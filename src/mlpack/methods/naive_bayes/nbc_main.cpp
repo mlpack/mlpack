@@ -152,14 +152,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     {
       // Load labels.
       Row<size_t> rawLabels = std::move(params.Get<Row<size_t>>("labels"));
-      data::NormalizeLabels(rawLabels, labels, model->mappings);
+      NormalizeLabels(rawLabels, labels, model->mappings);
     }
     else
     {
       // Use the last row of the training data as the labels.
       Log::Info << "Using last dimension of training data as training labels."
           << endl;
-      data::NormalizeLabels(trainingData.row(trainingData.n_rows - 1), labels,
+      NormalizeLabels(trainingData.row(trainingData.n_rows - 1), labels,
           model->mappings);
       // Remove the label row.
       trainingData.shed_row(trainingData.n_rows - 1);
@@ -200,7 +200,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     {
       // Un-normalize labels to prepare output.
       Row<size_t> rawResults;
-      data::RevertLabels(predictions, model->mappings, rawResults);
+      RevertLabels(predictions, model->mappings, rawResults);
 
       if (params.Has("predictions"))
         params.Get<Row<size_t>>("predictions") = std::move(rawResults);

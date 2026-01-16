@@ -112,7 +112,7 @@ class HoeffdingTreeModel
    *      Hoeffding numeric split.
    */
   void BuildModel(const arma::mat& dataset,
-                  const data::DatasetInfo& datasetInfo,
+                  const DatasetInfo& datasetInfo,
                   const arma::Row<size_t>& labels,
                   const size_t numClasses,
                   const bool batchTraining,
@@ -185,7 +185,7 @@ class HoeffdingTreeModel
     ar(CEREAL_NVP(type));
 
     // Fake dataset info may be needed to create fake trees.
-    data::DatasetInfo info;
+    DatasetInfo info;
     if (type == GINI_HOEFFDING)
       ar(CEREAL_POINTER(giniHoeffdingTree));
     else if (type == GINI_BINARY)

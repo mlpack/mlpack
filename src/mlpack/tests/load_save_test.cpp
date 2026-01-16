@@ -2,7 +2,7 @@
  * @file tests/load_save_test.cpp
  * @author Ryan Curtin
  *
- * Tests for data::Load() and data::Save().
+ * Tests for Load() and Save().
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -16,7 +16,6 @@
 #include "test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace std;
 
 /**
@@ -25,7 +24,7 @@ using namespace std;
 TEST_CASE("NoExtensionLoad", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
-  REQUIRE(data::Load("noextension", out) == false);
+  REQUIRE(Load("noextension", out) == false);
 }
 
 /**
@@ -34,7 +33,7 @@ TEST_CASE("NoExtensionLoad", "[LoadSaveTest][tiny]")
 TEST_CASE("NoExtensionSave", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
-  REQUIRE(data::Save("noextension", out) == false);
+  REQUIRE(Save("noextension", out) == false);
 }
 
 /**
@@ -43,7 +42,7 @@ TEST_CASE("NoExtensionSave", "[LoadSaveTest][tiny]")
 TEST_CASE("NotExistLoad", "[LoadSaveTest][tiny]")
 {
   arma::mat out;
-  REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
+  REQUIRE(Load("nonexistentfile_______________.csv", out) == false);
 }
 
 /**
@@ -61,7 +60,7 @@ TEST_CASE("WrongExtensionWrongLoad", "[LoadSaveTest][tiny]")
   REQUIRE(testTrans.save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.csv", test) == false);
+  REQUIRE(Load("test_file.csv", test) == false);
 
   // Remove the file.
   remove("test_file.csv");
@@ -82,7 +81,7 @@ TEST_CASE("WrongExtensionCorrectLoad", "[LoadSaveTest][tiny]")
   REQUIRE(testTrans.save("test_file.csv", arma::arma_binary) == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.csv", test, ArmaBin)
+  REQUIRE(Load("test_file.csv", test, ArmaBin)
       == true);
 
   REQUIRE(test.n_rows == 4);
@@ -109,7 +108,7 @@ TEST_CASE("LoadCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -141,7 +140,7 @@ TEST_CASE("LoadSparseTSVTest", "[LoadSaveTest][tiny]")
 
   arma::sp_mat test;
 
-  REQUIRE(data::Load(
+  REQUIRE(Load(
       "test_sparse_file.tsv", test, Fatal + NoTranspose) == true);
 
   REQUIRE(test.n_rows == 8);
@@ -181,7 +180,7 @@ TEST_CASE("LoadSparseTXTTest", "[LoadSaveTest][tiny]")
 
   arma::sp_mat test;
 
-  REQUIRE(data::Load("test_sparse_file.txt", test, Fatal + NoTranspose)
+  REQUIRE(Load("test_sparse_file.txt", test, Fatal + NoTranspose)
       == true);
 
   REQUIRE(test.n_rows == 8);
@@ -217,7 +216,7 @@ TEST_CASE("LoadSparseAutodetectTest", "[LoadSaveTest][tiny]")
 
   arma::sp_mat test;
 
-  REQUIRE(data::Load("test_file.csv", test, Fatal + Transpose)
+  REQUIRE(Load("test_file.csv", test, Fatal + Transpose)
       == true);
 
   REQUIRE(test.n_rows == 7);
@@ -247,7 +246,7 @@ TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest][tiny]")
 
   arma::sp_mat test;
 
-  REQUIRE(data::Load("test_file.csv", test, Fatal + Transpose) == true);
+  REQUIRE(Load("test_file.csv", test, Fatal + Transpose) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 3);
@@ -275,7 +274,7 @@ TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -301,7 +300,7 @@ TEST_CASE("LoadTSVExtensionTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.tsv", test) == true);
+  REQUIRE(Load("test_file.tsv", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -327,7 +326,7 @@ TEST_CASE("LoadAnyExtensionFileTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.blah", test, RawAscii));
+  REQUIRE(Load("test_file.blah", test, RawAscii));
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -349,11 +348,11 @@ TEST_CASE("SaveCSVTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.csv", test) == true);
+  REQUIRE(Save("test_file.csv", test) == true);
 
   // Load it in and make sure it is the same.
   arma::mat test2;
-  REQUIRE(data::Load("test_file.csv", test2) == true);
+  REQUIRE(Load("test_file.csv", test2) == true);
 
   REQUIRE(test2.n_rows == 4);
   REQUIRE(test2.n_cols == 2);
@@ -375,12 +374,12 @@ TEST_CASE("SaveSparseTXTTest", "[LoadSaveTest][tiny]")
                       "0 0 0.3 0;"
                       "0 0 0 0.4;";
 
-  REQUIRE(data::Save("test_sparse_file.txt", test,
+  REQUIRE(Save("test_sparse_file.txt", test,
         Fatal + Transpose) == true);
 
   // Load it in and make sure it is the same.
   arma::sp_mat test2;
-  REQUIRE(data::Load("test_sparse_file.txt", test2,
+  REQUIRE(Load("test_sparse_file.txt", test2,
         Fatal + Transpose) == true);
 
   REQUIRE(test2.n_rows == 4);
@@ -412,12 +411,12 @@ TEST_CASE("SaveSparseBinaryTest", "[LoadSaveTest][tiny]")
                       "0 0 0.3 0;"
                       "0 0 0 0.4;";
 
-  REQUIRE(data::Save("test_sparse_file.bin", test, Fatal + NoTranspose)
+  REQUIRE(Save("test_sparse_file.bin", test, Fatal + NoTranspose)
       == true);
 
   // Load it in and make sure it is the same.
   arma::sp_mat test2;
-  REQUIRE(data::Load("test_sparse_file.bin", test2, Fatal + NoTranspose)
+  REQUIRE(Load("test_sparse_file.bin", test2, Fatal + NoTranspose)
       == true);
 
   REQUIRE(test2.n_rows == 4);
@@ -453,7 +452,7 @@ TEST_CASE("LoadTransposedCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_cols == 2);
   REQUIRE(test.n_rows == 4);
@@ -479,7 +478,7 @@ TEST_CASE("LoadColVecCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::colvec test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_cols == 1);
   REQUIRE(test.n_rows == 8);
@@ -505,7 +504,7 @@ TEST_CASE("LoadColVecTransposedCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::colvec test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_cols == 1);
   REQUIRE(test.n_rows == 9);
@@ -543,8 +542,7 @@ TEST_CASE("LoadQuotedStringInCSVTest", "[LoadSaveTest][tiny]")
 
   arma::mat test;
   TextOptions opts = Categorical;
-
-  REQUIRE(data::Load("test_file.csv", test, opts) == true);
+  REQUIRE(Load("test_file.csv", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 5);
@@ -587,7 +585,7 @@ TEST_CASE("LoadQuotedStringInTXTTest", "[LoadSaveTest][tiny]")
 
   arma::mat test;
   TextOptions opts = Categorical;
-  REQUIRE(data::Load("test_file.txt", test, opts) == true);
+  REQUIRE(Load("test_file.txt", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 2);
@@ -637,7 +635,7 @@ TEST_CASE("LoadQuotedStringInTSVTest", "[LoadSaveTest][tiny]")
   arma::mat test;
   TextOptions opts = Categorical;
 
-  REQUIRE(data::Load("test_file.tsv", test, opts) == true);
+  REQUIRE(Load("test_file.tsv", test, opts) == true);
 
   REQUIRE(test.n_rows == 3);
   REQUIRE(test.n_cols == 5);
@@ -678,11 +676,11 @@ TEST_CASE("LoadMatinVec", "[LoadSaveTest][tiny]")
    * Log::Fatal will be called when the matrix is not of the right size.
    */
   arma::vec coltest;
-  REQUIRE_THROWS_AS(data::Load("test_file.csv", coltest, Fatal + Transpose),
+  REQUIRE_THROWS_AS(Load("test_file.csv", coltest, Fatal + Transpose),
       std::runtime_error);
 
   arma::rowvec rowtest;
-  REQUIRE_THROWS_AS(data::Load("test_file.csv", rowtest, Fatal + Transpose),
+  REQUIRE_THROWS_AS(Load("test_file.csv", rowtest, Fatal + Transpose),
       std::runtime_error);
 
   remove("test_file.csv");
@@ -704,7 +702,7 @@ TEST_CASE("LoadRowVecCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::rowvec test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_cols == 8);
   REQUIRE(test.n_rows == 1);
@@ -729,7 +727,7 @@ TEST_CASE("LoadRowVecTransposedCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::rowvec test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_rows == 1);
   REQUIRE(test.n_cols == 8);
@@ -755,7 +753,7 @@ TEST_CASE("LoadTransposedTSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test) == true);
+  REQUIRE(Load("test_file.csv", test) == true);
 
   REQUIRE(test.n_cols == 2);
   REQUIRE(test.n_rows == 4);
@@ -781,7 +779,7 @@ TEST_CASE("LoadTransposedTSVExtensionTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.tsv", test) == true);
+  REQUIRE(Load("test_file.tsv", test) == true);
 
   REQUIRE(test.n_cols == 2);
   REQUIRE(test.n_rows == 4);
@@ -807,7 +805,7 @@ TEST_CASE("LoadNonTransposedCSVTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.csv", test, NoFatal + NoTranspose) == true);
+  REQUIRE(Load("test_file.csv", test, NoFatal + NoTranspose) == true);
 
   REQUIRE(test.n_cols == 4);
   REQUIRE(test.n_rows == 2);
@@ -829,11 +827,11 @@ TEST_CASE("SaveNonTransposedCSVTest", "[LoadSaveTest][tiny]")
                    "5 6;"
                    "7 8;";
 
-  REQUIRE(data::Save("test_file.csv", test, NoFatal + NoTranspose) == true);
+  REQUIRE(Save("test_file.csv", test, NoFatal + NoTranspose) == true);
 
   // Load it in and make sure it is in the same.
   arma::mat test2;
-  REQUIRE(data::Load("test_file.csv", test2, NoFatal + NoTranspose) == true);
+  REQUIRE(Load("test_file.csv", test2, NoFatal + NoTranspose) == true);
 
   REQUIRE(test2.n_rows == 4);
   REQUIRE(test2.n_cols == 2);
@@ -858,7 +856,7 @@ TEST_CASE("LoadArmaASCIITest", "[LoadSaveTest][tiny]")
   arma::mat testTrans = trans(test);
   REQUIRE(testTrans.save("test_file.txt", arma::arma_ascii));
 
-  REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(Load("test_file.txt", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -880,10 +878,10 @@ TEST_CASE("SaveArmaASCIITest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.txt", test) == true);
+  REQUIRE(Save("test_file.txt", test) == true);
 
   // Load it in and make sure it is the same.
-  REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(Load("test_file.txt", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -909,7 +907,7 @@ TEST_CASE("LoadRawASCIITest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(Load("test_file.txt", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -935,7 +933,7 @@ TEST_CASE("LoadCSVTxtTest", "[LoadSaveTest][tiny]")
   f.close();
 
   arma::mat test;
-  REQUIRE(data::Load("test_file.txt", test) == true);
+  REQUIRE(Load("test_file.txt", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -962,7 +960,7 @@ TEST_CASE("LoadArmaBinaryTest", "[LoadSaveTest][tiny]")
       == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(Load("test_file.bin", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -984,9 +982,9 @@ TEST_CASE("SaveArmaBinaryTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.bin", test) == true);
+  REQUIRE(Save("test_file.bin", test) == true);
 
-  REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(Load("test_file.bin", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1008,9 +1006,9 @@ TEST_CASE("SaveArmaBinaryArbitraryExtensionTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.blerp.blah", test, ArmaBin) == true);
+  REQUIRE(Save("test_file.blerp.blah", test, ArmaBin) == true);
 
-  REQUIRE(data::Load("test_file.blerp.blah", test, ArmaBin) == true);
+  REQUIRE(Load("test_file.blerp.blah", test, ArmaBin) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1037,7 +1035,7 @@ TEST_CASE("LoadRawBinaryTest", "[LoadSaveTest][tiny]")
       == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.bin", test) == true);
+  REQUIRE(Load("test_file.bin", test) == true);
 
   REQUIRE(test.n_rows == 1);
   REQUIRE(test.n_cols == 8);
@@ -1064,7 +1062,7 @@ TEST_CASE("LoadPGMBinaryTest", "[LoadSaveTest][tiny]")
       == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.pgm", test) == true);
+  REQUIRE(Load("test_file.pgm", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1086,10 +1084,10 @@ TEST_CASE("SavePGMBinaryTest", "[LoadSaveTest][tiny]")
                    "3 7;"
                    "4 8;";
 
-  REQUIRE(data::Save("test_file.pgm", test) == true);
+  REQUIRE(Save("test_file.pgm", test) == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.pgm", test) == true);
+  REQUIRE(Load("test_file.pgm", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1122,7 +1120,7 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest][tiny]")
       == true);
 
   // Now reload through our interface.
-  REQUIRE(data::Load("test_file.h5", test) == true);
+  REQUIRE(Load("test_file.h5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1131,7 +1129,7 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest][tiny]")
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Make sure the other extensions work too.
-  REQUIRE(data::Load("test_file.hdf5", test) == true);
+  REQUIRE(Load("test_file.hdf5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1139,7 +1137,7 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest][tiny]")
   for (size_t i = 0; i < 8; ++i)
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  REQUIRE(data::Load("test_file.hdf", test) == true);
+  REQUIRE(Load("test_file.hdf", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1147,7 +1145,7 @@ TEST_CASE("LoadHDF5Test", "[LoadSaveTest][tiny]")
   for (size_t i = 0; i < 8; ++i)
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  REQUIRE(data::Load("test_file.he5", test) == true);
+  REQUIRE(Load("test_file.he5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1170,13 +1168,13 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest][tiny]")
                    "2 6;"
                    "3 7;"
                    "4 8;";
-  REQUIRE(data::Save("test_file.h5", test) == true);
-  REQUIRE(data::Save("test_file.hdf5", test) == true);
-  REQUIRE(data::Save("test_file.hdf", test) == true);
-  REQUIRE(data::Save("test_file.he5", test) == true);
+  REQUIRE(Save("test_file.h5", test) == true);
+  REQUIRE(Save("test_file.hdf5", test) == true);
+  REQUIRE(Save("test_file.hdf", test) == true);
+  REQUIRE(Save("test_file.he5", test) == true);
 
   // Now load them all and verify they were saved okay.
-  REQUIRE(data::Load("test_file.h5", test) == true);
+  REQUIRE(Load("test_file.h5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1185,7 +1183,7 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest][tiny]")
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
   // Make sure the other extensions work too.
-  REQUIRE(data::Load("test_file.hdf5", test) == true);
+  REQUIRE(Load("test_file.hdf5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1193,7 +1191,7 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest][tiny]")
   for (size_t i = 0; i < 8; ++i)
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  REQUIRE(data::Load("test_file.hdf", test) == true);
+  REQUIRE(Load("test_file.hdf", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1201,7 +1199,7 @@ TEST_CASE("SaveHDF5Test", "[LoadSaveTest][tiny]")
   for (size_t i = 0; i < 8; ++i)
     REQUIRE(test[i] == Approx((double) (i + 1)).epsilon(1e-7));
 
-  REQUIRE(data::Load("test_file.he5", test) == true);
+  REQUIRE(Load("test_file.he5", test) == true);
 
   REQUIRE(test.n_rows == 4);
   REQUIRE(test.n_cols == 2);
@@ -1226,7 +1224,7 @@ TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest][tiny]")
   arma::Row<size_t> newLabels;
   arma::ivec mappings;
 
-  data::NormalizeLabels(labels, newLabels, mappings);
+  NormalizeLabels(labels, newLabels, mappings);
 
   REQUIRE(mappings[0] == -1);
   REQUIRE(mappings[1] == 1);
@@ -1242,7 +1240,7 @@ TEST_CASE("NormalizeLabelSmallDatasetTest", "[LoadSaveTest][tiny]")
 
   arma::irowvec revertedLabels;
 
-  data::RevertLabels(newLabels, mappings, revertedLabels);
+  RevertLabels(newLabels, mappings, revertedLabels);
 
   for (size_t i = 0; i < labels.n_elem; ++i)
     REQUIRE(labels[i] == revertedLabels[i]);
@@ -1261,11 +1259,11 @@ TEST_CASE("NormalizeLabelTest", "[LoadSaveTest][tiny]")
   arma::Row<size_t> newLabels;
   arma::vec mappings;
 
-  data::NormalizeLabels(randLabels, newLabels, mappings);
+  NormalizeLabels(randLabels, newLabels, mappings);
 
   // Now map them back and ensure they are right.
   arma::rowvec revertedLabels(5000);
-  data::RevertLabels(newLabels, mappings, revertedLabels);
+  RevertLabels(newLabels, mappings, revertedLabels);
 
   for (size_t i = 0; i < 5000; ++i)
     REQUIRE(randLabels[i] == revertedLabels[i]);
@@ -1319,12 +1317,12 @@ TEST_CASE("LoadBinaryTest", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+  REQUIRE(Save("test.bin", x, NoFatal + BIN) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.bin", y, NoFatal + BIN) == true);
+  REQUIRE(Load("test.bin", y, NoFatal + BIN) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1338,16 +1336,16 @@ TEST_CASE("LoadBinaryTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  data::DataOptions opts;
+  DataOptions opts;
   opts.Format() = FileType::BIN;
   opts.Fatal() = false;
 
-  REQUIRE(data::Save("test.bin", x, opts) == true);
+  REQUIRE(Save("test.bin", x, opts) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.bin", y, opts) == true);
+  REQUIRE(Load("test.bin", y, opts) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1361,12 +1359,12 @@ TEST_CASE("LoadBinaryTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+  REQUIRE(Save("test.bin", x, NoFatal + BIN) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.bin", y, NoFatal + BIN) == true);
+  REQUIRE(Load("test.bin", y, NoFatal + BIN) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1380,12 +1378,12 @@ TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.bin", x, NoFatal + AutoDetect) == true);
+  REQUIRE(Save("test.bin", x, NoFatal + AutoDetect) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.bin", y, NoFatal + AutoDetect) == true);
+  REQUIRE(Load("test.bin", y, NoFatal + AutoDetect) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1394,8 +1392,8 @@ TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest][tiny]")
   REQUIRE(y.inb.c == x.inb.c);
   REQUIRE(y.inb.s == x.inb.s);
 
-  REQUIRE(data::Save("test.xml", x, NoFatal + AutoDetect) == true);
-  REQUIRE(data::Load("test.xml", y, NoFatal + AutoDetect) == true);
+  REQUIRE(Save("test.xml", x, NoFatal + AutoDetect) == true);
+  REQUIRE(Load("test.xml", y, NoFatal + AutoDetect) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1404,8 +1402,8 @@ TEST_CASE("LoadAutoDetectTestInOptions", "[LoadSaveTest][tiny]")
   REQUIRE(y.inb.c == x.inb.c);
   REQUIRE(y.inb.s == x.inb.s);
 
-  REQUIRE(data::Save("test.JSON", x, NoFatal + AutoDetect) == true);
-  REQUIRE(data::Load("test.JSON", y, NoFatal + AutoDetect) == true);
+  REQUIRE(Save("test.JSON", x, NoFatal + AutoDetect) == true);
+  REQUIRE(Load("test.JSON", y, NoFatal + AutoDetect) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1419,15 +1417,15 @@ TEST_CASE("LoadBinaryTestBadOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE_THROWS_AS(data::Save("test.bin", x, NoFatal + BIN + CSV),
+  REQUIRE_THROWS_AS(Save("test.bin", x, NoFatal + BIN + CSV),
       std::invalid_argument);
 
-  REQUIRE(data::Save("test.bin", x, NoFatal + BIN) == true);
+  REQUIRE(Save("test.bin", x, NoFatal + BIN) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE_THROWS_AS(data::Load("test.bin", y, NoFatal + BIN + HDF5),
+  REQUIRE_THROWS_AS(Load("test.bin", y, NoFatal + BIN + HDF5),
       std::invalid_argument);
 }
 
@@ -1440,12 +1438,12 @@ TEST_CASE("LoadXMLTest", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.xml", x, NoFatal + XML) == true);
+  REQUIRE(Save("test.xml", x, NoFatal + XML) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.xml", y, NoFatal + XML) == true);
+  REQUIRE(Load("test.xml", y, NoFatal + XML) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1459,15 +1457,15 @@ TEST_CASE("LoadXMLTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  data::DataOptions opts;
+  DataOptions opts;
   opts.Fatal() = false;
   opts.Format() = FileType::XML;
-  REQUIRE(data::Save("test.xml", x, opts) == true);
+  REQUIRE(Save("test.xml", x, opts) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.xml", y, opts) == true);
+  REQUIRE(Load("test.xml", y, opts) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1481,12 +1479,12 @@ TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.xml", x, NoFatal + XML) == true);
+  REQUIRE(Save("test.xml", x, NoFatal + XML) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.xml", y, NoFatal + XML) == true);
+  REQUIRE(Load("test.xml", y, NoFatal + XML) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1502,16 +1500,16 @@ TEST_CASE("LoadXMLTestInOptions", "[LoadSaveTest][tiny]")
 TEST_CASE("LoadJsonTestOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
-  data::DataOptions opts;
+  DataOptions opts;
   opts.Fatal() = false;
   opts.Format() = FileType::JSON;
 
-  REQUIRE(data::Save("test.json", x, opts) == true);
+  REQUIRE(Save("test.json", x, opts) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.json", y, opts) == true);
+  REQUIRE(Load("test.json", y, opts) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1525,12 +1523,12 @@ TEST_CASE("LoadJsonTestInOptions", "[LoadSaveTest][tiny]")
 {
   Test x(10, 12);
 
-  REQUIRE(data::Save("test.json", x, NoFatal + JSON) == true);
+  REQUIRE(Save("test.json", x, NoFatal + JSON) == true);
 
   // Now reload.
   Test y(11, 14);
 
-  REQUIRE(data::Load("test.json", y, NoFatal + JSON) == true);
+  REQUIRE(Load("test.json", y, NoFatal + JSON) == true);
 
   REQUIRE(y.x == x.x);
   REQUIRE(y.y == x.y);
@@ -1607,9 +1605,9 @@ TEST_CASE("RegularCSVDatasetInfoLoad", "[LoadSaveTest][tiny]")
     arma::mat one, two;
     TextOptions opts = Categorical;
 
-    if (!data::Load(testFiles[i], one))
+    if (!Load(testFiles[i], one))
       FAIL("Cannot load dataset");
-    if (!data::Load(testFiles[i], two, opts))
+    if (!Load(testFiles[i], two, opts))
       FAIL("Cannot load dataset");
 
     // Check that the matrices contain the same information.
@@ -1652,9 +1650,9 @@ TEST_CASE("NontransposedCSVDatasetInfoLoad", "[LoadSaveTest][tiny]")
     opts.Fatal() = false;
     opts.NoTranspose() = true;
     opts.Categorical() = true;
-    if (!data::Load(testFiles[i], one, NoFatal + NoTranspose))
+    if (!Load(testFiles[i], one, NoFatal + NoTranspose))
       FAIL("Cannot load dataset");
-    if (!data::Load(testFiles[i], two, opts))
+    if (!Load(testFiles[i], two, opts))
       FAIL("Cannot load dataset");
 
     // Check that the matrices contain the same information.
@@ -1695,7 +1693,7 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest][tiny]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 7);
@@ -1754,7 +1752,7 @@ TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest][tiny]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 4);
@@ -1801,7 +1799,7 @@ TEST_CASE("CategoricalCSVLoadTest02", "[LoadSaveTest][tiny]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 4);
@@ -1847,7 +1845,7 @@ TEST_CASE("CategoricalCSVLoadTest03", "[LoadSaveTest][tiny]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 4);
@@ -1893,7 +1891,7 @@ TEST_CASE("CategoricalCSVLoadTest04", "[LoadSaveTest][tiny]")
   arma::umat matrix;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 4);
@@ -1944,7 +1942,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest00", "[LoadSaveTest][tiny]")
   opts.Categorical() = true;
   opts.NoTranspose() = true;
   opts.Fatal() = false;
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 3);
@@ -2038,7 +2036,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest01", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 3);
@@ -2088,7 +2086,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest02", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 3);
@@ -2138,7 +2136,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest03", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
       FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 3);
@@ -2188,7 +2186,7 @@ TEST_CASE("CategoricalNontransposedCSVLoadTest04", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  if (!data::Load("test.csv", matrix, opts))
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(matrix.n_cols == 3);
@@ -2238,7 +2236,7 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.csv", dataset, opts))
+  if (!Load("test.csv", dataset, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(dataset.n_rows == 5);
@@ -2257,7 +2255,7 @@ TEST_CASE("HarderKeonTest", "[LoadSaveTest][tiny]")
   ntOpts.NoTranspose() = true;
   ntOpts.Fatal() = false;
 
-  if (!data::Load("test.csv", dataset, ntOpts))
+  if (!Load("test.csv", dataset, ntOpts))
     FAIL("Cannot load dataset");
 
   REQUIRE(dataset.n_rows == 4);
@@ -2294,7 +2292,7 @@ TEST_CASE("SimpleARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.arff", dataset, opts))
+  if (!Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(opts.DatasetInfo().Dimensionality() == 2);
@@ -2337,7 +2335,7 @@ TEST_CASE("SimpleARFFCategoricalTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.arff", dataset, opts))
+  if (!Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(opts.DatasetInfo().Dimensionality() == 3);
@@ -2398,7 +2396,7 @@ TEST_CASE("HarderARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  if (!data::Load("test.arff", dataset, opts))
+  if (!Load("test.arff", dataset, opts))
     FAIL("Cannot load dataset");
 
   REQUIRE(opts.DatasetInfo().Dimensionality() == 5);
@@ -2465,7 +2463,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info(6);
 
-  REQUIRE_THROWS(data::LoadARFF("test.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true));
 
   remove("test.arff");
 }
@@ -2478,7 +2476,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info;
 
-  REQUIRE_THROWS(data::LoadARFF("nonexistentfile.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true));
 }
 
 /**
@@ -2530,7 +2528,7 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
 
   // Make sure to parse with fatal errors (that's what the `true` parameter
   // means).
-  REQUIRE_THROWS_AS(data::Load("test.arff", dataset, opts),
+  REQUIRE_THROWS_AS(Load("test.arff", dataset, opts),
       std::runtime_error);
 
   remove("test.arff");
@@ -2551,7 +2549,7 @@ TEST_CASE("MalformedCSVTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  REQUIRE(!data::Load("test.csv", dataset, opts));
+  REQUIRE(!Load("test.csv", dataset, opts));
 
   remove("test.csv");
 }
@@ -2570,7 +2568,7 @@ TEST_CASE("LoadCSVTSVTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  REQUIRE(data::Load("test.tsv", dataset, opts));
+  REQUIRE(Load("test.tsv", dataset, opts));
 
   REQUIRE(dataset.n_cols == 2);
   REQUIRE(dataset.n_rows == 4);
@@ -2595,7 +2593,7 @@ TEST_CASE("LoadCSVTXTTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   TextOptions opts = Categorical;
 
-  REQUIRE(data::Load("test.txt", dataset, opts));
+  REQUIRE(Load("test.txt", dataset, opts));
 
   REQUIRE(dataset.n_cols == 2);
   REQUIRE(dataset.n_rows == 4);
@@ -2624,7 +2622,7 @@ TEST_CASE("MalformedNoTransposeCSVTest", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  REQUIRE(!data::Load("test.csv", dataset, opts));
+  REQUIRE(!Load("test.csv", dataset, opts));
 
   remove("test.csv");
 }
@@ -2646,7 +2644,7 @@ TEST_CASE("LoadCSVNoTransposeTSVTest", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  REQUIRE(data::Load("test.tsv", dataset, opts));
+  REQUIRE(Load("test.tsv", dataset, opts));
 
   REQUIRE(dataset.n_cols == 4);
   REQUIRE(dataset.n_rows == 2);
@@ -2680,7 +2678,7 @@ TEST_CASE("LoadCSVNoTransposeTXTTest", "[LoadSaveTest][tiny]")
   opts.NoTranspose() = true;
   opts.Fatal() = false;
 
-  REQUIRE(data::Load("test.txt", dataset, opts));
+  REQUIRE(Load("test.txt", dataset, opts));
 
   REQUIRE(dataset.n_cols == 4);
   REQUIRE(dataset.n_rows == 2);
@@ -2710,9 +2708,9 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest][tiny]")
   f << "5,6,7,8" << endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.HasHeaders() = true;
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   arma::field<std::string> headers = opts.Headers();
 
@@ -2727,7 +2725,7 @@ TEST_CASE("LoadCSVHeaderTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("DataOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::DataOptions opts1, opts2, opts3;
+  DataOptions opts1, opts2, opts3;
 
   opts1.Fatal() = false;
   opts2.Fatal() = false;
@@ -2760,7 +2758,7 @@ TEST_CASE("DataOptionsTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("MatrixOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::MatrixOptions opts1, opts2, opts3;
+  MatrixOptions opts1, opts2, opts3;
 
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
@@ -2805,7 +2803,7 @@ TEST_CASE("MatrixOptionsTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("TextOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::TextOptions opts1, opts2, opts3;
+  TextOptions opts1, opts2, opts3;
 
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
@@ -2893,8 +2891,8 @@ TEST_CASE("TextOptionsTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::MatrixOptions opts1;
-  data::DataOptions opts2;
+  MatrixOptions opts1;
+  DataOptions opts2;
 
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
@@ -2946,8 +2944,8 @@ TEST_CASE("MatrixDataOptionsTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("TextDataOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::TextOptions opts1;
-  data::DataOptions opts2;
+  TextOptions opts1;
+  DataOptions opts2;
 
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
@@ -3039,8 +3037,8 @@ TEST_CASE("TextDataOptionsTest", "[LoadSaveTest][tiny]")
 
 TEST_CASE("MatrixTextOptionsTest", "[LoadSaveTest][tiny]")
 {
-  data::TextOptions opts1;
-  data::MatrixOptions opts2;
+  TextOptions opts1;
+  MatrixOptions opts2;
 
   opts1.Fatal() = false;
   opts1.NoTranspose() = false;
@@ -3143,10 +3141,10 @@ TEST_CASE("LoadCSVNoHeaderTest", "[LoadSaveTest][tiny]")
   f << "5,6,7,8" << endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.HasHeaders() = false;
   opts.MissingToNan() = true;
-  REQUIRE(data::Load("test.csv", dataset, opts) == true);
+  REQUIRE(Load("test.csv", dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3164,8 +3162,8 @@ TEST_CASE("LoadVectorCSVFiles", "[LoadSaveTest][tiny]")
       "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
-  REQUIRE(data::Load(files, dataset, opts) == true);
+  TextOptions opts;
+  REQUIRE(Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 100);
@@ -3177,8 +3175,8 @@ TEST_CASE("LoadVectorCSVOneFile", "[LoadSaveTest][tiny]")
   std::vector<std::string> files = {"f0.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
-  REQUIRE(data::Load(files, dataset, opts) == true);
+  TextOptions opts;
+  REQUIRE(Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 10);
@@ -3189,9 +3187,9 @@ TEST_CASE("LoadVectorCSVEmptyFile", "[LoadSaveTest][tiny]")
   std::vector<std::string> files;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = false;
-  REQUIRE(data::Load(files, dataset, opts) == false);
+  REQUIRE(Load(files, dataset, opts) == false);
 }
 
 TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest][tiny]")
@@ -3199,8 +3197,8 @@ TEST_CASE("LoadVectorCSVDiffCols", "[LoadSaveTest][tiny]")
   std::vector<std::string> files = {"f0.csv", "f10.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
-  REQUIRE(data::Load(files, dataset, opts) == false);
+  TextOptions opts;
+  REQUIRE(Load(files, dataset, opts) == false);
 }
 
 TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest][tiny]")
@@ -3208,9 +3206,9 @@ TEST_CASE("LoadVectorCSVDiffHeaders", "[LoadSaveTest][tiny]")
   std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.HasHeaders() = true;
-  REQUIRE(data::Load(files, dataset, opts) == false);
+  REQUIRE(Load(files, dataset, opts) == false);
 }
 
 // These tests only work with Armadillo 12, as we need the `strict` option to be
@@ -3222,10 +3220,10 @@ TEST_CASE("LoadVectorCSVDiffNoHeaders", "[LoadSaveTest][tiny]")
   std::vector<std::string> files = {"f0header.csv", "f10header.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.HasHeaders() = false;
   opts.MissingToNan() = true;
-  REQUIRE(data::Load(files, dataset, opts) == true);
+  REQUIRE(Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 5);
   REQUIRE(dataset.n_cols == 22);
@@ -3248,10 +3246,10 @@ TEST_CASE("LoadVectorCSVFilesNoTranspose", "[LoadSaveTest][tiny]")
       "f4.csv", "f5.csv", "f6.csv", "f7.csv", "f8.csv", "f9.csv"};
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.NoTranspose() = true;
   opts.Fatal() = true;
-  REQUIRE(data::Load(files, dataset, opts) == true);
+  REQUIRE(Load(files, dataset, opts) == true);
 
   REQUIRE(dataset.n_rows == 100);
   REQUIRE(dataset.n_cols == 5);
@@ -3270,12 +3268,12 @@ TEST_CASE("LoadCSVMissingNanTest", "[LoadSaveTest][tiny]")
   f << "9, 10, 11, 12" << std::endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.MissingToNan() = true;
 
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   REQUIRE(dataset.n_rows == 3);
   REQUIRE(dataset.n_cols == 4);
@@ -3293,12 +3291,12 @@ TEST_CASE("LoadCSVMissingNanTestTransposed", "[LoadSaveTest][tiny]")
   f << "9, 10, 11, 12" << std::endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false;
   opts.MissingToNan() = true;
 
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3317,7 +3315,7 @@ TEST_CASE("LoadCSVMissingNanTestTransposedInOptions", "[LoadSaveTest][tiny]")
 
   arma::mat dataset;
 
-  data::Load("test.csv", dataset, MissingToNan);
+  Load("test.csv", dataset, MissingToNan);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3337,12 +3335,12 @@ TEST_CASE("LoadCSVSemicolon", "[LoadSaveTest][tiny]")
   f << "9; 10; 11; 12" << std::endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = false;
   opts.Semicolon() = true;
 
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3360,7 +3358,7 @@ TEST_CASE("LoadCSVSemicolonInOptions", "[LoadSaveTest][tiny]")
 
   arma::mat dataset;
 
-  data::Load("test.csv", dataset, Semicolon);
+  Load("test.csv", dataset, Semicolon);
 
   REQUIRE(dataset.n_rows == 4);
   REQUIRE(dataset.n_cols == 3);
@@ -3377,13 +3375,13 @@ TEST_CASE("LoadCSVSemicolonHeader", "[LoadSaveTest][tiny]")
   f << "5;6;7;8" << std::endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = true;
   opts.NoTranspose() = false;
   opts.Semicolon() = true;
   opts.HasHeaders() = true;
 
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   arma::field<std::string> headers = opts.Headers();
 
@@ -3408,14 +3406,14 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeader", "[LoadSaveTest][tiny]")
   f << "5;6;7;8" << std::endl;
 
   arma::mat dataset;
-  data::TextOptions opts;
+  TextOptions opts;
   opts.Fatal() = false;
   opts.NoTranspose() = true;
   opts.Semicolon() = true;
   opts.HasHeaders() = true;
   opts.MissingToNan() = true;
 
-  data::Load("test.csv", dataset, opts);
+  Load("test.csv", dataset, opts);
 
   arma::field<std::string> headers = opts.Headers();
 
@@ -3440,7 +3438,7 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 
   arma::mat dataset;
 
-  data::Load("test.csv", dataset,
+  Load("test.csv", dataset,
       NoFatal + NoTranspose + Semicolon + HasHeaders + MissingToNan);
 
   REQUIRE(dataset.n_rows == 2);

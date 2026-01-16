@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace std;
 
 /**
@@ -28,7 +27,8 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
   arma::Mat<unsigned char> matrix;
   ImageOptions opts;
   opts.Fatal() = true;
-  REQUIRE_THROWS_AS(data::Load("invalidExtension.p4ng", matrix, opts),
+
+  REQUIRE_THROWS_AS(Load("invalidExtension.p4ng", matrix, opts),
       std::runtime_error);
 }
 
@@ -38,9 +38,10 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
 TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  data::ImageOptions opts;
 
-  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  ImageOptions opts;
+
+  REQUIRE(Load("test_image.png", matrix, opts) == true);
   // width * height * channels.
   REQUIRE(matrix.n_rows == 50 * 50 * 3);
   REQUIRE(opts.Height() == 50);
@@ -55,10 +56,10 @@ TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  data::ImageOptions opts;
+  ImageOptions opts;
   opts.Format() = FileType::PNG;
 
-  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  REQUIRE(Load("test_image.png", matrix, opts) == true);
   // width * height * channels.
   REQUIRE(matrix.n_rows == 50 * 50 * 3);
   REQUIRE(opts.Height() == 50);
@@ -74,7 +75,7 @@ TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
 TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  REQUIRE(data::Load("test_image.png", matrix, PNG + Fatal) == true);
+  REQUIRE(Load("test_image.png", matrix, PNG + Fatal) == true);
 }
 
 /**
@@ -84,7 +85,7 @@ TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  REQUIRE(data::Load("test_image.png", matrix, Fatal) == true);
+  REQUIRE(Load("test_image.png", matrix, Fatal) == true);
 }
 
 /**
@@ -94,7 +95,8 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   TextOptions opts;
-  REQUIRE(data::Load("test_image.png", matrix, opts) == true);
+  opts.Fatal() = true;
+  REQUIRE(Load("test_image.png", matrix, opts) == true);
 }
 
 /**
@@ -102,16 +104,16 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
  */
 TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
 {
-  data::ImageInfo opts(5, 5, 3, 90);
+  ImageInfo opts(5, 5, 3, 90);
 
   arma::Mat<unsigned char> im1;
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
   im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
 
-  REQUIRE(data::Save("APITest.bmp", im1, opts) == true);
+  REQUIRE(Save("APITest.bmp", im1, opts) == true);
 
   arma::Mat<unsigned char> im2;
-  REQUIRE(data::Load("APITest.bmp", im2, opts) == true);
+  REQUIRE(Load("APITest.bmp", im2, opts) == true);
 
   REQUIRE(im1.n_cols == im2.n_cols);
   REQUIRE(im1.n_rows == im2.n_rows);
@@ -130,7 +132,7 @@ TEST_CASE("SaveImageWrongOptions", "[ImageLoadTest]")
   opts.Fatal() = true;
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Save("APITest.bmp", im1, opts),
+  REQUIRE_THROWS_AS(Save("APITest.bmp", im1, opts),
       std::runtime_error);
 }
 
@@ -140,11 +142,11 @@ TEST_CASE("SaveImageWrongOptions", "[ImageLoadTest]")
  */
 TEST_CASE("LoadImageWrongOptions", "[ImageLoadTest]")
 {
-  data::ImageOptions opts(5, 5, 3, 90);
+  ImageOptions opts(5, 5, 3, 90);
   opts.Fatal() = true;
   arma::Mat<unsigned char> im1;
   im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
-  REQUIRE_THROWS_AS(data::Load("APITest.bmp", im1, opts),
+  REQUIRE_THROWS_AS(Load("APITest.bmp", im1, opts),
       std::runtime_error);
 }
 
@@ -159,13 +161,13 @@ TEST_CASE("LoadSetOfImagesNoOptions", "[ImageLoadTest]")
        "sheep_9.jpg"};
 
   arma::Mat<unsigned char> im1;
-  REQUIRE_THROWS_AS(data::Load(files, im1, JPG + Fatal),
+  REQUIRE_THROWS_AS(Load(files, im1, JPG + Fatal),
       std::runtime_error);
 }
 
 TEST_CASE("LoadSetOfImagesWrongOptions", "[ImageLoadTest]")
 {
-  data::ImageOptions opts(5, 5, 3, 90);
+  ImageOptions opts(5, 5, 3, 90);
   opts.Fatal() = true;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
@@ -173,7 +175,7 @@ TEST_CASE("LoadSetOfImagesWrongOptions", "[ImageLoadTest]")
        "sheep_9.jpg"};
 
   arma::Mat<unsigned char> im1;
-  REQUIRE_THROWS_AS(data::Load(files, im1, opts),
+  REQUIRE_THROWS_AS(Load(files, im1, opts),
       std::runtime_error);
 }
 
@@ -184,9 +186,9 @@ TEST_CASE("LoadSetOfImagesWrongOptions", "[ImageLoadTest]")
 TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
-  data::ImageOptions opts;
+  ImageOptions opts;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
-  REQUIRE(data::Load(files, matrix, opts) == true);
+  REQUIRE(Load(files, matrix, opts) == true);
   // width * height * channels.
   REQUIRE(matrix.n_rows == 50 * 50 * 3);
   REQUIRE(opts.Height() == 50);
@@ -205,7 +207,8 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   typedef TestType eT;
 
   arma::Mat<eT> image, images;
-  data::ImageOptions opts, resizedOpts, resizedOpts2;
+  ImageOptions opts, resizedOpts, resizedOpts2;
+
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
@@ -225,24 +228,24 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    REQUIRE(data::Load(files.at(i), image, opts) == true);
+    REQUIRE(Load(files.at(i), image, opts) == true);
     ResizeImages(image, opts, 320, 320);
-    REQUIRE(data::Save(reSheeps.at(i), image, opts) == true);
+    REQUIRE(Save(reSheeps.at(i), image, opts) == true);
   }
 
   // Since they are all resized, this should passes
-  REQUIRE(data::Load(reSheeps, images, resizedOpts) == true);
+  REQUIRE(Load(reSheeps, images, resizedOpts) == true);
 
   REQUIRE(opts.Width() == resizedOpts.Width());
   REQUIRE(opts.Height() == resizedOpts.Height());
 
-  REQUIRE(data::Load(reSheeps, images, opts) == true);
+  REQUIRE(Load(reSheeps, images, opts) == true);
 
   ResizeImages(images, opts, 160, 160);
 
-  REQUIRE(data::Save(smSheeps, images, opts) == true);
+  REQUIRE(Save(smSheeps, images, opts) == true);
 
-  REQUIRE(data::Load(smSheeps, images, resizedOpts2) == true);
+  REQUIRE(Load(smSheeps, images, resizedOpts2) == true);
 
   REQUIRE(opts.Width() == resizedOpts2.Width());
   REQUIRE(opts.Height() == resizedOpts2.Height());
@@ -265,7 +268,8 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
   typedef TestType eT;
 
   arma::Mat<eT> image, images;
-  data::ImageOptions opts, resizedOpts, resizedOpts2;
+  ImageOptions opts, resizedOpts, resizedOpts2;
+
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
@@ -285,24 +289,24 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    REQUIRE(data::Load(files.at(i), image, opts) == true);
+    REQUIRE(Load(files.at(i), image, opts) == true);
     ResizeCropImages(image, opts, 320, 320);
-    REQUIRE(data::Save(reSheeps.at(i), image, opts) == true);
+    REQUIRE(Save(reSheeps.at(i), image, opts) == true);
   }
 
   // Since they are all resized, this should passes
-  REQUIRE(data::Load(reSheeps, images, resizedOpts) == true);
+  REQUIRE(Load(reSheeps, images, resizedOpts) == true);
 
   REQUIRE(opts.Width() == resizedOpts.Width());
   REQUIRE(opts.Height() == resizedOpts.Height());
 
-  REQUIRE(data::Load(reSheeps, images, opts) == true);
+  REQUIRE(Load(reSheeps, images, opts) == true);
 
   ResizeCropImages(images, opts, 160, 160);
 
-  REQUIRE(data::Save(smSheeps, images, opts) == true);
+  REQUIRE(Save(smSheeps, images, opts) == true);
 
-  REQUIRE(data::Load(smSheeps, images, resizedOpts2) == true);
+  REQUIRE(Load(smSheeps, images, resizedOpts2) == true);
 
   REQUIRE(opts.Width() == resizedOpts2.Width());
   REQUIRE(opts.Height() == resizedOpts2.Height());
@@ -325,7 +329,8 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   typedef TestType eT;
 
   arma::Mat<eT> image;
-  data::ImageOptions opts;
+
+  ImageOptions opts;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
@@ -334,7 +339,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    REQUIRE(data::Load(files.at(i), image, opts) == true);
+    REQUIRE(Load(files.at(i), image, opts) == true);
     arma::Mat<eT> originalImage = image;
     ResizeImages(image, opts, opts.Width(), opts.Height());
     if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
@@ -358,7 +363,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
   typedef TestType eT;
 
   arma::Mat<eT> image;
-  data::ImageOptions opts;
+  ImageOptions opts;
   std::vector<std::string> files =
       {"sheep_1.jpg", "sheep_2.jpg", "sheep_3.jpg", "sheep_4.jpg",
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
@@ -367,7 +372,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
   for (size_t i = 0; i < files.size(); i++)
   {
     opts.Reset();
-    REQUIRE(data::Load(files.at(i), image, opts) == true);
+    REQUIRE(Load(files.at(i), image, opts) == true);
     arma::Mat<eT> originalImage = image;
     ResizeCropImages(image, opts, opts.Width(), opts.Height());
     if (std::is_same_v<eT, float> || std::is_same_v<eT, double>)
@@ -391,8 +396,8 @@ TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
 
   // Load cat.jpg, which has a strange aspect ratio.
   arma::Mat<eT> image;
-  data::ImageOptions opts;
-  REQUIRE(data::Load("cat.jpg", image, opts) == true);
+  ImageOptions opts;
+  REQUIRE(Load("cat.jpg", image, opts) == true);
 
   // When we crop to match the height of the image, no resizing is needed and we
   // can compare pixels directly.
@@ -436,8 +441,8 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
 
   // Load cat.jpg, which has a strange aspect ratio.
   arma::Mat<eT> image;
-  data::ImageOptions opts;
-  REQUIRE(data::Load("cat.jpg", image, opts) == true);
+  ImageOptions opts;
+  REQUIRE(Load("cat.jpg", image, opts) == true);
 
   // When we crop to match the height of the image, no resizing is needed and we
   // can compare pixels directly.
@@ -457,7 +462,7 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
 TEST_CASE("GroupChannels", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 26);
-  data::ImageOptions opts(3, 3, 3);
+  ImageOptions opts(3, 3, 3);
 
   arma::mat newLayout = GroupChannels(image, opts);
 
@@ -476,7 +481,7 @@ TEST_CASE("GroupChannels", "[ImageTest]")
  */
 TEST_CASE("InterleaveChannels", "[ImageTest]")
 {
-  data::ImageInfo info(3, 3, 3);
+  ImageInfo info(3, 3, 3);
   std::vector<double> data = {
     0, 3, 6, 9, 12, 15, 18, 21, 24,
     1, 4, 7, 10, 13, 16, 19, 22, 25,
@@ -494,7 +499,7 @@ TEST_CASE("InterleaveChannels", "[ImageTest]")
  */
 TEST_CASE("GroupChannels2Images", "[ImageTest]")
 {
-  data::ImageInfo info(3, 3, 3);
+  ImageInfo info(3, 3, 3);
   arma::mat images = arma::reshape(arma::regspace(0, 53), 27, 2);
   arma::mat newImages = GroupChannels(images, info);
 
@@ -516,7 +521,7 @@ TEST_CASE("GroupChannels2Images", "[ImageTest]")
  */
 TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
 {
-  data::ImageInfo info(3, 3, 3);
+  ImageInfo info(3, 3, 3);
   std::vector<double> input = {
     0, 3, 6, 9, 12, 15, 18, 21, 24,
     1, 4, 7, 10, 13, 16, 19, 22, 25,
@@ -538,7 +543,7 @@ TEST_CASE("InterleaveChannels2Images", "[ImageTest]")
 TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
 {
   arma::mat image;
-  data::ImageInfo info(3, 3, 3);
+  ImageInfo info(3, 3, 3);
   REQUIRE_THROWS(GroupChannels(image, info));
 }
 
@@ -547,7 +552,7 @@ TEST_CASE("GroupChannelsEmptyImage", "[ImageTest]")
  */
 TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
 {
-  data::ImageInfo info(3, 3, 3);
+  ImageInfo info(3, 3, 3);
   arma::mat image;
   REQUIRE_THROWS(InterleaveChannels(image, info));
 }
@@ -558,7 +563,7 @@ TEST_CASE("InterleaveChannelsEmtpyImage", "[ImageTest]")
 TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 8);
-  data::ImageInfo info(3, 3, 1);
+  ImageInfo info(3, 3, 1);
   arma::mat newLayout = GroupChannels(image, info);
   arma::mat expectedImage(image);
 
@@ -571,7 +576,7 @@ TEST_CASE("GroupChannelsOneChannel", "[ImageTest]")
 TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
 {
   arma::mat image = arma::regspace(0, 8);
-  data::ImageInfo info(3, 3, 1);
+  ImageInfo info(3, 3, 1);
   arma::mat newLayout = InterleaveChannels(image, info);
   arma::mat expectedImage(image);
 
@@ -583,7 +588,7 @@ TEST_CASE("InterleaveChannelsOneChannel", "[ImageTest]")
  */
 TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
 {
-  data::ImageInfo info(1, 1, 1);
+  ImageInfo info(1, 1, 1);
   arma::mat image(1, 1);
   image.fill(5.0);
 
@@ -598,7 +603,7 @@ TEST_CASE("GroupChannelsOnePixel", "[ImageTest]")
  */
 TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
 {
-  data::ImageInfo info(1, 1, 1);
+  ImageInfo info(1, 1, 1);
   arma::mat image(1, 1);
   image.fill(5.0);
 
@@ -612,12 +617,12 @@ TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
  */
 TEST_CASE("LetterboxImages", "[ImageTest]")
 {
-  data::ImageOptions opt(40, 20, 1);
+  ImageOptions opt(40, 20, 1);
   const size_t imgSize = 16;
   arma::mat image(800, 1);
 
   const double fillValue = 0.5;
-  data::LetterboxImages(image, opt, imgSize, imgSize, fillValue);
+  LetterboxImages(image, opt, imgSize, imgSize, fillValue);
 
   REQUIRE(image.n_rows == imgSize * imgSize * opt.Channels());
   REQUIRE(image.n_cols == 1);
@@ -630,9 +635,9 @@ TEST_CASE("LetterboxImages", "[ImageTest]")
  */
 TEST_CASE("LetterboxImagesNoPixels", "[ImageTest]")
 {
-  data::ImageOptions opt(0, 0, 1);
+  ImageOptions opt(0, 0, 1);
   arma::mat image(0, 1);
-  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+  REQUIRE_THROWS(LetterboxImages(image, opt, 4, 4, 0.5));
 }
 
 /**
@@ -640,11 +645,11 @@ TEST_CASE("LetterboxImagesNoPixels", "[ImageTest]")
  */
 TEST_CASE("LetterboxImagesIncorrectImageOptions", "[ImageTest]")
 {
-  data::ImageOptions opt(5, 6, 1);
+  ImageOptions opt(5, 6, 1);
   arma::mat image(10, 1);
   image.fill(5.0);
 
-  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+  REQUIRE_THROWS(LetterboxImages(image, opt, 4, 4, 0.5));
 }
 
 /**
@@ -652,12 +657,12 @@ TEST_CASE("LetterboxImagesIncorrectImageOptions", "[ImageTest]")
  */
 TEST_CASE("LetterboxImagesMultipleImages", "[ImageTest]")
 {
-  data::ImageOptions opt(32, 24, 1);
+  ImageOptions opt(32, 24, 1);
   arma::mat images(32 * 24, 2);
   images.fill(5.0);
 
   const double fillValue = 0.5;
-  data::LetterboxImages(images, opt, 24, 24, fillValue);
+  LetterboxImages(images, opt, 24, 24, fillValue);
 
   CheckMatrices(images.col(0), images.col(1));
   REQUIRE(images.at(0, 0) == fillValue);
@@ -669,11 +674,11 @@ TEST_CASE("LetterboxImagesMultipleImages", "[ImageTest]")
  */
 TEST_CASE("LetterboxImagesIncorrectChannels", "[ImageTest]")
 {
-  data::ImageOptions opt(5, 2, 2);
+  ImageOptions opt(5, 2, 2);
   arma::mat image(20, 1);
   image.fill(5.0);
 
-  REQUIRE_THROWS(data::LetterboxImages(image, opt, 4, 4, 0.5));
+  REQUIRE_THROWS(LetterboxImages(image, opt, 4, 4, 0.5));
 }
 
 /**
@@ -681,14 +686,14 @@ TEST_CASE("LetterboxImagesIncorrectChannels", "[ImageTest]")
  */
 TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
 {
-  data::ImageOptions opt(40, 20, 1);
+  ImageOptions opt(40, 20, 1);
   const size_t width = 16;
   const size_t height = 12;
   arma::mat image(40 * 20, 3);
   image.fill(5.0);
 
   const double fillValue = 0.5;
-  data::LetterboxImages(image, opt, width, height, fillValue);
+  LetterboxImages(image, opt, width, height, fillValue);
 
   REQUIRE(image.n_rows == width * height * opt.Channels());
   REQUIRE(image.n_cols == 3);

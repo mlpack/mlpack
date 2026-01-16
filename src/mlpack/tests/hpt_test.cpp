@@ -16,7 +16,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace ens;
 
 /**
@@ -263,7 +262,7 @@ TEST_CASE("GridSearchTest", "[HPTTest][tiny]")
   {
     numCategories[d] = datasetInfo.NumMappings(d);
     categoricalDimensions[d] = datasetInfo.Type(d) ==
-        mlpack::data::Datatype::categorical;
+        mlpack::Datatype::categorical;
   }
 
   double actualObjective = optimizer.Optimize(cvFun, actualParameters,

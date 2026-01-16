@@ -25,7 +25,7 @@ template<typename T>
 inline std::string GetType(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   return "unknown";
@@ -35,7 +35,7 @@ template<>
 inline std::string GetType<int>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<int>::value>*,
-    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!HasSerialize<int>::value>*,
     const std::enable_if_t<!arma::is_arma_type<int>::value>*)
 {
   return "Int";
@@ -45,7 +45,7 @@ template<>
 inline std::string GetType<float>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<float>::value>*,
-    const std::enable_if_t<!data::HasSerialize<float>::value>*,
+    const std::enable_if_t<!HasSerialize<float>::value>*,
     const std::enable_if_t<!arma::is_arma_type<float>::value>*)
 {
   return "Float";
@@ -55,7 +55,7 @@ template<>
 inline std::string GetType<double>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<double>::value>*,
-    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!HasSerialize<double>::value>*,
     const std::enable_if_t<!arma::is_arma_type<double>::value>*)
 {
   return "Double";
@@ -65,7 +65,7 @@ template<>
 inline std::string GetType<std::string>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
-    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!HasSerialize<std::string>::value>*,
     const std::enable_if_t<!arma::is_arma_type<std::string>::value>*)
 {
   return "String";
@@ -75,7 +75,7 @@ template<>
 inline std::string GetType<bool>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<bool>::value>*,
-    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!HasSerialize<bool>::value>*,
     const std::enable_if_t<!arma::is_arma_type<bool>::value>*)
 {
   return "Bool";
@@ -121,7 +121,7 @@ template<typename T>
 inline std::string GetType(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return d.cppType + "*";
 }

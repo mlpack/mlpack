@@ -33,7 +33,7 @@ HoeffdingTree<
     maxSamples(size_t(-1)),
     checkInterval(100),
     minSamples(100),
-    datasetInfo(new data::DatasetInfo()),
+    datasetInfo(new DatasetInfo()),
     ownsInfo(true),
     successProbability(0.95),
     splitDimension(size_t(-1)),
@@ -71,7 +71,7 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(dimensionality)),
+    datasetInfo(new DatasetInfo(dimensionality)),
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -103,7 +103,7 @@ HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::HoeffdingTree(const data::DatasetInfo& datasetInfo,
+>::HoeffdingTree(const DatasetInfo& datasetInfo,
                  const size_t numClasses,
                  const double successProbability,
                  const size_t maxSamples,
@@ -123,7 +123,7 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(copyDatasetInfo ? new data::DatasetInfo(datasetInfo) :
+    datasetInfo(copyDatasetInfo ? new DatasetInfo(datasetInfo) :
         &datasetInfo),
     ownsInfo(copyDatasetInfo),
     successProbability(successProbability),
@@ -142,7 +142,7 @@ HoeffdingTree<
   {
     for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
     {
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      if (datasetInfo.Type(i) == Datatype::categorical)
       {
         categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
             datasetInfo.NumMappings(i), numClasses, categoricalSplitIn));
@@ -182,7 +182,7 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(data.n_rows)),
+    datasetInfo(new DatasetInfo(data.n_rows)),
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -207,7 +207,7 @@ HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::HoeffdingTree(const MatType& data,
-                 const data::DatasetInfo& datasetInfoIn,
+                 const DatasetInfo& datasetInfoIn,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  const bool batchTraining,
@@ -225,7 +225,7 @@ HoeffdingTree<
     maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     minSamples(minSamples),
-    datasetInfo(new data::DatasetInfo(datasetInfoIn)),
+    datasetInfo(new DatasetInfo(datasetInfoIn)),
     ownsInfo(true),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -257,7 +257,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     maxSamples(other.maxSamples),
     checkInterval(other.checkInterval),
     minSamples(other.minSamples),
-    datasetInfo(new data::DatasetInfo(*other.datasetInfo)),
+    datasetInfo(new DatasetInfo(*other.datasetInfo)),
     ownsInfo(true),
     successProbability(other.successProbability),
     splitDimension(other.splitDimension),
@@ -341,7 +341,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>&
     maxSamples = other.maxSamples;
     checkInterval = other.checkInterval;
     minSamples = other.minSamples;
-    datasetInfo = new data::DatasetInfo(*other.datasetInfo);
+    datasetInfo = new DatasetInfo(*other.datasetInfo);
     ownsInfo = true;
     successProbability = other.successProbability;
     splitDimension = other.splitDimension;
@@ -482,7 +482,7 @@ void HoeffdingTree<
     // Create a new datasetInfo, which assumes that all features are numeric.
     if (ownsInfo)
       delete datasetInfo;
-    datasetInfo = new data::DatasetInfo(data.n_rows);
+    datasetInfo = new DatasetInfo(data.n_rows);
     ownsInfo = true;
 
     // Set the number of classes correctly.
@@ -510,7 +510,7 @@ void HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::Train(const MatType& data,
-         const data::DatasetInfo& info,
+         const DatasetInfo& info,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
          const bool batchTraining,
@@ -535,7 +535,7 @@ void HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::Train(const MatType& data,
-         const data::DatasetInfo& info,
+         const DatasetInfo& info,
          const arma::Row<size_t>& labels,
          const size_t numClasses,
          const bool batchTraining,
@@ -596,9 +596,9 @@ void HoeffdingTree<
     size_t categoricalIndex = 0;
     for (size_t i = 0; i < point.n_rows; ++i)
     {
-      if (datasetInfo->Type(i) == data::Datatype::categorical)
+      if (datasetInfo->Type(i) == Datatype::categorical)
         categoricalSplits[categoricalIndex++].Train(point[i], label);
-      else if (datasetInfo->Type(i) == data::Datatype::numeric)
+      else if (datasetInfo->Type(i) == Datatype::numeric)
         numericSplits[numericIndex++].Train(point[i], label);
     }
 
@@ -673,10 +673,10 @@ size_t HoeffdingTree<
     // best two splits that can be done in every network.
     double bestGain = 0.0;
     double secondBestGain = 0.0;
-    if (type == data::Datatype::categorical)
+    if (type == Datatype::categorical)
       categoricalSplits[index].EvaluateFitnessFunction(bestGain,
           secondBestGain);
-    else if (type == data::Datatype::numeric)
+    else if (type == Datatype::numeric)
       numericSplits[index].EvaluateFitnessFunction(bestGain, secondBestGain);
 
     // See if these gains are better than the previous.
@@ -706,7 +706,7 @@ size_t HoeffdingTree<
     splitDimension = largestIndex;
     const size_t type = dimensionMappings->at(largestIndex).first;
     const size_t index = dimensionMappings->at(largestIndex).second;
-    if (type == data::Datatype::categorical)
+    if (type == Datatype::categorical)
     {
       // I don't know if this should be here.
       majorityClass = categoricalSplits[index].MajorityClass();
@@ -801,9 +801,9 @@ size_t HoeffdingTree<
 >::CalculateDirection(const VecType& point) const
 {
   // Don't call this before the node is split...
-  if (datasetInfo->Type(splitDimension) == data::Datatype::numeric)
+  if (datasetInfo->Type(splitDimension) == Datatype::numeric)
     return numericSplit.CalculateDirection(point[splitDimension]);
-  else if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
+  else if (datasetInfo->Type(splitDimension) == Datatype::categorical)
     return categoricalSplit.CalculateDirection(point[splitDimension]);
   else
     return 0; // Not sure what to do here...
@@ -938,13 +938,13 @@ void HoeffdingTree<
   // Create the children.
   arma::Col<size_t> childMajorities;
   if (dimensionMappings->at(splitDimension).first ==
-      data::Datatype::categorical)
+      Datatype::categorical)
   {
     categoricalSplits[dimensionMappings->at(splitDimension).second].Split(
         childMajorities, categoricalSplit);
   }
   else if (dimensionMappings->at(splitDimension).first ==
-           data::Datatype::numeric)
+           Datatype::numeric)
   {
     numericSplits[dimensionMappings->at(splitDimension).second].Split(
         childMajorities, numericSplit);
@@ -1016,7 +1016,7 @@ void HoeffdingTree<
 {
   if (ownsInfo)
     delete datasetInfo;
-  datasetInfo = new data::DatasetInfo(dimensionality); // All features numeric.
+  datasetInfo = new DatasetInfo(dimensionality); // All features numeric.
   ownsInfo = true;
 
   this->numClasses = numClasses;
@@ -1033,7 +1033,7 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Reset(const data::DatasetInfo& info, const size_t numClasses)
+>::Reset(const DatasetInfo& info, const size_t numClasses)
 {
   if (ownsInfo)
     delete datasetInfo;
@@ -1066,9 +1066,9 @@ void HoeffdingTree<
   ar(CEREAL_POINTER(dimensionMappings));
 
   // Special handling for const object.
-  data::DatasetInfo* d = NULL;
+  DatasetInfo* d = NULL;
   if (cereal::is_saving<Archive>())
-    d = const_cast<data::DatasetInfo*>(datasetInfo);
+    d = const_cast<DatasetInfo*>(datasetInfo);
   ar(CEREAL_POINTER(d));
 
   if (cereal::is_loading<Archive>())
@@ -1108,7 +1108,7 @@ void HoeffdingTree<
       categoricalSplits.clear();
       for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
       {
-        if (datasetInfo->Type(i) == data::Datatype::categorical)
+        if (datasetInfo->Type(i) == Datatype::categorical)
           categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
               datasetInfo->NumMappings(i), numClasses));
         else
@@ -1136,7 +1136,7 @@ void HoeffdingTree<
   else
   {
     // We have split, so we only need to save the split and the children.
-    if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
+    if (datasetInfo->Type(splitDimension) == Datatype::categorical)
       ar(CEREAL_NVP(categoricalSplit));
     else
       ar(CEREAL_NVP(numericSplit));
@@ -1280,18 +1280,18 @@ void HoeffdingTree<
   ownsMappings = true;
   for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
   {
-    if (datasetInfo->Type(i) == data::Datatype::categorical)
+    if (datasetInfo->Type(i) == Datatype::categorical)
     {
       categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
           datasetInfo->NumMappings(i), numClasses, categoricalSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
+      (*dimensionMappings)[i] = std::make_pair(Datatype::categorical,
           categoricalSplits.size() - 1);
     }
     else
     {
       numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses,
           numericSplitIn));
-      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
+      (*dimensionMappings)[i] = std::make_pair(Datatype::numeric,
           numericSplits.size() - 1);
     }
   }

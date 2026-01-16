@@ -20,7 +20,6 @@
 #include "../catch.hpp"
 
 using namespace mlpack;
-using namespace data;
 
 BINDING_TEST_FIXTURE(DecisionTreeTestFixture);
 
@@ -35,18 +34,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeOutputDimensionTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -83,18 +82,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, opts))
+  if (!Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
@@ -129,11 +128,11 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -160,11 +159,11 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -190,11 +189,11 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -220,11 +219,11 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -279,18 +278,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -343,11 +342,11 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -381,18 +380,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, opts))
+  if (!Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
@@ -448,18 +447,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
   arma::mat weights(1, labels.n_cols, arma::fill::ones);
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.

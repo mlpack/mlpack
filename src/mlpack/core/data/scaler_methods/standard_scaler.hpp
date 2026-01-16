@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple Standard Scaler class
@@ -112,7 +111,6 @@ class StandardScaler
   arma::vec itemStdDev;
 }; // class StandardScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

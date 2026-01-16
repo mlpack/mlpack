@@ -19,7 +19,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 // These help assemble the Armadillo csv_opts flags.
 inline const arma::csv_opts::opts& NoTransposeOpt(const bool noTranspose)
@@ -75,12 +74,12 @@ bool LoadCSVASCII(const std::string& filename,
   {
     if (opts.Fatal())
     {
-      Log::Fatal << "data::Load(): MissingToNan() requires Armadillo version "
+      Log::Fatal << "Load(): MissingToNan() requires Armadillo version "
           << ">= 12.0!" << std::endl;
     }
     else
     {
-      Log::Warn << "data::Load(): MissingToNan() requires Armadillo version "
+      Log::Warn << "Load(): MissingToNan() requires Armadillo version "
           << ">= 12.0!  Option ignored." << std::endl;
     }
   }
@@ -257,7 +256,7 @@ bool LoadDense(const std::string& filename,
     success = LoadCSVASCII(filename, matrix, opts);
 
     if (matrix.col(0).is_zero())
-      Log::Warn << "data::Load(): the first line in '" << filename << "' was "
+      Log::Warn << "Load(): the first line in '" << filename << "' was "
           << "loaded as all zeros; if the first row is headers, specify "
           << "`HasHeaders() = true` in the given DataOptions." << std::endl;
   }
@@ -275,7 +274,6 @@ bool LoadDense(const std::string& filename,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

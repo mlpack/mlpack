@@ -20,7 +20,6 @@
 #include "map_policies/map_policies.hpp"
 
 namespace mlpack {
-namespace data {
 
 enum struct FileType
 {
@@ -538,7 +537,6 @@ inline bool HandleError(const std::string& msg, bool fatal)
   return HandleError(oss, fatal);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

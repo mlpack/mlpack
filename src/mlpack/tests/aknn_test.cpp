@@ -26,7 +26,7 @@ TEST_CASE("AKNNApproxVsExact1", "[AKNNTest]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
@@ -79,7 +79,7 @@ TEST_CASE("AKNNApproxVsExact2", "[AKNNTest][tiny]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
@@ -106,7 +106,7 @@ TEST_CASE("AKNNSingleTreeApproxVsExact", "[AKNNTest]")
 {
   arma::mat dataset;
 
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
@@ -162,7 +162,7 @@ TEST_CASE("AKNNSingleCoverTreeTest", "[AKNNTest]")
 TEST_CASE("AKNNDualCoverTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);
@@ -217,7 +217,7 @@ TEST_CASE("AKNNSingleBallTreeTest", "[AKNNTest]")
 TEST_CASE("AKNNDualBallTreeTest", "[AKNNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN exact(dataset);

@@ -26,9 +26,9 @@ std::string PrintTypeDoc(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
   if (std::is_same_v<T, bool>)
@@ -132,7 +132,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "A 2-d arraylike containing data.  Like the regular 2-d matrices, this"
       " can be a list of lists, a numpy ndarray, or a pandas DataFrame. "
@@ -151,7 +151,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   return "An mlpack model pointer.  This type can be pickled to or from disk, "
       "and internally holds a pointer to C++ memory containing the mlpack "

@@ -17,7 +17,6 @@
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * Make sure the Gini gain is zero when the labels are perfect.
@@ -859,17 +858,14 @@ TEST_CASE("BestCategoricalBuildBinaryTest", "[DecisionTreeTest]")
   // into a training set and test set.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  TextOptions opts;
-  opts.Categorical() = true;
-  opts.Fatal() = false;
-  opts.NoTranspose() = false;
+  TextOptions opts = Categorical;
 
-  data::Load("mushroom.data.csv", dataset, opts);
-  data::Load("mushroom.labels.csv", labels, Fatal + Transpose);
+  Load("mushroom.data.csv", dataset, opts);
+  Load("mushroom.labels.csv", labels, Fatal + Transpose);
 
   arma::mat trainDataset, testDataset;
   arma::Row<size_t> trainLabels, testLabels;
-  data::Split(dataset, labels,
+  Split(dataset, labels,
       trainDataset, testDataset, trainLabels, testLabels, 0.3);
 
   // Build the DecisionTree with a BestBinaryCategoricalSplit.
@@ -904,7 +900,7 @@ TEST_CASE("BestCategoricalBuildMultiTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -940,7 +936,7 @@ TEST_CASE("BestCategoricalBuildTestWithWeight", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -979,7 +975,7 @@ TEST_CASE("BestCategoricalBuildTestWithWeightNoisy", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -1202,11 +1198,11 @@ TEST_CASE("ClassProbabilityTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 {
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1218,11 +1214,11 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!Load("vc2_test_labels.txt", trueTestLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1262,11 +1258,11 @@ TEST_CASE("SimpleGeneralizationTest", "[DecisionTreeTest]")
 TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 {
   arma::fmat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Initialize an all-ones weight matrix.
@@ -1278,11 +1274,11 @@ TEST_CASE("SimpleGeneralizationFMatTest", "[DecisionTreeTest]")
 
   // Load testing data.
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!Load("vc2_test_labels.txt", trueTestLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Get the predicted test labels.
@@ -1323,7 +1319,7 @@ TEST_CASE("CategoricalBuildTest", "[DecisionTreeTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -1358,7 +1354,7 @@ TEST_CASE("CategoricalBuildTestWithWeight", "[DecisionTreeTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -1397,9 +1393,9 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1425,9 +1421,9 @@ TEST_CASE("WeightedDecisionTreeTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
@@ -1452,7 +1448,7 @@ TEST_CASE("CategoricalWeightedBuildTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -1510,9 +1506,9 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   // Add some noise.
@@ -1538,9 +1534,9 @@ TEST_CASE("WeightedDecisionTreeInformationGainTest", "[DecisionTreeTest]")
   // Now we can check that we get good performance on the VC2 test set.
   arma::mat testData;
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt!");
 
   arma::Row<size_t> predictions;
@@ -1565,7 +1561,7 @@ TEST_CASE("CategoricalInformationGainWeightedBuildTest", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -1700,9 +1696,9 @@ TEST_CASE("NumClassesTest", "[DecisionTreeTest]")
   // Load a dataset to train with.
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> dt(dataset, labels, 3);
@@ -1717,7 +1713,7 @@ TEST_CASE("ConstDataTest", "[DecisionTreeTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   const arma::mat& constData = data;
@@ -1807,7 +1803,7 @@ TEST_CASE("DecisionTreeCategoricalTrainReturnEntropy", "[DecisionTreeTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   arma::Row<double> weights = arma::ones<arma::Row<double>>(l.n_elem);
@@ -1832,9 +1828,9 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt!");
 
   DecisionTree<> d(dataset, labels, 3, 10, 1e-7, 1);

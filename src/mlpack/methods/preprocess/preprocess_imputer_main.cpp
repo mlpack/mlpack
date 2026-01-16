@@ -65,7 +65,6 @@ using namespace mlpack;
 using namespace mlpack::util;
 using namespace arma;
 using namespace std;
-using namespace data;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {

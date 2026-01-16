@@ -31,7 +31,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANOutputDimensionTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   size_t inputSize = inputData.n_cols;
@@ -54,7 +54,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANEpsilonTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -70,7 +70,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANMinSizeTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -87,7 +87,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANClusterNumberTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -111,7 +111,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffEpsilonTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -144,7 +144,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffMinSizeTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -180,7 +180,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANTreeTypeTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", std::move(inputData));
@@ -197,7 +197,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANDiffTreeTypeTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   // Tree type = kd tree.
@@ -332,7 +332,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANSingleTreeTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -364,7 +364,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANNaiveSearchTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);
@@ -396,7 +396,7 @@ TEST_CASE_METHOD(DBSCANTestFixture, "DBSCANRandomSelectionFlagTest",
                  "[DBSCANMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("input", inputData);

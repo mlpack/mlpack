@@ -17,7 +17,6 @@
 #include <mlpack/core/util/params.hpp>
 
 namespace mlpack {
-namespace data {
 
 inline void CheckCategoricalParam(util::Params& params,
                                   const std::string& paramName)
@@ -35,7 +34,6 @@ inline void CheckCategoricalParam(util::Params& params,
     Log::Fatal << errMsg2 << std::endl;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

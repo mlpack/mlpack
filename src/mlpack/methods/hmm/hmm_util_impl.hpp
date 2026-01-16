@@ -38,7 +38,7 @@ template<typename ActionType, typename ExtraInfoType>
 void LoadHMMAndPerformAction(const std::string& modelFile,
                              ExtraInfoType* x)
 {
-  const std::string extension = data::Extension(modelFile);
+  const std::string extension = Extension(modelFile);
   if (extension == "xml")
   {
     LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(
@@ -126,7 +126,7 @@ char GetHMMType();
 template<typename HMMType>
 void SaveHMM(HMMType& hmm, const std::string& modelFile)
 {
-  const std::string extension = data::Extension(modelFile);
+  const std::string extension = Extension(modelFile);
   if (extension == "xml")
     SaveHMMHelper<cereal::XMLOutputArchive>(hmm, modelFile);
   else if (extension == "bin")

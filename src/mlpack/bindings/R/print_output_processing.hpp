@@ -27,9 +27,9 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   /**
    * This gives us code like:
@@ -50,7 +50,7 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   /**
    * This gives us code like:
@@ -70,7 +70,7 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   /**
    * This gives us code like:
@@ -90,7 +90,7 @@ template<typename T>
 void PrintOutputProcessing(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   /**
    * This gives us code like:

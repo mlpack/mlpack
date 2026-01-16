@@ -380,7 +380,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSKernelTest",
   SetInputParam("k", (int) 10);
   // For Hyptan Kernel
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   arma::Mat<size_t> indicesCompare;
@@ -465,7 +465,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSOffsetTest",
   CleanMemory();
 
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   ResetSettings();
@@ -531,7 +531,7 @@ TEST_CASE_METHOD(FastMKSTestFixture, "FastMKSScaleTest",
                  "[FastMKSMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Cannot load test dataset data_3d_ind.txt!");
 
   // Random input, some k <= number of reference points.

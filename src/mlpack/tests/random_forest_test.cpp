@@ -120,10 +120,10 @@ TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest][tiny]")
 {
   // Load the vc2 dataset.
   arma::mat dataset;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load dataset vc2.csv");
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2_labels.txt");
 
   // Build a random forest and a decision tree.
@@ -132,10 +132,10 @@ TEST_CASE("UnweightedNumericLearningTest", "[RandomForestTest][tiny]")
 
   // Get performance statistics on test data.
   arma::mat testDataset;
-  if (!data::Load("vc2_test.csv", testDataset))
+  if (!Load("vc2_test.csv", testDataset))
     FAIL("Cannot load dataset vc2_test.csv");
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Cannot load dataset vc2_test_labels.txt");
 
   arma::Row<size_t> rfPredictions;
@@ -160,9 +160,9 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load dataset vc2.csv");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2_labels.txt");
 
   // Add some noise.
@@ -188,10 +188,10 @@ TEST_CASE("WeightedNumericLearningTest", "[RandomForestTest][tiny]")
 
   // Get performance statistics on test data.
   arma::mat testDataset;
-  if (!data::Load("vc2_test.csv", testDataset))
+  if (!Load("vc2_test.csv", testDataset))
     FAIL("Cannot load dataset vc2_test.csv");
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Cannot load dataset vc2_test_labels.txt");
 
   arma::Row<size_t> rfPredictions;
@@ -216,7 +216,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -252,7 +252,7 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest][tiny]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Split into a training set and a test set.
@@ -310,10 +310,10 @@ TEST_CASE("LeafSizeDatasetTest", "[RandomForestTest]")
 {
   // Load the vc2 dataset.
   arma::mat dataset;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load dataset vc2.csv");
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2_labels.txt");
 
   // Build a random forest with a leaf size equal to the number of points in the
@@ -346,10 +346,10 @@ TEST_CASE("RandomForestSerializationTest", "[RandomForestTest]")
 {
   // Load the vc2 dataset.
   arma::mat dataset;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load dataset vc2.csv");
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2_labels.txt");
 
   RandomForest<> rf(dataset, labels, 3, 10 /* 10 trees */, 1);
@@ -384,9 +384,9 @@ TEST_CASE("RandomForestNumericTrainReturnEntropy", "[RandomForestTest]")
 {
   arma::mat dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("vc2.csv", dataset))
+  if (!Load("vc2.csv", dataset))
     FAIL("Cannot load dataset vc2.csv");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load dataset vc2_labels.txt");
 
   // Add some noise.
@@ -427,7 +427,7 @@ TEST_CASE("RandomForestCategoricalTrainReturnEntropy", "[RandomForestTest]")
 {
   arma::mat d;
   arma::Row<size_t> l;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(d, l, di);
 
   // Now create random points.
@@ -506,7 +506,7 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
 {
   arma::mat trainingData;
   arma::Row<size_t> trainingLabels;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(trainingData, trainingLabels, di);
 
   // Train a random forest.
@@ -530,7 +530,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
 {
   arma::mat trainingData;
   arma::Row<size_t> trainingLabels;
-  data::DatasetInfo di;
+  DatasetInfo di;
   MockCategoricalData(trainingData, trainingLabels, di);
 
   // Train a random forest.
@@ -564,10 +564,10 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 {
   // Load the iris dataset.
   arma::mat dataset;
-  if (!data::Load("iris_train.csv", dataset))
+  if (!Load("iris_train.csv", dataset))
     FAIL("Cannot load dataset iris_train.csv");
   arma::Row<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
+  if (!Load("iris_train_labels.csv", labels))
     FAIL("Cannot load dataset iris_train_labels.csv");
 
   // Add some noise.
@@ -592,10 +592,10 @@ TEST_CASE("ExtraTreesAccuracyTest", "[RandomForestTest]")
 
   // Get performance statistics on test data.
   arma::mat testDataset;
-  if (!data::Load("iris_test.csv", testDataset))
+  if (!Load("iris_test.csv", testDataset))
     FAIL("Cannot load dataset iris_test.csv");
   arma::Row<size_t> testLabels;
-  if (!data::Load("iris_test_labels.csv", testLabels))
+  if (!Load("iris_test_labels.csv", testLabels))
     FAIL("Cannot load dataset iris_test_labels.csv");
 
   arma::Row<size_t> predictions;

@@ -21,7 +21,7 @@ namespace tests {
 template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& /* d */,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   // Do nothing.
@@ -39,7 +39,7 @@ template<typename T>
 void DeleteAllocatedMemoryImpl(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
   delete *std::any_cast<T*>(&d.value);

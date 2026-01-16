@@ -568,15 +568,15 @@ TEMPLATE_TEST_CASE("UnequalStrideImageTest", "[ConvolutionTest]",
 
   arma::mat input, output;
   // Load input and expected outputs
-  data::Load("unequal_image_in.bmp", input, data::BMP);
-  data::Load("unequal_stride_image_out.bmp", output, data::BMP);
+  Load("unequal_image_in.bmp", input, BMP);
+  Load("unequal_stride_image_out.bmp", output, BMP);
 
   // Group input channels.
-  data::ImageOptions groupOpts;
+  ImageOptions groupOpts;
   groupOpts.Width() = inWidth;
   groupOpts.Height() = inHeight;
   groupOpts.Channels() = 3;
-  input = data::GroupChannels(input, groupOpts);
+  input = GroupChannels(input, groupOpts);
 
   arma::cube inputCube;
   MakeAlias(inputCube, input, inWidth, inHeight, 3);
@@ -602,7 +602,7 @@ TEMPLATE_TEST_CASE("UnequalStrideImageTest", "[ConvolutionTest]",
   groupOpts.Width() = outWidth;
   groupOpts.Height() = outHeight;
   groupOpts.Channels() = 3;
-  convOutput = data::InterleaveChannels(convOutput, groupOpts);
+  convOutput = InterleaveChannels(convOutput, groupOpts);
 
   // Check that the images are similar.
   CheckMatrices(output, convOutput);
@@ -624,15 +624,15 @@ TEMPLATE_TEST_CASE("UnequalDilationImageTest", "[ConvolutionTest]",
 
   arma::mat input, output;
   // Load input and expected outputs
-  data::Load("unequal_image_in.bmp", input, data::BMP);
-  data::Load("unequal_dilation_image_out.bmp", output, data::BMP);
+  Load("unequal_image_in.bmp", input, BMP);
+  Load("unequal_dilation_image_out.bmp", output, BMP);
 
   // Group input channels.
-  data::ImageOptions groupOpts;
+  ImageOptions groupOpts;
   groupOpts.Width() = inWidth;
   groupOpts.Height() = inHeight;
   groupOpts.Channels() = 3;
-  input = data::GroupChannels(input, groupOpts);
+  input = GroupChannels(input, groupOpts);
 
   arma::cube inputCube;
   MakeAlias(inputCube, input, inWidth, inHeight, 3);
@@ -658,7 +658,7 @@ TEMPLATE_TEST_CASE("UnequalDilationImageTest", "[ConvolutionTest]",
   groupOpts.Width() = outWidth;
   groupOpts.Height() = outHeight;
   groupOpts.Channels() = 3;
-  convOutput = data::InterleaveChannels(convOutput, groupOpts);
+  convOutput = InterleaveChannels(convOutput, groupOpts);
 
   // Check that the images are similar.
   CheckMatrices(output, convOutput);

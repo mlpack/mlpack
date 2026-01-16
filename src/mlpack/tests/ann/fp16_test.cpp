@@ -23,7 +23,7 @@ TEST_CASE("FFNSimpleFP16Test", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::hmat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::hmat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -31,7 +31,7 @@ TEST_CASE("FFNSimpleFP16Test", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::hmat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::hmat testLabels = testData.row(testData.n_rows - 1);
