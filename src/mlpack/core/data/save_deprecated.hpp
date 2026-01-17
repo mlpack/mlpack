@@ -18,7 +18,6 @@
 #include "extension.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Saves a matrix to file, guessing the filetype from the extension.  This
@@ -304,7 +303,6 @@ bool Save(const std::string& filename,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

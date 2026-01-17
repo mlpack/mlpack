@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Definition of the TfIdfEncodingPolicy class. TfIdfEncodingPolicy is used
@@ -343,7 +342,6 @@ class TfIdfEncodingPolicy
 template<typename TokenType>
 using TfIdfEncoding = StringEncoding<TfIdfEncodingPolicy,
                                      StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

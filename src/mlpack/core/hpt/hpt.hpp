@@ -257,7 +257,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -276,7 +276,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -297,7 +297,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -319,7 +319,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**

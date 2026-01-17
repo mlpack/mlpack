@@ -47,7 +47,7 @@ TEST_CASE_METHOD(
            "0 1 0 0 0 0 1 0;"
            "1 1 -1 -1 -1 -1 1 1;";
 
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {1, 3});
   RUN_BINDING();
@@ -67,7 +67,7 @@ TEST_CASE_METHOD(
 {
   arma::mat dataset;
 
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {1, 3});
   // This will throw an error since dimensions are bigger than the matrix.
@@ -88,7 +88,7 @@ TEST_CASE_METHOD(
             "-1 1 -1 -1 -1 -1 1 -1;"
             "1 1 -1 -1 -1 -1 1 1;";
 
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {});
   RUN_BINDING();
@@ -113,7 +113,7 @@ TEST_CASE_METHOD(
             "-1 1 -1 -1 -1 -1 1 -1;"
             "1 1 -1 -1 -1 -1 1 1;";
 
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {10000});
   // Error since dimensions are bigger than matrix.
@@ -134,7 +134,7 @@ TEST_CASE_METHOD(
             "-1 1 -1 -1 -1 -1 1 -1;"
             "1 1 -1 -1 -1 -1 1 1;";
 
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {-10000});
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
@@ -148,7 +148,7 @@ TEST_CASE_METHOD(
     "[PreprocessOneHotEncodingMainTest][BindingTests]")
 {
   arma::mat dataset;
-  data::DatasetInfo di(dataset.n_rows);
+  DatasetInfo di(dataset.n_rows);
 
   SetInputParam("input", std::make_tuple(di, dataset));
   SetInputParam<vector<int>>("dimensions", {});
@@ -178,8 +178,8 @@ TEST_CASE_METHOD(
   dataset(2, 3) = 2;
   dataset(2, 4) = 0;
 
-  data::DatasetInfo info(4);
-  info.Type(2) = data::Datatype::categorical;
+  DatasetInfo info(4);
+  info.Type(2) = Datatype::categorical;
   (void) info.MapString<double>("0", 2);
   (void) info.MapString<double>("1", 2);
   (void) info.MapString<double>("2", 2);
@@ -220,7 +220,7 @@ TEST_CASE_METHOD(
 {
   arma::mat dataset(4, 5);
   dataset.randu();
-  data::DatasetInfo info(4); // all numeric dimensions
+  DatasetInfo info(4); // all numeric dimensions
 
   SetInputParam("input", std::make_tuple(info, dataset));
   RUN_BINDING();
@@ -258,19 +258,19 @@ TEST_CASE_METHOD(
   dataset(3, 3) = 1;
   dataset(3, 4) = 1;
 
-  data::DatasetInfo info(4);
-  info.Type(0) = data::Datatype::categorical;
+  DatasetInfo info(4);
+  info.Type(0) = Datatype::categorical;
   (void) info.MapString<double>("0", 0);
   (void) info.MapString<double>("1", 0);
   (void) info.MapString<double>("2", 0);
   (void) info.MapString<double>("3", 0);
 
-  info.Type(2) = data::Datatype::categorical;
+  info.Type(2) = Datatype::categorical;
   (void) info.MapString<double>("0", 2);
   (void) info.MapString<double>("1", 2);
   (void) info.MapString<double>("2", 2);
 
-  info.Type(3) = data::Datatype::categorical;
+  info.Type(3) = Datatype::categorical;
   (void) info.MapString<double>("0", 3);
   (void) info.MapString<double>("1", 3);
 
@@ -361,19 +361,19 @@ TEST_CASE_METHOD(
   dataset(3, 3) = 1;
   dataset(3, 4) = 1;
 
-  data::DatasetInfo info(4);
-  info.Type(0) = data::Datatype::categorical;
+  DatasetInfo info(4);
+  info.Type(0) = Datatype::categorical;
   (void) info.MapString<double>("0", 0);
   (void) info.MapString<double>("1", 0);
   (void) info.MapString<double>("2", 0);
   (void) info.MapString<double>("3", 0);
 
-  info.Type(2) = data::Datatype::categorical;
+  info.Type(2) = Datatype::categorical;
   (void) info.MapString<double>("0", 2);
   (void) info.MapString<double>("1", 2);
   (void) info.MapString<double>("2", 2);
 
-  info.Type(3) = data::Datatype::categorical;
+  info.Type(3) = Datatype::categorical;
   (void) info.MapString<double>("0", 3);
   (void) info.MapString<double>("1", 3);
 

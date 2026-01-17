@@ -30,7 +30,7 @@ using std::make_pair;
 
 using namespace mlpack;
 
-using mlpack::data::Binarize;
+using mlpack::Binarize;
 
 // The dummy model that simply copies the sequence
 // the required number of times

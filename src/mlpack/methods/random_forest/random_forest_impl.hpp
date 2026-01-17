@@ -66,7 +66,7 @@ RandomForest<
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
-  data::DatasetInfo info; // Ignored.
+  DatasetInfo info; // Ignored.
   arma::rowvec weights; // Fake weights, not used.
   TrainInternal<false, false>(dataset, info, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
@@ -90,7 +90,7 @@ RandomForest<
     UseBootstrap,
     BootstrapType
 >::RandomForest(const MatType& dataset,
-                const data::DatasetInfo& datasetInfo,
+                const DatasetInfo& datasetInfo,
                 const LabelsType& labels,
                 const size_t numClasses,
                 const size_t numTrees,
@@ -139,7 +139,7 @@ RandomForest<
     avgGain(0.0)
 {
   // Pass off work to the Train() method.
-  data::DatasetInfo info; // Ignored by Train().
+  DatasetInfo info; // Ignored by Train().
   TrainInternal<true, false>(dataset, info, labels, numClasses, weights,
       numTrees, minimumLeafSize, minimumGainSplit, maximumDepth, false,
       dimensionSelector, bootstrap);
@@ -162,7 +162,7 @@ RandomForest<
     UseBootstrap,
     BootstrapType
 >::RandomForest(const MatType& dataset,
-                const data::DatasetInfo& datasetInfo,
+                const DatasetInfo& datasetInfo,
                 const LabelsType& labels,
                 const size_t numClasses,
                 const WeightsType& weights,
@@ -210,7 +210,7 @@ double RandomForest<
          BootstrapType bootstrap)
 {
   // Pass off to Train().
-  data::DatasetInfo datasetInfo; // Ignored by Train().
+  DatasetInfo datasetInfo; // Ignored by Train().
   arma::rowvec weights; // Ignored by Train().
   return TrainInternal<false, false>(dataset, datasetInfo, labels, numClasses,
       weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
@@ -234,7 +234,7 @@ double RandomForest<
     UseBootstrap,
     BootstrapType
 >::Train(const MatType& dataset,
-         const data::DatasetInfo& datasetInfo,
+         const DatasetInfo& datasetInfo,
          const LabelsType& labels,
          const size_t numClasses,
          const size_t numTrees,
@@ -283,7 +283,7 @@ double RandomForest<
                    std::remove_reference_t<WeightsType>>::value>*)
 {
   // Pass off to Train().
-  data::DatasetInfo datasetInfo; // Ignored by Train().
+  DatasetInfo datasetInfo; // Ignored by Train().
   return TrainInternal<true, false>(dataset, datasetInfo, labels, numClasses,
       weights, numTrees, minimumLeafSize, minimumGainSplit, maximumDepth,
       warmStart, dimensionSelector, bootstrap);
@@ -306,7 +306,7 @@ double RandomForest<
     UseBootstrap,
     BootstrapType
 >::Train(const MatType& dataset,
-         const data::DatasetInfo& datasetInfo,
+         const DatasetInfo& datasetInfo,
          const LabelsType& labels,
          const size_t numClasses,
          const WeightsType& weights,
@@ -534,7 +534,7 @@ double RandomForest<
     UseBootstrap,
     BootstrapType
 >::TrainInternal(const MatType& dataset,
-                 const data::DatasetInfo& datasetInfo,
+                 const DatasetInfo& datasetInfo,
                  const LabelsType& labels,
                  const size_t numClasses,
                  const WeightsType& weights,

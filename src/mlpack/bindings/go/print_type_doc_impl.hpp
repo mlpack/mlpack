@@ -26,9 +26,9 @@ std::string PrintTypeDoc(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
   if (std::is_same_v<T, bool>)
@@ -106,7 +106,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "A Tuple(matrixWithInfo) containing `float64` data (Data) along with a"
      " boolean array (Categoricals) indicating which dimensions are categorical"
@@ -123,7 +123,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   return "An mlpack model pointer.  This type holds a pointer to C++ memory "
       "containing the mlpack model.  Note that this means the mlpack model "

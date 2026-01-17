@@ -275,8 +275,8 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainReuseDiscreteModelTest",
   // Make sure that the size of the
   // training seq, and training labels is same
   arma::mat trainObs, trainLab;
-  data::Load(inputObsFileName, trainObs);
-  data::Load(inputLabFileName, trainLab);
+  Load(inputObsFileName, trainObs);
+  Load(inputLabFileName, trainLab);
   REQUIRE(trainObs.n_rows == trainLab.n_rows);
 
   SetInputParam("input_file", inputObsFileName);
@@ -317,7 +317,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainReuseGaussianModelTest",
   // Make sure that the size of the
   // training seq, and training labels is same
   arma::mat trainObs;
-  data::Load(inputObsFileName, trainObs);
+  Load(inputObsFileName, trainObs);
 
   SetInputParam("input_file", inputObsFileName);
   SetInputParam("type", std::move(hmmType));

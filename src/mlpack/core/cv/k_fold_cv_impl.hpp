@@ -58,7 +58,7 @@ KFoldCV<MLAlgorithm,
         PredictionsType,
         WeightsType>::KFoldCV(const size_t k,
                               const MatType& xs,
-                              const data::DatasetInfo& datasetInfo,
+                              const DatasetInfo& datasetInfo,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const bool shuffle) :
@@ -111,7 +111,7 @@ KFoldCV<MLAlgorithm,
         PredictionsType,
         WeightsType>::KFoldCV(const size_t k,
                               const MatType& xs,
-                              const data::DatasetInfo& datasetInfo,
+                              const DatasetInfo& datasetInfo,
                               const PredictionsType& ys,
                               const size_t numClasses,
                               const WeightsType& weights,
@@ -270,7 +270,7 @@ double KFoldCV<MLAlgorithm,
     return 0.0;
   }
 
-  return arma::mean(evaluations.elem(arma::find_finite(evaluations)));
+  return mean(evaluations.elem(find_finite(evaluations)));
 }
 
 template<typename MLAlgorithm,
@@ -300,7 +300,7 @@ double KFoldCV<MLAlgorithm,
       modelPtr.reset(new MLAlgorithm(std::move(model)));
   }
 
-  return arma::mean(evaluations);
+  return mean(evaluations);
 }
 
 template<typename MLAlgorithm,

@@ -16,10 +16,9 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
- * `data::Load()` returns a matrix where each column represents an image.
+ * `Load()` returns a matrix where each column represents an image.
  * The rows of each image represent pixel values whose channels are
  * interleaved, i.e. [r, g, b, r, g, b, ... ]. Some mlpack functionality
  * such as convolutions require that each channel of the image be grouped
@@ -57,7 +56,6 @@ template <typename eT>
 inline arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
     const ImageInfo& info);
 
-} // namespace data
 } // namespace mlpack
 
 #include "image_layout_impl.hpp"

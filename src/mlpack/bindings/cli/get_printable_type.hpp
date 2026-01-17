@@ -25,9 +25,9 @@ std::string GetPrintableType(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return a string representing the command-line type of a vector.
@@ -52,7 +52,7 @@ template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0);
+        std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
 /**
  * Return a string representing the command-line type of a model.
@@ -61,7 +61,7 @@ template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0);
+    const std::enable_if_t<HasSerialize<T>::value>* = 0);
 
 /**
  * Print the command-line type of an option into a string.

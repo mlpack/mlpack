@@ -326,7 +326,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, normalize the labels.
   arma::Col<size_t> mappings;
   arma::Row<size_t> labels;
-  data::NormalizeLabels(rawLabels, labels, mappings);
+  NormalizeLabels(rawLabels, labels, mappings);
 
   arma::mat distance;
 

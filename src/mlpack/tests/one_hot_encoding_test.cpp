@@ -14,7 +14,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace std;
 
 /**
@@ -35,7 +34,7 @@ TEST_CASE("OneHotEncodingTest01", "[OneHotEncodingTest][tiny]")
   arma::Mat<size_t> output;
   matrix = matrix.t();
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
-  data::OneHotEncoding(labels, output);
+  OneHotEncoding(labels, output);
 
   REQUIRE(matrix.n_cols == output.n_cols);
   REQUIRE(matrix.n_rows == output.n_rows);
@@ -61,7 +60,7 @@ TEST_CASE("OneHotEncodingSparseMatTest", "[OneHotEncodingTest]")
   // Output matrix to save one-hot encoding  results.
   arma::SpMat<size_t> output;
   arma::irowvec labels("-1 1 -1 -1 -1 -1 1 -1");
-  data::OneHotEncoding(labels, output);
+  OneHotEncoding(labels, output);
 
   REQUIRE(matrix.n_cols == output.n_cols);
   REQUIRE(matrix.n_rows == output.n_rows);
@@ -85,7 +84,7 @@ TEST_CASE("OneHotEncodingInputTest", "[OneHotEncodingTest]")
   // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::Col<size_t> indices("1");
-  data::OneHotEncoding(input, indices, output);
+  OneHotEncoding(input, indices, output);
 
   REQUIRE(matrix.n_cols == output.n_cols);
   REQUIRE(matrix.n_rows == output.n_rows);
@@ -117,7 +116,7 @@ TEST_CASE("OneHotEncodingBigInputTest", "[OneHotEncodingTest]")
   // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::Col<size_t> indices("1 3");
-  data::OneHotEncoding(input, indices, output);
+  OneHotEncoding(input, indices, output);
 
   REQUIRE(matrix.n_cols == output.n_cols);
   REQUIRE(matrix.n_rows == output.n_rows);
@@ -163,7 +162,7 @@ TEST_CASE("OneHotEncodingVeryBigInputTest", "[OneHotEncodingTest]")
   // Output matrix to save one-hot encoding results.
   arma::Mat<int> output;
   arma::Col<size_t> indices("1 4 7 8");
-  data::OneHotEncoding(input, indices, output);
+  OneHotEncoding(input, indices, output);
 
   REQUIRE(matrix.n_cols == output.n_cols);
   REQUIRE(matrix.n_rows == output.n_rows);
@@ -189,16 +188,17 @@ TEST_CASE("OneHotEncodingDatasetinfoTest", "[OneHotEncodingTest]")
 
   // Load the test CSV.
   arma::umat matrix;
-  DatasetInfo info;
-  if (!data::Load("test.csv", matrix, info))
+  TextOptions opts = Categorical;
+
+  if (!Load("test.csv", matrix, opts))
     FAIL("Cannot load dataset test.csv");
   arma::umat output;
-  data::OneHotEncoding(matrix, output, info);
+  OneHotEncoding(matrix, output, opts.DatasetInfo());
   REQUIRE(output.n_cols == 7);
   REQUIRE(output.n_rows == 6);
-  REQUIRE(info.Type(0) == Datatype::numeric);
-  REQUIRE(info.Type(1) == Datatype::numeric);
-  REQUIRE(info.Type(2) == Datatype::categorical);
+  REQUIRE(opts.DatasetInfo().Type(0) == Datatype::numeric);
+  REQUIRE(opts.DatasetInfo().Type(1) == Datatype::numeric);
+  REQUIRE(opts.DatasetInfo().Type(2) == Datatype::categorical);
 
   REQUIRE(output(0, 0) == 1);
   REQUIRE(output(1, 0) == 2);

@@ -20,7 +20,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Open any file type as long as it is supported by mlpack.
@@ -99,7 +98,6 @@ bool DetectFileType(const std::string& filename,
  */
 inline size_t CountCols(std::fstream& stream);
 
-} // namespace data
 } // namespace mlpack
 
 #include "detect_file_type_impl.hpp"

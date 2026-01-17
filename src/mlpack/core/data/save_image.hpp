@@ -17,7 +17,6 @@
 #include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace data {
 
 template<typename eT>
 bool SaveImage(const std::vector<std::string>& files,
@@ -56,7 +55,7 @@ bool SaveImage(const std::vector<std::string>& files,
   if (dimension != matrix.n_rows * matrix.n_cols)
   {
     std::stringstream oss;
-    oss << "data::Save(): The given image dimensions, Width: " << opts.Width()
+    oss << "Save(): The given image dimensions, Width: " << opts.Width()
         << ", Height: " << opts.Height() << ", Channels: "<< opts.Channels()
         << " do not match the dimensions of the matrix to be saved!";
     return HandleError(oss, opts);
@@ -102,7 +101,6 @@ bool SaveImage(const std::vector<std::string>& files,
   return success;
 }
 
-} //namespace data
-} //namespace mlpack
+} // namespace mlpack
 
 #endif

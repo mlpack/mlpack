@@ -26,9 +26,9 @@ std::string PrintTypeDoc(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
   if (std::is_same_v<T, bool>)
@@ -146,7 +146,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "A filename for a data matrix that can contain categorical "
       "(non-numeric) data.  If the file contains only numeric data, then the "
@@ -166,7 +166,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   return "A filename containing an mlpack model.  These can have one of three "
       "formats: binary (.bin), text (.txt), and XML (.xml).  The XML format "

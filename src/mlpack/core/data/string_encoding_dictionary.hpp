@@ -21,7 +21,6 @@
 #include <unordered_map>
 
 namespace mlpack {
-namespace data {
 
 /**
  * This class provides a dictionary interface for the purpose of string
@@ -343,7 +342,6 @@ class StringEncodingDictionary<int>
   size_t size;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

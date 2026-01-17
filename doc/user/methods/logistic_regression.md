@@ -188,7 +188,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `LogisticRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lr.Parameters()` will return an `arma::rowvec` filled with the weights of
    the model.  This vector has length equal to the dimensionality plus one, and

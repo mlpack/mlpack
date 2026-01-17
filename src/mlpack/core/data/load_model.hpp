@@ -20,7 +20,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename Object>
 bool LoadModel(Object& objectToSerialize,
@@ -58,7 +57,6 @@ bool LoadModel(Object& objectToSerialize,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

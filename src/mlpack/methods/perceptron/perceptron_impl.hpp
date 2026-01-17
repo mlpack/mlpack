@@ -66,7 +66,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
  * Constructor: construct the perceptron by building the weights matrix, which
  * is later used in classification.  The number of classes should be specified
  * separately, and the labels vector should contain values in the range [0,
- * numClasses - 1].  The data::NormalizeLabels() function can be used if the
+ * numClasses - 1].  The NormalizeLabels() function can be used if the
  * labels vector does not contain values in the required range.
  *
  * This constructor supports weights for each data point.

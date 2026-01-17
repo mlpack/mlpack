@@ -28,9 +28,9 @@ template<typename T>
 T& GetRawParam(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<mlpack::DatasetInfo, arma::mat>>>* = 0)
 {
   // No mapping is needed, so just cast it directly.
   return *std::any_cast<T>(&d.value);
@@ -44,7 +44,7 @@ T& GetRawParam(
     util::ParamData& d,
     const std::enable_if_t<
         arma::is_arma_type<T>::value ||
-        std::is_same_v<T, std::tuple<mlpack::data::DatasetInfo,
+        std::is_same_v<T, std::tuple<mlpack::DatasetInfo,
                                      arma::mat>>>* = 0)
 {
   // Don't load the matrix.
@@ -60,7 +60,7 @@ template<typename T>
 T*& GetRawParam(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // Don't load the model.
   using TupleType = std::tuple<T*, std::string>;

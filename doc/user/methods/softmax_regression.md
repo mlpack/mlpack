@@ -188,7 +188,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `SoftmaxRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `sr.Parameters()` will return an `arma::mat` filled with the weights of the
    model.  The matrix will have rows equal to `numClasses` and columns equal to
