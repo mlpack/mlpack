@@ -123,8 +123,8 @@ point elements to represent both the data and responses.
 ```c++
 // See https://datasets.mlpack.org/telecom_churn.arff.
 arma::fmat dataset;
-TextOptions opts = Categorical;
-mlpack::Load("telecom_churn.arff", dataset, mlpack::Fatal + Categorical);
+mlpack::TextOptions opts = mlpack::Fatal + mlpack::Categorical;
+mlpack::Load("telecom_churn.arff", dataset, opts);
 
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
 arma::frowvec labels;

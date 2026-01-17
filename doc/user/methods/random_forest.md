@@ -232,7 +232,7 @@ to disk:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::Load("covertype.train.arff", dataset, opts);
 
@@ -305,7 +305,7 @@ performance of each individual tree:
 ```c++
 // Load a categorical dataset (training and test sets).
 arma::mat dataset, testDataset;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 arma::Row<size_t> labels, testLabels;
 
 // See the following files:

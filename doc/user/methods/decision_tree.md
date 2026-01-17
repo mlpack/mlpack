@@ -210,7 +210,7 @@ Train a decision tree on mixed categorical data and save it:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::Load("covertype.train.arff", dataset, opts);
 

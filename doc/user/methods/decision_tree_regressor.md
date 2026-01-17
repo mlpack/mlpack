@@ -200,7 +200,7 @@ disk.
 ```c++
 // Load a categorical dataset.
 arma::mat data;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/telecom_churn.arff.
 mlpack::Load("telecom_churn.arff", data, opts);
 

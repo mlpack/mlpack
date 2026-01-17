@@ -277,7 +277,7 @@ Train a Hoeffding tree incrementally on mixed categorical data:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::Load("covertype.train.arff", dataset, opts);
 
@@ -318,7 +318,7 @@ set during training, and save the model to disk.
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 mlpack::DatasetInfo info;
 // See https://datasets.mlpack.org/covertype.train.arff.
 mlpack::Load("covertype.train.arff", dataset, opts);
@@ -398,7 +398,7 @@ Train a tree, reset a tree, and train again.
 
 arma::mat dataset, testDataset;
 arma::Row<size_t> labels, testLabels;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 
 mlpack::Load("covertype.train.arff", dataset, opts);
 mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);

@@ -60,7 +60,7 @@ Loading a test image is shown below. It also fills up the `ImageInfo` class
 object.
 
 ```c++
-ImageOptions opts = NoFatal + Transpose;
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
 Load("test_image.png", matrix, opts);
 ```
 
@@ -68,7 +68,7 @@ Load("test_image.png", matrix, opts);
 
 ```c++
 size_t height = 64, width = 64, channels = 1;
-ImageOptions opts(width, height, channels);
+mlpack::ImageOptions opts(width, height, channels);
 ```
 
 More than one image can be loaded into the same matrix.
@@ -91,7 +91,7 @@ bool Load(const std::vector<std::string>& files,
 ```
 
 ```c++
-ImageOptions opts;
+mlpack::ImageOptions opts;
 std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
 Load(files, matrix, opts);
 ```
@@ -121,7 +121,7 @@ bool Save(const std::string& filename,
 ```
 
 ```c++
-ImageOptions opts = NoFatal + Transpose;
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
 opts.Width() = opts.Height() = 25;
 opts.Channels() = 3;
 opts.Quality() = 90;
@@ -148,7 +148,7 @@ bool Save(const std::vector<std::string>& files,
 ```
 
 ```c++
-ImageOptions opts = NoFatal + Transpose;
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
 opts.Width() = opts.Height() = 25;
 opts.Channels() = 3;
 opts.Quality() = 90;
