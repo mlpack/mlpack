@@ -77,7 +77,7 @@ names.
 The type does not necessarily need to be a csv; it can be any supported storage
 format, assuming that it is a coordinate-format file in the format specified
 above.  For more information on mlpack file formats, see the documentation for
-`mlpack::data::Load()`.
+`mlpack::Load()`.
 
 ### `mlpack_cf` with default parameters
 
@@ -230,7 +230,7 @@ The data which the `CF` constructor takes should be an Armadillo matrix
 (`arma::mat`) with three rows.  The first row corresponds to users; the second
 row corresponds to items; the third column corresponds to the rating.  This is a
 coordinate list format, like the format the `mlpack_cf` executable takes.  The
-`data::Load()` function can be used to load data.
+`Load()` function can be used to load data.
 
 The following examples detail a few ways that the `CF` class can be used.
 

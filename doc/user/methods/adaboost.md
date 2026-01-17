@@ -16,7 +16,7 @@ Train an AdaBoost model on random data and predict labels on a random test set.
 // Train an AdaBoost model on random data and predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -184,7 +184,7 @@ used to make class predictions for new data.
 ### Other Functionality
 
  * An `AdaBoost` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `ab.NumClasses()` will return a `size_t` indicating the number of classes the
    model was trained on.
@@ -212,10 +212,10 @@ Train an AdaBoost model using the hyperparameters from an existing weak learner.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 mlpack::AdaBoost ab;
 // Train with a custom number of perceptron iterations, and custom AdaBoost
@@ -242,10 +242,10 @@ trained model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
@@ -255,7 +255,7 @@ ab.Tolerance() = 1e-4; // Set a custom tolerance for convergence.
 ab.Train(dataset, labels, 3);
 
 // Save the model to `adaboost_model.bin`.
-mlpack::data::Save("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::Save("adaboost_model.bin", ab, mlpack::Fatal);
 ```
 
 ---
@@ -265,7 +265,7 @@ Load an AdaBoost model and print some information about it.
 ```c++
 // Load a saved model named "adaboost_model" from `adaboost_model.bin`.
 mlpack::AdaBoost ab;
-mlpack::data::Load("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::Load("adaboost_model.bin", ab, mlpack::Fatal);
 
 std::cout << "Details about the model in `adaboost_model.bin`:" << std::endl;
 std::cout << "  - Trained on " << ab.NumClasses() << " classes." << std::endl;

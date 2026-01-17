@@ -36,15 +36,15 @@ necessary information of the dataset.
 
 ## Loading data
 
-To use `DatasetMapper` we have to call a specific overload of the `data::Load()`
+To use `DatasetMapper` we have to call a specific overload of the `Load()`
 function.
 
 ```c++
 using namespace mlpack;
 
 arma::mat data;
-data::DatasetInfo info;
-data::Load("dataset.csv", data, info);
+DatasetInfo info;
+Load("dataset.csv", data, info);
 ```
 
 Dataset:
@@ -78,17 +78,17 @@ std::cout << info.Dimensionality();
 
 Each dimension can be of either of the two types:
 
-  - `data::Datatype::numeric`
-  - `data::Datatype::categorical`
+  - `Datatype::numeric`
+  - `Datatype::categorical`
 
 The function `Type(size_t dimension)` takes an argument dimension which is the
 row number for which you want to know the type
 
-This will return an enum `data::Datatype`, which is cast to `size_t` when we
+This will return an enum `Datatype`, which is cast to `size_t` when we
 print them using `std::cout`.
 
-  - `0` represents `data::Datatype::numeric`
-  - `1` represents `data::Datatype::categorical`
+  - `0` represents `Datatype::numeric`
+  - `1` represents `Datatype::categorical`
 
 ```c++
 std::cout << info.Type(0) << "\n";
@@ -108,7 +108,7 @@ This produces:
 
 ## Number of mappings
 
-If the type of a dimension is `data::Datatype::categorical`, then during
+If the type of a dimension is `Datatype::categorical`, then during
 loading, each unique token in that dimension will be mapped to an integer
 starting with `0`.
 

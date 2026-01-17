@@ -119,9 +119,9 @@ int main()
 {
   // Load the training set and testing set.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  Load("thyroid_train.csv", trainData, mlpack::Fatal);
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  Load("thyroid_test.csv", testData, mlpack::Fatal);
 
   // Split the labels from the training set and testing set respectively.
   // Decrement the labels by 1, so they are in the range 0 to (numClasses - 1).
@@ -470,7 +470,7 @@ You can use mlpack's `Load()` function to load a dataset like this:
 
 ```c++
 arma::mat trainingSet;
-data::Load("dataset.csv", dataset, true);
+Load("dataset.csv", dataset, mlpack::Fatal);
 ```
 
 ```sh
@@ -517,7 +517,7 @@ model to the file `model.xml` for later use.
 ```c++
 // Load the training set.
 arma::mat dataset;
-data::Load("thyroid_train.csv", dataset, true);
+Load("thyroid_train.csv", dataset, mlpack::Fatal);
 
 // Split the labels from the training set.
 arma::mat trainData = dataset.submat(0, 0, dataset.n_rows - 4,
@@ -541,7 +541,7 @@ model.Train(trainData, trainLabels);
 arma::mat assignments;
 model.Predict(trainData, assignments);
 
-data::Save("model.xml", "model", model, false);
+Save("model.xml", "model", model, false);
 ```
 
 After this, the file `model.xml` will be available in the current working
@@ -639,12 +639,12 @@ model. For instance, the example below will load the model from `model.xml` and
 then generate the class predictions for the `thyroid` test dataset.
 
 ```c++
-data::Load("thyroid_test.csv", dataset, true);
+Load("thyroid_test.csv", dataset, mlpack::Fatal);
 
 arma::mat testData = dataset.submat(0, 0, dataset.n_rows - 4,
     dataset.n_cols - 1);
 
-data::Load("model.xml", "model", model);
+Load("model.xml", model);
 
 arma::mat predictions;
 model.Predict(testData, predictions);

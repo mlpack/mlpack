@@ -695,7 +695,7 @@ There are numerous different macros that can be used:
  - `PARAM_TMATRIX_OUT()` - transposed double-valued matrix (`arma::mat`) output
        parameter
  - `PARAM_MATRIX_AND_INFO_IN()` - matrix with categoricals input parameter
-       (`std::tuple<data::DatasetInfo, arma::mat>`)
+       (`std::tuple<DatasetInfo, arma::mat>`)
  - `PARAM_COL_IN()` - double-valued column vector (`arma::vec`) input parameter
  - `PARAM_COL_OUT()` - double-valued column vector (`arma::vec`) output
        parameter
@@ -755,12 +755,12 @@ occurs with matrix and model type parameters for command-line programs.
 The `PARAM_MATRIX_AND_INFO()` macro defines a categorical matrix parameter
 (more specifically, a matrix type that can support categorical columns).  From
 the C++ program side, this means that the parameter type is
-`std::tuple<data::DatasetInfo, arma::mat>`.  From the user side, for a
+`std::tuple<DatasetInfo, arma::mat>`.  From the user side, for a
 command-line program, this means that the user will pass the filename of a
 dataset that can have categorical features, such as an ARFF dataset.  For a
 Python program, the user may pass a Pandas matrix with categorical columns.
 When the program is run, the input that the user gives will be processed and the
-`data::DatasetInfo` object will be filled with the dimension types and the
+`DatasetInfo` object will be filled with the dimension types and the
 `arma::mat` object will be filled with the data itself.
 
 To give some examples, the parameter definitions from the example
@@ -833,15 +833,15 @@ LinearRegression& lr = params.Get<LinearRegression>("model");
 ```
 
 Matrices with categoricals are a little trickier to access since the C++
-parameter type is `std::tuple<data::DatasetInfo, arma::mat>`.  The example below
+parameter type is `std::tuple<DatasetInfo, arma::mat>`.  The example below
 creates references to both the `DatasetInfo` and matrix objects, assuming the
 user has passed a matrix with categoricals as the `matrix` parameter.
 
 ```c++
 using namespace mlpack;
 
-typename std::tuple<data::DatasetInfo, arma::mat> TupleType;
-data::DatasetInfo& di = std::get<0>(params.Get<TupleType>("matrix"));
+typename std::tuple<DatasetInfo, arma::mat> TupleType;
+DatasetInfo& di = std::get<0>(params.Get<TupleType>("matrix"));
 arma::mat& matrix = std::get<1>(params.Get<TupleType>("matrix"));
 ```
 

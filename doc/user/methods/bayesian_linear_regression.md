@@ -11,7 +11,7 @@ to control the data type used for storing the model.
 // Train a Bayesian linear regression model on random data and make predictions.
 
 // All data and responses are uniform random; this uses 10 dimensional data.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
@@ -153,7 +153,7 @@ can be used to make predictions for new data.
 ### Other Functionality
 
  * A `BayesianLinearRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * After training is complete, the following methods can be used to inspect the
    model:
@@ -196,11 +196,11 @@ compute the RMSE with `RMSE()`, and save the model.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::data::Load("admission_predict.csv", data, true);
+mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::data::Load("admission_predict.responses.csv", responses, true);
+mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
 
 // Generate random instance weights for each point, in the range 0.5 to 1.5.
 arma::rowvec weights(data.n_cols, arma::fill::randu);
@@ -215,7 +215,7 @@ std::cout << "RMSE on the training set: " << blr.RMSE(data, responses)
     << "." << std::endl;
 
 // Finally, save the model with the name "blr".
-mlpack::data::Save("blr_model.bin", "blr", blr, true);
+mlpack::Save("blr_model.bin", blr, mlpack::Fatal);
 ```
 
 ---
@@ -227,7 +227,7 @@ it, then make some predictions individually for random points.
 mlpack::BayesianLinearRegression blr;
 
 // Load the model named "blr" from "lr_model.bin".
-mlpack::data::Load("blr_model.bin", "blr", blr, true);
+mlpack::Load("blr_model.bin", blr, mlpack::Fatal);
 
 // Print some information about the model.
 const size_t dimensionality = blr.Omega().n_elem;
