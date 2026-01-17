@@ -170,10 +170,10 @@ dataset, and show improved performance when using
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, Fatal);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("iris.labels.csv", labels, Fatal);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Create an NCA object and learn a distance.
 arma::mat distance;
@@ -209,7 +209,7 @@ to represent the data and metric.
 ```c++
 // See https://datasets.mlpack.org/ionosphere.csv.
 arma::fmat dataset;
-mlpack::Load("ionosphere.csv", dataset, Fatal);
+mlpack::Load("ionosphere.csv", dataset, mlpack::Fatal);
 
 // The labels are the last row of the dataset.
 arma::Row<size_t> labels =
@@ -313,10 +313,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, Fatal);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("iris.labels.csv", labels, Fatal);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Learn a distance with ensmallen's L-BFGS optimizer.
 ens::L_BFGS lbfgs;
@@ -342,7 +342,7 @@ under the Euclidean distance.
 ```c++
 // See https://datasets.mlpack.org/vehicle.csv.
 arma::mat dataset;
-mlpack::Load("vehicle.csv", dataset, Fatal);
+mlpack::Load("vehicle.csv", dataset, mlpack::Fatal);
 
 // The labels are contained as the last row of the dataset.
 arma::Row<size_t> labels =
@@ -407,7 +407,7 @@ the dimensionality of the vehicle dataset by 2 dimensions.
 ```c++
 // See https://datasets.mlpack.org/vehicle.csv.
 arma::mat dataset;
-mlpack::Load("vehicle.csv", dataset, Fatal);
+mlpack::Load("vehicle.csv", dataset, mlpack::Fatal);
 
 // The labels are contained as the last row of the dataset.
 arma::Row<size_t> labels =

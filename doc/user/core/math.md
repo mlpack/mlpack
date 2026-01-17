@@ -764,10 +764,10 @@ columns of the cube will be shuffled.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, Fatal);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("iris.labels.csv", labels, Fatal);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Now shuffle the points in the iris dataset.
 arma::mat shuffledDataset;

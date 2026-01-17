@@ -404,7 +404,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, Fatal);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 
 // Build the octree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -451,7 +451,7 @@ nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset, Fatal);
+mlpack::Load("lcdm_tiny.csv", dataset, mlpack::Fatal);
 
 // Build octrees on the first half and the second half of points.
 mlpack::Octree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -591,7 +591,7 @@ Build an `Octree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset, Fatal);
+mlpack::Load("lcdm_tiny.csv", dataset, mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

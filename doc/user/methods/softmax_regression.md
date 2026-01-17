@@ -221,10 +221,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, Fatal);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, Fatal);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 
@@ -241,10 +241,10 @@ sr.Train(dataset, labels, 10 /* numClasses */, optimizer,
 
 // See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::Load("mnist.test.csv", testDataset, Fatal);
+mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::Load("mnist.test.labels.csv", testLabels, Fatal);
+mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -288,10 +288,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, Fatal);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, Fatal);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 
@@ -314,7 +314,7 @@ Load an existing softmax regression model and print some information about it.
 mlpack::SoftmaxRegression sr;
 // This assumes that a model called "sr_model" has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::Load("model-1.bin", sr, Fatal);
+mlpack::Load("model-1.bin", sr, mlpack::Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 const size_t dimensionality = (sr.FitIntercept()) ?

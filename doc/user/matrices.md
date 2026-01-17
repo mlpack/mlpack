@@ -114,7 +114,7 @@ modified dataset to disk.
 ```c++
 // Load data from `data.csv` into `m`.  Throw an exception on failure.
 arma::mat m;
-mlpack::Load("data.csv", m, Fatal);
+mlpack::Load("data.csv", m, mlpack::Fatal);
 
 // Since mlpack uses column-major data,
 //

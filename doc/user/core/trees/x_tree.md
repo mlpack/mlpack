@@ -398,7 +398,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the X tree with a leaf size of 10.  (This means that leaf nodes
 // cannot contain more than 10 points.)
@@ -449,7 +449,7 @@ maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build trees on the first half and the second half of points.
 mlpack::XTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -574,7 +574,7 @@ some information, and then remove a few randomly chosen points.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Create an empty tree of the right dimensionality.
 mlpack::XTree<> t(dataset.n_rows);

@@ -179,7 +179,7 @@ error.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::SparseCoding sc;
 sc.Atoms() = 50;
@@ -210,7 +210,7 @@ Train a sparse coding model on the iris dataset and save the model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::Load("iris.train.csv", dataset, Fatal);
+mlpack::Load("iris.train.csv", dataset, mlpack::Fatal);
 
 // Train the model in the constructor.
 mlpack::SparseCoding sc(dataset, 10 /* atoms */, 0.1 /* L1 penalty */);
@@ -231,7 +231,7 @@ mlpack::Load("sc.bin", sc);
 
 // See https://datasets.mlpack.org/iris.test.csv.
 arma::mat dataset;
-mlpack::Load("iris.test.csv", dataset, Fatal);
+mlpack::Load("iris.test.csv", dataset, mlpack::Fatal);
 
 // Encode the test points.
 arma::mat codes;
@@ -250,10 +250,10 @@ dictionary sizes and checking the objective value on a held-out test dataset.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, Fatal);
+mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testData;
-mlpack::Load("satellite.test.csv", testData, Fatal);
+mlpack::Load("satellite.test.csv", testData, mlpack::Fatal);
 
 for (size_t atoms = 20; atoms < 100; atoms += 10)
 {
@@ -305,7 +305,7 @@ floating point data.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::SparseCoding<arma::fmat> sc;
 sc.Atoms() = 30;
@@ -361,7 +361,7 @@ dictionary.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, Fatal);
+mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
 
 const size_t atoms = 25;
 const double lambda1 = 0.1;

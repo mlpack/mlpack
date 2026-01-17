@@ -216,7 +216,7 @@ mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the tree.
 mlpack::DecisionTree tree;
@@ -253,7 +253,7 @@ Load a tree and print some information about it.
 mlpack::DecisionTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `Save()`.
-mlpack::Load("tree.bin", tree, Fatal);
+mlpack::Load("tree.bin", tree, mlpack::Fatal);
 
 if (tree.NumChildren() > 0)
 {

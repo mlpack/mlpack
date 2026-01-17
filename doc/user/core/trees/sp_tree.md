@@ -419,7 +419,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the spill tree with a tau (margin) of 0.2 and a leaf size of 10.
 // (This means that nodes are split until they contain 10 or fewer points.)
@@ -465,7 +465,7 @@ maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build trees on the first half and the second half of points.  Use a tau
 // (overlap) parameter of 0.3, which is tuned to this dataset, and a rho value
@@ -705,7 +705,7 @@ class SpillNearestNeighborRule
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build two trees, one with a lot of overlap, and one with no overlap
 // (e.g. tau = 0).

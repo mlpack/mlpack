@@ -194,10 +194,10 @@ matrix to apply the same transformation to a test set.
 ```c++
 // See https://datasets.mlpack.org/iris.train.csv.
 arma::mat trainSet;
-mlpack::Load("iris.train.csv", trainSet, Fatal);
+mlpack::Load("iris.train.csv", trainSet, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.test.csv.
 arma::mat testSet;
-mlpack::Load("iris.test.csv", testSet, Fatal);
+mlpack::Load("iris.test.csv", testSet, mlpack::Fatal);
 
 // Create RADICAL object with custom options.  Here we optimize for speed, but
 // at the potential loss of quality!  A real-world application may want to use

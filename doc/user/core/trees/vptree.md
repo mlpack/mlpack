@@ -404,7 +404,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the vp-tree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -463,7 +463,7 @@ bounding quantities.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build vp-trees on the first half and the second half of points.
 mlpack::VPTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -603,7 +603,7 @@ Build a `VPTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

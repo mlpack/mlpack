@@ -283,7 +283,7 @@ mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the tree.
 mlpack::HoeffdingTree tree(info, 7 /* classes */);
@@ -325,7 +325,7 @@ mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Also load test data.
 
@@ -335,7 +335,7 @@ mlpack::Load("covertype.test.arff", testDataset, opts);
 
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create the tree with custom parameters.
 mlpack::HoeffdingTree tree(info, 7 /* number of classes */);
@@ -360,7 +360,7 @@ for (size_t start = 0; start < dataset.n_cols; start += 10000)
 }
 
 // Save the fully trained tree in `tree.bin` with name `tree`.
-mlpack::Save("tree.bin", tree, Fatal);
+mlpack::Save("tree.bin", tree, mlpack::Fatal);
 ```
 
 ---
@@ -371,7 +371,7 @@ Load a tree and print some information about it.
 mlpack::HoeffdingTree tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
 // with `Save()`.
-mlpack::Load("tree.bin", tree, Fatal);
+mlpack::Load("tree.bin", tree, mlpack::Fatal);
 
 if (tree.NumChildren() > 0)
 {
@@ -401,9 +401,9 @@ arma::Row<size_t> labels, testLabels;
 TextOptions opts = Categorical + Fatal;
 
 mlpack::Load("covertype.train.arff", dataset, opts);
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 mlpack::Load("covertype.test.arff", testDataset, opts);
-mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create a tree, and train on the training data.
 mlpack::HoeffdingTree tree(info, 7 /* number of classes */, 0.98);

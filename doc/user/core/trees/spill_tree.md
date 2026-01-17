@@ -738,7 +738,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the spill tree with a tau (margin) of 0.2 and a leaf size of 10.
 // (This means that nodes are split until they contain 10 or fewer points.)
@@ -784,7 +784,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Convenience typedef for the tree type.
 using TreeType = mlpack::SpillTree<mlpack::EuclideanDistance,
@@ -1036,7 +1036,7 @@ class SpillNearestNeighborRule
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 typedef mlpack::SpillTree<mlpack::EuclideanDistance,
                           mlpack::EmptyStatistic,

@@ -415,7 +415,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the UB-tree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -472,7 +472,7 @@ maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build UB-trees on the first half and the second half of points.
 mlpack::UBTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -612,7 +612,7 @@ Build a `UBTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

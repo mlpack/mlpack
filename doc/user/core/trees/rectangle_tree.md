@@ -932,7 +932,7 @@ about the tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the rectangle tree with a leaf size of 10.  (This means that leaf nodes
 // cannot contain more than 10 points.)
@@ -985,7 +985,7 @@ and maximum distances between different nodes in the tree.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Convenience typedef for the tree type.
 using TreeType = mlpack::RectangleTree<mlpack::EuclideanDistance,
@@ -1125,7 +1125,7 @@ print some information, and then remove a few randomly chosen points.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, Fatal);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // This convenient typedef saves us a long type name!
 using TreeType = mlpack::RectangleTree<mlpack::EuclideanDistance,

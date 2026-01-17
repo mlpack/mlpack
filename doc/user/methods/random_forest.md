@@ -238,7 +238,7 @@ mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;
@@ -253,7 +253,7 @@ mlpack::Load("covertype.test.arff", testDataset, opts);
 
 arma::Row<size_t> testLabels;
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
-mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Compute test set accuracy.
 arma::Row<size_t> testPredictions;
@@ -286,7 +286,7 @@ Load a random forest and print some information about it.
 mlpack::RandomForest rf;
 // This call assumes a random forest called "rf" has already been saved to
 // `rf.bin` with `Save()`.
-mlpack::Load("rf.bin", rf, Fatal);
+mlpack::Load("rf.bin", rf, mlpack::Fatal);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
     << " trees." << std::endl;
@@ -314,9 +314,9 @@ arma::Row<size_t> labels, testLabels;
 //  * https://datasets.mlpack.org/covertype.test.arff
 //  * https://datasets.mlpack.org/covertype.test.labels.csv
 mlpack::Load("covertype.train.arff", dataset, opts);
-mlpack::Load("covertype.train.labels.csv", labels, Fatal);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 mlpack::Load("covertype.test.arff", testDataset, opts);
-mlpack::Load("covertype.test.labels.csv", testLabels, Fatal);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;

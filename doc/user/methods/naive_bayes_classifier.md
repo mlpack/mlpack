@@ -198,10 +198,10 @@ accuracy on a test set and save the model to disk.
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, Fatal);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, Fatal);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::NaiveBayesClassifier nbc(dataset.n_rows /* dimensionality */,
                                  10 /* numClasses */);
@@ -214,10 +214,10 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 
 // See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::Load("mnist.test.csv", testDataset, Fatal);
+mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::Load("mnist.test.labels.csv", testLabels, Fatal);
+mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
 
 arma::Row<size_t> predictions;
 nbc.Classify(dataset, predictions);
@@ -234,7 +234,7 @@ std::cout << "Accuracy of model on test data:     " << testAccuracy << "\%."
     << std::endl;
 
 // Save the model to disk with the name "nbc".
-mlpack::Save("nbc_model.bin", nbc, Fatal);
+mlpack::Save("nbc_model.bin", nbc, mlpack::Fatal);
 ```
 
 ---
@@ -245,7 +245,7 @@ Load a saved Naive Bayes classifier and print some information about it.
 mlpack::NaiveBayesClassifier nbc;
 
 // Load the model named "nbc" from "nbc_model.bin".
-mlpack::Load("nbc_model.bin", nbc, Fatal);
+mlpack::Load("nbc_model.bin", nbc, mlpack::Fatal);
 
 // Print information about the model.
 std::cout << "The dimensionality of the model in nbc_model.bin is "
