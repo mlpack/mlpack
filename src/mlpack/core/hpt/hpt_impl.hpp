@@ -52,8 +52,8 @@ TupleOfHyperParameters<Args...> HyperParameterTuner<MLAlgorithm,
 {
   static const size_t numberOfParametersToOptimize =
       std::tuple_size<TupleOfHyperParameters<Args...>>::value;
-  data::IncrementPolicy policy(true);
-  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo(policy,
+  IncrementPolicy policy(true);
+  DatasetMapper<IncrementPolicy, double> datasetInfo(policy,
       numberOfParametersToOptimize);
 
   arma::mat bestParameters(numberOfParametersToOptimize, 1);
@@ -63,7 +63,7 @@ TupleOfHyperParameters<Args...> HyperParameterTuner<MLAlgorithm,
 
   for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
   {
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
+    if (datasetInfo.Type(i) == Datatype::categorical)
       bestParameters[i] = datasetInfo.UnmapString(bestParameters[i], i);
   }
 
@@ -87,7 +87,7 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitAndOptimize(
     const ArgsTuple& /* args */,
     arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    DatasetMapper<IncrementPolicy, double>& datasetInfo,
     FixedArgs... fixedArgs)
 {
   static const size_t totalArgs = std::tuple_size<ArgsTuple>::value;
@@ -98,7 +98,7 @@ void HyperParameterTuner<MLAlgorithm,
   {
     numCategories[d] = datasetInfo.NumMappings(d);
     categoricalDimensions[d] = datasetInfo.Type(d) ==
-        mlpack::data::Datatype::categorical;
+        mlpack::Datatype::categorical;
   }
 
   CVFunction<CVType, MLAlgorithm, totalArgs, FixedArgs...>
@@ -127,7 +127,7 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitAndOptimize(
     const ArgsTuple& args,
     arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    DatasetMapper<IncrementPolicy, double>& datasetInfo,
     FixedArgs... fixedArgs)
 {
   using PreFixedArgT = std::remove_reference_t<
@@ -155,12 +155,12 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitAndOptimize(
     const ArgsTuple& args,
     arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    DatasetMapper<IncrementPolicy, double>& datasetInfo,
     FixedArgs... fixedArgs)
 {
   static const size_t dimension =
       I - std::tuple_size<std::tuple<FixedArgs...>>::value;
-  datasetInfo.Type(dimension) = data::Datatype::numeric;
+  datasetInfo.Type(dimension) = Datatype::numeric;
   bestParams(dimension) = std::get<I>(args);
 
   InitAndOptimize<I + 1>(args, bestParams, datasetInfo, fixedArgs...);
@@ -184,7 +184,7 @@ void HyperParameterTuner<MLAlgorithm,
                          WeightsType>::InitAndOptimize(
     const ArgsTuple& args,
     arma::mat& bestParams,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    DatasetMapper<IncrementPolicy, double>& datasetInfo,
     FixedArgs... fixedArgs)
 {
   static const size_t dimension =

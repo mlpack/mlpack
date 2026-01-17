@@ -153,7 +153,7 @@ After encoding, the original data can be recovered (approximately) as
 ### Other Functionality
 
  * A `LocalCoordinateCoding` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lcc.Dictionary()` will return an `arma::mat&` containing the dictionary
    matrix.  The matrix has `data.n_rows` rows and `atoms` columns; each column

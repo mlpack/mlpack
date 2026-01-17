@@ -17,7 +17,6 @@
 #include "catch.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 void GenerateProblem(arma::mat& matX,
                      arma::rowvec& y,

@@ -16,7 +16,6 @@
 #include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple ZCAWhitening class.
@@ -111,7 +110,6 @@ class ZCAWhitening
   PCAWhitening pca;
 }; // class ZCAWhitening
 
-} // namespace data
 } // namespace mlpack
 
 #endif

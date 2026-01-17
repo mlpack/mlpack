@@ -19,7 +19,6 @@
 #include <vector>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The class translates a set of strings into numbers using various encoding
@@ -208,7 +207,6 @@ class StringEncoding
   DictionaryType dictionary;
 };
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

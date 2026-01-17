@@ -1263,7 +1263,7 @@ TEST_CASE("HoeffdingCategoricalSplitTest", "[SerializationTest]")
  */
 TEST_CASE("HoeffdingTreeBeforeSplitTest", "[SerializationTest]")
 {
-  data::DatasetInfo info(5);
+  DatasetInfo info(5);
   info.MapString<double>("0", 2); // Dimension 1 is categorical.
   info.MapString<double>("1", 2);
   HoeffdingTree<> split(info, 2, 0.99, 15000, 1);
@@ -1272,12 +1272,12 @@ TEST_CASE("HoeffdingTreeBeforeSplitTest", "[SerializationTest]")
   split.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
   split.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
-  data::DatasetInfo wrongInfo(3);
+  DatasetInfo wrongInfo(3);
   wrongInfo.MapString<double>("1", 1);
   HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
   // Force the binarySplit to split.
-  data::DatasetInfo binaryInfo(2);
+  DatasetInfo binaryInfo(2);
   binaryInfo.MapString<double>("cat0", 0);
   binaryInfo.MapString<double>("cat1", 0);
   binaryInfo.MapString<double>("cat0", 1);
@@ -1315,7 +1315,7 @@ TEST_CASE("HoeffdingTreeBeforeSplitTest", "[SerializationTest]")
 TEST_CASE("HoeffdingTreeAfterSplitTest", "[SerializationTest]")
 {
   // Force the split to split.
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<double>("cat0", 0);
   info.MapString<double>("cat1", 0);
   info.MapString<double>("cat0", 1);
@@ -1331,11 +1331,11 @@ TEST_CASE("HoeffdingTreeAfterSplitTest", "[SerializationTest]")
   // Ensure a split has happened.
   REQUIRE(split.SplitDimension() != size_t(-1));
 
-  data::DatasetInfo wrongInfo(3);
+  DatasetInfo wrongInfo(3);
   wrongInfo.MapString<double>("1", 1);
   HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
-  data::DatasetInfo binaryInfo(5);
+  DatasetInfo binaryInfo(5);
   binaryInfo.MapString<double>("0", 2); // Dimension 2 is categorical.
   binaryInfo.MapString<double>("1", 2);
   HoeffdingTree<> binarySplit(binaryInfo, 2, 0.99, 15000, 1);
@@ -1372,7 +1372,7 @@ TEST_CASE("HoeffdingTreeAfterSplitTest", "[SerializationTest]")
 
 TEST_CASE("EmptyHoeffdingTreeTest", "[SerializationTest]")
 {
-  data::DatasetInfo info(6);
+  DatasetInfo info(6);
   HoeffdingTree<> tree(info, 2);
   HoeffdingTree<> xmlTree(info, 3);
   HoeffdingTree<> binaryTree(info, 4);
@@ -1404,7 +1404,7 @@ TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
     labels[2 * i + 1] = 1;
   }
   // Make the features categorical.
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<double>("a", 0);
   info.MapString<double>("b", 0);
   info.MapString<double>("c", 0);
@@ -1416,11 +1416,11 @@ TEST_CASE("HoeffdingTreeTest", "[SerializationTest]")
 
   HoeffdingTree<> tree(dataset, info, labels, 2, false /* no batch mode */);
 
-  data::DatasetInfo xmlInfo(1);
+  DatasetInfo xmlInfo(1);
   HoeffdingTree<> xmlTree(xmlInfo, 1);
-  data::DatasetInfo binaryInfo(5);
+  DatasetInfo binaryInfo(5);
   HoeffdingTree<> binaryTree(binaryInfo, 6);
-  data::DatasetInfo jsonInfo(7);
+  DatasetInfo jsonInfo(7);
   HoeffdingTree<> jsonTree(jsonInfo, 100);
 
   SerializeObjectAll(tree, xmlTree, jsonTree, binaryTree);

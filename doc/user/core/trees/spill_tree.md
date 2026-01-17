@@ -334,7 +334,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `SpillTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -511,7 +511,7 @@ the data.
      the right of `h`.
 
  * An `AxisOrthogonalHyperplane` object can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 For more details, see the
 [the source code](/src/mlpack/core/tree/space_split/hyperplane.hpp).
@@ -556,7 +556,7 @@ able to represent any possible hyperplane.
      the bullet point above) is to the right of `h`.
 
  * A `Hyperplane` object can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 For more details, see the
 [the source code](/src/mlpack/core/tree/space_split/hyperplane.hpp).

@@ -30,9 +30,9 @@ void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -119,7 +119,7 @@ void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -152,7 +152,7 @@ void PrintMethodInit(
     util::ParamData& d,
     const size_t indent,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   const std::string prefix(indent, ' ');
 

@@ -91,10 +91,10 @@ class MultiheadAttention : public Layer<MatType>
    *     come from the same inputs
    */
   MultiheadAttention(const size_t tgtSeqLen,
-                         const size_t numHeads,
-                         const CubeType& attnMask = CubeType(),
-                         const MatType& keyPaddingMask = MatType(),
-                         const bool selfAttention = false);
+                     const size_t numHeads,
+                     const CubeType& attnMask = CubeType(),
+                     const MatType& keyPaddingMask = MatType(),
+                     const bool selfAttention = false);
 
   //! Clone the MultiheadAttention object. This handles polymorphism
   //! correctly.

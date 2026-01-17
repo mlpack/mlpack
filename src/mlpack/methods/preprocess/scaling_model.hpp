@@ -21,7 +21,6 @@
 #include <mlpack/core/data/scaler_methods/standard_scaler.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The model to save to disk.
@@ -41,12 +40,12 @@ class ScalingModel
 
  private:
   size_t scalerType;
-  data::MinMaxScaler* minmaxscale;
-  data::MaxAbsScaler* maxabsscale;
-  data::MeanNormalization* meanscale;
-  data::StandardScaler* standardscale;
-  data::PCAWhitening* pcascale;
-  data::ZCAWhitening* zcascale;
+  MinMaxScaler* minmaxscale;
+  MaxAbsScaler* maxabsscale;
+  MeanNormalization* meanscale;
+  StandardScaler* standardscale;
+  PCAWhitening* pcascale;
+  ZCAWhitening* zcascale;
   int minValue;
   int maxValue;
   double epsilon;
@@ -134,7 +133,6 @@ class ScalingModel
   }
 };
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

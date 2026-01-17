@@ -202,7 +202,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Row<size_t> labels;
 
     // Normalize the labels.
-    data::NormalizeLabels(labelsIn, labels, m->Mappings());
+    NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
     const double tolerance = params.Get<double>("tolerance");
@@ -253,7 +253,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, m->Mappings(), results);
+    RevertLabels(predictedLabels, m->Mappings(), results);
 
     // Save the predicted labels.
     if (params.Has("predictions"))

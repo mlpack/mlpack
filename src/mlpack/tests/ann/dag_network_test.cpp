@@ -97,7 +97,7 @@ void CheckMove(ModelType* network1,
 TEST_CASE("CheckCopyVanillaDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -118,7 +118,7 @@ TEST_CASE("CheckCopyVanillaDAGNetworkTest", "[DAGNetworkTest]")
 TEST_CASE("CheckMoveVanillaDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -143,7 +143,7 @@ TEST_CASE("CheckMoveVanillaDAGNetworkTest", "[DAGNetworkTest]")
 TEST_CASE("CheckCopyDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -184,7 +184,7 @@ TEST_CASE("CheckCopyDAGNetworkTest", "[DAGNetworkTest]")
 TEST_CASE("CheckMoveDAGNetworkTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -889,7 +889,7 @@ TEST_CASE("DAGNetworkGradientAccumulatesAndResetsToZeroAddition",
 TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
 {
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -897,7 +897,7 @@ TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);

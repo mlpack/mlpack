@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace mlpack::util;
 
 // Program Name.
@@ -276,7 +275,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("test"))
   {
     // Before loading, pre-set the dataset info by getting the raw parameter
-    // (that doesn't call data::Load()).
+    // (that doesn't call Load()).
     std::get<0>(params.GetRaw<TupleType>("test")) = datasetInfo;
     arma::mat testSet = std::get<1>(params.Get<TupleType>("test"));
 

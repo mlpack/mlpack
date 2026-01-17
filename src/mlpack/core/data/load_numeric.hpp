@@ -19,7 +19,6 @@
 #include "load_sparse.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename MatType>
 bool LoadNumeric(const std::string& filename,
@@ -53,7 +52,7 @@ bool LoadNumeric(const std::string& filename,
   }
   else
   {
-    return HandleError("data::Load(): unknown matrix-like type given!",
+    return HandleError("Load(): unknown matrix-like type given!",
         txtOpts);
   }
   opts = std::move(txtOpts);
@@ -163,7 +162,6 @@ bool LoadNumericMultifile(const std::vector<std::string>& filenames,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -20,7 +20,6 @@
 #include "map_policies/map_policies.hpp"
 
 namespace mlpack {
-namespace data {
 
 enum struct FileType
 {
@@ -301,6 +300,7 @@ class DataOptionsBase
       case FileType::HDF5Binary:  return "HDF5 data";
       case FileType::CoordASCII:
           return "ASCII formatted sparse coordinate data";
+      case FileType::ARFFASCII:   return "ARFF data";
       case FileType::XML:         return "XML model";
       case FileType::BIN:         return "binary model";
       case FileType::JSON:        return "JSON model";
@@ -450,6 +450,8 @@ static const DataOptions BinAscii = DataOptions(std::nullopt,
     FileType::RawBinary);
 static const DataOptions CoordAscii = DataOptions(std::nullopt,
     FileType::CoordASCII);
+static const DataOptions ARFF = DataOptions(std::nullopt,
+    FileType::ARFFASCII);
 static const DataOptions AutoDetect = DataOptions(std::nullopt,
     FileType::AutoDetect);
 static const DataOptions JSON = DataOptions(std::nullopt, FileType::JSON);
@@ -535,7 +537,6 @@ inline bool HandleError(const std::string& msg, bool fatal)
   return HandleError(oss, fatal);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -29,7 +29,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              NoRecursion>::DecisionTree(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
@@ -103,7 +103,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              NoRecursion>::DecisionTree(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
@@ -186,7 +186,7 @@ DecisionTree<FitnessFunction,
         NoRecursion>::DecisionTree(
     const DecisionTree& other,
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
@@ -446,7 +446,7 @@ double DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::Train(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
@@ -527,7 +527,7 @@ double DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::Train(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
@@ -618,7 +618,7 @@ double DecisionTree<FitnessFunction,
     MatType& data,
     const size_t begin,
     const size_t count,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     arma::Row<size_t>& labels,
     const size_t numClasses,
     WeightsType& weights,
@@ -650,7 +650,7 @@ double DecisionTree<FitnessFunction,
          i = dimensionSelector.Next())
     {
       double dimGain = -DBL_MAX;
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      if (datasetInfo.Type(i) == Datatype::categorical)
       {
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
@@ -663,7 +663,7 @@ double DecisionTree<FitnessFunction,
             classProbabilities,
             *this);
       }
-      else if (datasetInfo.Type(i) == data::Datatype::numeric)
+      else if (datasetInfo.Type(i) == Datatype::numeric)
       {
         dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
@@ -699,14 +699,14 @@ double DecisionTree<FitnessFunction,
 
     // Get the number of children we will have.
     size_t numChildren = 0;
-    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
+    if (datasetInfo.Type(bestDim) == Datatype::categorical)
       numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
     else
       numChildren = NumericSplit::NumChildren(classProbabilities, *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
-    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
+    if (datasetInfo.Type(bestDim) == Datatype::categorical)
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
@@ -868,7 +868,7 @@ double DecisionTree<FitnessFunction,
     size_t numChildren =
         NumericSplit::NumChildren(classProbabilities, *this);
     splitDimension = bestDim;
-    dimensionType = (size_t) data::Datatype::numeric;
+    dimensionType = (size_t) Datatype::numeric;
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -1099,7 +1099,7 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
-  if ((data::Datatype) dimensionType == data::Datatype::categorical)
+  if ((Datatype) dimensionType == Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
         classProbabilities, *this);
   else

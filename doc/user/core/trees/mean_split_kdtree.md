@@ -317,7 +317,7 @@ accessing them does not require any computation.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `MeanSplitKDTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 

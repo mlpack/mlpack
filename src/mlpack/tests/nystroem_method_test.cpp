@@ -140,7 +140,7 @@ TEST_CASE("GermanTest", "[NystroemMethodTest][long]")
 {
   // Load the dataset.
   arma::mat dataset;
-  if (!data::Load("german.csv", dataset))
+  if (!Load("german.csv", dataset))
     FAIL("Cannot load dataset german.csv");
 
   // These are our tolerance bounds.

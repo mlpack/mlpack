@@ -133,7 +133,7 @@ class HoeffdingTree
    * @param copyDatasetInfo If true, then a copy of the datasetInfo will be
    *      made.
    */
-  HoeffdingTree(const data::DatasetInfo& datasetInfo,
+  HoeffdingTree(const DatasetInfo& datasetInfo,
                 const size_t numClasses,
                 const double successProbability = 0.95,
                 const size_t maxSamples = 0,
@@ -211,7 +211,7 @@ class HoeffdingTree
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
-                const data::DatasetInfo& datasetInfo,
+                const DatasetInfo& datasetInfo,
                 const arma::Row<size_t>& labels,
                 const size_t numClasses,
                 const bool batchTraining = true,
@@ -330,7 +330,7 @@ class HoeffdingTree
    */
   template<typename MatType>
   void Train(const MatType& data,
-             const data::DatasetInfo& info,
+             const DatasetInfo& info,
              const arma::Row<size_t>& labels,
              const size_t numClasses = 0,
              const bool batchTraining = true,
@@ -340,7 +340,7 @@ class HoeffdingTree
 
   template<typename MatType>
   void Train(const MatType& data,
-             const data::DatasetInfo& info,
+             const DatasetInfo& info,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
              const bool batchTraining,
@@ -497,7 +497,7 @@ class HoeffdingTree
   /**
    * Reset the tree, setting a new number of classes and a new datasetInfo.
    */
-  void Reset(const data::DatasetInfo& datasetInfo, const size_t numClasses);
+  void Reset(const DatasetInfo& datasetInfo, const size_t numClasses);
 
   //! Serialize the split.
   template<typename Archive>
@@ -527,7 +527,7 @@ class HoeffdingTree
   //! The minimum number of samples for splitting.
   size_t minSamples;
   //! The dataset information.
-  const data::DatasetInfo* datasetInfo;
+  const DatasetInfo* datasetInfo;
   //! Whether or not we own the dataset information.
   bool ownsInfo;
   //! The required probability of success for a split to be performed.

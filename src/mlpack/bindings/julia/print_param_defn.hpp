@@ -27,7 +27,7 @@ void PrintParamDefn(
     util::ParamData& /* d */,
     const std::string& /* programName */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -52,7 +52,7 @@ void PrintParamDefn(
     util::ParamData& d,
     const std::string& programName,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // We need to print something of the form below:
   //
