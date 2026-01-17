@@ -1304,6 +1304,11 @@ for (size_t i = 0; i < files.size(); i++)
 
 ## Changing the memory layout of images
 
+Image-related utilities such as `GroupChannels()` and
+`InterleaveChannels()` have been moved to a dedicated page.
+See [Working with Images](data/images.md) for details.
+
+
 When loading images using `data::Load()` channels are interleaved, i.e.
 the underlying vector contains the values `[r, g, b, r, g, b, ... ]`
 (for an image with 3 channels). mlpack has functionality such as `Convolution`
