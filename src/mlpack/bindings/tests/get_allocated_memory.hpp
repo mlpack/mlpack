@@ -22,7 +22,7 @@ namespace tests {
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   return NULL;
@@ -40,7 +40,7 @@ template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // Here we have a model; return its memory location.
   return *std::any_cast<T*>(&d.value);

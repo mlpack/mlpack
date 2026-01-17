@@ -26,7 +26,7 @@ template<typename T>
 void PrintSerializeUtil(
     util::ParamData& /* d */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   // Do Nothing.
 }
@@ -49,7 +49,7 @@ template<typename T>
 void PrintSerializeUtil(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   /**
    * This gives us code like:

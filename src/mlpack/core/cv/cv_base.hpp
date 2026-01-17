@@ -57,12 +57,12 @@ class CVBase
 
   /**
    * Assert that MLAlgorithm takes the numClasses parameter and a
-   * data::DatasetInfo parameter and store them.
+   * DatasetInfo parameter and store them.
    *
    * @param datasetInfo Type information for each dimension of the dataset.
    * @param numClasses Number of classes in the dataset.
    */
-  CVBase(const data::DatasetInfo& datasetInfo,
+  CVBase(const DatasetInfo& datasetInfo,
          const size_t numClasses);
 
   /**
@@ -101,9 +101,9 @@ class CVBase
   static_assert(MIE::IsSupported,
       "The given MLAlgorithm is not supported by MetaInfoExtractor");
 
-  //! A variable for storing a data::DatasetInfo parameter if it is passed.
-  const data::DatasetInfo datasetInfo;
-  //! An indicator whether a data::DatasetInfo parameter has been passed.
+  //! A variable for storing a DatasetInfo parameter if it is passed.
+  const DatasetInfo datasetInfo;
+  //! An indicator whether a DatasetInfo parameter has been passed.
   const bool isDatasetInfoPassed;
   //! A variable for storing the numClasses parameter if it is passed.
   size_t numClasses;
@@ -145,7 +145,7 @@ class CVBase
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
-   * numClasses parameter and a data::DatasetInfo parameter.
+   * numClasses parameter and a DatasetInfo parameter.
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
@@ -183,7 +183,7 @@ class CVBase
 
   /**
    * Construct a trained MLAlgorithm model if MLAlgorithm takes the
-   * numClasses parameter and a data::DatasetInfo parameter.
+   * numClasses parameter and a DatasetInfo parameter.
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = MIE::TakesNumClasses & MIE::TakesDatasetInfo,
@@ -196,13 +196,13 @@ class CVBase
                          const MLAlgorithmArgs&... args);
 
   /**
-   * When MLAlgorithm supports a data::DatasetInfo parameter, training should be
+   * When MLAlgorithm supports a DatasetInfo parameter, training should be
    * treated separately - there are models that can be constructed with and
    * without a data:DatasetInfo parameter and models that can be constructed
-   * only with a data::DatasetInfo parameter.
+   * only with a DatasetInfo parameter.
    *
    * Construct a trained MLAlgorithm model when it can be constructed without a
-   * data::DatasetInfo parameter.
+   * DatasetInfo parameter.
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,
@@ -213,7 +213,7 @@ class CVBase
 
   /**
    * Construct a trained MLAlgorithm model when it can't be constructed without
-   * a data::DatasetInfo parameter.
+   * a DatasetInfo parameter.
    */
   template<bool ConstructableWithoutDatasetInfo,
            typename... MLAlgorithmArgs,

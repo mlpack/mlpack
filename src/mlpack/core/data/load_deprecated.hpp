@@ -21,7 +21,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -194,7 +193,7 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * If the given `info` has already been used with a different `data::Load()`
+ * If the given `info` has already been used with a different `Load()`
  * call where the dataset has the same dimensionality, then the mappings and
  * dimension types inside of `info` will be *re-used*.  If the given `info` is a
  * new `DatasetMapper` object (e.g. its dimensionality is 0), then new mappings
@@ -261,7 +260,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into sparse matrix
@@ -277,7 +276,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into a column vector
@@ -288,7 +287,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, vec, opts);
+  return Load(filename, vec, opts, false);
 }
 
 // For loading data into a raw vector
@@ -299,7 +298,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, rowvec, opts);
+  return Load(filename, rowvec, opts, false);
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
@@ -456,7 +455,6 @@ bool Load(const std::string& filename,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

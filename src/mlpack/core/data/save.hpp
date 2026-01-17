@@ -25,7 +25,6 @@
 #include "save_image.hpp"
 
 namespace mlpack {
-namespace data /** Functions to load and save matrices. */ {
 
 /**
  * This function defines a unified data saving interface for the library.
@@ -68,7 +67,6 @@ bool Save(const std::vector<std::string>& files,
   return SaveImage(files, matrix, opts);
 }
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

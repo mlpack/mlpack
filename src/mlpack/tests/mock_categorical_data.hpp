@@ -19,7 +19,7 @@
  */
 inline void MockCategoricalData(arma::mat& d,
                                 arma::Row<size_t>& l,
-                                mlpack::data::DatasetInfo& datasetInfo)
+                                mlpack::DatasetInfo& datasetInfo)
 {
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
@@ -89,9 +89,9 @@ inline void MockCategoricalData(arma::mat& d,
   }
 
   // Now create the dataset info.
-  datasetInfo = mlpack::data::DatasetInfo(4);
-  datasetInfo.Type(2) = mlpack::data::Datatype::categorical;
-  datasetInfo.Type(3) = mlpack::data::Datatype::categorical;
+  datasetInfo = mlpack::DatasetInfo(4);
+  datasetInfo.Type(2) = mlpack::Datatype::categorical;
+  datasetInfo.Type(3) = mlpack::Datatype::categorical;
   // Set mappings.
   datasetInfo.MapString<double>("0", 2);
   datasetInfo.MapString<double>("1", 2);
@@ -117,7 +117,7 @@ inline void MockCategoricalData(arma::mat& d,
  */
 inline void MockCategoricalData(arma::mat& d,
                                 arma::Row<double>& l,
-                                mlpack::data::DatasetInfo& datasetInfo)
+                                mlpack::DatasetInfo& datasetInfo)
 {
   // Dataset of size 4000.
   d.set_size(5, 4000);
@@ -156,9 +156,9 @@ inline void MockCategoricalData(arma::mat& d,
   }
 
   // Now create the dataset info.
-  datasetInfo = mlpack::data::DatasetInfo(5);
-  datasetInfo.Type(3) = mlpack::data::Datatype::categorical;
-  datasetInfo.Type(4) = mlpack::data::Datatype::categorical;
+  datasetInfo = mlpack::DatasetInfo(5);
+  datasetInfo.Type(3) = mlpack::Datatype::categorical;
+  datasetInfo.Type(4) = mlpack::Datatype::categorical;
   // Set mappings.
   datasetInfo.MapString<double>("0", 3);
   datasetInfo.MapString<double>("1", 3);

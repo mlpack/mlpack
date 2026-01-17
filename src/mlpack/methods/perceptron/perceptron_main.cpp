@@ -238,7 +238,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Normalize the labels.
     Row<size_t> labels;
-    data::NormalizeLabels(labelsIn, labels, p->Map());
+    NormalizeLabels(labelsIn, labels, p->Map());
     const size_t numClasses = p->Map().n_elem;
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
@@ -306,7 +306,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Un-normalize labels to prepare output.
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, p->Map(), results);
+    RevertLabels(predictedLabels, p->Map(), results);
 
     // Save the predicted labels.
     if (params.Has("predictions"))

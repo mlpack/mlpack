@@ -225,9 +225,9 @@ TEST_CASE("IrisDataset", "[KSInitialization]")
 
   arma::mat dataset, labels;
 
-  if (!data::Load("iris.csv", dataset))
+  if (!Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
   dataset.insert_rows(dataset.n_rows, labels);

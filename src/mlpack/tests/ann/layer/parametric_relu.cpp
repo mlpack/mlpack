@@ -18,7 +18,6 @@
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * PReLU forward pass test.
@@ -105,16 +104,16 @@ double ComputeMSRE(arma::mat input, arma::mat target)
 TEST_CASE("PReLUIntegrationTest", "[ANNLayerTest]")
 {
   arma::mat data;
-  data::Load("boston_housing_price.csv", data, Fatal + Transpose);
+  Load("boston_housing_price.csv", data, Fatal + Transpose);
   arma::mat labels;
-  data::Load("boston_housing_price_responses.csv", labels, Fatal + Transpose);
+  Load("boston_housing_price_responses.csv", labels, Fatal + Transpose);
 
   // Sometimes the model may not optimize correctly, so we allow a few trials.
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::mat trainData, testData, trainLabels, testLabels;
-    data::Split(data, labels, trainData, testData, trainLabels, testLabels,
+    Split(data, labels, trainData, testData, trainLabels, testLabels,
         0.2);
 
     FFN<L1Loss> model;

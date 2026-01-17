@@ -25,9 +25,9 @@ TEST_CASE("NaiveBayesClassifierTest", "[NBCTest][tiny]")
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainResultFilename, trainRes))
+  if (!Load(trainResultFilename, trainRes))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -67,11 +67,11 @@ TEST_CASE("NaiveBayesClassifierTest", "[NBCTest][tiny]")
   arma::mat testResProbs;
   arma::Row<size_t> calcVec;
   arma::mat calcProbs;
-  if (!data::Load(testFilename, testData))
+  if (!Load(testFilename, testData))
     FAIL("Cannot load dataset");
-  if (!data::Load(testResultFilename, testRes))
+  if (!Load(testResultFilename, testRes))
     FAIL("Cannot load dataset");
-  if (!data::Load(testResultProbsFilename, testResProbs))
+  if (!Load(testResultProbsFilename, testResProbs))
     FAIL("Cannot load dataset");
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
@@ -103,9 +103,9 @@ TEST_CASE("NaiveBayesClassifierIncrementalTest", "[NBCTest]")
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainResultFilename, trainRes))
+  if (!Load(trainResultFilename, trainRes))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -145,11 +145,11 @@ TEST_CASE("NaiveBayesClassifierIncrementalTest", "[NBCTest]")
   arma::mat testResProba;
   arma::Row<size_t> calcVec;
   arma::mat calcProbs;
-  if (!data::Load(testFilename, testData))
+  if (!Load(testFilename, testData))
     FAIL("Cannot load dataset");
-  if (!data::Load(testResultFilename, testRes))
+  if (!Load(testResultFilename, testRes))
     FAIL("Cannot load dataset");
-  if (!data::Load(testResultProbsFilename, testResProba))
+  if (!Load(testResultProbsFilename, testResProba))
     FAIL("Cannot load dataset");
 
   testData.shed_row(testData.n_rows - 1); // Remove the labels.
@@ -179,9 +179,9 @@ TEST_CASE("SeparateTrainTest", "[NBCTest]")
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainResultFilename, trainRes))
+  if (!Load(trainResultFilename, trainRes))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -239,9 +239,9 @@ TEST_CASE("SeparateTrainIncrementalTest", "[NBCTest]")
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainResultFilename, trainRes))
+  if (!Load(trainResultFilename, trainRes))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -299,9 +299,9 @@ TEST_CASE("SeparateTrainIndividualIncrementalTest", "[NBCTest]")
   size_t classes = 2;
 
   arma::mat trainData, trainRes, calcMat;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainResultFilename, trainRes))
+  if (!Load(trainResultFilename, trainRes))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -371,9 +371,9 @@ TEST_CASE("NaiveBayesClassifierHighDimensionsTest", "[NBCTest]")
   // Create variables for training and assign data to them.
   arma::mat trainData;
   arma::Row<size_t> trainLabels;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
-  if (!data::Load(trainLabelsFileName, trainLabels))
+  if (!Load(trainLabelsFileName, trainLabels))
     FAIL("Cannot load dataset");
 
   // Initialize and train a NBC model.
@@ -383,9 +383,9 @@ TEST_CASE("NaiveBayesClassifierHighDimensionsTest", "[NBCTest]")
   arma::mat testData, calcProbs;
   arma::Row<size_t> testLabels;
   arma::Row<size_t> calcVec;
-  if (!data::Load(testFilename, testData))
+  if (!Load(testFilename, testData))
     FAIL("Cannot load dataset");
-  if (!data::Load(testLabelsFilename, testLabels))
+  if (!Load(testLabelsFilename, testLabels))
     FAIL("Cannot load dataset");
 
   // Classify observations in the test dataset. To use Classify() method with
@@ -406,7 +406,7 @@ TEST_CASE("NBCResetTest", "[NBCTest]")
   const char* trainFilename = "trainSet.csv";
 
   arma::mat trainData;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
 
   // Get the labels out.
@@ -448,7 +448,7 @@ TEMPLATE_TEST_CASE("NBCIncrementalTest", "[NBCTest]", arma::fmat, arma::mat)
   const char* trainFilename = "trainSet.csv";
 
   MatType trainData;
-  if (!data::Load(trainFilename, trainData))
+  if (!Load(trainFilename, trainData))
     FAIL("Cannot load dataset");
 
   // Get the labels out.

@@ -18,7 +18,6 @@
 #include "save_dense.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename ObjectType, typename DataOptionsType>
 bool SaveNumeric(const std::string& filename,
@@ -51,12 +50,11 @@ bool SaveNumeric(const std::string& filename,
   {
     success = SaveDense(matrix, txtOpts, filename, stream);
   }
-  opts = std::move(txtOpts);
+  static_cast<DataOptionsType&>(opts) = std::move(txtOpts);
 
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

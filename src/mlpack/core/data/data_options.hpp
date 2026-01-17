@@ -20,7 +20,6 @@
 #include "map_policies/map_policies.hpp"
 
 namespace mlpack {
-namespace data {
 
 enum struct FileType
 {
@@ -118,7 +117,7 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator=(DataOptionsBase<Derived2>&& other)
   {
-    if ((void*) &other != (void*) this)
+    if ((void*) &other == (void*) this)
       return *this;
 
     // Print warnings for any members that cannot be converted.
@@ -538,7 +537,6 @@ inline bool HandleError(const std::string& msg, bool fatal)
   return HandleError(oss, fatal);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

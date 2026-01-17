@@ -34,7 +34,7 @@ TEST_CASE_METHOD(
     "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -46,7 +46,7 @@ TEST_CASE_METHOD(
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!Load("testSet.csv", testData))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -79,7 +79,7 @@ TEST_CASE_METHOD(
     "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Input training data.
@@ -97,7 +97,7 @@ TEST_CASE_METHOD(
     "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -109,7 +109,7 @@ TEST_CASE_METHOD(
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!Load("testSet.csv", testData))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -160,7 +160,7 @@ TEST_CASE_METHOD(
     "SoftmaxRegressionMaxItrTest", "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -187,7 +187,7 @@ TEST_CASE_METHOD(
     "SoftmaxRegressionLambdaTest", "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -215,7 +215,7 @@ TEST_CASE_METHOD(
     "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -243,7 +243,7 @@ TEST_CASE_METHOD(
     "[SoftmaxRegressionMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -278,7 +278,7 @@ TEST_CASE_METHOD(
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -290,7 +290,7 @@ TEST_CASE_METHOD(
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!Load("testSet.csv", testData))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -344,7 +344,7 @@ TEST_CASE_METHOD(
 {
   // Train SR for lambda 0.1.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -356,7 +356,7 @@ TEST_CASE_METHOD(
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!Load("testSet.csv", testData))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -410,7 +410,7 @@ TEST_CASE_METHOD(
 {
   // Train SR with intercept.
   arma::mat inputData;
-  if (!data::Load("trainSet.csv", inputData))
+  if (!Load("trainSet.csv", inputData))
     FAIL("Cannot load train dataset trainSet.csv!");
 
   // Get the labels out.
@@ -422,7 +422,7 @@ TEST_CASE_METHOD(
   inputData.shed_row(inputData.n_rows - 1);
 
   arma::mat testData;
-  if (!data::Load("testSet.csv", testData))
+  if (!Load("testSet.csv", testData))
     FAIL("Cannot load test dataset testSet.csv!");
 
   // Delete the last row containing labels from test dataset.
@@ -473,11 +473,11 @@ TEST_CASE_METHOD(
 {
   // Train softmax regression.
   arma::mat data;
-  if (!data::Load("vc2.csv", data))
+  if (!Load("vc2.csv", data))
     FAIL("Cannot load train dataset 'vc2.csv'!");
   // Get the labels out.
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load training labels 'vc2_labels.txt'!");
 
   // Input training data.

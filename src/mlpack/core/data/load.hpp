@@ -28,7 +28,17 @@
 #include "load_model.hpp"
 
 namespace mlpack {
-namespace data /** Functions to load and save matrices and models. */ {
+
+/**
+ * Loads a matrix from file, use the default options for fatal, transpose, and
+ * try to detect the file type using AutoDetect.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename MatType>
+bool Load(const std::string& filename, MatType& matrix);
 
 /**
  * Loads a matrix from file, use the default options for fatal, transpose, and
@@ -54,6 +64,7 @@ template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
           DataOptionsType& opts,
+          const bool copyBack = true,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 
@@ -118,10 +129,10 @@ template<typename eT, typename DataOptionsType>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           DataOptionsType& opts,
+          const bool copyBack = true,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation of Load() for matrix.

@@ -34,9 +34,9 @@ void PrintInputProcessing(
     const size_t indent,
     const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   // The copy_all_inputs parameter must be handled first, and therefore is
   // outside the scope of this code.
@@ -166,9 +166,9 @@ void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0,
+        std::tuple<DatasetInfo, arma::mat>>>* = 0,
     const std::enable_if_t<util::IsStdVector<T>::value>* = 0)
 {
   const std::string prefix(indent, ' ');
@@ -385,7 +385,7 @@ void PrintInputProcessing(
     const size_t indent,
     const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // First, get the correct class name if needed.
   std::string strippedType, printedType, defaultsType;
@@ -460,7 +460,7 @@ void PrintInputProcessing(
     const size_t indent,
     const std::enable_if_t<!util::IsStdVector<T>::value>* = 0,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   std::string name = GetValidName(d.name);
 

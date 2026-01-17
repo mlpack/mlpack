@@ -16,7 +16,6 @@
 #include "save_matrix.hpp"
 
 namespace mlpack {
-namespace data {
 
 // Save a Sparse Matrix
 template<typename eT>
@@ -40,7 +39,6 @@ bool SaveSparse(const arma::SpMat<eT>& matrix,
   return success;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

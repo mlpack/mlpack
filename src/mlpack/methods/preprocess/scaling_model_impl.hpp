@@ -17,7 +17,6 @@
 #include "scaling_model.hpp"
 
 namespace mlpack {
-namespace data {
 
 inline ScalingModel::ScalingModel(const int minvalue,
                                   const int maxvalue,
@@ -40,17 +39,17 @@ inline ScalingModel::ScalingModel(const int minvalue,
 inline ScalingModel::ScalingModel(const ScalingModel& other) :
     scalerType(other.scalerType),
     minmaxscale(other.minmaxscale == NULL ? NULL :
-        new data::MinMaxScaler(*other.minmaxscale)),
+        new MinMaxScaler(*other.minmaxscale)),
     maxabsscale(other.maxabsscale == NULL ? NULL :
-        new data::MaxAbsScaler(*other.maxabsscale)),
+        new MaxAbsScaler(*other.maxabsscale)),
     meanscale(other.meanscale == NULL ? NULL :
-        new data::MeanNormalization(*other.meanscale)),
+        new MeanNormalization(*other.meanscale)),
     standardscale(other.standardscale == NULL ? NULL :
-        new data::StandardScaler(*other.standardscale)),
+        new StandardScaler(*other.standardscale)),
     pcascale(other.pcascale == NULL ? NULL :
-        new data::PCAWhitening(*other.pcascale)),
+        new PCAWhitening(*other.pcascale)),
     zcascale(other.zcascale == NULL ? NULL :
-        new data::ZCAWhitening(*other.zcascale)),
+        new ZCAWhitening(*other.zcascale)),
     minValue(other.minValue),
     maxValue(other.maxValue),
     epsilon(other.epsilon)
@@ -94,27 +93,27 @@ inline ScalingModel& ScalingModel::operator=(const ScalingModel& other)
 
   delete minmaxscale;
   minmaxscale = (other.minmaxscale == NULL) ? NULL :
-      new data::MinMaxScaler(*other.minmaxscale);
+      new MinMaxScaler(*other.minmaxscale);
 
   delete maxabsscale;
   maxabsscale = (other.maxabsscale == NULL) ? NULL :
-      new data::MaxAbsScaler(*other.maxabsscale);
+      new MaxAbsScaler(*other.maxabsscale);
 
   delete standardscale;
   standardscale = (other.standardscale == NULL) ? NULL :
-      new data::StandardScaler(*other.standardscale);
+      new StandardScaler(*other.standardscale);
 
   delete meanscale;
   meanscale = (other.meanscale == NULL) ? NULL :
-      new data::MeanNormalization(*other.meanscale);
+      new MeanNormalization(*other.meanscale);
 
   delete pcascale;
   pcascale = (other.pcascale == NULL) ? NULL :
-      new data::PCAWhitening(*other.pcascale);
+      new PCAWhitening(*other.pcascale);
 
   delete zcascale;
   zcascale = (other.zcascale == NULL) ? NULL :
-      new data::ZCAWhitening(*other.zcascale);
+      new ZCAWhitening(*other.zcascale);
 
   minValue = other.minValue;
   maxValue = other.maxValue;
@@ -169,37 +168,37 @@ void ScalingModel::Fit(const MatType& input)
   if (scalerType == ScalerTypes::STANDARD_SCALER)
   {
     delete standardscale;
-    standardscale = new data::StandardScaler();
+    standardscale = new StandardScaler();
     standardscale->Fit(input);
   }
   else if (scalerType == ScalerTypes::MIN_MAX_SCALER)
   {
     delete minmaxscale;
-    minmaxscale = new data::MinMaxScaler(minValue, maxValue);
+    minmaxscale = new MinMaxScaler(minValue, maxValue);
     minmaxscale->Fit(input);
   }
   else if (scalerType == ScalerTypes::MEAN_NORMALIZATION)
   {
     delete meanscale;
-    meanscale = new data::MeanNormalization();
+    meanscale = new MeanNormalization();
     meanscale->Fit(input);
   }
   else if (scalerType == ScalerTypes::MAX_ABS_SCALER)
   {
     delete maxabsscale;
-    maxabsscale = new data::MaxAbsScaler();
+    maxabsscale = new MaxAbsScaler();
     maxabsscale->Fit(input);
   }
   else if (scalerType == ScalerTypes::PCA_WHITENING)
   {
     delete pcascale;
-    pcascale = new data::PCAWhitening(epsilon);
+    pcascale = new PCAWhitening(epsilon);
     pcascale->Fit(input);
   }
   else if (scalerType == ScalerTypes::ZCA_WHITENING)
   {
     delete zcascale;
-    zcascale = new data::ZCAWhitening(epsilon);
+    zcascale = new ZCAWhitening(epsilon);
     zcascale->Fit(input);
   }
 }
@@ -262,7 +261,6 @@ void ScalingModel::InverseTransform(const MatType& input, MatType& output)
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -36,7 +36,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   // TODO: when DataOptions refactoring is done, this should load so that
   // invalid tokens map to NaN, and the replace() can be removed.
-  data::Load("preprocess_imputer_test.csv", inputData);
+  Load("preprocess_imputer_test.csv", inputData);
   inputData.replace(0.0, std::nan(""));
 
   arma::mat outputData;
@@ -96,7 +96,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   // TODO: when DataOptions refactoring is done, this should load so that
   // invalid tokens map to NaN, and the replace() can be removed.
-  data::Load("preprocess_imputer_test.csv", inputData);
+  Load("preprocess_imputer_test.csv", inputData);
   inputData.replace(0.0, std::nan(""));
 
   // Store size of input dataset.
@@ -136,7 +136,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   // TODO: when DataOptions refactoring is done, this should load so that
   // invalid tokens map to NaN, and the replace() can be removed.
-  data::Load("preprocess_imputer_test.csv", inputData);
+  Load("preprocess_imputer_test.csv", inputData);
   inputData.replace(0.0, std::nan(""));
 
   // Input custom data points and labels.
@@ -157,7 +157,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   // TODO: when DataOptions refactoring is done, this should load so that
   // invalid tokens map to 0.0.
-  data::Load("preprocess_imputer_test.csv", inputData);
+  Load("preprocess_imputer_test.csv", inputData);
   inputData.replace(std::nan(""), 0.0);
 
   // Input custom data points and labels.
@@ -185,7 +185,7 @@ TEST_CASE_METHOD(
   arma::mat inputData;
   // TODO: when DataOptions refactoring is done, this should load so that
   // invalid tokens map to NaN.  (Or the test case should be adapted.)
-  data::Load("preprocess_imputer_test.csv", inputData);
+  Load("preprocess_imputer_test.csv", inputData);
   inputData.replace(std::nan(""), 0.0);
 
   // Input custom data points and labels.

@@ -427,7 +427,7 @@ class DistractedSequenceTestSetCallback
 
     // Binarize the output to 0/1.
     for (size_t j = 0; j < testPreds.n_slices; ++j)
-      data::Binarize(testPreds.slice(j), testPreds.slice(j), 0.5);
+      Binarize(testPreds.slice(j), testPreds.slice(j), 0.5);
 
     // Count the number of columns where we got one or more time slice
     // predictions incorrect.
