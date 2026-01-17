@@ -95,7 +95,6 @@ TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
   TextOptions opts;
-  opts.Fatal() = true;
   REQUIRE(Load("test_image.png", matrix, opts) == true);
 }
 

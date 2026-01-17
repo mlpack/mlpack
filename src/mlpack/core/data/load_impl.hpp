@@ -27,7 +27,7 @@ bool Load(const std::string& filename,
               IsDataOptions<DataOptionsType>::value>*)
 {
   DataOptionsType tmpOpts(opts);
-  return Load(filename, matrix, tmpOpts);
+  return Load(filename, matrix, tmpOpts, false);
 }
 
 template<typename eT, typename DataOptionsType>
@@ -38,7 +38,7 @@ bool Load(const std::vector<std::string>& files,
               IsDataOptions<DataOptionsType>::value>*)
 {
   DataOptionsType tmpOpts(opts);
-  return Load(files, matrix, tmpOpts);
+  return Load(files, matrix, tmpOpts, false);
 }
 
 template<typename MatType>
@@ -51,6 +51,7 @@ template<typename ObjectType, typename DataOptionsType>
 bool Load(const std::string& filename,
           ObjectType& matrix,
           DataOptionsType& opts,
+          const bool copyBack,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
@@ -99,14 +100,16 @@ bool Load(const std::string& filename,
         std::vector<std::string> files;
         files.push_back(filename);
         success = LoadImage(files, matrix, imgOpts);
-        opts = std::move(imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
       }
     }
     else
     {
       TextOptions txtOpts(std::move(opts));
       success = LoadNumeric(filename, matrix, stream, txtOpts);
-      opts = std::move(txtOpts);
+      if (copyBack)
+        opts = std::move(txtOpts);
     }
   }
   else if constexpr (isSerializable)
@@ -144,6 +147,7 @@ template<typename eT, typename DataOptionsType>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
           DataOptionsType& opts,
+          const bool copyBack,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>*)
 {
@@ -165,13 +169,15 @@ bool Load(const std::vector<std::string>& files,
   {
     ImageOptions imgOpts(std::move(opts));
     success = LoadImage(files, matrix, imgOpts);
-    opts = std::move(imgOpts);
+    if (copyBack)
+      opts = std::move(imgOpts);
   }
   else
   {
     TextOptions txtOpts(std::move(opts));
     success = LoadNumericMultifile(files, matrix, txtOpts);
-    opts = std::move(txtOpts);
+    if (copyBack)
+      opts = std::move(txtOpts);
   }
   return success;
 }

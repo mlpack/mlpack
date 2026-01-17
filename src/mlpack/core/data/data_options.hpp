@@ -117,7 +117,7 @@ class DataOptionsBase
   template<typename Derived2>
   DataOptionsBase& operator=(DataOptionsBase<Derived2>&& other)
   {
-    if ((void*) &other != (void*) this)
+    if ((void*) &other == (void*) this)
       return *this;
 
     // Print warnings for any members that cannot be converted.

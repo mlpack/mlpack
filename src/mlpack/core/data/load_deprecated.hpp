@@ -260,7 +260,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into sparse matrix
@@ -276,7 +276,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into a column vector
@@ -287,7 +287,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, vec, opts);
+  return Load(filename, vec, opts, false);
 }
 
 // For loading data into a raw vector
@@ -298,7 +298,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, rowvec, opts);
+  return Load(filename, rowvec, opts, false);
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
