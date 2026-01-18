@@ -50,14 +50,13 @@ arma::mat kMeansData("  0.0   0.0;" // Class 1.
 /**
  * 30-point 3-class test case for K-Means.
  */
-TEST_CASE("KMeansSimpleTest", "[KMeansTest]")
-{
+TEST_CASE("KMeansSimpleTest", "[KMeansTest]") {
   // This test was originally written to use RandomPartition, and is left that
   // way because RandomPartition gives better initializations here.
   KMeans<EuclideanDistance, RandomPartition> kmeans;
 
   arma::Row<size_t> assignments;
-  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
+  kmeans.Cluster((arma::mat)trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
@@ -84,20 +83,16 @@ TEST_CASE("KMeansSimpleTest", "[KMeansTest]")
     REQUIRE(assignments(i) == thirdClass);
 }
 
-TEST_CASE("KMeansMaxIterationsZeroTest", "[KMeansTest]") 
-{
-  // dataset with two clusters
-  arma::mat data("1.0 1.1 1.2 10.0 10.1 10.2;"
+TEST_CASE("KMeansMaxIterationsZeroTest", "[KMeansTest]") {
+  arma::mat data("1.0 1.1 1.2 10.0 10.1 10.2;" // dataset with two clusters
                  "1.0 1.1 1.2 10.0 10.1 10.2;");
 
   arma::Row<size_t> assignments;
   arma::mat centroids;
 
-  
   KMeans<> kmeans(0); // max iterations = 0
 
   kmeans.Cluster(data, 2, assignments, centroids, false, false);
-
   // first three points must belong to the same cluster.
   REQUIRE(assignments[0] == assignments[1]);
   REQUIRE(assignments[1] == assignments[2]);
@@ -110,18 +105,14 @@ TEST_CASE("KMeansMaxIterationsZeroTest", "[KMeansTest]")
   REQUIRE(assignments[0] != assignments[3]);
 }
 
-
-
-TEST_CASE("KMeansMaxIterationsOneTest", "[KMeansTest]")
-{
-  //dataset with 2 clusters
-  arma::mat data("1.0 1.0 10.0 10.0;"
+TEST_CASE("KMeansMaxIterationsOneTest", "[KMeansTest]") {
+  arma::mat data("1.0 1.0 10.0 10.0;"  // dataset with 2 clusters
                  "1.0 1.0 10.0 10.0;");
 
   arma::Row<size_t> assignments;
   arma::mat centroids;
 
-  KMeans<> kmeans(1);   // max iterations = 1
+  KMeans<> kmeans(1); // max iterations = 1
 
   kmeans.Cluster(data, 2, assignments, centroids, false, false);
 
@@ -135,9 +126,7 @@ TEST_CASE("KMeansMaxIterationsOneTest", "[KMeansTest]")
   REQUIRE(assignments[0] != assignments[2]);
 }
 
-
-TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
-{
+TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]") {
   arma::Row<size_t> assignments;
   assignments.randu(30);
   arma::Row<size_t> assignmentsOld = assignments;
@@ -146,7 +135,7 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   centroids.randu(30, 3); // This doesn't matter.
 
   arma::Col<size_t> counts(3);
-  counts[0] = accu(assignments == 0); 
+  counts[0] = accu(assignments == 0);
   counts[1] = accu(assignments == 1);
   counts[2] = 0;
   arma::Col<size_t> countsOld = counts;
@@ -155,8 +144,7 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   LMetric<2, true> distance;
 
   AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      distance, 0);
-
+                                   distance, 0);
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
     REQUIRE(assignments[i] == assignmentsOld[i]);
@@ -169,8 +157,7 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
 /**
  * Make sure kill empty cluster policy removes the empty cluster.
  */
-TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
-{
+TEST_CASE("KillEmptyClusterTest", "[KMeansTest]") {
   arma::Row<size_t> assignments;
   assignments.randu(30);
   arma::Row<size_t> assignmentsOld = assignments;
@@ -188,7 +175,7 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
   LMetric<2, true> distance;
 
   KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      distance, 0);
+                                  distance, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -205,8 +192,7 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
 /**
  * Make sure the max variance method finds the correct point.
  */
-TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
-{
+TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]") {
   // Five points.
   arma::mat data("0.4 1.0 5.0 -2.0 -2.5;"
                  "1.0 0.8 0.7  5.1  5.2;");
@@ -230,18 +216,15 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
+  for (size_t i = 0; i < data.n_cols; ++i) {
     // Find the closest centroid to this point.
     double minDistance = std::numeric_limits<double>::infinity();
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
-    for (size_t j = 0; j < centroids.n_cols; ++j)
-    {
+    for (size_t j = 0; j < centroids.n_cols; ++j) {
       const double dist = distance.Evaluate(data.col(i), centroids.col(j));
 
-      if (dist < minDistance)
-      {
+      if (dist < minDistance) {
         minDistance = dist;
         closestCluster = j;
       }
@@ -265,8 +248,7 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 /**
  * Make sure the random partitioner seems to return valid results.
  */
-TEST_CASE("RandomPartitionTest", "[KMeansTest]")
-{
+TEST_CASE("RandomPartitionTest", "[KMeansTest]") {
   arma::mat data;
   data.randu(2, 1000); // One thousand points.
 
@@ -286,8 +268,7 @@ TEST_CASE("RandomPartitionTest", "[KMeansTest]")
 /**
  * Make sure that random initialization fails for a corner case dataset.
  */
-TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest][long]")
-{
+TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest][long]") {
   // This is a very synthetic dataset.  It is one Gaussian with a huge number of
   // points combined with one faraway Gaussian with very few points.  Normally,
   // k-means should not get the correct result -- which is one cluster at each
@@ -307,8 +288,7 @@ TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest][long]")
   // strictly a necessary test, but it does help let us know that this is a good
   // test.
   size_t successes = 0;
-  for (size_t run = 0; run < 15; ++run)
-  {
+  for (size_t run = 0; run < 15; ++run) {
     arma::mat centroids;
     arma::Row<size_t> assignments;
     KMeans<> kmeans;
@@ -329,8 +309,7 @@ TEST_CASE("RandomInitialAssignmentFailureTest", "[KMeansTest][long]")
  * Make sure that specifying initial assignments is successful for a corner case
  * dataset which doesn't usually converge otherwise.
  */
-TEST_CASE("InitialAssignmentTest", "[KMeansTest]")
-{
+TEST_CASE("InitialAssignmentTest", "[KMeansTest]") {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
   arma::mat dataset(2, 10002);
@@ -373,8 +352,7 @@ TEST_CASE("InitialAssignmentTest", "[KMeansTest]")
  * Make sure specifying initial centroids is successful for a corner case which
  * doesn't usually converge otherwise.
  */
-TEST_CASE("InitialCentroidTest", "[KMeansTest]")
-{
+TEST_CASE("InitialCentroidTest", "[KMeansTest]") {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
   arma::mat dataset(2, 10002);
@@ -415,8 +393,7 @@ TEST_CASE("InitialCentroidTest", "[KMeansTest]")
 /**
  * Ensure that initial assignments override initial centroids.
  */
-TEST_CASE("InitialAssignmentOverrideTest", "[KMeansTest]")
-{
+TEST_CASE("InitialAssignmentOverrideTest", "[KMeansTest]") {
   // For a better description of this dataset, see
   // RandomInitialAssignmentFailureTest.
   arma::mat dataset(2, 10002);
@@ -457,8 +434,7 @@ TEST_CASE("InitialAssignmentOverrideTest", "[KMeansTest]")
  * Test that the refined starting policy returns decent initial cluster
  * estimates.
  */
-TEST_CASE("RefinedStartTest", "[KMeansTest]")
-{
+TEST_CASE("RefinedStartTest", "[KMeansTest]") {
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
@@ -494,8 +470,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   resultingCentroids.zeros(3, 5);
   arma::Col<size_t> counts(5);
   counts.zeros();
-  for (size_t i = 0; i < 3000; ++i)
-  {
+  for (size_t i = 0; i < 3000; ++i) {
     resultingCentroids.col(assignments[i]) += data.col(i);
     ++counts[assignments[i]];
   }
@@ -508,8 +483,8 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // Calculate sum of distances from centroid means.
   double distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
-    distortion += EuclideanDistance::Evaluate(data.col(i),
-        resultingCentroids.col(assignments[i]));
+    distortion += EuclideanDistance::Evaluate(
+        data.col(i), resultingCentroids.col(assignments[i]));
 
   // Using the refined start, the distance for this dataset is usually around
   // 13500.  Regular k-means is between 10000 and 30000 (I think the 10000
@@ -523,8 +498,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
  * Test that the k-means++ initialization strategy returns decent initial
  * cluster estimates.
  */
-TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]") {
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
@@ -555,15 +529,12 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
 
   // Calculate resulting assignments.
   arma::Row<size_t> assignments(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
+  for (size_t i = 0; i < data.n_cols; ++i) {
     double bestDist = DBL_MAX;
-    for (size_t j = 0; j < 5; ++j)
-    {
-      const double dist = EuclideanDistance::Evaluate(data.col(i),
-          resultingCentroids.col(j));
-      if (dist < bestDist)
-      {
+    for (size_t j = 0; j < 5; ++j) {
+      const double dist =
+          EuclideanDistance::Evaluate(data.col(i), resultingCentroids.col(j));
+      if (dist < bestDist) {
         bestDist = dist;
         assignments[i] = j;
       }
@@ -573,8 +544,8 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
   // Calculate sum of distances from centroid means.
   double distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
-    distortion += EuclideanDistance::Evaluate(data.col(i),
-        resultingCentroids.col(assignments[i]));
+    distortion += EuclideanDistance::Evaluate(
+        data.col(i), resultingCentroids.col(assignments[i]));
 
   // Using k-means++, the distance for this dataset is usually around
   // 10000.  Regular k-means is between 10000 and 30000 (I think the 10000
@@ -589,8 +560,7 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
 /**
  * Make sure sparse k-means works okay.
  */
-TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]") {
   // Huge dimensionality, few points.
   arma::SpMat<double> data(5000, 12);
   data(14, 0) = 6.4;
@@ -609,7 +579,8 @@ TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
   arma::Row<size_t> assignments;
 
   KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster, NaiveKMeans,
-         arma::sp_mat> kmeans; // Default options.
+         arma::sp_mat>
+      kmeans; // Default options.
 
   kmeans.Cluster(data, 2, assignments);
 
@@ -632,12 +603,10 @@ TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
 
 #endif // ARMA_HAS_SPMAT
 
-TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("ElkanTest", "[KMeansTest][tiny]") {
   const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+  for (size_t t = 0; t < trials; ++t) {
     arma::mat dataset(10, 1000);
     dataset.randu();
 
@@ -653,7 +622,8 @@ TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        ElkanKMeans> elkan;
+           ElkanKMeans>
+        elkan;
     arma::Row<size_t> elkanAssignments;
     arma::mat elkanCentroids(centroids);
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
@@ -666,12 +636,10 @@ TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
   }
 }
 
-TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("HamerlyTest", "[KMeansTest][tiny]") {
   const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+  for (size_t t = 0; t < trials; ++t) {
     arma::mat dataset(10, 1000);
     dataset.randu();
 
@@ -687,11 +655,12 @@ TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        HamerlyKMeans> hamerly;
+           HamerlyKMeans>
+        hamerly;
     arma::Row<size_t> hamerlyAssignments;
     arma::mat hamerlyCentroids(centroids);
     hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
-        true);
+                    true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == hamerlyAssignments[i]);
@@ -701,12 +670,10 @@ TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
   }
 }
 
-TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]") {
   const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+  for (size_t t = 0; t < trials; ++t) {
     arma::mat dataset(10, 1000);
     dataset.randu();
 
@@ -722,7 +689,8 @@ TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        PellegMooreKMeans> pellegMoore;
+           PellegMooreKMeans>
+        pellegMoore;
     arma::Row<size_t> pmAssignments;
     arma::mat pmCentroids(centroids);
     pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
@@ -735,12 +703,10 @@ TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
   }
 }
 
-TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("DTNNTest", "[KMeansTest][tiny]") {
   const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+  for (size_t t = 0; t < trials; ++t) {
     arma::mat dataset(10, 300);
     dataset.randu();
 
@@ -754,7 +720,8 @@ TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        DefaultDualTreeKMeans> dtnn;
+           DefaultDualTreeKMeans>
+        dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
@@ -767,12 +734,10 @@ TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
   }
 }
 
-TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
-{
+TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]") {
   const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+  for (size_t t = 0; t < trials; ++t) {
     arma::mat dataset(10, 300);
     dataset.randu();
 
@@ -786,7 +751,8 @@ TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        CoverTreeDualTreeKMeans> dtnn;
+           CoverTreeDualTreeKMeans>
+        dtnn;
     arma::Row<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
@@ -803,8 +769,7 @@ TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
  * Make sure that the sample initialization strategy successfully samples points
  * from the dataset.
  */
-TEST_CASE("SampleInitializationTest", "[KMeansTest]")
-{
+TEST_CASE("SampleInitializationTest", "[KMeansTest]") {
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   const size_t clusters = 10;
   arma::mat centroids;
@@ -816,15 +781,13 @@ TEST_CASE("SampleInitializationTest", "[KMeansTest]")
   REQUIRE(centroids.n_rows == 5);
 
   // Check that each entry in the matrix is some sample from the dataset.
-  for (size_t i = 0; i < clusters; ++i)
-  {
+  for (size_t i = 0; i < clusters; ++i) {
     // If the loop successfully terminates, j will be equal to dataset.n_cols.
     // If not then we have found a match.
     size_t j;
-    for (j = 0; j < dataset.n_cols; ++j)
-    {
-      const double distance = EuclideanDistance::Evaluate(
-          centroids.col(i), dataset.col(j));
+    for (j = 0; j < dataset.n_cols; ++j) {
+      const double distance =
+          EuclideanDistance::Evaluate(centroids.col(i), dataset.col(j));
       if (distance < 1e-10)
         break;
     }
