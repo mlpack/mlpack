@@ -71,18 +71,18 @@ inline void BoundingBoxImage(ImageType& src,
   const size_t imageSize = srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
   if (src.n_elem != imageSize) {
     std::ostringstream errMessage;
-    errMessage << "BoundingBoxImage(): The size of the image (" << src.n_elem 
+    errMessage << "BoundingBoxImage(): The size of the image (" << src.n_elem
                << ") does not match the given dimensions ("
                << srcOpt.Width() << ", " << srcOpt.Height() << ", "
                << srcOpt.Channels() << ").";
     throw std::logic_error(errMessage.str());
   }
 
-  if (color.n_elem != srcOpt.Channels()) {
+  if (color.n_rows != srcOpt.Channels() || color.n_cols != 1) {
     std::ostringstream errMessage;
-    errMessage << "BoundingBoxImage(): The number of color channels ("
-               << color.n_elem << ") does not match the number image channels ("
-               << srcOpt.Channels() << ")";
+    errMessage << "BoundingBoxImage(): The color vector of shape ("
+               << color.n_rows << ", " << color.n_cols << ") does not match "
+               << "expected shape (" << srcOpt.Channels() << ", 1)";
     throw std::logic_error(errMessage.str());
   }
 
