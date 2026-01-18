@@ -99,7 +99,7 @@ T& GetParam(
   if (d.input && !d.loaded)
   {
     TextOptions opts = Fatal + Categorical;
-    opts.NoTranspose () = d.noTranspose;
+    opts.NoTranspose() = d.noTranspose;
     Load(value, std::get<1>(t), opts);
     n_rows = std::get<1>(t).n_rows;
     n_cols = std::get<1>(t).n_cols;
