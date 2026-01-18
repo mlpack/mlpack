@@ -24,9 +24,7 @@ inline void BoundingBoxImage(ImageType& src,
   const ImageInfo& srcOpt,
   const BoundingBoxesType& bbox,
   const std::string& className,
-  const typename ImageType::elem_type red,
-  const typename ImageType::elem_type green,
-  const typename ImageType::elem_type blue,
+  const ImageType& color,
   const size_t borderSize,
   const size_t letterSize);
 

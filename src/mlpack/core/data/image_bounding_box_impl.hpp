@@ -24,16 +24,14 @@ inline void UpdatePixel(MatType& src,
   const ImageInfo& srcOpt,
   const size_t x,
   const size_t y,
-  const typename MatType::elem_type red,
-  const typename MatType::elem_type green,
-  const typename MatType::elem_type blue)
+  const MatType& color)
 {
   const size_t redChannel =
     x * srcOpt.Channels() + y * srcOpt.Channels() * srcOpt.Width();
 
-  src.at(redChannel, 0) = red;
-  src.at(redChannel + 1, 0) = green;
-  src.at(redChannel + 2, 0) = blue;
+  src.at(redChannel, 0) = color.at(0); // TODO: use submat, color needs to be a column vector
+  src.at(redChannel + 1, 0) = color.at(1);
+  src.at(redChannel + 2, 0) = color.at(2);
 }
 
 template <typename MatType>
@@ -65,31 +63,39 @@ inline void BoundingBoxImage(ImageType& src,
   const ImageInfo& srcOpt,
   const BoundingBoxesType& bbox,
   const std::string& className,
-  const typename ImageType::elem_type red,
-  const typename ImageType::elem_type green,
-  const typename ImageType::elem_type blue,
+  const ImageType& color,
   const size_t borderSize,
   const size_t letterSize)
 {
   using ElemType = typename BoundingBoxesType::elem_type;
-  const ElemType x1 = std::clamp<ElemType>(bbox(0), 0, srcOpt.Width() - 1);
-  const ElemType y1 = std::clamp<ElemType>(bbox(1), 0, srcOpt.Height() - 1);
-  const ElemType x2 = std::clamp<ElemType>(bbox(2), 0, srcOpt.Width() - 1);
-  const ElemType y2 = std::clamp<ElemType>(bbox(3), 0, srcOpt.Height() - 1);
 
-  if (x1 > x2)
+  if (color.n_elem != srcOpt.Channels()) {
+    std::ostringstream errMessage;
+    errMessage << "BoundingBoxImage(): The number of color channels ("
+               << color.n_elem << ") does not match the number image channels ("
+               << srcOpt.Channels() << ")";
+    throw std::logic_error(errMessage.str());
+
+  }
+
+  const ElemType x1 = bbox(0).clamp(0, srcOpt.Width() - 1);
+  const ElemType y1 = bbox(1).clamp(0, srcOpt.Height() - 1);
+  const ElemType x2 = bbox(2).clamp(0, srcOpt.Width() - 1);
+  const ElemType y2 = bbox(3).clamp(0, srcOpt.Height() - 1);
+
+  if (x1 >= x2)
   {
     std::ostringstream errMessage;
-    errMessage << "BoundingBoxImage(): x1 should be <= x2, but "
-               << x1 << " > " << x2;
+    errMessage << "BoundingBoxImage(): x1 should be < x2, but "
+               << x1 << " >= " << x2;
     throw std::logic_error(errMessage.str());
   }
 
-  if (y1 > y2)
+  if (y1 >= y2)
   {
     std::ostringstream errMessage;
-    errMessage << "BoundingBoxImage(): y1 should be <= y2, but "
-               << y1 << " > " << y2;
+    errMessage << "BoundingBoxImage(): y1 should be < y2, but "
+               << y1 << " >= " << y2;
     throw std::logic_error(errMessage.str());
   }
 
@@ -98,26 +104,26 @@ inline void BoundingBoxImage(ImageType& src,
     for (size_t x = x1; x <= x2; x++)
     {
       // Top
-      int yT = y1 + b;
+      const size_t yT = y1 + b;
       // Bottom
-      int yB = y2 - b;
+      const size_t yB = y2 - b;
       // x, yT
-      UpdatePixel(src, srcOpt, x, yT, red, green, blue);
-      UpdatePixel(src, srcOpt, x, yB, red, green, blue);
+      UpdatePixel(src, srcOpt, x, yT, color);
+      UpdatePixel(src, srcOpt, x, yB, color);
     }
     for (int y = y1; y <= y2; y++)
     {
       // Left
-      int xL = x1 + b;
+      const size_t xL = x1 + b;
       // Right
-      int xR = x2 - b;
-      UpdatePixel(src, srcOpt, xL, y, red, green, blue);
-      UpdatePixel(src, srcOpt, xR, y, red, green, blue);
+      const size_t xR = x2 - b;
+      UpdatePixel(src, srcOpt, xL, y, color);
+      UpdatePixel(src, srcOpt, xR, y, color);
     }
   }
 
   // Draw class name
-  ElemType dx = x1;
+  size_t dx = x1;
   const ElemType update = letterSize * 8;
   for (size_t i = 0; i < className.size(); i++)
   {
