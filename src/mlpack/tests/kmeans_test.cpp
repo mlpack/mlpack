@@ -84,9 +84,58 @@ TEST_CASE("KMeansSimpleTest", "[KMeansTest]")
     REQUIRE(assignments(i) == thirdClass);
 }
 
-/**
- * Make sure the empty cluster policy class does nothing.
- */
+TEST_CASE("KMeansMaxIterationsZeroTest", "[KMeansTest]") 
+{
+  // dataset with two clusters
+  arma::mat data("1.0 1.1 1.2 10.0 10.1 10.2;"
+                 "1.0 1.1 1.2 10.0 10.1 10.2;");
+
+  arma::Row<size_t> assignments;
+  arma::mat centroids;
+
+  
+  KMeans<> kmeans(0); // max iterations = 0
+
+  kmeans.Cluster(data, 2, assignments, centroids, false, false);
+
+  // first three points must belong to the same cluster.
+  REQUIRE(assignments[0] == assignments[1]);
+  REQUIRE(assignments[1] == assignments[2]);
+
+  // Last three points must belong to the same cluster.
+  REQUIRE(assignments[3] == assignments[4]);
+  REQUIRE(assignments[4] == assignments[5]);
+
+  // the two clusters must be different.
+  REQUIRE(assignments[0] != assignments[3]);
+}
+
+
+
+TEST_CASE("KMeansMaxIterationsOneTest", "[KMeansTest]")
+{
+  //dataset with 2 clusters
+  arma::mat data("1.0 1.0 10.0 10.0;"
+                 "1.0 1.0 10.0 10.0;");
+
+  arma::Row<size_t> assignments;
+  arma::mat centroids;
+
+  KMeans<> kmeans(1);   // max iterations = 1
+
+  kmeans.Cluster(data, 2, assignments, centroids, false, false);
+
+  // first cluster must have first two points.
+  REQUIRE(assignments[0] == assignments[1]);
+
+  // second cluster must have last two points.
+  REQUIRE(assignments[2] == assignments[3]);
+
+  // clusters should differ.
+  REQUIRE(assignments[0] != assignments[2]);
+}
+
+
 TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
 {
   arma::Row<size_t> assignments;
@@ -97,7 +146,7 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   centroids.randu(30, 3); // This doesn't matter.
 
   arma::Col<size_t> counts(3);
-  counts[0] = accu(assignments == 0);
+  counts[0] = accu(assignments == 0); 
   counts[1] = accu(assignments == 1);
   counts[2] = 0;
   arma::Col<size_t> countsOld = counts;
