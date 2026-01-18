@@ -706,7 +706,6 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
 
 TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
 {
-
   ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 5 * 3, 1);
 
@@ -717,13 +716,11 @@ TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
-  );
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
 }
 
 TEST_CASE("BoundingBoxImageMismatchColorChannelsImageChannels", "[ImageTest]")
 {
-
   ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
@@ -734,13 +731,11 @@ TEST_CASE("BoundingBoxImageMismatchColorChannelsImageChannels", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
-  );
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
 }
 
 TEST_CASE("BoundingBoxImageIncorrectNumberOfCoordinates", "[ImageTest]")
 {
-
   ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
@@ -751,13 +746,11 @@ TEST_CASE("BoundingBoxImageIncorrectNumberOfCoordinates", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
-  );
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
 }
 
 TEST_CASE("BoundingBoxImageX1GreaterThanX2", "[ImageTest]")
 {
-
   ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
@@ -768,13 +761,11 @@ TEST_CASE("BoundingBoxImageX1GreaterThanX2", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
-  );
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
 }
 
 TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
 {
-
   ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
@@ -785,6 +776,5 @@ TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
-  );
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
 }

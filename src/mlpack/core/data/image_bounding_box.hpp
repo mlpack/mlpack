@@ -17,7 +17,6 @@
 #include "font8x8_basic.h"
 
 namespace mlpack {
-namespace data {
 
 template <typename ImageType, typename BoundingBoxesType>
 inline void BoundingBoxImage(ImageType& src,
@@ -28,7 +27,6 @@ inline void BoundingBoxImage(ImageType& src,
   const std::string& className = "",
   const size_t letterSize = 0);
 
-} // namespace data
 } // namespace mlpack
 
 #include "image_bounding_box_impl.hpp"
