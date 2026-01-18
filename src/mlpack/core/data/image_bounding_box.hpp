@@ -23,10 +23,10 @@ template <typename ImageType, typename BoundingBoxesType>
 inline void BoundingBoxImage(ImageType& src,
   const ImageInfo& srcOpt,
   const BoundingBoxesType& bbox,
-  const std::string& className,
   const ImageType& color,
-  const size_t borderSize,
-  const size_t letterSize);
+  const size_t borderSize = 1,
+  const std::string& className = "",
+  const size_t letterSize = 0);
 
 } // namespace data
 } // namespace mlpack

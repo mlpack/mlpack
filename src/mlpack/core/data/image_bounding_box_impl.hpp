@@ -28,10 +28,7 @@ inline void UpdatePixel(MatType& src,
 {
   const size_t redChannel =
     x * srcOpt.Channels() + y * srcOpt.Channels() * srcOpt.Width();
-
-  src.at(redChannel, 0) = color.at(0); // TODO: use submat, color needs to be a column vector
-  src.at(redChannel + 1, 0) = color.at(1);
-  src.at(redChannel + 2, 0) = color.at(2);
+  src.rows(redChannel, redChannel + color.n_rows - 1) =  color;
 }
 
 template <typename MatType>
@@ -47,12 +44,14 @@ inline void DrawLetter(MatType& src,
   {
     for (size_t j = 0; j < fontWidth; j++)
     {
-      const bool set = !(font8x8_basic[letter][i] & (unsigned char)(1 << j));
+      const bool on =
+        !(font8x8_basic[letter][i] & (unsigned char)(1 << j));
+      const MatType set = arma::repmat(MatType({ on }), srcOpt.Channels(), 1);
       for (size_t k = 0; k < size * size; k++)
       {
         const size_t px = x + (j * size) + (k % size);
         const size_t py = y + (i * size) + (k / size);
-        UpdatePixel(src, srcOpt, px, py, set, set, set);
+        UpdatePixel(src, srcOpt, px, py, set);
       }
     }
   }
@@ -62,12 +61,22 @@ template <typename ImageType, typename BoundingBoxesType>
 inline void BoundingBoxImage(ImageType& src,
   const ImageInfo& srcOpt,
   const BoundingBoxesType& bbox,
-  const std::string& className,
   const ImageType& color,
   const size_t borderSize,
+  const std::string& className,
   const size_t letterSize)
 {
   using ElemType = typename BoundingBoxesType::elem_type;
+
+  const size_t imageSize = srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
+  if (src.n_elem != imageSize) {
+    std::ostringstream errMessage;
+    errMessage << "BoundingBoxImage(): The size of the image (" << src.n_elem 
+               << ") does not match the given dimensions ("
+               << srcOpt.Width() << ", " << srcOpt.Height() << ", "
+               << srcOpt.Channels() << ").";
+    throw std::logic_error(errMessage.str());
+  }
 
   if (color.n_elem != srcOpt.Channels()) {
     std::ostringstream errMessage;
@@ -75,13 +84,21 @@ inline void BoundingBoxImage(ImageType& src,
                << color.n_elem << ") does not match the number image channels ("
                << srcOpt.Channels() << ")";
     throw std::logic_error(errMessage.str());
-
   }
 
-  const ElemType x1 = bbox(0).clamp(0, srcOpt.Width() - 1);
-  const ElemType y1 = bbox(1).clamp(0, srcOpt.Height() - 1);
-  const ElemType x2 = bbox(2).clamp(0, srcOpt.Width() - 1);
-  const ElemType y2 = bbox(3).clamp(0, srcOpt.Height() - 1);
+  if (bbox.n_rows < 4) {
+    std::ostringstream errMessage;
+    errMessage << "BoundingBoxImage(): A bounding box is made up of 4 points "
+               "but was given " << color.n_rows;
+    throw std::logic_error(errMessage.str());
+  }
+
+  const ElemType maxWidth = srcOpt.Width() - 1;
+  const ElemType maxHeight = srcOpt.Height() - 1;
+  const ElemType x1 = std::clamp<ElemType>(bbox(0), 0, maxWidth);
+  const ElemType y1 = std::clamp<ElemType>(bbox(1), 0, maxHeight);
+  const ElemType x2 = std::clamp<ElemType>(bbox(2), 0, maxWidth);
+  const ElemType y2 = std::clamp<ElemType>(bbox(3), 0, maxHeight);
 
   if (x1 >= x2)
   {
@@ -103,26 +120,23 @@ inline void BoundingBoxImage(ImageType& src,
   {
     for (size_t x = x1; x <= x2; x++)
     {
-      // Top
-      const size_t yT = y1 + b;
-      // Bottom
-      const size_t yB = y2 - b;
-      // x, yT
-      UpdatePixel(src, srcOpt, x, yT, color);
-      UpdatePixel(src, srcOpt, x, yB, color);
+      const size_t yTop = y1 + b;
+      const size_t yBottom = y2 - b;
+      UpdatePixel(src, srcOpt, x, yTop, color);
+      UpdatePixel(src, srcOpt, x, yBottom, color);
     }
     for (int y = y1; y <= y2; y++)
     {
-      // Left
-      const size_t xL = x1 + b;
-      // Right
-      const size_t xR = x2 - b;
-      UpdatePixel(src, srcOpt, xL, y, color);
-      UpdatePixel(src, srcOpt, xR, y, color);
+      const size_t xLeft = x1 + b;
+      const size_t xRight = x2 - b;
+      UpdatePixel(src, srcOpt, xLeft, y, color);
+      UpdatePixel(src, srcOpt, xRight, y, color);
     }
   }
 
   // Draw class name
+  if (letterSize == 0)
+    return;
   size_t dx = x1;
   const ElemType update = letterSize * 8;
   for (size_t i = 0; i < className.size(); i++)
