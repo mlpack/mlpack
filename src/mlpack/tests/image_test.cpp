@@ -707,7 +707,7 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
 TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
 {
 
-  data::ImageOptions opt(10, 10, 3);
+  ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 5 * 3, 1);
 
   arma::mat bbox(4, 1);
@@ -717,14 +717,14 @@ TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    data::BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
   );
 }
 
 TEST_CASE("BoundingBoxImageMismatchColorChannelsImageChannels", "[ImageTest]")
 {
 
-  data::ImageOptions opt(10, 10, 3);
+  ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
   arma::mat bbox(4, 1);
@@ -734,14 +734,14 @@ TEST_CASE("BoundingBoxImageMismatchColorChannelsImageChannels", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    data::BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
   );
 }
 
 TEST_CASE("BoundingBoxImageIncorrectNumberOfCoordinates", "[ImageTest]")
 {
 
-  data::ImageOptions opt(10, 10, 3);
+  ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
   arma::mat bbox(3, 1);
@@ -751,14 +751,14 @@ TEST_CASE("BoundingBoxImageIncorrectNumberOfCoordinates", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    data::BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
   );
 }
 
 TEST_CASE("BoundingBoxImageX1GreaterThanX2", "[ImageTest]")
 {
 
-  data::ImageOptions opt(10, 10, 3);
+  ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
   arma::mat bbox = arma::mat({10, 5, 9, 10}).t();
@@ -768,14 +768,14 @@ TEST_CASE("BoundingBoxImageX1GreaterThanX2", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    data::BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
   );
 }
 
 TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
 {
 
-  data::ImageOptions opt(10, 10, 3);
+  ImageOptions opt(10, 10, 3);
   arma::mat image(10 * 10 * 3, 1);
 
   arma::mat bbox = arma::mat({10, 15, 12, 10}).t();
@@ -785,6 +785,6 @@ TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
   size_t letterSize = 1;
 
   REQUIRE_THROWS(
-    data::BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize)
   );
 }

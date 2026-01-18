@@ -17,7 +17,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template <typename MatType>
 inline void UpdatePixel(MatType& src,
@@ -148,7 +147,6 @@ inline void BoundingBoxImage(ImageType& src,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif
