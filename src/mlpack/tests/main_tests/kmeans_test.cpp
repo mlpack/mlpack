@@ -11,10 +11,10 @@
  */
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-#include "main_test_fixture.hpp"
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/kmeans/kmeans_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
@@ -27,39 +27,43 @@ BINDING_TEST_FIXTURE(KmTestFixture);
  * Checking that number of Clusters are non negative
  */
 TEST_CASE_METHOD(KmTestFixture, "NonNegativeClustersTest",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", (int)-1); // Invalid
+  SetInputParam("clusters", (int) -1); // Invalid
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
+
 /**
- * Checking that initial centroids are provided if clusters are to be auto
- * detected
+ * Checking that initial centroids are provided if clusters are to be auto detected
  */
 TEST_CASE_METHOD(KmTestFixture, "AutoDetectClusterTest",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   constexpr int N = 10;
   constexpr int D = 4;
 
   arma::mat inputData = arma::randu<arma::mat>(N, D);
 
   SetInputParam("input", std::move(inputData));
-  SetInputParam("clusters", (int)0); // Invalid
+  SetInputParam("clusters", (int) 0); // Invalid
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
+
 /**
  * Checking that percentage is between 0 and 1 when --refined_start is specified
- */
+*/
 TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 2;
   double P = 2.0;
   arma::mat inputData;
@@ -69,16 +73,18 @@ TEST_CASE_METHOD(KmTestFixture, "RefinedStartPercentageTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
   SetInputParam("clusters", c);
-  SetInputParam("percentage", std::move(P)); // Invalid
+  SetInputParam("percentage", std::move(P));     // Invalid
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
+
 
 /**
  * Checking percentage is non-negative when --refined_start is specified
  */
 TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 2;
   double P = -1.0;
   arma::mat inputData;
@@ -88,16 +94,18 @@ TEST_CASE_METHOD(KmTestFixture, "NonNegativePercentageTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("refined_start", true);
   SetInputParam("clusters", c);
-  SetInputParam("percentage", P); // Invalid
+  SetInputParam("percentage", P);     // Invalid
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
+
 
 /**
  * Checking that size and dimensionality of prediction is correct.
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 2;
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
@@ -111,18 +119,18 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
 
   RUN_BINDING();
 
-  REQUIRE(params.Get<arma::mat>("output").n_rows == row + 1);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == row+1);
   REQUIRE(params.Get<arma::mat>("output").n_cols == col);
   REQUIRE(params.Get<arma::mat>("centroid").n_rows == row);
-  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword)c);
+  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
 /**
- * Checking that size and dimensionality of prediction is correct when
- * --labels_only is specified
+ * Checking that size and dimensionality of prediction is correct when --labels_only is specified
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 2;
 
   arma::mat inputData;
@@ -140,15 +148,16 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
   REQUIRE(params.Get<arma::mat>("output").n_rows == 1);
   REQUIRE(params.Get<arma::mat>("output").n_cols == col);
   REQUIRE(params.Get<arma::mat>("centroid").n_rows == row);
-  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword)c);
+  REQUIRE(params.Get<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
+
 /**
- * Checking that predictions are not same when --allow_empty_clusters or
- * kill_empty_clusters are specified
+ * Checking that predictions are not same when --allow_empty_clusters or kill_empty_clusters are specified
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
-                 "[KmeansMainTest][BindingTests][long]") {
+                 "[KmeansMainTest][BindingTests][long]")
+{
   int c = 400;
   int iterations = 100;
 
@@ -201,7 +210,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
   CleanMemory();
   ResetSettings();
 
-  if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem) {
+  if (killEmptyOutput.n_elem == allowEmptyOutput.n_elem)
+  {
     REQUIRE(accu(killEmptyOutput != allowEmptyOutput) > 1);
     REQUIRE(accu(killEmptyOutput != normalOutput) > 1);
   }
@@ -213,7 +223,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
  * when flag --in_place is specified
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClusteringResultSizeCheck",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 2;
 
   arma::mat inputData;
@@ -233,14 +244,15 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringResultSizeCheck",
   // due to a little trick in kmeans_main
 
   REQUIRE(processedInput.n_cols == col);
-  REQUIRE(processedInput.n_rows == row + 1);
+  REQUIRE(processedInput.n_rows == row+1);
 }
 
 /**
  * Ensuring that absence of Number of Clusters is checked.
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
     FAIL("Unable to load train dataset vc2.csv!");
@@ -254,7 +266,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClustersNotDefined",
  * Checking that all the algorithms yield same results
  */
 TEST_CASE_METHOD(KmTestFixture, "AlgorithmsSimilarTest",
-                 "[KmeansMainTest][BindingTests]") {
+                 "[KmeansMainTest][BindingTests]")
+{
   int c = 5;
   arma::mat inputData(10, 1000);
   inputData.randu();
