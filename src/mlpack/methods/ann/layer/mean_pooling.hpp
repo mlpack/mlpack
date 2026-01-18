@@ -152,7 +152,7 @@ class MeanPooling : public Layer<MatType>
    */
   typename MatType::elem_type Pooling(const MatType& input)
   {
-    return arma::mean(vectorise(input));
+    return mean(vectorise(input));
   }
 
   //! Locally-stored width of the pooling window.

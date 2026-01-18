@@ -165,7 +165,7 @@ probabilities is not available.
 ### Other Functionality
 
  * A `Perceptron` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `p.NumClasses()` will return a `size_t` indicating the number of classes the
    perceptron was trained on.

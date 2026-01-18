@@ -135,7 +135,7 @@ can be used to make predictions for new data.
 ### Other Functionality
 
  * A `LinearRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lr.Intercept()` will return a `bool` indicating whether the model was
    trained with an intercept term.

@@ -68,7 +68,7 @@ class DecisionTreeRegressor :
    */
   template<typename MatType, typename ResponsesType>
   DecisionTreeRegressor(MatType data,
-                        const data::DatasetInfo& datasetInfo,
+                        const DatasetInfo& datasetInfo,
                         ResponsesType responses,
                         const size_t minimumLeafSize = 10,
                         const double minimumGainSplit = 1e-7,
@@ -121,7 +121,7 @@ class DecisionTreeRegressor :
   template<typename MatType, typename ResponsesType, typename WeightsType>
   DecisionTreeRegressor(
       MatType data,
-      const data::DatasetInfo& datasetInfo,
+      const DatasetInfo& datasetInfo,
       ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
@@ -182,7 +182,7 @@ class DecisionTreeRegressor :
   DecisionTreeRegressor(
       const DecisionTreeRegressor& other,
       MatType data,
-      const data::DatasetInfo& datasetInfo,
+      const DatasetInfo& datasetInfo,
       ResponsesType responses,
       WeightsType weights,
       const size_t minimumLeafSize = 10,
@@ -277,7 +277,7 @@ class DecisionTreeRegressor :
    */
   template<typename MatType, typename ResponsesType>
   double Train(MatType data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                ResponsesType responses,
                const size_t minimumLeafSize = 10,
                const double minimumGainSplit = 1e-7,
@@ -338,7 +338,7 @@ class DecisionTreeRegressor :
    */
   template<typename MatType, typename ResponsesType, typename WeightsType>
   double Train(MatType data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                ResponsesType responses,
                WeightsType weights,
                const size_t minimumLeafSize = 10,
@@ -481,7 +481,7 @@ class DecisionTreeRegressor :
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                ResponsesType& responses,
                arma::rowvec& weights,
                const size_t minimumLeafSize,

@@ -23,10 +23,10 @@ template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "unknown";
 }
@@ -35,10 +35,10 @@ template<>
 inline std::string GetPrintableType<int>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<int>::value>*,
-    const std::enable_if_t<!data::HasSerialize<int>::value>*,
+    const std::enable_if_t<!HasSerialize<int>::value>*,
     const std::enable_if_t<!arma::is_arma_type<int>::value>*,
     const std::enable_if_t<!std::is_same_v<int,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "int";
 }
@@ -47,10 +47,10 @@ template<>
 inline std::string GetPrintableType<double>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<double>::value>*,
-    const std::enable_if_t<!data::HasSerialize<double>::value>*,
+    const std::enable_if_t<!HasSerialize<double>::value>*,
     const std::enable_if_t<!arma::is_arma_type<double>::value>*,
     const std::enable_if_t<!std::is_same_v<double,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "float";
 }
@@ -59,10 +59,10 @@ template<>
 inline std::string GetPrintableType<std::string>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<std::string>::value>*,
-    const std::enable_if_t<!data::HasSerialize<std::string>::value>*,
+    const std::enable_if_t<!HasSerialize<std::string>::value>*,
     const std::enable_if_t<!arma::is_arma_type<std::string>::value>*,
     const std::enable_if_t<!std::is_same_v<std::string,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "str";
 }
@@ -71,10 +71,10 @@ template<>
 inline std::string GetPrintableType<size_t>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<size_t>::value>*,
-    const std::enable_if_t<!data::HasSerialize<size_t>::value>*,
+    const std::enable_if_t<!HasSerialize<size_t>::value>*,
     const std::enable_if_t<!arma::is_arma_type<size_t>::value>*,
     const std::enable_if_t<!std::is_same_v<size_t,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "int";
 }
@@ -83,10 +83,10 @@ template<>
 inline std::string GetPrintableType<bool>(
     util::ParamData& /* d */,
     const std::enable_if_t<!util::IsStdVector<bool>::value>*,
-    const std::enable_if_t<!data::HasSerialize<bool>::value>*,
+    const std::enable_if_t<!HasSerialize<bool>::value>*,
     const std::enable_if_t<!arma::is_arma_type<bool>::value>*,
     const std::enable_if_t<!std::is_same_v<bool,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "bool";
 }
@@ -96,7 +96,7 @@ inline std::string GetPrintableType(
     util::ParamData& d,
     const std::enable_if_t<util::IsStdVector<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "list of " + GetPrintableType<typename T::value_type>(d) + "s";
 }
@@ -106,7 +106,7 @@ inline std::string GetPrintableType(
     util::ParamData& /* d */,
     const std::enable_if_t<arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::string type = "matrix";
   if (std::is_same_v<typename T::elem_type, double>)
@@ -128,7 +128,7 @@ template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& /* d */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "categorical matrix";
 }
@@ -137,9 +137,9 @@ template<typename T>
 inline std::string GetPrintableType(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*,
+    const std::enable_if_t<HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return d.cppType + "Type";
 }

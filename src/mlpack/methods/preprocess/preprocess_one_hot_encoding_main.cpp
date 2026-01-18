@@ -52,7 +52,7 @@ BINDING_SEE_ALSO("@preprocess_describe", "#preprocess_describe");
 BINDING_SEE_ALSO("@preprocess_imputer", "#preprocess_imputer");
 #endif
 BINDING_SEE_ALSO("One-hot encoding on Wikipedia",
-        "https://en.m.wikipedia.org/wiki/One-hot");
+    "https://en.wikipedia.org/wiki/One-hot");
 
 // Define parameters for data.
 PARAM_MATRIX_AND_INFO_IN_REQ("input", "Matrix containing data.", "i");
@@ -71,10 +71,10 @@ using namespace std;
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Load the data.
-  const std::tuple<data::DatasetInfo, arma::mat>& t =
-      params.Get<std::tuple<data::DatasetInfo, arma::mat>>("input");
+  const std::tuple<DatasetInfo, arma::mat>& t =
+      params.Get<std::tuple<DatasetInfo, arma::mat>>("input");
 
-  const data::DatasetInfo& info = std::get<0>(t);
+  const DatasetInfo& info = std::get<0>(t);
   const arma::mat& data = std::get<1>(t);
 
   vector<int>& indices = params.Get<vector<int>>("dimensions");
@@ -83,7 +83,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     // If the user did not specify any dimensions to convert, we pick all the
     // categorical dimensions by default.
     for (size_t d = 0; d < info.Dimensionality(); ++d)
-      if (info.Type(d) == data::Datatype::categorical)
+      if (info.Type(d) == Datatype::categorical)
         indices.push_back(d);
 
     // Print which dimensions we selected to one-hot encode.
@@ -124,7 +124,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
 
     arma::mat output;
-    data::OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
+    OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
     if (params.Has("output"))
       params.Get<arma::mat>("output") = std::move(output);
   }

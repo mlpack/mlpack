@@ -3589,7 +3589,7 @@ param.Verbose = false
 output, output_model := mlpack.PreprocessScale(input, param)
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
+A utility to perform feature scaling on datasets using one of six techniques.  Both scaling and inverse scaling are supported, and scalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 
@@ -3744,7 +3744,7 @@ X_ouput := mlpack.PreprocessOneHotEncoding(X, param)
 
  - [PreprocessBinarize()](#preprocess_binarize)
  - [PreprocessDescribe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## Radical()
 {: #radical }

@@ -177,12 +177,8 @@ TEST_CASE("GradientMultiheadAttentionTest", "[ANNLayerTest][tiny]")
                          batchSize(2)
     {
       input = arma::randu(embedDim * (tgtSeqLen + 2 * srcSeqLen), batchSize);
-      target = arma::zeros(vocabSize, batchSize);
-      for (size_t i = 0; i < target.n_elem; ++i)
-      {
-        const size_t label = RandInt(1, vocabSize);
-        target(i) = label;
-      }
+      target = arma::randi<arma::mat>(1, batchSize,
+          arma::distr_param(0, vocabSize - 1));
 
       attnMask = arma::zeros(srcSeqLen, tgtSeqLen, batchSize);
       for (size_t k = 0; k < batchSize; ++k)

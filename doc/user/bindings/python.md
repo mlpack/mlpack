@@ -2965,7 +2965,7 @@ If we want to customize the width to 10 and precision to 5 and consider the data
 >>> output_model = d['output_model']
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
+A utility to perform feature scaling on datasets using one of six techniques.  Both scaling and inverse scaling are supported, and scalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 
@@ -3098,7 +3098,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset `'
 
  - [preprocess_binarize()](#preprocess_binarize)
  - [preprocess_describe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## radical()
 {: #radical }

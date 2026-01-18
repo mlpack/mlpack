@@ -116,6 +116,7 @@ std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
  * [mlpack geometric algorithms](../modeling.md#geometric-algorithms)
  * [Nearest neighbor search on Wikipedia](https://en.wikipedia.org/wiki/Nearest_neighbor_search)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
+ * [`KFN` (k-furthest-neighbors)](kfn.md)
 
 ### Constructors
 
@@ -341,6 +342,7 @@ can be done with the `Search()` method.
 | `k` | `size_t` | Number of nearest neighbors to search for. |
 | `neighbors` | [`arma::Mat<size_t>`](../matrices.md) | Matrix to store indices of nearest neighbors into.  Will be set to size `k` x `N`, where `N` is the number of points in the query set (if specified), or the reference set (if not). |
 | `distances` | [`arma::mat`](../matrices.md) | Matrix to store distances to nearest neighbors into.  Will be set to the same size as `neighbors`. |
+| `sameSet` | `bool` | *(Only for `Search()` with a query set.)* If `true`, then `querySet` is the same set as the reference set. |
 
 ### Computing quality metrics
 
@@ -410,12 +412,12 @@ compute quality metrics of the approximate search.
    performed, if a [tree-traversing search strategy](#search-strategies) was
    used.
 
- - After calling `knn.Search()`, `knn.Scores()` will return a `size_t` indicates
-   the number of tree nodes that were visited during search, if a
+ - After calling `knn.Search()`, `knn.Scores()` will return a `size_t`
+   indicating the number of tree nodes that were visited during search, if a
    [tree-traversing search strategy](#search-strategies) was used.
 
  - A `KNN` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).  Note
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).  Note
    that for large reference sets, this will also serialize the dataset
    (`knn.ReferenceSet()`) and the tree (`knn.Tree()`), and so the resulting file
    may be quite large.
@@ -518,7 +520,7 @@ mlpack::data::Load("lcdm_tiny.csv", dataset);
 
 // Build a KNN object on the LCDM dataset, and pass with `std::move()` so that
 // we can avoid copying the dataset.  Set the search strategy to single-tree.
-mlpack::KNN knn(std::move(dataset), mlpack::SINGLE_TREE_MODE);
+mlpack::KNN knn(std::move(dataset), mlpack::SINGLE_TREE);
 
 // Now we will compute the 5 nearest neighbors of the first point in the
 // dataset.
@@ -549,7 +551,8 @@ for (size_t k = 0; k < 5; ++k)
 ---
 
 Use greedy single-tree search to find 5 approximate nearest neighbors of every
-point in the `cloud` dataset.  Then, compute the exact nearest neighbors, and use these to find the average error and recall of the approximate search.
+point in the `cloud` dataset.  Then, compute the exact nearest neighbors, and
+use these to find the average error and recall of the approximate search.
 
 ***Note***: greedy single-tree search is far more effective when using spill
 trees---see the [advanced examples](#advanced-examples) for another example that
@@ -562,7 +565,7 @@ mlpack::data::Load("cloud.csv", dataset);
 
 // Build a tree on the dataset and set the search strategy to the greedy single
 // tree strategy.
-mlpack::KNN knn(std::move(dataset), mlpack::GREEDY_SINGLE_TREE_MODE);
+mlpack::KNN knn(std::move(dataset), mlpack::GREEDY_SINGLE_TREE);
 
 // Compute the 5 approximate nearest neighbors of every point in the dataset.
 arma::mat distances;
@@ -651,7 +654,7 @@ mlpack::data::Split(dataset, referenceSet, querySet, 0.5);
 // Build the KNN object, passing the reference set with `std::move()` to avoid a
 // copy.  We use the default dual-tree strategy for search and set the maximum
 // allowed relative error to 0.1 (10%).
-mlpack::KNN knn(std::move(referenceSet), mlpack::DUAL_TREE_MODE, 0.1);
+mlpack::KNN knn(std::move(referenceSet), mlpack::DUAL_TREE, 0.1);
 
 // Now build a tree on the query points.  This is a KDTree, and we manually
 // specify a leaf size of 50 points.  Note that the KDTree rearranges the
@@ -863,7 +866,7 @@ mlpack::data::Load("cloud.csv", dataset);
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
 mlpack::KNNType<mlpack::ChebyshevDistance> knn(std::move(dataset),
-    mlpack::SINGLE_TREE_MODE, 0.2);
+    mlpack::SINGLE_TREE, 0.2);
 
 arma::mat distances;
 arma::Mat<size_t> neighbors;
@@ -950,7 +953,7 @@ TreeType queryTree(std::move(querySet));
 
 // Construct the KNN object with the prebuilt reference tree.
 mlpack::KNNType<mlpack::ManhattanDistance, mlpack::RPTree, arma::fmat> knn(
-    std::move(referenceTree), mlpack::DUAL_TREE_MODE, 0.1 /* max 10% error */);
+    std::move(referenceTree), mlpack::DUAL_TREE, 0.1 /* max 10% error */);
 
 // Find 5 approximate nearest neighbors.
 arma::fmat approxDistances;
@@ -1007,7 +1010,7 @@ mlpack::KNNType<mlpack::EuclideanDistance,
                 TreeType::template DefeatistDualTreeTraverser,
                 TreeType::template DefeatistSingleTreeTraverser> knn(
     std::move(referenceTree),
-    mlpack::GREEDY_SINGLE_TREE_MODE);
+    mlpack::GREEDY_SINGLE_TREE);
 
 arma::mat greedyDistances, dualDistances, singleDistances, exactDistances;
 arma::Mat<size_t> greedyNeighbors, dualNeighbors, singleNeighbors,

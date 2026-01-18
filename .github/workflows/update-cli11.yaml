@@ -14,7 +14,7 @@ jobs:
     if: ${{ github.repository == 'mlpack/mlpack' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Get Latest CLI11 Tagged Release
         id: cli11-header
         run: |

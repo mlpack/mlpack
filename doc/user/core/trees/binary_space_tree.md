@@ -38,6 +38,7 @@ may require a template typedef.
 
  * [mlpack trees](../trees.md)
  * [`KNN`](../../methods/knn.md)
+ * [`KFN`](../../methods/kfn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
@@ -324,7 +325,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `BinarySpaceTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -532,7 +533,7 @@ accessed and modified.
    by `b`.
 
  * An `HRectBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -902,7 +903,7 @@ The properties of the `BallBound` can be directly accessed and modified.
    `center`.  `center` should be of type `arma::vec`.
 
  * A `BallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` and/or `VecType` were specified in the
 constructor, then:
@@ -1221,7 +1222,7 @@ be accessed and modified.
    by `b`.
 
  * A `HollowBallBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -1585,7 +1586,7 @@ bound](#growing-the-bound-2) for ways to grow a `CellBound`.
    by `b`.
 
  * A `CellBound` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ***Note:*** if a custom `ElemType` was specified in the constructor, then:
 
@@ -1912,6 +1913,9 @@ mlpack provides a few existing `StatisticType` classes, and a custom
  * [`NearestNeighborStat`](#nearestneighborstat): a statistic class storing data
    relevant during nearest neighbor search, used by
    [`KNN`](../../methods/knn.md).
+ * [`FurthestNeighborStat`](#nearestneighborstat): a statistic class storing
+   data relevant during furthest neighbor search, used by
+   [`KNN`](../../methods/kfn.md).
  * [Custom `StatisticType`s](#custom-statistictypes): implement a fully custom
    `StatisticType`
 
@@ -1929,16 +1933,33 @@ The class ***does not hold any members and provides no functionality***.
 ### `NearestNeighborStat`
 
 The `NearestNeighborStat` class is a utility structure that holds a number of
-bounding quantities used in tree-based algorithms for nearest neighbor search
-and furthest neighbor search.  The held quantities are used internally by the
-[`RuleType`](../../../developer/trees.md#rules) used for nearest neighbor or
-furthest neighbor search, and these quantities are detailed in the
+bounding quantities used in tree-based algorithms for nearest neighbor search.
+The held quantities are used internally by the
+[`RuleType`](../../../developer/trees.md#rules) used for nearest neighbor
+search, and these quantities are detailed in the
 [tree-independent dual tree algorithms paper (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf).
 
 In general, there is no need to directly interact with the
 `NearestNeighborStat`, and classes such as [`KNN`](../../methods/knn.md) provide
 a convenience typedef (e.g. `KNN::TreeType`) that corresponds to the tree type
 with `NearestNeighborStat` as the `StatisticType`.
+
+For more details, see
+[the source code](/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp).
+
+### `FurthestNeighborStat`
+
+The `FurthestNeighborStat` class is a utility structure that holds a number of
+bounding quantities used in tree-based algorithms for furthest neighbor search.
+The held quantities are used internally by the
+[`RuleType`](../../../developer/trees.md#rules) used for furthest neighbor
+search, and these quantities are detailed in the
+[tree-independent dual tree algorithms paper (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf).
+
+In general, there is no need to directly interact with the
+`FurthestNeighborStat`, and classes such as [`KFN`](../../methods/kfn.md)
+provide a convenience typedef (e.g. `KFN::TreeType`) that corresponds to the
+tree type with `FurthestNeighborStat` as the `StatisticType`.
 
 For more details, see
 [the source code](/src/mlpack/methods/neighbor_search/neighbor_search_stat.hpp).

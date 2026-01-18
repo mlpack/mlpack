@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_ALGORITHMS_HPP
 
 namespace mlpack {
-namespace data {
 
 /**
  * Trim off characters from start and end of
@@ -122,7 +121,6 @@ inline std::vector<std::string> Tokenize(
   return tokens;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

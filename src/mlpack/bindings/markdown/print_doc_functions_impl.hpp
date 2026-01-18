@@ -386,13 +386,13 @@ inline std::string PrintTypeDocs()
   }
 
   data.tname =
-      std::string(typeid(std::tuple<data::DatasetInfo, arma::mat>).name());
-  data.cppType = "std::tuple<data::DatasetInfo, arma::mat>";
-  data.value = std::any(std::tuple<data::DatasetInfo, arma::mat>());
+      std::string(typeid(std::tuple<DatasetInfo, arma::mat>).name());
+  data.cppType = "std::tuple<DatasetInfo, arma::mat>";
+  data.value = std::any(std::tuple<DatasetInfo, arma::mat>());
 
-  type = GetPrintableType<std::tuple<data::DatasetInfo, arma::mat>>(data);
+  type = GetPrintableType<std::tuple<DatasetInfo, arma::mat>>(data);
   oss << " - `" << type << "`{: #doc_" << ToValidHTMLAnchor(type) << " }: "
-      << PrintTypeDoc<std::tuple<data::DatasetInfo, arma::mat>>(data)
+      << PrintTypeDoc<std::tuple<DatasetInfo, arma::mat>>(data)
       << std::endl;
 
   data.tname = std::string(typeid(priv::mlpackModel).name());

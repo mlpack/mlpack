@@ -24,7 +24,7 @@ namespace cli {
 template<typename T>
 std::string StringTypeParamImpl(
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*)
+    const std::enable_if_t<!HasSerialize<T>::value>*)
 {
   // Don't know what type this is.
   return "unknown";
@@ -45,7 +45,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   return "string";
 }
@@ -92,7 +92,7 @@ inline void StringTypeParam<double>(util::ParamData& /* data */,
 
 //! Return "string";
 template<>
-inline void StringTypeParam<std::tuple<mlpack::data::DatasetInfo, arma::mat>>(
+inline void StringTypeParam<std::tuple<mlpack::DatasetInfo, arma::mat>>(
     util::ParamData& /* data */,
     const void* /* input */,
     void* output)

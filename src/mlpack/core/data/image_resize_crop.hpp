@@ -19,7 +19,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Image resize/crop interfaces.
@@ -276,7 +275,6 @@ void ResizeCropImages(arma::Mat<eT>& images, ImageOptions& opts,
   opts.Height() = newHeight;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

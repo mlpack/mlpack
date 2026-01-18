@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Definition of the BagOfWordsEncodingPolicy class.
@@ -165,7 +164,6 @@ class BagOfWordsEncodingPolicy
 template<typename TokenType>
 using BagOfWordsEncoding = StringEncoding<BagOfWordsEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

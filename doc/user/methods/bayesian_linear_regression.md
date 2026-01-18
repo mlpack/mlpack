@@ -153,7 +153,7 @@ can be used to make predictions for new data.
 ### Other Functionality
 
  * A `BayesianLinearRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * After training is complete, the following methods can be used to inspect the
    model:

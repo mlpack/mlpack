@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * This is a template struct that provides some information about various
@@ -33,7 +32,6 @@ struct StringEncodingPolicyTraits
   static const bool onePassEncoding = false;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

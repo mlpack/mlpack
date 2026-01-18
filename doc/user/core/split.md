@@ -3,7 +3,7 @@
 mlpack provides a simple functions for splitting a dataset into a training set
 and a test set.
 
- * [`data::Split()`](#datasplitdata): split a dataset into a training set
+ * [`data::Split()`](#datasplit): split a dataset into a training set
    and test set, optionally with labels and weights.
 
  * [`data::StratifiedSplit()`](#datastratifiedsplit): perform a stratified
@@ -12,7 +12,7 @@ and a test set.
 
 ---
 
-## `data::SplitData()`
+## `data::Split()`
 
  * `data::Split(input, trainData, testData, testRatio, shuffleData=true)`
  * `data::Split(input, inputLabels, trainData, testData, trainLabels, testLabels, testRatio, shuffleData=true)`

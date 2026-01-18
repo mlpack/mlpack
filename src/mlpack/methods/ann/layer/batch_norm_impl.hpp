@@ -31,7 +31,7 @@ BatchNorm<MatType>::BatchNorm() :
     momentum(0.0),
     count(0),
     inputDimension(1),
-    size(0),
+    inputUnits(0),
     higherDimension(1)
 {
   // Nothing to do here.
@@ -52,7 +52,7 @@ BatchNorm<MatType>::BatchNorm(
     momentum(momentum),
     count(0),
     inputDimension(1),
-    size(0),
+    inputUnits(0),
     higherDimension(1)
 {
   // Nothing to do here.
@@ -70,7 +70,7 @@ BatchNorm<MatType>::BatchNorm(const BatchNorm& layer) :
     variance(layer.variance),
     count(layer.count),
     inputDimension(layer.inputDimension),
-    size(layer.size),
+    inputUnits(layer.inputUnits),
     higherDimension(layer.higherDimension),
     runningMean(layer.runningMean),
     runningVariance(layer.runningVariance)
@@ -90,7 +90,7 @@ BatchNorm<MatType>::BatchNorm(BatchNorm&& layer) :
     variance(std::move(layer.variance)),
     count(std::move(layer.count)),
     inputDimension(std::move(layer.inputDimension)),
-    size(std::move(layer.size)),
+    inputUnits(std::move(layer.inputUnits)),
     higherDimension(std::move(layer.higherDimension)),
     runningMean(std::move(layer.runningMean)),
     runningVariance(std::move(layer.runningVariance))
@@ -113,7 +113,7 @@ BatchNorm<MatType>::operator=(const BatchNorm& layer)
     variance = layer.variance;
     count = layer.count;
     inputDimension = layer.inputDimension;
-    size = layer.size;
+    inputUnits = layer.inputUnits;
     higherDimension = layer.higherDimension;
     runningMean = layer.runningMean;
     runningVariance = layer.runningVariance;
@@ -138,7 +138,7 @@ BatchNorm<MatType>::operator=(
     variance = std::move(layer.variance);
     count = std::move(layer.count);
     inputDimension = std::move(layer.inputDimension);
-    size = std::move(layer.size);
+    inputUnits = std::move(layer.inputUnits);
     higherDimension = std::move(layer.higherDimension);
     runningMean = std::move(layer.runningMean);
     runningVariance = std::move(layer.runningVariance);
@@ -152,9 +152,9 @@ void BatchNorm<MatType>::SetWeights(const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, WeightSize(), 1);
   // Gamma acts as the scaling parameters for the normalized output.
-  MakeAlias(gamma, weightsIn, size, 1);
+  MakeAlias(gamma, weightsIn, inputUnits, 1);
   // Beta acts as the shifting parameters for the normalized output.
-  MakeAlias(beta, weightsIn, size, 1, gamma.n_elem);
+  MakeAlias(beta, weightsIn, inputUnits, 1, gamma.n_elem);
 }
 
 template<typename MatType>
@@ -162,22 +162,22 @@ void BatchNorm<MatType>::CustomInitialize(
     MatType& W,
     const size_t elements)
 {
-  if (elements != 2 * size) {
+  if (elements != 2 * inputUnits) {
     throw std::invalid_argument("BatchNorm::CustomInitialize(): wrong "
         "elements size!");
   }
   MatType gammaTemp;
   MatType betaTemp;
   // Gamma acts as the scaling parameters for the normalized output.
-  MakeAlias(gammaTemp, W, size, 1);
+  MakeAlias(gammaTemp, W, inputUnits, 1);
   // Beta acts as the shifting parameters for the normalized output.
-  MakeAlias(betaTemp, W, size, 1, gammaTemp.n_elem);
+  MakeAlias(betaTemp, W, inputUnits, 1, gammaTemp.n_elem);
 
   gammaTemp.ones();
   betaTemp.zeros();
 
-  runningMean.zeros(size, 1);
-  runningVariance.ones(size, 1);
+  runningMean.zeros(inputUnits, 1);
+  runningVariance.ones(inputUnits, 1);
 }
 
 template<typename MatType>
@@ -203,12 +203,12 @@ void BatchNorm<MatType>::Forward(
     // Input corresponds to output from previous layer.
     // Used a cube for simplicity.
     CubeType inputTemp;
-    MakeAlias(inputTemp, input, inputSize, size,
+    MakeAlias(inputTemp, input, inputSize, inputUnits,
         batchSize * higherDimension, 0, false);
 
     // Initialize output to same size and values for convenience.
     CubeType outputTemp;
-    MakeAlias(outputTemp, output, inputSize, size,
+    MakeAlias(outputTemp, output, inputSize, inputUnits,
         batchSize * higherDimension, 0, false);
     outputTemp = inputTemp;
 
@@ -220,7 +220,7 @@ void BatchNorm<MatType>::Forward(
     outputTemp.each_slice() -= repmat(mean, inputSize, 1);
 
     // Used in backward propagation.
-    inputMean.set_size(arma::size(inputTemp));
+    inputMean.set_size(size(inputTemp));
     inputMean = outputTemp;
 
     // Normalize output.
@@ -228,7 +228,7 @@ void BatchNorm<MatType>::Forward(
         ElemType(eps));
 
     // Re-used in backward propagation.
-    normalized.set_size(arma::size(inputTemp));
+    normalized.set_size(size(inputTemp));
     normalized = outputTemp;
 
     outputTemp.each_slice() %= repmat(gamma.t(), inputSize, 1);
@@ -253,7 +253,7 @@ void BatchNorm<MatType>::Forward(
     // Normalize the input and scale and shift the output.
     output = input;
     CubeType outputTemp;
-    MakeAlias(outputTemp, output, inputSize, size,
+    MakeAlias(outputTemp, output, inputSize, inputUnits,
         batchSize * higherDimension, 0, false);
 
     outputTemp.each_slice() -= repmat(runningMean.t(), inputSize, 1);
@@ -278,10 +278,10 @@ void BatchNorm<MatType>::Backward(
   const size_t m = inputSize * batchSize * higherDimension;
 
   CubeType gyTemp;
-  MakeAlias(gyTemp, gy, inputSize, size,
+  MakeAlias(gyTemp, gy, inputSize, inputUnits,
       batchSize * higherDimension, 0, false);
   CubeType gTemp;
-  MakeAlias(gTemp, g, inputSize, size,
+  MakeAlias(gTemp, g, inputSize, inputUnits,
       batchSize * higherDimension, 0, false);
 
   // Step 1: dl / dxhat.
@@ -314,7 +314,7 @@ void BatchNorm<MatType>::Gradient(
   const size_t inputSize = inputDimension;
 
   CubeType errorTemp;
-  MakeAlias(errorTemp, error, inputSize, size,
+  MakeAlias(errorTemp, error, inputSize, inputUnits,
       error.n_cols * higherDimension, 0, false);
 
   // Step 5: dl / dy * xhat.
@@ -355,9 +355,9 @@ void BatchNorm<MatType>::ComputeOutputDimensions()
   for (size_t i = 0; i < mainMinAxis; i++)
     inputDimension *= this->inputDimensions[i];
 
-  size = this->inputDimensions[mainMinAxis];
+  inputUnits = this->inputDimensions[mainMinAxis];
   for (size_t i = mainMinAxis + 1; i <= mainMaxAxis; i++)
-    size *= this->inputDimensions[i];
+    inputUnits *= this->inputDimensions[i];
 
   higherDimension = 1;
   for (size_t i = mainMaxAxis + 1; i < this->inputDimensions.size(); i++)
@@ -381,7 +381,7 @@ void BatchNorm<MatType>::serialize(
   ar(CEREAL_NVP(runningVariance));
   ar(CEREAL_NVP(inputMean));
   ar(CEREAL_NVP(inputDimension));
-  ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(inputUnits));
   ar(CEREAL_NVP(higherDimension));
 }
 

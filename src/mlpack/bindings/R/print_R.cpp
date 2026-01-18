@@ -93,7 +93,8 @@ void PrintR(util::Params& params,
 
   // Next, print information on the output options.
   if (outputOptions.size() > 0)
-    cout << "#' @return A list with several components:" << endl;
+    cout << "#' @return A list with several components defining the "
+         << "class attributes:" << endl;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
@@ -226,6 +227,11 @@ void PrintR(util::Params& params,
       cout << "," << endl << indentStr;
   }
   cout << endl << "  )" << endl << endl;
+
+  // Add binding name as class to the output.
+  cout << "  # Add binding name as class to the output." << endl;
+  cout << "  class(out) <- c(\"mlpack_" << bindingName
+       << "\", \"mlpack_model_binding\", \"list\")" << endl;
 
   cout << endl;
   cout << "  return(out)" << endl << "}" << endl;

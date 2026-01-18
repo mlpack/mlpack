@@ -150,7 +150,7 @@ mlpack has support to load mixed categorical data:
    dimension is numeric or categorical.  ([full
    documentation](load_save.md#datadatasetinfo))
  * `data::Load(filename, matrix, info, fatal=false, transpose=true)` ([full
-   documentation](load_save.md#loading-categorical-data))
+   documentation](load_save.md#mixed-categorical-data))
 
 For example, consider the following CSV file that contains strings:
 
@@ -312,8 +312,7 @@ to the underlying memory.
 
 ---
 
-Copy an [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) matrix
-into an Armadillo matrix.
+Copy an [Eigen](https://libeigen.gitlab.io/) matrix into an Armadillo matrix.
 
 ```c++
 // Note: this will only work if the Eigen matrix is stored in column-major
@@ -352,7 +351,7 @@ arma::mat mCopy(m.data(), rows, cols);
 ---
 
 Make an Armadillo matrix that is an alias of an
-[Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) matrix.  Note
+[Eigen](https://libeigen.gitlab.io/) matrix.  Note
 that changes to the Eigen matrix will be reflected in the Armadillo matrix, and
 vice versa.
 

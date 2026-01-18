@@ -2918,7 +2918,7 @@ julia> output, output_model = preprocess_scale(input; epsilon=1e-06,
           scaler_method="standard_scaler", seed=0, verbose=false)
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
+A utility to perform feature scaling on datasets using one of six techniques.  Both scaling and inverse scaling are supported, and scalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 
@@ -3052,7 +3052,7 @@ julia> X_ouput = preprocess_one_hot_encoding(X; dimensions=1)
 
  - [preprocess_binarize()](#preprocess_binarize)
  - [preprocess_describe()](#preprocess_describe)
- - [One-hot encoding on Wikipedia](https://en.m.wikipedia.org/wiki/One-hot)
+ - [One-hot encoding on Wikipedia](https://en.wikipedia.org/wiki/One-hot)
 
 ## radical()
 {: #radical }

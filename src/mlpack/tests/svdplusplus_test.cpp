@@ -252,7 +252,7 @@ TEST_CASE("SVDplusPlusOutputSizeTest", "[SVDPlusPlusTest]")
 {
   // Load small GroupLens dataset.
   arma::mat data;
-  if (!data::Load("GroupLensSmall.csv", data))
+  if (!Load("GroupLensSmall.csv", data))
     FAIL("Cannot load dataset GroupLensSmall.csv");
 
   // Define useful constants.
@@ -286,7 +286,7 @@ TEST_CASE("SVDPlusPlusCleanDataTest", "[SVDPlusPlusTest]")
 {
   // Load small GroupLens dataset.
   arma::mat data;
-  if (!data::Load("GroupLensSmall.csv", data))
+  if (!Load("GroupLensSmall.csv", data))
     FAIL("Cannot load dataset GroupLensSmall.csv");
 
   // Define useful constants.

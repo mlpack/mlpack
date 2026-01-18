@@ -19,7 +19,6 @@
 #include "matrix_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 class TextOptions : public MatrixOptionsBase<TextOptions>
 {
@@ -239,9 +238,13 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   arma::field<std::string>& Headers() { return headers; }
 
   // Get the DatasetInfo for categorical data.
-  const data::DatasetInfo& DatasetInfo() const { return datasetInfo; }
+  const DatasetMapper<IncrementPolicy>& DatasetInfo() const
+  {
+    return datasetInfo;
+  }
+
   // Modify the DatasetInfo.
-  data::DatasetInfo& DatasetInfo() { return datasetInfo; }
+  DatasetMapper<IncrementPolicy>& DatasetInfo() { return datasetInfo; }
 
  private:
   std::optional<bool> hasHeaders;
@@ -252,7 +255,7 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // These are not optional, but if either is specified, then it should be taken
   // to mean that `hasHeaders` or `categorical` has been specified as true.
   arma::field<std::string> headers;
-  data::DatasetInfo datasetInfo;
+  DatasetMapper<IncrementPolicy> datasetInfo;
 
   constexpr static const bool defaultHasHeaders = false;
   constexpr static const bool defaultSemicolon = false;
@@ -274,7 +277,6 @@ struct IsDataOptions<TextOptions>
   constexpr static bool value = true;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

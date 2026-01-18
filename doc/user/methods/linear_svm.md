@@ -177,7 +177,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `LinearSVM` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `svm.Parameters()` will return the parameters of the model as an `arma::mat`
    with either `data.n_rows` rows (if `FitIntercept()` is `false`) or

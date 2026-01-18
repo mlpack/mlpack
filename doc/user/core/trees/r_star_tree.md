@@ -33,7 +33,7 @@ functionality is required, then the R-\*-tree or other variants of
  * [`KNN`](../../methods/knn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [R\*-Tree on Wikipedia](https://en.wikipedia.org/wiki/R*-tree)
- * [The R\*-tree: An Efficient And Robust Access Method for Points and Rectangles (pdf)](https://core.ac.uk/download/pdf/12165134.pdf)
+ * [The R\*-tree: An Efficient And Robust Access Method for Points and Rectangles (pdf)](https://infolab.usc.edu/csci599/Fall2001/paper/rstar-tree.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
@@ -317,7 +317,7 @@ on bound quantities for trees.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * An `RStarTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-objects).
+   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
