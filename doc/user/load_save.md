@@ -1530,7 +1530,7 @@ disk, then reload it.
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
 mlpack::DataOptions opts;
-opts.Fatal () = false;
+opts.Fatal() = false;
 mlpack::Load("admission_predict.csv", data, true);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
