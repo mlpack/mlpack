@@ -117,7 +117,7 @@ Saving one image can be done with the function below:
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
-          ImageOption& opts);
+          ImageOptions& opts);
 ```
 
 ```c++
