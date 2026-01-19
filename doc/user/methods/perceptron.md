@@ -224,7 +224,7 @@ std::cout << "Training set accuracy after 350 iterations: "
     << "\%." << std::endl;
 
 // Save the perceptron to disk for later use.
-mlpack::Save("perceptron.bin", "perceptron", p);
+mlpack::Save("perceptron.bin", p);
 ```
 
 ---
