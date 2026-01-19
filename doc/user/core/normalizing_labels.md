@@ -3,8 +3,8 @@
 mlpack classifiers and other algorithms require labels to be in the range `0` to
 `numClasses - 1`.  A vector of labels with arbitrary (`size_t`) values can be
 normalized to the required range with the
-[`NormalizeLabels()`](#datanormalizelabels) function, and reverted to the
-original range with the [`RevertLabels()`](#datarevertlabels) function.
+[`NormalizeLabels()`](#normalizelabels) function, and reverted to the
+original range with the [`RevertLabels()`](#revertlabels) function.
 
 ---
 
