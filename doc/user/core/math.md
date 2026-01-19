@@ -392,7 +392,7 @@ arma::mat blocks;
 ctb.Transform(matrix, blocks);
 
 mlpack::ImageOptions blockOutOpts(blocks.n_cols, blocks.n_rows, 1);
-blackOutOpts.Fatal() = true;
+blockOutOpts.Fatal() = true;
 mlpack::Save("favicons-blocks.png", blocks, blackOutOpts);
 ```
 
