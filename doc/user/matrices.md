@@ -147,7 +147,7 @@ mlpack has support to load mixed categorical data:
 
  * The `DatasetInfo` auxiliary class stores information about whether each
    dimension is numeric or categorical.  ([full
-   documentation](load_save.md#datadatasetinfo))
+   documentation](load_save.md#datasetinfo))
  * `Load(filename, matrix, Categorical)` ([full
    documentation](load_save.md#mixed-categorical-data))
 

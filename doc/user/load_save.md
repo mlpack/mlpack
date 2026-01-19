@@ -176,7 +176,7 @@ object `X` to be loaded or saved:
    - Columns of `X` that are categorical are represented as integer values
      starting from 0.
    - Information about categorical dimensions is stored in a
-     [`DatasetInfo`](#datadatasetinfo) object, which is held inside of a
+     [`DatasetInfo`](#datasetinfo) object, which is held inside of a
      [`TextOptions`](#textoptions) object.
    - Supported formats are CSV, TSV, text, and ARFF;
      see [the table of format options](#formats).
@@ -361,7 +361,7 @@ is set.
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Metadata._               |                             |                           |                   |
 | _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV. |
-| _(n/a)_                   | `opts.DatasetInfo()`        | [Categorical](#mixed-categorical-data) data. | Returns a [`DatasetInfo`](#datadatasetinfo) with dimension information after loading, or that will be used for dimension information during saving. |
+| _(n/a)_                   | `opts.DatasetInfo()`        | [Categorical](#mixed-categorical-data) data. | Returns a [`DatasetInfo`](#datasetinfo) with dimension information after loading, or that will be used for dimension information during saving. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 
 ***Notes:***
@@ -381,7 +381,7 @@ is set.
    representation.
 
  - When `opts.Categorical()` is `true` while loading, a
-   [`DatasetInfo`](#datadatasetinfo) option is populated with information
+   [`DatasetInfo`](#datasetinfo) option is populated with information
    about each of the dimensions in the dataset and stored in
    `opts.DatasetInfo()`.  In order to access this after loading, an instantiated
    `TextOptions` must be passed to [`Load()`](#dataload); if `Categorical`
@@ -389,7 +389,7 @@ is set.
    accessible after loading.
 
  - When `opts.Categorical()` is `true` while saving, the values in
-   `opts.DatasetInfo()` (which has type [`DatasetInfo`](#datadatasetinfo))
+   `opts.DatasetInfo()` (which has type [`DatasetInfo`](#datasetinfo))
    will be used to map any categorical dimensions back to their original values.
    If `Categorical` was passed as a standalone option, then no
    `DatasetInfo` can be set before saving, and all dimensions of the data
@@ -696,7 +696,7 @@ mlpack supports mixed categorical data, e.g., data where some dimensions take
 only categorical values (e.g. `0`, `1`, `2`, etc.).  When using mlpack, string
 data and other non-numerical data must be mapped to categorical values and
 represented as part of an `arma::mat` or other matrix type.  Category metadata
-is stored in an auxiliary [`DatasetInfo`](#datadatasetinfo) object.
+is stored in an auxiliary [`DatasetInfo`](#datasetinfo) object.
 
  * When calling [`Load()`](#dataload) and [`Save()`](#datasave), `X`
    should have type [`arma::mat`](matrices.md) or any other supported matrix
@@ -718,7 +718,7 @@ is stored in an auxiliary [`DatasetInfo`](#datadatasetinfo) object.
    load, as well as which dimensions are categorical, an instantiated
    [`TextOptions`](#textoptions) `opts` must be passed to
    [`Load()`](#dataload); then, the associated
-   [`DatasetInfo`](#datadatasetinfo) is accessible via
+   [`DatasetInfo`](#datasetinfo) is accessible via
    [`opts.DatasetInfo()`](#textoptions-standalone-operators-and-members).
 
  * When saving, reverse mappings from positive integers to the original unique
@@ -857,7 +857,7 @@ for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 
 ---
 
-Manually create a [`DatasetInfo`](#datadatasetinfo) object and use it to
+Manually create a [`DatasetInfo`](#datasetinfo) object and use it to
 save a categorical dataset.
 
 ```c++
