@@ -207,7 +207,7 @@ object `X` to be loaded or saved:
 
 ## `DataOptions`
 
-The [`Load()`](#dataload) and [`Save()`](#datasave) functions allow
+The [`Load()`](#load) and [`Save()`](#datasave) functions allow
 specifying options in a standalone manner or with an instantiated `DataOptions`
 object.  Standalone options provide convenience:
 
@@ -262,7 +262,7 @@ available when using other options types (e.g. [`TextOptions`](#textoptions),
 #### `DataOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
-[`Load()`](#dataload) and [`Save()`](#datasave) functions, or as
+[`Load()`](#load) and [`Save()`](#datasave) functions, or as
 calls to set members of an instantiated `DataOptions` object.
 
 | ***Standalone operator*** | ***Member function***   | ***Available for:***      | ***Description*** |
@@ -291,7 +291,7 @@ specifically for loading numeric or categorical data from plaintext formats.
 #### `MatrixOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
-[`Load()`](#dataload) and [`Save()`](#datasave) functions, or as
+[`Load()`](#load) and [`Save()`](#datasave) functions, or as
 calls to set members of an instantiated `MatrixOptions` object.
 
 If an option is given that does not match the type of data being loaded or
@@ -333,7 +333,7 @@ data).  `TextOptions` is a child class and thus any standalone operators or memb
 #### `TextOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
-[`Load()`](#dataload) and [`Save()`](#datasave) functions, or as
+[`Load()`](#load) and [`Save()`](#datasave) functions, or as
 calls to set members of an instantiated `TextOptions` object.
 
 If an option is given that does not match the type of data being loaded or
@@ -369,7 +369,7 @@ is set.
  - When `opts.HasHeaders()` is `true` while loading, the parsed headers from the CSV
    file are stored into the `opts.Headers()` member, which has type
    `std::vector<std::string>`.  In order to access the headers after loading, an
-   instantiated `TextOptions` must be passed to [`Load()`](#dataload); if
+   instantiated `TextOptions` must be passed to [`Load()`](#load); if
    `HasHeaders` is passed as a standalone option, the parsed headers will not be
    accessible after loading.
 
@@ -384,7 +384,7 @@ is set.
    [`DatasetInfo`](#datasetinfo) option is populated with information
    about each of the dimensions in the dataset and stored in
    `opts.DatasetInfo()`.  In order to access this after loading, an instantiated
-   `TextOptions` must be passed to [`Load()`](#dataload); if `Categorical`
+   `TextOptions` must be passed to [`Load()`](#load); if `Categorical`
    is passed as a standalone option, the `DatasetInfo` object will not be
    accessible after loading.
 
@@ -406,7 +406,7 @@ The `ImageOptions` class represents options specific to [images](#image-data).
 #### `ImageOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
-[`Load()`](#dataload) and [`Save()`](#datasave) functions, or as
+[`Load()`](#load) and [`Save()`](#datasave) functions, or as
 calls to set members of an instantiated `MatrixOptions` object.
 
 If an option is given that does not match the type of data being loaded or
@@ -439,11 +439,11 @@ is set.
 
 ***Notes:***
 
- * After a call to [`Load()`](#dataload), if an instantiated
+ * After a call to [`Load()`](#load), if an instantiated
    `ImageOptions` was passed, the `opts.Height()`, `opts.Width()`, and
    `opts.Channels()` members will be set with the values found during loading.
 
- * Before calling [`Load()`](#dataload), the value of `opts.Channels()`
+ * Before calling [`Load()`](#load), the value of `opts.Channels()`
    can be set to the desired number of channels (1/3/4) to force loading with
    that many color channels.
 
@@ -462,7 +462,7 @@ child class of [`DataOptions`](#dataoptions) and thus any
 #### `ModelOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
-[`Load()`](#dataload) and [`Save()`](#datasave) functions, or as
+[`Load()`](#load) and [`Save()`](#datasave) functions, or as
 calls to set members of an instantiated `MatrixOptions` object.
 
 If an option is given that does not match the type of data being loaded or
@@ -489,7 +489,7 @@ is set.
 
 ## Formats
 
-The [`Load()`](#dataload) and [`Save()`](#datasave) functions
+The [`Load()`](#load) and [`Save()`](#datasave) functions
 support numerous different formats for loading and saving.  Not all formats are
 relevant for all types of data.  The table below lists standalone options that
 can be used to specify the format, as well as member functions for a
@@ -536,11 +536,11 @@ Standard numeric data is represented in mlpack as a
 [column-major matrix](matrices.md) and a variety of formats for loading and
 saving are supported.
 
- * When calling [`Load()`](#dataload) and [`Save()`](#datasave), `X`
+ * When calling [`Load()`](#load) and [`Save()`](#datasave), `X`
    should have type [`arma::mat`](matrices.md) or any other supported matrix
    type (e.g. `arma::fmat`, `arma::umat`, and so forth).
 
- * When calling [`Load()`](#dataload) with a vector `filenames`, all files
+ * When calling [`Load()`](#load) with a vector `filenames`, all files
    must have the same number of dimensions and header names (if using
    CSVs with headers).  All files will be concatenated into the output matrix `X`.
 
@@ -698,7 +698,7 @@ data and other non-numerical data must be mapped to categorical values and
 represented as part of an `arma::mat` or other matrix type.  Category metadata
 is stored in an auxiliary [`DatasetInfo`](#datasetinfo) object.
 
- * When calling [`Load()`](#dataload) and [`Save()`](#datasave), `X`
+ * When calling [`Load()`](#load) and [`Save()`](#datasave), `X`
    should have type [`arma::mat`](matrices.md) or any other supported matrix
    type (e.g. `arma::fmat`, `arma::umat`, and so forth).
 
@@ -717,7 +717,7 @@ is stored in an auxiliary [`DatasetInfo`](#datasetinfo) object.
  * To access mappings from each categorical value to its original value after
    load, as well as which dimensions are categorical, an instantiated
    [`TextOptions`](#textoptions) `opts` must be passed to
-   [`Load()`](#dataload); then, the associated
+   [`Load()`](#load); then, the associated
    [`DatasetInfo`](#datasetinfo) is accessible via
    [`opts.DatasetInfo()`](#textoptions-standalone-operators-and-members).
 
@@ -742,7 +742,7 @@ numeric or categorical and allows conversion from the original category values
 to the numeric values used to represent those categories.
 
 For loading and saving categorical data, an instantiated
-[`TextOptions`](#textoptions) must be passed to [`Load()`](#dataload) or
+[`TextOptions`](#textoptions) must be passed to [`Load()`](#load) or
 [`Save()`](#datasave); this object contains a `DatasetInfo` object,
 accessible via the
 [`.DatasetInfo()`](#textoptions-standalone-operators-and-members) method; e.g.,
@@ -751,7 +751,7 @@ accessible via the
 #### Accessing and setting properties
 
 This documentation uses `info` as the name of the `DatasetInfo` object,
-but if a categorical dataset has been loaded with [`Load()`](#dataload),
+but if a categorical dataset has been loaded with [`Load()`](#load),
 it is instead suggested to use `opts.DatasetInfo()` in place of `info`.
 
  - `info = DatasetInfo(dimensionality)`
@@ -958,7 +958,7 @@ a version of STB
 When loading images, each image is represented as a flattened single column
 vector in a data matrix; each row of the resulting vector will correspond to a
 single pixel value (between 0 and 255) in a single channel.  If an
-[`ImageOptions`](#imageoptions) was passed to [`Load()`](#dataload), it
+[`ImageOptions`](#imageoptions) was passed to [`Load()`](#load), it
 will be populated with the metadata of the image.
 
 Images are flattened along rows, with channel values interleaved, starting from
@@ -1466,10 +1466,10 @@ std::cout << "Total size: " << image.n_rows << "\n";
 
 Machine learning models and any mlpack object (i.e. anything in the `mlpack::`
 namespace) can be saved with [`Save()`](#datasave) and loaded with
-[`Load()`](#dataload).  Serialization is performed using the
+[`Load()`](#load).  Serialization is performed using the
 [cereal](https://uscilab.github.io/cereal/) serialization toolkit.
 
- * When calling [`Load()`](#dataload) and [`Save()`](#datasave), `X`
+ * When calling [`Load()`](#load) and [`Save()`](#datasave), `X`
    should be the desired mlpack model or object type.
 
  * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
