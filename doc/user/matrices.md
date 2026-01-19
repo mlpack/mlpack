@@ -178,7 +178,7 @@ that supports mixed categorical data.
 // Load data from `mixed_string_data.csv` into `m`.  Throw an exception on
 // failure.
 arma::mat m;
-TextOptions opts = Categorical + Fatal;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 mlpack::Load("mixed_string_data.csv", m, opts);
 
 // Print information about the data.
@@ -205,6 +205,7 @@ m(1, 2) = info.MapString<double>("wonderful", 1); // Create new third category.
 m(2, 2) = 1;
 m(3, 2) = info.MapString<double>("c", 1);
 m(4, 2) = 0;
+
 // `m` can now be used with any mlpack algorithm that supports categorical data.
 ```
 
