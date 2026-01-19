@@ -393,7 +393,7 @@ ctb.Transform(matrix, blocks);
 
 mlpack::ImageOptions blockOutOpts(blocks.n_cols, blocks.n_rows, 1);
 blockOutOpts.Fatal() = true;
-mlpack::Save("favicons-blocks.png", blocks, blackOutOpts);
+mlpack::Save("favicons-blocks.png", blocks, blockOutOpts);
 ```
 
 The resulting images (before and after using `ColumnsToBlocks`) are shown below.
