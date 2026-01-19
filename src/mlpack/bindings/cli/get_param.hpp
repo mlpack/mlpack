@@ -101,6 +101,7 @@ T& GetParam(
     TextOptions opts = Fatal + Categorical;
     opts.NoTranspose() = d.noTranspose;
     Load(value, std::get<1>(t), opts);
+    std::get<0>(t) = std::move(opts.DatasetInfo());
     n_rows = std::get<1>(t).n_rows;
     n_cols = std::get<1>(t).n_cols;
     d.loaded = true;
