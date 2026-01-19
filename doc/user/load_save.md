@@ -1433,7 +1433,7 @@ with `fillValue`.
 - `LetterboxImages(src, opt, width, height, fillValue)`
   * `src` is a [column-major matrix](matrices.md) containing a single image,
     where the image is represented as a flattened vector in one column.
-  * `opt` is a [`imageOptions&`](#imageoptions) containing info on
+  * `opt` is an [`ImageOptions&`](#imageoptions) containing info on
     the dimensions of the image.
   * `width` and `height` are `const size_t`s determining the new width and
     height of `src`.
