@@ -379,8 +379,9 @@ mlpack::Load(images, matrix, opts);
 
 // Now `matrix` has 4 columns, each of which is an individual image.
 // Let's save that as its own image just for visualization.
-mlpack::ImageInfo outInfo(matrix.n_cols, matrix.n_rows, 1);
-mlpack::Save("favicons-matrix.png", matrix, outInfo, true);
+mlpack::ImageOptions outOpts(matrix.n_cols, matrix.n_rows, 1);i
+outOpts.Fatal() = true;
+mlpack::Save("favicons-matrix.png", matrix, outopts);
 
 // Use ColumnsToBlocks to create a 2x2 block matrix holding each image.
 mlpack::ColumnsToBlocks ctb(2, 2);
@@ -390,8 +391,9 @@ ctb.BufSize(2); // Use 2-pixel margins.
 arma::mat blocks;
 ctb.Transform(matrix, blocks);
 
-mlpack::ImageInfo blockOutInfo(blocks.n_cols, blocks.n_rows, 1);
-mlpack::Save("favicons-blocks.png", blocks, blockOutInfo, true);
+mlpack::ImageOptions blockOutOpts(blocks.n_cols, blocks.n_rows, 1);
+blackOutOpts.Fatal() = true;
+mlpack::Save("favicons-blocks.png", blocks, blackOutOpts);
 ```
 
 The resulting images (before and after using `ColumnsToBlocks`) are shown below.

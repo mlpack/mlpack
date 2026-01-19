@@ -570,7 +570,7 @@ print some information, and then remove a few randomly chosen points.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Create an empty tree of the right dimensionality.
 mlpack::RPlusTree<> t(dataset.n_rows);

@@ -835,7 +835,7 @@ Then we can use it in a program:
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::AMF<CustomTimeTermination,

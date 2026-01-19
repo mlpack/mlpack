@@ -274,7 +274,7 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    mlpack::Save(filename, "sr_model", model, true);
+    mlpack::Save(filename, model, mlpack::Fatal);
     return false; // Do not terminate the optimization.
   }
 

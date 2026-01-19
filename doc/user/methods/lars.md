@@ -332,8 +332,8 @@ const double prediction = lars.Predict(point);
 
 std::cout << "Prediction on random point: " << prediction << "." << std::endl;
 
-// Save the model to "lars_model.bin" with the name "lars".
-mlpack::Save("lars_model.bin", "lars", lars, true);
+// Save the model to "lars_model.bin".
+mlpack::Save("lars_model.bin", lars, mlpack::Fatal);
 ```
 
 ---
@@ -341,7 +341,7 @@ mlpack::Save("lars_model.bin", "lars", lars, true);
 Load a LARS model from disk and print some information about it.
 
 ```c++
-// This assumes a model named "lars" has previously been saved to
+// This assumes a Lars model has previously been saved to
 // "lars_model.bin".
 mlpack::LARS lars;
 mlpack::Load("lars_model.bin", lars, mlpack::Fatal);

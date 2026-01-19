@@ -1455,7 +1455,7 @@ opts.Fatal() = true;
 mlpack::Load("jurassic-park.png", image, opts);
 mlpack::LetterboxImages(image, opts, 416, 416, 127.0);
 // Image dimensions are now 416x416.
-mlpack::Save("jurassic-park-letterbox.png", image, opts, true);
+mlpack::Save("jurassic-park-letterbox.png", image, opts);
 
 std::cout << "Dimensions: " << opts.Width() << " x " << opts.Height()
           << " x " << opts.Channels() << "\n";
@@ -1529,13 +1529,11 @@ disk, then reload it.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::DataOptions opts;
-opts.Fatal() = false;
-mlpack::Load("admission_predict.csv", data, true);
+mlpack::Load("admission_predict.csv", data, mlpack::NoFatal);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, true);
+mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
 
 // Train a linear regression model, fitting an intercept term and using an L2
 // regularization parameter of 0.3.

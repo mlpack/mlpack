@@ -275,7 +275,7 @@ using 32-bit floating point matrices to represent the data.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Create the MeanShift object using a TriangularKernel.
 mlpack::TriangularKernel tk;
