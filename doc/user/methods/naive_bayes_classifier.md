@@ -233,7 +233,7 @@ const double testAccuracy = 100.0 *
 std::cout << "Accuracy of model on test data:     " << testAccuracy << "\%."
     << std::endl;
 
-// Save the model to disk with the name "nbc".
+// Save the model to disk.
 mlpack::Save("nbc_model.bin", nbc, mlpack::Fatal);
 ```
 
