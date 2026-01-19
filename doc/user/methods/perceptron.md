@@ -234,7 +234,7 @@ Load a saved perceptron from disk and print information about it.
 ```c++
 mlpack::Perceptron p;
 // This call assumes a perceptron has already been saved to `perceptron.bin`
-// `perceptron.bin` with `Save()`.
+// with `Save()`.
 mlpack::Load("perceptron.bin", p, mlpack::Fatal);
 
 if (p.NumClasses() > 0)
