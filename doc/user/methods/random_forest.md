@@ -243,7 +243,7 @@ mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 10 trees on the given dataset, with a minimum leaf size of 3.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */);
 
 // Now load categorical test data.
@@ -264,7 +264,7 @@ std::cout << "After training 10 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
 
 // Now train another 10 trees and compute the test accuracy.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */, 0.0 /* minimum split gain */,
          0 /* maximum depth (unlimited) */, true /* incremental training */);
 
@@ -321,7 +321,7 @@ mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 20 trees on the given dataset, with a minimum leaf size of 5.
-rf.Train(dataset, info, labels, 7 /* classes */, 20 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 20 /* trees */,
          5 /* minimum leaf size */);
 
 // Compute test set accuracy for each tree.

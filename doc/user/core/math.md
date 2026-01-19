@@ -379,9 +379,9 @@ mlpack::Load(images, matrix, opts);
 
 // Now `matrix` has 4 columns, each of which is an individual image.
 // Let's save that as its own image just for visualization.
-mlpack::ImageOptions outOpts(matrix.n_cols, matrix.n_rows, 1);i
+mlpack::ImageOptions outOpts(matrix.n_cols, matrix.n_rows, 1);
 outOpts.Fatal() = true;
-mlpack::Save("favicons-matrix.png", matrix, outopts);
+mlpack::Save("favicons-matrix.png", matrix, outOpts);
 
 // Use ColumnsToBlocks to create a 2x2 block matrix holding each image.
 mlpack::ColumnsToBlocks ctb(2, 2);
