@@ -296,7 +296,7 @@ Load a linear SVM from disk and print some information about it.
 
 ```c++
 mlpack::LinearSVM svm;
-// This assumes that a model called "svm" has been saved to the file
+// This assumes that a `LinearSVM` model has been saved to the file
 // "model-1.bin" (as in the previous example).
 mlpack::Load("model-1.bin", svm, mlpack::Fatal);
 
