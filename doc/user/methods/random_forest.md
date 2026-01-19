@@ -285,7 +285,7 @@ Load a random forest and print some information about it.
 ```c++
 mlpack::RandomForest rf;
 // This call assumes a random forest has already been saved to `rf.bin` with
-// `rf.bin` with `Save()`.
+// `Save()`.
 mlpack::Load("rf.bin", rf, mlpack::Fatal);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
