@@ -3,10 +3,10 @@
 mlpack provides a simple functions for splitting a dataset into a training set
 and a test set.
 
- * [`Split()`](#datasplit): split a dataset into a training set
+ * [`Split()`](#split): split a dataset into a training set
    and test set, optionally with labels and weights.
 
- * [`StratifiedSplit()`](#datastratifiedsplit): perform a stratified
+ * [`StratifiedSplit()`](#stratifiedsplit): perform a stratified
    split, ensuring that the training and test set have the same ratios of each
    label.
 
