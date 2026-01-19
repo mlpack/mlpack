@@ -316,7 +316,7 @@ Load an existing logistic regression model and print some information about it.
 
 ```c++
 mlpack::LogisticRegression lr;
-// This assumes that a model called "lr_model" has been saved to the file
+// This assumes that a `LogisticRegression` model has been saved to the file
 // "model-1.bin" (as in the previous example).
 mlpack::Load("model-1.bin", lr, mlpack::Fatal);
 
