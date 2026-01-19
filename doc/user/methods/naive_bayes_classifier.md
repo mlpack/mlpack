@@ -244,7 +244,7 @@ Load a saved Naive Bayes classifier and print some information about it.
 ```c++
 mlpack::NaiveBayesClassifier nbc;
 
-// Load the model named "nbc" from "nbc_model.bin".
+// Load the `NaiveBayesClassifier` model from "nbc_model.bin".
 mlpack::Load("nbc_model.bin", nbc, mlpack::Fatal);
 
 // Print information about the model.
