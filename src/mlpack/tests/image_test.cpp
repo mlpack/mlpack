@@ -790,7 +790,7 @@ TEST_CASE("BoundingBoxImage3Channels", "[ImageTest]")
     0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
     0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
     0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}).t() * 255;
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}).t();
 
   arma::mat bbox = arma::mat({1, 1, 3, 3}).t();
   arma::mat color(3, 1);
@@ -811,7 +811,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsTopLeftCorner", "[ImageTest]")
     1, 0, 0, 1, 0,
     1, 0, 0, 1, 0,
     1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0}).t() * 255;
+    0, 0, 0, 0, 0}).t();
 
   arma::mat bbox = arma::mat({-1, -1, 3, 3}).t();
   arma::mat color(1, 1);
@@ -832,7 +832,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsTopRightCorner", "[ImageTest]")
     0, 1, 0, 0, 1,
     0, 1, 0, 0, 1,
     0, 1, 1, 1, 1,
-    0, 0, 0, 0, 0}).t() * 255;
+    0, 0, 0, 0, 0}).t();
 
   arma::mat bbox = arma::mat({1, -1, 5, 3}).t();
   arma::mat color(1, 1);
@@ -853,7 +853,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomRightCorner", "[ImageTest]")
     0, 1, 1, 1, 1,
     0, 1, 0, 0, 1,
     0, 1, 0, 0, 1,
-    0, 1, 1, 1, 1}).t() * 255;
+    0, 1, 1, 1, 1}).t();
 
   arma::mat bbox = arma::mat({1, 1, 5, 5}).t();
   arma::mat color(1, 1);
@@ -874,7 +874,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
     1, 1, 1, 1, 0,
     1, 0, 0, 1, 0,
     1, 0, 0, 1, 0,
-    1, 1, 1, 1, 0}).t() * 255;
+    1, 1, 1, 1, 0}).t();
 
   arma::mat bbox = arma::mat({-1, 1, 3, 5}).t();
   arma::mat color(1, 1);
