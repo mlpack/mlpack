@@ -20,12 +20,12 @@ namespace mlpack {
 
 template <typename ImageType, typename BoundingBoxesType>
 inline void BoundingBoxImage(ImageType& src,
-  const ImageInfo& srcOpt,
+  const ImageInfo& opts,
   const BoundingBoxesType& bbox,
   const ImageType& color,
   const size_t borderSize = 1,
   const std::string& className = "",
-  const size_t letterSize = 0);
+  const size_t letterSize = 1);
 
 } // namespace mlpack
 

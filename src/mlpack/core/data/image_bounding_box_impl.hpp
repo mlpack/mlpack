@@ -20,19 +20,19 @@ namespace mlpack {
 
 template <typename MatType>
 inline void UpdatePixel(MatType& src,
-  const ImageInfo& srcOpt,
+  const ImageInfo& opts,
   const size_t x,
   const size_t y,
   const MatType& color)
 {
   const size_t redChannel =
-    x * srcOpt.Channels() + y * srcOpt.Channels() * srcOpt.Width();
+    x * opts.Channels() + y * opts.Channels() * opts.Width();
   src.rows(redChannel, redChannel + color.n_rows - 1) =  color;
 }
 
 template <typename MatType>
 inline void DrawLetter(MatType& src,
-  const ImageInfo& srcOpt,
+  const ImageInfo& opts,
   const char letter,
   const typename MatType::elem_type x,
   const typename MatType::elem_type y,
@@ -43,14 +43,15 @@ inline void DrawLetter(MatType& src,
   {
     for (size_t j = 0; j < fontWidth; j++)
     {
-      const bool on =
+      const double on =
         !(font8x8Basic[(size_t)letter][i] & (unsigned char)(1 << j));
-      const MatType set = arma::repmat(MatType({ on }), srcOpt.Channels(), 1);
+      const MatType set =
+        arma::repmat(MatType({ on * 255.0 }), opts.Channels(), 1);
       for (size_t k = 0; k < size * size; k++)
       {
         const size_t px = x + (j * size) + (k % size);
         const size_t py = y + (i * size) + (k / size);
-        UpdatePixel(src, srcOpt, px, py, set);
+        UpdatePixel(src, opts, px, py, set);
       }
     }
   }
@@ -58,7 +59,7 @@ inline void DrawLetter(MatType& src,
 
 template <typename ImageType, typename BoundingBoxesType>
 inline void BoundingBoxImage(ImageType& src,
-  const ImageInfo& srcOpt,
+  const ImageInfo& opts,
   const BoundingBoxesType& bbox,
   const ImageType& color,
   const size_t borderSize,
@@ -67,21 +68,21 @@ inline void BoundingBoxImage(ImageType& src,
 {
   using ElemType = typename BoundingBoxesType::elem_type;
 
-  const size_t imageSize = srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
+  const size_t imageSize = opts.Width() * opts.Height() * opts.Channels();
   if (src.n_elem != imageSize) {
     std::ostringstream errMessage;
     errMessage << "BoundingBoxImage(): The size of the image (" << src.n_elem
                << ") does not match the given dimensions ("
-               << srcOpt.Width() << ", " << srcOpt.Height() << ", "
-               << srcOpt.Channels() << ").";
+               << opts.Width() << ", " << opts.Height() << ", "
+               << opts.Channels() << ").";
     throw std::logic_error(errMessage.str());
   }
 
-  if (color.n_rows != srcOpt.Channels() || color.n_cols != 1) {
+  if (color.n_rows != opts.Channels() || color.n_cols != 1) {
     std::ostringstream errMessage;
     errMessage << "BoundingBoxImage(): The color vector of shape ("
                << color.n_rows << ", " << color.n_cols << ") does not match "
-               << "expected shape (" << srcOpt.Channels() << ", 1)";
+               << "expected shape (" << opts.Channels() << ", 1)";
     throw std::logic_error(errMessage.str());
   }
 
@@ -92,8 +93,8 @@ inline void BoundingBoxImage(ImageType& src,
     throw std::logic_error(errMessage.str());
   }
 
-  const ElemType maxWidth = srcOpt.Width() - 1;
-  const ElemType maxHeight = srcOpt.Height() - 1;
+  const ElemType maxWidth = opts.Width() - 1;
+  const ElemType maxHeight = opts.Height() - 1;
   const ElemType x1 = std::clamp<ElemType>(bbox(0), 0, maxWidth);
   const ElemType y1 = std::clamp<ElemType>(bbox(1), 0, maxHeight);
   const ElemType x2 = std::clamp<ElemType>(bbox(2), 0, maxWidth);
@@ -121,15 +122,15 @@ inline void BoundingBoxImage(ImageType& src,
     {
       const size_t yTop = y1 + b;
       const size_t yBottom = y2 - b;
-      UpdatePixel(src, srcOpt, x, yTop, color);
-      UpdatePixel(src, srcOpt, x, yBottom, color);
+      UpdatePixel(src, opts, x, yTop, color);
+      UpdatePixel(src, opts, x, yBottom, color);
     }
     for (int y = y1; y <= y2; y++)
     {
       const size_t xLeft = x1 + b;
       const size_t xRight = x2 - b;
-      UpdatePixel(src, srcOpt, xLeft, y, color);
-      UpdatePixel(src, srcOpt, xRight, y, color);
+      UpdatePixel(src, opts, xLeft, y, color);
+      UpdatePixel(src, opts, xRight, y, color);
     }
   }
 
@@ -140,9 +141,9 @@ inline void BoundingBoxImage(ImageType& src,
   const ElemType update = letterSize * 8;
   for (size_t i = 0; i < className.size(); i++)
   {
-    if (dx + update > srcOpt.Width())
+    if (dx + update > opts.Width())
       break;
-    DrawLetter(src, srcOpt, className[i], dx, y1, letterSize);
+    DrawLetter(src, opts, className[i], dx, y1, letterSize);
     dx += update;
   }
 }
