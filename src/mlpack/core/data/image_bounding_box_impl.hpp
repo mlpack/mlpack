@@ -44,7 +44,7 @@ inline void DrawLetter(MatType& src,
     for (size_t j = 0; j < fontWidth; j++)
     {
       const bool on =
-        !(font8x8_basic[(size_t)letter][i] & (unsigned char)(1 << j));
+        !(font8x8Basic[(size_t)letter][i] & (unsigned char)(1 << j));
       const MatType set = arma::repmat(MatType({ on }), srcOpt.Channels(), 1);
       for (size_t k = 0; k < size * size; k++)
       {
