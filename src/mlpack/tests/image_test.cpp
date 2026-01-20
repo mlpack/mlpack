@@ -781,7 +781,7 @@ TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
 
 TEST_CASE("BoundingBoxImage3Channels", "[ImageTest]")
 {
-  ImageOptions opt(5, 5 * 3, 1);
+  ImageOptions opt(5, 5, 3);
   arma::mat image(25 * 3, 1);
   image.fill(0);
 
