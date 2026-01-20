@@ -818,7 +818,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsTopLeftCorner", "[ImageTest]")
   color.fill(1);
 
   BoundingBoxImage(image, opt, bbox, color);
-  REQUIRE(image == expectedOutput);
+  REQUIRE(CheckMatrices(image, expectedOutput));
 }
 
 TEST_CASE("BoundingBoxImageOutOfBoundsTopRightCorner", "[ImageTest]")
@@ -839,7 +839,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsTopRightCorner", "[ImageTest]")
   color.fill(1);
 
   BoundingBoxImage(image, opt, bbox, color);
-  REQUIRE(image == expectedOutput);
+  REQUIRE(CheckMatrices(image, expectedOutput));
 }
 
 TEST_CASE("BoundingBoxImageOutOfBoundsBottomRightCorner", "[ImageTest]")
@@ -860,7 +860,7 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomRightCorner", "[ImageTest]")
   color.fill(1);
 
   BoundingBoxImage(image, opt, bbox, color);
-  REQUIRE(image == expectedOutput);
+  REQUIRE(CheckMatrices(image, expectedOutput));
 }
 
 TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
@@ -881,5 +881,5 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
   color.fill(1);
 
   BoundingBoxImage(image, opt, bbox, color);
-  REQUIRE(image == expectedOutput);
+  REQUIRE(CheckMatrices(image, expectedOutput));
 }

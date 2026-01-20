@@ -1462,6 +1462,8 @@ std::cout << "Dimensions: " << opts.Width() << " x " << opts.Height()
 std::cout << "Total size: " << image.n_rows << "\n";
 ```
 
+## Draw bounding boxes for object detection
+
 ## mlpack models and objects
 
 Machine learning models and any mlpack object (i.e. anything in the `mlpack::`
