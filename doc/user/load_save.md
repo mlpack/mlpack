@@ -1464,6 +1464,74 @@ std::cout << "Total size: " << image.n_rows << "\n";
 
 ## Draw bounding boxes for object detection
 
+mlpack comes with a utility function to draw bounding boxes onto images when
+doing tasks such as object detection.
+
+You can do this through the `BoundingBoxImage()`.
+
+---
+
+#### `BoundingBoxImage()`
+
+  * `BoundingBoxImage(src, opts, bbox, color, borderSize, className,
+     letterSize)`
+    - `src` is the column vector representing the image where the bounding box
+      is drawn. The channels of the image must be interleaved,
+      i.e `[r, g, b, r, g, b, ...]`. There must be at most one image. Pixel
+      values are expected to be in the 0-255 range.
+
+    - `opts` is the `ImageOptions` object that describes the shape of the image.
+
+    - `bbox` is the column vector representing the bounding box.
+      `BoundingBoxImage` expects the box to be in `(x1, y1, x2, y2)` format.
+      The vector must contain at least 4 points to represent the box coordinates
+      but may be bigger. This allows passing in matrices that may include class
+      information about the box, which simply gets ignored. The area of the
+      bounding box must be greater than 0. If `x1 >= x2` or `y1 >= y2` an
+      exception will be thrown. Bounding boxes that go off the edge of the image
+      will be clipped and their borders will lie along the boundary of the
+      given image.
+
+    - `color` is a column vector representing the color of the bounding box. It
+      must have the same number of channels as `opts`.
+
+    - `borderSize` is an unsigned integer representing the width of the
+      bounding box in pixels. If border size is set to 0, no bounding box will
+      be drawn. The default border size is 1.
+
+    - `className` is a string representing the class name given to the bounding
+      box. If the string is empty, no name will be drawn. The default class
+      name is `""`. Letters will be truncated if they do not fit entirely onto
+      the image. The font included uses the `font8x8_basic` from
+      [https://github.com/dhepper/font8x8](https://github.com/dhepper/font8x8).
+
+    - `letterSize` represents the size of each letter. When set to 1, each
+      letter is 8x8 pixels. `letterSize` is a multiplier, so when set to 2
+      each letter is 16x16 pixels. If letterSize is 0, no class name will be
+      printed. The default setting is 1.
+
+#### Example
+
+An example that draws a random red bounding box onto an image, with the class
+name `Jurassic Park Logo`.
+
+```c++
+// Download: https://datasets.mlpack.org/jurassic-park.png
+arma::mat image;
+mlpack::data::ImageOptions opts;
+opts.Fatal() = true;
+mlpack::data::Load("jurassic-park.png", image, opts);
+
+arma::mat bbox = arma::mat({90, 80, 510, 370}).t();
+arma::mat color = arma::mat({255, 0, 0}).t();
+std::string className = "Jurassic Park Logo";
+size_t borderSize = 2;
+size_t letterSize = 2;
+mlpack::data::BoundingBoxImage(image, opts, bbox, color, borderSize,
+                               className, letterSize);
+mlpack::data::Save("jurassic-park-box.png", image, opts, true);
+```
+
 ## mlpack models and objects
 
 Machine learning models and any mlpack object (i.e. anything in the `mlpack::`
