@@ -39,13 +39,10 @@ namespace mlpack {
  * @return Boolean value indicating success or failure of Save.
  */
 
-template<typename MatType>
-bool Save(const std::string& filename, MatType& matrix);
-
-template<typename MatType, typename DataOptionsType>
+template<typename MatType, typename DataOptionsType = PlainDataOptions>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          DataOptionsType& opts,
+          DataOptionsType& opts = DataOptionsType(),
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 

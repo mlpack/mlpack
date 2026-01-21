@@ -30,12 +30,6 @@ bool Save(const std::string& filename,
   return Save(filename, matrix, copyOpts);
 }
 
-template<typename MatType>
-bool Save(const std::string& filename, MatType& matrix)
-{
-  return Save(filename, matrix, DataOptions());
-}
-
 template<typename ObjectType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const ObjectType& matrix,
