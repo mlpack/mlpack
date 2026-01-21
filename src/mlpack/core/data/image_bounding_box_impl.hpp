@@ -57,11 +57,13 @@ inline void DrawLetter(MatType& src,
   }
 }
 
-template <typename ImageType, typename BoundingBoxesType>
+template <typename ImageType,
+          typename BoundingBoxesType,
+          typename ColorType>
 inline void BoundingBoxImage(ImageType& src,
   const ImageInfo& opts,
   const BoundingBoxesType& bbox,
-  const ImageType& color,
+  const ColorType& color,
   const size_t borderSize,
   const std::string& className,
   const size_t letterSize)
