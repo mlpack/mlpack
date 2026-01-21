@@ -985,6 +985,7 @@ of the flattened vector.
    - [`ResizeAndCropImages()`](#resize-and-crop-images)
    - [`GroupChannels()` and `InterleaveChannels()`](#changing-the-memory-layout-of-images)
    - [`LetterboxImages()`](#letterbox-transform)
+   - [`BoundingBoxImages()`](#draw-bounding-boxes-for-object-detection)
 
 ---
 
@@ -1355,7 +1356,7 @@ grouped together in preparation for a convolutional neural network. Then, the
 image is converted back to interleaved channels and saved.
 
 ```c++
-// Download: https://datasets.mlpack.org/images/mlpack-favicon.png
+// See https://datasets.mlpack.org/images/mlpack-favicon.png
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
@@ -1448,7 +1449,7 @@ An example that loads an image, resizes the image to some square image
 while keeping the aspect ratio using `LetterboxImages()`.
 
 ```c++
-// Download: https://datasets.mlpack.org/jurassic-park.png
+// See https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
@@ -1467,56 +1468,59 @@ std::cout << "Total size: " << image.n_rows << "\n";
 mlpack comes with a utility function to draw bounding boxes onto images when
 doing tasks such as object detection.
 
-You can do this through the `BoundingBoxImage()`.
+<p align="center">
+  <img src="../img/jurassic-park-logo-box.png" alt="jurassic park logo">
+</p>
+
+You can do this through the `BoundingBoxImage()` function.
 
 ---
 
 #### `BoundingBoxImage()`
 
-  * `BoundingBoxImage(src, opts, bbox, color, borderSize, className,
-     letterSize)`
-    - `src` is the column vector representing the image where the bounding box
-      is drawn. The channels of the image must be interleaved,
-      i.e `[r, g, b, r, g, b, ...]`. There must be at most one image. Pixel
-      values are expected to be in the 0-255 range.
+  * `BoundingBoxImage(src, opts, bbox, color, borderSize = 1, className = "", letterSize = 1)`
+    - `src` is [image data](#image-data) (e.g. a column vector) where the bounding box
+      will be drawn. The channels of the image must be interleaved,
+      which you can read about [here](#changing-the-memory-layout-of-images).
+      There must be at most one image, otherwise an exception will be thrown.
+      Pixel values are expected to be in the 0-255 range.
 
-    - `opts` is the `ImageOptions` object that describes the shape of the image.
+    - `opts` is the [`ImageOptions`](#imageoptions) object containing metadata relating
+      to the image.
 
-    - `bbox` is the column vector representing the bounding box.
-      `BoundingBoxImage` expects the box to be in `(x1, y1, x2, y2)` format.
-      The vector must contain at least 4 points to represent the box coordinates
-      but may be bigger. This allows passing in matrices that may include class
-      information about the box, which simply gets ignored. The area of the
-      bounding box must be greater than 0. If `x1 >= x2` or `y1 >= y2` an
-      exception will be thrown. Bounding boxes that go off the edge of the image
-      will be clipped and their borders will lie along the boundary of the
-      given image.
+    - `bbox` is a [column vector](matrices.md#representing-data-in-mlpack) representing the bounding box to be drawn as a four-element vector: `(x1, y1, x2, y2)`.
+      * Elements after the fourth in `bbox` are ignored. There must be at least four elements,
+        otherwise an exception will be thrown.
+      * The area of the bounding box must be greater than 0.
+      * If `x1 >= x2` or `y1 >= y2` an exception will be thrown.
+      * Bounding boxes larger than the image will be clipped and their borders will lie along
+        the image's edge.
 
-    - `color` is a column vector representing the color of the bounding box. It
-      must have the same number of channels as `opts`.
+    - `color` is a [column vector](matrices.md#representing-data-in-mlpack) representing the
+      color of the bounding box. It must have the same number of elements as `opts.Channels()`.
 
-    - `borderSize` is an unsigned integer representing the width of the
+    - `borderSize` is a `size_t` representing the width of the
       bounding box in pixels. If border size is set to 0, no bounding box will
       be drawn. The default border size is 1.
 
     - `className` is a string representing the class name given to the bounding
-      box. If the string is empty, no name will be drawn. The default class
-      name is `""`. Letters will be truncated if they do not fit entirely onto
-      the image. The font included uses the `font8x8_basic` from
+      box. If the string is empty (the default), no name will be drawn.
+      Letters will be truncated if they do not fit entirely onto the image. The font
+      included uses the `font8x8_basic` from
       [https://github.com/dhepper/font8x8](https://github.com/dhepper/font8x8).
 
-    - `letterSize` represents the size of each letter. When set to 1, each
+    - `letterSize` represents the size of each letter. When set to 1 (the default), each
       letter is 8x8 pixels. `letterSize` is a multiplier, so when set to 2
       each letter is 16x16 pixels. If letterSize is 0, no class name will be
-      printed. The default setting is 1.
+      printed.
 
 #### Example
 
-An example that draws a random red bounding box onto an image, with the class
+An example that draws a red bounding box onto an image, with the class
 name `Jurassic Park Logo`.
 
 ```c++
-// Download: https://datasets.mlpack.org/jurassic-park.png
+// See https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
