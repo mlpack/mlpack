@@ -38,10 +38,10 @@ namespace mlpack {
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType, typename DataOptionsType = PlainDataOptions>
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
           MatType& matrix,
-          DataOptionsType& opts = DataOptionsType(),
+          DataOptionsType& opts,
           const bool copyBack = true,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
@@ -55,10 +55,10 @@ bool Load(const std::string& filename,
  * @param opts Non-modifiable DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename MatType, typename DataOptionsType = PlainDataOptions>
 bool Load(const std::string& filename,
           MatType& matrix,
-          const DataOptionsType& opts,
+          const DataOptionsType& opts = DataOptionsType(),
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 /**
