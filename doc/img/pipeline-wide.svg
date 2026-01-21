@@ -115,8 +115,11 @@
       <a xlink:href="../user/core/split.html" target="_top">
         <text x="430" y="230" text-anchor="middle">Dataset splitting</text>
       </a>
+      <a xlink:href="../user/core/images.html" target="_top">
+        <text x="430" y="245" text-anchor="middle">Images preprocessing</text>
+      </a>
       <a xlink:href="../user/core/imputation.html" target="_top">
-        <text x="430" y="245" text-anchor="middle">Imputing missing values</text>
+        <text x="430" y="260" text-anchor="middle">Imputing missing values</text>
       </a>
     </g>
 
