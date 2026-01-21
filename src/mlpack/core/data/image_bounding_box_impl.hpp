@@ -18,12 +18,12 @@
 
 namespace mlpack {
 
-template <typename MatType>
-inline void UpdatePixel(MatType& src,
+template <typename ImageType, typename ColorType>
+inline void UpdatePixel(ImageType& src,
   const ImageInfo& opts,
   const size_t x,
   const size_t y,
-  const MatType& color)
+  const ColorType& color)
 {
   const size_t redChannel =
     x * opts.Channels() + y * opts.Channels() * opts.Width();
