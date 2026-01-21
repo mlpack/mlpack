@@ -1197,7 +1197,7 @@ std::cout << "Saved model to lr-model.bin." << std::endl;
 // Now load the model back, using format autodetection on the filename
 // extension.
 mlpack::LinearRegression loadedModel;
-if (!mlpack::Load("lr-model.bin", loadedModel, opts))
+if (!mlpack::Load("lr-model.bin", loadedModel))
 {
   std::cout << "Model not loaded successfully from 'lr-model.bin'!"
       << std::endl;
