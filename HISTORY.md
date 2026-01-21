@@ -3,6 +3,8 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+ * Allow batching when training RNN with ragged lengths (#4042).
+
  * Fixed generated artifiacts in resized float images by using clamping (#4030).
 
  * Optimize convolution (#3988).
