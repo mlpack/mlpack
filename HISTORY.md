@@ -51,7 +51,7 @@ _????-??-??_
    mlpack model bindings and list as fallback (#4045).
 
  * Added `BoundingBoxImage()` for drawing bounding boxes onto images when
-   doing tasks such as object detection.
+   doing tasks such as object detection (#4039).
 
 ## mlpack 4.6.2
 
