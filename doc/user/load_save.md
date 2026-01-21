@@ -980,11 +980,7 @@ of the flattened vector.
    for more details.
 
  * mlpack offers the following image modification functionality, documented in
-   the sections below:
-   - [`ResizeImages()`](#resizing-images)
-   - [`ResizeAndCropImages()`](#resize-and-crop-images)
-   - [`GroupChannels()` and `InterleaveChannels()`](#changing-the-memory-layout-of-images)
-   - [`LetterboxImages()`](#letterbox-transform)
+   [Images preprocessing](core/images.md).
 
 ---
 

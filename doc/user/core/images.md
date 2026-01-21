@@ -3,15 +3,15 @@
 mlpack provides a set of functions to preprocess images for training and
 testing.
 
- * [`ResizeImage()`](#resizingimages): resize a matrix with a set of images.
+ * [`ResizeImage()`](#resizing-images): resize a matrix with a set of images.
    Images needs to have an identical dimensions.
- * [`ResizeCropImages()`](#resizeandcropimages): resize the images but it crops
+ * [`ResizeCropImages()`](#resize-and-crop-images): resize the images but it crops
    the images to keep the same aspect ratio.
  * [`GroupChannels()`](#groupchannels): Convert image pixel order from
    `[r, g, b, r, g, b, ... ]` to `[r, r, ..., g, g, ..., b, b]`.
  * [`InterleaveChannels()`](#interleavechannels): Convert image pixel order
    from `[r, r, ..., g, g, ..., b, b]` to  `[r, g, b, r, g, b, ... ]`.
- * [`LetterboxImages()`](letterboxtransform): resize the images and keep the
+ * [`LetterboxImages()`](#letterbox-transform): resize the images and keep the
    same aspect ratio without cropping.
 
 ## Resizing images
@@ -19,10 +19,10 @@ testing.
 The `ResizeImages()` function can be used to resize image data:
 
 - `ResizeImages(images, opts, newWidth, newHeight)`
-   * `images` is a [column-major matrix](matrices.md) containing a set of
+   * `images` is a [column-major matrix](../matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`ImageOptions&`](#imageoptions) containing details about
+   * `opts` is a [`ImageOptions&`](../load_save.md#imageoptions) containing details about
      the images in `images`, and will be modified to contain the new size of the
      images.
 
@@ -121,33 +121,33 @@ that the width and height of the image both no smaller than `outputWidth` and
 *Original image:*
 
 <p align="center">
-  <img src="../img/cat.jpg" alt="cat">
+  <img src="../../img/cat.jpg" alt="cat">
 </p>
 
 *Original image with target size of* `220`x`220` *pixels:*
 
 <p align="center">
-  <img src="../img/cat_rect.jpg" alt="cat with rectangle overlaid">
+  <img src="../../img/cat_rect.jpg" alt="cat with rectangle overlaid">
 </p>
 
 *First step: resize while preserving aspect ratio:*
 
 <p align="center">
-  <img src="../img/cat_scaled_rect.jpg"
+  <img src="../../img/cat_scaled_rect.jpg"
        alt="scaled cat with rectangle overlaid">
 </p>
 
 *Second step: crop to desired final size:*
 
 <p align="center">
-  <img src="../img/cat_cropped.jpg" alt="cropped cat">
+  <img src="../../img/cat_cropped.jpg" alt="cropped cat">
 </p>
 
 - `ResizeCropImages(images, opts, newWidth, newHeight)`
-   * `images` is a [column-major matrix](matrices.md) containing a set of
+   * `images` is a [column-major matrix](../matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`ImageOptions&`](#imageoptions) containing details about
+   * `opts` is a [`ImageOptions&`](../load_save.md#imageoptions) containing details about
      the images in `images`.
 
    * `images` and `opts` are modified in-place.
@@ -315,27 +315,27 @@ with `fillValue`.
 *Original image with size of* `640`x`326` *pixels:*
 
 <p align="center">
-  <img src="../img/cat.jpg" alt="cat">
+  <img src="../../img/cat.jpg" alt="cat">
 </p>
 
 *Image with target size of* `416`x`416` *pixels after letterbox:*
 
 <p align="center">
-  <img src="../img/cat_square_letterbox.jpg"
+  <img src="../../img/cat_square_letterbox.jpg"
        alt="cat with square letterbox transform">
 </p>
 
 *Image with target size of* `300`x`208` *pixels after letterbox:*
 
 <p align="center">
-  <img src="../img/cat_rect_letterbox.jpg"
+  <img src="../../img/cat_rect_letterbox.jpg"
        alt="cat with rectangular letterbox transform">
 </p>
 
 - `LetterboxImages(src, opt, width, height, fillValue)`
-  * `src` is a [column-major matrix](matrices.md) containing a single image,
+  * `src` is a [column-major matrix](../matrices.md) containing a single image,
     where the image is represented as a flattened vector in one column.
-  * `opt` is an [`ImageOptions&`](#imageoptions) containing info on
+  * `opt` is an [`ImageOptions&`](../load_save.md#imageoptions) containing info on
     the dimensions of the image.
   * `width` and `height` are `const size_t`s determining the new width and
     height of `src`.

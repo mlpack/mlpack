@@ -286,7 +286,7 @@ arma::Row<size_t> labels;
 mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the tree.
-mlpack::HoeffdingTree tree(info, 7 /* classes */);
+mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* classes */);
 
 // Train on each point in the given dataset.
 for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -338,7 +338,7 @@ arma::Row<size_t> testLabels;
 mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create the tree with custom parameters.
-mlpack::HoeffdingTree tree(info, 7 /* number of classes */);
+mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* number of classes */);
 tree.SuccessProbability(0.99);
 tree.CheckInterval(500);
 
@@ -347,7 +347,7 @@ for (size_t start = 0; start < dataset.n_cols; start += 10000)
 {
   size_t end = std::min(start + 9999, (size_t) dataset.n_cols - 1);
 
-  tree.Train(dataset.cols(start, end), info, labels.subvec(start, end));
+  tree.Train(dataset.cols(start, end), opts.DatasetInfo(), labels.subvec(start, end));
 
   // Compute accuracy on the test set.
   arma::Row<size_t> predictions;
@@ -406,7 +406,7 @@ mlpack::Load("covertype.test.arff", testDataset, opts);
 mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create a tree, and train on the training data.
-mlpack::HoeffdingTree tree(info, 7 /* number of classes */, 0.98);
+mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* number of classes */, 0.98);
 tree.MinSamples(500);
 tree.CheckInterval(500);
 
