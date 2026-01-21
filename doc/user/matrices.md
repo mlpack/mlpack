@@ -193,7 +193,7 @@ for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
   if (opts.DatasetInfo().Type(d) == mlpack::Datatype::categorical)
   {
     std::cout << " - Dimension " << d << " is categorical with "
-        << info.NumMappings(d) << " distinct categories." << std::endl;
+        << opts.DatasetInfo().NumMappings(d) << " distinct categories." << std::endl;
   }
 }
 
@@ -201,9 +201,9 @@ for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 // Note that we manually map the string values; MapString() returns the category
 // for a given value.
 m(0, 2) = 4;
-m(1, 2) = info.MapString<double>("wonderful", 1); // Create new third category.
+m(1, 2) = opts.DatasetInfo().MapString<double>("wonderful", 1); // Create new third category.
 m(2, 2) = 1;
-m(3, 2) = info.MapString<double>("c", 1);
+m(3, 2) = opts.DatasetInfo().MapString<double>("c", 1);
 m(4, 2) = 0;
 
 // `m` can now be used with any mlpack algorithm that supports categorical data.
