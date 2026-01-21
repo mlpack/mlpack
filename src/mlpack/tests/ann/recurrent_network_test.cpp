@@ -1084,7 +1084,7 @@ TEMPLATE_TEST_CASE("RNNRaggedSequenceTest", "[RecurrentNetworkTest][long]",
 /**
  * Test that we can train a RecurrentLinear RNN on sequences of different
  * lengths, and get roughly the same thing we would for training on non-ragged
- * sequences. This is a seperate test from `RNNRaggedSequenceTest` because the
+ * sequences. This is a separate test from `RNNRaggedSequenceTest` because the
  * `LinearRecurrent` layer can't model sine waves.
  */
 TEST_CASE("RNNRecurrentLinearRaggedSequenceTest",
@@ -1120,7 +1120,7 @@ TEST_CASE("RNNRecurrentLinearRaggedSequenceTest",
 
   // Assign random sequence lengths for each sequence.
   arma::urowvec lengths = arma::randi<arma::urowvec>(500,
-                                                     DistrParam(10, 30));
+      arma::distr_param(10, 30));
 
   arma::cube origPredictors = predictors;
   arma::cube origResponses = responses;

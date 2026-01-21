@@ -174,8 +174,7 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
     if (!this->AtFinalStep())
     {
       // If we also have a path from dz/dh^t, this can be added.
-      previousGradient +=
-          recurrentWeights.t() * currentGradient;
+      previousGradient += recurrentWeights.t() * currentGradient;
     }
   }
 }
