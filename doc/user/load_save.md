@@ -1526,8 +1526,8 @@ mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
 mlpack::data::Load("jurassic-park.png", image, opts);
 
-arma::mat bbox = arma::mat({90, 80, 510, 370}).t();
-arma::mat color = arma::mat({255, 0, 0}).t();
+arma::vec bbox({90, 80, 510, 370});
+arma::vec color({255, 0, 0}); // Use red for the border.
 std::string className = "Jurassic Park Logo";
 size_t borderSize = 2;
 size_t letterSize = 2;
