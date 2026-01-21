@@ -432,6 +432,10 @@ typename MatType::elem_type RNN<
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
+
   // Add the loss of the network unrelated to output.
   ElemType lossSum = ElemType(network.network.Loss());
 
@@ -555,6 +559,10 @@ typename MatType::elem_type RNN<
   // Ensure the network is valid.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
+
   // The core of the computation here is to pass through each step.  Since we
   // are not computing the gradient, we can be "clever" and use only one memory
   // cell---we don't need to know about the past.
@@ -628,6 +636,10 @@ typename MatType::elem_type RNN<
     const size_t batchSize)
 {
   network.CheckNetwork("RNN::EvaluateWithGradient()", predictors.n_rows);
+
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
 
   ElemType loss = 0;
 
