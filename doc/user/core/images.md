@@ -4,9 +4,9 @@ mlpack provides a set of functions to preprocess images for training and
 testing.
 
  * [`ResizeImages()`](#resizing-images): resize a matrix with a set of images.
-   Images needs to have an identical dimensions.
- * [`ResizeCropImages()`](#resize-and-crop-images): resize the images but it crops
-   the images to keep the same aspect ratio.
+   Images need to have identical dimensions.
+ * [`ResizeCropImages()`](#resize-and-crop-images): resize the images and then crop
+   to keep the same aspect ratio.
  * [`GroupChannels()`](#groupchannels): Convert image pixel order from
    `[r, g, b, r, g, b, ... ]` to `[r, r, ..., g, g, ..., b, b]`.
  * [`InterleaveChannels()`](#interleavechannels): Convert image pixel order
