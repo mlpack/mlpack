@@ -534,7 +534,7 @@ class RNN
     activeBatchSize = accu(sequenceLengths
         .subvec(begin, begin + activeBatchSize - 1) > step);
   }
-  
+
   #endif // defined(MLPACK_HAS_COOT)
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
