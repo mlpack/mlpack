@@ -979,7 +979,7 @@ of the flattened vector.
    [`ImageOptions` member documentation](#imageoptions-standalone-operators-and-members)
    for more details.
 
- * mlpack offers the following image modification functionality, documented in
+ * mlpack offers several utility functions for image modification and preprocessing, documented in
    [Images preprocessing](core/images.md).
 
 ---
