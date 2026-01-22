@@ -19,7 +19,8 @@ documented yet.*
    set, optionally including labels.
 
  * [Image preprocessing](core/images.md): functions to preprocess
-   images for training and inference, such as resize, crop, and group channels.
+   images for training and inference, including resizing, cropping, and changing
+   the pixel ordering.
 
  * [Imputation](core/imputation.md): replace missing values in a dataset with
    imputed values using a variety of imputation strategies.
