@@ -56,7 +56,8 @@ bool Load(const std::string& filename,
           ImageOptions& opts);
 ```
 
-Loading a test image is shown below. It also fills up the `ImageInfo` class
+Loading a test image is shown below. It also fills up the `ImageOptions` class
+
 object.
 
 ```c++
