@@ -173,7 +173,7 @@ Alternatively, we could extract the model from the cross-validation stage by
 using `cv.Model()`.
 
 ```c++
-mlpack::Save("mymodel.xml", rf, mlpack::NoFatal);
+mlpack::Save("mymodel.xml", rf);
 ```
 
 We can also save the model in `bin` format (`"mymodel.bin"`) which would result
