@@ -18,7 +18,7 @@ documented yet.*
  * [Dataset splitting](core/split.md): split a dataset into a training and test
    set, optionally including labels.
 
- * [Images preprocessing](core/images.md): a set of functions to preprocess
+ * [Image preprocessing](core/images.md): functions to preprocess
    images for training and inference, such as resize, crop, and group channels.
 
  * [Imputation](core/imputation.md): replace missing values in a dataset with
