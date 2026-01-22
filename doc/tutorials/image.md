@@ -64,7 +64,8 @@ mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
 Load("test_image.png", matrix, opts);
 ```
 
-`ImageInfo` requires height, width, number of channels of the image.
+`ImageOptions` requires height, width, and the number of channels of the image.
+
 
 ```c++
 size_t height = 64, width = 64, channels = 1;
