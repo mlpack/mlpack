@@ -480,8 +480,7 @@ typename MatType::elem_type RNN<
     for (size_t t = 0; t < slices; t++)
     {
       // Calculate the number of active points.
-      activeBatchSize = accu(reordLengths
-          .subvec(i, i + effectiveBatchSize - 1) > t);
+      CalculateActivePoints(activeBatchSize, i, reordLengths, t);
 
       SetCurrentStep(t, (t == slices - 1), effectiveBatchSize, activeBatchSize);
 
@@ -582,8 +581,7 @@ typename MatType::elem_type RNN<
   {
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-      activeBatchSize = accu(sequenceLengths
-          .subvec(begin, begin + batchSize - 1) > t);
+      CalculateActivePoints(activeBatchSize, begin, sequenceLengths, t);
 
     // Manually reset the data of the network to be an alias of the current time
     // step.
@@ -680,8 +678,7 @@ typename MatType::elem_type RNN<
   {
     // Calculate the number of active points.
     if (sequenceLengths.n_elem > 0)
-      activeBatchSize = accu(sequenceLengths
-          .subvec(begin, begin + batchSize - 1) > t);
+      CalculateActivePoints(activeBatchSize, begin, sequenceLengths, t);
 
     SetCurrentStep(t, (t == (steps - 1)), batchSize, activeBatchSize);
 
