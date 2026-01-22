@@ -3,7 +3,7 @@
 mlpack provides a set of functions to preprocess images for training and
 testing.
 
- * [`ResizeImage()`](#resizing-images): resize a matrix with a set of images.
+ * [`ResizeImages()`](#resizing-images): resize a matrix with a set of images.
    Images needs to have an identical dimensions.
  * [`ResizeCropImages()`](#resize-and-crop-images): resize the images but it crops
    the images to keep the same aspect ratio.
