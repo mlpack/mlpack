@@ -119,7 +119,7 @@
         <text x="140" y="630" text-anchor="middle">Dataset splitting</text>
       </a>
       <a xlink:href="../user/core/images.html" target="_top">
-        <text x="140" y="645" text-anchor="middle">Images preprocessing</text>
+        <text x="140" y="645" text-anchor="middle">Image preprocessing</text>
       </a>
 
       <a xlink:href="../user/core/imputation.html" target="_top">
