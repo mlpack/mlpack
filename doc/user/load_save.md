@@ -980,7 +980,7 @@ of the flattened vector.
    for more details.
 
  * mlpack offers several utility functions for image modification and preprocessing, documented in
-   [Images preprocessing](core/images.md).
+   [Image preprocessing](core/images.md).
 
 ---
 
