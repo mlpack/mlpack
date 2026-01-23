@@ -181,8 +181,11 @@ struct GetColType
   using type = arma::Col<typename MatType::elem_type>;
 };
 
+template<typename MatType, typename T = void>
+struct GetUColType;
+
 template<typename MatType>
-struct GetUColType
+struct GetUColType<MatType, std::enable_if_t<IsArma<MatType>::value>>
 {
   using type = arma::Col<arma::uword>;
 };

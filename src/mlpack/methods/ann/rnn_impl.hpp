@@ -289,7 +289,8 @@ void RNN<
     // Iterate over all time steps.
     for (size_t t = 0; t < predictors.n_slices; ++t)
     {
-      SetCurrentStep(t, (t == predictors.n_slices - 1));
+      SetCurrentStep(t, (t == predictors.n_slices - 1), effectiveBatchSize,
+          effectiveBatchSize);
 
       // Create aliases for the input and output.  If we are in single mode, we
       // always output into the same slice.
@@ -334,7 +335,7 @@ void RNN<
     const size_t steps = sequenceLengths[i];
     for (size_t t = 0; t < steps; ++t)
     {
-      SetCurrentStep(t, (t == steps - 1));
+      SetCurrentStep(t, (t == steps - 1), 1, 1);
 
       // Create aliases for the input and output.  If we are in single mode, we
       // always output into the same slice.
@@ -401,7 +402,8 @@ typename MatType::elem_type RNN<
   MatType forwardOutput;
   for (size_t t = 0; t < predictors.n_slices; t++)
   {
-    SetCurrentStep(t, (t == predictors.n_slices - 1));
+    SetCurrentStep(t, (t == predictors.n_slices - 1), predictors.n_cols,
+        predictors.n_cols);
     // Do a forward pass and calculate the loss.
     network.Forward(predictors.slice(t), forwardOutput);
     if (!single || t == predictors.n_slices - 1)
@@ -424,34 +426,76 @@ typename MatType::elem_type RNN<
 >::Evaluate(
     const CubeType& predictors,
     const CubeType& responses,
-    const URowType& sequenceLengths)
+    const URowType& sequenceLengths,
+    const size_t batchSize)
 {
   // Ensure that the network is configured correctly.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
+
   // Add the loss of the network unrelated to output.
   ElemType lossSum = ElemType(network.network.Loss());
 
-  MatType forwardOutput, inputAlias;
-  for (size_t i = 0; i < predictors.n_cols; i++)
+  CubeType reordPredictors, reordResponses;
+  URowType reordLengths;
+  if (batchSize > 1)
   {
-    // Reset memory for a new sequence.
-    ResetMemoryState(0, 1);
+    // Make copies of the arguments so they can be reordered while the orignal
+    // arguments stay constant.
+    reordPredictors = predictors;
+    reordResponses = responses;
+    reordLengths = sequenceLengths;
+  }
+  else
+  {
+    // Reordering isn't actually needed so we just make aliases.
+    MakeAlias(reordPredictors, predictors, predictors.n_rows,
+        predictors.n_cols, predictors.n_slices);
+    MakeAlias(reordResponses, responses, responses.n_rows,
+        responses.n_cols, responses.n_slices);
+    MakeAlias(reordLengths, sequenceLengths, sequenceLengths.n_elem);
+  }
 
+  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
+  {
+    size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols) - i);
+
+    // Reset recurrent memory state.
+    ResetMemoryState(0, effectiveBatchSize);
+
+    // Reorder the data so the sequence lengths are in descending order.
+    if (batchSize > 1)
+      ReorderBatch(i, effectiveBatchSize, reordPredictors, reordResponses,
+          reordLengths);
+
+    MatType forwardOutput, inputAlias, responseAlias;
     // Iterate over all time slices.
-    size_t slices = sequenceLengths[i];
+    size_t slices = reordLengths
+        .subvec(i, i + effectiveBatchSize - 1).max();
+    size_t activeBatchSize = effectiveBatchSize;
     for (size_t t = 0; t < slices; t++)
     {
-      SetCurrentStep(t, (t == slices - 1));
-      // Get the input data.
-      MakeAlias(inputAlias, predictors, predictors.n_rows, 1,
-          i * predictors.n_rows);
+      // Calculate the number of active points.
+      CalculateActivePoints(activeBatchSize, i, reordLengths, t);
+
+      SetCurrentStep(t, (t == slices - 1), effectiveBatchSize, activeBatchSize);
+
+      // Get the input and response data.
+      MakeAlias(inputAlias, reordPredictors.slice(t), predictors.n_rows,
+          activeBatchSize, i * predictors.n_rows);
 
       // Do a forward pass and calculate the loss.
       network.Forward(inputAlias, forwardOutput);
-      if (!single || t == predictors.n_slices - 1)
-        lossSum += network.outputLayer.Forward(forwardOutput,
-            responses.slice(single ? 0 : t).col(i));
+      if (!single || t == slices - 1)
+      {
+        MakeAlias(responseAlias, reordResponses.slice((single ? 0 : t)),
+            responses.n_rows, activeBatchSize, i * responses.n_rows);
+        lossSum += network.outputLayer.Forward(forwardOutput, responseAlias);
+      }
     }
   }
 
@@ -514,32 +558,43 @@ typename MatType::elem_type RNN<
   // Ensure the network is valid.
   network.CheckNetwork("RNN::Evaluate()", predictors.n_rows);
 
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
+
   // The core of the computation here is to pass through each step.  Since we
   // are not computing the gradient, we can be "clever" and use only one memory
   // cell---we don't need to know about the past.
-  ResetMemoryState(1, batchSize);
+  ResetMemoryState(0, batchSize);
   MatType output(network.network.OutputSize(), batchSize);
 
-  if (sequenceLengths.n_elem > 0 && batchSize != 1)
-    throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
+  // Reorder the data so the sequence lengths are in descending order.
+  if (sequenceLengths.n_elem > 0 && batchSize > 1)
+    ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
 
   ElemType loss = 0;
   MatType stepData, responseData;
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
-      sequenceLengths[begin];
+      sequenceLengths.subvec(begin, begin + batchSize - 1).max();
+  size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
+    // Calculate the number of active points.
+    if (sequenceLengths.n_elem > 0)
+      CalculateActivePoints(activeBatchSize, begin, sequenceLengths, t);
+
     // Manually reset the data of the network to be an alias of the current time
     // step.
-    SetCurrentStep(t, (t == steps));
+    SetCurrentStep(t, (t == steps), batchSize, activeBatchSize);
+
     MakeAlias(network.predictors, predictors.slice(t), predictors.n_rows,
-        batchSize, begin * predictors.slice(t).n_rows);
+        activeBatchSize, begin * predictors.slice(t).n_rows);
     const size_t responseStep = (single) ? 0 : t;
     MakeAlias(network.responses, responses.slice(responseStep),
-        responses.n_rows, batchSize,
+        responses.n_rows, activeBatchSize,
         begin * responses.slice(responseStep).n_rows);
 
-    loss += network.Evaluate(output, begin, batchSize);
+    loss += network.Evaluate(output, begin, activeBatchSize);
   }
 
   return loss;
@@ -580,8 +635,9 @@ typename MatType::elem_type RNN<
 {
   network.CheckNetwork("RNN::EvaluateWithGradient()", predictors.n_rows);
 
-  if (sequenceLengths.n_elem > 0 && batchSize != 1)
-    throw std::invalid_argument("Batch size must be 1 for ragged sequences!");
+  if (sequenceLengths.n_elem > 0 && batchSize != 1 && single)
+    throw std::invalid_argument(
+        "Batch size must be 1 for ragged sequences in single mode!");
 
   ElemType loss = 0;
 
@@ -608,20 +664,29 @@ typename MatType::elem_type RNN<
   // having to do with the output layer.
   loss += ElemType(network.network.Loss());
 
+  // Reorder the data so the sequence lengths are in descending order.
+  if (sequenceLengths.n_elem > 0 && batchSize > 1)
+    ReorderBatch(begin, batchSize, predictors, responses, sequenceLengths);
+
   // For backpropagation through time, we must backpropagate for every
   // subsequence of length `bpttSteps`.  Before we've taken `bpttSteps` though,
   // we will be backpropagating shorter sequences.
   const size_t steps = (sequenceLengths.n_elem == 0) ? predictors.n_slices :
-      sequenceLengths[begin];
+      sequenceLengths.subvec(begin, begin + batchSize - 1).max();
+  size_t activeBatchSize = batchSize;
   for (size_t t = 0; t < steps; ++t)
   {
-    SetCurrentStep(t, (t == (steps - 1)));
+    // Calculate the number of active points.
+    if (sequenceLengths.n_elem > 0)
+      CalculateActivePoints(activeBatchSize, begin, sequenceLengths, t);
+
+    SetCurrentStep(t, (t == (steps - 1)), batchSize, activeBatchSize);
 
     // Make an alias of the step's data for the forward pass.
-    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, batchSize,
-        begin * predictors.slice(t).n_rows);
+    MakeAlias(stepData, predictors.slice(t), predictors.n_rows, activeBatchSize,
+        begin * predictors.n_rows);
     MakeAlias(outputData, outputs.slice(t % effectiveBPTTSteps), outputs.n_rows,
-        outputs.n_cols);
+        activeBatchSize);
     network.network.Forward(stepData, outputData);
 
     // Determine what the response should be.  If we are in single mode but not
@@ -636,7 +701,7 @@ typename MatType::elem_type RNN<
     MatType error;
     for (size_t step = 0; step < std::min(t + 1, effectiveBPTTSteps); ++step)
     {
-      SetCurrentStep(t - step, (step == 0));
+      SetCurrentStep(t - step, (step == 0), batchSize, activeBatchSize, true);
 
       if (step > 0)
       {
@@ -644,9 +709,9 @@ typename MatType::elem_type RNN<
         error.zeros();
 
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            batchSize, begin * predictors.slice(t - step).n_rows);
+            activeBatchSize, begin * predictors.slice(t - step).n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, outputs.n_cols);
+            outputs.n_rows, activeBatchSize);
       }
       else
       {
@@ -654,11 +719,11 @@ typename MatType::elem_type RNN<
         // error.
         const size_t responseStep = (single) ? 0 : t - step;
         MakeAlias(stepData, predictors.slice(t - step), predictors.n_rows,
-            batchSize, begin * predictors.slice(t - step).n_rows);
+            activeBatchSize, begin * predictors.n_rows);
         MakeAlias(responseData, responses.slice(responseStep), responses.n_rows,
-            batchSize, begin * responses.slice(responseStep).n_rows);
+            activeBatchSize, begin * responses.n_rows);
         MakeAlias(outputData, outputs.slice((t - step) % effectiveBPTTSteps),
-            outputs.n_rows, outputs.n_cols);
+            outputs.n_rows, activeBatchSize);
 
         // We only need to do this on the first time step of BPTT.
         loss += network.outputLayer.Forward(outputData, responseData);
@@ -673,7 +738,7 @@ typename MatType::elem_type RNN<
       // TODO: note that we could avoid the copy of currentGradient by having
       // each layer *add* its gradient to `gradient`.  However that would
       // require some amount of refactoring.
-      MatType networkDelta(predictors.n_rows, batchSize,
+      MatType networkDelta(predictors.n_rows, activeBatchSize,
           GetFillType<MatType>::none);
       GradType currentGradient(gradient.n_rows, gradient.n_cols,
           GetFillType<MatType>::zeros);
@@ -778,17 +843,60 @@ void RNN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::SetCurrentStep(const size_t step, const bool end)
+>::SetCurrentStep(const size_t step,
+                  const bool end,
+                  size_t batchSize,
+                  size_t activeBatchSize,
+                  bool backwards)
 {
-  // Iterate over all layers and set the memory size.
+  // Iterate over all layers and set the current step.
   for (Layer<MatType>* l : network.Network())
   {
     // We can only call CurrentStep() on RecurrentLayers.
     RecurrentLayer<MatType>* r =
         dynamic_cast<RecurrentLayer<MatType>*>(l);
     if (r != nullptr)
+    {
       r->CurrentStep(step, end);
+      r->OnStepChanged(step, batchSize, activeBatchSize, backwards);
+    }
   }
+}
+
+template<
+    typename OutputLayerType,
+    typename InitializationRuleType,
+    typename MatType
+>
+void RNN<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::ReorderBatch(const size_t begin,
+                const size_t batchSize,
+                CubeType& predictors,
+                CubeType& responses,
+                URowType& sequenceLengths)
+{
+  using UColType = typename GetUColType<MatType>::type;
+  URowType batchLengths;
+  MakeAlias(batchLengths, sequenceLengths, batchSize, begin);
+
+  // Get the new ordering of this batch.
+  UColType ordering = sort_index(batchLengths, "descending");
+
+  // Reorder all slices to use the new ordering.
+  MatType batchPredictors, batchResponses;
+  for (size_t i = 0; i < predictors.n_slices; i++)
+  {
+    MakeAlias(batchPredictors, predictors.slice(i), predictors.n_rows,
+        batchSize, begin * predictors.n_rows);
+    MakeAlias(batchResponses, responses.slice(i), responses.n_rows,
+        batchSize, begin * responses.n_rows);
+    batchPredictors = batchPredictors.cols(ordering);
+    batchResponses = batchResponses.cols(ordering);
+  }
+  batchLengths = batchLengths.cols(ordering);
 }
 
 } // namespace mlpack
