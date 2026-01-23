@@ -96,7 +96,10 @@ void LoadBostonHousingDataset(MatType& trainData,
   info.Type(3) = Datatype::categorical;
   info.Type(8) = Datatype::categorical;
 
-  if (!Load("boston_housing_price.csv", dataset, info))
+  TextOptions opts = Categorical;
+  opts.DatasetInfo() = info;
+
+  if (!Load("boston_housing_price.csv", dataset, opts))
     FAIL("Cannot load test dataset boston_housing_price.csv!");
   if (!Load("boston_housing_price_responses.csv", responses))
     FAIL("Cannot load test dataset boston_housing_price_responses.csv!");

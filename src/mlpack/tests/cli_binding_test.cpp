@@ -455,7 +455,7 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
       (void*) NULL);
 
   GaussianKernel gk2(1.0);
-  REQUIRE(Load("kernel.bin", "model", gk2));
+  REQUIRE(Load("kernel.bin", gk2));
 
   REQUIRE(gk.Bandwidth() == gk2.Bandwidth());
 
