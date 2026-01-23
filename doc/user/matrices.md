@@ -86,8 +86,8 @@ In general, the following Armadillo types are commonly used inside mlpack:
 mlpack provides two simple functions for loading and saving data matrices in a
 column-major form:
 
- * `data::Load(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric-data))
- * `data::Save(filename, matrix, fatal=false, transpose=true, type=FileType::AutoDetect)` ([full documentation](load_save.md#numeric-data))
+ * `Load(filename, matrix, options)` ([full documentation](load_save.md#numeric-data))
+ * `Save(filename, matrix, options)` ([full documentation](load_save.md#numeric-data))
 
 As an example, consider the following CSV file:
 
@@ -112,10 +112,9 @@ The following program will load the data, print information about it, and save a
 modified dataset to disk.
 
 ```c++
-// Load data from `data.csv` into `m`.  Throw an exception on failure (i.e. set
-// `fatal` to `true`).
+// Load data from `data.csv` into `m`.  Throw an exception on failure.
 arma::mat m;
-mlpack::data::Load("data.csv", m, true);
+mlpack::Load("data.csv", m, mlpack::Fatal);
 
 // Since mlpack uses column-major data,
 //
@@ -132,11 +131,11 @@ std::cout << m.col(1).t();
 // Now modify the matrix and save to a different format (space-separated
 // values).
 m += 3;
-mlpack::data::Save("data-mod.txt", m);
+mlpack::Save("data-mod.txt", m);
 ```
 
 Although Armadillo does provide a `.load()` and `.save()` member function for
-matrices, the `data::Load()` and `data::Save()` functions offer additional
+matrices, the `Load()` and `Save()` functions offer additional
 flexibility, and ensure that data is saved and loaded in a column-major format.
 
 ## Loading and using categorical data
@@ -146,10 +145,10 @@ dimensions take only categorical values (e.g. `0`, `1`, `2`, etc.).  String data
 and other non-numerical data can be represented as categorical values, and
 mlpack has support to load mixed categorical data:
 
- * The `data::DatasetInfo` auxiliary class stores information about whether each
+ * The `DatasetInfo` auxiliary class stores information about whether each
    dimension is numeric or categorical.  ([full
-   documentation](load_save.md#datadatasetinfo))
- * `data::Load(filename, matrix, info, fatal=false, transpose=true)` ([full
+   documentation](load_save.md#datasetinfo))
+ * `Load(filename, matrix, Categorical)` ([full
    documentation](load_save.md#mixed-categorical-data))
 
 For example, consider the following CSV file that contains strings:
@@ -177,23 +176,24 @@ that supports mixed categorical data.
 
 ```c++
 // Load data from `mixed_string_data.csv` into `m`.  Throw an exception on
-// failure (i.e. set `fatal` to `true`).  This populates the `info` object.
+// failure.
 arma::mat m;
-mlpack::data::DatasetInfo info;
-mlpack::data::Load("mixed_string_data.csv", m, info, true);
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
+mlpack::Load("mixed_string_data.csv", m, opts);
 
 // Print information about the data.
 std::cout << "The matrix in 'mixed_string_data.csv' has: " << std::endl;
 std::cout << " - " << m.n_cols << " points." << std::endl;
-std::cout << " - " << info.Dimensionality() << " dimensions." << std::endl;
+std::cout << " - " << opts.DatasetInfo().Dimensionality() << " dimensions." << std::endl;
+std::cout << " - " << opts.DatasetInfo().Dimensionality() << " dimensions." << std::endl;
 
 // Print which dimensions are categorical.
-for (size_t d = 0; d < info.Dimensionality(); ++d)
+for (size_t d = 0; d < opts.DatasetInfo().Dimensionality(); ++d)
 {
-  if (info.Type(d) == mlpack::data::Datatype::categorical)
+  if (opts.DatasetInfo().Type(d) == mlpack::Datatype::categorical)
   {
     std::cout << " - Dimension " << d << " is categorical with "
-        << info.NumMappings(d) << " distinct categories." << std::endl;
+        << opts.DatasetInfo().NumMappings(d) << " distinct categories." << std::endl;
   }
 }
 
@@ -201,9 +201,9 @@ for (size_t d = 0; d < info.Dimensionality(); ++d)
 // Note that we manually map the string values; MapString() returns the category
 // for a given value.
 m(0, 2) = 4;
-m(1, 2) = info.MapString<double>("wonderful", 1); // Create new third category.
+m(1, 2) = opts.DatasetInfo().MapString<double>("wonderful", 1); // Create new third category.
 m(2, 2) = 1;
-m(3, 2) = info.MapString<double>("c", 1);
+m(3, 2) = opts.DatasetInfo().MapString<double>("c", 1);
 m(4, 2) = 0;
 
 // `m` can now be used with any mlpack algorithm that supports categorical data.

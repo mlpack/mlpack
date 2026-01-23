@@ -38,6 +38,7 @@ namespace mlpack {
  * @param opts DataOptions to be passed to the function
  * @return Boolean value indicating success or failure of Save.
  */
+
 template<typename MatType, typename DataOptionsType>
 bool Save(const std::string& filename,
           const MatType& matrix,
@@ -45,10 +46,10 @@ bool Save(const std::string& filename,
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 
-template<typename MatType, typename DataOptionsType>
+template<typename MatType, typename DataOptionsType = PlainDataOptions>
 bool Save(const std::string& filename,
           const MatType& matrix,
-          const DataOptionsType& opts,
+          const DataOptionsType& opts = DataOptionsType(),
           const typename std::enable_if_t<
               IsDataOptions<DataOptionsType>::value>* = 0);
 

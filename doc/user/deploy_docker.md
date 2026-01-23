@@ -371,7 +371,7 @@ further compiler options or more intrusive code modifications.  Likely the
 largest contributor to code size after the optimizations above are
 serialization and the standard libraries:
 
- * Avoiding the use of `data::Load()` (and thus the
+ * Avoiding the use of `Load()` (and thus the
    [Cereal](https://uscilab.github.io/cereal/) serialization library) by
    directly saving the weights of the RNN using Armadillo's built-in save
    functionality would be effective.

@@ -116,9 +116,9 @@ int main()
   // Load the datasets.
   mat dataset;
   Row<size_t> labels;
-  if (!data::Load("covertype-small.data.csv", dataset))
+  if (!Load("covertype-small.data.csv", dataset))
     throw std::runtime_error("Could not read covertype-small.data.csv!");
-  if (!data::Load("covertype-small.labels.csv", labels))
+  if (!Load("covertype-small.labels.csv", labels))
     throw std::runtime_error("Could not read covertype-small.labels.csv!");
 
   // Labels are 1-7, but we want 0-6 (we are 0-indexed in C++).
@@ -128,7 +128,7 @@ int main()
   // dataset for the test set.
   mat trainDataset, testDataset;
   Row<size_t> trainLabels, testLabels;
-  data::Split(dataset, labels, trainDataset, testDataset, trainLabels,
+  Split(dataset, labels, trainDataset, testDataset, trainLabels,
       testLabels, 0.3);
 
   // Create the RandomForest object and train it on the training data.
@@ -211,19 +211,19 @@ int main()
 {
   // Load the ratings.
   mat ratings;
-  if (!data::Load("ratings-only.csv", ratings))
+  if (!Load("ratings-only.csv", ratings))
     throw std::runtime_error("Could not load ratings-only.csv!");
   // Now, load the names of the movies as a single-feature categorical dataset.
   // We can use `moviesInfo.UnmapString(i, 0)` to get the i'th string.
-  data::DatasetInfo moviesInfo;
+  DatasetInfo moviesInfo;
   mat movies; // This will be unneeded.
-  if (!data::Load("movies.csv", movies, moviesInfo))
+  if (!Load("movies.csv", movies, moviesInfo))
     throw std::runtime_error("Could not load movies.csv!");
 
   // Split the ratings into a training set and a test set, using 10% of the
   // dataset for the test set.
   mat trainRatings, testRatings;
-  data::Split(ratings, trainRatings, testRatings, 0.1);
+  Split(ratings, trainRatings, testRatings, 0.1);
 
   // Train the CF model using RegularizedSVD as the decomposition algorithm.
   // Here we use a rank of 10 for the decomposition.
