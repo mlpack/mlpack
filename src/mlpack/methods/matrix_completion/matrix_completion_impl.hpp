@@ -81,7 +81,7 @@ inline void MatrixCompletion::CheckValues()
     if (indices(0, i) >= m || indices(1, i) >= n)
       Log::Fatal << "MatrixCompletion::CheckValues(): indices ("
           << indices(0, i) << ", " << indices(1, i)
-          << ") are out of bounds for matrix of size " << m << " x n!"
+          << ") are out of bounds for matrix of size " << m << " x " << n << "!"
           << std::endl;
   }
 }
