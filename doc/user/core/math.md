@@ -371,16 +371,17 @@ images.push_back("ensmallen-favicon.png");
 images.push_back("armadillo-favicon.png");
 images.push_back("bandicoot-favicon.png");
 
-mlpack::data::ImageInfo info;
-info.Channels() = 1; // Force loading in grayscale.
-
+mlpack::ImageOptions opts;
+opts.Channels() = 1; // Force loading in grayscale.
+opts.Fatal() = true;
 arma::mat matrix;
-mlpack::data::Load(images, matrix, info, true);
+mlpack::Load(images, matrix, opts);
 
 // Now `matrix` has 4 columns, each of which is an individual image.
 // Let's save that as its own image just for visualization.
-mlpack::data::ImageInfo outInfo(matrix.n_cols, matrix.n_rows, 1);
-mlpack::data::Save("favicons-matrix.png", matrix, outInfo, true);
+mlpack::ImageOptions outOpts(matrix.n_cols, matrix.n_rows, 1);
+outOpts.Fatal() = true;
+mlpack::Save("favicons-matrix.png", matrix, outOpts);
 
 // Use ColumnsToBlocks to create a 2x2 block matrix holding each image.
 mlpack::ColumnsToBlocks ctb(2, 2);
@@ -390,8 +391,9 @@ ctb.BufSize(2); // Use 2-pixel margins.
 arma::mat blocks;
 ctb.Transform(matrix, blocks);
 
-mlpack::data::ImageInfo blockOutInfo(blocks.n_cols, blocks.n_rows, 1);
-mlpack::data::Save("favicons-blocks.png", blocks, blockOutInfo, true);
+mlpack::ImageOptions blockOutOpts(blocks.n_cols, blocks.n_rows, 1);
+blockOutOpts.Fatal() = true;
+mlpack::Save("favicons-blocks.png", blocks, blockOutOpts);
 ```
 
 The resulting images (before and after using `ColumnsToBlocks`) are shown below.
@@ -764,10 +766,10 @@ columns of the cube will be shuffled.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Now shuffle the points in the iris dataset.
 arma::mat shuffledDataset;

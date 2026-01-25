@@ -17,9 +17,9 @@ Images are stored in matrix as `(width * height * channels, numberOfImages)`.
 Therefore `imageMatrix.col(0)` would be the first image if images are loaded in
 `imageMatrix`.
 
-## `ImageInfo`
+## `ImageOptions`
 
-The `ImageInfo` class contains the metadata of the images.
+The `ImageOptions` class contains the metadata of the images.
 
 ```c++
 /**
@@ -29,9 +29,9 @@ The `ImageInfo` class contains the metadata of the images.
  * @param height Image height.
  * @param channels number of channels in the image.
  */
-ImageInfo(const size_t width,
-          const size_t height,
-          const size_t channels);
+ImageOptions(const size_t width,
+             const size_t height,
+             const size_t channels);
 ```
 
 Other public members include the quality compression of the image if saved as
@@ -47,33 +47,30 @@ Standalone loading of images can be done with the function below.
  *
  * @param filename Name of the image file.
  * @param matrix Matrix to load the image into.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, flips the image, same as transposing the
- *    matrix after loading.
+ * @param opts An object of ImageOptions class.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal,
-          const bool transpose);
+          ImageOptions& opts);
 ```
 
-Loading a test image is shown below. It also fills up the `ImageInfo` class
+Loading a test image is shown below. It also fills up the `ImageOptions` class
+
 object.
 
 ```c++
-data::ImageInfo info;
-data::Load("test_image.png", matrix, info, false, true);
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
+Load("test_image.png", matrix, opts);
 ```
 
-`ImageInfo` requires height, width, number of channels of the image.
+`ImageOptions` requires height, width, and the number of channels of the image.
+
 
 ```c++
 size_t height = 64, width = 64, channels = 1;
-data::ImageInfo info(width, height, channels);
+mlpack::ImageOptions opts(width, height, channels);
 ```
 
 More than one image can be loaded into the same matrix.
@@ -86,24 +83,19 @@ Loading multiple images can be done using the function below.
  *
  * @param files A vector consisting of filenames.
  * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, flips the image, same as transposing the
- *    matrix after loading.
+ * @param opts An object of ImageOptions class.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal,
-          const bool transpose);
+          ImageOptions& opts)
 ```
 
 ```c++
-data::ImageInfo info;
+mlpack::ImageOptions opts;
 std::vector<std::string>> files{"test_image1.bmp","test_image2.bmp"};
-data::Load(files, matrix, info, false, true);
+Load(files, matrix, opts);
 ```
 
 ## Saving
@@ -121,26 +113,21 @@ Saving one image can be done with the function below:
  *
  * @param filename Name of the image file.
  * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, flips the image, same as transposing the
- *    matrix after loading.
+ * @param opts An object of ImageOptions class.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Save(const std::string& filename,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal,
-          const bool transpose);
+          ImageOptions& opts);
 ```
 
 ```c++
-data::ImageInfo info;
-info.width = info.height = 25;
-info.channels = 3;
-info.quality = 90;
-data::Save("test_image.bmp", matrix, info, false, true);
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
+opts.Width() = opts.Height() = 25;
+opts.Channels() = 3;
+opts.Quality() = 90;
+Save("test_image.bmp", matrix, opts);
 ```
 
 If the matrix contains more than one image, only the first one is saved.
@@ -153,27 +140,22 @@ Saving multiple images can be done with the function below.
  *
  * @param files A vector consisting of filenames.
  * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @param transpose If true, Flips the image, same as transposing the
- *    matrix after loading.
+ * @param opts An object of ImageOptions class.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Save(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal,
-          const bool transpose);
+          ImageOptions& opts);
 ```
 
 ```c++
-data::ImageInfo info;
-info.width = info.height = 25;
-info.channels = 3;
-info.quality = 90;
+mlpack::ImageOptions opts = mlpack::NoFatal + mlpack::Transpose;
+opts.Width() = opts.Height() = 25;
+opts.Channels() = 3;
+opts.Quality() = 90;
 std::vector<std::string>> files{"test_image1.bmp", "test_image2.bmp"};
-data::Save(files, matrix, info, false, true);
+Save(files, matrix, opts);
 ```
 
 Multiple images are saved according to the vector of filenames specified.

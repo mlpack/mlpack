@@ -356,7 +356,7 @@ struct Train
 
           // Now read the matrix.
           Mat<size_t> label;
-          Load(lineBuf, label, true); // Fatal on failure.
+          Load(lineBuf, label, Fatal);
 
           // Ensure that matrix only has one row.
           if (label.n_cols == 1)
@@ -387,7 +387,7 @@ struct Train
       else
       {
         Mat<size_t> label;
-        Load(labelsFile, label, true);
+        Load(labelsFile, label, Fatal);
 
         // Ensure that matrix only has one row.
         if (label.n_cols == 1)
@@ -498,7 +498,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
       // Now read the matrix.
       trainSeq.push_back(mat());
-      Load(lineBuf, trainSeq.back(), true); // Fatal on failure.
+      Load(lineBuf, trainSeq.back(), Fatal);
 
       // See if we need to transpose the data.
       if (type == "discrete")
@@ -516,7 +516,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   {
     // Only one input file.
     trainSeq.resize(1);
-    Load(inputFile, trainSeq[0], true);
+    Load(inputFile, trainSeq[0], Fatal);
   }
 
   // Get the type.

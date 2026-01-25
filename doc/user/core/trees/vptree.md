@@ -299,7 +299,7 @@ accessing them does not require any computation.
    - This is equivalent to calling `node.Bound().Center(center)`.
 
  * A `VPTree` can be serialized with
-   [`data::Save()` and `data::Load()`](../../load_save.md#mlpack-models-and-objects).
+   [`Save()` and `Load()`](../../load_save.md#mlpack-models-and-objects).
 
 ## Bounding distances with the tree
 
@@ -404,7 +404,7 @@ tree.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the vp-tree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -463,7 +463,7 @@ bounding quantities.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset, true);
+mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
 
 // Build vp-trees on the first half and the second half of points.
 mlpack::VPTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -529,7 +529,7 @@ Build a `VPTree` on 32-bit floating point data and save it to disk.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset);
+mlpack::Load("corel-histogram.csv", dataset);
 
 // Build the VPTree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -539,7 +539,7 @@ mlpack::VPTree<mlpack::EuclideanDistance,
                arma::fmat> tree(std::move(dataset), 100);
 
 // Save the VPTree to disk with the name 'tree'.
-mlpack::data::Save("tree.bin", "tree", tree);
+mlpack::Save("tree.bin", tree);
 
 std::cout << "Saved tree with " << tree.Dataset().n_cols << " points to "
     << "'tree.bin'." << std::endl;
@@ -560,7 +560,7 @@ using TreeType = mlpack::VPTree<mlpack::EuclideanDistance,
                                 arma::fmat>;
 
 TreeType tree;
-mlpack::data::Load("tree.bin", "tree", tree);
+mlpack::Load("tree.bin", tree);
 std::cout << "Tree loaded with " << tree.NumDescendants() << " points."
     << std::endl;
 
@@ -603,7 +603,7 @@ Build a `VPTree` and map between original points and new points.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

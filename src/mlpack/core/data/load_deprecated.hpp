@@ -64,6 +64,7 @@ namespace mlpack {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
@@ -101,6 +102,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal,
@@ -135,6 +137,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
           const bool fatal);
@@ -167,6 +170,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
           const bool fatal);
@@ -208,6 +212,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetInfo& info,
@@ -241,6 +246,7 @@ bool Load(const std::string& filename,
  */
 
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           const std::string& name,
           T& t,
