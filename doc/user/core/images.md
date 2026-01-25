@@ -380,16 +380,16 @@ You can do this through the `BoundingBoxImage()` function.
 #### `BoundingBoxImage()`
 
   * `BoundingBoxImage(src, opts, bbox, color, borderSize = 1, className = "", letterSize = 1)`
-    - `src` is [image data](#image-data) (e.g. a column vector) where the bounding box
+    - `src` is [image data](../load_save.md#image-data) (e.g. a column vector) where the bounding box
       will be drawn. The channels of the image must be interleaved,
       which you can read about [here](#changing-the-memory-layout-of-images).
       There must be at most one image, otherwise an exception will be thrown.
       Pixel values are expected to be in the 0-255 range.
 
-    - `opts` is the [`ImageOptions`](#imageoptions) object containing metadata relating
+    - `opts` is the [`ImageOptions`](../load_save.md#imageoptions) object containing metadata relating
       to the image.
 
-    - `bbox` is a [column vector](matrices.md#representing-data-in-mlpack) representing the bounding box to be drawn as a four-element vector: `(x1, y1, x2, y2)`.
+    - `bbox` is a [column vector](../matrices.md#representing-data-in-mlpack) representing the bounding box to be drawn as a four-element vector: `(x1, y1, x2, y2)`.
       * Elements after the fourth in `bbox` are ignored. There must be at least four elements,
         otherwise an exception will be thrown.
       * The area of the bounding box must be greater than 0.
@@ -397,7 +397,7 @@ You can do this through the `BoundingBoxImage()` function.
       * Bounding boxes larger than the image will be clipped and their borders will lie along
         the image's edge.
 
-    - `color` is a [column vector](matrices.md#representing-data-in-mlpack) representing the
+    - `color` is a [column vector](../matrices.md#representing-data-in-mlpack) representing the
       color of the bounding box. It must have the same number of elements as `opts.Channels()`.
 
     - `borderSize` is a `size_t` representing the width of the
