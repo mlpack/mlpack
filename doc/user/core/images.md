@@ -370,7 +370,7 @@ mlpack comes with a utility function to draw bounding boxes onto images when
 doing tasks such as object detection.
 
 <p align="center">
-  <img src="../img/jurassic-park-logo-box.png" alt="jurassic park logo">
+  <img src="../../img/jurassic-park-logo-box.png" alt="jurassic park logo">
 </p>
 
 You can do this through the `BoundingBoxImage()` function.
