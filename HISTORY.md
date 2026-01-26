@@ -52,6 +52,9 @@ _????-??-??_
  * R bindings now return class attributes as vector with the given model,
    mlpack model bindings and list as fallback (#4045).
 
+ * Added `BoundingBoxImage()` for drawing bounding boxes onto images when
+   doing tasks such as object detection (#4039).
+
 ## mlpack 4.6.2
 
 _2025-05-22_

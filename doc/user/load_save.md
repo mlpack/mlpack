@@ -970,7 +970,7 @@ of the flattened vector.
    PNM; see [the table of formats](#formats) for more details.
 
  * Multiple images can be loaded into the columns of a single matrix using the
-    overload of [`Save`](#save) that takes a vector of `filenames`.
+   overload of [`Save`](#save) that takes a vector of `filenames`.
 
  * Supported image saving formats are JPEG, PNG, TGA, and BMP.
 

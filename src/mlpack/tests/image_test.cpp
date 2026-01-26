@@ -703,3 +703,183 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
   REQUIRE(image.at(image.n_rows - 1, 1) == fillValue);
   REQUIRE(image.at(image.n_rows - 1, 2) == fillValue);
 }
+
+TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
+{
+  ImageOptions opt(10, 10, 3);
+  arma::mat image(10 * 5 * 3, 1);
+
+  arma::mat bbox(4, 1);
+  std::string name = "example";
+  arma::mat color(3, 1);
+  size_t borderSize = 1;
+  size_t letterSize = 1;
+
+  REQUIRE_THROWS(
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
+}
+
+TEST_CASE("BoundingBoxImageMismatchColorChannelsImageChannels", "[ImageTest]")
+{
+  ImageOptions opt(10, 10, 3);
+  arma::mat image(10 * 10 * 3, 1);
+
+  arma::mat bbox(4, 1);
+  std::string name = "example";
+  arma::mat color(1, 3);
+  size_t borderSize = 1;
+  size_t letterSize = 1;
+
+  REQUIRE_THROWS(
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
+}
+
+TEST_CASE("BoundingBoxImageIncorrectNumberOfCoordinates", "[ImageTest]")
+{
+  ImageOptions opt(10, 10, 3);
+  arma::mat image(10 * 10 * 3, 1);
+
+  arma::mat bbox(3, 1);
+  std::string name = "example";
+  arma::mat color(3, 1);
+  size_t borderSize = 1;
+  size_t letterSize = 1;
+
+  REQUIRE_THROWS(
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
+}
+
+TEST_CASE("BoundingBoxImageX1GreaterThanX2", "[ImageTest]")
+{
+  ImageOptions opt(10, 10, 3);
+  arma::mat image(10 * 10 * 3, 1);
+
+  arma::mat bbox = arma::mat({10, 5, 9, 10}).t();
+  std::string name = "example";
+  arma::mat color(3, 1);
+  size_t borderSize = 1;
+  size_t letterSize = 1;
+
+  REQUIRE_THROWS(
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
+}
+
+TEST_CASE("BoundingBoxImageY1GreaterThanY2", "[ImageTest]")
+{
+  ImageOptions opt(10, 10, 3);
+  arma::mat image(10 * 10 * 3, 1);
+
+  arma::mat bbox = arma::mat({10, 15, 12, 10}).t();
+  std::string name = "example";
+  arma::mat color(3, 1);
+  size_t borderSize = 1;
+  size_t letterSize = 1;
+
+  REQUIRE_THROWS(
+    BoundingBoxImage(image, opt, bbox, color, borderSize, name, letterSize));
+}
+
+TEST_CASE("BoundingBoxImage3Channels", "[ImageTest]")
+{
+  ImageOptions opt(5, 5, 3);
+  arma::mat image(25 * 3, 1);
+  image.fill(0);
+
+  arma::mat expectedOutput = arma::mat({
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}).t();
+
+  arma::mat bbox = arma::mat({1, 1, 3, 3}).t();
+  arma::mat color(3, 1);
+  color.fill(1);
+
+  BoundingBoxImage(image, opt, bbox, color);
+  CheckMatrices(image, expectedOutput);
+}
+
+TEST_CASE("BoundingBoxImageOutOfBoundsTopLeftCorner", "[ImageTest]")
+{
+  ImageOptions opt(5, 5, 1);
+  arma::mat image(25, 1);
+  image.fill(0);
+
+  arma::mat expectedOutput = arma::mat({
+    1, 1, 1, 1, 0,
+    1, 0, 0, 1, 0,
+    1, 0, 0, 1, 0,
+    1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0}).t();
+
+  arma::mat bbox = arma::mat({-1, -1, 3, 3}).t();
+  arma::mat color(1, 1);
+  color.fill(1);
+
+  BoundingBoxImage(image, opt, bbox, color);
+  CheckMatrices(image, expectedOutput);
+}
+
+TEST_CASE("BoundingBoxImageOutOfBoundsTopRightCorner", "[ImageTest]")
+{
+  ImageOptions opt(5, 5, 1);
+  arma::mat image(25, 1);
+  image.fill(0);
+
+  arma::mat expectedOutput = arma::mat({
+    0, 1, 1, 1, 1,
+    0, 1, 0, 0, 1,
+    0, 1, 0, 0, 1,
+    0, 1, 1, 1, 1,
+    0, 0, 0, 0, 0}).t();
+
+  arma::mat bbox = arma::mat({1, -1, 5, 3}).t();
+  arma::mat color(1, 1);
+  color.fill(1);
+
+  BoundingBoxImage(image, opt, bbox, color);
+  CheckMatrices(image, expectedOutput);
+}
+
+TEST_CASE("BoundingBoxImageOutOfBoundsBottomRightCorner", "[ImageTest]")
+{
+  ImageOptions opt(5, 5, 1);
+  arma::mat image(25, 1);
+  image.fill(0);
+
+  arma::mat expectedOutput = arma::mat({
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1,
+    0, 1, 0, 0, 1,
+    0, 1, 0, 0, 1,
+    0, 1, 1, 1, 1}).t();
+
+  arma::mat bbox = arma::mat({1, 1, 5, 5}).t();
+  arma::mat color(1, 1);
+  color.fill(1);
+
+  BoundingBoxImage(image, opt, bbox, color);
+  CheckMatrices(image, expectedOutput);
+}
+
+TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
+{
+  ImageOptions opt(5, 5, 1);
+  arma::mat image(25, 1);
+  image.fill(0);
+
+  arma::mat expectedOutput = arma::mat({
+    0, 0, 0, 0, 0,
+    1, 1, 1, 1, 0,
+    1, 0, 0, 1, 0,
+    1, 0, 0, 1, 0,
+    1, 1, 1, 1, 0}).t();
+
+  arma::mat bbox = arma::mat({-1, 1, 3, 5}).t();
+  arma::mat color(1, 1);
+  color.fill(1);
+
+  BoundingBoxImage(image, opt, bbox, color);
+  CheckMatrices(image, expectedOutput);
+}
