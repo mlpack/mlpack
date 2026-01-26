@@ -139,17 +139,8 @@ LinearRegression<ModelMatType>::Train(const MatType& predictors,
 
   const size_t nCols = predictors.n_cols;
 
-  // Copy is necessary to avoid modifying the user's input data.
-  arma::Mat<ElemType> p;
-  if constexpr (std::is_same_v<std::decay_t<MatType>, arma::Mat<ElemType>>)
-  {
-    p = predictors; // Direct copy when type matches (avoids ConvTo overhead).
-  }
-  else
-  {
-    p = ConvTo<arma::Mat<ElemType>>::From(predictors);
-  }
-
+  // TODO: avoid copy if possible.
+  arma::Mat<ElemType> p = ConvTo<arma::Mat<ElemType>>::From(predictors);
   arma::Row<ElemType> r = responses;
 
   // Here we add the row of ones to the predictors.
