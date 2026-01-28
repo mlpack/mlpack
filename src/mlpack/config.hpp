@@ -84,7 +84,8 @@
 // This is necessary if we would like to overwrite the default packaging
 // condition.
 //
-#if defined(MLPACK_DONT_USE_SYSTEM_HTTPLIB) && defined(MLPACK_USE_SYSTEM_HTTPLIB)
+#if defined(MLPACK_DONT_USE_SYSTEM_HTTPLIB) \
+  && defined(MLPACK_USE_SYSTEM_HTTPLIB)
   #undef MLPACK_USE_SYSTEM_HTTPLIB
 #endif
 
