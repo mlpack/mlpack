@@ -1,8 +1,8 @@
 # mlpack changelog
 
-## mlpack ?.?.?
+## mlpack 4.7.0
 
-_????-??-??_
+_2026-01-30_
  * Allow batching when training RNN with ragged lengths (#4042).
 
  * Fixed generated artifiacts in resized float images by using clamping (#4030).
