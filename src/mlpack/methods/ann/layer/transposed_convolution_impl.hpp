@@ -15,7 +15,6 @@
 
 // In case it hasn't yet been included.
 #include "transposed_convolution.hpp"
-#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 
@@ -448,8 +447,8 @@ void TransposedConvolution<
         mappedErrorBatch,
         weight,
         gTempBatch,
-        strideHeight,
         strideWidth,
+        strideHeight,
         1,
         1,
         true);
