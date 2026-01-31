@@ -18,6 +18,8 @@ option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 option(USE_SYSTEM_HTTPLIB "Use system HTTPLIB instead of version bundled with mlpack." OFF)
+option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
+option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -250,6 +252,16 @@ endif ()
 
 if (USE_SYSTEM_HTTPLIB)
   set(MLPACK_USE_SYSTEM_HTTPLIB ON)
+endif ()
+
+# Flag to be removed after release
+if (ENABLE_HTTPLIB)
+  set(MLPACK_ENABLE_HTTPLIB ON)
+endif ()
+
+# If the user would like to disable httplib for embedded system
+if (DISABLE_HTTPLIB)
+  set(MLPACK_DISABLE_HTTPLIB ON)
 endif ()
 
 set(MLPACK_DONT_FIND_MLPACK 1)
