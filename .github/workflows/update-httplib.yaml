@@ -1,0 +1,43 @@
+name: Update cpp-httplib
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 10 1/16 * *"
+permissions:
+  contents: read
+
+jobs:
+  updateCLI11:
+    permissions:
+      contents: write # for peter-evans/create-pull-request to create branch
+      pull-requests: write # for peter-evans/create-pull-request to create a PR
+    if: ${{ github.repository == 'mlpack/mlpack' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Get Latest cpp-httplib Tagged Release
+        id: httplib-header
+        run: |
+          # Ping version information upstream.
+          HTTPLIB_RELEASE_JSON=$(curl -sL https://api.github.com/repos/yhirose/cpp-httlib/releases/latest)
+          HTTPLIB_RELEASE_VERSION=$(jq -r ".tag_name" <<< "$HTTPLIB_RELEASE_JSON" | tr -d v)
+          echo "release_tag=$(echo $HTTPLIB_RELEASE_VERSION)" >> $GITHUB_OUTPUT
+          # Extract out version information from git repository.
+          HTTPLIB_VERSION_VALUE=$(grep -i ".*#define CPPHTTPLIB_VERSION.*" src/mlpack/core/httplib/bundled/httplib.h | grep -Po "(\d+\.)+\d+")
+          # Set the current release tag.
+          echo "current_tag=$(echo $HTTPLIB_VERSION_VALUE)" >> $GITHUB_OUTPUT
+
+      - name: Update Catch
+        if: steps.httplib-header.outputs.current_tag != steps.httplib-header.outputs.release_tag
+        env:
+          CURRENT_TAG: ${{ steps.httplib-header.outputs.current_tag }}
+          RELEASE_TAG: ${{ steps.httplib-header.outputs.release_tag }}
+        run: |
+          # Delete the catch.hpp.
+          rm -f src/mlpack/core/httplib/bundled/httplib.h
+          # Download the release.
+          curl -sL 
+
+          cp source/--o src/mlpack/core/httplib/bundled/httplib.h
+
+
