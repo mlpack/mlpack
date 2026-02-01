@@ -26,7 +26,7 @@ namespace mlpack {
  * Supported files are armadillo matrices and mlpack serialized models.
  *
  * param filename filename with extension to be opened.
- * param opts  DataOption type describing the file.
+ * param opts DataOption type describing the file.
  * param isLoading true if we are loading, false otherwise.
  * param stream the stream that will hold the content of the file.
  * @return bool if opening the file was successful.
@@ -36,6 +36,21 @@ bool OpenFile(const std::string& filename,
               DataOptionsType& opts,
               bool isLoading,
               std::fstream& stream);
+
+/**
+ * Write to a file from a string stream.
+ *
+ * param filename filename with extension to be opened.
+ * param opts DataOption type describing the file.
+ * param data to write to the file.
+ * param stream the stream that will hold the content of the file.
+ * @return bool if opening the file was successful.
+ */
+template<typename DataOptionsType>
+bool WriteToFile(const std::string& filename,
+                 DataOptionsType& opts,
+                 std::string data,
+                 std::fstream& stream);
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -76,6 +91,17 @@ inline FileType AutoDetectFile(std::fstream& stream,
 template<typename MatType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts);
+
+/**
+ * Return the type based on extension that are eligibale for serialization.
+ *
+ * @param filename Name of the file whose type we should detect.
+ * @param DataOptionsType Type of the data option, text, data, matrix, etc.
+ * @return Detected type of file. FileType::FileTypeUnknown if unknown.
+ */
+template<typename ObjectType, typename DataOptionsType>
+void DetectFromSerializedExtension(const std::string& filename,
+                                   DataOptionsType& opts);
 
 /**
  * Return the type of the file.

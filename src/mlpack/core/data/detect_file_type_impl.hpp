@@ -60,17 +60,39 @@ bool OpenFile(const std::string& filename,
   return true;
 }
 
-/**
- * Given an istream, attempt to guess the file type.  This is taken originally
- * from Armadillo's function guess_file_type_internal(), but we avoid using
- * internal Armadillo functionality.
- *
- * If the file is detected as a CSV, and the CSV is detected to have a header
- * row, the stream `f` will be fast-forwarded to point at the second line of the
- * file.
- *
- * @param f Opened istream to look into to guess the file type.
- */
+template<typename DataOptionsType>
+bool WriteToFile(const std::string& filename,
+                 DataOptionsType& opts,
+                 std::string data,
+                 std::fstream& stream)
+{
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+   if (!stream.is_open())
+   {
+    std::stringstream oss;
+    oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+    return HandleError(oss, opts);
+   }
+
+  stream.write(data.data(), data.size());
+
+  if (!stream.good())
+  {
+    std::stringstream oss;
+    oss << "Error writing to a '" << filename << "'.  "
+          << "Please check permissions or disk space.";
+    return HandleError(oss, opts);
+  }
+  stream.close();
+  return true;
+}
+
 inline FileType GuessFileType(std::istream& f)
 {
   f.clear();
@@ -157,19 +179,6 @@ inline FileType GuessFileType(std::istream& f)
   return FileType::RawASCII;
 }
 
-/**
- * Attempt to auto-detect the type of a file given its extension, and by
- * inspecting the parts of the file to disambiguate between types when
- * necessary.  (For instance, a .csv file could be delimited by spaces, commas,
- * or tabs.)  This is meant to be used during loading.
- *
- * If the file is detected as a CSV, and the CSV is detected to have a header
- * row, `stream` will be fast-forwarded to point at the second line of the file.
- *
- * @param stream Opened file stream to look into for autodetection.
- * @param filename Name of the file.
- * @return The detected file type.
- */
 inline FileType AutoDetectFile(std::fstream& stream,
                                const std::string& filename)
 {
@@ -320,11 +329,6 @@ inline FileType AutoDetectFile(std::fstream& stream,
   return detectedLoadType;
 }
 
-/**
- * Update FileType in DataOptions based on extension.
- *
- * @param filename Name of the file whose type we should detect.
- */
 template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
