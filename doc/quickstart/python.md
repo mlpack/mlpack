@@ -11,6 +11,10 @@ This quickstart guide is also available for [C++](cpp.md),
 Installing the mlpack bindings for Python is straightforward.  It's easy to use
 `conda` or `pip` to do this:
 
+Before installing, ensure that you are using Python 3.8 or newer.
+It is also recommended to install mlpack inside a virtual environment
+to avoid dependency conflicts.
+
 ```sh
 pip install mlpack
 ```
@@ -37,6 +41,9 @@ simple classification on a subset of the standard machine learning `covertype`
 dataset.  We'll first split the dataset into a training set and a testing set,
 then we'll train an mlpack random forest on the training data, and finally we'll
 print the accuracy of the random forest on the test dataset.
+
+This example demonstrates how to train and evaluate a simple random
+forest classifier using mlpack's Python bindings.
 
 You can copy-paste this code directly into Python to run it.
 
