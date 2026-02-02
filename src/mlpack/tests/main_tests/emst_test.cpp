@@ -30,7 +30,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTOutputDimensionTest",
                  "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("test_data_3_1000.csv", x))
+  if (!Load("test_data_3_1000.csv", x))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
@@ -53,7 +53,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTNaiveOutputDimensionTest",
                  "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("test_data_3_1000.csv", x))
+  if (!Load("test_data_3_1000.csv", x))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
@@ -75,7 +75,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTInvalidLeafSizeTest",
                  "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("test_data_3_1000.csv", x))
+  if (!Load("test_data_3_1000.csv", x))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.
@@ -92,7 +92,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTFirstTwoOutputRowsIntegerTest",
                  "[EMSTMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("test_data_3_1000.csv", x))
+  if (!Load("test_data_3_1000.csv", x))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Input random data points.

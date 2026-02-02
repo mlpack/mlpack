@@ -286,11 +286,11 @@ inline void Params::CheckInputMatrices()
     {
       CheckInputMatrix(Get<arma::rowvec>(paramName), paramName);
     }
-    else if (paramType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
+    else if (paramType == "std::tuple<mlpack::DatasetInfo, arma::mat>")
     {
       // Note that CheckCategoricalParam() is a utility function that must be
       // defined after DatasetInfo is fully defined.
-      data::CheckCategoricalParam(*this, paramName);
+      CheckCategoricalParam(*this, paramName);
     }
   }
 }

@@ -97,7 +97,7 @@ class KFoldCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter.
+   * can take a DatasetInfo parameter.
    *
    * @param k Number of folds (should be at least 2).
    * @param xs Data points to cross-validate on.
@@ -108,7 +108,7 @@ class KFoldCV
    */
   KFoldCV(const size_t k,
           const MatType& xs,
-          const data::DatasetInfo& datasetInfo,
+          const DatasetInfo& datasetInfo,
           const PredictionsType& ys,
           const size_t numClasses,
           const bool shuffle = true);
@@ -150,7 +150,7 @@ class KFoldCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter and support weighted learning.
+   * can take a DatasetInfo parameter and support weighted learning.
    *
    * @param k Number of folds (should be at least 2).
    * @param xs Data points to cross-validate on.
@@ -162,7 +162,7 @@ class KFoldCV
    */
   KFoldCV(const size_t k,
           const MatType& xs,
-          const data::DatasetInfo& datasetInfo,
+          const DatasetInfo& datasetInfo,
           const PredictionsType& ys,
           const size_t numClasses,
           const WeightsType& weights,

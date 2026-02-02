@@ -27,13 +27,13 @@ dependencies in Release Mode).
 - Under C/C++ > General > Additional Include Directories add:
 ```
  - C:\mlpack\armadillo-9.800.3\include
- - C:\mlpack\mlpack-4.6.2\src
+ - C:\mlpack\mlpack-4.7.0\src
  - C:\mlpack\ensmallen-2.19.0\include
  - C:\mlpack\cereal-3.1.2\include
 ```
 - Under Build Events > Post-Build Event > Command Line add:
 ```
- - xcopy /y "C:\mlpack\mlpack-4.6.2\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
+ - xcopy /y "C:\mlpack\mlpack-4.7.0\packages\OpenBLAS.0.2.14.1\lib\native\bin\x64\*.dll" $(OutDir)
 ```
 
 *Note*: recent versions of Visual Studio set "Conformance Mode" enabled by
@@ -95,7 +95,7 @@ folder in your project directory.
 
 ```c++
 mat dataset;
-bool loaded = mlpack::data::Load("data/german.csv", dataset);
+bool loaded = mlpack::Load("data/german.csv", dataset);
 if (!loaded)
   return -1;
 ```
@@ -173,7 +173,7 @@ Alternatively, we could extract the model from the cross-validation stage by
 using `cv.Model()`.
 
 ```c++
-mlpack::data::Save("mymodel.xml", "model", rf, false);
+mlpack::Save("mymodel.xml", rf);
 ```
 
 We can also save the model in `bin` format (`"mymodel.bin"`) which would result
@@ -185,7 +185,7 @@ In a real-life application, you may want to load a previously trained model to
 classify new samples.  We load the model from a file using:
 
 ```c++
-mlpack::data::Load("mymodel.xml", "model", rf);
+mlpack::Load("mymodel.xml", rf);
 ```
 
 ## Classifying a new sample

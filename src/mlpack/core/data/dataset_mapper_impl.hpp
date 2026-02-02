@@ -17,7 +17,6 @@
 #include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data {
 
 // Default constructor.
 template<typename PolicyType, typename InputType>
@@ -248,7 +247,6 @@ inline void DatasetMapper<PolicyType, InputType>::Policy(PolicyType&& policy)
   this->policy = std::forward<PolicyType>(policy);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

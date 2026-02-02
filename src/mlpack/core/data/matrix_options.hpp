@@ -19,7 +19,6 @@
 #include "data_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename Derived>
 class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
@@ -300,7 +299,6 @@ struct IsDataOptions<PlainMatrixOptions>
   constexpr static bool value = true;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

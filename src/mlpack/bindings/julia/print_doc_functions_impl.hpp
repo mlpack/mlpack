@@ -146,7 +146,7 @@ inline std::string CreateInputArguments(util::Params& p,
       if (d.cppType == "arma::mat" ||
           d.cppType == "arma::vec" ||
           d.cppType == "arma::rowvec" ||
-          d.cppType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
+          d.cppType == "std::tuple<mlpack::DatasetInfo, arma::mat>")
       {
         oss << "julia> " << value << " = CSV.read(\"" << value << ".csv\")"
             << std::endl;

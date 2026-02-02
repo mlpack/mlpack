@@ -17,7 +17,6 @@
 #include <mlpack/core/stb/stb.hpp>
 
 namespace mlpack {
-namespace data {
 
 template<typename eT>
 bool LoadImage(const std::vector<std::string>& files,
@@ -93,7 +92,6 @@ bool LoadImage(const std::vector<std::string>& files,
   return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

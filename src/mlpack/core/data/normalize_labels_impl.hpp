@@ -17,7 +17,6 @@
 #include "normalize_labels.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given a set of labels of a particular datatype, convert them to unsigned
@@ -86,7 +85,6 @@ void RevertLabels(const arma::Row<size_t>& labels,
     labelsOut[i] = mapping[labels[i]];
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

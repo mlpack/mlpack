@@ -59,7 +59,7 @@ class CVFunction
    *     method of this object.
    */
   CVFunction(CVType& cv,
-             data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+             DatasetMapper<IncrementPolicy, double>& datasetInfo,
              const double relativeDelta,
              const double minDelta,
              const BoundArgs&... args);
@@ -107,7 +107,7 @@ class CVFunction
   CVType& cv;
 
   //! Information on each argument to be optimized.
-  data::DatasetMapper<data::IncrementPolicy, double> datasetInfo;
+  DatasetMapper<IncrementPolicy, double> datasetInfo;
 
   //! The bound arguments.
   BoundArgsTupleType boundArgs;

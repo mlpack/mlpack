@@ -20,7 +20,6 @@
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
-using namespace data;
 
 BINDING_TEST_FIXTURE(HoeffdingTreeTestFixture);
 
@@ -35,15 +34,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeOutputDimensionTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -78,15 +77,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, opts))
+  if (!Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
@@ -120,15 +119,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingTreeLabelLessTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Append labels to the training set.
@@ -199,15 +198,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   size_t testSize = testData.n_cols;
@@ -230,7 +229,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelReuseTest",
   HoeffdingTreeModel* m = params.Get<HoeffdingTreeModel*>("output_model");
   ResetSettings();
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input trained model.
@@ -267,15 +266,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("braziltourism.arff", inputData, opts))
+  if (!Load("braziltourism.arff", inputData, opts))
     FAIL("Cannot load train dataset braziltourism.arff!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("braziltourism_labels.txt", labels))
+  if (!Load("braziltourism_labels.txt", labels))
     FAIL("Cannot load labels for braziltourism_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("braziltourism_test.arff", testData, opts))
+  if (!Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   size_t testSize = testData.n_cols;
@@ -298,7 +297,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingModelCategoricalReuseTest",
   HoeffdingTreeModel* m = params.Get<HoeffdingTreeModel*>("output_model");
   ResetSettings();
 
-  if (!data::Load("braziltourism_test.arff", testData, opts))
+  if (!Load("braziltourism_test.arff", testData, opts))
     FAIL("Cannot load test dataset braziltourism_test.arff!");
 
   // Input trained model.
@@ -336,15 +335,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
   opts.Categorical() = true;
 
   int nodes;
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -365,13 +364,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMinSamplesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -402,15 +401,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
   opts.Categorical() = true;
 
   int nodes;
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -431,13 +430,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingMaxSamplesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -468,15 +467,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
   opts.Categorical() = true;
 
   int nodes;
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -497,13 +496,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingConfidenceTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -533,15 +532,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
   opts.Categorical() = true;
 
   int nodes;
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -562,13 +561,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingPassesTest",
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -599,15 +598,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -641,15 +640,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   opts.Categorical() = true;
 
   int nodes;
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -672,13 +671,13 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   ResetSettings();
   CleanMemory();
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   // Input training data.
@@ -712,15 +711,15 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture, "HoeffdingBinningTest",
   TextOptions opts;
   opts.Categorical() = true;
 
-  if (!data::Load("vc2.csv", inputData, opts))
+  if (!Load("vc2.csv", inputData, opts))
     FAIL("Cannot load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData, opts))
+  if (!Load("vc2_test.csv", testData, opts))
     FAIL("Cannot load test dataset vc2.csv!");
 
   modData = inputData.cols(0, 49);

@@ -29,9 +29,9 @@ template<typename T>
 T& GetParam(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<mlpack::DatasetInfo, arma::mat>>>* = 0)
 {
   // No mapping is needed, so just cast it directly.
   return *std::any_cast<T>(&d.value);
@@ -59,11 +59,16 @@ T& GetParam(
   size_t& n_cols = std::get<2>(std::get<1>(tuple));
   if (d.input && !d.loaded)
   {
-    // Call correct data::Load() function.
+    // Call correct Load() function.
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-      data::Load(value, matrix, true);
+      Load(value, matrix, Fatal);
     else
-      data::Load(value, matrix, true, !d.noTranspose);
+    {
+      MatrixOptions opts;
+      opts.Fatal() = true;
+      opts.NoTranspose() = d.noTranspose;
+      Load(value, matrix, opts);
+    }
     n_rows = matrix.n_rows;
     n_cols = matrix.n_cols;
     d.loaded = true;
@@ -81,7 +86,7 @@ template<typename T>
 T& GetParam(
     util::ParamData& d,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<mlpack::DatasetInfo, arma::mat>>>* = 0)
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
@@ -93,7 +98,11 @@ T& GetParam(
   size_t& n_cols = std::get<2>(std::get<1>(*tuple));
   if (d.input && !d.loaded)
   {
-    data::Load(value, std::get<1>(t), std::get<0>(t), true, !d.noTranspose);
+    TextOptions opts = Fatal + Categorical;
+    opts.NoTranspose() = d.noTranspose;
+    opts.DatasetInfo() = std::move(std::get<0>(t));
+    Load(value, std::get<1>(t), opts);
+    std::get<0>(t) = std::move(opts.DatasetInfo());
     n_rows = std::get<1>(t).n_rows;
     n_cols = std::get<1>(t).n_cols;
     d.loaded = true;
@@ -111,7 +120,7 @@ template<typename T>
 T*& GetParam(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
@@ -121,7 +130,7 @@ T*& GetParam(
   if (d.input && !d.loaded)
   {
     T* model = new T();
-    data::Load(value, "model", *model, true);
+    Load(value, *model, Fatal);
     d.loaded = true;
     std::get<0>(*tuple) = model;
   }

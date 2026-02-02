@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * DicitonaryEnocdingPolicy is used as a helper class for StringEncoding.
@@ -144,7 +143,6 @@ struct StringEncodingPolicyTraits<DictionaryEncodingPolicy>
 template<typename TokenType>
 using DictionaryEncoding = StringEncoding<DictionaryEncodingPolicy,
                                           StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

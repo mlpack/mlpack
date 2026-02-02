@@ -3,6 +3,13 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+
+
+## mlpack 4.7.0
+
+_2026-01-30_
+ * Allow batching when training RNN with ragged lengths (#4042).
+
  * Fixed generated artifiacts in resized float images by using clamping (#4030).
 
  * Optimize convolution (#3988).
@@ -49,6 +56,9 @@ _????-??-??_
 
  * R bindings now return class attributes as vector with the given model,
    mlpack model bindings and list as fallback (#4045).
+
+ * Added `BoundingBoxImage()` for drawing bounding boxes onto images when
+   doing tasks such as object detection (#4039).
 
 ## mlpack 4.6.2
 

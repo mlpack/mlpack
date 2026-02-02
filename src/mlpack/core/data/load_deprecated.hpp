@@ -21,7 +21,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -65,9 +64,10 @@ namespace data {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          const bool fatal = false,
+          const bool fatal,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
 
@@ -102,9 +102,10 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
-          const bool fatal = false,
+          const bool fatal,
           const bool transpose = true,
           const FileType inputLoadType = FileType::AutoDetect);
 
@@ -136,9 +137,10 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Col<eT>& vec,
-          const bool fatal = false);
+          const bool fatal);
 
 /**
  * Load a row vector from a file, guessing the filetype from the extension.
@@ -168,9 +170,10 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Row<eT>& rowvec,
-          const bool fatal = false);
+          const bool fatal);
 
 /**
  * Loads a matrix from a file, guessing the filetype from the extension and
@@ -194,7 +197,7 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
- * If the given `info` has already been used with a different `data::Load()`
+ * If the given `info` has already been used with a different `Load()`
  * call where the dataset has the same dimensionality, then the mappings and
  * dimension types inside of `info` will be *re-used*.  If the given `info` is a
  * new `DatasetMapper` object (e.g. its dimensionality is 0), then new mappings
@@ -209,6 +212,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           DatasetInfo& info,
@@ -242,6 +246,7 @@ bool Load(const std::string& filename,
  */
 
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 bool Load(const std::string& filename,
           const std::string& name,
           T& t,
@@ -261,7 +266,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into sparse matrix
@@ -277,7 +282,7 @@ bool Load(const std::string& filename,
   opts.NoTranspose() = !transpose;
   opts.Format() = inputLoadType;
 
-  return Load(filename, matrix, opts);
+  return Load(filename, matrix, opts, false);
 }
 
 // For loading data into a column vector
@@ -288,7 +293,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, vec, opts);
+  return Load(filename, vec, opts, false);
 }
 
 // For loading data into a raw vector
@@ -299,7 +304,7 @@ bool Load(const std::string& filename,
 {
   DataOptions opts;
   opts.Fatal() = fatal;
-  return Load(filename, rowvec, opts);
+  return Load(filename, rowvec, opts, false);
 }
 
 // Load with mappings.  Unfortunately we have to implement this ourselves.
@@ -456,7 +461,6 @@ bool Load(const std::string& filename,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

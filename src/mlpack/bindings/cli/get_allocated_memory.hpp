@@ -22,7 +22,7 @@ namespace cli {
 template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& /* d */,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0)
 {
   return NULL;
@@ -40,7 +40,7 @@ template<typename T>
 void* GetAllocatedMemory(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // Here we have a model, which is a tuple, and we need the address of the
   // memory.

@@ -225,6 +225,7 @@ TEST_CASE("LSTMForwardForgetInputOnlyTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
 
   // Set all of the weights to 0.
   l.Parameters().zeros();
@@ -264,6 +265,7 @@ TEST_CASE("LSTMForwardIgnoreInputTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
 
   // Set the cell state to a random vector.
   arma::mat cell, storedCell;
@@ -293,6 +295,7 @@ TEST_CASE("LSTMForwardInputPeepholeOnlyTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).zeros();
   l.RecurrentState(l.CurrentStep()).zeros();
 
@@ -339,6 +342,7 @@ TEST_CASE("LSTMForwardForgetPeepholeOnlyTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).zeros();
   l.RecurrentState(l.CurrentStep()).zeros();
 
@@ -380,6 +384,7 @@ TEST_CASE("LSTMForwardOutputPeepholeOnlyTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).zeros();
   l.RecurrentState(l.CurrentStep()).zeros();
 
@@ -421,6 +426,7 @@ TEST_CASE("LSTMForwardNonRecurrentTest", "[ANNLayerTest]")
   arma::mat weights;
   LSTM l = SetupLSTM(inputSize, batchSize, outputSize, 2, weights);
   l.CurrentStep(0); // So we will not be able to use the previous state.
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   // Set all of the weights and recurrent state to random.
   l.Parameters().randu();
@@ -444,6 +450,7 @@ TEST_CASE("LSTMForwardNonRecurrentTest", "[ANNLayerTest]")
 
   // Lastly, set the cell state for the last time step to 0.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   arma::mat cell;
   MakeAlias(cell, l.RecurrentState(l.PreviousStep()), outputSize, batchSize,
       outputSize * batchSize);
@@ -468,6 +475,7 @@ TEST_CASE("LSTMForwardRecurrentOnlyTest", "[ANNLayerTest]")
 
   // Set the recurrent state to random values.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).randu();
 
   // Now set all the recurrent weights to something.
@@ -518,6 +526,7 @@ TEST_CASE("LSTMForwardPeepholeOnlyTest", "[ANNLayerTest]")
 
   // Set the recurrent state to random values.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).randu();
 
   // Now set all the peephole weights to something.
@@ -575,6 +584,7 @@ TEST_CASE("LSTMForwardBiasOnlyTest", "[ANNLayerTest]")
 
   // Set the recurrent state to random values.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.RecurrentState(l.PreviousStep()).randu();
 
   // Now set all the biases to something.
@@ -637,6 +647,7 @@ TEST_CASE("LSTMBackwardInputOnlyTest", "[ANNLayerTest]")
   l.RecurrentOutputGateWeight().randu();
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   arma::mat cell;
   MakeAlias(cell, l.RecurrentState(l.CurrentStep()), outputSize, batchSize,
@@ -648,6 +659,7 @@ TEST_CASE("LSTMBackwardInputOnlyTest", "[ANNLayerTest]")
   l.Forward(input, output);
 
   l.CurrentStep(0, true);
+  l.OnStepChanged(0, batchSize, batchSize, true);
 
   arma::mat delta(outputSize, batchSize, arma::fill::randu);
   arma::mat dxIn(inputSize, batchSize, arma::fill::none);
@@ -674,9 +686,11 @@ TEST_CASE("LSTMBackwardInputOnlyTest", "[ANNLayerTest]")
   arma::mat zeroDelta(outputSize, batchSize, arma::fill::zeros);
   l.RecurrentState(1).zeros();
   l.CurrentStep(1, true);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, zeroDelta, dxIn /* ignored */);
 
   l.CurrentStep(0, false);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.RecurrentBlockInputWeight().zeros();
   l.RecurrentInputGateWeight().zeros();
   l.RecurrentForgetGateWeight().zeros();
@@ -711,6 +725,7 @@ TEST_CASE("LSTMBackwardBlockInputOnlyTest", "[ANNLayerTest]")
   l.RecurrentOutputGateWeight().randu();
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   arma::mat cell;
   MakeAlias(cell, l.RecurrentState(l.CurrentStep()), outputSize, batchSize,
@@ -722,6 +737,7 @@ TEST_CASE("LSTMBackwardBlockInputOnlyTest", "[ANNLayerTest]")
   l.Forward(input, output);
 
   l.CurrentStep(0, true);
+  l.OnStepChanged(0, batchSize, batchSize, true);
 
   arma::mat delta(outputSize, batchSize, arma::fill::randu);
   arma::mat dxIn(inputSize, batchSize, arma::fill::none);
@@ -746,9 +762,11 @@ TEST_CASE("LSTMBackwardBlockInputOnlyTest", "[ANNLayerTest]")
   arma::mat zeroDelta(outputSize, batchSize, arma::fill::zeros);
   l.RecurrentState(1).zeros();
   l.CurrentStep(1, true);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, zeroDelta, dxIn /* ignored */);
 
   l.CurrentStep(0, false);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.RecurrentBlockInputWeight().zeros();
   l.RecurrentInputGateWeight().zeros();
   l.RecurrentForgetGateWeight().zeros();
@@ -783,6 +801,7 @@ TEST_CASE("LSTMBackwardForgetOnlyTest", "[ANNLayerTest]")
   l.RecurrentOutputGateWeight().randu();
 
   l.CurrentStep(1, true);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   arma::mat cell, lastCell;
   MakeAlias(lastCell, l.RecurrentState(l.PreviousStep()), outputSize, batchSize,
       outputSize * batchSize);
@@ -822,9 +841,11 @@ TEST_CASE("LSTMBackwardForgetOnlyTest", "[ANNLayerTest]")
   arma::mat zeroDelta(outputSize, batchSize, arma::fill::zeros);
   l.RecurrentState(2).zeros();
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Backward(input, output, zeroDelta, dxIn /* ignored */);
 
   l.CurrentStep(1, false);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.RecurrentBlockInputWeight().zeros();
   l.RecurrentInputGateWeight().zeros();
   l.RecurrentForgetGateWeight().zeros();
@@ -859,6 +880,7 @@ TEST_CASE("LSTMBackwardOutputOnlyTest", "[ANNLayerTest]")
   l.RecurrentOutputGateWeight().randu();
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   arma::mat cell;
   MakeAlias(cell, l.RecurrentState(l.CurrentStep()), outputSize, batchSize,
@@ -870,6 +892,7 @@ TEST_CASE("LSTMBackwardOutputOnlyTest", "[ANNLayerTest]")
   l.Forward(input, output);
 
   l.CurrentStep(0, true);
+  l.OnStepChanged(0, batchSize, batchSize, true);
 
   arma::mat delta(outputSize, batchSize, arma::fill::randu);
   arma::mat dxIn(inputSize, batchSize, arma::fill::none);
@@ -893,9 +916,11 @@ TEST_CASE("LSTMBackwardOutputOnlyTest", "[ANNLayerTest]")
   arma::mat zeroDelta(outputSize, batchSize, arma::fill::zeros);
   l.RecurrentState(1).zeros();
   l.CurrentStep(1, true);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, zeroDelta, dxIn /* ignored */);
 
   l.CurrentStep(0, false);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.RecurrentBlockInputWeight().zeros();
   l.RecurrentInputGateWeight().zeros();
   l.RecurrentForgetGateWeight().zeros();
@@ -931,6 +956,7 @@ TEST_CASE("LSTMBackwardNonRecurrentWeightsTest", "[ANNLayerTest]")
   l.RecurrentOutputGateWeight().randu();
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   // Initialize the recurrent state by passing random data through.
   arma::mat input(inputSize, batchSize, arma::fill::randu);
@@ -938,6 +964,7 @@ TEST_CASE("LSTMBackwardNonRecurrentWeightsTest", "[ANNLayerTest]")
   l.Forward(input, output);
 
   l.CurrentStep(1, true);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   arma::mat cell, lastCell;
   MakeAlias(lastCell, l.RecurrentState(l.PreviousStep()), outputSize, batchSize,
       outputSize * batchSize);
@@ -996,9 +1023,11 @@ TEST_CASE("LSTMBackwardNonRecurrentWeightsTest", "[ANNLayerTest]")
   arma::mat zeroDelta(outputSize, batchSize, arma::fill::zeros);
   l.RecurrentState(2).zeros();
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Backward(input, output, zeroDelta, dxIn /* ignored */);
 
   l.CurrentStep(1, false);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.RecurrentBlockInputWeight().zeros();
   l.RecurrentInputGateWeight().zeros();
   l.RecurrentForgetGateWeight().zeros();
@@ -1032,10 +1061,13 @@ TEST_CASE("LSTMBackwardRecurrentWeightsTest", "[ANNLayerTest]")
   arma::mat input(inputSize, batchSize, arma::fill::randu);
   arma::mat output(outputSize, batchSize, arma::fill::none);
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Forward(input, output);
 
   arma::mat delta(outputSize, batchSize, arma::fill::randu);
@@ -1046,12 +1078,14 @@ TEST_CASE("LSTMBackwardRecurrentWeightsTest", "[ANNLayerTest]")
   REQUIRE(all(all(dx == 0.0)));
 
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
 
   l.Backward(input, output, delta, dx);
 
   REQUIRE(all(all(dx == 0.0)));
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, true);
 
   l.Backward(input, output, delta, dx);
 
@@ -1096,10 +1130,13 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
 
   // Now do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1127,6 +1164,7 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
   // Now take an additional time step back and just do a sanity check that this
   // changes the result.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, delta, dx);
   REQUIRE(!approx_equal(dx, dxExpected, "both", 1e-5, 1e-5));
 
@@ -1136,10 +1174,13 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
 
   // Now do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1164,6 +1205,7 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
   // Now take an additional time step back and just do a sanity check that this
   // changes the result.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, delta, dx);
   REQUIRE(!approx_equal(dx, dxExpected, "both", 1e-5, 1e-5));
 
@@ -1173,10 +1215,13 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
 
   // Do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1202,6 +1247,7 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
   // Now take an additional time step back and just do a sanity check that this
   // changes the result.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, delta, dx);
   REQUIRE(!approx_equal(dx, dxExpected, "both", 1e-5, 1e-5));
 
@@ -1211,10 +1257,13 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
 
   // Do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1234,6 +1283,7 @@ TEST_CASE("LSTMBackwardEachRecurrentWeightTest", "[ANNLayerTest]")
   // Now take an additional time step back and just do a sanity check that this
   // changes the result.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input, output, delta, dx);
   REQUIRE(!approx_equal(dx, dxExpected, "both", 1e-5, 1e-5));
 }
@@ -1277,10 +1327,13 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1310,6 +1363,7 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now step back a time step and make sure the output has changed.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Forward(input, output);
   l.Backward(input, output, delta, dx);
 
@@ -1322,10 +1376,13 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
   l.BlockInputBias().ones();
 
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1349,6 +1406,7 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now step back a time step and make sure the output has changed.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Forward(input, output);
   l.Backward(input, output, delta, dx);
 
@@ -1361,10 +1419,13 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1388,6 +1449,7 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now step back a time step and make sure the output has changed.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Forward(input, output);
   l.Backward(input, output, delta, dx);
 
@@ -1399,10 +1461,13 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Do the entire forward step sequence and then the first backward step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input, output);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   // Set random internal state, in case it was 0.
   lastY.randu();
   lastCell.randu();
@@ -1421,6 +1486,7 @@ TEST_CASE("LSTMBackwardPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now step back a time step and make sure the output has changed.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Forward(input, output);
   l.Backward(input, output, delta, dx);
 
@@ -1462,10 +1528,13 @@ TEST_CASE("LSTMGradientNonRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now take the forward steps.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input0, output0);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input1, output1);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Forward(input2, output2);
 
   arma::mat dx(inputSize, batchSize, arma::fill::zeros);
@@ -1551,6 +1620,7 @@ TEST_CASE("LSTMGradientNonRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now take a time step backwards.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input1, output1, delta1, dx);
   l.Gradient(input1, dx, gradient);
 
@@ -1604,6 +1674,7 @@ TEST_CASE("LSTMGradientNonRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now do the first time step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.Backward(input0, output0, delta0, dx);
   l.Gradient(input0, dx, gradient);
 
@@ -1691,10 +1762,13 @@ TEST_CASE("LSTMGradientRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now take the forward steps.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input0, output0);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input1, output1);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Forward(input2, output2);
 
   arma::mat dx(inputSize, batchSize, arma::fill::zeros);
@@ -1785,6 +1859,7 @@ TEST_CASE("LSTMGradientRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now take a time step backwards.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input1, output1, delta1, dx);
   l.Gradient(input1, dx, gradient);
 
@@ -1844,6 +1919,7 @@ TEST_CASE("LSTMGradientRecurrentWeightsTest", "[ANNLayerTest]")
 
   // Now do the first time step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.Backward(input0, output0, delta0, dx);
   l.Gradient(input0, dx, gradient);
 
@@ -1933,10 +2009,13 @@ TEST_CASE("LSTMGradientPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now take the forward steps.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
   l.Forward(input0, output0);
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   l.Forward(input1, output1);
   l.CurrentStep(2, true);
+  l.OnStepChanged(2, batchSize, batchSize, true);
   l.Forward(input2, output2);
 
   arma::mat dx(inputSize, batchSize, arma::fill::zeros);
@@ -2026,6 +2105,7 @@ TEST_CASE("LSTMGradientPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now take a time step backwards.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, true);
   l.Backward(input1, output1, delta1, dx);
   l.Gradient(input1, dx, gradient);
 
@@ -2082,6 +2162,7 @@ TEST_CASE("LSTMGradientPeepholeWeightsTest", "[ANNLayerTest]")
 
   // Now do the first time step.
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, true);
   l.Backward(input0, output0, delta0, dx);
   l.Gradient(input0, dx, gradient);
 

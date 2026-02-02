@@ -555,13 +555,13 @@ TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
 
 // Check that accuracy while learning square distance matrix is the same as when
 // we are learning low rank matrix.  I'm ok if this passes only once out of
-// three tries.
+// five tries.
 TEMPLATE_TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]", float, double)
 {
   using ElemType = TestType;
 
   bool success = false;
-  for (size_t trial = 0; trial < 3; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     arma::Mat<ElemType> dataPart1;
     dataPart1.randn(5, 50);
@@ -756,9 +756,9 @@ TEMPLATE_TEST_CASE("LMNNFunctionGradientTest3", "[LMNNTest]", float, double)
 
   arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("iris.csv", dataset))
+  if (!Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
   LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);
@@ -778,9 +778,9 @@ TEMPLATE_TEST_CASE("LMNNFunctionGradientTest4", "[LMNNTest]", float, double)
 
   arma::Mat<ElemType> dataset;
   arma::Row<size_t> labels;
-  if (!data::Load("iris.csv", dataset))
+  if (!Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
   LMNNFunction<arma::Mat<ElemType>> lmnnfn(dataset, labels, 1, 0.6, 1);

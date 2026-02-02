@@ -40,6 +40,7 @@ class RNN
   // Convenience typedefs.
   using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+  using URowType = typename GetURowType<MatType>::type;
 
   /**
    * Create the RNN object.
@@ -223,7 +224,7 @@ class RNN
   template<typename OptimizerType, typename... CallbackTypes>
   ElemType Train(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths,
+                 URowType sequenceLengths,
                  OptimizerType& optimizer,
                  CallbackTypes&&... callbacks);
 
@@ -258,7 +259,7 @@ class RNN
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
   ElemType Train(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths,
+                 URowType sequenceLengths,
                  CallbackTypes&&... callbacks);
 
   /**
@@ -290,7 +291,7 @@ class RNN
    */
   void Predict(const CubeType& predictors,
                CubeType& results,
-               const arma::urowvec& sequenceLengths);
+               const URowType& sequenceLengths);
 
   // Return the nujmber of weights in the model.
   size_t WeightSize() { return network.WeightSize(); }
@@ -362,10 +363,13 @@ class RNN
    * @param sequenceLengths Length of each input sequences.  Should have size
    *     `predictors.n_cols`, and all values should be less than or equal to
    *     `predictors.n_slices`.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
    */
   ElemType Evaluate(const CubeType& predictors,
                     const CubeType& responses,
-                    const arma::urowvec& sequenceLengths);
+                    const URowType& sequenceLengths,
+                    const size_t batchSize);
 
   // Serialize the model.
   template<typename Archive>
@@ -473,7 +477,7 @@ class RNN
    */
   void ResetData(CubeType predictors,
                  CubeType responses,
-                 arma::urowvec sequenceLengths = arma::urowvec());
+                 URowType sequenceLengths = URowType());
 
  private:
   // Helper functions.
@@ -486,7 +490,52 @@ class RNN
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step, const bool end);
+  void SetCurrentStep(const size_t step,
+                      const bool end,
+                      size_t batchSize,
+                      size_t activeBatchSize,
+                      bool backwards = false);
+
+  // Reorders the data in a batch to have sequence lengths in descending order.
+  void ReorderBatch(const size_t begin,
+                    const size_t batchSize,
+                    CubeType& predictors,
+                    CubeType& responses,
+                    URowType& sequenceLengths);
+
+  // Calculates the number of active points in the batch.
+  void CalculateActivePoints(size_t& activeBatchSize,
+                             const size_t begin,
+                             URowType& sequenceLengths,
+                             const size_t step,
+                             const std::enable_if_t<
+                                 IsArma<URowType>::value>* = 0)
+  {
+    // Since we know that `sequenceLengths` is sorted in order of descending
+    // lengths and `activeBatchSize` only decreases as `step` increases, we
+    // can just decrease `activeBatchSize` until we find the sequence length
+    // that is greater than the current step.
+    while (activeBatchSize > 0 &&
+        sequenceLengths[begin + activeBatchSize - 1] <= step)
+      activeBatchSize--;
+  }
+
+  #if defined(MLPACK_HAS_COOT)
+
+  void CalculateActivePoints(size_t& activeBatchSize,
+                             const size_t begin,
+                             const URowType& sequenceLengths,
+                             const size_t step,
+                             const std::enable_if_t<
+                                 IsCoot<URowType>::value>* = 0)
+  {
+    // Individual element access is probably slower if `URowType` is a
+    // Bandicoot type so we don't use the optimized version.
+    activeBatchSize = accu(sequenceLengths
+        .subvec(begin, begin + activeBatchSize - 1) > step);
+  }
+
+  #endif // defined(MLPACK_HAS_COOT)
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
@@ -509,8 +558,8 @@ class RNN
   CubeType responses;
 
   // The length of each input sequence.  If this is empty, then every sequence
-  // is assuemd to have the same length (`predictors.n_slices`).
-  arma::urowvec sequenceLengths;
+  // is assumed to have the same length (`predictors.n_slices`).
+  URowType sequenceLengths;
 }; // class RNNType
 
 } // namespace mlpack

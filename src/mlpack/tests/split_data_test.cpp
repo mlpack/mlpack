@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace arma;
-using namespace mlpack::data;
 
 /**
  * Compare the data after train test split.  This assumes that the labels

@@ -149,7 +149,7 @@ void MakeAlias(OutVecType& v,
   coot::dev_mem_t<typename InVecType::elem_type> newMem =
       oldVec.get_dev_mem() + offset;
   v.~OutVecType();
-  new (&v) OutVecType(newMem, numElems, false, strict);
+  new (&v) OutVecType(newMem, numElems);
 }
 
 /**
@@ -162,7 +162,7 @@ void MakeAlias(OutMatType& m,
                const size_t numRows,
                const size_t numCols,
                const size_t offset = 0,
-               const bool strict = true,
+               const bool /* strict */ = true,
                const typename std::enable_if_t<
                    IsMatrix<OutMatType>::value &&
                    IsCoot<InMatType>::value &&

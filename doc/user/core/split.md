@@ -3,20 +3,20 @@
 mlpack provides a simple functions for splitting a dataset into a training set
 and a test set.
 
- * [`data::Split()`](#datasplitdata): split a dataset into a training set
+ * [`Split()`](#split): split a dataset into a training set
    and test set, optionally with labels and weights.
 
- * [`data::StratifiedSplit()`](#datastratifiedsplit): perform a stratified
+ * [`StratifiedSplit()`](#stratifiedsplit): perform a stratified
    split, ensuring that the training and test set have the same ratios of each
    label.
 
 ---
 
-## `data::SplitData()`
+## `Split()`
 
- * `data::Split(input, trainData, testData, testRatio, shuffleData=true)`
- * `data::Split(input, inputLabels, trainData, testData, trainLabels, testLabels, testRatio, shuffleData=true)`
- * `data::Split(input, inputLabels, inputWeights, trainData, testData, trainLabels, testLabels, trainWeights, testWeights, testRatio, shuffleData=true)`
+ * `Split(input, trainData, testData, testRatio, shuffleData=true)`
+ * `Split(input, inputLabels, trainData, testData, trainLabels, testLabels, testRatio, shuffleData=true)`
+ * `Split(input, inputLabels, inputWeights, trainData, testData, trainLabels, testLabels, trainWeights, testWeights, testRatio, shuffleData=true)`
    - Perform a standard train/test split, with a factor of `testRatio` of the
      data stored in the test set.
    - If `shuffleData` is `false`, the first points in the dataset will be used
@@ -30,9 +30,9 @@ See more details on each parameter in the [Parameters](#parameters) section.
 
 ---
 
-## `data::StratifiedSplit()`
+## `StratifiedSplit()`
 
- * `data::StratifiedSplit(input, inputLabels, trainData, testData, trainLabels,
+ * `StratifiedSplit(input, inputLabels, trainData, testData, trainLabels,
    testLabels, testRatio, shuffleData=true)`
    - Perform a stratified train/test split, with a factor of `testRatio` of the
      dataset stored in the test set.
@@ -97,12 +97,12 @@ Split the unlabeled `cloud` dataset, using 20% of the dataset for the test set.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 arma::mat trainData, testData;
 
 // Split the data, using 20% of the data for the test set.
-mlpack::data::Split(dataset, trainData, testData, 0.2);
+mlpack::Split(dataset, trainData, testData, 0.2);
 
 // Print the size of each matrix.
 std::cout << "Full data size:     " << dataset.n_rows << " x " << dataset.n_cols
@@ -123,12 +123,12 @@ point elements to represent both the data and responses.
 ```c++
 // See https://datasets.mlpack.org/telecom_churn.arff.
 arma::fmat dataset;
-mlpack::data::DatasetInfo info; // Holds which dimensions are categorical.
-mlpack::data::Load("telecom_churn.arff", dataset, info, true);
+mlpack::TextOptions opts = mlpack::Fatal + mlpack::Categorical;
+mlpack::Load("telecom_churn.arff", dataset, opts);
 
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
 arma::frowvec labels;
-mlpack::data::Load("telecom_churn.responses.csv", labels, true);
+mlpack::Load("telecom_churn.responses.csv", labels, mlpack::Fatal);
 
 arma::fmat trainData, testData;
 arma::frowvec trainLabels, testLabels;
@@ -136,7 +136,7 @@ arma::frowvec trainLabels, testLabels;
 // Split the data, using 25% of the data for the test set.
 // Note that Split() can accept many different types for the data and the
 // labels---here we pass arma::frowvec instead of arma::Row<size_t>.
-mlpack::data::Split(dataset, labels, trainData, testData, trainLabels,
+mlpack::Split(dataset, labels, trainData, testData, trainLabels,
     testLabels, 0.25);
 
 // Print the size of each matrix.
@@ -162,12 +162,12 @@ splitting.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat dataset;
-mlpack::data::Load("movielens-100k.csv", dataset, true);
+mlpack::Load("movielens-100k.csv", dataset, mlpack::Fatal);
 
 arma::sp_mat trainData, testData;
 
 // Split the dataset without shuffling.
-mlpack::data::Split(dataset, trainData, testData, 0.2, false);
+mlpack::Split(dataset, trainData, testData, 0.2, false);
 
 // Print the first point of the dataset and the training set (these will be the
 // same because we did not shuffle during splitting).
@@ -195,17 +195,17 @@ percentage of each class in the original dataset and in the split datasets.
 ```c++
 // See https://datasets.mlpack.org/covertype.data.csv.
 arma::mat dataset;
-mlpack::data::Load("covertype.data.csv", dataset, true);
+mlpack::Load("covertype.data.csv", dataset, mlpack::Fatal);
 
 // See https://datasets.mlpack.org/covertype.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("covertype.labels.csv", labels, true);
+mlpack::Load("covertype.labels.csv", labels, mlpack::Fatal);
 
 arma::mat trainData, testData;
 arma::Row<size_t> trainLabels, testLabels;
 
 // Perform a stratified split, keeping 15% of the data as a test set.
-mlpack::data::StratifiedSplit(dataset, labels, trainData, testData, trainLabels,
+mlpack::StratifiedSplit(dataset, labels, trainData, testData, trainLabels,
     testLabels, 0.15);
 
 // Now compute the percentage of each label in the dataset.

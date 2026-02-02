@@ -14,7 +14,7 @@ RADICAL supports decomposing different matrix types via template parameters.
 // linearly independent.
 
 // This dataset is uniform random in 3 dimensions.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat x(3, 100, arma::fill::randu); // 1000 points.
 
 mlpack::Radical r; // Step 1: create RADICAL object.
@@ -103,7 +103,7 @@ time!
 ### Serialization
 
  * A `Radical` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
    Only the parameters to be used when calling `Apply()` are serialized (e.g.
    the five constructor parameters.)
 
@@ -122,7 +122,7 @@ magnitude of each dimension of the RADICAL-ized matrix.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset);
+mlpack::Load("iris.csv", dataset);
 
 // Create RADICAL object with default options and apply to data.
 mlpack::Radical r;
@@ -164,7 +164,7 @@ independent.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::fmat dataset;
-mlpack::data::Load("iris.csv", dataset);
+mlpack::Load("iris.csv", dataset);
 
 // Create RADICAL object with custom options and apply to data.
 mlpack::Radical r(0.1 /* noise standard deviation */,
@@ -194,10 +194,10 @@ matrix to apply the same transformation to a test set.
 ```c++
 // See https://datasets.mlpack.org/iris.train.csv.
 arma::mat trainSet;
-mlpack::data::Load("iris.train.csv", trainSet, true);
+mlpack::Load("iris.train.csv", trainSet, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.test.csv.
 arma::mat testSet;
-mlpack::data::Load("iris.test.csv", testSet, true);
+mlpack::Load("iris.test.csv", testSet, mlpack::Fatal);
 
 // Create RADICAL object with custom options.  Here we optimize for speed, but
 // at the potential loss of quality!  A real-world application may want to use

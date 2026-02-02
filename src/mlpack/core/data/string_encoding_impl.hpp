@@ -18,7 +18,6 @@
 #include <type_traits>
 
 namespace mlpack {
-namespace data {
 
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename ... ArgTypes>
@@ -205,7 +204,6 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
   ar(CEREAL_NVP(dictionary));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

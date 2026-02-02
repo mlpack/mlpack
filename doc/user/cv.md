@@ -119,9 +119,9 @@ DecisionTree(MatType&& data,
 
 `DecisionTree` models can be constructed in multiple other ways. For example, if
 we have a dataset with both categorical and numerical features, we can also
-perform cross-validation by using the associated `data::DatasetInfo` object.
-Thus, given some `data::DatasetInfo` object called `datasetInfo` (that perhaps
-was produced by a call to `data::Load()`), we can perform k-fold
+perform cross-validation by using the associated `DatasetInfo` object.
+Thus, given some `DatasetInfo` object called `datasetInfo` (that perhaps
+was produced by a call to `Load()`), we can perform k-fold
 cross-validation in a similar manner to the other examples:
 
 ```c++
@@ -136,7 +136,7 @@ constructor:
 ```c++
 template<typename MatType, typename LabelsType>
 DecisionTree(MatType&& data,
-             const data::DatasetInfo& datasetInfo,
+             const DatasetInfo& datasetInfo,
              LabelsType&& labels,
              const size_t numClasses,
              const size_t minimumLeafSize = 10);
@@ -249,7 +249,7 @@ the dataset to use as a validation set.
 
  - `KFoldCV(k, xs, datasetInfo, ys, numClasses)`: this is for unweighted
         categorical/numeric classification applications; `xs` is the dataset,
-        `datasetInfo` is a `data::DatasetInfo` object that holds the types of
+        `datasetInfo` is a `DatasetInfo` object that holds the types of
         each dimension in the dataset, `ys` are the class labels for each data
         point, and `numClasses` is the number of classes in the dataset.
 
@@ -266,7 +266,7 @@ the dataset to use as a validation set.
 
  - `KFoldCV(k, xs, datasetInfo, ys, numClasses, weights)`: this is for
         weighted cateogrical/numeric classification applications; `xs` is the
-        dataset, `datasetInfo` is a `data::DatasetInfo` object that holds the
+        dataset, `datasetInfo` is a `DatasetInfo` object that holds the
         types of each dimension in the dataset, `ys` are the class labels for
         each data point, `numClasses` is the number of classes in each dataset,
         and `weights` holds the weights for each point in the dataset.

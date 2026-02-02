@@ -86,22 +86,25 @@ void LoadBostonHousingDataset(MatType& trainData,
                               MatType& testData,
                               ResponsesType& trainResponses,
                               ResponsesType& testResponses,
-                              data::DatasetInfo& info)
+                              DatasetInfo& info)
 {
   MatType dataset;
   ResponsesType responses;
 
   // Defining categorical deimensions.
   info.SetDimensionality(13);
-  info.Type(3) = data::Datatype::categorical;
-  info.Type(8) = data::Datatype::categorical;
+  info.Type(3) = Datatype::categorical;
+  info.Type(8) = Datatype::categorical;
 
-  if (!data::Load("boston_housing_price.csv", dataset, info))
+  TextOptions opts = Categorical;
+  opts.DatasetInfo() = info;
+
+  if (!Load("boston_housing_price.csv", dataset, opts))
     FAIL("Cannot load test dataset boston_housing_price.csv!");
-  if (!data::Load("boston_housing_price_responses.csv", responses))
+  if (!Load("boston_housing_price_responses.csv", responses))
     FAIL("Cannot load test dataset boston_housing_price_responses.csv!");
 
-  data::Split(dataset, responses, trainData, testData,
+  Split(dataset, responses, trainData, testData,
       trainResponses, testResponses, 0.3);
 }
 

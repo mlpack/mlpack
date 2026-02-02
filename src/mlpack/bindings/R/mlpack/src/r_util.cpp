@@ -193,7 +193,7 @@ void SetParamUCol(SEXP params,
   p.SetPassed(paramName);
 }
 
-// Call params.Get<std::tuple<data::DatasetInfo, arma::mat>>() to set the value
+// Call params.Get<std::tuple<DatasetInfo, arma::mat>>() to set the value
 // of a parameter.
 // [[Rcpp::export]]
 void SetParamMatWithInfo(SEXP params,
@@ -202,12 +202,12 @@ void SetParamMatWithInfo(SEXP params,
                          const arma::mat& paramValue)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
-  data::DatasetInfo d(paramValue.n_cols);
+  DatasetInfo d(paramValue.n_cols);
   bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
-    d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
-        data::Datatype::numeric;
+    d.Type(i) = (dimensions[i]) ? Datatype::categorical :
+        Datatype::numeric;
     if (dimensions[i])
       hasCategoricals = true;
   }
@@ -234,9 +234,9 @@ void SetParamMatWithInfo(SEXP params,
     }
   }
 
-  std::get<0>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<0>(p.Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)) = std::move(d);
-  std::get<1>(p.Get<std::tuple<data::DatasetInfo, arma::mat>>(
+  std::get<1>(p.Get<std::tuple<DatasetInfo, arma::mat>>(
       paramName)) = std::move(m);
   p.SetPassed(paramName);
 }
@@ -345,19 +345,19 @@ const arma::Row<size_t> GetParamUCol(SEXP params,
   return p.Get<arma::Col<size_t>>(paramName).t() + 1;
 }
 
-// Call p.Get<std::tuple<data::DatasetInfo, arma::mat>>().
+// Call p.Get<std::tuple<DatasetInfo, arma::mat>>().
 // [[Rcpp::export]]
 List IO_GetParamMatWithInfo(SEXP params, const std::string& paramName)
 {
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
-  const data::DatasetInfo& d = std::get<0>(
-      p.Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName));
+  const DatasetInfo& d = std::get<0>(
+      p.Get<std::tuple<DatasetInfo, arma::mat>>(paramName));
   const arma::mat& m = std::get<1>(
-      p.Get<std::tuple<data::DatasetInfo, arma::mat>>(paramName)).t();
+      p.Get<std::tuple<DatasetInfo, arma::mat>>(paramName)).t();
 
   LogicalVector dims(d.Dimensionality());
   for (size_t i = 0; i < d.Dimensionality(); ++i)
-    dims[i] = (d.Type(i) == data::Datatype::numeric) ? false : true;
+    dims[i] = (d.Type(i) == Datatype::numeric) ? false : true;
 
   return List::create(Rcpp::Named("Info") = std::move(dims),
                       Rcpp::Named("Data") = std::move(m));
