@@ -2918,7 +2918,7 @@ julia> output, output_model = preprocess_scale(input; epsilon=1e-06,
           scaler_method="standard_scaler", seed=0, verbose=false)
 ```
 
-A utility to perform feature scaling on datasets using one of sixtechniques.  Both scaling and inverse scaling are supported, andscalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
+A utility to perform feature scaling on datasets using one of six techniques.  Both scaling and inverse scaling are supported, and scalers can be saved and then applied to other datasets. [Detailed documentation](#preprocess_scale_detailed-documentation).
 
 
 

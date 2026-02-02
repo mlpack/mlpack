@@ -19,7 +19,6 @@
 #include "image_resize_crop.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Resize an image to `imgSize` x `imgSize` while keeping the original
@@ -112,7 +111,6 @@ void LetterboxImages(arma::Mat<eT>& src,
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

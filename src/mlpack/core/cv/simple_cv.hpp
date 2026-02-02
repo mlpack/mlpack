@@ -105,7 +105,7 @@ class SimpleCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter.
+   * can take a DatasetInfo parameter.
    *
    * @param validationSize A proportion (between 0 and 1) of data used as a
    *     validation set.
@@ -120,7 +120,7 @@ class SimpleCV
   template<typename MatInType, typename PredictionsInType>
   SimpleCV(const double validationSize,
            MatInType&& xs,
-           const data::DatasetInfo& datasetInfo,
+           const DatasetInfo& datasetInfo,
            PredictionsInType&& ys,
            const size_t numClasses);
 
@@ -173,7 +173,7 @@ class SimpleCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter and support weighted learning.
+   * can take a DatasetInfo parameter and support weighted learning.
    *
    * @param validationSize A proportion (between 0 and 1) of data used as a
    *     validation set.
@@ -192,7 +192,7 @@ class SimpleCV
            typename WeightsInType>
   SimpleCV(const double validationSize,
            MatInType&& xs,
-           const data::DatasetInfo& datasetInfo,
+           const DatasetInfo& datasetInfo,
            PredictionsInType&& ys,
            const size_t numClasses,
            WeightsInType&& weights);

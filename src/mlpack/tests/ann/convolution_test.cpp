@@ -359,9 +359,8 @@ TEST_CASE("UnequalStrideConvolutionTest", "[ConvolutionTest]")
   filter = { { 1, -1 },
              { -1, 1 } };
 
-  output = { { 2, 2 },
-             { -2, 0 },
-             { -4, 6 } };
+  output = { {  2, 2, -8 },
+             { -2, 8,  2 } };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -483,12 +482,13 @@ TEST_CASE("UnequalDilationConvolutionTest", "[ConvolutionTest]")
   filter = { { 1, -1 },
              { -1, 1 } };
 
-  output = { { 2, 4, 6, 6, -4, -6, -8 },
-             { 8, 2, 4, -2, -2, -4, -6 },
-             { 4, 4, -4, -8, -4, 4, 4 },
-             { -4, 4, 4, 0, -4, -4, 4 },
-             { -6, -8, -2, 2, 8, 2, 4 },
-             { -4, -6, -8, 2, 6, 8, 2 } };
+  output = { { 2,  4,  4,  4, -6, -8},
+             { 8,  2, -4,  4, -4, -6},
+             { 6,  8, -4, -4, -2, -4},
+             { 2,  2,  0, -8, -2,  6},
+             {-8, -2,  4, -4,  4,  6},
+             {-6, -8,  4,  4,  2,  4},
+             {-4, -6, -4,  4,  8,  2} };
 
   arma::cube inputCube(input.n_rows, input.n_cols, 2);
   inputCube.slice(0) = input;
@@ -550,4 +550,116 @@ TEST_CASE("DilationAndStrideConvolutionTest", "[ConvolutionTest]")
   // Perform the convolution using im2col.
   Convolution3DMethodTest<Im2ColConvolution<FullConvolution> >(inputCube,
       filterCube, outputCube, 2, 2, 2, 2);
+}
+
+// Test that the Convolution layer processes an image correctly when stride
+// is unequal.
+TEMPLATE_TEST_CASE("UnequalStrideImageTest", "[ConvolutionTest]",
+    NaiveConvolution<ValidConvolution>,
+    Im2ColConvolution<ValidConvolution>)
+{
+  constexpr size_t outWidth = 8;
+  constexpr size_t outHeight = 8;
+  constexpr size_t filterW = 7;
+  constexpr size_t filterH = 2;
+
+  constexpr size_t inWidth = outWidth * filterW;
+  constexpr size_t inHeight = outHeight * filterH;
+
+  arma::mat input, output;
+  // Load input and expected outputs
+  Load("unequal_image_in.bmp", input, BMP);
+  Load("unequal_stride_image_out.bmp", output, BMP);
+
+  // Group input channels.
+  ImageOptions groupOpts;
+  groupOpts.Width() = inWidth;
+  groupOpts.Height() = inHeight;
+  groupOpts.Channels() = 3;
+  input = GroupChannels(input, groupOpts);
+
+  arma::cube inputCube;
+  MakeAlias(inputCube, input, inWidth, inHeight, 3);
+
+  // Set up a filter. This filter will return the average color of all points
+  // in its kernel.
+  arma::cube filterCube(filterW, filterH, 9);
+  double weight = 1.0 / (filterW * filterH);
+  filterCube.slice(0).fill(weight);
+  filterCube.slice(4).fill(weight);
+  filterCube.slice(8).fill(weight);
+
+  arma::mat convOutput(outWidth * outHeight * 3, 1);
+  arma::cube outputCube;
+  MakeAlias(outputCube, convOutput, outWidth, outHeight, 3);
+  // Perform a convolution to check unequal stride.
+  // This should downsample each block of color into a single pixel for a
+  // square output.
+  TestType::Convolution(inputCube, filterCube, outputCube,
+      filterW, filterH, 1, 1);
+
+  // Ungroup output channels.
+  groupOpts.Width() = outWidth;
+  groupOpts.Height() = outHeight;
+  groupOpts.Channels() = 3;
+  convOutput = InterleaveChannels(convOutput, groupOpts);
+
+  // Check that the images are similar.
+  CheckMatrices(output, convOutput);
+}
+
+// Test that the Convolution layer processes an image correctly when dilation
+// is unequal.
+TEMPLATE_TEST_CASE("UnequalDilationImageTest", "[ConvolutionTest]",
+    NaiveConvolution<ValidConvolution>,
+    Im2ColConvolution<ValidConvolution>)
+{
+  constexpr size_t outWidth = 7;
+  constexpr size_t outHeight = 2;
+  constexpr size_t filterW = 8;
+  constexpr size_t filterH = 8;
+
+  constexpr size_t inWidth = outWidth * filterW;
+  constexpr size_t inHeight = outHeight * filterH;
+
+  arma::mat input, output;
+  // Load input and expected outputs
+  Load("unequal_image_in.bmp", input, BMP);
+  Load("unequal_dilation_image_out.bmp", output, BMP);
+
+  // Group input channels.
+  ImageOptions groupOpts;
+  groupOpts.Width() = inWidth;
+  groupOpts.Height() = inHeight;
+  groupOpts.Channels() = 3;
+  input = GroupChannels(input, groupOpts);
+
+  arma::cube inputCube;
+  MakeAlias(inputCube, input, inWidth, inHeight, 3);
+
+  // Set up a filter. This filter will return the average color of all points
+  // in its kernel.
+  arma::cube filterCube(filterW, filterH, 9);
+  double weight = 1.0 / (filterW * filterH);
+  filterCube.slice(0).fill(weight);
+  filterCube.slice(4).fill(weight);
+  filterCube.slice(8).fill(weight);
+
+  arma::mat convOutput(outWidth * outHeight * 3, 1);
+  arma::cube outputCube;
+  MakeAlias(outputCube, convOutput, outWidth, outHeight, 3);
+  // Perform a convolution to check unequal dilation.
+  // This should result in a single block of color that is the average of all
+  // blocks in the input.
+  TestType::Convolution(inputCube, filterCube, outputCube,
+      1, 1, outWidth, outHeight);
+
+  // Ungroup output channels.
+  groupOpts.Width() = outWidth;
+  groupOpts.Height() = outHeight;
+  groupOpts.Channels() = 3;
+  convOutput = InterleaveChannels(convOutput, groupOpts);
+
+  // Check that the images are similar.
+  CheckMatrices(output, convOutput);
 }

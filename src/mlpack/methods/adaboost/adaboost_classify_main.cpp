@@ -84,7 +84,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   timers.Stop("adaboost_classification");
 
   Row<size_t> results;
-  data::RevertLabels(predictedLabels, m->Mappings(), results);
+  RevertLabels(predictedLabels, m->Mappings(), results);
 
   params.Get<arma::Row<size_t>>("predictions") = std::move(results);
 }

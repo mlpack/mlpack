@@ -26,9 +26,9 @@ std::string PrintTypeDoc(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   // A flag type.
   if (std::is_same_v<T, bool>)
@@ -136,7 +136,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   return "A 2-d array containing `Float64` data along with a boolean array "
       "indicating which dimensions are categorical (represented by `true`) and "
@@ -155,7 +155,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   return "An mlpack model pointer.  `<Model>` refers to the type of model that "
       "is being stored, so, e.g., for `CF()`, the type will be `CFModel`. "

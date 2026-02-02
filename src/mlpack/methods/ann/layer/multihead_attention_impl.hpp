@@ -304,7 +304,7 @@ Gradient(const MatType& input,
   const size_t wtSize = embedDim * embedDim;
 
   // The shape of gradient : (4 * embedDim * embedDim + 4 * embedDim, 1).
-  gradient.set_size(arma::size(weights));
+  gradient.set_size(size(weights));
 
   const CubeType q, k, v;
   MakeAlias(const_cast<CubeType&>(q), input, embedDim, tgtSeqLen, batchSize,

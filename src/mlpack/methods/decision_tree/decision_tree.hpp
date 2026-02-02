@@ -64,7 +64,7 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType>
   DecisionTree(MatType data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
@@ -121,7 +121,7 @@ class DecisionTree :
   template<typename MatType, typename LabelsType, typename WeightsType>
   DecisionTree(
       MatType data,
-      const data::DatasetInfo& datasetInfo,
+      const DatasetInfo& datasetInfo,
       LabelsType labels,
       const size_t numClasses,
       WeightsType weights,
@@ -186,7 +186,7 @@ class DecisionTree :
   DecisionTree(
       const DecisionTree& other,
       MatType data,
-      const data::DatasetInfo& datasetInfo,
+      const DatasetInfo& datasetInfo,
       LabelsType labels,
       const size_t numClasses,
       WeightsType weights,
@@ -291,7 +291,7 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType>
   double Train(MatType data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                LabelsType labels,
                const size_t numClasses,
                const size_t minimumLeafSize = 10,
@@ -350,7 +350,7 @@ class DecisionTree :
    */
   template<typename MatType, typename LabelsType, typename WeightsType>
   double Train(MatType data,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                LabelsType labels,
                const size_t numClasses,
                WeightsType weights,
@@ -540,7 +540,7 @@ class DecisionTree :
   double Train(MatType& data,
                const size_t begin,
                const size_t count,
-               const data::DatasetInfo& datasetInfo,
+               const DatasetInfo& datasetInfo,
                arma::Row<size_t>& labels,
                const size_t numClasses,
                WeightsType& weights,

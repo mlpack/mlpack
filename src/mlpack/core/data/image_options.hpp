@@ -18,13 +18,13 @@
 
 #include <mlpack/prereqs.hpp>
 #include "extension.hpp"
+#include "data_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
- * Implements meta-data of images required by data::Load and
- * data::Save for loading and saving images into arma::Mat.
+ * Implements meta-data of images required by Load and
+ * Save for loading and saving images into arma::Mat.
  */
 class ImageOptions : public DataOptionsBase<ImageOptions>
 {
@@ -252,7 +252,6 @@ struct IsDataOptions<ImageOptions>
 // This should be removed with mlpack 5.0.0
 using ImageInfo = ImageOptions;
 
-} // namespace data
 } // namespace mlpack
 
 #endif

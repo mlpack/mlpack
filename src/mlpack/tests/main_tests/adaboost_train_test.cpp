@@ -29,11 +29,11 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitToleranceTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -48,11 +48,11 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitIterationsTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -67,11 +67,11 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitWeakLearnerTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   SetInputParam("training", std::move(trainData));
@@ -86,15 +86,15 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitModelReuseTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
   size_t trainDims = trainData.n_rows;
@@ -122,15 +122,15 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffWeakLearnerOutputTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
   SetInputParam("training", trainData);
@@ -165,19 +165,19 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffItrTest",
                  "[AdaBoostFitMainTest][BindingTests][long]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // Iterations = 1
@@ -244,19 +244,19 @@ TEST_CASE_METHOD(AdaBoostFitTestFixture, "AdaBoostFitDiffTolTest",
                  "[AdaBoostFitMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
   arma::Row<size_t> testLabels;
-  if (!data::Load("vc2_test_labels.txt", testLabels))
+  if (!Load("vc2_test_labels.txt", testLabels))
     FAIL("Unable to load labels for vc2__test_labels.txt");
 
   // tolerance = 0.001

@@ -42,6 +42,18 @@ target_info = [
       'test_filters': '[tiny]',
       'openblas_extra_flags': 'MSA_FLAGS= USE_THREAD=0',
       'scp_opts': '-O'
+  ],
+  'laziji': [
+      'device_name': 'sunblade-150',
+      'arch_type': 'sparc64',
+      'arch_name': 'ULTRASPARC',
+      'test_filters': '~[long]',
+      // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
+      // download a precompiled reference BLAS implementation.
+      'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a',
+      // STB will perform unaligned accesses unless we tell it not to, which
+      // causes bus errors on sparc64.
+      'extra_cxxflags': '-DSTBIR_MEMCPY_NOUNALIGNED'
   ]
 ]
 
@@ -94,7 +106,7 @@ pipeline
           {
             name 'target'
             values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
-                   'cayenne'
+                   'cayenne', 'laziji'
           }
         }
 
@@ -125,6 +137,8 @@ pipeline
               JUMP_HOST = "${target_info[env.target]['jump_host'] ?: ''}"
               OPENBLAS_EXTRA_FLAGS = "${target_info[env.target]['openblas_extra_flags'] ?: ''}"
               SCP_OPTS = "${target_info[env.target]['scp_opts'] ?: ''}"
+              BLAS_URL = "${target_info[env.target]['blas_url'] ?: ''}"
+              EXTRA_CXXFLAGS = "${target_info[env.target]['extra_cxxflags'] ?: ''}"
             }
 
             steps
@@ -139,7 +153,7 @@ pipeline
                 # If a custom page size is needed, set it.
                 if [ ! -z "$PAGE_SIZE" ];
                 then
-                  EXTRA_CXX_FLAGS="-Wl,-z,common-page-size=$PAGE_SIZE -Wl,-z,max-page-size=$PAGE_SIZE";
+                  EXTRA_CXXFLAGS="${EXTRA_CXXFLAGS} -Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'";
                 fi
 
                 # Configure ccache.
@@ -162,8 +176,14 @@ pipeline
                     -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
-                    -DCMAKE_CXX_FLAGS="$EXTRA_CXX_FLAGS" \
+                    -DCMAKE_CXX_FLAGS="$EXTRA_CXXFLAGS" \
+                    $EXTRA_CMAKE_OPTS \
                     ../
+                # If we have a custom BLAS library move it into place...
+                if [ ! -z "$BLAS_URL" ]; then
+                    curl $BLAS_URL > deps/OpenBLAS*/libopenblas_*.a;
+                    ls -l deps/OpenBLAS*/
+                fi
                 time make mlpack_test;
 
                 # Print ccache results.

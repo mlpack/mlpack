@@ -4,6 +4,11 @@
  * @author Omar Shrit
  *
  * Definition of operator+() for DataOptions types.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_DATA_COMBINE_OPTIONS_HPP
 #define MLPACK_CORE_DATA_COMBINE_OPTIONS_HPP
@@ -15,7 +20,6 @@
 #include "text_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 // This template metaprogram encodes what the result of combining two different
 // DataOptions types are.  For now it exhaustively considers every possibility,
@@ -142,7 +146,6 @@ operator+(const DataOptionsBase<Derived1>& a,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

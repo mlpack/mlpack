@@ -15,7 +15,7 @@ singular value decompositions.
 // Use PCA to reduce the number of dimensions to 5 on uniform random data.
 
 // This dataset is uniform random in 10 dimensions.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 
 mlpack::PCA pca;       // Step 1: create PCA object.
@@ -141,7 +141,7 @@ variance.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat data;
-mlpack::data::Load("satellite.train.csv", data, true);
+mlpack::Load("satellite.train.csv", data, mlpack::Fatal);
 const size_t origDim = data.n_rows;
 
 mlpack::PCA pca;
@@ -162,7 +162,7 @@ the transformed data.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::fmat data;
-mlpack::data::Load("iris.csv", data, true);
+mlpack::Load("iris.csv", data, mlpack::Fatal);
 
 mlpack::PCA pca(true /* scale data when transforming */);
 
@@ -239,7 +239,7 @@ MNIST data, timing how long each decomposition takes.
 ```c++
 arma::mat data;
 // See https://datasets.mlpack.org/mnist.train.csv.
-mlpack::data::Load("mnist.train.csv", data, true);
+mlpack::Load("mnist.train.csv", data, mlpack::Fatal);
 
 arma::mat output1, output2, output3, output4;
 

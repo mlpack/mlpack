@@ -17,7 +17,7 @@ learners_ for the [`AdaBoost`](adaboost.md) boosting classifier.
 // Train a perceptron on random numeric data and predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu);
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -89,7 +89,7 @@ section below.
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#mixed-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `datasetInfo` | [`DatasetInfo`](../load_save.md#mixed-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, between [`0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
@@ -165,7 +165,7 @@ probabilities is not available.
 ### Other Functionality
 
  * A `Perceptron` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `p.NumClasses()` will return a `size_t` indicating the number of classes the
    perceptron was trained on.
@@ -195,10 +195,10 @@ and save the resulting model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Create a Perceptron object.
 mlpack::Perceptron p;
@@ -224,7 +224,7 @@ std::cout << "Training set accuracy after 350 iterations: "
     << "\%." << std::endl;
 
 // Save the perceptron to disk for later use.
-mlpack::data::Save("perceptron.bin", "perceptron", p);
+mlpack::Save("perceptron.bin", p);
 ```
 
 ---
@@ -233,9 +233,9 @@ Load a saved perceptron from disk and print information about it.
 
 ```c++
 mlpack::Perceptron p;
-// This call assumes a perceptron called "p" has already been saved to
-// `perceptron.bin` with `data::Save()`.
-mlpack::data::Load("perceptron.bin", "p", p, true);
+// This call assumes a perceptron has already been saved to `perceptron.bin`
+// with `Save()`.
+mlpack::Load("perceptron.bin", p, mlpack::Fatal);
 
 if (p.NumClasses() > 0)
 {

@@ -70,7 +70,7 @@ computing the nearest neighbors of points.
 ```c++
 // Compute the 5 exact nearest neighbors of every point of random numeric data.
 
-// All data is uniform random: 10-dimensional data.  Replace with a data::Load()
+// All data is uniform random: 10-dimensional data.  Replace with a Load()
 // call or similar for a real application.
 arma::mat referenceSet(10, 1000, arma::fill::randu); // 1000 points.
 
@@ -417,7 +417,7 @@ compute quality metrics of the approximate search.
    [tree-traversing search strategy](#search-strategies) was used.
 
  - A `KNN` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).  Note
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).  Note
    that for large reference sets, this will also serialize the dataset
    (`knn.ReferenceSet()`) and the tree (`knn.Tree()`), and so the resulting file
    may be quite large.
@@ -442,7 +442,7 @@ Find the exact nearest neighbor of every point in the `cloud` dataset.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -471,11 +471,11 @@ neighbor in the first set of every point in the second set.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset);
+mlpack::Load("corel-histogram.csv", dataset);
 
-// Split the dataset into two equal-sized sets randomly with `data::Split()`.
+// Split the dataset into two equal-sized sets randomly with `Split()`.
 arma::mat referenceSet, querySet;
-mlpack::data::Split(dataset, referenceSet, querySet, 0.5);
+mlpack::Split(dataset, referenceSet, querySet, 0.5);
 
 // Construct the KNN object, building a tree on the reference set.  Copies are
 // avoided by the use of `std::move()`.
@@ -516,7 +516,7 @@ point in a subset of the `LCDM` dataset.
 ```c++
 // See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::data::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("lcdm_tiny.csv", dataset);
 
 // Build a KNN object on the LCDM dataset, and pass with `std::move()` so that
 // we can avoid copying the dataset.  Set the search strategy to single-tree.
@@ -561,7 +561,7 @@ does exactly that.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Build a tree on the dataset and set the search strategy to the greedy single
 // tree strategy.
@@ -599,13 +599,13 @@ Build a `KNN` object on the `cloud` dataset and save it to disk.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Build the reference tree.
 mlpack::KNN knn(std::move(dataset));
 
 // Save the KNN object to disk with the name 'knn'.
-mlpack::data::Save("knn.bin", "knn", knn);
+mlpack::Save("knn.bin", "knn", knn);
 
 std::cout << "Successfully saved KNN model to 'knn.bin'." << std::endl;
 ```
@@ -618,7 +618,7 @@ Load a `KNN` object from disk, and inspect the
 ```c++
 // Load the KNN object with name 'knn' from 'knn.bin'.
 mlpack::KNN knn;
-mlpack::data::Load("knn.bin", "knn", knn);
+mlpack::Load("knn.bin", knn);
 
 // Inspect the KDTree held by the KNN object.
 std::cout << "The KDTree in the KNN object in 'knn.bin' holds "
@@ -645,11 +645,11 @@ tree to compute the exact neighbors and compute the effective error.
 ```c++
 // See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::data::Load("corel-histogram.csv", dataset);
+mlpack::Load("corel-histogram.csv", dataset);
 
 // Split the covertype dataset into two parts of equal size.
 arma::mat referenceSet, querySet;
-mlpack::data::Split(dataset, referenceSet, querySet, 0.5);
+mlpack::Split(dataset, referenceSet, querySet, 0.5);
 
 // Build the KNN object, passing the reference set with `std::move()` to avoid a
 // copy.  We use the default dual-tree strategy for search and set the maximum
@@ -831,7 +831,7 @@ point in the `cloud` dataset, using 32-bit floats to represent the data.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -861,7 +861,7 @@ Perform approximate single-tree nearest neighbor search using the Chebyshev
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -892,7 +892,7 @@ subset of the 3-dimensional LCDM dataset.
 ```c++
 // See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::data::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("lcdm_tiny.csv", dataset);
 
 // Construct the KNN object with Octrees.
 mlpack::KNNType<mlpack::EuclideanDistance, mlpack::Octree> knn(
@@ -925,12 +925,12 @@ recall.
 ```c++
 // See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::fmat dataset;
-mlpack::data::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("lcdm_tiny.csv", dataset);
 
 // Split the dataset into a query set and a reference set (each with the same
 // size).
 arma::fmat referenceSet, querySet;
-mlpack::data::Split(dataset, referenceSet, querySet, 0.5);
+mlpack::Split(dataset, referenceSet, querySet, 0.5);
 
 // This is the type of tree we will build on the datasets.
 using TreeType = mlpack::RPTree<mlpack::ManhattanDistance,
@@ -992,7 +992,7 @@ better for greedy search!
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset);
+mlpack::Load("cloud.csv", dataset);
 
 // Build a spill tree on the dataset and set the search strategy to the greedy
 // single tree strategy.  We will build the tree manually, so that we can

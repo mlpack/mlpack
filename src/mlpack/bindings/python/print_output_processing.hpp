@@ -32,9 +32,9 @@ void PrintOutputProcessing(
     const size_t indent,
     const bool onlyOutput,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -130,7 +130,7 @@ void PrintOutputProcessing(
     const size_t indent,
     const bool onlyOutput,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* = 0)
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -172,7 +172,7 @@ void PrintOutputProcessing(
     const size_t indent,
     const bool onlyOutput,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // Get the type names we need to use.
   std::string strippedType, printedType, defaultsType;

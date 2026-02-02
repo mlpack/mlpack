@@ -24,7 +24,7 @@ using namespace std;
 // Get train and test datasets.
 static void GetDatasets(arma::mat& dataset, arma::mat& savedCols)
 {
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load test dataset GroupLensSmall.csv!");
   savedCols.set_size(3, 50);
 
@@ -80,7 +80,7 @@ void GetRecommendationsAllUsers()
 
   // Load GroupLens data.
   arma::mat dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load test dataset GroupLensSamll.csv!");
 
   CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
@@ -118,7 +118,7 @@ void GetRecommendationsQueriedUser()
 
   // Load GroupLens data.
   arma::mat dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load test dataset GroupLensSmall.csv!");
 
   CFType<DecompositionPolicy> c(dataset, decomposition, 5, 5, 30);
@@ -419,7 +419,7 @@ void Serialization()
   DecompositionPolicy decomposition;
   // Load a dataset to train on.
   arma::mat dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load test dataset GroupLensSmall.csv!");
 
   arma::sp_mat cleanedData;

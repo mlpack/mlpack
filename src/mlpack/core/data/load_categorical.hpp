@@ -52,7 +52,6 @@
 #include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * Load the csv file. This class contains functions
@@ -269,7 +268,6 @@ class LoadCSV
   char delim;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #include "load_categorical_impl.hpp"

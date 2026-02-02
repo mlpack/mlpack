@@ -74,7 +74,7 @@ void AddMerge<MatType>::Forward(
   {
     // Initialize temporary memory for the forward pass.
     MatType tempOutput;
-    tempOutput.set_size(arma::size(output));
+    tempOutput.set_size(size(output));
 
     // Forward pass every layer in network with same input.
     // Reduce the outputs to single output by adding element-wise.
@@ -108,7 +108,7 @@ void AddMerge<MatType>::Backward(
   {
     // Initialize temporary memory for the backward pass.
     MatType tempDelta;
-    tempDelta.set_size(arma::size(g));
+    tempDelta.set_size(size(g));
 
     g.zeros();
     for (size_t i = 0; i < this->network.size(); i++)
