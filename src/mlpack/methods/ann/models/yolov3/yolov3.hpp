@@ -91,7 +91,6 @@ class YOLOv3
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
    * @param output Resulting bounding boxes.
-   * @param numDetections Number of bounding boxes in output per batch.
    */
   void Predict(const MatType& input,
                MatType& output)
