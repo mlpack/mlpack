@@ -199,8 +199,8 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // y
   outputCube.tube(grid, 0, grid * 2 - 1, cols) =
-    (yOffset + 1 / (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols))
-    )) * stride;
+    (yOffset + 1 / (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))
+    ) * stride;
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
