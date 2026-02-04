@@ -26,7 +26,7 @@ inline void FindExtrema(const ColType& h,
   // Identify indices of strict local maxima and minima (discrete neighbors) and
   // always include endpoints. This determines whether the residue is monotone
   // and supplies knots for spline envelopes in sifting.
-  using eT = typename ColType::elem_type;
+  using eT = typename ColType::elem_type; // getting unused error in test build
   const size_t N = h.n_elem;
 
   maxIdx.reset();
@@ -246,7 +246,7 @@ inline void EMD(const ColType& signal,
                 const size_t maxSiftIter = 10,
                 const double tol = 1e-3)
 {
-  using eT = typename ColType::elem_type;
+  using eT = typename ColType::elem_type; 
 
   const size_t N = signal.n_elem;
   imfs.reset();
