@@ -156,7 +156,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 ### Other Functionality
 
  * A `MeanShift` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `EstimateRadius(data, ratio=0.2)` returns a `double` that estimates a good
    value to use for the radius parameter.  `ratio` (between 0 and 1) controls
@@ -183,7 +183,7 @@ distance from each point to its assigned centroid.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
 // Create MeanShift object with default parameters and perform clustering.
 mlpack::MeanShift ms;
@@ -217,7 +217,7 @@ to set the initial radius.
 ```c++
 // See https://datasets.mlpack.org/wave_energy_farm_100.csv.
 arma::mat dataset;
-mlpack::data::Load("wave_energy_farm_100.csv", dataset, true);
+mlpack::Load("wave_energy_farm_100.csv", dataset, mlpack::Fatal);
 
 // Create MeanShift object and set parameters.
 mlpack::MeanShift ms;
@@ -236,7 +236,7 @@ std::cout << "MeanShift found " << centroids.n_cols << " clusters."
     << std::endl;
 
 // Save the centroids to disk.
-mlpack::data::Save("wave_energy_centroids.csv", centroids);
+mlpack::Save("wave_energy_centroids.csv", centroids);
 ```
 
 ---
@@ -247,7 +247,7 @@ centroid) on the cloud dataset.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Don't use a kernel for clustering.  This means all points within the radius
 // are weighted equally.  Use a custom radius of 25.
@@ -275,7 +275,7 @@ using 32-bit floating point matrices to represent the data.
 ```c++
 // See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::data::Load("cloud.csv", dataset, true);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Create the MeanShift object using a TriangularKernel.
 mlpack::TriangularKernel tk;

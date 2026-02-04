@@ -34,9 +34,9 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitDimensionTest",
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
@@ -76,7 +76,7 @@ TEST_CASE_METHOD(
 {
   // Load custom dataset.
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
 
   // Store size of input dataset.
@@ -106,9 +106,9 @@ TEST_CASE_METHOD(PreprocessSplitTestFixture, "PreprocessSplitTestRatioTest",
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Input custom data points and labels.
@@ -130,9 +130,9 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
@@ -167,9 +167,9 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
@@ -202,7 +202,7 @@ TEST_CASE_METHOD(
 {
   // Load custom dataset.
   arma::mat inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
 
   // Store size of input dataset.
@@ -238,9 +238,9 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
@@ -277,9 +277,9 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Store size of input dataset.
@@ -322,9 +322,9 @@ TEST_CASE_METHOD(
   // Load custom dataset.
   arma::mat inputData;
   arma::Mat<size_t> labels;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load train dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   // Input custom data points and labels.

@@ -18,7 +18,6 @@
 #include <array>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The SplitByAnyOf class tokenizes a string using a set of delimiters.
@@ -112,7 +111,6 @@ class SplitByAnyOf
   MaskType mask;
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

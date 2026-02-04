@@ -12,7 +12,7 @@ penalty parameters greater than or equal to the given L1 penalty parameter.
 // Train a LARS model on random numeric data and make predictions.
 
 // All data and responses are uniform random; this uses 10 dimensional data.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
@@ -204,7 +204,7 @@ can be used to make predictions for new data.
 ### Other Functionality
 
  * A `LARS` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `lars.Beta()` will return an `arma::vec` with the model parameters.  This
    will have length equal to the dimensionality of the model.  Note that
@@ -273,7 +273,7 @@ test data for each set of weights in the path.
 ```c++
 // See https://datasets.mlpack.org/wave_energy_farm_100.csv.
 arma::mat data;
-mlpack::data::Load("wave_energy_farm_100.csv", data, true);
+mlpack::Load("wave_energy_farm_100.csv", data, mlpack::Fatal);
 
 // Split the last row off: it is the responses.  Also, normalize the responses
 // to [0, 1].
@@ -285,7 +285,7 @@ data.shed_row(data.n_rows - 1);
 // test set.
 arma::mat trainingData, testData;
 arma::rowvec trainingResponses, testResponses;
-mlpack::data::Split(data, responses, trainingData, testData, trainingResponses,
+mlpack::Split(data, responses, trainingData, testData, trainingResponses,
     testResponses, 0.2);
 
 // Train a LARS model with lambda1 = 1e-5 and lambda2 = 1e-6.
@@ -317,11 +317,11 @@ Train a LARS model, print predictions for a random point, and save to a file.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::data::Load("admission_predict.csv", data, true); 
+mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::data::Load("admission_predict.responses.csv", responses, true);
+mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
 
 // Train a LARS model with only L2 regularization.
 mlpack::LARS lars(data, responses, true, true, 0.0, 0.1 /* lambda2 */);
@@ -332,8 +332,8 @@ const double prediction = lars.Predict(point);
 
 std::cout << "Prediction on random point: " << prediction << "." << std::endl;
 
-// Save the model to "lars_model.bin" with the name "lars".
-mlpack::data::Save("lars_model.bin", "lars", lars, true);
+// Save the model to "lars_model.bin".
+mlpack::Save("lars_model.bin", lars, mlpack::Fatal);
 ```
 
 ---
@@ -341,10 +341,10 @@ mlpack::data::Save("lars_model.bin", "lars", lars, true);
 Load a LARS model from disk and print some information about it.
 
 ```c++
-// This assumes a model named "lars" has previously been saved to
+// This assumes a Lars model has previously been saved to
 // "lars_model.bin".
 mlpack::LARS lars;
-mlpack::data::Load("lars_model.bin", "lars", lars, true);
+mlpack::Load("lars_model.bin", lars, mlpack::Fatal);
 
 if (lars.BetaPath().size() == 0)
 {
@@ -385,11 +385,11 @@ a precomputed Gram matrix.
 ```c++
 // See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::data::Load("admission_predict.csv", data, true);
+mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
 
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::data::Load("admission_predict.responses.csv", responses, true);
+mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
 
 // Precompute Gram matrix.
 arma::mat gramMatrix = data * data.t();

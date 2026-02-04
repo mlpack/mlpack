@@ -359,3 +359,10 @@ test_that("TestGlobalVerboseOverride", {
                                build_model=TRUE,
                                verbose=FALSE))
 })
+
+test_that("TestS3Class", {
+  set.seed(1234)
+  x <- matrix(rnorm(10*5), ncol = 5)
+  res <- mlpack::knn(query = x, reference = x, k = 3)
+  expect_s3_class(res, c("mlpack_knn", "mlpack_model_binding"))
+})

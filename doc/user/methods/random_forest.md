@@ -22,7 +22,7 @@ information...](#fully-custom-behavior))
 // Train a random forest on random numeric data and predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -87,7 +87,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `info` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `info` | [`DatasetInfo`](../load_save.md#datasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Instance weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
@@ -207,7 +207,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `RandomForest` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `rf.NumTrees()` will return a `size_t` indicating the number of trees in the
    random forest.
@@ -232,28 +232,28 @@ to disk:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-mlpack::data::DatasetInfo info;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 10 trees on the given dataset, with a minimum leaf size of 3.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */);
 
 // Now load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::Load("covertype.test.arff", testDataset, opts);
 
 arma::Row<size_t> testLabels;
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
-mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Compute test set accuracy.
 arma::Row<size_t> testPredictions;
@@ -264,7 +264,7 @@ std::cout << "After training 10 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
 
 // Now train another 10 trees and compute the test accuracy.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */, 0.0 /* minimum split gain */,
          0 /* maximum depth (unlimited) */, true /* incremental training */);
 
@@ -275,7 +275,7 @@ std::cout << "After training 20 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
 
 // Save the random forest to disk.
-mlpack::data::Save("rf.bin", "rf", rf);
+mlpack::Save("rf.bin", rf);
 ```
 
 ---
@@ -284,9 +284,9 @@ Load a random forest and print some information about it.
 
 ```c++
 mlpack::RandomForest rf;
-// This call assumes a random forest called "rf" has already been saved to
-// `rf.bin` with `data::Save()`.
-mlpack::data::Load("rf.bin", "rf", rf, true);
+// This call assumes a random forest has already been saved to `rf.bin` with
+// `Save()`.
+mlpack::Load("rf.bin", rf, mlpack::Fatal);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
     << " trees." << std::endl;
@@ -305,7 +305,7 @@ performance of each individual tree:
 ```c++
 // Load a categorical dataset (training and test sets).
 arma::mat dataset, testDataset;
-mlpack::data::DatasetInfo info;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 arma::Row<size_t> labels, testLabels;
 
 // See the following files:
@@ -313,15 +313,15 @@ arma::Row<size_t> labels, testLabels;
 //  * https://datasets.mlpack.org/covertype.train.labels.csv
 //  * https://datasets.mlpack.org/covertype.test.arff
 //  * https://datasets.mlpack.org/covertype.test.labels.csv
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
-mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 20 trees on the given dataset, with a minimum leaf size of 5.
-rf.Train(dataset, info, labels, 7 /* classes */, 20 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 20 /* trees */,
          5 /* minimum leaf size */);
 
 // Compute test set accuracy for each tree.

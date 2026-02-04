@@ -31,7 +31,6 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 
 using namespace mlpack;
 using namespace mlpack::util;
-using namespace mlpack::data;
 using namespace mlpack::bindings::cli;
 using namespace std;
 
@@ -412,7 +411,7 @@ TEST_CASE("OutputColParamTest", "[IOTest]")
 
   // Now load the vector back and make sure it was saved correctly.
   arma::vec dataset2;
-  if (!data::Load("test.csv", dataset2))
+  if (!Load("test.csv", dataset2))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
@@ -460,7 +459,7 @@ TEST_CASE("OutputUnsignedColParamTest", "[IOTest]")
 
   // Now load the vector back and make sure it was saved correctly.
   arma::Col<size_t> dataset2;
-  if (!data::Load("test.csv", dataset2))
+  if (!Load("test.csv", dataset2))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_rows == dataset2.n_rows);
@@ -508,7 +507,7 @@ TEST_CASE("OutputRowParamTest", "[IOTest]")
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::rowvec dataset2;
-  if (!data::Load("test.csv", dataset2))
+  if (!Load("test.csv", dataset2))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
@@ -556,7 +555,7 @@ TEST_CASE("OutputUnsignedRowParamTest", "[IOTest]")
 
   // Now load the row vector back and make sure it was saved correctly.
   arma::Row<size_t> dataset2;
-  if (!data::Load("test.csv", dataset2))
+  if (!Load("test.csv", dataset2))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
@@ -783,7 +782,7 @@ TEST_CASE("OutputMatrixParamTest", "[IOTest]")
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
-  if (!data::Load("test.csv", dataset2))
+  if (!Load("test.csv", dataset2))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);
@@ -832,7 +831,8 @@ TEST_CASE("OutputMatrixNoTransposeParamTest", "[IOTest]")
 
   // Now load the matrix back and make sure it was saved correctly.
   arma::mat dataset2;
-  if (!data::Load("test.csv", dataset2, false, false))
+
+  if (!Load("test.csv", dataset2, NoFatal + NoTranspose))
     FAIL("Cannot load dataset test.csv");
 
   REQUIRE(dataset.n_cols == dataset2.n_cols);

@@ -127,7 +127,7 @@ void LinearRecurrent<MatType, RegularizerType>::Forward(
   else
   {
     output = weights * input +
-        recurrentWeights * this->RecurrentState(this->PreviousStep());
+        recurrentWeights * previousOutput;
   }
 
   #pragma omp for
@@ -136,7 +136,7 @@ void LinearRecurrent<MatType, RegularizerType>::Forward(
 
   // Update the recurrent state if needed.
   if (!this->AtFinalStep())
-    this->RecurrentState(this->CurrentStep()) = output;
+    currentOutput = output;
 }
 
 // Backward pass of linear recurrent layer.
@@ -159,7 +159,7 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
   {
     // Via the recurrence, the result is equivalent, just with the recurrent
     // gradient as the gy parameter.
-    g += weights.t() * this->RecurrentGradient(this->CurrentStep());
+    g += weights.t() * currentGradient;
   }
 
   if (this->HasPreviousStep())
@@ -169,13 +169,12 @@ void LinearRecurrent<MatType, RegularizerType>::Backward(
     //
     // With respect to the output, we can just propagate back through the
     // recurrent weights.
-    this->RecurrentGradient(this->PreviousStep()) = recurrentWeights.t() * gy;
+    previousGradient = recurrentWeights.t() * gy;
 
     if (!this->AtFinalStep())
     {
       // If we also have a path from dz/dh^t, this can be added.
-      this->RecurrentGradient(this->PreviousStep()) +=
-          recurrentWeights.t() * this->RecurrentGradient(this->CurrentStep());
+      previousGradient += recurrentWeights.t() * currentGradient;
     }
   }
 }
@@ -204,7 +203,7 @@ void LinearRecurrent<MatType, RegularizerType>::Gradient(
   if (this->HasPreviousStep())
   {
     gradient.submat(whOffset, 0, bOffset - 1, 0) =
-        vectorise(error * this->RecurrentState(this->PreviousStep()).t());
+        vectorise(error * previousOutput.t());
   }
   gradient.submat(bOffset, 0, gradient.n_rows - 1, 0) = sum(error, 1);
 
@@ -215,15 +214,14 @@ void LinearRecurrent<MatType, RegularizerType>::Gradient(
   if (!this->AtFinalStep())
   {
     gradient.submat(0, 0, whOffset - 1, 0) +=
-        vectorise(this->RecurrentGradient(this->CurrentStep()) * input.t());
+        vectorise(currentGradient * input.t());
     if (this->HasPreviousStep())
     {
       gradient.submat(whOffset, 0, bOffset - 1, 0) +=
-          vectorise(this->RecurrentGradient(this->CurrentStep()) *
-                    this->RecurrentState(this->PreviousStep()).t());
+          vectorise(currentGradient * previousOutput.t());
     }
     gradient.submat(bOffset, 0, gradient.n_rows - 1, 0) += sum(
-        this->RecurrentGradient(this->CurrentStep()), 1);
+        currentGradient, 1);
 
     // this->HiddenDeriv(this->PreviousStep()) was already computed in
     // Backward(), so no need to do it here.
@@ -259,6 +257,37 @@ void LinearRecurrent<MatType, RegularizerType>::ComputeOutputDimensions()
 
   // The LinearRecurrent layer flattens its input.
   this->outputDimensions[0] = outSize;
+}
+
+template<typename MatType, typename RegularizerType>
+void LinearRecurrent<MatType, RegularizerType>::OnStepChanged(
+    const size_t step,
+    const size_t /* batchSize */,
+    const size_t activeBatchSize,
+    const bool backwards)
+{
+  // Make aliases for the output from the recurrent state.
+  MakeAlias(currentOutput, this->RecurrentState(step),
+      outSize, activeBatchSize);
+
+  if (this->HasPreviousStep())
+  {
+    MakeAlias(previousOutput, this->RecurrentState(this->PreviousStep()),
+        outSize, activeBatchSize);
+  }
+
+  // Make aliases for the gradient from the recurrent gradient.
+  if (backwards)
+  {
+    MakeAlias(currentGradient, this->RecurrentGradient(step),
+        outSize, activeBatchSize);
+
+    if (this->HasPreviousStep())
+    {
+      MakeAlias(previousGradient, this->RecurrentGradient(this->PreviousStep()),
+          outSize, activeBatchSize);
+    }
+  }
 }
 
 // Serialize the layer.

@@ -5,6 +5,11 @@
  * Test that mlpack neural networks successfully run with fp16 precision.  This
  * also instantiates all layers for serialization and therefore serves as a
  * check for any compilation warnings when using fp16.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
 
@@ -23,7 +28,7 @@ TEST_CASE("FFNSimpleFP16Test", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::hmat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::hmat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -31,7 +36,7 @@ TEST_CASE("FFNSimpleFP16Test", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::hmat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::hmat testLabels = testData.row(testData.n_rows - 1);

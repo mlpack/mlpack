@@ -98,13 +98,14 @@ jobs:
     runs-on: ${{ matrix.config.runner }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       # Set up ccache.
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
+          append-timestamp: false
           variant: ccache
           max-size: 1G # Github has a 10GB repo cache limit, so we use 1GB/job.
 
@@ -206,13 +207,14 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       # Set up ccache.
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ runner.os }}
+          append-timestamp: false
           variant: ccache
           max-size: 1G
 
@@ -391,4 +393,4 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack-windows-installer
-          path: dist/win-installer/mlpack-win-installer/bin/Release/mlpack-windows.msi
+          path: dist/win-installer/mlpack-win-installer/bin/x64/Release/mlpack-windows.msi

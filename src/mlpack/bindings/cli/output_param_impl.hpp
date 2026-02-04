@@ -26,9 +26,9 @@ void OutputParamImpl(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!util::IsStdVector<T>::value>*,
-    const std::enable_if_t<!data::HasSerialize<T>::value>*,
+    const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>*)
+        std::tuple<DatasetInfo, arma::mat>>>*)
 {
   std::cout << data.name << ": " << *std::any_cast<T>(&data.value)
       << std::endl;
@@ -61,9 +61,9 @@ void OutputParamImpl(
   if (output.n_elem > 0 && filename != "")
   {
     if (arma::is_Row<T>::value || arma::is_Col<T>::value)
-      data::Save(filename, output, false);
+      Save(filename, output, false);
     else
-      data::Save(filename, output, false, !data.noTranspose);
+      Save(filename, output, false, !data.noTranspose);
   }
 }
 
@@ -72,7 +72,7 @@ template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
-    const std::enable_if_t<data::HasSerialize<T>::value>*)
+    const std::enable_if_t<HasSerialize<T>::value>*)
 {
   // The const cast is necessary here because Serialize() can't ever be marked
   // const.  In this case we can assume it though, since we will be saving and
@@ -84,7 +84,7 @@ void OutputParamImpl(
       std::get<1>(*std::any_cast<TupleType>(&data.value));
 
   if (filename != "")
-    data::Save(filename, "model", *output);
+    Save(filename, "model", *output);
 }
 
 //! Output a mapped dataset.
@@ -92,7 +92,7 @@ template<typename T>
 void OutputParamImpl(
     util::ParamData& data,
     const std::enable_if_t<std::is_same_v<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>* /* junk */)
+        std::tuple<DatasetInfo, arma::mat>>>* /* junk */)
 {
   // Output the matrix with the mappings.
   using TupleType = std::tuple<T, std::tuple<std::string, size_t, size_t>>;
@@ -101,10 +101,10 @@ void OutputParamImpl(
       std::get<0>(std::get<1>(*std::any_cast<TupleType>(&data.value)));
   const arma::mat& matrix = std::get<1>(tuple);
 
-  // The mapping isn't taken into account.  We should write a data::Save()
+  // The mapping isn't taken into account.  We should write a Save()
   // overload for this.
   if (filename != "")
-    data::Save(filename, matrix, false, !data.noTranspose);
+    Save(filename, matrix, false, !data.noTranspose);
 }
 
 } // namespace cli

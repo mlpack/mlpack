@@ -17,7 +17,7 @@ learning technique that scales better to larger datasets.
 // Learn a distance metric that improves kNN classification performance.
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -152,7 +152,7 @@ that type implements the Armadillo API.  So, e.g., `arma::fmat` can be used.
 ### Other Functionality
 
  * An `NCA` object can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
    Note that this is only meaningful if a custom `DistanceType` is being used,
    and that custom `DistanceType` has state to be saved.
 
@@ -170,10 +170,10 @@ dataset, and show improved performance when using
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Create an NCA object and learn a distance.
 arma::mat distance;
@@ -209,7 +209,7 @@ to represent the data and metric.
 ```c++
 // See https://datasets.mlpack.org/ionosphere.csv.
 arma::fmat dataset;
-mlpack::data::Load("ionosphere.csv", dataset, true);
+mlpack::Load("ionosphere.csv", dataset, mlpack::Fatal);
 
 // The labels are the last row of the dataset.
 arma::Row<size_t> labels =
@@ -313,10 +313,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 // Learn a distance with ensmallen's L-BFGS optimizer.
 ens::L_BFGS lbfgs;
@@ -342,7 +342,7 @@ under the Euclidean distance.
 ```c++
 // See https://datasets.mlpack.org/vehicle.csv.
 arma::mat dataset;
-mlpack::data::Load("vehicle.csv", dataset, true);
+mlpack::Load("vehicle.csv", dataset, mlpack::Fatal);
 
 // The labels are contained as the last row of the dataset.
 arma::Row<size_t> labels =
@@ -407,7 +407,7 @@ the dimensionality of the vehicle dataset by 2 dimensions.
 ```c++
 // See https://datasets.mlpack.org/vehicle.csv.
 arma::mat dataset;
-mlpack::data::Load("vehicle.csv", dataset, true);
+mlpack::Load("vehicle.csv", dataset, mlpack::Fatal);
 
 // The labels are contained as the last row of the dataset.
 arma::Row<size_t> labels =

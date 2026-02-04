@@ -92,7 +92,7 @@ int main()
   kpca.Apply(dataset, 2);
 
   // Save the results to 'results.csv'.
-  data::Save(dataset, "results.csv");
+  Save(dataset, "results.csv");
 }
 ```
 

@@ -154,7 +154,7 @@ void SetParamUCol(void* params,
                   const size_t rows);
 
 /**
- * Call params.SetParam<std::tuple<data::DatasetInfo, arma::mat>>().
+ * Call params.SetParam<std::tuple<DatasetInfo, arma::mat>>().
  */
 void SetParamMatWithInfo(void* params,
                          const char* paramName,

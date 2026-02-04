@@ -33,15 +33,15 @@ TEST_CASE_METHOD(AdaBoostPredictTestFixture,
                  "[AdaBoostPredictMainTest][BindingTests]")
 {
   arma::mat trainData;
-  if (!data::Load("vc2.csv", trainData))
+  if (!Load("vc2.csv", trainData))
     FAIL("Unable to load train dataset vc2.csv!");
 
   arma::Row<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Unable to load label dataset vc2_labels.txt!");
 
   arma::mat testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Unable to load test dataset vc2.csv!");
 
   arma::Col<size_t> mappings = {0, 1, 2};

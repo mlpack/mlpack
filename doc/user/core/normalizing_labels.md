@@ -3,14 +3,14 @@
 mlpack classifiers and other algorithms require labels to be in the range `0` to
 `numClasses - 1`.  A vector of labels with arbitrary (`size_t`) values can be
 normalized to the required range with the
-[`NormalizeLabels()`](#datanormalizelabels) function, and reverted to the
-original range with the [`RevertLabels()`](#datarevertlabels) function.
+[`NormalizeLabels()`](#normalizelabels) function, and reverted to the
+original range with the [`RevertLabels()`](#revertlabels) function.
 
 ---
 
-## `data::NormalizeLabels()`
+## `NormalizeLabels()`
 
- * `data::NormalizeLabels(labelsIn, labelsOut, mappings)`
+ * `NormalizeLabels(labelsIn, labelsOut, mappings)`
     - Map vector `labelsIn` into the range `0` to `numClasses - 1`, storing as
       `labelsOut` (of type `arma::Row<size_t>`).
       * `numClasses` is automatically detected using the number of unique values
@@ -23,9 +23,9 @@ original range with the [`RevertLabels()`](#datarevertlabels) function.
 
 ---
 
-## `data::RevertLabels()`
+## `RevertLabels()`
 
- * `data::RevertLabels(labelsIn, mappings, labelsOut)`
+ * `RevertLabels(labelsIn, mappings, labelsOut)`
     - Unmap normalized labels `labelsIn` using `mappings` into `labelsOut`.
 
     - Performs the reverse operation of `NormalizeLabels()`; `mappings` should
@@ -50,7 +50,7 @@ arma::Row<size_t> labels = { 3, 7, 3, 3, 5 };
 // We will map them to that range using NormalizeLabels().
 arma::Row<size_t> mappedLabels;
 arma::Col<size_t> mappings;
-mlpack::data::NormalizeLabels(labels, mappedLabels, mappings);
+mlpack::NormalizeLabels(labels, mappedLabels, mappings);
 const size_t numClasses = mappedLabels.max() + 1;
 
 // Print the mapped values:
@@ -72,7 +72,7 @@ d.Classify(dataset, mappedPredictions);
 // The predictions use mapped labels (0, 1, 2), which we will need to map back
 // to the original labels using RevertLabels().
 arma::Row<size_t> predictions;
-mlpack::data::RevertLabels(mappedPredictions, mappings, predictions);
+mlpack::RevertLabels(mappedPredictions, mappings, predictions);
 
 // Print the predictions before and after unmapping.
 // The mapped predictions will take values 0, 1, or 2; the predictions will take

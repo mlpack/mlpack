@@ -830,6 +830,10 @@ table thead tr {
   border-bottom: 2px solid #7a7c7f;
 }
 
+table tbody {
+  border-bottom: 2px solid #7a7c7f;
+}
+
 img {
   max-width: 100%;
   box-sizing: initial;

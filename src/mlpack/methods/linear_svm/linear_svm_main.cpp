@@ -313,7 +313,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, do the training.
   if (params.Has("training"))
   {
-    data::NormalizeLabels(rawLabels, labels, model->mappings);
+    NormalizeLabels(rawLabels, labels, model->mappings);
     numClasses = params.Get<int>("num_classes") == 0 ?
         model->mappings.n_elem : params.Get<int>("num_classes");
     model->svm.Lambda() = lambda;
@@ -410,7 +410,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     model->svm.Classify(testSet, predictedLabels);
-    data::RevertLabels(predictedLabels, model->mappings, predictions);
+    RevertLabels(predictedLabels, model->mappings, predictions);
 
     // Calculate accuracy, if desired.
     if (params.Has("test_labels"))
@@ -419,7 +419,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> testRawLabels =
           std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
-      data::NormalizeLabels(testRawLabels, testLabels, model->mappings);
+      NormalizeLabels(testRawLabels, testLabels, model->mappings);
 
       if (testSet.n_cols != testLabels.n_elem)
       {

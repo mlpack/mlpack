@@ -26,7 +26,7 @@ template<typename T>
 void PrintClassDefn(
     util::ParamData& /* d */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   // Do nothing.
 }
@@ -49,7 +49,7 @@ template<typename T>
 void PrintClassDefn(
     util::ParamData& d,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   // First, we have to parse the type.  If we have something like, e.g.,
   // 'LogisticRegression<>', we must convert this to 'LogisticRegression[].'

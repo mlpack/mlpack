@@ -21,7 +21,7 @@ namespace python {
 template<typename T>
 inline bool IsSerializable(
     util::ParamData& /* d */,
-    const std::enable_if_t<!data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   return false;
 }
@@ -29,7 +29,7 @@ inline bool IsSerializable(
 template<typename T>
 inline bool IsSerializable(
     util::ParamData& /* d */,
-    const std::enable_if_t<data::HasSerialize<T>::value>* = 0)
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   return true;
 }

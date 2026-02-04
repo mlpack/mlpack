@@ -17,7 +17,6 @@
 #include "image_options.hpp"
 
 namespace mlpack {
-namespace data {
 
 template <typename eT>
 arma::Mat<eT> GroupChannels(const arma::Mat<eT>& image,
@@ -71,7 +70,6 @@ arma::Mat<eT> InterleaveChannels(const arma::Mat<eT>& image,
   return output;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

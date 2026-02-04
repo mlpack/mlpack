@@ -38,6 +38,7 @@ TEST_CASE("SimpleLinearRecurrentLayerTest", "[ANNLayerTest]")
   module.SetWeights(weights);
   module.ClearRecurrentState(1, batchSize);
   module.CurrentStep(0, true /* only one step */);
+  module.OnStepChanged(0, batchSize, batchSize, true);
 
   module.Parameters().randu();
 
@@ -78,6 +79,7 @@ TEST_CASE("JacobianLinearRecurrentLayerTest", "[ANNLayerTest]")
     module.SetWeights(weights);
     module.ClearRecurrentState(1, batchSize);
     module.CurrentStep(0, true /* only one step */);
+    module.OnStepChanged(0, batchSize, batchSize, false);
 
     module.Parameters().randu();
 
@@ -169,6 +171,7 @@ TEST_CASE("TrivialLinearRecurrentLayerRecurrentTest", "[ANNLayerTest]")
 
   l.ClearRecurrentState(1, batchSize);
   l.CurrentStep(0);
+  l.OnStepChanged(0, batchSize, batchSize, false);
 
   input.zeros(size, batchSize);
   output.ones(size, batchSize);
@@ -180,6 +183,7 @@ TEST_CASE("TrivialLinearRecurrentLayerRecurrentTest", "[ANNLayerTest]")
 
   // Now pass ones through.
   l.CurrentStep(1);
+  l.OnStepChanged(1, batchSize, batchSize, false);
   input.ones();
   l.Forward(input, output);
 
@@ -191,6 +195,7 @@ TEST_CASE("TrivialLinearRecurrentLayerRecurrentTest", "[ANNLayerTest]")
   for (size_t t = 2; t < 12; ++t)
   {
     l.CurrentStep(t);
+    l.OnStepChanged(t, batchSize, batchSize, false);
     l.Forward(input, output);
 
     REQUIRE(all(all(output == 1.0)));
@@ -231,6 +236,7 @@ TEST_CASE("LinearRecurrentBackwardStateTest", "[ANNLayerTest]")
     // This is okay because we will be manually setting and modifying the
     // recurrent state.
     l.CurrentStep(0);
+    l.OnStepChanged(0, batchSize, batchSize, false);
 
     // Create a random input and pass it through the network.
     input.randu(size, batchSize);
@@ -244,12 +250,14 @@ TEST_CASE("LinearRecurrentBackwardStateTest", "[ANNLayerTest]")
     // First compute the delta when we are at the last time step, so that the
     // recurrent state connection contributes nothing.
     l.CurrentStep(1, true /* end of sequence */);
+    l.OnStepChanged(1, batchSize, batchSize, true);
     l.Backward(input, output, error, deltaOutput);
 
     // Now compute the delta when we set the output error to 0, so all error
     // goes through the recurrent state.  Manually modify the recurrent gradient
     // state to the error.  (This testing trick is specific to this layer type!)
     l.CurrentStep(0);
+    l.OnStepChanged(0, batchSize, batchSize, true);
     l.RecurrentGradient(0) = error;
     error.zeros();
     l.Backward(input, output, error, deltaRecurrent);
@@ -292,6 +300,7 @@ TEST_CASE("LinearRecurrentGradientStateTest", "[ANNLayerTest]")
     // This is okay because we will be manually setting and modifying the
     // recurrent state.
     l.CurrentStep(1);
+    l.OnStepChanged(1, batchSize, batchSize, false);
 
     // Create a random input and error to compute the gradient with.
     input.randu(size, batchSize);
@@ -306,12 +315,14 @@ TEST_CASE("LinearRecurrentGradientStateTest", "[ANNLayerTest]")
     // First compute the gradient when we are at the last time step, so that the
     // recurrent state connection contributes nothing.
     l.CurrentStep(2, true /* end of sequence */);
+    l.OnStepChanged(2, batchSize, batchSize, true);
     l.Gradient(input, error, gradientOutput);
 
     // Now compute the delta when we set the output error to 0, so all error
     // goes through the recurrent state.  Manually modify the recurrent gradient
     // state to the error.  (This testing trick is specific to this layer type!)
     l.CurrentStep(2, false /* not end of sequence */);
+    l.OnStepChanged(2, batchSize, batchSize, true);
     l.RecurrentGradient(2) = error;
     error.zeros();
     l.Gradient(input, error, gradientRecurrent);

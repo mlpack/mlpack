@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple MinMax Scaler class
@@ -153,7 +152,6 @@ class MinMaxScaler
   arma::vec scalerowmin;
 }; // class MinMaxScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif
