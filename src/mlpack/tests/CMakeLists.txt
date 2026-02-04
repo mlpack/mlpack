@@ -30,15 +30,15 @@ add_executable(mlpack_test
 
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.
- ann/not_adapted/activation_functions_test.cpp
- ann/not_adapted/ann_layer_test.cpp
- ann/not_adapted/feedforward_network_test.cpp
- ann/not_adapted/recurrent_network_test.cpp
- ann/not_adapted/rbm_network_test.cpp
- ann/not_adapted/rnn_reber_test.cpp
- ann/not_adapted/dcgan_test.cpp
- ann/not_adapted/gan_test.cpp
- ann/not_adapted/wgan_test.cpp
+#  ann/not_adapted/activation_functions_test.cpp
+#  ann/not_adapted/ann_layer_test.cpp
+#  ann/not_adapted/feedforward_network_test.cpp
+#  ann/not_adapted/recurrent_network_test.cpp
+#  ann/not_adapted/rbm_network_test.cpp
+#  ann/not_adapted/rnn_reber_test.cpp
+#  ann/not_adapted/dcgan_test.cpp
+#  ann/not_adapted/gan_test.cpp
+#  ann/not_adapted/wgan_test.cpp
 
   # Tests for other methods.
   adaboost_test.cpp
