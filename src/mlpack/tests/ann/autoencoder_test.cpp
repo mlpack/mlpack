@@ -11,6 +11,7 @@
  */
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/data/text_options.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
 #include <mlpack/methods/ann/layer/transposed_convolution.hpp>
@@ -66,24 +67,21 @@ TEST_CASE("ConvTransConvAutoencoderTest", "[AutoEncoderTest]")
   autoencoder.Add<Sigmoid>();
   autoencoder.InputDimensions() = std::vector<size_t>({28, 28});
 
+  TextOptions opts;
+  opts.Fatal() = true;
+  opts.NoTranspose() = true;
+
   arma::mat data;
-  data::Load("mnist_first250_training_4s_and_9s.csv", data, true, false);
-  // min max normalization
+  Load("mnist_first250_training_4s_and_9s.csv", data, opts);
   data = (data - min(min(data))) / (max(max(data) - min(min(data))));
 
   arma::mat trainData, testData;
-  data::Split(data, trainData, testData, 0.1);
+  Split(data, trainData, testData, 0.2);
 
   ens::Adam optimizer;
   optimizer.StepSize() = 0.1;
   optimizer.BatchSize() = 16;
   optimizer.MaxIterations() = trainData.n_cols;
-
-  for (int i = 0; i < 10; i++)
-  {
-    autoencoder.Train(trainData, trainData, optimizer);
-    optimizer.ResetPolicy() = false;
-  }
-
-  REQUIRE(MeanTestLoss<>(autoencoder, trainData, 16) < 0.1);
+  autoencoder.Train(trainData, trainData, optimizer);
+  REQUIRE(MeanTestLoss<>(autoencoder, testData, optimizer.BatchSize()) < 0.1);
 }
