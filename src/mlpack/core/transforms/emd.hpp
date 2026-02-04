@@ -2,7 +2,7 @@
  * @file core/transforms/emd.hpp
  * @author Mohammad Mundiwala
  *
- * Implementation of the EMD feature extractor (empirical mode decomposition).
+ * Implementation of the EMD feature extractor (empirical mode decomposition)
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -79,28 +79,79 @@ inline void FindExtrema(const ColType& h,
   maxIdx = arma::conv_to<arma::uvec>::from(maxTemp);
   minIdx = arma::conv_to<arma::uvec>::from(minTemp);
 }
+//helper to count interior extrema
+template<typename ColType>
+inline size_t CountInteriorExtrema(const ColType& h)
+{
+  using eT = typename ColType::elem_type;
+  const size_t N = h.n_elem;
+  if (N < 3) return 0;
+
+  size_t cnt = 0;
+  for (size_t i = 1; i + 1 < N; ++i)
+  {
+    const eT a = h[i - 1], b = h[i], c = h[i + 1];
+    if ((b > a && b > c) || (b < a && b < c))
+      ++cnt;
+  }
+  return cnt;
+}
+//helper to count zero crossings as part of IMF stopping criteria
+template<typename ColType>
+inline size_t CountZeroCrossings(const ColType& h)
+{
+  using eT = typename ColType::elem_type;
+  const size_t N = h.n_elem;
+  if (N < 2) return 0;
+
+  auto sgn = [](eT v) -> int { return (v > eT(0)) - (v < eT(0)); };
+
+  int prev = 0;
+  size_t zc = 0;
+
+  for (size_t i = 0; i < N; ++i)
+  {
+    const int cur = sgn(h[i]);
+    if (cur == 0) continue;
+    if (prev != 0 && cur != prev) ++zc;
+    prev = cur;
+  }
+  return zc;
+}
+
+//faster norm computation for arma types
+template<typename ColType>
+inline double L2Norm(const ColType& x)
+{
+  if constexpr (arma::is_arma_type<ColType>::value)
+    return arma::norm(x, 2);
+  else
+    return L2NormCpuCopy(x);
+}
 
 template<typename ColType>
 inline double L2NormCpuCopy(const ColType& x)
 {
   // Compute L2 norm on arma::Col copy for portability across types
+  // would not be needed if data is always loaded into arma types.
   using eT = typename ColType::elem_type;
   const arma::Col<eT> xc(x);
   return arma::norm(xc, 2);
 }
 
+// sifting step extracts mean envelope and produces next h
 template<typename ColType>
 inline void SiftingStep(const ColType& h,
-                        ColType& hNext)
+                        ColType& hNext,
+                        ColType* meanEnvOut = nullptr)
 {
-  // One sifting iteration: build upper/lower spline envelopes through maxima
-  // and minima, take mean, subtract from the IMF.
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
   if (N == 0)
   {
     hNext.reset();
+    if (meanEnvOut) meanEnvOut->reset();
     return;
   }
 
@@ -113,35 +164,48 @@ inline void SiftingStep(const ColType& h,
   BuildSplineEnvelope(h, maxIdx, upper);
   BuildSplineEnvelope(h, minIdx, lower);
 
+  ColType meanEnv(N);
+  meanEnv = eT(0.5) * (upper + lower);
+
   hNext.set_size(N);
-  hNext = h - eT(0.5) * (upper + lower);
+  hNext = h - meanEnv;
+
+  if (meanEnvOut)
+    *meanEnvOut = std::move(meanEnv);
 }
+
+//extract first IMF via sifting, using EMD stopping criteria
 
 template<typename ColType>
 inline void FirstImf(const ColType& signal,
                      ColType& imf,
                      const size_t maxSiftIter = 10,
-                     const double tol = 1e-3)
+                     const double tolMean = 1e-2)
 {
-  // Iteratively sift until the IMF stabilizes (rel L2 change < tol)
-  // or until maxSiftIter is reached. 
-  //Produces the first IMF of the residue.
+  using eT = typename ColType::elem_type;
+
   ColType h = signal;
   ColType hNew(signal.n_elem);
+  ColType meanEnv(signal.n_elem);
 
   for (size_t iter = 0; iter < maxSiftIter; ++iter)
   {
-    SiftingStep(h, hNew);
+    SiftingStep(h, hNew, &meanEnv);
 
-    // Convergence based on relative L2 change (CPU norm for portability).
-    const arma::Col<typename ColType::elem_type> diff(hNew - h);
-    const double num = arma::norm(diff, 2);
-    const double den = L2NormCpuCopy(h);
-    const double relChange = (den > 0.0) ? (num / den) : num;
+    // mean-envelope criterion
+    // mean envelope should be close to zero
+    const double meanRatio = (L2Norm(h) > 0.0) ? (L2Norm(meanEnv) / L2Norm(h))
+                                              : L2Norm(meanEnv);
+
+    // IMF criterion: extrema vs zero-crossings
+    // number of extrema and zero-crossings must differ at most by one
+    const size_t ext = CountInteriorExtrema(hNew);
+    const size_t zc  = CountZeroCrossings(hNew);
+    const bool imfShapeOk = (std::max(ext, zc) - std::min(ext, zc) <= 1);
 
     h.swap(hNew);
 
-    if (relChange < tol)
+    if (imfShapeOk && (meanRatio < tolMean))
       break;
   }
 
@@ -154,7 +218,7 @@ namespace mlpack
 {
 
 /**
- * Empirical Mode Decomposition (EMD) on a 1D signal.
+ * Empirical Mode Decomposition on a 1D signal.
  *
  * Algorithm outline: repeatedly extract IMFs via sifting (cubic spline
  * envelopes of extrema) until the residue is monotone or a limit is reached.
@@ -199,13 +263,11 @@ inline void EMD(const ColType& signal,
   for (size_t k = 0; k < maxImfs; ++k)
   {
     // Stop if residue is monotone (fewer than 2 extrema).
-    arma::uvec maxIdx, minIdx;
-    FindExtrema(residue, maxIdx, minIdx); 
-    if (maxIdx.n_elem + minIdx.n_elem < 2)
+    if (CountInteriorExtrema(residue) <= 1)
       break;
 
     ColType imf;
-    FirstImf(residue, imf, maxSiftIter, tol); // produce next IMF via sifting
+    FirstImf(residue, imf, maxSiftIter, tol); // Produce next IMF via sifting 
 
     const double imfNorm = arma::norm(imf, 2);
     if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)
