@@ -30,7 +30,7 @@ TEST_CASE("EMDSingleTone", "[EMD]")
 
   // run emd
   // add timer to test
-  const auto start = std::chrono::high_resolution_clock::now(); 
+  const auto start = std::chrono::high_resolution_clock::now();
   mlpack::EMD(x, imfs, r, /*maxImfs=*/5, /*maxSiftIter=*/50, /*tol=*/1e-3);
   const auto stop = std::chrono::high_resolution_clock::now();
   const auto ms =
