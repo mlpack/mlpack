@@ -2,7 +2,7 @@
  * @file core/transforms/spline_envelope.hpp
  * @author Mohammad Mundiwala
  *
- * Implementation of a spline envelope builder for EMD.
+ * Implementation of a spline envelope builder for EMD
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,6 +13,8 @@
 #define MLPACK_CORE_TRANSFORMS_SPLINE_ENVELOPE_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <algorithm>   // std::sort
+#include <cassert>     // runtime checks
 
 namespace mlpack {
 namespace emd {
@@ -24,10 +26,20 @@ inline void BuildSplineEnvelope(const ColType& h,
                                 ColType& env)
 {
   using eT = typename ColType::elem_type;
-  arma::Col<eT> hCpu(h);
-  arma::Col<eT> envCpu;
-  BuildSplineEnvelope(hCpu, idx, envCpu);
-  env = envCpu;
+  if constexpr (arma::is_arma_type<ColType>::value)
+  {
+    // reduce copies for arma::Col type
+    arma::Col<eT> envCpu;
+    BuildSplineEnvelope(arma::Col<eT>(h), idx, envCpu); 
+    env = envCpu;
+  }
+  else{
+    arma::Col<eT> hCpu(h);
+    arma::Col<eT> envCpu;
+    BuildSplineEnvelope(hCpu, idx, envCpu);
+    env = envCpu;
+  }
+  
 }
 
 template<typename eT>
@@ -39,6 +51,8 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   // integer grid of the signal to obtain the envelope. This follows the
   // standard tridiagonal solve for natural splines (zero second-derivative at
   // endpoints), as in classical EMD 
+  // see ref: Burden & Faires, Numerical Analysis, Algorithm 3.4. pp 149
+
   const size_t N = h.n_elem;
   env.set_size(N);
 
@@ -119,9 +133,9 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
       //        ((A^3 - A)*c_i + (B^3 - B)*c_{i+1}) * h_i^2 / 6
       const eT Ai3 = A * A * A;
       const eT Bi3 = B * B * B;
-      const eT termC = ((Ai3 - A) * c[seg] +
+      const eT C = ((Ai3 - A) * c[seg] +
                         (Bi3 - B) * c[seg + 1]) * (hSegLen * hSegLen) / eT(6);
-      env[i] = A * y[seg] + B * y[seg + 1] + termC;
+      env[i] = A * y[seg] + B * y[seg + 1] + C;
     }
   }
 }
