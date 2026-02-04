@@ -246,7 +246,7 @@ inline void EMD(const ColType& signal,
                 const size_t maxSiftIter = 10,
                 const double tol = 1e-3)
 {
-  using eT = typename ColType::elem_type; 
+  using eT = typename ColType::elem_type;
 
   const size_t N = signal.n_elem;
   imfs.reset();
@@ -267,7 +267,7 @@ inline void EMD(const ColType& signal,
       break;
 
     ColType imf;
-    FirstImf(residue, imf, maxSiftIter, tol); // Produce next IMF via sifting 
+    FirstImf(residue, imf, maxSiftIter, tol); // Produce next IMF via sifting
 
     const double imfNorm = arma::norm(imf, 2);
     if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)

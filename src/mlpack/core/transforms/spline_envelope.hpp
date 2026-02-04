@@ -30,7 +30,7 @@ inline void BuildSplineEnvelope(const ColType& h,
   {
     // reduce copies for arma::Col type
     arma::Col<eT> envCpu;
-    BuildSplineEnvelope(arma::Col<eT>(h), idx, envCpu); 
+    BuildSplineEnvelope(arma::Col<eT>(h), idx, envCpu);
     env = envCpu;
   }
   else{
@@ -39,7 +39,6 @@ inline void BuildSplineEnvelope(const ColType& h,
     BuildSplineEnvelope(hCpu, idx, envCpu);
     env = envCpu;
   }
-  
 }
 
 template<typename eT>
@@ -50,9 +49,8 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   // Build a natural cubic spline through extrema (idx) and evaluate it on the
   // integer grid of the signal to obtain the envelope. This follows the
   // standard tridiagonal solve for natural splines (zero second-derivative at
-  // endpoints), as in classical EMD 
+  // endpoints), as in classical EMD
   // see ref: Burden & Faires, Numerical Analysis, Algorithm 3.4. pp 149
-
   const size_t N = h.n_elem;
   env.set_size(N);
 
@@ -106,7 +104,6 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
       c[j] = z[j] - mu[j] * c[j + 1];
     }
   }
-  
   // Step 3: evaluate spline on each segment and fill envelope values
   env.zeros();
   size_t seg = 0;

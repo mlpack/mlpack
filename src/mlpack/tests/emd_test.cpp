@@ -29,11 +29,13 @@ TEST_CASE("EMDSingleTone", "[EMD]")
   arma::vec r;
 
   // run emd
-  const auto start = std::chrono::high_resolution_clock::now(); //add timer to test
+  // add timer to test
+  const auto start = std::chrono::high_resolution_clock::now(); 
   mlpack::EMD(x, imfs, r, /*maxImfs=*/5, /*maxSiftIter=*/50, /*tol=*/1e-3);
   const auto stop = std::chrono::high_resolution_clock::now();
   const auto ms =
-      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+        stop - start).count();
   UNSCOPED_INFO("EMD runtime for toy test (ms): " << ms);
 
   UNSCOPED_INFO("IMF count: " << imfs.n_cols);
@@ -73,8 +75,8 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   using eT = TestType;
 
   arma::Col<eT> t = arma::linspace<arma::Col<eT>>(eT(0), eT(1), 800);
-  arma::Col<eT> x = arma::sin(eT(2) * eT(arma::datum::pi) * eT(4) * t)
-                  + eT(0.25) * arma::sin(eT(2) * eT(arma::datum::pi) * eT(14) * t);
+  arma::Col<eT> x = arma::sin(eT(2)*eT(arma::datum::pi)*eT(4)*t)
+                  + eT(0.25) * arma::sin(eT(2)*eT(arma::datum::pi)*eT(14)*t);
   // x = sin(2*pi*4*t) + 0.25*sin(2*pi*14*t)
 
   arma::Mat<eT> imfs;
