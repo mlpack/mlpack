@@ -74,7 +74,7 @@ add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
 ## Logistic
 #add_all_bindings(logistic_regression logistic_regression "Classification")
 add_category(logistic_regression "Classification")
-group_bindings(logistic_regression logistic_regression "train;classify")
+group_bindings(logistic_regression logistic_regression "train;classify;probabilities")
 add_python_wrapper(logistic_regression logistic_regression)
 
 add_cli_executable(logistic_regression logistic_regression)
