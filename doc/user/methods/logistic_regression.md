@@ -407,3 +407,18 @@ std::cout << "Class probabilities for random test point: "
 parameter representation will be a *dense* vector containing elements of the
 same type (e.g. `frowvec`).  This is because L2-regularized logistic regression,
 even when training on sparse data, does not necessarily produce sparse models.
+### Using Non-Default MatTypes
+
+LogisticRegression supports different matrix types (`MatType`) besides the default `arma::mat`.
+When using a non-default `MatType`, the following functions are affected:
+
+- `Train()` and `Predict()` accept matrices of the same `MatType`.
+- Input and output matrices must match the chosen `MatType`.
+- Some internal functions may require explicit conversion to the correct `MatType`.
+
+**Example:**
+
+```cpp
+arma::sp_mat X; // sparse matrix instead of arma::mat
+arma::Row<size_t> y;
+LogisticRegression<> lr(X, y);  // works with sparse matrices
