@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <optional>
+#include <regex>
 #include <stdexcept>
 #include <string_view>
 #include <tuple>

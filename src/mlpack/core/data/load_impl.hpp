@@ -41,9 +41,12 @@ bool Load(const std::vector<std::string>& files,
   return Load(files, matrix, tmpOpts, false);
 }
 
+// We need to change filename to src and matrix to dest
+// src could be a link to URL, filename, any place where the data can be
+// dest, usually matrix, or something else.
 template<typename ObjectType, typename DataOptionsType>
-bool Load(const std::string& filename,
-          ObjectType& matrix,
+bool Load(const std::string& src,
+          ObjectType& dest,
           DataOptionsType& opts,
           const bool copyBack,
           const typename std::enable_if_t<
@@ -60,7 +63,32 @@ bool Load(const std::string& filename,
   const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
 
   std::fstream stream;
-  bool success = OpenFile(filename, opts, true, stream);
+  std::string filename;
+  bool success = false;
+
+  // The idea here is that I would like to provide a URL
+  //    From this URL I can get back either a filename that I can load
+  //    or a stream that I can use with my work.
+  //    However, since dealing with a stream might complicate things at this
+  //    stage. So better to try to open even the temporary file.
+  //    So in conclusion here what needs to be done and tested:
+  //
+  //
+  //    1. LoadHTTP from a link, or a link with gz format
+  //    2. Get back a filename that is within a format that we support
+  //    3. Open the file and load it as usual with the existing infrastructure.
+  if (opts.URL())
+  {
+    success = LoadHTTP(src, filename, stream, opts);
+  }
+  if (!success)
+  {
+    Timer::Stop("loading_data");
+    return HandleError("Cannot download the dataset from the provoided link. "
+        "Please check the link or the data format.", opts);
+  }
+
+  success = OpenFile(filename, opts, true, stream);
   if (!success)
   {
     Timer::Stop("loading_data");
