@@ -77,6 +77,25 @@ bool Load(const std::string& src,
   //    1. LoadHTTP from a link, or a link with gz format
   //    2. Get back a filename that is within a format that we support
   //    3. Open the file and load it as usual with the existing infrastructure.
+  //
+  //    4. Another case we should study, what if the user would like to
+  //    download using https, and they are downloading a CSV file.
+  //            In this case the user might would like to use SemiColon,
+  //            headers, Height() ? options and others.
+  //            This also means that we should be able to case the options from
+  //            different TextOptions as well as ImageOptions.
+  //
+  //            So we need to enable this case between different Options
+  //
+  //            Current Options for HTTPOptions
+  //            1. URL() we are providing a URL instead of a filename
+  //            2. EnableCache() allowing to save the filaname that the user
+  //            requested
+  //            3. DecompressData() Notify if we are decompressing the data or
+  //            not.
+  //            4. Others TBC 
+  //
+  //
   if (opts.URL())
   {
     success = LoadHTTP(src, filename, stream, opts);
