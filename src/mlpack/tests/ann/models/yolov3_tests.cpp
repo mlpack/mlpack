@@ -155,8 +155,8 @@ TEST_CASE("YOLOv3ImageSize", "[YOLOv3Test][long]")
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = (10 * 10 + 20 * 20 + 40 * 40) * predictionsPerCell *
-    (5 + numClasses);
+  const size_t expectedRows = (10 * 10 + 20 * 20 + 40 * 40) * predictionsPerCell
+    * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
@@ -179,8 +179,8 @@ TEST_CASE("YOLOv3Classes", "[YOLOv3Test][long]")
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell *
-    (5 + numClasses);
+  const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell
+    * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
@@ -202,8 +202,8 @@ TEST_CASE("YOLOv3PredictionsPerCell", "[YOLOv3Test][long]")
   arma::mat testOutput;
   model.Predict(testInput, testOutput);
 
-  const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell *
-    (5 + numClasses);
+  const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell
+    * (5 + numClasses);
   REQUIRE(testOutput.n_rows == expectedRows);
 }
 
