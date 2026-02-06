@@ -115,7 +115,8 @@ YOLOv3<
   size_t layer96 = ConvolutionBlock(256, 3);
   size_t layer97 = ConvolutionBlock(128, 1);
   size_t layer98 = ConvolutionBlock(256, 3);
-  size_t layer99 = ConvolutionBlock(255, 1, 1, false); // coco
+  size_t layer99 =
+    ConvolutionBlock(predictionsPerCell * numAttributes, 1, 1, false);
 
   // Concat
   model.Connect(upsample91, layer93);

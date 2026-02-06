@@ -59,7 +59,6 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 3;
   const size_t predictionsPerCell = 3;
-  const size_t max = 100;
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
 
@@ -169,7 +168,6 @@ TEST_CASE("YOLOv3Classes", "[YOLOv3Test][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 3;
   const size_t predictionsPerCell = 3;
-  const size_t max = 100;
   const std::vector<double> anchors = {
     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
   };
