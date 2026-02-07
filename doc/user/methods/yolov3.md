@@ -1,44 +1,151 @@
-## YOLOv3 and YOLOv3-tiny
+## YOLOv3 and YOLOv3Tiny
 
-The `YOLOv3` and `YOLOv3-tiny` classes implement the models from
+The `YOLOv3` and `YOLOv3Tiny` classes implement the models from
 the paper "YOLOv3: An Incremental Improvement". `YOLOv3` is a simple
-object detection algorithm that takes in a square image and makes
+object detection algorithm that takes in a image and makes
 thousands of guesses in a single neural network pass, which makes
 these models really easy and quick to use.
 
-Both the YOLOv3 and YOLOv3-tiny classes have identical APIs.
-
-**NOTE**: Currently, training is being implemented and not ready yet.
+**NOTE**: At the current time, only prediction is supported by the `YOLOv3`
+and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 
 #### Simple usage example:
 
-```cpp
-  mlpack::YOLOv3<mlpack::EmptyLoss, mlpack::RandomInitialization, arma::fmat> model;
-  mlpack::Load(modelFile, model);
+```c++
+// Download: https://models.mlpack.org/yolo/yolov3-320.bin
+// Predict bounding boxes from an image using `YOLOv3`
+mlpack::YOLOv3 model;
+mlpack::Load("yolov3-320.bin", model);
 
-  arma::fmat image;
-  ImageInfo info;
-  Load(inputFile, image, info, true);
+// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+arma::fmat image;
+mlpack::ImageInfo info;
+mlpack::Load("dog.jpg", image, info, true);
 
-  arma::fmat preprocessedImage = image / 255.0f;
-  ImageInfo preprocessedInfo = info;
-  LetterboxImages(preprocessedImage, preprocessedInfo, imgSize, imgSize, 0.5f);
-  preprocessedImage = mlpack::GroupChannels(preprocessedImage, preprocessedInfo);
+// Image pixel values must be between 0 and 1
+arma::fmat preprocessedImage = image / 255.0f;
 
-  arma::fmat detections;
-  model.Predict(preprocessedImage, detections);
+// Resize the image so that original image ratio is kept
+// while making the input image square using the letterbox transform.
+mlpack::ImageInfo preprocessedInfo = info;
+mlpack::LetterboxImages(preprocessedImage, preprocessedInfo, imgSize, imgSize, 0.5f);
+
+// Channels in the image must be grouped for doing convolutions.
+preprocessedImage = mlpack::GroupChannels(preprocessedImage, preprocessedInfo);
+
+// Get raw outputs from model.
+arma::fmat detections;
+model.Predict(preprocessedImage, detections);
 ```
+
+#### Quick Links:
+
+ * [Constructors](#constructors): create `YOLOv3` objects.
+ * [`Predict()`](#predicting-bounding-boxes): predict bounding boxes in an image.
+ * [Other functionality](#other-functionality) for loading, saving, and
+   inspecting.
+ * [YOLOv3Tiny](#yolov3tiny) of usage using `YOLOv3Tiny` instead of `YOLOv3`.
+ * [Template parameters](#advanced-functionality-template-parameters) for custom
+   behavior.
+
+#### See also:
+ * [YOLOv3 paper](https://arxiv.org/abs/1804.02767): paper where the YOLOv3 architecture is described.
+ * [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) is used internally to represent the model.
+ * [Weights](https://models.mlpack.org/yolo/) you can download for loading YOLOv3 models and their weights.
 
 ### Constructors
 
-* `YOLOv3(imgSize, numClasses, predictionsPerCell, anchors)
-  - `imgSize` sets the input image width and height dimensions.
-  - `numClasses` sets the number of classes the model can detect.
-  - `predictionsPerCell`: YOLOv3 has multiple detection heads. This parameter sets how many predictions per pixel.
-  - `anchors` sets the anchor width and heights of the model.
+Construct a `YOLOv3` object using one of the constructors below.
+Defaults and types are detailed in the
+[Constructor Parameters](#constructor-parameters) section below.
 
-### Inference
+#### Forms
 
-* `Predict(input, output)`
-  - `input` is the input data. The dimensions must be (imgSize * imgSize * channels, batchSize).
-  - `output` Resulting bounding boxes.
+ * `model = YOLOv3(imgSize, numClasses, predictionsPerCell, anchors)`
+   - Initialize the model that takes an image whose width and height are `imgSize`.
+   - The model will be able to predict `numClasses` different number of classes. The pretrained weights were trained on COCO which has 80 classes.
+   - A YOLOv3 model has 3 heads where each head makes `predictionsPerCell` number of predictions per grid cell.
+   - The YOLOv3 model uses anchors collected from the training set using k-means. For YOLOv3 pretrained weights, the anchors are `(10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326)`, which represent (w0, h0, w1, h1 ... ). More information is described in the paper, in particular the "Bounding Box Prediction" section.
+
+---
+
+#### Constructor Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `imgSize` | `size_t` | Width and height of input images. |
+| `numClasses` | `size_t` | Number of classes in the dataset. |
+| `predictionsPerCell` | `size_t` | Number of different predictions made per grid cell in each detection head. |
+| `anchors` | `std::vector<typename MatType::elem_type>` | Anchors for predicting the widths and heights of bounding boxes. |
+
+### Predicting Bounding Boxes
+
+Once the weights are loaded and the input images are preprocessed, you can do inference with `Predict`.
+
+#### Forms
+
+ * `model.Predict(input, output)`
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `input` | `MatType` | Input image. See [example](#simple-usage-example) for details on preprocessing the input image |
+| `output` | `MatType` | Bounding box detections. |
+
+
+The output detections is a matrix of shape `(numAttributes, numDetections)`. `numAttributes` is the number of data points that represent a bounding box, including `cx`, `cy`, `w`, `h` to represent the bounding box, the objectness score, which represents how likely an object is present within the box, and then all the class probabilities, which present the probability of a certain object given an object is in the image. You can do `objectness * class probability` to find the probability of some object being within the box.
+
+### Other Funtionality
+
+ * `YOLOv3` can be serialized with
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
+ * `model.Model()` will return the underlying
+   [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) object that represents the model architecture.
+
+### `YOLOv3Tiny`
+
+Example using `YOLOv3Tiny` instead of `YOLOv3`. Since both `YOLOv3` and `YOLOv3Tiny` classes have identical APIs, simply change the weights and the class being used.
+
+
+```c++
+// Download: https://models.mlpack.org/yolo/yolov3-tiny-coco.bin
+// Predict bounding boxes from an image using `YOLOv3Tiny`
+mlpack::YOLOv3Tiny model;
+mlpack::Load("yolov3-tiny-coco.bin", model);
+
+// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+arma::fmat image;
+mlpack::ImageInfo info;
+mlpack::Load("dog.jpg", image, info, true);
+
+// Image pixel values must be between 0 and 1
+arma::fmat preprocessedImage = image / 255.0f;
+
+// Resize the image so that original image ratio is kept
+// while making the input image square using the letterbox transform.
+mlpack::ImageInfo preprocessedInfo = info;
+mlpack::LetterboxImages(preprocessedImage, preprocessedInfo, imgSize, imgSize, 0.5f);
+
+// Channels in the image must be grouped for doing convolutions.
+preprocessedImage = mlpack::GroupChannels(preprocessedImage, preprocessedInfo);
+
+// Get raw outputs from model.
+arma::fmat detections;
+model.Predict(preprocessedImage, detections);
+```
+
+### Advanced Functionality: Template Parameters
+
+The `YOLOv3` class also supports several template parameters, which can be
+used for custom behavior.  The full signature of the class is as follows:
+
+```
+Perceptron<OutputLayerType
+           InitializationRuleType
+           MatType>
+```
+
+ * `OutputLayerType`: the loss function used to train the model. **NOTE**: this is a work in progress.
+ * `InitializationRuleType`: the way that weights are initialized before
+   training.
+ * `MatType`: specifies the type of matrix used for learning and internal
+   representation of weights and biases. The pretrained weights used float-32, so that default is `arma::fmat`.
