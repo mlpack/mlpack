@@ -90,7 +90,10 @@ class YOLOv3
    *
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
-   * @param output Resulting bounding boxes.
+   * @param output Resulting bounding boxes and classification probabilities.
+      The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
+      to the center of the box. The bounding boxes are normalized based on the
+      `imgSize`.
    */
   void Predict(const MatType& input,
                MatType& output)
@@ -105,7 +108,7 @@ class YOLOv3
  private:
   /**
    * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
-   * a Convolutions, BatchNorm (if batchNorm is true) and LeakyReLU.
+   * a Convolution, BatchNorm (if batchNorm is true) and LeakyReLU.
    * If batchNorm is true, the convolution layer will not have a bias,
    * otherwise it will.
    * 
