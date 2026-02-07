@@ -66,40 +66,16 @@ bool Load(const std::string& src,
   std::string filename;
   bool success = false;
 
-  // The idea here is that I would like to provide a URL
-  //    From this URL I can get back either a filename that I can load
-  //    or a stream that I can use with my work.
-  //    However, since dealing with a stream might complicate things at this
-  //    stage. So better to try to open even the temporary file.
-  //    So in conclusion here what needs to be done and tested:
-  //
-  //
-  //    1. LoadHTTP from a link, or a link with gz format
-  //    2. Get back a filename that is within a format that we support
-  //    3. Open the file and load it as usual with the existing infrastructure.
-  //
-  //    4. Another case we should study, what if the user would like to
-  //    download using https, and they are downloading a CSV file.
-  //            In this case the user might would like to use SemiColon,
-  //            headers, Height() ? options and others.
-  //            This also means that we should be able to case the options from
-  //            different TextOptions as well as ImageOptions.
-  //
-  //            So we need to enable this case between different Options
-  //
-  //            Current Options for HTTPOptions
-  //            1. URL() we are providing a URL instead of a filename
-  //            2. EnableCache() allowing to save the filaname that the user
-  //            requested
-  //            3. DecompressData() Notify if we are decompressing the data or
-  //            not.
-  //            4. Others TBC 
-  //
-  //
-  if (opts.URL())
+  if (checkIfURL(url));
   {
-    success = LoadHTTP(src, filename, stream, opts);
+    // #ifdef to be removed at the end of the integration.
+#ifdef MLPACK_ENABLE_HTTPLIB
+    success = DownloadFile(src, filename, stream, opts);
+#else
+    return HandleError("HTTPLIB is disabled, please enable MLPACK_HTTPLIB, "
+        "to download dataset as URL.", opts);
   }
+
   if (!success)
   {
     Timer::Stop("loading_data");

@@ -81,7 +81,7 @@ bool WriteToFile(const std::string& filename,
    }
 
   stream.write(data.data(), data.size());
-
+  // Check if we need to flush in here.
   if (!stream.good())
   {
     std::stringstream oss;
