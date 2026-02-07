@@ -94,7 +94,7 @@ Once the weights are loaded and the input images are preprocessed, you can do in
 
 The output detections is a matrix of shape `(numAttributes, numDetections)`. `numAttributes` is the number of data points that represent a bounding box, including `cx`, `cy`, `w`, `h` to represent the bounding box, the objectness score, which represents how likely an object is present within the box, and then all the class probabilities, which present the probability of a certain object given an object is in the image. You can do `objectness * class probability` to find the probability of some object being within the box.
 
-### Other Funtionality
+### Other Functionality
 
  * `YOLOv3` can be serialized with
    [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
