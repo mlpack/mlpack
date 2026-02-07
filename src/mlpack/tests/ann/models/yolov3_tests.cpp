@@ -18,16 +18,16 @@
 
 using namespace mlpack;
 
-CEREAL_REGISTER_TYPE(mlpack::Layer<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::Identity<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::Padding<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::mat>)
-CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::mat>)
+CEREAL_REGISTER_TYPE(mlpack::Layer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Identity<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Convolution<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::BatchNorm<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::LeakyReLU<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::Padding<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::fmat>)
+CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::fmat>)
 
 /*
  * Test different input image sizes. Other params are set to the default.
@@ -37,13 +37,12 @@ TEST_CASE("YOLOv3TinyImageSize", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 320;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors =
+  const std::vector<float> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3Tiny model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (10 * 10 + 20 * 20) * predictionsPerCell *
@@ -59,14 +58,13 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 3;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors =
+  const std::vector<float> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
 
-  YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3Tiny model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (13 * 13 + 26 * 26) * predictionsPerCell *
@@ -82,14 +80,13 @@ TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const std::vector<double> anchors =
+  const std::vector<float> anchors =
     { 10, 14, 23, 27 };
 
-  YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3Tiny model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (13 * 13 + 26 * 26) * predictionsPerCell *
@@ -105,7 +102,7 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  const std::vector<float> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
   REQUIRE_THROWS(YOLOv3Tiny(imgSize, numClasses, predictionsPerCell, anchors));
 }
 
@@ -117,17 +114,16 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors =
+  const std::vector<float> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3Tiny model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
+  arma::fmat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
-  YOLOv3Tiny<EmptyLoss, ConstInitialization> xmlModel, jsonModel, binaryModel;
+  YOLOv3Tiny xmlModel, jsonModel, binaryModel;
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
-  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  arma::fmat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   model.Predict(testData, predictions);
   xmlModel.Predict(testData, xmlPredictions);
   jsonModel.Predict(testData, jsonPredictions);
@@ -145,14 +141,13 @@ TEST_CASE("YOLOv3ImageSize", "[YOLOv3Test][long]")
   const size_t imgSize = 320;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors = {
+  const std::vector<float> anchors = {
     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
   };
-  YOLOv3<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3 model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (10 * 10 + 20 * 20 + 40 * 40) * predictionsPerCell
@@ -168,15 +163,14 @@ TEST_CASE("YOLOv3Classes", "[YOLOv3Test][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 3;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors = {
+  const std::vector<float> anchors = {
     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
   };
 
-  YOLOv3<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3 model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell
@@ -192,14 +186,13 @@ TEST_CASE("YOLOv3PredictionsPerCell", "[YOLOv3Test][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const std::vector<double> anchors =
+  const std::vector<float> anchors =
     { 10, 13, 23, 27, 33, 23 };
 
-  YOLOv3<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3 model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
+  arma::fmat testInput(imgSize * imgSize * 3, 1);
+  arma::fmat testOutput;
   model.Predict(testInput, testOutput);
 
   const size_t expectedRows = (13 * 13 + 26 * 26 + 52 * 52) * predictionsPerCell
@@ -215,7 +208,7 @@ TEST_CASE("YOLOv3IncorrectAnchors", "[YOLOvTest][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 1;
-  const std::vector<double> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  const std::vector<float> anchors = { 0, 1, 2, 3, 4, 5, 6, 7 };
   REQUIRE_THROWS(YOLOv3(imgSize, numClasses, predictionsPerCell, anchors));
 }
 
@@ -227,18 +220,17 @@ TEST_CASE("YOLOv3Serialize", "[YOLOv3Test][long]")
   const size_t imgSize = 416;
   const size_t numClasses = 80;
   const size_t predictionsPerCell = 3;
-  const std::vector<double> anchors = {
+  const std::vector<float> anchors = {
     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
   };
-  YOLOv3<EmptyLoss, ConstInitialization>
-    model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3 model(imgSize, numClasses, predictionsPerCell, anchors);
 
-  arma::mat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
+  arma::fmat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
-  YOLOv3<EmptyLoss, ConstInitialization> xmlModel, jsonModel, binaryModel;
+  YOLOv3 xmlModel, jsonModel, binaryModel;
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
-  arma::mat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
+  arma::fmat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
   model.Predict(testData, predictions);
   xmlModel.Predict(testData, xmlPredictions);
   jsonModel.Predict(testData, jsonPredictions);
