@@ -1,7 +1,7 @@
 ## YOLOv3 and YOLOv3Tiny
 
 The `YOLOv3` and `YOLOv3Tiny` classes implement the models from
-the paper "YOLOv3: An Incremental Improvement". `YOLOv3` is a simple
+the paper ["YOLOv3: An Incremental Improvement"](https://arxiv.org/abs/1804.02767). `YOLOv3` is a simple
 object detection algorithm that takes in a image and makes
 thousands of guesses in a single neural network pass, which makes
 these models really easy and quick to use.
@@ -44,7 +44,7 @@ model.Predict(preprocessedImage, detections);
  * [`Predict()`](#predicting-bounding-boxes): predict bounding boxes in an image.
  * [Other functionality](#other-functionality) for loading, saving, and
    inspecting.
- * [YOLOv3Tiny](#yolov3tiny) of usage using `YOLOv3Tiny` instead of `YOLOv3`.
+ * [YOLOv3Tiny](#yolov3tiny) example using instead of `YOLOv3`.
  * [Template parameters](#advanced-functionality-template-parameters) for custom
    behavior.
 
