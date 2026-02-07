@@ -49,7 +49,7 @@ model.Predict(preprocessedImage, detections);
    behavior.
 
 #### See also:
- * [YOLOv3 paper](https://arxiv.org/abs/1804.02767): paper where the YOLOv3 architecture is described.
+ * [YOLOv3 paper](https://arxiv.org/abs/1804.02767) where the YOLOv3 architecture is described.
  * [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) is used internally to represent the model.
  * [Weights](https://models.mlpack.org/yolo/) you can download for loading YOLOv3 models and their weights.
 
@@ -139,9 +139,9 @@ The `YOLOv3` class also supports several template parameters, which can be
 used for custom behavior.  The full signature of the class is as follows:
 
 ```
-Perceptron<OutputLayerType
-           InitializationRuleType
-           MatType>
+YOLOv3<OutputLayerType
+       InitializationRuleType
+       MatType>
 ```
 
  * `OutputLayerType`: the loss function used to train the model. **NOTE**: this is a work in progress.
