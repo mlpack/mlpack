@@ -68,12 +68,13 @@ bool Load(const std::string& src,
 
   if (checkIfURL(src))
   {
-    // #ifdef to be removed at the end of the integration.
+    // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
+    // the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
     success = DownloadFile(src, filename, stream, opts);
 #else
-    return HandleError("HTTPLIB is disabled, please enable MLPACK_HTTPLIB, "
-        "to download dataset as URL.", opts);
+    return HandleError("HTTPLIB support is disabled, please define "
+        "MLPACK_ENABLE_HTTPLIB, to download dataset as URL.", opts);
 #endif
   }
 
