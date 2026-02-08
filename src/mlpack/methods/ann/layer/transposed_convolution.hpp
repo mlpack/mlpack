@@ -29,11 +29,11 @@ namespace mlpack
  * Implementation of the Transposed Convolution class. The Transposed
  * Convolution class represents a single layer of a neural network.
  *
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  * @tparam ForwardConvolutionRule Convolution to perform forward process.
  * @tparam BackwardConvolutionRule Convolution to perform backward process.
  * @tparam GradientConvolutionRule Convolution to calculate gradient.
- * @tparam MatType Matrix representation to accept as input and use for
- *    computation.
  */
 template <
     typename MatType = arma::mat,
@@ -323,17 +323,13 @@ class TransposedConvolution : public Layer<MatType>
    */
   void InsertZeros(const CubeType& input, CubeType& output)
   {
+    using UVec = typename GetUColType<CubeType>::type;
     for (size_t slice = 0; slice < input.n_slices; slice++)
     {
-      for (size_t i = 0; i < output.n_rows; i += strideWidth)
-      {
-        for (size_t j = 0; j < output.n_cols; j += strideHeight)
-        {
-          // TODO: Use [] instead of () for speedup after this is completely
-          // debugged and approved.
-          output(i, j, slice) = input(i / strideWidth, j / strideHeight, slice);
-        }
-      }
+      output.slice(slice).submat(
+        linspace<UVec>(0, output.n_rows - 1, input.n_rows),
+        linspace<UVec>(0, output.n_cols - 1, input.n_cols)
+      ) = input.slice(slice);
     }
   }
 

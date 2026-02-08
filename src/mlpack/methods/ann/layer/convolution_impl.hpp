@@ -671,15 +671,15 @@ void Convolution<
   /**
    * Using O = (W - F + 2P) / s + 1;
    */
-  size_t totalVerticalPadding = (strideWidth - 1) * this->inputDimensions[0] +
-      kernelWidth - strideWidth;
-  size_t totalHorizontalPadding = (strideHeight - 1) * this->inputDimensions[1]
+  size_t totalHorizontalPadding = (strideWidth - 1) * this->inputDimensions[0]
+      + kernelWidth - strideWidth;
+  size_t totalVerticalPadding = (strideHeight - 1) * this->inputDimensions[1]
       + kernelHeight - strideHeight;
 
-  padWLeft = totalVerticalPadding / 2;
-  padWRight = totalVerticalPadding - totalVerticalPadding / 2;
-  padHTop = totalHorizontalPadding / 2;
-  padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
+  padWLeft = totalHorizontalPadding / 2;
+  padWRight = totalHorizontalPadding - totalHorizontalPadding / 2;
+  padHTop = totalVerticalPadding / 2;
+  padHBottom = totalVerticalPadding - totalVerticalPadding / 2;
 }
 
 } // namespace mlpack

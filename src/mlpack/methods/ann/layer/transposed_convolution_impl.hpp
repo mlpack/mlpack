@@ -19,32 +19,32 @@
 namespace mlpack {
 
 template <
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
 TransposedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::TransposedConvolution()
 {
   // Nothing to do here.
 }
 
 template <
+    typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename MatType
+    typename GradientConvolutionRule
 >
 TransposedConvolution<
+    MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
-    GradientConvolutionRule,
-    MatType
+    GradientConvolutionRule
 >::TransposedConvolution(
     const size_t maps,
     const size_t kernelWidth,
@@ -467,16 +467,10 @@ void TransposedConvolution<
     BackwardConvolutionRule,
     GradientConvolutionRule
 >::Gradient(
-    const MatType& input,
+    const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
 {
-  // TODO: Is this needed?
-  if (!(expandInput || padInput)) {
-    MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
-        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
-  }
-
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
@@ -554,8 +548,8 @@ void TransposedConvolution<
   else if (paddingType == "same")
   {
     InitializeSamePadding();
-    if ((kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
-         kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1))
+    if (kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
+         kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1)
     {
       throw std::logic_error(
           "TransposedConvolution::ComputeOutputDimensions(): "
@@ -672,15 +666,15 @@ void TransposedConvolution<
    * Transpose conv padding is later derived as: p' = k - p - 1
    * in ComputeOutputDimensions()
    */
-  size_t totalVerticalPadding = (strideWidth - 1) * this->inputDimensions[0] +
-      kernelWidth - strideWidth;
-  size_t totalHorizontalPadding = (strideHeight - 1) *
-      this->inputDimensions[1] + kernelHeight - strideHeight;
+  size_t totalHorizontalPadding = (strideWidth - 1) * this->inputDimensions[0]
+      + kernelWidth - strideWidth;
+  size_t totalVerticalPadding = (strideHeight - 1) * this->inputDimensions[1]
+      + kernelHeight - strideHeight;
 
-  padWLeft = totalVerticalPadding / 2;
-  padWRight = totalVerticalPadding - totalVerticalPadding / 2;
-  padHTop = totalHorizontalPadding / 2;
-  padHBottom = totalHorizontalPadding - totalHorizontalPadding / 2;
+  padWLeft = totalHorizontalPadding / 2;
+  padWRight = totalHorizontalPadding - totalHorizontalPadding / 2;
+  padHTop = totalVerticalPadding / 2;
+  padHBottom = totalVerticalPadding - totalVerticalPadding / 2;
 }
 
 } // namespace mlpack

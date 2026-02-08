@@ -21,26 +21,26 @@
 using namespace mlpack;
 
 // Calculates mean loss over batches.
-template<typename NetworkType = FFN<MeanSquaredError, HeInitialization>,
-         typename DataType = arma::mat>
+template<typename NetworkType,
+         typename DataType>
 double MeanTestLoss(NetworkType& model, DataType& testSet, size_t batchSize)
 {
   double loss = 0;
   size_t nofPoints = testSet.n_cols;
-  size_t i;
 
+  size_t i;
   for (i = 0; i < (size_t) nofPoints / batchSize; i++)
   {
-    loss +=
-        model.Evaluate(testSet.cols(batchSize * i, batchSize * (i + 1) - 1),
-                       testSet.cols(batchSize * i, batchSize * (i + 1) - 1));
+    loss += model.Evaluate(
+        testSet.cols(batchSize * i, batchSize * (i + 1) - 1),
+        testSet.cols(batchSize * i, batchSize * (i + 1) - 1));
   }
 
   if (nofPoints % batchSize != 0)
   {
     loss += model.Evaluate(testSet.cols(batchSize * i, nofPoints - 1),
                            testSet.cols(batchSize * i, nofPoints - 1));
-    loss /= (int) nofPoints / batchSize + 1;
+    loss /= nofPoints / batchSize + 1;
   }
   else
   {
@@ -73,7 +73,7 @@ TEST_CASE("ConvTransConvAutoencoderTest", "[AutoEncoderTest]")
 
   arma::mat data;
   Load("mnist_first250_training_4s_and_9s.csv", data, opts);
-  data = (data - min(min(data))) / (max(max(data) - min(min(data))));
+  data = (data - data.min()) / (data.max() - data.min());
 
   arma::mat trainData, testData;
   Split(data, trainData, testData, 0.2);
@@ -81,7 +81,8 @@ TEST_CASE("ConvTransConvAutoencoderTest", "[AutoEncoderTest]")
   ens::Adam optimizer;
   optimizer.StepSize() = 0.1;
   optimizer.BatchSize() = 16;
-  optimizer.MaxIterations() = trainData.n_cols;
+  optimizer.MaxIterations() = 2 * trainData.n_cols;
   autoencoder.Train(trainData, trainData, optimizer);
+
   REQUIRE(MeanTestLoss<>(autoencoder, testData, optimizer.BatchSize()) < 0.1);
 }
