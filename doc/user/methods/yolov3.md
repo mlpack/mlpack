@@ -14,6 +14,7 @@ and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 ```c++
 // Download: https://models.mlpack.org/yolo/yolov3-320.bin
 // Predict bounding boxes from an image using `YOLOv3`
+size_t imgSize = 320;
 mlpack::YOLOv3 model;
 mlpack::Load("yolov3-320.bin", model);
 
