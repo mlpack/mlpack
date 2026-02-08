@@ -1,5 +1,5 @@
 /**
- * @file core/data/load_http.hpp
+ * @file core/data/download_file.hpp
  * @author Omar Shrit
  *
  * mlpack Load function that download dataset from a URL.
@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_HTTP_HPP
-#define MLPACK_CORE_DATA_LOAD_HTTP_HPP
+#ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
+#define MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
 
 #ifdef MLPACK_ENABLE_HTTPLIB
 
