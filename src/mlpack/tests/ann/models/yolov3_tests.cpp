@@ -116,11 +116,12 @@ TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
   const size_t predictionsPerCell = 3;
   const std::vector<float> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
-  YOLOv3Tiny model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3Tiny<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::fmat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
-  YOLOv3Tiny xmlModel, jsonModel, binaryModel;
+  YOLOv3Tiny<EmptyLoss, ConstInitialization> xmlModel, jsonModel, binaryModel;
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   arma::fmat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
@@ -223,11 +224,12 @@ TEST_CASE("YOLOv3Serialize", "[YOLOv3Test][long]")
   const std::vector<float> anchors = {
     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
   };
-  YOLOv3 model(imgSize, numClasses, predictionsPerCell, anchors);
+  YOLOv3<EmptyLoss, ConstInitialization>
+    model(imgSize, numClasses, predictionsPerCell, anchors);
 
   arma::fmat testData(imgSize * imgSize * 3, 1, arma::fill::randu);
 
-  YOLOv3 xmlModel, jsonModel, binaryModel;
+  YOLOv3<EmptyLoss, ConstInitialization> xmlModel, jsonModel, binaryModel;
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
 
   arma::fmat predictions, xmlPredictions, jsonPredictions, binaryPredictions;
