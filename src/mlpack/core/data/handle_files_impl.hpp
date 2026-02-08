@@ -17,169 +17,6 @@
 
 namespace mlpack {
 
-template<typename DataOptionsType>
-bool OpenFile(const std::string& filename,
-              DataOptionsType& opts,
-              bool isLoading,
-              std::fstream& stream)
-{
-  if (isLoading)
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::in
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::in);
-#endif
-  }
-  else
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::out);
-#endif
-  }
-
-  if (!stream.is_open())
-  {
-    std::stringstream oss;
-    if (isLoading)
-    {
-      oss << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists.";
-      return HandleError(oss, opts);
-    }
-    else if (!isLoading)
-    {
-      oss << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing.";
-      return HandleError(oss, opts);
-    }
-  }
-  return true;
-}
-
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream)
-{
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::out);
-#endif
-   if (!stream.is_open())
-   {
-    std::stringstream oss;
-    oss << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing.";
-    return HandleError(oss, opts);
-   }
-
-  stream.write(data.data(), data.size());
-  // Check if we need to flush in here.
-  if (!stream.good())
-  {
-    std::stringstream oss;
-    oss << "Error writing to a '" << filename << "'.  "
-          << "Please check permissions or disk space.";
-    return HandleError(oss, opts);
-  }
-  stream.close();
-  return true;
-}
-
-inline FileType GuessFileType(std::istream& f)
-{
-  f.clear();
-  const std::fstream::pos_type pos1 = f.tellg();
-
-  f.clear();
-  f.seekg(0, std::ios::end);
-
-  f.clear();
-  // Get the length of the stream.
-  const std::fstream::pos_type pos2 = f.tellg();
-
-  // Compute length of the stream.
-  const arma::uword nMax = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
-      arma::uword(pos2 - pos1) : arma::uword(0);
-
-  f.clear();
-  f.seekg(pos1);
-
-  // Handle empty files.
-  if (nMax == 0)
-    return FileType::FileTypeUnknown;
-
-  const arma::uword nUse = std::min(nMax, arma::uword(4096));
-
-  unsigned char* dataMem = new unsigned char[nUse];
-  memset(dataMem, 0, nUse);
-
-  f.clear();
-  f.read(reinterpret_cast<char*>(dataMem), std::streamsize(nUse));
-
-  const bool loadOkay = f.good();
-
-  f.clear();
-  f.seekg(pos1);
-
-  if (!loadOkay)
-  {
-    delete[] dataMem;
-    return FileType::FileTypeUnknown;
-  }
-
-  bool hasBinary = false;
-  bool hasBracket = false;
-  bool hasComma = false;
-  bool hasSemicolon = false;
-
-  for (arma::uword i = 0; i < nUse; ++i)
-  {
-    const unsigned char val = dataMem[i];
-    if (val <= 8)
-    {
-      hasBinary = true;
-      break;
-    }  // The range checking can be made more elaborate.
-
-    if ((val == '(') || (val == ')'))
-    {
-      hasBracket = true;
-    }
-
-    if (val == ';')
-    {
-      hasSemicolon = true;
-    }
-
-    if (val == ',')
-    {
-      hasComma = true;
-    }
-  }
-
-  delete[] dataMem;
-
-  if (hasBinary)
-    return FileType::RawBinary;
-
-  if (hasSemicolon && (hasBracket == false))
-    return FileType::CSVASCII;
-
-  if (hasComma && (hasBracket == false))
-    return FileType::CSVASCII;
-
-  return FileType::RawASCII;
-}
-
 inline FileType AutoDetectFile(std::fstream& stream,
                                const std::string& filename)
 {
@@ -330,6 +167,40 @@ inline FileType AutoDetectFile(std::fstream& stream,
   return detectedLoadType;
 }
 
+inline bool checkIfURL(const std::string& url)
+{
+  std::regex rgx("^https?://");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
+  {
+    return true;
+  }
+  return false;
+}
+
+inline size_t CountCols(std::fstream& f)
+{
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  std::string firstLine;
+  std::getline(f, firstLine);
+
+  // Extract tokens from the first line using whitespace.
+  std::stringstream str(firstLine);
+  size_t cols = 0;
+  std::string token;
+
+  while (str >> token)
+    ++cols;
+
+  // Reset to wherever we were.
+  f.clear();
+  f.seekg(pos1);
+
+  return cols;
+}
+
 template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
@@ -471,31 +342,178 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-/**
- * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
- * with no header.
- */
-inline size_t CountCols(std::fstream& f)
+inline void FilenameFromURL(std::string& filename, const std::string& url)
+{
+  std::regex rgx("[^/]+(?=/$|$)");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
+  {
+    //std::cout << "filename: " << match[0] << std::endl;
+    filename = match[0];
+  }
+}
+
+inline FileType GuessFileType(std::istream& f)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
 
-  std::string firstLine;
-  std::getline(f, firstLine);
+  f.clear();
+  f.seekg(0, std::ios::end);
 
-  // Extract tokens from the first line using whitespace.
-  std::stringstream str(firstLine);
-  size_t cols = 0;
-  std::string token;
+  f.clear();
+  // Get the length of the stream.
+  const std::fstream::pos_type pos2 = f.tellg();
 
-  while (str >> token)
-    ++cols;
+  // Compute length of the stream.
+  const arma::uword nMax = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
+      arma::uword(pos2 - pos1) : arma::uword(0);
 
-  // Reset to wherever we were.
   f.clear();
   f.seekg(pos1);
 
-  return cols;
+  // Handle empty files.
+  if (nMax == 0)
+    return FileType::FileTypeUnknown;
+
+  const arma::uword nUse = std::min(nMax, arma::uword(4096));
+
+  unsigned char* dataMem = new unsigned char[nUse];
+  memset(dataMem, 0, nUse);
+
+  f.clear();
+  f.read(reinterpret_cast<char*>(dataMem), std::streamsize(nUse));
+
+  const bool loadOkay = f.good();
+
+  f.clear();
+  f.seekg(pos1);
+
+  if (!loadOkay)
+  {
+    delete[] dataMem;
+    return FileType::FileTypeUnknown;
+  }
+
+  bool hasBinary = false;
+  bool hasBracket = false;
+  bool hasComma = false;
+  bool hasSemicolon = false;
+
+  for (arma::uword i = 0; i < nUse; ++i)
+  {
+    const unsigned char val = dataMem[i];
+    if (val <= 8)
+    {
+      hasBinary = true;
+      break;
+    }  // The range checking can be made more elaborate.
+
+    if ((val == '(') || (val == ')'))
+    {
+      hasBracket = true;
+    }
+
+    if (val == ';')
+    {
+      hasSemicolon = true;
+    }
+
+    if (val == ',')
+    {
+      hasComma = true;
+    }
+  }
+
+  delete[] dataMem;
+
+  if (hasBinary)
+    return FileType::RawBinary;
+
+  if (hasSemicolon && (hasBracket == false))
+    return FileType::CSVASCII;
+
+  if (hasComma && (hasBracket == false))
+    return FileType::CSVASCII;
+
+  return FileType::RawASCII;
+}
+
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream)
+{
+  if (isLoading)
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::in
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::in);
+#endif
+  }
+  else
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+  }
+
+  if (!stream.is_open())
+  {
+    std::stringstream oss;
+    if (isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists.";
+      return HandleError(oss, opts);
+    }
+    else if (!isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+      return HandleError(oss, opts);
+    }
+  }
+  return true;
+}
+
+template<typename DataOptionsType>
+bool WriteToFile(const std::string& filename,
+                 DataOptionsType& opts,
+                 std::string data,
+                 std::fstream& stream)
+{
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+   if (!stream.is_open())
+   {
+    std::stringstream oss;
+    oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+    return HandleError(oss, opts);
+   }
+
+  stream.write(data.data(), data.size());
+  // Check if we need to flush in here.
+  if (!stream.good())
+  {
+    std::stringstream oss;
+    oss << "Error writing to a '" << filename << "'.  "
+          << "Please check permissions or disk space.";
+    return HandleError(oss, opts);
+  }
+  stream.close();
+  return true;
 }
 
 } // namespace mlpack
