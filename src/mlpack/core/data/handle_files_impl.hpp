@@ -1,7 +1,8 @@
 /**
- * @file core/data/detect_file_type_impl.hpp
+ * @file core/data/handle_files_impl.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Functionality to guess the type of a file by inspecting it.  Parts of the
  * implementation are adapted from the Armadillo sources and relicensed to be a
@@ -12,7 +13,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "detect_file_type.hpp"
+#include "handle_files.hpp"
 
 namespace mlpack {
 
