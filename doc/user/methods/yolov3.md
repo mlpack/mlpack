@@ -110,6 +110,7 @@ Example using `YOLOv3Tiny` instead of `YOLOv3`. Since both `YOLOv3` and `YOLOv3T
 ```c++
 // Download: https://models.mlpack.org/yolo/yolov3-tiny-coco.bin
 // Predict bounding boxes from an image using `YOLOv3Tiny`
+size_t imgSize = 320;
 mlpack::YOLOv3Tiny model;
 mlpack::Load("yolov3-tiny-coco.bin", model);
 
