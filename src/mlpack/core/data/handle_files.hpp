@@ -1,7 +1,8 @@
 /**
- * @file core/data/detect_file_type.hpp
+ * @file core/data/handle_files.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Functionality to guess the type of a file by inspecting it.  Parts of the
  * implementation are adapted from the Armadillo sources and relicensed to be a
@@ -12,58 +13,14 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
-#define MLPACK_CORE_DATA_DETECT_FILE_TYPE_HPP
+#ifndef MLPACK_CORE_DATA_HANLE_FILES_HPP
+#define MLPACK_CORE_DATA_HANLE_FILES_HPP
 
 #include "extension.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
 
 namespace mlpack {
-
-/**
- * Open any file type as long as it is supported by mlpack.
- * Supported files are armadillo matrices and mlpack serialized models.
- *
- * param filename filename with extension to be opened.
- * param opts DataOption type describing the file.
- * param isLoading true if we are loading, false otherwise.
- * param stream the stream that will hold the content of the file.
- * @return bool if opening the file was successful.
- */
-template<typename DataOptionsType>
-bool OpenFile(const std::string& filename,
-              DataOptionsType& opts,
-              bool isLoading,
-              std::fstream& stream);
-
-/**
- * Write to a file from a string stream.
- *
- * param filename filename with extension to be opened.
- * param opts DataOption type describing the file.
- * param data to write to the file.
- * param stream the stream that will hold the content of the file.
- * @return bool if opening the file was successful.
- */
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream);
-
-/**
- * Given an istream, attempt to guess the file type.  This is taken originally
- * from Armadillo's function guess_file_type_internal(), but we avoid using
- * internal Armadillo functionality.
- *
- * If the file is detected as a CSV, and the CSV is detected to have a header
- * row, the stream `f` will be fast-forwarded to point at the second line of the
- * file.
- *
- * @param f Opened istream to look into to guess the file type.
- */
-inline FileType GuessFileType(std::istream& f);
 
 /**
  * Attempt to auto-detect the type of a file given its extension, and by
@@ -80,6 +37,16 @@ inline FileType GuessFileType(std::istream& f);
  */
 inline FileType AutoDetectFile(std::fstream& stream,
                                const std::string& filename);
+/**
+ * return a true if the URL is provided.
+ */
+inline bool checkIfURL(const std::string& url);
+
+/**
+ * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
+ * with no header.
+ */
+inline size_t CountCols(std::fstream& stream);
 
 /**
  * Return the type based only on the extension.
@@ -119,13 +86,59 @@ bool DetectFileType(const std::string& filename,
                     std::fstream* stream = nullptr);
 
 /**
- * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
- * with no header.
+ * Given an URL, extract the filename that is being downloaded using regex.
+ * 
+ * @param filename to be extracted from URL.
+ * @param url that contains the filename at the end.
  */
-inline size_t CountCols(std::fstream& stream);
+inline void FilenameFromURL(std::string& filename, const std::string& url);
+
+/**
+ * Given an istream, attempt to guess the file type.  This is taken originally
+ * from Armadillo's function guess_file_type_internal(), but we avoid using
+ * internal Armadillo functionality.
+ *
+ * If the file is detected as a CSV, and the CSV is detected to have a header
+ * row, the stream `f` will be fast-forwarded to point at the second line of the
+ * file.
+ *
+ * @param f Opened istream to look into to guess the file type.
+ */
+inline FileType GuessFileType(std::istream& f);
+
+/**
+ * Open any file type as long as it is supported by mlpack.
+ * Supported files are armadillo matrices and mlpack serialized models.
+ *
+ * param filename filename with extension to be opened.
+ * param opts DataOption type describing the file.
+ * param isLoading true if we are loading, false otherwise.
+ * param stream the stream that will hold the content of the file.
+ * @return bool if opening the file was successful.
+ */
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream);
+
+/**
+ * Write to a file from a string stream.
+ *
+ * param filename filename with extension to be opened.
+ * param opts DataOption type describing the file.
+ * param data to write to the file.
+ * param stream the stream that will hold the content of the file.
+ * @return bool if opening the file was successful.
+ */
+template<typename DataOptionsType>
+bool WriteToFile(const std::string& filename,
+                 DataOptionsType& opts,
+                 std::string data,
+                 std::fstream& stream);
 
 } // namespace mlpack
 
-#include "detect_file_type_impl.hpp"
+#include "handle_files_impl.hpp"
 
 #endif

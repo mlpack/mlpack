@@ -66,7 +66,7 @@ bool Load(const std::string& src,
   std::string filename;
   bool success = false;
 
-  if (checkIfURL(url));
+  if (checkIfURL(src))
   {
     // #ifdef to be removed at the end of the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
@@ -74,6 +74,7 @@ bool Load(const std::string& src,
 #else
     return HandleError("HTTPLIB is disabled, please enable MLPACK_HTTPLIB, "
         "to download dataset as URL.", opts);
+#endif
   }
 
   if (!success)
@@ -116,7 +117,7 @@ bool Load(const std::string& src,
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);
-        success = LoadImage(files, matrix, imgOpts);
+        success = LoadImage(files, dest, imgOpts);
         if (copyBack)
           opts = std::move(imgOpts);
       }
@@ -124,14 +125,14 @@ bool Load(const std::string& src,
     else
     {
       TextOptions txtOpts(std::move(opts));
-      success = LoadNumeric(filename, matrix, stream, txtOpts);
+      success = LoadNumeric(filename, dest, stream, txtOpts);
       if (copyBack)
         opts = std::move(txtOpts);
     }
   }
   else if constexpr (isSerializable)
   {
-    success = LoadModel(matrix, opts, stream);
+    success = LoadModel(dest, opts, stream);
   }
   else
   {
@@ -150,8 +151,8 @@ bool Load(const std::string& src,
   {
     if constexpr (IsArma<ObjectType>::value)
     {
-      Log::Info << "Size is " << matrix.n_rows << " x "
-          << matrix.n_cols << ".\n";
+      Log::Info << "Size is " << dest.n_rows << " x "
+          << dest.n_cols << ".\n";
     }
   }
 

@@ -16,28 +16,6 @@
 
 namespace mlpack {
 
-void FilenameFromURL(std::string& filename, const std::string& url)
-{
-  std::regex rgx("[^/]+(?=/$|$)");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    //std::cout << "filename: " << match[0] << std::endl;
-    filename = match[0];
-  }
-}
-
-bool checkIfURL(const std::string& url)
-{
-  std::regex rgx("^https?://");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    return true;
-  }
-  return false;
-}
-
 template<typename MatType>
 bool DownloadFile(const std::string& url,
                   std::fstream& stream, // will see if we will need this
