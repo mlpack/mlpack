@@ -324,12 +324,11 @@ class TransposedConvolution : public Layer<MatType>
   void InsertZeros(const CubeType& input, CubeType& output)
   {
     using UVec = typename GetUColType<CubeType>::type;
-    for (size_t slice = 0; slice < input.n_slices; slice++)
+    for (size_t i = 0; i < input.n_slices; i++)
     {
-      output.slice(slice).submat(
-        linspace<UVec>(0, output.n_rows - 1, input.n_rows),
-        linspace<UVec>(0, output.n_cols - 1, input.n_cols)
-      ) = input.slice(slice);
+      output.slice(i).submat(
+          linspace<UVec>(0, output.n_rows - 1, input.n_rows),
+          linspace<UVec>(0, output.n_cols - 1, input.n_cols)) = input.slice(i);
     }
   }
 

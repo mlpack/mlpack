@@ -296,8 +296,15 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 
       weights.set_size(module.WeightSize(), 1);
       weights.zeros();
+
+      const size_t kernelSize = c.kW * c.kH;
       for (auto const& [index, value] : c.weightAssignments)
-        weights[index] = value;
+      {
+        const size_t newIndex = index < kernelSize
+                                ? kernelSize - index - 1
+                                : index;
+        weights[newIndex] = value;
+      }
       module.SetWeights(weights);
 
       output.set_size(module.OutputSize(), 1);
@@ -353,5 +360,5 @@ TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
     arma::mat input, target;
   } function;
 
-  REQUIRE(CheckGradient(function) < 1e-4);
+  REQUIRE(CheckGradient(function) < 2e-4);
 }

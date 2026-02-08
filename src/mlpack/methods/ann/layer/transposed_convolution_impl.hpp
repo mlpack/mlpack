@@ -342,12 +342,6 @@ void TransposedConvolution<
 
   output.zeros();
 
-  // Weights need to be flipped for the forward pass
-  CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
-  #pragma omp parallel for schedule(static)
-  for (size_t map = 0; map < (size_t)(maps * inMaps); ++map)
-    Rotate180(weight.slice(map), rotatedFilters.slice(map));
-
   CubeType outputBatch;
 
   // We "ignore" dimensions higher than the third---that means that we just pass
@@ -369,7 +363,7 @@ void TransposedConvolution<
 
     ForwardConvolutionRule::Convolution(
         inputBatch,
-        rotatedFilters,
+        weight,
         outputBatch,
         1,
         1,
@@ -427,6 +421,14 @@ void TransposedConvolution<
             inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
+  // Rotating the weights here allows the layer learns the rotated form
+  // directly. This removes the need to rotate during the forward pass,
+  // making inference faster without adding any extra cost during training.
+  CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
+  #pragma omp parallel for schedule(static)
+  for (size_t map = 0; map < (size_t)(maps * inMaps); ++map)
+    Rotate180(weight.slice(map), rotatedFilters.slice(map));
+
   CubeType gTempBatch;
 
   // See Forward() for the overall iteration strategy.
@@ -445,7 +447,7 @@ void TransposedConvolution<
 
     BackwardConvolutionRule::Convolution(
         mappedErrorBatch,
-        weight,
+        rotatedFilters,
         gTempBatch,
         strideWidth,
         strideHeight,
@@ -490,7 +492,7 @@ void TransposedConvolution<
         this->outputDimensions[1], maps, fullOutputOffset *
         this->outputDimensions[0] * this->outputDimensions[1]);
 
-    CubeType curError, rotatedCurError;
+    CubeType curError(gradientTemp.n_rows, gradientTemp.n_cols, maps);
     for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
       GradientConvolutionRule::Convolution(
@@ -502,13 +504,12 @@ void TransposedConvolution<
           1,
           1,
           false);
-      Rotate180(curError, rotatedCurError);
 
       #pragma omp critical
       for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
       {
         gradientTemp.slice((outMap * inMaps) + inMap) +=
-            rotatedCurError.slice(outMap);
+            curError.slice(outMap);
       }
     }
 
