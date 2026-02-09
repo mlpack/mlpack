@@ -69,6 +69,7 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of cpp-httlib that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISALBE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib. (e.g., embedded systems).|
+| `-DMLPACK_CACHE_REMOTE_DATASETS` | `#define MLPACK_CACHE_REMOTE_DATASETS` | Save the downloaded file locally by default in the executable's path or in a specific location defined by the user. |
 
 ***Note:*** If your code serializes (saves or loads) mlpack neural networks, the
 `MLPACK_ENABLE_ANN_SERIALIZATION` option must be enabled.  This option is not

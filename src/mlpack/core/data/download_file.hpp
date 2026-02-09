@@ -84,6 +84,30 @@ bool DownloadFile(const std::string& url,
                   DataOptionsType& opts)
 {
   bool success = false;
+  std::string originalFilename;
+  FilenameFromURL(originalFilename, url);
+
+#ifdef MLPACK_CACHE_REMOTE_DATASETS
+  if (std::filesystem::exists(originalFilename))
+  {
+    std::filesystem::file_time_type fileTime =
+        std::filesystem::last_write_time(originalFilename);
+
+    std::chrono::time_point<std::filesystem::file_time_type::clock,
+        FileTimeClock::duration> now = FileTimeClock::now();
+
+    FileTimeClock::duration difference = now - fileTime;
+
+    std::chrono::hours difference =
+        std::chrono::duration_cast<std::chrono::hours>(difference);
+    if (difference.count() > 5)
+    {
+      // only return, the file exist and we don't need to download it
+      return true;
+    }
+  }
+#endif
+
   // If host is not extracted correctly, we will get a segmentation fault from
   // httplib
   std::string host = URLToHost(url);
@@ -105,12 +129,10 @@ bool DownloadFile(const std::string& url,
   }
 
   std::stringstream data(res->body);
-  std::string originalFilename;
-  FilenameFromURL(originalFilename, url);
 
-//#ifdef MLPACK_CAHCHE
-  //success = WriteToFile(filename, opts, data.str(), stream);
-//#endif
+#ifdef MLPACK_CACHE_REMOTE_DATASETS
+  success = WriteToFile(originalFilename, opts, data.str(), stream);
+#else
   // This does not work, please see above.
   // filename = std::tmpnam(nullptr); 
 
@@ -134,6 +156,7 @@ bool DownloadFile(const std::string& url,
     return HandleError(oss, opts);
   }
   stream.close();
+#endif
   return success;
 }
 
