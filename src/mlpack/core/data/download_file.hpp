@@ -48,7 +48,7 @@ namespace mlpack {
 // 
 // Assuming that the directory problem is solved on Windows, the above solution 
 // would segfault sometimes and run normally other times, it depends on the
-// runs. This was not really constructive to debug it with gdb, so I abadndone
+// runs. This was not really constructive to debug with gdb, so I abadndone
 // this idea, as I thought, there should be probably a better way that is used
 // by everyone to solve this simple problem, and here is the solution in the
 // following function:
