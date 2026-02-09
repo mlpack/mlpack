@@ -58,7 +58,7 @@ namespace mlpack {
 //
 // https://codereview.stackexchange.com/questions/292241/generate-unique-temporary-file-names-in-c20
 //
-// If this works on Windows, I would recommend to use something like this, as
+// If this works on Windows, I would recommend using it as it is, as
 // it is going to be much easier to be handle with our current infrastrucutre
 // without the need to use any C function. 
 //
@@ -74,7 +74,6 @@ std::filesystem::path TempName()
   {
       nameStream << dist(gen);
   }
-  std::cout << nameStream.str() << std::endl;
   return std::filesystem::temp_directory_path() / nameStream.str();
 }
 
@@ -85,17 +84,18 @@ bool DownloadFile(const std::string& url,
                   DataOptionsType& opts)
 {
   bool success = false;
-
+  // If host is not extracted correctly, we will get a segmentation fault from
+  // httplib
+  std::string host = URLToHost(url);
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
   auto port = 443;
-  httplib::SSLClient cli(url, port);
+  httplib::SSLClient cli(host, port);
 #else
   auto port = 80;
-  httplib::Client cli(url, port);
+  httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
   httplib::Result res = cli.Get(url);
-  std::cout << "Status: " << res->status << std::endl;
 
   if (res->status != 200)
   {
@@ -104,18 +104,19 @@ bool DownloadFile(const std::string& url,
     return HandleError(oss, opts);
   }
 
-  //std::cout << "Show the body of the message:"  << std::endl << res->body
-   //   << std::endl;
   std::stringstream data(res->body);
+  std::string originalFilename;
+  FilenameFromURL(originalFilename, url);
 
 //#ifdef MLPACK_CAHCHE
-  //FilenameFromURL(filename, url);
   //success = WriteToFile(filename, opts, data.str(), stream);
-//#endif 
-
+//#endif
+  // This does not work, please see above.
   // filename = std::tmpnam(nullptr); 
-  filename = TempName();
 
+  filename = TempName();
+  // This is necessary to get the extension.
+  filename += originalFilename;
   success = OpenFile(filename, opts, false, stream);
   if (!success)
   {
