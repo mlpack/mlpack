@@ -516,4 +516,16 @@ bool WriteToFile(const std::string& filename,
   return true;
 }
 
+inline std::string URLToHost(const std::string& url)
+{
+  std::string host;
+  std::regex rgx(R"(^(?:https?|ftp)://(?:[^@/\n]+@)?([^:/?\n]+))");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
+  {
+    host = match[1];
+  }
+  return host;
+}
+
 } // namespace mlpack

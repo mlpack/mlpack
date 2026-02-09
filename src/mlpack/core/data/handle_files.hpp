@@ -136,6 +136,10 @@ bool WriteToFile(const std::string& filename,
                  DataOptionsType& opts,
                  std::string data,
                  std::fstream& stream);
+/**
+ * Extract host from URL.
+ */
+inline std::string URLToHost(const std::string& url);
 
 } // namespace mlpack
 
