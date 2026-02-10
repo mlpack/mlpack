@@ -114,6 +114,8 @@ BINDING_EXAMPLE(
 
 
 // See also...
+BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
+BINDING_SEE_ALSO("@logistic_regression_probabilities", "#logistic_regression_probabilities");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",

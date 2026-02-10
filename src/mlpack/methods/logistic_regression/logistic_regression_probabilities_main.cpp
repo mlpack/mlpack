@@ -44,6 +44,8 @@ BINDING_EXAMPLE(
     CALL_METHOD("model", "probabilities", "test", "X_test"));
 
 // See also...
+BINDING_SEE_ALSO("@logistic_regression_train", "#logistic_regression_train");
+BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",
