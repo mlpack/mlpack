@@ -4,11 +4,14 @@
 
 _????-??-??_
 
+ * Fix header inclusion and warnings in R package (#4098).
+
  * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
 
 ## mlpack 4.7.0
 
 _2026-01-30_
+
  * Allow batching when training RNN with ragged lengths (#4042).
 
  * Fixed generated artifiacts in resized float images by using clamping (#4030).
