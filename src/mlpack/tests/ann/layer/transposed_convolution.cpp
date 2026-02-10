@@ -1,4 +1,3 @@
-
 /**
  * @file tests/ann/layer/transposed_convolution.cpp
  * @author Marcus Edel
@@ -12,9 +11,6 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
-#include <string>
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/layer/transposed_convolution.hpp>
@@ -22,6 +18,37 @@
 #include "../../catch.hpp"
 
 using namespace mlpack;
+
+
+//! Calculates mean loss over batches.
+template<typename NetworkType,
+         typename DataType>
+double MeanTestLoss(NetworkType& model, DataType& testSet, size_t batchSize)
+{
+  double loss = 0;
+  size_t nofPoints = testSet.n_cols;
+
+  size_t i;
+  for (i = 0; i < (size_t) nofPoints / batchSize; i++)
+  {
+    loss += model.Evaluate(
+        testSet.cols(batchSize * i, batchSize * (i + 1) - 1),
+        testSet.cols(batchSize * i, batchSize * (i + 1) - 1));
+  }
+
+  if (nofPoints % batchSize != 0)
+  {
+    loss += model.Evaluate(testSet.cols(batchSize * i, nofPoints - 1),
+                           testSet.cols(batchSize * i, nofPoints - 1));
+    loss /= nofPoints / batchSize + 1;
+  }
+  else
+  {
+    loss /= nofPoints / batchSize;
+  }
+
+  return loss;
+}
 
 /**
  * Test that the functions that can modify and access the parameters of the
@@ -79,19 +106,25 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   module.InputDimensions() = std::vector<size_t>({5, 5, inMaps});
   module.ComputeOutputDimensions();
 
-  arma::mat weights = arma::zeros(kW * kH * inMaps * maps + maps);
+  const size_t biasSize = maps;
+  const size_t weightSize = kW * kH * inMaps * maps;
+  arma::mat weights = arma::randn(weightSize + biasSize);
   module.SetWeights(weights);
 
-  REQUIRE(std::equal(module.Weight().begin(),
-      module.Weight().end(), module.Parameters().begin()));
-  REQUIRE(std::equal(module.Bias().begin(),
-      module.Bias().end(), module.Parameters().end() - maps));
-  REQUIRE(module.Weight().n_rows == kW);
-  REQUIRE(module.Weight().n_cols == kH);
-  REQUIRE(module.Weight().n_slices == inMaps * maps);
-  REQUIRE(module.Bias().n_rows == maps);
-  REQUIRE(module.Bias().n_cols == 1);
-  REQUIRE(module.Parameters().n_rows == (maps * inMaps * kW * kH) + maps);
+  arma::mat bias;
+  arma::cube weight;
+  MakeAlias(bias, weights, maps, 1, weightSize);
+  MakeAlias(weight, weights, kW, kH, maps * inMaps);
+
+  REQUIRE(arma::approx_equal(
+    module.Bias(), bias, "absdiff", 0.0
+  ));
+  REQUIRE(arma::approx_equal(
+    module.Weight(), weight, "absdiff", 0.0
+  ));
+  REQUIRE(arma::approx_equal(
+    module.Parameters(), weights, "absdiff", 0.0
+  ));
 }
 
 /**
@@ -145,7 +178,7 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
   const size_t inMaps = 1, maps = 2;
   for (size_t i = 0; i < configs.size(); ++i)
   {
-    const auto& c = configs[i];
+    const Config& c = configs[i];
     std::string sectionName = "Case - " + std::to_string(i);
     SECTION(sectionName)
     {
@@ -157,13 +190,13 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
       module.ComputeOutputDimensions();
 
       // WeightSize = inMaps * maps * kernelWidth * kernelHeight + maps (bias).
-      size_t expectedWeightSize = inMaps * maps * c.kW * c.kH + maps;
-      REQUIRE(module.WeightSize() == expectedWeightSize);
-
+      REQUIRE(module.WeightSize() == inMaps * maps * c.kW * c.kH + maps);
       // OutputSize = (outputWidth * outputHeight * maps).
-      size_t expectedOutputSize = c.expectedOutputWidth *
-          c.expectedOutputHeight * maps;
-      REQUIRE(module.OutputSize() == expectedOutputSize);
+      REQUIRE(module.OutputSize() == c.expectedOutputWidth *
+          c.expectedOutputHeight * maps);
+
+      REQUIRE(module.OutputDimensions() == std::vector<size_t>{
+        c.expectedOutputWidth, c.expectedOutputHeight, maps});
     }
   }
 }
@@ -194,6 +227,8 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
     size_t expectedTotalWeights; // Including bias
   };
 
+  // The expected values for Output, Delta
+  // and Gradient sums were calculated using pytorch.
   std::vector<Config> configs = {
       {
         1, 3, 3, 1, 1, 0, 0, 0, 0, 4, 4,
@@ -280,7 +315,7 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 
   for (size_t i = 0; i < configs.size(); ++i)
   {
-    const auto& c = configs[i];
+    const Config& c = configs[i];
     std::string sectionName = "Case - " + std::to_string(i);
     SECTION(sectionName)
     {
@@ -361,4 +396,41 @@ TEST_CASE("TransposedConvolutionGradientTest", "[ANNLayerTest]")
   } function;
 
   REQUIRE(CheckGradient(function) < 2e-4);
+}
+
+/**
+ * Create a simple autoencoder with Convolution and Transposed Convolution
+ * layers, train it on a subset of MNIST, and check the mean squared error.
+ */
+TEST_CASE("ConvTransConvAutoencoderTest", "[ANNLayerTest][long]")
+{
+  FFN<MeanSquaredError, XavierInitialization> autoencoder;
+  autoencoder.Add<Convolution>(16, 2, 2, 2, 2, 0, 0);
+  autoencoder.Add<LeakyReLU>();
+  autoencoder.Add<Convolution>(32, 2, 2, 2, 2, 0, 0);
+  autoencoder.Add<LeakyReLU>();
+  autoencoder.Add<TransposedConvolution>(16, 2, 2, 2, 2, 0, 0);
+  autoencoder.Add<LeakyReLU>();
+  autoencoder.Add<TransposedConvolution>(1, 2, 2, 2, 2, 0, 0);
+  autoencoder.Add<Sigmoid>();
+  autoencoder.InputDimensions() = std::vector<size_t>({28, 28});
+
+  TextOptions opts;
+  opts.Fatal() = true;
+  opts.NoTranspose() = true;
+
+  arma::mat data;
+  Load("mnist_first250_training_4s_and_9s.csv", data, opts);
+  data = (data - data.min()) / (data.max() - data.min());
+
+  arma::mat trainData, testData;
+  Split(data, trainData, testData, 0.2);
+
+  ens::Adam optimizer;
+  optimizer.StepSize() = 0.1;
+  optimizer.BatchSize() = 16;
+  optimizer.MaxIterations() = 2 * trainData.n_cols;
+  autoencoder.Train(trainData, trainData, optimizer);
+
+  REQUIRE(MeanTestLoss<>(autoencoder, testData, optimizer.BatchSize()) < 0.1);
 }

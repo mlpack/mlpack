@@ -27,7 +27,6 @@ add_executable(mlpack_test
   ann/reward_clipping_test.cpp
   ann/rl_components_test.cpp
   ann/models/yolov3_tests.cpp
-  ann/autoencoder_test.cpp
 
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.
