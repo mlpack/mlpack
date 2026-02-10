@@ -2,6 +2,7 @@
  * @file methods/ann/layer/transposed_convolution_impl.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
+ * @author Ranjodh Singh
  *
  * Implementation of the Transposed Convolution module class.
  *
@@ -550,7 +551,7 @@ void TransposedConvolution<
   {
     InitializeSamePadding();
     if (kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
-         kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1)
+        kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1)
     {
       throw std::logic_error(
           "TransposedConvolution::ComputeOutputDimensions(): "

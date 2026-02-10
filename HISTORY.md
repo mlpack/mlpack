@@ -4,6 +4,7 @@
 
 _????-??-??_
 
+ * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
 
 ## mlpack 4.7.0
 

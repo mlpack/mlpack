@@ -2,6 +2,7 @@
  * @file methods/ann/layer/transposed_convolution.hpp
  * @author Shikhar Jaiswal
  * @author Marcus Edel
+ * @author Ranjodh Singh
  *
  * Definition of the Transposed Convolution module class.
  *
@@ -83,7 +84,7 @@ class TransposedConvolution : public Layer<MatType>
                         const size_t padH = 0,
                         const size_t outputPadW = 0,
                         const size_t outputPadH = 0,
-                        const std::string& paddingType = "None",
+                        const std::string& paddingType = "none",
                         const bool useBias = true);
 
   /**
@@ -124,7 +125,7 @@ class TransposedConvolution : public Layer<MatType>
                         const std::tuple<size_t, size_t>& padH,
                         const size_t outputPadW = 0,
                         const size_t outputPadH = 0,
-                        const std::string& paddingType = "None",
+                        const std::string& paddingType = "none",
                         const bool useBias = true);
 
   //! Clone the TransposedConvolution object.
