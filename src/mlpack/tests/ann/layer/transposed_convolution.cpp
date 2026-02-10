@@ -117,14 +117,11 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   MakeAlias(weight, weights, kW, kH, maps * inMaps);
 
   REQUIRE(arma::approx_equal(
-    module.Bias(), bias, "absdiff", 0.0
-  ));
+    module.Bias(), bias, "absdiff", 0.0));
   REQUIRE(arma::approx_equal(
-    module.Weight(), weight, "absdiff", 0.0
-  ));
+    module.Weight(), weight, "absdiff", 0.0));
   REQUIRE(arma::approx_equal(
-    module.Parameters(), weights, "absdiff", 0.0
-  ));
+    module.Parameters(), weights, "absdiff", 0.0));
 }
 
 /**
