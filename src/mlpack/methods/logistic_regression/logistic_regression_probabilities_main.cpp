@@ -83,6 +83,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         << trainingDimensionality << ")!" << endl;
   }
 
+  // Decision boundary must be between 0 and 1.
+  RequireParamValue<double>(params, "decision_boundary",
+      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+      "decision boundary must be between 0.0 and 1.0");
+
+
   // We must perform predictions on the test set.  Training (and the
   // optimizer) are irrelevant here; we'll pass in the model we have.
   arma::Row<size_t> predictions;
