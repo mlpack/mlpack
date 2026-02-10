@@ -126,7 +126,7 @@ BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
 // Training parameters.
 PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the matrix "
     "of predictors, X).", "t");
-PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
+PARAM_UROW_IN_REQ("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
 // Optimizer parameters.
