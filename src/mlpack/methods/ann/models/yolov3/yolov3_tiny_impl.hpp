@@ -26,12 +26,10 @@ YOLOv3Tiny<
 >::YOLOv3Tiny(const size_t imgSize,
               const size_t numClasses,
               const size_t predictionsPerCell,
-              const size_t maxDetections,
               const std::vector<ElemType>& anchors) :
   imgSize(imgSize),
   predictionsPerCell(predictionsPerCell),
-  numAttributes(numClasses + 5),
-  maxDetections(maxDetections)
+  numAttributes(numClasses + 5)
 {
   if (anchors.size() != predictionsPerCell * 4)
   {
@@ -42,8 +40,6 @@ YOLOv3Tiny<
   }
 
   const size_t mid = predictionsPerCell * 2;
-  numBoxes = (imgSize / 16) * (imgSize / 16) * predictionsPerCell +
-             (imgSize / 32) * (imgSize / 32) * predictionsPerCell;
 
   const std::vector<ElemType>
     smallAnchors(anchors.begin(), anchors.begin() + mid),
@@ -197,8 +193,6 @@ void YOLOv3Tiny<
   ar(CEREAL_NVP(imgSize));
   ar(CEREAL_NVP(predictionsPerCell));
   ar(CEREAL_NVP(numAttributes));
-  ar(CEREAL_NVP(maxDetections));
-  ar(CEREAL_NVP(numBoxes));
 }
 
 } // namespace mlpack

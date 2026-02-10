@@ -1,16 +1,16 @@
 /**
- * @file methods/ann/models/yolov3_tiny.hpp
+ * @file methods/ann/models/yolov3.hpp
  * @author Andrew Furey
  *
- * Definition of the YOLOv3-tiny model.
+ * Definition of the YOLOv3 model.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_MODELS_YOLOV3_TINY_HPP
-#define MLPACK_METHODS_ANN_MODELS_YOLOV3_TINY_HPP
+#ifndef MLPACK_METHODS_ANN_MODELS_YOLOV3_HPP
+#define MLPACK_METHODS_ANN_MODELS_YOLOV3_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -24,7 +24,7 @@
 namespace mlpack {
 
 /**
- * YOLOv3-tiny is a small one-stage object detection model.
+ * YOLOv3 is a one-stage object detection model.
  *
  * The input to the model must be a square image. Look at image_letterbox.hpp
  * to preprocess images before inference.
@@ -48,7 +48,7 @@ namespace mlpack {
 template <typename OutputLayerType = EmptyLoss,
           typename InitializationRuleType = RandomInitialization,
           typename MatType = arma::fmat>
-class YOLOv3Tiny
+class YOLOv3
 {
  public:
   // Helper types.
@@ -57,10 +57,10 @@ class YOLOv3Tiny
   using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
 
-  YOLOv3Tiny() { /* Nothing to do. */ }
+  YOLOv3() { /* Nothing to do. */ }
 
   /**
-   * Create the YOLOv3Tiny model.
+   * Create the YOLOv3 model.
    *
    * @param imgSize The width and height of input images. Pretrained weights
        used 416.
@@ -70,15 +70,15 @@ class YOLOv3Tiny
        boxes per grid cell. Pretrained weights use 3.
    * @param anchors Vector of anchor width and heights. Formatted as
       [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be
-      predictionsPerCell * 2 anchors, since YOLOv3Tiny has two output layers.
-      Therefore, anchors.size() must be predictionsPerCell * 4.
+      predictionsPerCell * 3 anchors, since YOLOv3 has three output layers.
+      Therefore, anchors.size() must be predictionsPerCell * 6.
    */
-  YOLOv3Tiny(const size_t imgSize,
-             const size_t numClasses,
-             const size_t predictionsPerCell,
-             const std::vector<ElemType>& anchors);
+  YOLOv3(const size_t imgSize,
+         const size_t numClasses,
+         const size_t predictionsPerCell,
+         const std::vector<ElemType>& anchors);
 
-  ~YOLOv3Tiny() { /* Nothing to do. */ }
+  ~YOLOv3() { /* Nothing to do. */ }
 
   /**
    * Returns the graph representation of the model.
@@ -90,7 +90,10 @@ class YOLOv3Tiny
    *
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
-   * @param output Resulting bounding boxes.
+   * @param output Resulting bounding boxes and classification probabilities.
+      The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
+      to the center of the box. The bounding boxes are normalized based on the
+      `imgSize`.
    */
   void Predict(const MatType& input,
                MatType& output)
@@ -105,7 +108,7 @@ class YOLOv3Tiny
  private:
   /**
    * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
-   * a Convolutions, BatchNorm (if batchNorm is true) and LeakyReLU.
+   * a Convolution, BatchNorm (if batchNorm is true) and LeakyReLU.
    * If batchNorm is true, the convolution layer will not have a bias,
    * otherwise it will.
    * 
@@ -113,26 +116,36 @@ class YOLOv3Tiny
    * padding will be added.
    *
    * @param maps Number of output maps of the convolution layer.
-   * @param kernel Size of the convolution kernel
+   * @param kernel Size of the convolution kernel.
+   * @param stride Size of the convolution stride.
    * @param batchNorm Boolean for including a batchnorm layer.
    * @param reluSlope Slope used in LeakyReLU. Default is 0.1 because
       pretrained weights used 0.1.
    */
   size_t ConvolutionBlock(const size_t maps,
                           const size_t kernel,
+                          const size_t stride = 1,
                           const bool batchNorm = true,
                           const ElemType reluSlope = 0.1);
 
   /**
    * Adds a MultiLayer to the internal DAGNetwork. The MultiLayer includes
-   * a MaxPooling layer and an optional Padding layer depending on the stride
-   * size.
+   * a Convolutions, BatchNorm (if batchNorm is true) and LeakyReLU.
+   * If batchNorm is true, the convolution layer will not have a bias,
+   * otherwise it will.
+   * 
+   * The convolution kernel size must be 3 or 1. If the kernel size is 3,
+   * padding will be added.
    *
-   * @param stride Stride of the MaxPooling kernel.
+   * @param previousLayer
+   * @param maps Number of output maps of the convolution layer.
+   * @param shortcuts
    */
-  size_t MaxPool2x2(const size_t stride);
+  size_t DownsampleBlock(const size_t previousLayer,
+                         const size_t maps,
+                         const size_t shortcuts);
 
-  // DAGNetwork containing the graph of the YOLOv3Tiny model
+  // DAGNetwork containing the graph of the YOLOv3 model
   ModelType model;
   // Width and height of input image
   size_t imgSize;
@@ -144,6 +157,6 @@ class YOLOv3Tiny
 
 } // namespace mlpack
 
-#include "yolov3_tiny_impl.hpp"
+#include "yolov3_impl.hpp"
 
 #endif
