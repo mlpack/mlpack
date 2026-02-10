@@ -52,7 +52,7 @@ BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
     "@doc/user/methods/logistic_regression.md");
 
 // Classification options.
-PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -60,7 +60,7 @@ PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
 
 // Model loading/saving.
-PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model "
+PARAM_MODEL_IN_REQ(LogisticRegression<>, "input_model", "Existing model "
     "(parameters).", "m");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)

@@ -52,7 +52,7 @@ BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
     "@doc/user/methods/logistic_regression.md");
 
 // Classification options.
-PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -60,7 +60,7 @@ PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
     "point in the test set.", "p");
 
 // Model loading/saving.
-PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model "
+PARAM_MODEL_IN_REQ(LogisticRegression<>, "input_model", "Existing model "
     "(parameters).", "m");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
@@ -86,7 +86,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // We must perform predictions on the test set.  Training (and the
   // optimizer) are irrelevant here; we'll pass in the model we have.
   arma::Row<size_t> predictions;
-  mat probabilities;
+  arma::mat probabilities;
 
   Log::Info << "Predicting classes of points in '"
       << params.GetPrintable<arma::mat>("test") << "'." << endl;
