@@ -20,10 +20,8 @@
 
 #if defined(MLPACK_USE_SYSTEM_HTTPLIB)
 #if defined __has_include
-  #if __has_include(<httplib.h>) // Most frequent
+  #if __has_include(<httplib.h>)
     #include <httplib.h>
-  #elif __has_include(<httplib/httplib.h>) // Possible but rare
-    #include <httplib/httplib.h>
   #else
     #pragma warning("System's httplib not found; including bundled httplib")
     #include "bundled/httplib.h"
