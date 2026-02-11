@@ -146,6 +146,9 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
     size_t expectedOutputHeight;
   };
 
+  // These tests cover different combinations of kernel, stride, and
+  // padding dimensions, including equal and unequal width/height, odd and
+  // even values, as well as cases where width > height or height > width.
   const std::vector<Config> configs = {
     // VALID (pads always treated as zero)
     { "valid",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0,  9,  9 },
@@ -226,6 +229,7 @@ TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
 
   // The expected values for Output, Delta
   // and Gradient sums were calculated using pytorch.
+  // https://gist.github.com/ranjodhsingh1729/48f28648187fd4eed7d30c95069808f7
   std::vector<Config> configs = {
       {
         1, 3, 3, 1, 1, 0, 0, 0, 0, 4, 4,
