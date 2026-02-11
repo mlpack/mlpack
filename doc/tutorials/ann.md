@@ -447,9 +447,8 @@ void ExampleLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 
 ## Reshaping Output
 
-In some network architectures, particularly in Convolutional Neural Networks (CNNs), you may need to transition from a fully connected layer (which outputs a flat vector) to a convolutional layer (which expects a 3D volume, e.g., height $\times$ width $\times$ channels).
-
-Since `mlpack` does not strictly enforce a dedicated `Reshape` utility layer for all cases, you can create a custom layer wrapper to handle this specific transformation. Below is an example of a `ReshapeLayer` template, which can inherit from any existing layer type (defaulting to the `ExampleLayer` shown above) and override the output dimensions without altering the data or gradients.
+In some network architectures, particularly in Convolutional Neural Networks (CNNs), you may need to transition from a fully connected layer (which outputs a flat vector) to a convolutional layer (which expects a 3D volume, e.g., `height x width x channels` channels).
+Since mlpack does not strictly enforce a dedicated `Reshape` utility layer for all cases, you can create a custom layer wrapper to handle this specific transformation. Below is an example of a `ReshapeLayer` template, which can inherit from any existing layer type (defaulting to the `ExampleLayer` shown above) and override the output dimensions without altering the data or gradients.
 
 ### Custom ReshapeLayer
 
@@ -471,7 +470,7 @@ class ReshapeLayer : public LayerType
 
   void ComputeOutputDimensions()
   {
-    // Important: Call base class to ensure any internal state is initialized.
+    // Call base class to ensure internal state of ExampleLayer is initialized.
     LayerType::ComputeOutputDimensions();
     
     // Now overwrite the output dimensions.
