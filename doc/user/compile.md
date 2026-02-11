@@ -66,7 +66,7 @@ program (before including mlpack or Armadillo!).
 |*Configuration.* |||
 | `-DMLPACK_USE_SYSTEM_STB` | `#define MLPACK_USE_SYSTEM_STB` | Use the version of STB available on the system instead of the version bundled with mlpack.  If set, make sure `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` are available. |
 | `-DMLPACK_DONT_USE_SYSTEM_STB` | `#define MLPACK_DONT_USE_SYSTEM_STB` | Force usage of the bundled version of STB.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_STB=ON`. |
-| `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of cpp-httlib that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
+| `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISALBE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib. (e.g., embedded systems).|
 
