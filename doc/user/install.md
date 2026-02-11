@@ -197,7 +197,7 @@ The following options can be used when configuring mlpack.
 | `-DUSE_OPENMP=ON` | Use OpenMP for parallelization. | `ON` |
 | `-DUSE_PRECOMPILED_HEADERS=OFF` | Disable precompiled headers during build. | `OFF` |
 | `-DUSE_SYSTEM_STB=OFF` | Use version of STB bundled with mlpack. If set to `ON` make sure `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` are available. | `OFF` |
-| `-DUSE_SYSTEM_HTTPLIB=OFF` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. | `OFF` | 
+| `-DUSE_SYSTEM_HTTPLIB=OFF` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. | `OFF` |
 | `-DDISABLE_HTTPLIB=OFF` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems). | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
