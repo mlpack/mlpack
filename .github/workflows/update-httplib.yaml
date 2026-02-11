@@ -27,7 +27,7 @@ jobs:
           # Set the current release tag.
           echo "current_tag=$(echo $HTTPLIB_VERSION_VALUE)" >> $GITHUB_OUTPUT
 
-      - name: Update Catch
+      - name: Update httplib
         if: steps.httplib-header.outputs.current_tag != steps.httplib-header.outputs.release_tag
         env:
           CURRENT_TAG: ${{ steps.httplib-header.outputs.current_tag }}
