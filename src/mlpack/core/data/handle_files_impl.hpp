@@ -439,6 +439,18 @@ inline FileType GuessFileType(std::istream& f)
   return FileType::RawASCII;
 }
 
+inline bool IsGzip(const std::string& data)
+{
+  if (data.size() > 2)
+  {
+    // Got the headers info from Claude
+    if (static_cast<unsigned char>(data[0]) == 0x1F &&
+        static_cast<unsigned char>(data[1]) == 0x8B)
+      return true;
+  }
+  return false;
+}
+
 template<typename DataOptionsType>
 bool OpenFile(const std::string& filename,
               DataOptionsType& opts,

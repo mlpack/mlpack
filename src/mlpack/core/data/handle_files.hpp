@@ -107,6 +107,11 @@ inline void FilenameFromURL(std::string& filename, const std::string& url);
 inline FileType GuessFileType(std::istream& f);
 
 /**
+ * Return true if the string is compressed as gzip.
+ */
+inline bool IsGzip(const std::string& data);
+
+/**
  * Open any file type as long as it is supported by mlpack.
  * Supported files are armadillo matrices and mlpack serialized models.
  *
