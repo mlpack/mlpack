@@ -18,6 +18,14 @@
   #define CPPHTTPLIB_OPENSSL_SUPPORT
 #endif
 
+// Shall we guard this with mlpack ? or this is too much from user perspective
+// I think personally this is too much, this will compile the only problem will
+// be is the linker error. However, if we follow the same logic with HTTPS,
+// then this should be guarded with something like MLPACK_USE_ZLIB
+// @rcurtin, up to you, I am find with both options
+//
+#define CPPHTTPLIB_ZLIB_SUPPORT
+
 #if defined(MLPACK_USE_SYSTEM_HTTPLIB)
 #if defined __has_include
   #if __has_include(<httplib.h>) // Most frequent
