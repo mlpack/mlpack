@@ -41,9 +41,12 @@ bool Load(const std::vector<std::string>& files,
   return Load(files, matrix, tmpOpts, false);
 }
 
+// We need to change filename to src and matrix to dest
+// src could be a link to URL, filename, any place where the data can be
+// dest, usually matrix, or something else.
 template<typename ObjectType, typename DataOptionsType>
-bool Load(const std::string& filename,
-          ObjectType& matrix,
+bool Load(const std::string& src,
+          ObjectType& dest,
           DataOptionsType& opts,
           const bool copyBack,
           const typename std::enable_if_t<
@@ -60,7 +63,29 @@ bool Load(const std::string& filename,
   const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
 
   std::fstream stream;
-  bool success = OpenFile(filename, opts, true, stream);
+  std::string filename;
+  bool success = false;
+
+  if (checkIfURL(src))
+  {
+    // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
+    // the integration.
+#ifdef MLPACK_ENABLE_HTTPLIB
+    success = DownloadFile(src, filename, stream, opts);
+#else
+    return HandleError("HTTPLIB support is disabled, please define "
+        "MLPACK_ENABLE_HTTPLIB, to download dataset as URL.", opts);
+#endif
+  }
+
+  if (!success)
+  {
+    Timer::Stop("loading_data");
+    return HandleError("Cannot download the dataset from the provoided link. "
+        "Please check the link or the data format.", opts);
+  }
+
+  success = OpenFile(filename, opts, true, stream);
   if (!success)
   {
     Timer::Stop("loading_data");
@@ -93,7 +118,7 @@ bool Load(const std::string& filename,
         ImageOptions imgOpts(std::move(opts));
         std::vector<std::string> files;
         files.push_back(filename);
-        success = LoadImage(files, matrix, imgOpts);
+        success = LoadImage(files, dest, imgOpts);
         if (copyBack)
           opts = std::move(imgOpts);
       }
@@ -101,14 +126,14 @@ bool Load(const std::string& filename,
     else
     {
       TextOptions txtOpts(std::move(opts));
-      success = LoadNumeric(filename, matrix, stream, txtOpts);
+      success = LoadNumeric(filename, dest, stream, txtOpts);
       if (copyBack)
         opts = std::move(txtOpts);
     }
   }
   else if constexpr (isSerializable)
   {
-    success = LoadModel(matrix, opts, stream);
+    success = LoadModel(dest, opts, stream);
   }
   else
   {
@@ -127,8 +152,8 @@ bool Load(const std::string& filename,
   {
     if constexpr (IsArma<ObjectType>::value)
     {
-      Log::Info << "Size is " << matrix.n_rows << " x "
-          << matrix.n_cols << ".\n";
+      Log::Info << "Size is " << dest.n_rows << " x "
+          << dest.n_cols << ".\n";
     }
   }
 
