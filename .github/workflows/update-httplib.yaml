@@ -33,7 +33,7 @@ jobs:
           CURRENT_TAG: ${{ steps.httplib-header.outputs.current_tag }}
           RELEASE_TAG: ${{ steps.httplib-header.outputs.release_tag }}
         run: |
-          # Delete the catch.hpp.
+          # Delete the existing httplib.h.
           rm -f src/mlpack/core/httplib/bundled/httplib.h
           # Download the release.
           curl -sL https://api.github.com/repos/yhirose/cpp-httplib/tarball/${HTTPLIB_RELEASE_VERSION} > httplib.tar.gz
