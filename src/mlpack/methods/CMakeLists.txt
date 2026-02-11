@@ -94,3 +94,5 @@ add_markdown_docs(preprocess preprocess_imputer "cli" "")
 add_category(range_search "Geometry")
 add_cli_executable(range_search range_search)
 add_markdown_docs(range_search range_search "cli" "")
+## Adding CLI executable for ANN.
+add_cli_executable(ann ann)

@@ -7,7 +7,6 @@ add_executable(mlpack_test
   # Tests for neural network code (and reinforcement learning code).
   ann/activation_functions_test.cpp
   ann/ann_dist_test.cpp
-  # This includes all files in ann/layer/.
   ann/layer_test.cpp
   ann/ann_regularizer_test.cpp
   ann/ann_test_tools.hpp
@@ -152,6 +151,7 @@ add_executable(mlpack_test
 
   # Tests for individual bindings.
   main_tests/adaboost_test.cpp
+  main_tests/ann_test.cpp
   main_tests/adaboost_train_test.cpp
   main_tests/adaboost_classify_test.cpp
   main_tests/adaboost_probabilities_test.cpp
