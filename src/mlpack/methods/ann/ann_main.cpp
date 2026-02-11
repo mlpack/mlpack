@@ -1,24 +1,24 @@
-#include<mlpack/core.hpp>
+#include <mlpack/core.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME ann
 
-#include<mlpack/core/util/mlpack_main.hpp>
-#include<mlpack/methods/ann/ffn.hpp>
-#include<mlpack/methods/ann/init_rules/init_rules.hpp>
-#include<mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include<mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
-#include<mlpack/methods/ann/layer/layer.hpp>
-#include<mlpack/methods/ann/layer/leaky_relu.hpp>
-#include<mlpack/methods/ann/layer/elu.hpp>
-#include<mlpack/methods/ann/layer/hard_tanh.hpp>
-#include<mlpack/methods/ann/layer/relu6.hpp>
-#include<mlpack/methods/ann/layer/parametric_relu.hpp>
-#include<mlpack/methods/ann/layer/softmax.hpp>
-#include<mlpack/methods/ann/layer/log_softmax.hpp>
-#include<mlpack/methods/ann/layer/dropout.hpp>
-#include<mlpack/methods/ann/layer/batch_norm.hpp>
-#include<mlpack/methods/ann/layer/identity.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/methods/ann/ffn.hpp>
+#include <mlpack/methods/ann/init_rules/init_rules.hpp>
+#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
+#include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
+#include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/leaky_relu.hpp>
+#include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/relu6.hpp>
+#include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/softmax.hpp>
+#include <mlpack/methods/ann/layer/log_softmax.hpp>
+#include <mlpack/methods/ann/layer/dropout.hpp>
+#include <mlpack/methods/ann/layer/batch_norm.hpp>
+#include <mlpack/methods/ann/layer/identity.hpp>
 
 
 using namespace mlpack;
