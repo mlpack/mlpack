@@ -490,18 +490,17 @@ bool WriteToFile(const std::string& filename,
                  std::fstream& stream)
 {
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
+  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
 #else
-    stream.open(filename.c_str(), std::fstream::out);
+  stream.open(filename.c_str(), std::fstream::out);
 #endif
-   if (!stream.is_open())
-   {
+  if (!stream.is_open())
+  {
     std::stringstream oss;
     oss << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing.";
+        << "Please check if you have permissions for writing.";
     return HandleError(oss, opts);
-   }
+  }
 
   stream.write(data.data(), data.size());
   // Check if we need to flush in here.
