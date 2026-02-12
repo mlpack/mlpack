@@ -120,6 +120,6 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnAutoInferenceTest",
 
   RUN_BINDING();
   REQUIRE(params.Has("output_model")); // FFNModel
-  
+
   remove("ann_test_arch_auto.txt");
 }

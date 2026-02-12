@@ -189,27 +189,30 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       // Here we trust the user to provide 0-based classes or we shift if min >= 1?
       // For safety, assume 0-based.
       
-      arma::Row<size_t> labelIndices = 
+      arma::Row<size_t> labelIndices =
           arma::conv_to<arma::Row<size_t>>::from(labels.row(0));
-      
+
       size_t numClasses = 0;
       if (labelIndices.n_elem > 0)
         numClasses = arma::max(labelIndices) + 1;
-      
+
       if (params.Has("output_dim"))
       {
-         const size_t dim = (size_t)params.Get<int>("output_dim");
+         const size_t dim = (size_t) params.Get<int>("output_dim");
          if (dim > numClasses) numClasses = dim;
       }
 
       trainLabels.zeros(numClasses, labels.n_cols);
-      for(size_t i = 0; i < labels.n_cols; ++i)
+      for (size_t i = 0; i < labels.n_cols; ++i)
       {
         if (labelIndices[i] < numClasses)
+        {
           trainLabels(labelIndices[i], i) = 1;
-        else {
-          Log::Fatal << "Label index " << labelIndices[i] << " out of bounds (0.." 
-                     << numClasses - 1 << ")." << endl;
+        }
+        else
+        {
+          Log::Fatal << "Label index " << labelIndices[i] << " out of bounds "
+              << "(0.." << numClasses - 1 << ")." << endl;
         }
       }
     }
