@@ -27,7 +27,6 @@
   #else
     #pragma warning("System's dr_mp3 not found; including bundled dr_mp3")
     #include "bundled/dr_mp3.h"
-  #endif
 #endif
 
 #else
@@ -42,7 +41,6 @@
   #else
     #pragma warning("System's dr_wav not found; including bundled dr_wav")
     #include "bundled/dr_wav.h"
-  #endif
 #endif
 
 #else
