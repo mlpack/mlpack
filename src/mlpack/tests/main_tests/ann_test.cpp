@@ -22,7 +22,7 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnClassificationTest",
                  "[AnnMainTest][BindingTests]")
 {
   arma::mat trainData(4, 100, arma::fill::randu); // 4 inputs, 100 samples
-  
+
   // Use arma::mat for labels (doubles)
   arma::mat labels(1, 100);
   for (size_t i = 0; i < 100; i++) labels(0, i) = (double)(i % 2); // 2 classes

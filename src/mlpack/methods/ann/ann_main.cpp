@@ -61,7 +61,8 @@ PARAM_INT_IN("input_dim", "Input dimension (required if creating new model).",
              "i", 0);
 PARAM_INT_IN("output_dim", "Output dimension (required if creating new model).",
              "O", 0);
-PARAM_FLAG("regression", "Perform regression (default is classification).", "r");
+PARAM_FLAG("regression", "Perform regression "
+    "(default is classification).", "r");
 PARAM_INT_IN("seed", "Random seed.", "S", 0);
 
 // function to make layer specifications
@@ -146,7 +147,6 @@ void AddLayerFromString(FFNModel& model, const string& layerSpec)
   // Error
   else
   {
-    std::cerr << "Log::Fatal at AddLayerFromString: Unknown layer type: " << layerType << std::endl;
     Log::Fatal << "Unknown layer type: " << layerType << endl;
   }
 }
@@ -184,11 +184,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     if (!params.Has("regression"))
     {
       // Convert to one-hot encoding for classification with MSE.
-      // Assume labels are class indices 0..K-1 or 1..K in first row.
-      // (mlpack usually uses 0-based for internal logic but 1-based labels are common)
-      // Here we trust the user to provide 0-based classes or we shift if min >= 1?
-      // For safety, assume 0-based.
-      
       arma::Row<size_t> labelIndices =
           arma::conv_to<arma::Row<size_t>>::from(labels.row(0));
 
