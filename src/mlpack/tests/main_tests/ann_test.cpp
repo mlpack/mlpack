@@ -22,8 +22,10 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnClassificationTest",
                  "[AnnMainTest][BindingTests]")
 {
   arma::mat trainData(4, 100, arma::fill::randu); // 4 inputs, 100 samples
-  arma::Row<size_t> labels(100);
-  for (size_t i = 0; i < 100; i++) labels[i] = i%2; // 2 classes
+  
+  // Use arma::mat for labels (doubles)
+  arma::mat labels(1, 100);
+  for (size_t i = 0; i < 100; i++) labels(0, i) = (double)(i % 2); // 2 classes
 
   arma::mat testData(4, 10, arma::fill::randu);
 
@@ -48,11 +50,9 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnClassificationTest",
   // Check predictions presence and shape
   REQUIRE(params.Has("predictions"));
 
-  
   arma::mat preds = params.Get<arma::mat>("predictions");
   REQUIRE(preds.n_cols == 10);
   REQUIRE(preds.n_rows == 1);
-  
   // Cleanup
   remove("ann_test_arch_cls.txt");
 }
@@ -64,8 +64,9 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnRegressionTest",
                  "[AnnMainTest][BindingTests]")
 {
   arma::mat trainData(10, 100, arma::fill::randu);
-  arma::Row<size_t> labels(100);
-  for (size_t i = 0; i < 100; i++) labels[i] = i%5;
+  // Use arma::mat for labels (doubles)
+  arma::mat labels(1, 100);
+  for (size_t i = 0; i < 100; i++) labels(0, i) = (double)(i % 5);
 
   arma::mat testData(10, 10, arma::fill::randu);
 
@@ -101,14 +102,15 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnAutoInferenceTest",
                  "[AnnMainTest][BindingTests]")
 {
   arma::mat trainData(5, 50, arma::fill::randu);
-  arma::Row<size_t> labels(50);
-  for (size_t i = 0; i < 50; i++) labels[i] = i%2;
+  // Use arma::mat for labels
+  arma::mat labels(1, 50);
+  for (size_t i = 0; i < 50; i++) labels(0, i) = (double)(i % 2);
 
   std::ofstream arch("ann_test_arch_auto.txt");
-  arch<<"Linear 10"<<std::endl;
-  arch<<"ReLU"<<std::endl;
-  arch<<"Linear 2"<<std::endl;
-  arch<<"LogSoftmax"<<std::endl;
+  arch << "Linear 10" << std::endl;
+  arch << "ReLU" << std::endl;
+  arch << "Linear 2" << std::endl;
+  arch << "LogSoftmax" << std::endl;
   arch.close();
 
   SetInputParam("training", std::move(trainData));
@@ -117,7 +119,7 @@ TEST_CASE_METHOD(AnnTestFixture, "AnnAutoInferenceTest",
   SetInputParam("max_iterations", (int) 5);
 
   RUN_BINDING();
-  REQUIRE(params.Has("output_model")); // FFN<>
+  REQUIRE(params.Has("output_model")); // FFNModel
   
   remove("ann_test_arch_auto.txt");
 }
