@@ -81,7 +81,7 @@ jobs:
             runner: macOS-latest,
             os: 'macOS',
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON -DENABLE_HTTPLIB=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
             cores: 3
           },
           {
