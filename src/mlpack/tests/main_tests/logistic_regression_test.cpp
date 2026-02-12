@@ -62,7 +62,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPridictionSizeCheck",
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionPredictionSizeCheck",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -322,7 +323,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
 /**
   * Ensuring that step size for optimizer is non negative.
- **/ 
+ **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeStepSizeTest",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
