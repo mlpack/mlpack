@@ -27,7 +27,6 @@ The original signal can be reconstructed as
 ## Example
 
 ```c++
-
 arma::vec t = arma::linspace<arma::vec>(0.0, 1.0, 1000);
 // Example: pick 5 frequencies to construct a non-stationary signal
 const double A = 5.0;   // Hz
