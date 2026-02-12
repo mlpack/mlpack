@@ -56,6 +56,7 @@ add_all_bindings(random_forest random_forest "Classification")
 add_all_bindings(rann krann "Geometry")
 add_all_bindings(softmax_regression softmax_regression "Classification")
 add_all_bindings(sparse_coding sparse_coding "Transformations")
+add_all_bindings(tsne tsne "Transformations")
 
 # Now, define the "special" bindings that are different somehow.
 

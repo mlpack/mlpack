@@ -144,6 +144,7 @@ add_executable(mlpack_test
   tree_test.cpp
   tree_traits_test.cpp
   trigamma_test.cpp
+  tsne_test.cpp
   ub_tree_test.cpp
   union_find_test.cpp
   vantage_point_tree_test.cpp
@@ -203,6 +204,7 @@ add_executable(mlpack_test
   main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
+  main_tests/tsne_test.cpp
   main_tests/main_test_fixture.hpp
 )
 

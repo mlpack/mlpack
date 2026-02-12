@@ -2,7 +2,7 @@
 
 `mlpack_ann` is a flexible command-line program for training deep neural networks. It supports classification, regression, and custom architectures defined via simple text files.
 
-## 🚀 Quick Start
+## Quick Start
 
 **1. Define your network:**
 Create `model.txt`:
@@ -25,7 +25,7 @@ mlpack_ann -m model.bin -T test.csv -p predictions.csv -v
 
 ---
 
-## 🏗️ Building a Network
+## Building a Network
 
 Neural networks in mlpack are defined by stacking layers in a text file (one layer per line).
 
@@ -55,7 +55,7 @@ LogSoftmax      # Required for classification
 
 ---
 
-## 📚 Supported Layers
+## Supported Layers
 
 ### Core Layers
 | Layer | Description | Example |
@@ -86,7 +86,7 @@ LogSoftmax      # Required for classification
 
 ---
 
-## 🛠️ Command-Line Reference
+## Command-Line Reference
 
 ### Data Files
 - `-t, --training_file`: **Required**. CSV file with training data (features).
@@ -112,7 +112,7 @@ LogSoftmax      # Required for classification
 
 ---
 
-## 💡 Examples
+## Examples
 
 ### 1. Classification (Iris Dataset)
 Assuming `iris_train.csv` (4 features) and `iris_labels.csv` (3 classes: 0, 1, 2).

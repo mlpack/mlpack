@@ -18,5 +18,6 @@
 #include "gaussian_distribution.hpp"
 #include "laplace_distribution.hpp"
 #include "regression_distribution.hpp"
+#include "student_t_distribution.hpp"
 
 #endif
