@@ -25,7 +25,6 @@ The original signal can be reconstructed as
 `signal ~ Σ_k imfs.col(k) + residue`
 
 ## Example
-
 ```c++
 arma::vec t = arma::linspace<arma::vec>(0.0, 1.0, 1000);
 // Example: pick 5 frequencies to construct a non-stationary signal
@@ -71,8 +70,10 @@ for (size_t k = 0; k < numToShow; ++k)
   const double peakHz = (double) idx * fs / spectrum.n_elem;
   std::cout << "IMF " << k << " peak freq ~ " << peakHz << " Hz" << std::endl;
 }
-
-  // Or use custom settings: 15 IMFs, 15 sifts/IMF, tighter tolerance.
+// Or use custom settings: 15 IMFs, 15 sifts/IMF, tighter tolerance.
 // EMD(signal, imfs, residue, 15 /* maxImfs */, 15 /* maxSiftIter */, 5e-4);
-return 0;
 ```
+
+## see also
+
+- reference algorithm
