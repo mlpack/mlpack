@@ -18,6 +18,8 @@
 using namespace mlpack;
 using namespace std;
 
+#define MLPACK_ENABLE_HTTPLIB
+
 /**
  * Make sure failure occurs when no extension given.
  */
@@ -3446,6 +3448,20 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   REQUIRE(std::isnan(dataset.at(0, 0)) == true);
   REQUIRE(std::isnan(dataset.at(0, 1)) == true);
   remove("test.csv");
+}
+
+TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
+        dataset, Fatal + Transpose) == true);
+}
+
+TEST_CASE("DownLoadWrongURL", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
+        dataset, NoFatal + Transpose) == false);
 }
 
 #endif
