@@ -13,6 +13,15 @@
 #ifndef MLPACK_CORE_AUDIO_AUDIO_HPP
 #define MLPACK_CORE_AUDIO_AUDIO_HPP
 
+//#ifndef DRMP3_API
+  #define DRMP3_API inline 
+//#endif
+
+//#ifndef DRWAV_API
+  #define DRWAV_API inline
+//  #define DRWAV_PRIVATE static
+//#endif
+
 #ifndef DR_MP3_IMPLEMENTATION
   #define DR_MP3_IMPLEMENTATION
 #endif
