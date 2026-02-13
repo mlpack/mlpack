@@ -73,6 +73,20 @@
   #undef MLPACK_USE_SYSTEM_STB
 #endif
 
+//
+// MLPACK_USE_SYSTEM_MP3 is used to enable usage of locally installed dr_mp3.
+//
+#if !defined(MLPACK_USE_SYSTEM_MP3)
+  // #define MLPACK_USE_SYSTEM_MP3
+#endif
+
+//
+// MLPACK_USE_SYSTEM_WAV is used to enable usage of locally installed dr_wav.
+//
+#if !defined(MLPACK_USE_SYSTEM_WAV)
+  // #define MLPACK_USE_SYSTEM_WAV
+#endif
+
 #ifdef MLPACK_DISABLE_BFD_DL
   #undef MLPACK_HAS_BFD_DL
 #endif
