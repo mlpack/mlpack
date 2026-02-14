@@ -1,5 +1,5 @@
 /**
- * @file core/data/load_mp3.hpp
+ * @file core/data/load_wav.hpp
  * @author Omar Shrit
  *
  * Load wav data functions implementation.
