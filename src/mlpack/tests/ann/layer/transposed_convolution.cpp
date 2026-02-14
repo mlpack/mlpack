@@ -142,6 +142,8 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
     size_t pWRight;
     size_t pHTop;
     size_t pHBottom;
+    size_t outputPadW;
+    size_t outputPadH;
     size_t expectedOutputWidth;
     size_t expectedOutputHeight;
   };
@@ -151,41 +153,61 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
   // even values, as well as cases where width > height or height > width.
   const std::vector<Config> configs = {
     // VALID (pads always treated as zero)
-    { "valid",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0,  9,  9 },
-    { "valid",  7,  8, 4, 2, 1, 2, 0, 0, 0, 0, 10, 16 },
-    { "valid",  8,  7, 5, 1, 2, 1, 0, 0, 0, 0, 19,  7 },
-    { "valid",  8,  8, 2, 5, 3, 3, 0, 0, 0, 0, 23, 26 },
-    { "valid",  6,  9, 4, 4, 2, 1, 0, 0, 0, 0, 14, 12 },
-    { "valid",  9,  6, 3, 5, 1, 3, 0, 0, 0, 0, 11, 20 },
-    { "valid", 10, 10, 5, 2, 3, 1, 0, 0, 0, 0, 32, 11 },
-    { "valid",  5,  5, 2, 3, 1, 2, 0, 0, 0, 0,  6, 11 },
-    { "valid",  5,  6, 3, 4, 2, 2, 0, 0, 0, 0, 11, 14 },
+    { "valid",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0,  9,  9 },
+    { "valid",  7,  8, 4, 2, 1, 2, 0, 0, 0, 0, 0, 0, 10, 16 },
+    { "valid",  8,  7, 5, 1, 2, 1, 0, 0, 0, 0, 0, 0, 19,  7 },
+    { "valid",  8,  8, 2, 5, 3, 3, 0, 0, 0, 0, 0, 0, 23, 26 },
+    { "valid",  6,  9, 4, 4, 2, 1, 0, 0, 0, 0, 0, 0, 14, 12 },
+    { "valid",  9,  6, 3, 5, 1, 3, 0, 0, 0, 0, 0, 0, 11, 20 },
+    { "valid", 10, 10, 5, 2, 3, 1, 0, 0, 0, 0, 0, 0, 32, 11 },
+    { "valid",  5,  5, 2, 3, 1, 2, 0, 0, 0, 0, 0, 0,  6, 11 },
+    { "valid",  5,  6, 3, 4, 2, 2, 0, 0, 0, 0, 0, 0, 11, 14 },
 
     // NONE (explicit pads)
-    { "none",  7,  7, 3, 3, 1, 1, 1, 1, 1, 1,  7,  7 },
-    { "none",  8,  8, 4, 2, 2, 2, 1, 2, 2, 1, 15, 13 },
-    { "none",  7,  8, 5, 3, 1, 2, 0, 1, 1, 0, 10, 16 },
-    { "none",  8,  7, 2, 5, 3, 1, 2, 0, 0, 2, 21,  9 },
-    { "none",  6,  6, 3, 4, 2, 3, 1, 1, 2, 0, 11, 17 },
-    { "none",  9,  5, 4, 2, 1, 3, 0, 3, 1, 1,  9, 12 },
-    { "none",  5,  9, 5, 5, 2, 2, 2, 2, 2, 2,  9, 17 },
-    { "none", 10, 10, 3, 3, 3, 3, 1, 4, 0, 3, 25, 27 },
+    { "none",  7,  7, 3, 3, 1, 1, 1, 1, 1, 1, 0, 0,  7,  7 },
+    { "none",  8,  8, 4, 2, 2, 2, 1, 2, 2, 1, 0, 0, 15, 13 },
+    { "none",  7,  8, 5, 3, 1, 2, 0, 1, 1, 0, 0, 0, 10, 16 },
+    { "none",  8,  7, 2, 5, 3, 1, 2, 0, 0, 2, 0, 0, 21,  9 },
+    { "none",  6,  6, 3, 4, 2, 3, 1, 1, 2, 0, 0, 0, 11, 17 },
+    { "none",  9,  5, 4, 2, 1, 3, 0, 3, 1, 1, 0, 0,  9, 12 },
+    { "none",  5,  9, 5, 5, 2, 2, 2, 2, 2, 2, 0, 0,  9, 17 },
+    { "none", 10, 10, 3, 3, 3, 3, 1, 4, 0, 3, 0, 0, 25, 27 },
 
     // SAME (output spatial == input spatial, stride == 1)
-    { "same",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0,  7,  7 },
+    { "same",  7,  7, 3, 3, 1, 1, 1, 1, 1, 1, 0, 0,  7,  7 },
+    { "same",  8,  8, 4, 2, 1, 1, 1, 2, 2, 1, 0, 0,  8,  8 },
+    { "same",  7,  8, 5, 3, 1, 1, 0, 1, 1, 0, 0, 0,  7,  8 },
+    { "same",  8,  7, 2, 5, 1, 1, 2, 0, 0, 2, 0, 0,  8,  7 },
+    { "same",  6,  6, 3, 4, 1, 1, 1, 1, 2, 0, 0, 0,  6,  6 },
+    { "same",  9,  5, 4, 2, 1, 1, 0, 3, 1, 1, 0, 0,  9,  5 },
+    { "same",  5,  9, 5, 5, 1, 1, 2, 2, 2, 2, 0, 0,  5,  9 },
+    { "same", 10, 10, 3, 3, 1, 1, 1, 4, 0, 3, 0, 0, 10, 10 },
+
+    // Output Padding
+    { "valid", 9,  6, 3, 5, 1, 3, 0, 0, 0, 0, 0, 1, 11, 21 },
+    { "none",  5,  9, 5, 5, 2, 2, 2, 2, 2, 2, 1, 1, 10, 18 },
+    { "same",  7,  7, 3, 3, 1, 1, 0, 0, 0, 0, 1, 0,  8,  7 },
   };
 
   const size_t inMaps = 1, maps = 2;
   for (size_t i = 0; i < configs.size(); ++i)
   {
     const Config& c = configs[i];
-    std::string sectionName = "Case - " + std::to_string(i);
+    const std::string sectionName = "Case - " + std::to_string(i);
     SECTION(sectionName)
     {
-      TransposedConvolution module(maps, c.kW, c.kH, c.dW, c.dH,
-          std::make_tuple(c.pWLeft, c.pWRight),
-          std::make_tuple(c.pHTop, c.pHBottom), 0, 0, c.paddingType);
-
+      TransposedConvolution module(
+        maps,
+        c.kW,
+        c.kH,
+        c.dW,
+        c.dH,
+        std::make_tuple(c.pWLeft, c.pWRight),
+        std::make_tuple(c.pHTop, c.pHBottom),
+        c.outputPadW,
+        c.outputPadH,
+        c.paddingType
+      );
       module.InputDimensions() = { c.inW, c.inH, inMaps };
       module.ComputeOutputDimensions();
 
@@ -202,9 +224,10 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
 }
 
 /**
- * Test the Forward and Backward passes of the TransposedConvolution layer.
+ * Test the forward, backward, and gradient functions
+ * of the TransposedConvolution layer.
  */
-TEST_CASE("TransposedConvolutionForwardBackwardTest", "[ANNLayerTest]")
+TEST_CASE("TransposedConvolutionForwardBackwardGradientTest", "[ANNLayerTest]")
 {
   struct Config
   {
