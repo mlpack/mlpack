@@ -22,6 +22,11 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
 {
  public:
 
+  AudioOptions()
+  {
+    // Do nothing.
+  }
+
   AudioOptions(const DataOptionsBase<AudioOptions>& opts) :
       DataOptionsBase<AudioOptions>()
   {
@@ -111,6 +116,168 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   {
     return static_cast<AudioOptions&>(
         DataOptionsBase<AudioOptions>::operator=(std::move(other)));
+  }
+
+  void Combine(const AudioOptions& other)
+  {
+    if (!audioDuration.has_value() && other.audioDuration.has_value())
+    {
+      audioDuration = other.audioDuration;
+    }
+    else if (audioDuration.has_value() && other.audioDuration.has_value())
+    {
+      if (audioDuration.has_value() != other.audioDuration.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "audioDuration with different values!");
+      }
+    }
+
+    if (!avgBytesPerSec.has_value() && other.avgBytesPerSec.has_value())
+    {
+      avgBytesPerSec = other.avgBytesPerSec;
+    }
+    else if (avgBytesPerSec.has_value() && other.avgBytesPerSec.has_value())
+    {
+      if (avgBytesPerSec.has_value() != other.avgBytesPerSec.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "avgBytesPerSec with different values!");
+      }
+    }
+
+    if (!bitPerSample.has_value() && other.bitPerSample.has_value())
+    {
+      bitPerSample = other.bitPerSample;
+    }
+    else if (bitPerSample.has_value() && other.bitPerSample.has_value())
+    {
+      if (bitPerSample.has_value() != other.bitPerSample.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "bitPerSample with different values!");
+      }
+    }
+
+    if (!blockAlign.has_value() && other.blockAlign.has_value())
+    {
+      blockAlign = other.blockAlign;
+    }
+    else if (blockAlign.has_value() && other.blockAlign.has_value())
+    {
+      if (blockAlign.has_value() != other.blockAlign.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "blockAlign with different values!");
+      }
+    }
+
+    if (!channels.has_value() && other.channels.has_value())
+    {
+      channels = other.channels;
+    }
+    else if (channels.has_value() && other.channels.has_value())
+    {
+      if (channels.has_value() != other.channels.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "channels with different values!");
+      }
+    }
+
+    if (!dataChunkSize.has_value() && other.dataChunkSize.has_value())
+    {
+      dataChunkSize = other.dataChunkSize;
+    }
+    else if (dataChunkSize.has_value() && other.dataChunkSize.has_value())
+    {
+      if (dataChunkSize.has_value() != other.dataChunkSize.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "dataChunkSize with different values!");
+      }
+    }
+
+    if (!fileBitRate.has_value() && other.fileBitRate.has_value())
+    {
+      fileBitRate = other.fileBitRate;
+    }
+    else if (fileBitRate.has_value() && other.fileBitRate.has_value())
+    {
+      if (fileBitRate.has_value() != other.fileBitRate.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "fileBitRate with different values!");
+      }
+    }
+
+    if (!formatTag.has_value() && other.formatTag.has_value())
+    {
+      formatTag = other.formatTag;
+    }
+    else if (formatTag.has_value() && other.formatTag.has_value())
+    {
+      if (formatTag.has_value() != other.formatTag.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "formatTag with different values!");
+      }
+    }
+
+    if (!sampleRate.has_value() && other.sampleRate.has_value())
+    {
+      sampleRate = other.sampleRate;
+    }
+    else if (sampleRate.has_value() && other.sampleRate.has_value())
+    {
+      if (sampleRate.has_value() != other.sampleRate.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "sampleRate with different values!");
+      }
+    }
+
+    if (!totalFramesRead.has_value() && other.totalFramesRead.has_value())
+    {
+      totalFramesRead = other.totalFramesRead;
+    }
+    else if (totalFramesRead.has_value() && other.totalFramesRead.has_value())
+    {
+      if (totalFramesRead.has_value() != other.totalFramesRead.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "totalFramesRead with different values!");
+      }
+    }
+
+    if (!totalPCMFramesCount.has_value() &&
+        other.totalPCMFramesCount.has_value())
+    {
+      totalPCMFramesCount = other.totalPCMFramesCount;
+    }
+    else if (totalPCMFramesCount.has_value() &&
+        other.totalPCMFramesCount.has_value())
+    {
+      if (totalPCMFramesCount.has_value() !=
+          other.totalPCMFramesCount.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "totalPCMFramesCount with different values!");
+      }
+    }
+
+    if (!totalSamples.has_value() && other.totalSamples.has_value())
+    {
+      totalSamples = other.totalSamples;
+    }
+    else if (totalSamples.has_value() && other.totalSamples.has_value())
+    {
+      if (totalSamples.has_value() != other.totalSamples.has_value())
+      {
+        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+            "totalSamples with different values!");
+      }
+    }
   }
 
   void WarnBaseConversion(const char* dataDescription) const
