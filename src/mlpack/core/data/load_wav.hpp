@@ -115,7 +115,7 @@ bool LoadWav(const std::string& filename,
 
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
-  opts.ContainerType() = wav.container;
+//  opts.ContainerType() = wav.container;
   opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()

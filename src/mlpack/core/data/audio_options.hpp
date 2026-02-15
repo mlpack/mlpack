@@ -90,6 +90,61 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return *this;
   }
 
+  // Conversions must be explicit.
+  template<typename Derived2>
+  explicit AudioOptions(const DataOptionsBase<Derived2>& other) :
+      DataOptionsBase<AudioOptions>(other) { }
+
+  template<typename Derived2>
+  explicit AudioOptions(DataOptionsBase<Derived2>&& other) :
+      DataOptionsBase<AudioOptions>(std::move(other)) { }
+
+  template<typename Derived2>
+  AudioOptions& operator=(const DataOptionsBase<Derived2>& other)
+  {
+    return static_cast<AudioOptions&>(
+        DataOptionsBase<AudioOptions>::operator=(other));
+  }
+
+  template<typename Derived2>
+  AudioOptions& operator=(DataOptionsBase<Derived2>&& other)
+  {
+    return static_cast<AudioOptions&>(
+        DataOptionsBase<AudioOptions>::operator=(std::move(other)));
+  }
+
+  void WarnBaseConversion(const char* dataDescription) const
+  {
+    if (audioDuration.has_value() && audioDuration != defaultAudioDuration)
+      this->WarnOptionConversion("audioDuration", dataDescription);
+    if (avgBytesPerSec.has_value() && avgBytesPerSec != defaultAvgBytesPerSec)
+      this->WarnOptionConversion("avgBytesPerSec", dataDescription);
+    if (bitPerSample.has_value() && bitPerSample != defaultBitPerSample)
+      this->WarnOptionConversion("bitPerSample", dataDescription);
+    if (blockAlign.has_value() && blockAlign != defaultBlockAlign)
+      this->WarnOptionConversion("blockAlign", dataDescription);
+    if (channels.has_value() && channels != defaultChannels)
+      this->WarnOptionConversion("channels", dataDescription);
+  //  if (containerType.has_value() && containerType != defaultContainerType)
+  //    this->WarnOptionConversion("containerType", dataDescription);
+    if (dataChunkSize.has_value() && dataChunkSize != defaultDataChunkSize)
+      this->WarnOptionConversion("dataChunkSize", dataDescription);
+    if (fileBitRate.has_value() && fileBitRate != defaultFileBitRate)
+      this->WarnOptionConversion("fileBitRate", dataDescription);
+    if (formatTag.has_value() && formatTag != defaultFormatTag)
+      this->WarnOptionConversion("formatTag", dataDescription);
+    if (sampleRate.has_value() && sampleRate != defaultSampleRate)
+      this->WarnOptionConversion("sampleRate", dataDescription);
+    if (totalFramesRead.has_value() &&
+        totalFramesRead != defaultTotalFramesRead)
+      this->WarnOptionConversion("totalFramesRead", dataDescription);
+    if (totalPCMFramesCount.has_value() &&
+        totalPCMFramesCount != defaultTotalPCMFramesCount)
+      this->WarnOptionConversion("totalPCMFramesCount", dataDescription);
+    if (totalSamples.has_value() && totalSamples != defaultTotalSamples)
+      this->WarnOptionConversion("totalSamples", dataDescription);
+  }
+
   static const char* DataDescription() { return "audio data"; }
 
   void Reset()
@@ -238,7 +293,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   // accessed
   // Maybe assign -1 my default ? but these are unsigned int.
   // So how we can make it easy?
-//  opts.ContainerType() = wav.container;
 
  private:
 
@@ -261,7 +315,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const drwav_uint16 defaultBitPerSample     = 0;
   constexpr static const drwav_uint16 defaultBlockAlign       = 0;
   constexpr static const drwav_uint16 defaultChannels         = 0;
-  constexpr static const drwav_container defaultContainerType = 0; // Check
+  //constexpr static const drwav_container defaultContainerType = 0; // Check
   constexpr static const drwav_uint64 defaultDataChunkSize    = 0;
   constexpr static const drwav_uint64 defaultFileBitRate      = 0;
   constexpr static const drwav_uint16 defaultFormatTag        = 0;

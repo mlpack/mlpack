@@ -73,6 +73,8 @@ bool Load(const std::string& filename,
     Timer::Stop("loading_data");
     return false;
   }
+  const bool isAudioFormat = opts.Format() == FileType::WAV;
+  std::cout << isAudioFormat << std::endl;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -96,6 +98,22 @@ bool Load(const std::string& filename,
         success = LoadImage(files, matrix, imgOpts);
         if (copyBack)
           opts = std::move(imgOpts);
+      }
+    }
+    else if (isAudioFormat)
+    {
+      std::cout << "it is not possible to be here" << std::endl;
+      if constexpr (isSparseMatrixType)
+      {
+        return HandleError("Cannot load image data into a sparse matrix. "
+        "Please use dense matrix instead.", opts);
+      }
+      else
+      {
+        AudioOptions audOpts(std::move(opts));
+        success = LoadWav(filename, matrix, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
       }
     }
     else
