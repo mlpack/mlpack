@@ -12,6 +12,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_WAV_HPP
 #define MLPACK_CORE_DATA_LOAD_WAV_HPP
 
+#include "audio_options.hpp"
+
 namespace mlpack {
 
 /**
@@ -61,15 +63,14 @@ namespace mlpack {
  * In real life, most of digital audio data, is 2 channels (L,R) whether this
  * for MP3 or WAV format.
  */
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool LoadWav(const std::string& filename,
              MatType& matrix,
-             const DataOptionsType& opts)
+             AudioOptions& opts)
 {
   drwav wav;
   drwav_uint64 framesRead;
   drwav_uint64 totalFramesRead = 0;
-  drwav_bool32 hasError = DRMP3_FALSE;
   arma::fmat fullFileFrames;
 
   if (!drwav_init_file(&wav, filename.c_str(), NULL))
@@ -78,37 +79,47 @@ bool LoadWav(const std::string& filename,
         "and try again.", opts);
   }
 
-  drwav_uint64 totalFrameCount = wav.totalPCMFrameCount;
-  drwav_seek_to_pcm_frame(&wav, totalFrameCount / 2);
+  opts.TotalPCMFramesCount() = wav.totalPCMFrameCount;
+  opts.Channels() = wav.channels;
+
+  drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
   drwav_seek_to_pcm_frame(&wav, 0);
 
   // The size of the array is defined by drlibs for easy memory management.
   float pcm[4096];
 
   std::vector<float> fullFrames;
-  fullFrames.reserve(totalFrameCount * wav.channels);
+  fullFrames.reserve(opts.TotalPCMFramesCount() * opts.Channels());
   // We will read iterately the PCM frames, each time we fill the buffer we
   // insert it to std::vector<> and repeat again until we read the entire file.
   for (;;)
   {
     framesRead = drwav_read_pcm_frames_f32(&wav,
-        sizeof(pcm)/sizeof(pcm[0])/wav.channels, pcm);
+        sizeof(pcm)/sizeof(pcm[0])/opts.Channels(), pcm);
     if (framesRead == 0)
       break;
 
-    size_t samplesRead = framesRead * wav.channels;
+    size_t samplesRead = framesRead * opts.Channels();
     fullFrames.insert(fullFrames.end(), pcm, pcm + samplesRead);
 
-    totalFramesRead += framesRead;
+    opts.TotalFramesRead() += framesRead;
   }
 
-  if (totalFramesRead != totalFrameCount)
+  if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
     std::stringstream oss;
-    oss << "Frame count mismatch: " << (int)totalFrameCount << "(queried) != "
-        << (int)totalFramesRead <<" (read)";
+    oss << "Frame count mismatch: " << (int)opts.TotalPCMFramesCount()
+        << "(queried) != " << (int)opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
+
+  opts.SampleRate() = wav.sampleRate;
+  opts.BitsPerSample() = wav.bitsPerSample;
+  opts.ContainerType() = wav.container;
+  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
+  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
+  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
+      * opts.Channels();
 
   matrix = arma::conv_to<arma::Mat<float>>::from(std::move(fullFrames));
   return true;
