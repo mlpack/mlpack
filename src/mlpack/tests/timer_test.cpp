@@ -9,6 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+
+#include <mlpack/core.hpp>
+
 #ifndef _WIN32
   #include <sys/time.h>
 #endif
@@ -17,8 +20,6 @@
 #ifdef _WIN32
   #include <windows.h>
 #endif
-
-#include <mlpack/core.hpp>
 
 #include "catch.hpp"
 
