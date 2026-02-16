@@ -549,14 +549,13 @@ void TransposedConvolution<
   }
   else if (paddingType == "same")
   {
-    InitializeSamePadding();
-    if (kernelWidth < padWLeft + 1 || kernelWidth < padWRight + 1 ||
-        kernelHeight < padHTop + 1 || kernelHeight < padHBottom + 1)
+    if (strideWidth > 1 || strideHeight)
     {
       throw std::logic_error(
           "TransposedConvolution::ComputeOutputDimensions(): "
-          "Cannot apply 'same' padding with the current parameters");
+          "Cannot apply 'same' padding with non-unit stride.");
     }
+    InitializeSamePadding();
   }
 
   // Calculate padding for the forward pass of transposed convolution
