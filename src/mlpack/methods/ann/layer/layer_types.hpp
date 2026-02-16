@@ -29,6 +29,7 @@
 #include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
+#include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
