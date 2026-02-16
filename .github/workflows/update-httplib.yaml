@@ -27,19 +27,18 @@ jobs:
           # Set the current release tag.
           echo "current_tag=$(echo $HTTPLIB_VERSION_VALUE)" >> $GITHUB_OUTPUT
 
-      - name: Update Catch
+      - name: Update httplib
         if: steps.httplib-header.outputs.current_tag != steps.httplib-header.outputs.release_tag
         env:
           CURRENT_TAG: ${{ steps.httplib-header.outputs.current_tag }}
           RELEASE_TAG: ${{ steps.httplib-header.outputs.release_tag }}
         run: |
-          # Delete the catch.hpp.
+          # Delete the existing httplib.h.
           rm -f src/mlpack/core/httplib/bundled/httplib.h
           # Download the release.
           curl -sL https://api.github.com/repos/yhirose/cpp-httplib/tarball/${HTTPLIB_RELEASE_VERSION} > httplib.tar.gz
           tar -vxzf httplib.tar.gz
-          cd yhirose*
-          cp httplib.h src/mlpack/core/httplib/bundled/httplib.h
+          cp yhirose*/httplib.h src/mlpack/core/httplib/bundled/httplib.h
 
       - name: Create Pull Request For cpp-httplib
         if: steps.httplib-header.outputs.current_tag != steps.httplib-header.outputs.release_tag

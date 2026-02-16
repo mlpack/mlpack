@@ -19,7 +19,7 @@
 <p align="center">
   <em>
     Download:
-    <a href="https://www.mlpack.org/files/mlpack-4.6.2.tar.gz">current stable version (4.6.2)</a>
+    <a href="https://www.mlpack.org/files/mlpack-4.7.0.tar.gz">current stable version (4.7.0)</a>
   </em>
 </p>
 
@@ -109,8 +109,10 @@ Citations are beneficial for the growth and improvement of mlpack.
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
-If the STB library headers are available, image loading support will be
-available.
+mlpack bundles the STB and httplib header-only libraries for Image loading
+support, and dataset download is supported by default. If you prefer to
+use versions available on your system, see
+[the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
