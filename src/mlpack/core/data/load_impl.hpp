@@ -111,9 +111,9 @@ bool Load(const std::string& filename,
       else
       {
         AudioOptions audOpts(std::move(opts));
-        // maybe add a several files instead of one, a vector might allow us to
-        // escape this shitty situation.
-        success = LoadWav(filename, matrix, audOpts);
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadWav(files, matrix, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
       }
@@ -173,6 +173,8 @@ bool Load(const std::vector<std::string>& files,
   }
 
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+
+  const bool isAudioFormat = opts.Format() == FileType::WAV;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -185,6 +187,13 @@ bool Load(const std::vector<std::string>& files,
     success = LoadImage(files, matrix, imgOpts);
     if (copyBack)
       opts = std::move(imgOpts);
+  }
+  else if (isAudioFormat)
+  {
+    AudioOptions audOpts(std::move(opts));
+    success = LoadWav(files, matrix, audOpts);
+    if (copyBack)
+      opts = std::move(audOpts);
   }
   else
   {
