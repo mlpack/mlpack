@@ -111,6 +111,8 @@ bool Load(const std::string& filename,
       else
       {
         AudioOptions audOpts(std::move(opts));
+        // maybe add a several files instead of one, a vector might allow us to
+        // escape this shitty situation.
         success = LoadWav(filename, matrix, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
