@@ -68,6 +68,9 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_DONT_USE_SYSTEM_STB` | `#define MLPACK_DONT_USE_SYSTEM_STB` | Force usage of the bundled version of STB.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_STB=ON`. |
 | `-DMLPACK_USE_SYSTEM_MP3` | `#define MLPACK_USE_SYSTEM_MP3` | Use the version of dr\_mp3 available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` is available. |
 | `-DMLPACK_USE_SYSTEM_WAV` | `#define MLPACK_USE_SYSTEM_WAV` | Use the version of dr\_wav available on the system instead of the version bundled with mlpack.  If set, make sure `dr_wav.h` is available. |
+| `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
+| `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
+| `-DMLPACK_DISABLE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems).|
 
 ***Note:*** If your code serializes (saves or loads) mlpack neural networks, the
 `MLPACK_ENABLE_ANN_SERIALIZATION` option must be enabled.  This option is not
