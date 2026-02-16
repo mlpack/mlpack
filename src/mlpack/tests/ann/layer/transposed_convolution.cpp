@@ -206,8 +206,8 @@ TEST_CASE("TransposedConvolutionDimensionsTest", "[ANNLayerTest]")
         std::make_tuple(c.pHTop, c.pHBottom),
         c.outputPadW,
         c.outputPadH,
-        c.paddingType
-      );
+        c.paddingType);
+
       module.InputDimensions() = { c.inW, c.inH, inMaps };
       module.ComputeOutputDimensions();
 
