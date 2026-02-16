@@ -549,7 +549,7 @@ void TransposedConvolution<
   }
   else if (paddingType == "same")
   {
-    if (strideWidth > 1 || strideHeight)
+    if (strideWidth > 1 || strideHeight > 1)
     {
       throw std::logic_error(
           "TransposedConvolution::ComputeOutputDimensions(): "
