@@ -132,6 +132,9 @@ PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the matri
 PARAM_UROW_IN_REQ("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
+// Optional parmaters for testing.
+PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+
 // Optimizer parameters.
 PARAM_DOUBLE_IN("lambda", "L2-regularization parameter for training.", "L",
     0.0);

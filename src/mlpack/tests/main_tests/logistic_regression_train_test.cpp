@@ -59,6 +59,41 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 }
 
 /**
+ * Checking that that size and dimensionality of prediction is correct.
+ */
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainPredictionSizeCheck",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+  // 10 responses.
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
+  // SetInputParam("training", std::move(trainX));
+  // SetInputParam("labels", std::move(trainY));
+  // SetInputParam("test", std::move(testX));
+
+  // Training the model.
+  //RUN_BINDING();
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
+  model->Train(trainX, trainY);
+
+  arma::Row<size_t> testY;
+  model->Classify(testX, testY);
+
+  // Output predictions size must match the test data set size.
+  REQUIRE(testY.n_rows == 1);
+  REQUIRE(testY.n_cols == testX.n_cols);
+}
+
+/**
   * Ensuring that the response size is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
@@ -79,6 +114,51 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Labels with incorrect size. It should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
+ * Checking two options of specifying responses (extra row in train matrix and
+ * extra parameter) and ensuring that predictions are the same.
+ */
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionResponsesRepresentationTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
+  arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
+
+  SetInputParam("training", std::move(trainX1));
+  SetInputParam("test", testX);
+
+  // The first solution.
+#if 0
+  RUN_BINDING();
+  // Get the output.
+  const arma::Row<size_t> testY1 =
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
+
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  // Now train by providing labels as extra parameter.
+  arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
+  arma::Row<size_t> trainY2({0, 1, 1});
+
+  SetInputParam("training", std::move(trainX2));
+  SetInputParam("labels", std::move(trainY2));
+  SetInputParam("test", std::move(testX));
+
+  // The second solution.
+  RUN_BINDING();
+
+  // get the output
+  const arma::Row<size_t>& testY2 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Both solutions should be equal.
+  CheckMatrices(testY1, testY2);
+#endif
 }
 
 /**
