@@ -17,7 +17,6 @@
 #include <cassert>     // runtime checks
 
 namespace mlpack {
-namespace emd {
 
 // Generic to support Armadillo compatible column types
 template<typename ColType>
@@ -137,7 +136,6 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   }
 }
 
-} // namespace emd
 } // namespace mlpack
 
 #endif

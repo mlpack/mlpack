@@ -15,8 +15,7 @@
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/transforms/spline_envelope.hpp>
 
-namespace mlpack
-{
+namespace mlpack {
 
 template<typename ColType>
 inline void FindExtrema(const ColType& h,
@@ -26,7 +25,7 @@ inline void FindExtrema(const ColType& h,
   // Identify indices of strict local maxima and minima (discrete neighbors) and
   // always include endpoints. This determines whether the residue is monotone
   // and supplies knots for spline envelopes in sifting.
-  using eT = typename ColType::elem_type; // getting unused error in test build
+  using eT = typename ColType::elem_type; 
   const size_t N = h.n_elem;
 
   maxIdx.reset();
@@ -52,18 +51,12 @@ inline void FindExtrema(const ColType& h,
   std::vector<arma::uword> maxTemp;
   std::vector<arma::uword> minTemp;
 
-  for (size_t i = 1; i + 1 < N; ++i)
-  {
-    const eT him1 = h[i - 1];
-    const eT hi   = h[i];
-    const eT hip1 = h[i + 1];
-
-    if ((hi > him1) && (hi > hip1))
-      maxTemp.push_back((arma::uword) i);
-
-    if ((hi < him1) && (hi < hip1))
-      minTemp.push_back((arma::uword) i);
-  }
+  arma::uvec maxTemp = find(
+    h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2) &&
+    h.subvec(1, h.n_elem - 2) > h.subvec(2, h.n_elem - 1));
+  arma::uvec minTemp = find(
+    h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2) &&
+    h.subvec(1, h.n_elem - 2) < h.subvec(2, h.n_elem - 1));
 
   // Always include endpoints to allow envelope construction on monotone data.
   if (maxTemp.empty() || maxTemp.front() != 0)
