@@ -39,6 +39,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Training data is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
+
 /**
  * Ensuring that absence of responses is checked.
  */

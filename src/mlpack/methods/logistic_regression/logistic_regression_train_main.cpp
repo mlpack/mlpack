@@ -40,7 +40,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "  y = (1 / 1 + e^-(X * b))."
     "\n\n"
-    "In this setting, y corresponds to class labels and X corresponds to data."
+    "In this setting, y corresponds to class labels and X corresponds to data.");
+#if 0
     "\n\n"
     "This program allows loading a logistic regression model (via the "
     "FIXME_PRINT_PARAM_STRING(input_model  parameter) "
@@ -93,7 +94,7 @@ BINDING_LONG_DESC(
     "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
     std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
     "softmax regression implementation.");
-
+#endif
 // Example.
 BINDING_EXAMPLE(
     "As an example, to train a logistic regression model on the data '" +
@@ -105,13 +106,15 @@ BINDING_EXAMPLE(
     //    "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
     //    true) +
     "\n\n"
+                );
+#if 0
     "Then, to use that model to predict classes for the dataset '" +
-    PRINT_DATASET("test") + "', storing the output predictions in '" +
+    PRINT_DATASET("test") + "', storing the output predictions in '") +
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n"); // +
     //PRINT_CALL("logistic_regression", "input_model"
 //           "lr_model", "test", "test", "predictions", "predictions"));
-
+#endif
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
@@ -166,15 +169,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "output_model" }, false, "trained model "
       "will not be saved");
 
-  RequireAtLeastOnePassed(params, { "output_model", "predictions",
-      "probabilities"}, false, "no output will be saved");
+  //RequireAtLeastOnePassed(params, { "output_model", "predictions",
+  //    "probabilities"}, false, "no output will be saved");
 
-  ReportIgnoredParam(params, {{ "training", false }},
-      "print_training_accuracy");
+  //ReportIgnoredParam(params, {{ "training", false }},
+  //    "print_training_accuracy");
 
-  RequireAtLeastOnePassed(params,
-      { "test", "output_model", "print_training_accuracy" }, false,
-      "the trained logistic regression model will not be used or saved");
+  //RequireAtLeastOnePassed(params,
+  //    { "test", "output_model", "print_training_accuracy" }, false,
+  //    "the trained logistic regression model will not be used or saved");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
@@ -198,9 +201,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       true, "lambda must be positive or zero");
 
   // Decision boundary must be between 0 and 1.
-  RequireParamValue<double>(params, "decision_boundary",
-      [](double x) { return x >= 0.0 && x <= 1.0; }, true,
-      "decision boundary must be between 0.0 and 1.0");
+  // RequireParamValue<double>(params, "decision_boundary",
+  //     [](double x) { return x >= 0.0 && x <= 1.0; }, true,
+  //     "decision boundary must be between 0.0 and 1.0");
 
   RequireParamValue<double>(params, "step_size",
       [](double x) { return x >= 0.0; }, true, "step size must be positive");
@@ -249,9 +252,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
     {
-      // Clean memory if needed.
-      if (!params.Has("input_model"))
-        delete model;
+      // // Clean memory if needed.
+      // if (!params.Has("input_model"))
+      //   delete model;
 
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
@@ -269,21 +272,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         << "than 2 rows." << endl;
   }
 
-  // The initial predictors for y, Nx1.
-  responses = ConvTo<arma::Row<size_t>>::From(
-      regressors.row(regressors.n_rows - 1));
-  regressors.shed_row(regressors.n_rows - 1);
-
   // Verify the labels.
   if (max(responses) > 1)
   {
-    // Clean memory if needed.
-    if (!params.Has("input_model"))
-      delete model;
+    // // Clean memory if needed.
+    // if (!params.Has("input_model"))
+    //   delete model;
 
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
   }
+
+  // The initial predictors for y, Nx1.
+  responses = ConvTo<arma::Row<size_t>>::From(
+      regressors.row(regressors.n_rows - 1));
+  regressors.shed_row(regressors.n_rows - 1);
 
   // Now, do the training.
   model->Lambda() = lambda;
@@ -315,20 +318,20 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     timers.Stop("logistic_regression_optimization");
   }
 
-  // Did we want training accuracy?
-  if (params.Has("print_training_accuracy"))
-  {
-    timers.Start("lr_prediction");
-    arma::Row<size_t> predictions;
-    model->Classify(regressors, predictions);
+  // // Did we want training accuracy?
+  // if (params.Has("print_training_accuracy"))
+  // {
+  //   timers.Start("lr_prediction");
+  //   arma::Row<size_t> predictions;
+  //   model->Classify(regressors, predictions);
 
-    const size_t correct = accu(predictions == responses);
+  //   const size_t correct = accu(predictions == responses);
 
-    Log::Info << correct << " of " << responses.n_elem << " correct on "
-        << "training set ("
-        << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
-    timers.Stop("lr_prediction");
-  }
+  //   Log::Info << correct << " of " << responses.n_elem << " correct on "
+  //       << "training set ("
+  //       << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
+  //   timers.Stop("lr_prediction");
+  // }
 
   params.Get<LogisticRegression<>*>("output_model") = model;
 }
