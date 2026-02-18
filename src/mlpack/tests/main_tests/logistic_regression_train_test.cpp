@@ -276,6 +276,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
+
 /**
   * Ensuring that training responses contain only two classes (0 or 1).
  **/
@@ -325,6 +326,31 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 }
 
 /**
+  * Ensuring that step size for optimizer is non negative.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainNonNegativeStepSizeTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 2;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("step_size", double(-0.01));
+
+  // Step size for optimizer is negative. It should throw a runtime error.
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
   * Ensuring that tolerance is non negative.
  **/
 TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
@@ -346,4 +372,250 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Tolerance is negative. It should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
+  * Ensuring changing Maximum number of iterations changes the output model.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainMaxIterationsChangeTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("max_iterations", int(1));
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::rowvec parameters1 =
+      std::move(params.Get<LogisticRegression<>*>("output_model")
+                ->Parameters());
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("max_iterations", int(100));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
+
+  // Check that the parameters (parameters1 and parameters2) are not equal
+  // which ensures Max Iteration changes the output model.
+  // arma::all function checks that each element of the vector is equal to zero.
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Max Iteration) has no effect on the output");
+  }
+  else { // adding a require to have the test 'count' rather than just not fail
+    REQUIRE(arma::all((parameters1-parameters2) != 0));
+  }
+}
+
+/**
+  * Ensuring that lambda has some effects on the output.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainLambdaChangeTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 4;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("lambda", double(0));
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::rowvec parameters1 =
+      std::move(params.Get<LogisticRegression<>*>("output_model")
+                ->Parameters());
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("lambda", double(1000));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
+
+  // Check that the parameters (parameters1 and parameters2) are not equal
+  // which ensures lambda changes the output model.
+  // arma::all function checks that each element of the vector is equal to zero.
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(lambda) has no effect on the output");
+  } else { // adding a require to have the test 'count' rather than just not fail
+    REQUIRE(arma::all((parameters1-parameters2) != 0));
+  }
+}
+
+/**
+  * Ensuring that Step size has some effects on the output.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainStepSizeChangeTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("step_size", double(0.02));
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::rowvec parameters1 =
+      std::move(params.Get<LogisticRegression<>*>("output_model")
+                ->Parameters());
+
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("step_size", double(1.02));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
+
+  // Check that the parameters (parameters1 and parameters2) are not equal
+  // which ensures Step Size changes the output model.
+  // arma::all function checks that each element of the vector is equal to zero.
+  if (arma::all((parameters1-parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Step Size) has no effect on the output");
+  } else { // adding a require to have the test 'count' rather than just not fail
+    REQUIRE(arma::all((parameters1-parameters2) != 0));
+  }
+}
+
+/**
+  * Ensuring that lbfgs optimizer converges to a different result than sgd.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainOptimizerChangeTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("max_iterations", int(1000));
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after first training.
+  const arma::rowvec parameters1 = std::move(
+      params.Get<LogisticRegression<>*>("output_model")->Parameters());
+
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("max_iterations", int(1000));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the parameters of the output model obtained after second training.
+  const arma::rowvec& parameters2 =
+      params.Get<LogisticRegression<>*>("output_model")->Parameters();
+
+  // Check that the parameters (parameters1 and parameters2) are not equal which
+  // ensures that different optimizer converge to different results.
+  // arma::all function checks that each element of the vector is equal to zero.
+  if (arma::all((parameters1 - parameters2) == 0))
+  {
+    FAIL("parameters1 and parameters2 are equal. "
+         "Parameter(Step Size) has no effect on the output");
+  } else { // adding a require to have the test 'count' rather than just not fail
+    REQUIRE(arma::all((parameters1-parameters2) != 0));
+  }
+
+}
+
+/**
+ * Check that running the binding with print_training_accuracy set to true
+ * does not crash.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainPrintTrainingAccuracyTest",
+                "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 100;
+  constexpr int D = 5;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = arma::randi<arma::Row<size_t>>(N,
+      DistrParam(0, 1));
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("print_training_accuracy", true);
+
+  // Run the binding with print_training_accuracy set to true.
+  REQUIRE_NOTHROW(RUN_BINDING());
 }

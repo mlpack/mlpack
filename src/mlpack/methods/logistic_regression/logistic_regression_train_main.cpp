@@ -154,6 +154,9 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
+PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
+    "on the training set will be printed (verbose must also be specified).",
+    "a");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -183,12 +186,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   // ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
-  //ReportIgnoredParam(params, {{ "training", false }},
-  //    "print_training_accuracy");
+  ReportIgnoredParam(params, {{ "training", false }},
+      "print_training_accuracy");
 
-  //RequireAtLeastOnePassed(params,
-  //    { "test", "output_model", "print_training_accuracy" }, false,
-  //    "the trained logistic regression model will not be used or saved");
+  RequireAtLeastOnePassed(params,
+      { "test", "output_model", "print_training_accuracy" }, false,
+      "the trained logistic regression model will not be used or saved");
 
   // Max Iterations needs to be positive.
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
@@ -335,19 +338,19 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     // // Did we want training accuracy?
-    // if (params.Has("print_training_accuracy"))
-    // {
-    //   timers.Start("lr_prediction");
-    //   arma::Row<size_t> predictions;
-    //   model->Classify(regressors, predictions);
+    if (params.Has("print_training_accuracy"))
+    {
+      timers.Start("lr_prediction");
+      arma::Row<size_t> predictions;
+      model->Classify(regressors, predictions);
 
-    //   const size_t correct = accu(predictions == responses);
+      const size_t correct = accu(predictions == responses);
 
-    //   Log::Info << correct << " of " << responses.n_elem << " correct on "
-    //       << "training set ("
-    //       << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
-    //   timers.Stop("lr_prediction");
-    // }
+      Log::Info << correct << " of " << responses.n_elem << " correct on "
+          << "training set ("
+          << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
+      timers.Stop("lr_prediction");
+    }
   }
 
   if (params.Has("test"))
