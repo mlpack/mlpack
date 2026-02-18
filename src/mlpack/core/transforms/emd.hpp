@@ -48,29 +48,18 @@ inline void FindExtrema(const ColType& h,
     return;
   }
 
-  std::vector<arma::uword> maxTemp;
-  std::vector<arma::uword> minTemp;
-
-  arma::uvec maxTemp = find(
-    h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2) &&
+  arma::uvec maxIdx = find(
+    h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2) %
     h.subvec(1, h.n_elem - 2) > h.subvec(2, h.n_elem - 1));
-  arma::uvec minTemp = find(
-    h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2) &&
+  arma::uvec minIdx = find(
+    h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2) %
     h.subvec(1, h.n_elem - 2) < h.subvec(2, h.n_elem - 1));
 
   // Always include endpoints to allow envelope construction on monotone data.
-  if (maxTemp.empty() || maxTemp.front() != 0)
-    maxTemp.insert(maxTemp.begin(), arma::uword(0));
-  if (maxTemp.back() != (arma::uword) (N - 1))
-    maxTemp.push_back((arma::uword) (N - 1));
-
-  if (minTemp.empty() || minTemp.front() != 0)
-    minTemp.insert(minTemp.begin(), arma::uword(0));
-  if (minTemp.back() != (arma::uword) (N - 1))
-    minTemp.push_back((arma::uword) (N - 1));
-
-  maxIdx = arma::conv_to<arma::uvec>::from(maxTemp);
-  minIdx = arma::conv_to<arma::uvec>::from(minTemp);
+  if (minIdx.empty() || minIdx.front() != 0)
+    minIdx.insert(minIdx.begin(), arma::uword(0));
+  if (minIdx.back() != (arma::uword) (N - 1))
+    minIdx.push_back((arma::uword) (N - 1));
 }
 //helper to count interior extrema
 template<typename ColType>
@@ -136,7 +125,8 @@ inline double L2NormCpuCopy(const ColType& x)
 template<typename ColType>
 inline void SiftingStep(const ColType& h,
                         ColType& hNext,
-                        ColType* meanEnvOut = nullptr)
+                        ColType* meanEnvOut = nullptr,
+                        size_t* numExtremaOut = nullptr)
 {
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
@@ -153,7 +143,7 @@ inline void SiftingStep(const ColType& h,
 
   FindExtrema(h, maxIdx, minIdx);
 
-  using mlpack::emd::BuildSplineEnvelope;
+  using mlpack::BuildSplineEnvelope;
   BuildSplineEnvelope(h, maxIdx, upper);
   BuildSplineEnvelope(h, minIdx, lower);
 
@@ -165,15 +155,20 @@ inline void SiftingStep(const ColType& h,
 
   if (meanEnvOut)
     *meanEnvOut = std::move(meanEnv);
+  if (numExtremaOut)
+    *numExtremaOut = 
+      (maxIdx.n_elem >= 2 ? maxIdx.n_elem - 2 : 0) +
+      (minIdx.n_elem >= 2 ? minIdx.n_elem - 2 : 0);
+
 }
 
 //extract first IMF via sifting, using EMD stopping criteria
 
 template<typename ColType>
-inline void FirstImf(const ColType& signal,
+inline bool FirstImf(const ColType& signal,
                      ColType& imf,
-                     const size_t maxSiftIter = 10,
-                     const double tolMean = 1e-2)
+                     const size_t maxSiftIter = 50,
+                     const double tolMean = 1e-3)
 {
   using eT = typename ColType::elem_type;
 
@@ -183,8 +178,13 @@ inline void FirstImf(const ColType& signal,
 
   for (size_t iter = 0; iter < maxSiftIter; ++iter)
   {
-    SiftingStep(h, hNew, &meanEnv);
+    size_t ext = 0;
+    SiftingStep(h, hNew, &meanEnv, &ext);
 
+    // If the current signal is monotone, EMD is NA
+    // ext = # extrema points
+    if (iter == 0 && ext <= 2)
+      return false;
     // mean-envelope criterion
     // mean envelope should be close to zero
     const double meanRatio = (L2Norm(h) > 0.0) ? (L2Norm(meanEnv) / L2Norm(h))
@@ -192,7 +192,6 @@ inline void FirstImf(const ColType& signal,
 
     // IMF criterion: extrema vs zero-crossings
     // number of extrema and zero-crossings must differ at most by one
-    const size_t ext = CountInteriorExtrema(hNew);
     const size_t zc  = CountZeroCrossings(hNew);
     const bool imfShapeOk = (std::max(ext, zc) - std::min(ext, zc) <= 1);
 
@@ -203,6 +202,7 @@ inline void FirstImf(const ColType& signal,
   }
 
   imf = h;
+  return true;
 }
 
 } // namespace mlpack
@@ -260,7 +260,8 @@ inline void EMD(const ColType& signal,
       break;
 
     ColType imf;
-    FirstImf(residue, imf, maxSiftIter, tol); // Produce next IMF via sifting
+    if (!FirstImf(residue, imf, maxSiftIter, tol)) // Get next IMF via sifting
+      break;
 
     const double imfNorm = arma::norm(imf, 2);
     if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)
