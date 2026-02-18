@@ -13,8 +13,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_HANLE_FILES_HPP
-#define MLPACK_CORE_DATA_HANLE_FILES_HPP
+#ifndef MLPACK_CORE_DATA_HANDLE_FILES_HPP
+#define MLPACK_CORE_DATA_HANDLE_FILES_HPP
 
 #include "extension.hpp"
 #include "string_algorithms.hpp"
