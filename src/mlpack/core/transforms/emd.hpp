@@ -107,20 +107,14 @@ inline double L2NormCpuCopy(const ColType& x)
 
 // sifting step extracts mean envelope and produces next h
 template<typename ColType>
-inline void SiftingStep(const ColType& h,
-                        ColType& hNext,
-                        ColType* meanEnvOut = nullptr,
-                        size_t* numExtremaOut = nullptr)
+inline void SiftingStep(ColType& h,
+                        ColType& meanEnvOut,
+                        size_t& numExtremaOut)
 {
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
-  if (N == 0)
-  {
-    hNext.reset();
-    if (meanEnvOut) meanEnvOut->reset();
-    return;
-  }
+  if (N == 0) { meanEnvOut.reset(); numExtremaOut = 0; return; }
 
   arma::uvec maxIdx, minIdx;
   ColType upper(N), lower(N);
@@ -131,19 +125,14 @@ inline void SiftingStep(const ColType& h,
   BuildSplineEnvelope(h, maxIdx, upper);
   BuildSplineEnvelope(h, minIdx, lower);
 
-  ColType meanEnv(N);
-  meanEnv = eT(0.5) * (upper + lower);
+  meanEnvOut = (upper + lower)/2;
 
-  hNext.set_size(N);
-  hNext = h - meanEnv;
-
-  if (meanEnvOut)
-    *meanEnvOut = std::move(meanEnv);
-  if (numExtremaOut)
-    *numExtremaOut = 
-      (maxIdx.n_elem >= 2 ? maxIdx.n_elem - 2 : 0) +
-      (minIdx.n_elem >= 2 ? minIdx.n_elem - 2 : 0);
-
+  h -= meanEnvOut; //in-place update to next h
+  
+  // count the number of extrema 
+  numExtremaOut = 
+    (maxIdx.n_elem >= 2 ? maxIdx.n_elem - 2 : 0) +
+    (minIdx.n_elem >= 2 ? minIdx.n_elem - 2 : 0);
 }
 
 //extract first IMF via sifting, using EMD stopping criteria
@@ -163,7 +152,7 @@ inline bool FirstImf(const ColType& signal,
   for (size_t iter = 0; iter < maxSiftIter; ++iter)
   {
     size_t ext = 0;
-    SiftingStep(h, hNew, &meanEnv, &ext);
+    SiftingStep(h, meanEnv, ext);
 
     // If the current signal is monotone, EMD is NA
     // ext = # extrema points
