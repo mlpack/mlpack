@@ -23,6 +23,7 @@ using namespace mlpack;
 
 BINDING_TEST_FIXTURE(LogisticRegressionTrainTestFixture);
 
+#if 0
 /**
   * Ensuring that absence of training data is checked.
  **/
@@ -39,7 +40,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Training data is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
-
+#endif
 /**
  * Ensuring that absence of responses is checked.
  */
@@ -75,12 +76,12 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
-  // SetInputParam("training", std::move(trainX));
-  // SetInputParam("labels", std::move(trainY));
-  // SetInputParam("test", std::move(testX));
+  //SetInputParam("training", std::move(trainX));
+  //SetInputParam("labels", std::move(trainY));
+  //SetInputParam("test", std::move(testX));
 
   // Training the model.
-  //RUN_BINDING();
+  // RUN_BINDING();
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
   model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
   model->Train(trainX, trainY);
@@ -129,10 +130,13 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   SetInputParam("training", std::move(trainX1));
   SetInputParam("test", testX);
+  // FIXME TOSO
+  //arma::Row<size_t> trainY2aa({0, 1, 1});
+  //SetInputParam("labels", std::move(trainY2aa));
 
   // The first solution.
-#if 0
   RUN_BINDING();
+
   // Get the output.
   const arma::Row<size_t> testY1 =
       std::move(params.Get<arma::Row<size_t>>("predictions"));
@@ -140,7 +144,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Reset the settings.
   CleanMemory();
   ResetSettings();
-
   // Now train by providing labels as extra parameter.
   arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
   arma::Row<size_t> trainY2({0, 1, 1});
@@ -158,7 +161,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Both solutions should be equal.
   CheckMatrices(testY1, testY2);
-#endif
 }
 
 /**

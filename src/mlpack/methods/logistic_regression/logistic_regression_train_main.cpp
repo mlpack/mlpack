@@ -152,6 +152,8 @@ PARAM_INT_IN("batch_size", "Batch size for SGD.", "b", 64);
 //PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model " "(parameters).", "m");
 PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
+PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
+    "the predictions for the test set will be saved.", "P");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -232,7 +234,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::Row<size_t> predictions;
 
   // Load data matrix.
-  regressors = std::move(params.Get<arma::mat>("training"));
+  if (params.Has("training"))
+    regressors = std::move(params.Get<arma::mat>("training"));
 
   // Load the model, if necessary.
   LogisticRegression<>* model;
@@ -250,7 +253,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Check if the responses are in a separate file.
-  if (params.Has("labels"))
+  if (params.Has("training") && params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
@@ -263,20 +266,27 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << "training dataset." << endl;
     }
   }
-
-  // Checking the size of training data if no labels are passed.
-  if (regressors.n_rows < 2)
+  else if (params.Has("training"))
   {
-    // Clean memory if needed.
-    //if (!params.Has("input_model"))
-    //  delete model;
+    // Checking the size of training data if no labels are passed.
+    if (regressors.n_rows < 2)
+    {
+      // Clean memory if needed.
+      //if (!params.Has("input_model"))
+      //  delete model;
 
-    Log::Fatal << "Can't get responses from training data since it has less "
-        << "than 2 rows." << endl;
+      Log::Fatal << "Can't get responses from training data since it has less "
+          << "than 2 rows." << endl;
+    }
+
+    // The initial predictors for y, Nx1.
+    responses = ConvTo<arma::Row<size_t>>::From(
+        regressors.row(regressors.n_rows - 1));
+    regressors.shed_row(regressors.n_rows - 1);
   }
 
   // Verify the labels.
-  if (max(responses) > 1)
+  if (params.Has("training") && max(responses) > 1)
   {
     // // Clean memory if needed.
     // if (!params.Has("input_model"))
@@ -285,11 +295,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
   }
-
-  // The initial predictors for y, Nx1.
-  responses = ConvTo<arma::Row<size_t>>::From(
-      regressors.row(regressors.n_rows - 1));
-  regressors.shed_row(regressors.n_rows - 1);
 
   // Now, do the training.
   model->Lambda() = lambda;
