@@ -33,18 +33,18 @@ BINDING_SHORT_DESC(
     "future use.");
 
 // Long description.
-BINDING_LONG_DESC(
+BINDING_LONG_DESC("TODO");
+#if 0
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
     "\n\n"
     "  y = (1 / 1 + e^-(X * b))."
     "\n\n"
-    "In this setting, y corresponds to class labels and X corresponds to data.");
-#if 0
+    "In this setting, y corresponds to class labels and X corresponds to data."
     "\n\n"
-    "This program allows loading a logistic regression model (via the "
-    "FIXME_PRINT_PARAM_STRING(input_model  parameter) "
+    "This program allows loading a logistic regression model (via the " +
+    PRINT_PARAM_STRING("input_model") + " parameter) "
     "or training a logistic regression model given training data (specified "
     "with the " + PRINT_PARAM_STRING("training") + " parameter), or both "
     "those things at once.  In addition, this program allows classification on "
@@ -84,8 +84,8 @@ BINDING_LONG_DESC(
     "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
     "specified.  The " + PRINT_PARAM_STRING("test") + " parameter can be "
     "specified without the " + PRINT_PARAM_STRING("training") + " parameter, "
-    "so long as an existing logistic regression model is given with the "
-    "FIXME_PRINT_PARAM_STRING(input_model parameter.  The output predictions "
+    "so long as an existing logistic regression model is given with the " +
+    PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
     "from the logistic regression model may be saved with the " +
     PRINT_PARAM_STRING("predictions") + " parameter." +
     "\n\n"
@@ -95,25 +95,26 @@ BINDING_LONG_DESC(
     std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
     "softmax regression implementation.");
 #endif
+
 // Example.
 BINDING_EXAMPLE(
     "As an example, to train a logistic regression model on the data '" +
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
     "with L2 regularization of 0.1, saving the model to '" +
-    PRINT_MODEL("lr_model") + "', the following command may be used:"
-    "\n\n"
-    // + PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
-    //    "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
-    //    true) +
+    PRINT_MODEL("lr_model") + "', the following command may be used:" +
+    "\n\n" );//+
+#if 0
+    PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
+        "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
+        true) +
     "\n\n"
                 );
-#if 0
     "Then, to use that model to predict classes for the dataset '" +
-    PRINT_DATASET("test") + "', storing the output predictions in '") +
+    PRINT_DATASET("test") + "', storing the output predictions in '" +
     PRINT_DATASET("predictions") + "', the following command may be used: "
-    "\n\n"); // +
-    //PRINT_CALL("logistic_regression", "input_model"
-//           "lr_model", "test", "test", "predictions", "predictions"));
+    "\n\n" +
+    PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
+              "predictions", "predictions"));
 #endif
 
 // See also...
@@ -132,9 +133,6 @@ PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the matri
 PARAM_UROW_IN_REQ("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
-// Optional parmaters for testing.
-PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-
 // Optimizer parameters.
 PARAM_DOUBLE_IN("lambda", "L2-regularization parameter for training.", "L",
     0.0);
@@ -149,9 +147,13 @@ PARAM_DOUBLE_IN("step_size", "Step size for SGD optimizer.",
 PARAM_INT_IN("batch_size", "Batch size for SGD.", "b", 64);
 
 // Model loading/saving. (Input model used for unit tests)
-PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model " "(parameters).", "m");
+PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model "
+    "(parameters).", "m");
 PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
+
+// Testing.
+PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
 PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
