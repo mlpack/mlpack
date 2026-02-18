@@ -66,12 +66,12 @@ bool Load(const std::string& src,
   std::string filename;
   bool success = false;
 
-  if (checkIfURL(src))
+  if (CheckIfURL(src))
   {
     // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
     // the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
-    success = DownloadFile(src, filename, stream, opts);
+    success = DownloadFile(src, filename);
     if (!success)
     {
       Timer::Stop("loading_data");

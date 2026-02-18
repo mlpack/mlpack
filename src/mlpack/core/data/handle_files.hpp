@@ -19,6 +19,7 @@
 #include "extension.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
+#include "../math/random.hpp"
 
 namespace mlpack {
 
@@ -37,10 +38,6 @@ namespace mlpack {
  */
 inline FileType AutoDetectFile(std::fstream& stream,
                                const std::string& filename);
-/**
- * return a true if the URL is provided.
- */
-inline bool CheckIfURL(const std::string& url);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
@@ -86,14 +83,6 @@ bool DetectFileType(const std::string& filename,
                     std::fstream* stream = nullptr);
 
 /**
- * Given an URL, extract the filename that is being downloaded using regex.
- * 
- * @param filename to be extracted from URL.
- * @param url that contains the filename at the end.
- */
-inline void FilenameFromURL(std::string& filename, const std::string& url);
-
-/**
  * Given an istream, attempt to guess the file type.  This is taken originally
  * from Armadillo's function guess_file_type_internal(), but we avoid using
  * internal Armadillo functionality.
@@ -123,6 +112,14 @@ bool OpenFile(const std::string& filename,
               std::fstream& stream);
 
 /**
+ * Generate a random file name that is located in the temporary directory.
+ * This function only generate the name, it does not write the file.
+ *
+ * @return std::filesystem::path to the temporary file.
+ */
+inline std::filesystem::path TempName();
+
+/**
  * Write to a file from a string stream.
  *
  * param filename filename with extension to be opened.
@@ -136,10 +133,6 @@ bool WriteToFile(const std::string& filename,
                  DataOptionsType& opts,
                  std::string data,
                  std::fstream& stream);
-/**
- * Extract host from URL.
- */
-inline std::string URLToHost(const std::string& url);
 
 } // namespace mlpack
 

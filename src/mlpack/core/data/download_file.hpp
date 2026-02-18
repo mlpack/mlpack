@@ -16,74 +16,56 @@
 
 namespace mlpack {
 
-//@rcurtin, it seems that using tmpnam is a bad idea, since the software was
-//sefgaulting and the compiler was throwing the following warning:
-//
-// (.text+0x83d4b): warning: the use of `tmpnam' is dangerous, better use `mkstemp'  
-//
-//
-// After checking online, a lot of people and discussion pointed out to avoid
-// using std::tmpname since it is not safe in the case of race condition.
-//
-//
-// https://stackoverflow.com/questions/78535907/can-we-implement-a-facility-to-safely-create-temporary-files-in-c23
-//
-// https://stackoverflow.com/questions/75867045/temporary-files-in-c-tmpnam-alternatives
-//
-// https://stackoverflow.com/questions/35188145/warning-the-use-of-tmpnam-is-dangerous-better-use-mkstemp
-//
-// I have also seen some stupid proposals, saying, just ignore or disable the
-// compiler warning. 
-//
-// The main problem with the compiler proposal of using mkstemp is the need
-// to define the name of the temporary file, which defies the first reason we used this one.
-//
-// Here is a code sinppet that might looks like to use mkstemp():
-// char filename[] = "/tmp/tempXXXXXX";
-// int fd = mkstemp(filename);
-// if (fd != -1)
-// {
-//   std::cout << "random file opened" << std::endl;
-// }
-// 
-// Assuming that the directory problem is solved on Windows, the above solution 
-// would segfault sometimes and run normally other times, it depends on the
-// runs. This was not really constructive to debug with gdb, so I abadndone
-// this idea, as I thought, there should be probably a better way that is used
-// by everyone to solve this simple problem, and here is the solution in the
-// following function:
-//
-// For the following function , I have adapted the following implementation
-// from C++20 to C++17 below:
-//
-// https://codereview.stackexchange.com/questions/292241/generate-unique-temporary-file-names-in-c20
-//
-// If this works on Windows, I would recommend using it as it is, as
-// it is going to be much easier to be handle with our current infrastrucutre
-// without the need to use any C function. 
-//
-std::filesystem::path TempName()
+/**
+ * return a true if the URL is provided.
+ */
+inline bool CheckIfURL(const std::string& url)
 {
-  static std::mt19937 gen{std::random_device{}()};
-  static std::uniform_int_distribution<>
-      dist{0, std::numeric_limits<uint8_t>::max()};
-  std::stringstream nameStream;
-  // i.e. long enough to avoid collisions (see UUID)
-  static constexpr auto num_bits = 128;
-  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
+  std::regex rgx("^https?://");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
   {
-      nameStream << dist(gen);
+    return true;
   }
-  return std::filesystem::temp_directory_path() / nameStream.str();
+  return false;
 }
 
-template<typename DataOptionsType>
-bool DownloadFile(const std::string& url,
-                  std::string& filename,
-                  std::fstream& stream,
-                  DataOptionsType& opts)
+/**
+ * Given an URL, extract the filename that is being downloaded using regex.
+ *
+ * @param filename to be extracted from URL.
+ * @param url that contains the filename at the end.
+ */
+inline void FilenameFromURL(std::string& filename, const std::string& url)
 {
-  bool success = false;
+  std::regex rgx("[^/]+(?=/$|$)");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
+  {
+    //std::cout << "filename: " << match[0] << std::endl;
+    filename = match[0];
+  }
+}
+
+/**
+ * Extract host from URL.
+ */
+inline std::string URLToHost(const std::string& url)
+{
+  std::string host;
+  std::regex rgx(R"(^(?:https?|ftp)://(?:[^@/\n]+@)?([^:/?\n]+))");
+  std::smatch match;
+  if (std::regex_search(url, match, rgx))
+  {
+    host = match[1];
+  }
+  return host;
+}
+
+bool DownloadFile(const std::string& url,
+                  std::string& filename)
+{
+  std::fstream stream;
   // If host is not extracted correctly, we will get a segmentation fault from
   // httplib
   std::string host = URLToHost(url);
@@ -100,40 +82,34 @@ bool DownloadFile(const std::string& url,
   {
     std::stringstream oss;
     oss <<  "Unable to connect, status returned: '" << res->status;
-    return HandleError(oss, opts);
+    throw std::runtime_error(oss.str());
   }
 
-  std::stringstream data(res->body);
   std::string originalFilename;
   FilenameFromURL(originalFilename, url);
-
-//#ifdef MLPACK_CAHCHE
-  //success = WriteToFile(filename, opts, data.str(), stream);
-//#endif
-  // This does not work, please see above.
-  // filename = std::tmpnam(nullptr); 
 
   filename = TempName();
   // This is necessary to get the extension.
   filename += originalFilename;
-  success = OpenFile(filename, opts, false, stream);
-  if (!success)
+  // @rcurtin, I do not like this, but this is the only option;
+  DataOptions opts = NoFatal;
+  if (!OpenFile(filename, opts, false, stream))
   {
     std::stringstream oss;
     oss <<  "Unable to open a temporary file for downloading data.";
-    return HandleError(oss, opts);
+    throw std::runtime_error(oss.str());
   }
 
-  stream.write(data.str().data(), data.str().size());
+  stream.write(res->body.data(), res->body.size());
   if (!stream.good())
   {
     std::stringstream oss;
     oss << "Error writing to a '" << filename << "'.  "
           << "Please check permissions or disk space.";
-    return HandleError(oss, opts);
+    throw std::runtime_error(oss.str());
   }
   stream.close();
-  return success;
+  return true;
 }
 
 } // namespace mlpack

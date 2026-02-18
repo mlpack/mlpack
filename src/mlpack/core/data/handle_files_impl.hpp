@@ -167,17 +167,6 @@ inline FileType AutoDetectFile(std::fstream& stream,
   return detectedLoadType;
 }
 
-inline bool checkIfURL(const std::string& url)
-{
-  std::regex rgx("^https?://");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    return true;
-  }
-  return false;
-}
-
 inline size_t CountCols(std::fstream& f)
 {
   f.clear();
@@ -342,17 +331,6 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-inline void FilenameFromURL(std::string& filename, const std::string& url)
-{
-  std::regex rgx("[^/]+(?=/$|$)");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    //std::cout << "filename: " << match[0] << std::endl;
-    filename = match[0];
-  }
-}
-
 inline FileType GuessFileType(std::istream& f)
 {
   f.clear();
@@ -483,6 +461,17 @@ bool OpenFile(const std::string& filename,
   return true;
 }
 
+inline std::filesystem::path TempName()
+{
+  std::stringstream nameStream;
+  static constexpr auto num_bits = 32;
+  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
+  {
+      nameStream << RandInt(0, 9);
+  }
+  return std::filesystem::temp_directory_path() / nameStream.str();
+}
+
 template<typename DataOptionsType>
 bool WriteToFile(const std::string& filename,
                  DataOptionsType& opts,
@@ -513,18 +502,6 @@ bool WriteToFile(const std::string& filename,
   }
   stream.close();
   return true;
-}
-
-inline std::string URLToHost(const std::string& url)
-{
-  std::string host;
-  std::regex rgx(R"(^(?:https?|ftp)://(?:[^@/\n]+@)?([^:/?\n]+))");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    host = match[1];
-  }
-  return host;
 }
 
 } // namespace mlpack
