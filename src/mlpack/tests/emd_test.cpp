@@ -13,7 +13,6 @@
 #include <mlpack/core.hpp>
 #include "catch.hpp"
 
-#include <mlpack/core/transforms/emd.hpp>
 using namespace mlpack;
 using namespace arma;
 
@@ -48,7 +47,7 @@ TEST_CASE("EMDSingleTone", "[EMD]")
   for (arma::uword k = 0; k < imfs.n_cols; ++k)
     recon += imfs.col(k);
 
-    // does the reconstruction match the original toy input
+  // Does the reconstruction match the original toy input
   const double relErr = arma::norm(recon - x, 2) / arma::norm(x, 2);
   UNSCOPED_INFO("Reconstruction relErr=" << relErr);
   REQUIRE(relErr < 1e-3);

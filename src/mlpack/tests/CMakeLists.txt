@@ -4,7 +4,7 @@ include(CTest)
 add_executable(mlpack_test
   ${MLPACK_TEST_SRCS}
 
-  # # Tests for neural network code (and reinforcement learning code).
+  # Tests for neural network code (and reinforcement learning code).
   ann/activation_functions_test.cpp
   ann/ann_dist_test.cpp
   # This includes all files in ann/layer/.
@@ -151,7 +151,7 @@ add_executable(mlpack_test
   vantage_point_tree_test.cpp
   xgboost_test.cpp
 
-  # # Tests for individual bindings.
+  # Tests for individual bindings.
   main_tests/adaboost_test.cpp
   main_tests/adaboost_train_test.cpp
   main_tests/adaboost_classify_test.cpp

@@ -13,8 +13,6 @@
 #define MLPACK_CORE_TRANSFORMS_SPLINE_ENVELOPE_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <algorithm>   // std::sort
-#include <cassert>     // runtime checks
 
 namespace mlpack {
 
@@ -105,8 +103,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   }
   // Step 3: evaluate spline on each segment and fill envelope values
   env.zeros();
-  size_t seg = 0;
-  for (; seg + 1 < m; ++seg)
+  for (size_t seg = 0; seg < m - 1; ++seg)
   {
     const arma::uword i0 = idx[seg];
     const arma::uword i1 = idx[seg + 1];
