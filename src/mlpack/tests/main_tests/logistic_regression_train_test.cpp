@@ -23,7 +23,6 @@ using namespace mlpack;
 
 BINDING_TEST_FIXTURE(LogisticRegressionTrainTestFixture);
 
-#if 0
 /**
   * Ensuring that absence of training data is checked.
  **/
@@ -40,7 +39,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Training data is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
-#endif
+
 /**
  * Ensuring that absence of responses is checked.
  */
@@ -130,9 +129,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   SetInputParam("training", std::move(trainX1));
   SetInputParam("test", testX);
-  // FIXME TOSO
-  //arma::Row<size_t> trainY2aa({0, 1, 1});
-  //SetInputParam("labels", std::move(trainY2aa));
 
   // The first solution.
   RUN_BINDING();
@@ -144,6 +140,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Reset the settings.
   CleanMemory();
   ResetSettings();
+
   // Now train by providing labels as extra parameter.
   arma::mat trainX2({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}});
   arma::Row<size_t> trainY2({0, 1, 1});
@@ -161,6 +158,122 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Both solutions should be equal.
   CheckMatrices(testY1, testY2);
+}
+
+/**
+ * Check that model can saved / loaded and used. Ensuring that results are the
+ * same.
+ */
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainModelReload",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("test", testX);
+
+  // First solution
+  RUN_BINDING();
+
+  // Get the output model obtained from training.
+  LogisticRegression<>* model =
+      params.Get<LogisticRegression<>*>("output_model");
+  // Get the output.
+  const arma::Row<size_t> testY1 =
+      std::move(params.Get<arma::Row<size_t>>("predictions"));
+
+  // Reset the data passed.
+  ResetSettings();
+
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(testX));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the output.
+  const arma::Row<size_t>& testY2 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Both solutions must be equal.
+  CheckMatrices(testY1, testY2);
+}
+
+/**
+  * Checking for dimensionality of the test data set.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainWrongDimOfTestData",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 4;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+
+  // Test data with wrong dimensionality.
+  arma::mat testX = arma::randu<arma::mat>(D-1, N);
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("test", std::move(testX));
+
+  // Dimensionality of test data is wrong. It should throw a runtime error.
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
+ * Ensuring that test data dimensionality is checked when model is loaded.
+ */
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainWrongDimOfTestData2",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+  // 10 responses
+  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+
+  // Training the model.
+  RUN_BINDING();
+
+  // Get the output model obtained from training.
+  LogisticRegression<>* model =
+      params.Get<LogisticRegression<>*>("output_model");
+
+  // Reset the data passed.
+  ResetSettings();
+
+  // Test data with Wrong dimensionality.
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M);
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(testX));
+
+  // Test data dimensionality is wrong. It should throw a runtime error.
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**

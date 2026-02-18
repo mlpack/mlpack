@@ -148,8 +148,8 @@ PARAM_DOUBLE_IN("step_size", "Step size for SGD optimizer.",
     "s", 0.01);
 PARAM_INT_IN("batch_size", "Batch size for SGD.", "b", 64);
 
-// Model loading/saving.
-//PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model " "(parameters).", "m");
+// Model loading/saving. (Input model used for unit tests)
+PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model " "(parameters).", "m");
 PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
@@ -167,15 +167,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   //const double decisionBoundary = params.Get<double>("decision_boundary");
 
   // One of training and input_model must be specified.
-  //RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
+  RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
 
   // If no output file is given, the user should know that the model will not be
   // saved
-  RequireAtLeastOnePassed(params, { "output_model" }, false, "trained model "
-      "will not be saved");
+  if (params.Has("training"))
+  {
+    RequireAtLeastOnePassed(params, { "output_model" }, false, "trained model "
+        "will not be saved");
+  }
 
   //RequireAtLeastOnePassed(params, { "output_model", "predictions",
   //    "probabilities"}, false, "no output will be saved");
+
+  // ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+  // ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
   //ReportIgnoredParam(params, {{ "training", false }},
   //    "print_training_accuracy");
@@ -239,9 +245,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Load the model, if necessary.
   LogisticRegression<>* model;
-  //if (params.Has("input_model"))
-  //  model = params.Get<LogisticRegression<>*>("input_model");
-  //else
+  if (params.Has("input_model"))
+    model = params.Get<LogisticRegression<>*>("input_model");
+  else
   {
     model = new LogisticRegression<>(0, 0);
 
@@ -258,9 +264,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
     {
-      // // Clean memory if needed.
-      // if (!params.Has("input_model"))
-      //   delete model;
+      // Clean memory if needed.
+      if (!params.Has("input_model"))
+        delete model;
 
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
@@ -272,8 +278,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (regressors.n_rows < 2)
     {
       // Clean memory if needed.
-      //if (!params.Has("input_model"))
-      //  delete model;
+      if (!params.Has("input_model"))
+        delete model;
 
       Log::Fatal << "Can't get responses from training data since it has less "
           << "than 2 rows." << endl;
@@ -289,57 +295,102 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("training") && max(responses) > 1)
   {
     // // Clean memory if needed.
-    // if (!params.Has("input_model"))
-    //   delete model;
+    if (!params.Has("input_model"))
+       delete model;
 
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
   }
 
   // Now, do the training.
-  model->Lambda() = lambda;
-
-  if (optimizerType == "sgd")
+  if (params.Has("training"))
   {
-    ens::SGD<> sgdOpt;
-    sgdOpt.MaxIterations() = maxIterations;
-    sgdOpt.Tolerance() = tolerance;
-    sgdOpt.StepSize() = stepSize;
-    sgdOpt.BatchSize() = batchSize;
-    Log::Info << "Training model with SGD optimizer." << endl;
+    model->Lambda() = lambda;
 
-    // This will train the model.
-    timers.Start("logistic_regression_optimization");
-    model->Train(regressors, responses, sgdOpt);
-    timers.Stop("logistic_regression_optimization");
+    if (optimizerType == "sgd")
+    {
+      ens::SGD<> sgdOpt;
+      sgdOpt.MaxIterations() = maxIterations;
+      sgdOpt.Tolerance() = tolerance;
+      sgdOpt.StepSize() = stepSize;
+      sgdOpt.BatchSize() = batchSize;
+      Log::Info << "Training model with SGD optimizer." << endl;
+
+      // This will train the model.
+      timers.Start("logistic_regression_optimization");
+      model->Train(regressors, responses, sgdOpt);
+      timers.Stop("logistic_regression_optimization");
+    }
+    else if (optimizerType == "lbfgs")
+    {
+      ens::L_BFGS lbfgsOpt;
+      lbfgsOpt.MaxIterations() = maxIterations;
+      lbfgsOpt.MinGradientNorm() = tolerance;
+      Log::Info << "Training model with L-BFGS optimizer." << endl;
+
+      // This will train the model.
+      timers.Start("logistic_regression_optimization");
+      model->Train(regressors, responses, lbfgsOpt);
+      timers.Stop("logistic_regression_optimization");
+    }
+
+    // // Did we want training accuracy?
+    // if (params.Has("print_training_accuracy"))
+    // {
+    //   timers.Start("lr_prediction");
+    //   arma::Row<size_t> predictions;
+    //   model->Classify(regressors, predictions);
+
+    //   const size_t correct = accu(predictions == responses);
+
+    //   Log::Info << correct << " of " << responses.n_elem << " correct on "
+    //       << "training set ("
+    //       << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
+    //   timers.Stop("lr_prediction");
+    // }
   }
-  else if (optimizerType == "lbfgs")
+
+  if (params.Has("test"))
   {
-    ens::L_BFGS lbfgsOpt;
-    lbfgsOpt.MaxIterations() = maxIterations;
-    lbfgsOpt.MinGradientNorm() = tolerance;
-    Log::Info << "Training model with L-BFGS optimizer." << endl;
+    const arma::mat& testSet = params.Get<arma::mat>("test");
 
-    // This will train the model.
-    timers.Start("logistic_regression_optimization");
-    model->Train(regressors, responses, lbfgsOpt);
-    timers.Stop("logistic_regression_optimization");
+    // Checking the dimensionality of the test data.
+    if (testSet.n_rows != model->Parameters().n_cols - 1)
+    {
+      // Clean memory if needed.
+      const size_t trainingDimensionality = model->Parameters().n_cols - 1;
+      if (!params.Has("input_model"))
+        delete model;
+
+      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
+          << "be the same as the dimensionality of the training data ("
+          << trainingDimensionality << ")!" << endl;
+    }
+
+    // We must perform predictions on the test set.  Training (and the
+    // optimizer) are irrelevant here; we'll pass in the model we have.
+    // if (params.Has("predictions"))
+    // {
+    //   Log::Info << "Predicting classes of points in '"
+    //       << params.GetPrintable<arma::mat>("test") << "'." << endl;
+    //   model->Classify(testSet, predictions, decisionBoundary);
+
+    //   if (params.Has("predictions"))
+    //     params.Get<arma::Row<size_t>>("predictions") = predictions;
+    // }
+
+    // if (params.Has("probabilities"))
+    // {
+    //   Log::Info << "Calculating class probabilities of points in '"
+    //       << params.GetPrintable<arma::mat>("test") << "'." << endl;
+    //   arma::mat probabilities;
+    //   model->Classify(testSet, predictions, probabilities);
+
+    //   if (params.Has("probabilities"))
+    //     params.Get<arma::mat>("probabilities") = std::move(probabilities);
+    // }
+
   }
-
-  // // Did we want training accuracy?
-  // if (params.Has("print_training_accuracy"))
-  // {
-  //   timers.Start("lr_prediction");
-  //   arma::Row<size_t> predictions;
-  //   model->Classify(regressors, predictions);
-
-  //   const size_t correct = accu(predictions == responses);
-
-  //   Log::Info << correct << " of " << responses.n_elem << " correct on "
-  //       << "training set ("
-  //       << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
-  //   timers.Stop("lr_prediction");
-  // }
 
   params.Get<LogisticRegression<>*>("output_model") = model;
 }
