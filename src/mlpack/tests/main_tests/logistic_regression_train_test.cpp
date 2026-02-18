@@ -75,18 +75,16 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
-  //SetInputParam("training", std::move(trainX));
-  //SetInputParam("labels", std::move(trainY));
-  //SetInputParam("test", std::move(testX));
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  SetInputParam("test", std::move(testX));
 
   // Training the model.
-  // RUN_BINDING();
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
-  model->Train(trainX, trainY);
+  RUN_BINDING();
 
-  arma::Row<size_t> testY;
-  model->Classify(testX, testY);
+  // Get the output predictions of the test data.
+  const arma::Row<size_t>& testY =
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Output predictions size must match the test data set size.
   REQUIRE(testY.n_rows == 1);
@@ -424,8 +422,9 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
     FAIL("parameters1 and parameters2 are equal. "
          "Parameter(Max Iteration) has no effect on the output");
   }
-  else { // adding a require to have the test 'count' rather than just not fail
-    REQUIRE(arma::all((parameters1-parameters2) != 0));
+  else
+  {   // adding a require to have the test 'count' rather than just not fail
+      REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
 }
 
@@ -478,7 +477,9 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   {
     FAIL("parameters1 and parameters2 are equal. "
          "Parameter(lambda) has no effect on the output");
-  } else { // adding a require to have the test 'count' rather than just not fail
+  }
+  else
+  { // adding a require to have the test 'count' rather than just not fail
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
 }
@@ -535,7 +536,9 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   {
     FAIL("parameters1 and parameters2 are equal. "
          "Parameter(Step Size) has no effect on the output");
-  } else { // adding a require to have the test 'count' rather than just not fail
+  }
+  else
+  { // adding a require to have the test 'count' rather than just not fail
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
 }
@@ -591,7 +594,9 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   {
     FAIL("parameters1 and parameters2 are equal. "
          "Parameter(Step Size) has no effect on the output");
-  } else { // adding a require to have the test 'count' rather than just not fail
+  }
+  else
+  { // adding a require to have the test 'count' rather than just not fail
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
 
