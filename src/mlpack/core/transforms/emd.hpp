@@ -85,26 +85,6 @@ inline size_t CountZeroCrossings(const ColType& h)
   return zc;
 }
 
-//faster norm computation for arma types
-template<typename ColType>
-inline double L2Norm(const ColType& x)
-{
-  if constexpr (arma::is_arma_type<ColType>::value)
-    return arma::norm(x, 2);
-  else
-    return L2NormCpuCopy(x);
-}
-
-template<typename ColType>
-inline double L2NormCpuCopy(const ColType& x)
-{
-  // Compute L2 norm on arma::Col copy for portability across types
-  // would not be needed if data is always loaded into arma types.
-  using eT = typename ColType::elem_type;
-  const arma::Col<eT> xc(x);
-  return arma::norm(xc, 2);
-}
-
 // sifting step extracts mean envelope and produces next h
 template<typename ColType>
 inline void SiftingStep(ColType& h,
@@ -138,51 +118,42 @@ inline void SiftingStep(ColType& h,
 //extract first IMF via sifting, using EMD stopping criteria
 
 template<typename ColType>
-inline bool FirstImf(const ColType& signal,
+inline bool NextImf(const ColType& signal,
                      ColType& imf,
                      const size_t maxSiftIter = 50,
-                     const double tolMean = 1e-3)
+                     const double tolMean = 1e-3,
+                     double& imfNormOut = 0.0)
 {
-  using eT = typename ColType::elem_type;
-
-  ColType h = signal;
-  ColType hNew(signal.n_elem);
+  imf = signal;
   ColType meanEnv(signal.n_elem);
 
   for (size_t iter = 0; iter < maxSiftIter; ++iter)
   {
+    const double imfNorm = norm(imf, 2);
+
     size_t ext = 0;
-    SiftingStep(h, meanEnv, ext);
+    SiftingStep(imf, meanEnv, ext);
 
     // If the current signal is monotone, EMD is NA
     // ext = # extrema points
-    if (iter == 0 && ext <= 1)
-      return false;
+    if (iter == 0 && ext <= 1) { imfNormOut = 0.0; return false; }
     // mean-envelope criterion
     // mean envelope should be close to zero
-    const double meanRatio = (L2Norm(h) > 0.0) ? (L2Norm(meanEnv) / L2Norm(h))
-                                              : L2Norm(meanEnv);
+    const double meanEnvNorm = norm(meanEnv, 2);
+    const double meanRatio =
+     (imfNorm > 0.0) ? (meanEnvNorm / imfNorm): meanEnvNorm;
 
     // IMF criterion: extrema vs zero-crossings
     // number of extrema and zero-crossings must differ at most by one
-    const size_t zc  = CountZeroCrossings(hNew);
+    const size_t zc  = CountZeroCrossings(imf);
     const bool imfShapeOk = (std::max(ext, zc) - std::min(ext, zc) <= 1);
-
-    h.swap(hNew);
 
     if (imfShapeOk && (meanRatio < tolMean))
       break;
   }
-
-  imf = h;
+  imfNormOut = norm(imf, 2);
   return true;
 }
-
-} // namespace mlpack
-
-namespace mlpack
-{
-
 /**
  * Empirical Mode Decomposition on a 1D signal.
  *
@@ -224,27 +195,29 @@ inline void EMD(const ColType& signal,
   std::vector<ColType> imfList;
   imfList.reserve(maxImfs);
 
-  const double signalNorm = arma::norm(signal, 2);
+  const double signalNorm = norm(signal, 2);
 
   for (size_t k = 0; k < maxImfs; ++k)
   {
     ColType imf;
-    if (!FirstImf(residue, imf, maxSiftIter, tol)) // Get next IMF via sifting
+    double imfNorm;
+    // Get next IMF via sifting
+    if (!NextImf(residue, imf, maxSiftIter, tol, imfNorm)) 
       break;
 
-    const double imfNorm = arma::norm(imf, 2);
+    // stop if IMF is negligible compared to original signal
     if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)
       break;
 
-    imfList.push_back(imf);
-    residue -= imf;
+    imfList.push_back(std::move(imf));
+    residue -= imfList.back(); 
   }
 
   if (!imfList.empty())
   {
     imfs.set_size(N, imfList.size());
     for (size_t k = 0; k < imfList.size(); ++k)
-      imfs.col(k) = imfList[k];
+      imfs.col(k) = std::move(imfList[k]);
   }
   else
   {
@@ -253,4 +226,5 @@ inline void EMD(const ColType& signal,
 }
 
 } // namespace mlpack
+
 #endif // MLPACK_CORE_TRANSFORMS_EMD_HPP
