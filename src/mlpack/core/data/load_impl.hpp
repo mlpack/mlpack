@@ -75,7 +75,7 @@ bool Load(const std::string& src,
     if (!success)
     {
       Timer::Stop("loading_data");
-      return HandleError("Cannot download the dataset from the provoided link. "
+      return HandleError("Cannot download the dataset from the provided link. "
           "Please check the link or the data format.", opts);
     }
 #else
