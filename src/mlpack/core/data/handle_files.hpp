@@ -40,7 +40,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
 /**
  * return a true if the URL is provided.
  */
-inline bool checkIfURL(const std::string& url);
+inline bool CheckIfURL(const std::string& url);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
