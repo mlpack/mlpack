@@ -472,36 +472,4 @@ inline std::filesystem::path TempName()
   return std::filesystem::temp_directory_path() / nameStream.str();
 }
 
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream)
-{
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::out | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::out);
-#endif
-  if (!stream.is_open())
-  {
-    std::stringstream oss;
-    oss << "Cannot open file '" << filename << "' for saving.  "
-        << "Please check if you have permissions for writing.";
-    return HandleError(oss, opts);
-  }
-
-  stream.write(data.data(), data.size());
-  // Check if we need to flush in here.
-  if (!stream.good())
-  {
-    std::stringstream oss;
-    oss << "Error writing to a '" << filename << "'.  "
-          << "Please check permissions or disk space.";
-    return HandleError(oss, opts);
-  }
-  stream.close();
-  return true;
-}
-
 } // namespace mlpack

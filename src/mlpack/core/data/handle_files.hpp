@@ -119,21 +119,6 @@ bool OpenFile(const std::string& filename,
  */
 inline std::filesystem::path TempName();
 
-/**
- * Write to a file from a string stream.
- *
- * param filename filename with extension to be opened.
- * param opts DataOption type describing the file.
- * param data to write to the file.
- * param stream the stream that will hold the content of the file.
- * @return bool if opening the file was successful.
- */
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream);
-
 } // namespace mlpack
 
 #include "handle_files_impl.hpp"
