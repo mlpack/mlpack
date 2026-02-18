@@ -88,8 +88,7 @@ bool DownloadFile(const std::string& url,
   // httplib
   std::string host = URLToHost(url);
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-  auto port = 443;
-  httplib::SSLClient cli(host, port);
+  httplib::SSLClient cli(host, 443);
 #else
   auto port = 80;
   httplib::Client cli(host, port);
