@@ -61,23 +61,7 @@ inline void FindExtrema(const ColType& h,
   if (minIdx.back() != (arma::uword) (N - 1))
     minIdx.push_back((arma::uword) (N - 1));
 }
-//helper to count interior extrema
-template<typename ColType>
-inline size_t CountInteriorExtrema(const ColType& h)
-{
-  using eT = typename ColType::elem_type;
-  const size_t N = h.n_elem;
-  if (N < 3) return 0;
 
-  size_t cnt = 0;
-  for (size_t i = 1; i + 1 < N; ++i)
-  {
-    const eT a = h[i - 1], b = h[i], c = h[i + 1];
-    if ((b > a && b > c) || (b < a && b < c))
-      ++cnt;
-  }
-  return cnt;
-}
 //helper to count zero crossings as part of IMF stopping criteria
 template<typename ColType>
 inline size_t CountZeroCrossings(const ColType& h)
@@ -183,7 +167,7 @@ inline bool FirstImf(const ColType& signal,
 
     // If the current signal is monotone, EMD is NA
     // ext = # extrema points
-    if (iter == 0 && ext <= 2)
+    if (iter == 0 && ext <= 1)
       return false;
     // mean-envelope criterion
     // mean envelope should be close to zero
@@ -255,10 +239,6 @@ inline void EMD(const ColType& signal,
 
   for (size_t k = 0; k < maxImfs; ++k)
   {
-    // Stop if residue is monotone (fewer than 2 extrema).
-    if (CountInteriorExtrema(residue) <= 1)
-      break;
-
     ColType imf;
     if (!FirstImf(residue, imf, maxSiftIter, tol)) // Get next IMF via sifting
       break;
