@@ -23,7 +23,6 @@ using namespace mlpack;
 
 BINDING_TEST_FIXTURE(LogisticRegressionClassifyTestFixture);
 
-#if 1
 /**
   * Ensuring that absence of input model is checked.
  **/
@@ -45,7 +44,6 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
   // NB this currently requires a patch applied here too
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
-#endif
 
 /**
   * Ensuring that absence of estimated model is checked.
@@ -143,18 +141,69 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
   model->Parameters() = zeros<arma::rowvec>(D + 1);
   model->Train(trainX, trainY);
 
-  arma::Row<size_t> predictions;
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(testX));
 
-  if (false) {
-    SetInputParam("input_model", model);
-    SetInputParam("test", std::move(testX));
-    RUN_BINDING();
-    predictions = params.Get<arma::Row<size_t>>("predictions");
-  } else {
-    model->Classify(testX, predictions);
-  }
+  RUN_BINDING();
+
+  arma::Row<size_t> predictions = params.Get<arma::Row<size_t>>("predictions");
 
   // Check that number of predicted labels is equal to the input test points.
   REQUIRE(predictions.n_rows == 1);
   REQUIRE(predictions.n_cols == M);
+}
+
+/**
+  * Ensuring decision_boundary parameter does something.
+ **/
+TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
+                 "LogisticRegressionClassifyDecisionBoundaryTest",
+                 "[LogisticRegressionClassifyMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 50;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
+  // Training the model.
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(D + 1);
+  model->Train(trainX, trainY);
+
+  SetInputParam("input_model", model);
+  SetInputParam("test", testX);
+  SetInputParam("decision_boundary", double(0.2));
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the output after first training.
+  const arma::Row<size_t> output1 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  // re-fit
+  model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(D + 1);
+  model->Train(trainX, trainY);
+
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(testX));
+  SetInputParam("decision_boundary", double(0.8));
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the output after second training.
+  const arma::Row<size_t>& output2 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Check that the output changed when the decision boundary moved.
+  REQUIRE(accu(output1 != output2) > 0);
 }

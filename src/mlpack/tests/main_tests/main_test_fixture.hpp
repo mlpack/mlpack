@@ -35,6 +35,13 @@
      public: \
       CLASS_NAME() : MainTestFixture(IO::Parameters(STRINGIFY(BINDING_NAME))) \
       { } \
+      \
+      static void CheckRequiredAndRun(util::Params& params, \
+                                      util::Timers& timers) \
+      { \
+        CheckRequired(params); \
+        BINDING_FUNCTION(params, timers); \
+      } \
     };
 
 /**
@@ -43,7 +50,7 @@
  * required input parameters are correctly given, then the binding is run via a
  * call to BINDING_FUNCTION().
  */
-inline void CheckRequiredAndRun(util::Params& params, util::Timers& timers)
+inline void CheckRequired(util::Params& params)
 {
   for (const std::pair<std::string, ParamData> p : params.Parameters())
   {
@@ -55,9 +62,6 @@ inline void CheckRequiredAndRun(util::Params& params, util::Timers& timers)
       throw std::runtime_error(oss.str());
     }
   }
-
-  // Now actually call the binding.
-  BINDING_FUNCTION(params, timers);
 }
 
 /**
