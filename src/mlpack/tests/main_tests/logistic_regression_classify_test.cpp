@@ -63,7 +63,7 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-
+  // model not trained
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
@@ -73,7 +73,7 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
 
 
 /**
-  * Ensuring that absence of estimated model is checked.
+  * Ensuring that absence of test data is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
                  "LogisticRegressionClassifyNoData",
@@ -87,11 +87,74 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
 
   // Training the model.
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
+  model->Parameters() = zeros<arma::rowvec>(D + 1);
   model->Train(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));
 
   // Required input data is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
+  * Ensuring that absence of wrong size of test data is checked.
+ **/
+TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
+                 "LogisticRegressionClassifyWrongSizeData",
+                 "[LogisticRegressionClassifyMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+  arma::mat testX = arma::randu<arma::mat>(D - 1, M);
+
+  // Training the model.
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(D + 1);
+  model->Train(trainX, trainY);
+
+  SetInputParam("input_model", std::move(model));
+  SetInputParam("test", std::move(testX));
+
+  // Required input data is not provided. Should throw a runtime error.
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+/**
+  * Ensuring that predictions have right size
+ **/
+TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
+                 "LogisticRegressionClassifyPredictionSize",
+                 "[LogisticRegressionClassifyMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
+  // Training the model.
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(D + 1);
+  model->Train(trainX, trainY);
+
+  arma::Row<size_t> predictions;
+
+  if (false) {
+    SetInputParam("input_model", model);
+    SetInputParam("test", std::move(testX));
+    RUN_BINDING();
+    predictions = params.Get<arma::Row<size_t>>("predictions");
+  } else {
+    model->Classify(testX, predictions);
+  }
+
+  // Check that number of predicted labels is equal to the input test points.
+  REQUIRE(predictions.n_rows == 1);
+  REQUIRE(predictions.n_cols == M);
 }
