@@ -1,48 +1,44 @@
 # `EMD`
 
-Empirical Mode Decomposition (EMD) adaptively decomposes a 1D signal into a
-small set of Intrinsic Mode Functions (IMFs) plus a residue. This is often used
-for vibration/sensor pipelines as a time-domain alternative to FFT.
+Empirical Mode Decomposition (`EMD`) adaptively decomposes a 1D signal into a
+small set of Intrinsic Mode Functions (IMFs) plus a residue. This can be used
+for vibration monitoring pipelines as a nonlinear alternative to signal
+processing methods like FFT.  
 
-## Inputs
+#### See also:
 
-- `signal` (`arma::Col<eT>`): uniformly sampled 1D signal (any Armadillo
-  column type / scalar `eT`).
-- `maxImfs` (`size_t`, default `10`): maximum number of IMFs to extract.
-- `maxSiftIter` (`size_t`, default `10`): maximum sifting iterations per IMF.
-- `tol` (`double`, default `1e-3`): sifting stopping tolerance on the mean
-  envelope ratio (see notes below).
+<!-- * [`CF`](cf.md): collaborative filtering (recommender system) -->
+
+ * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
+ * [EMD for nonlinear and non-stationary time series analysis](https://royalsocietypublishing.org/rspa/article-pdf/454/1971/903/634025/rspa.1998.0193.pdf) (original EMD paper, pdf)
+
+## Inputs 
+Basic usage is
+
+`mlpack::EMD(signal, imfs, residue)`
+
+- Takes in a 1D signal (uniformly sampled)
+
+- Extracts periodic components (imfs) from high to low frequency
 
 ## Outputs
 
-- `imfs` (`arma::Mat<eT>`): shape `N x K`, each column an IMF, `K <= maxImfs`.
-- `residue` (`arma::Col<eT>`): final residual signal after removing all IMFs.
+- `imfs`: matrix with shape `N x K` whose columns are IMFs.
+- `residue`: final residual signal after removing all IMFs.
 
-## Reconstruction
-
-The original signal can be reconstructed as
+The original signal can be reconstructed as the sum of the IMFs and residue: 
 
 `signal ~ Σ_k imfs.col(k) + residue`
 
-*Original signal:*
+*Original signal(a);*
+*Original signal with envelopes about the local minima and maxima(b)*
+*The first IMF extracted from the original signal via sifting(c)*
 
 <p align="center">
-  <img src="../../../img/emd_original_signal.png" alt="signal">
+  <img src="../../../img/emd_visualization.svg" alt="signal with envelopes">
 </p>
 
-*Original signal with envelopes about the local minima and maxima:*
-
-<p align="center">
-  <img src="../../../img/emd_envelopes.png" alt="signal with envelopes">
-</p>
-
-*The first IMF extracted from the original signal via sifting:*
-
-<p align="center">
-  <img src="../../../img/emd_imf1.png" alt="signal with envelopes">
-</p>
-
-## Example
+### Simple Example
 
 Create some periodic, time-varying signal `S`.
 
@@ -95,3 +91,19 @@ for (size_t k = 0; k < numToShow; ++k)
   std::cout << "IMF " << k << " peak freq: " << peakHz << " Hz" << std::endl;
 }
 ```
+
+#### `EMD()` Parameters
+
+| **name** | **type** | **default** | **description** |
+|----------|----------|-------------|-----------------|
+| `signal` | `arma::Col<eT>` | — | Uniformly sampled 1D input signal. |
+| `maxImfs` | `size_t` | `10` | Maximum number of IMFs to extract. |
+| `maxSiftIter` | `size_t` | `50` | Maximum sifting iterations per IMF. |
+| `tol` | `double` | `1e-3` | Stopping tolerance on mean envelope ratio. |
+
+***Notes:*** 
+- `signal` may use any Armadillo column scalar type `eT`. The 
+stopping criterion is based on the normalized mean envelope magnitude.
+
+- Sifting will terminate when zero-crossings and extrema are equal or differing
+by at most one. Specifically, S-number is set to S=1.

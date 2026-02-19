@@ -180,7 +180,7 @@ inline void EMD(const ColType& signal,
                 MatType& imfs,
                 ColType& residue,
                 const size_t maxImfs = 10,
-                const size_t maxSiftIter = 10,
+                const size_t maxSiftIter = 50,
                 const double tol = 1e-3)
 {
   using eT = typename ColType::elem_type;
