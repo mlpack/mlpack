@@ -68,8 +68,6 @@ PARAM_MODEL_IN_REQ(LogisticRegression<>, "input_model", "Existing model "
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   LogisticRegression<>* model = params.Get<LogisticRegression<>*>("input_model");
-  const double decisionBoundary = params.Get<double>("decision_boundary");
-
   const arma::mat& testSet = params.Get<arma::mat>("test");
 
   // Checking the dimensionality of the test data.
@@ -99,7 +97,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   Log::Info << "Predicting classes of points in '"
       << params.GetPrintable<arma::mat>("test") << "'." << endl;
   timers.Start("logistic_regression_probabilities");
-  model->Classify(testSet, predictions, decisionBoundary);
+  model->Classify(testSet, predictions, probabilities);
   timers.Stop("logistic_regression_probabilities");
 
   params.Get<arma::mat>("probabilities") = std::move(probabilities);

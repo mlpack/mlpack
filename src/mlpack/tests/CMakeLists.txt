@@ -188,6 +188,7 @@ add_executable(mlpack_test
   main_tests/logistic_regression_test.cpp
   main_tests/logistic_regression_train_test.cpp
   main_tests/logistic_regression_classify_test.cpp
+  main_tests/logistic_regression_probabilities_test.cpp
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
