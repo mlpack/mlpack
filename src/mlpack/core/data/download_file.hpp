@@ -21,9 +21,7 @@ namespace mlpack {
  */
 inline bool CheckIfURL(const std::string& url)
 {
-  std::regex rgx("^https?://");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
+  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 8, "https://") == 0)
   {
     return true;
   }
@@ -50,29 +48,83 @@ inline void FilenameFromURL(std::string& filename, const std::string& url)
 /**
  * Extract host from URL.
  */
-inline std::string URLToHost(const std::string& url)
+//inline bool URLToHost(const std::string& url, std::string& host)
+//{
+  //bool success = false;
+  //std::regex rgx(R"(^(?:https?)://(?:[^@/\n]+@)?([^:/?\n]+))");
+  //std::smatch match;
+  //if (std::regex_search(url, match, rgx))
+  //{
+    //host = match[1];
+  //}
+  //return host;
+//}
+
+
+void ParseURL(const std::string& url, std::string& host,
+              std::string& filename, int& port)
 {
-  std::string host;
-  std::regex rgx(R"(^(?:https?|ftp)://(?:[^@/\n]+@)?([^:/?\n]+))");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
+  if (!CheckIfURL(url) || url.size() <= 8)
   {
-    host = match[1];
+    throw std::runtime_error("Invalid URL provided."
+        " URL should start with http or https");
   }
-  return host;
+  size_t pos = url.find("://");
+  pos = pos + 3;
+
+  std::string possibleHost = url.substr(pos);
+  std::cout << "possible Host: " << possibleHost << std::endl;
+
+  size_t hostPos = possibleHost.find_first_of(":/");
+  if (hostPos == std::string::npos)
+  {
+    throw std::runtime_error("Host name is not found."
+        " Host name ends either by '/' or ':'. Please check the provided URL");
+  }
+
+  host = possibleHost.substr(0, hostPos);
+ // we should not use hostPos in here. 
+  char endChar = possibleHost.at(hostPos);
+  std::cout << "End Char:" << endChar << std::endl;
+  if (endChar == ':')
+  {
+    // we need to find the last char which is /
+    std::string findPort = possibleHost.substr(hostPos + 1);
+    std::cout << "possible port: " << findPort << std::endl;
+    size_t endPort = findPort.find("/");
+    port = std::stoi(findPort.substr(0, endPort));
+  }
+
+  size_t filePos = url.rfind("/");
+  // no need to throw an exception, if the file is not found this is not a
+  // problem with the URL.
+  if (filePos != std::string::npos)
+  {
+    std::string possibleFilename = url.substr(filePos);
+    std::cout << "possible filename:" << possibleFilename << std::endl;
+    size_t posFile = possibleFilename.find_first_of("?#");
+    if (posFile != std::string::npos)
+    {
+      filename = possibleFilename.substr(posFile);
+    }
+  }
 }
 
 bool DownloadFile(const std::string& url,
                   std::string& filename)
 {
   std::fstream stream;
-  // If host is not extracted correctly, we will get a segmentation fault from
-  // httplib
-  std::string host = URLToHost(url);
+  int port = -1;
+  std::string host;
+  ParseURL(url, host, filename, port);
+
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
   httplib::SSLClient cli(host, 443);
 #else
-  auto port = 80;
+  if (port = -1)
+  {
+    port = 80;
+  }
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
@@ -99,13 +151,14 @@ bool DownloadFile(const std::string& url,
     oss <<  "Unable to open a temporary file for downloading data.";
     throw std::runtime_error(oss.str());
   }
-
+  errno = 0;
   stream.write(res->body.data(), res->body.size());
+  stream.flush();
   if (!stream.good())
   {
     std::stringstream oss;
-    oss << "Error writing to a '" << filename << "'.  "
-          << "Please check permissions or disk space.";
+    oss << "Error writing to a '" << filename << "' failed: "
+        << std::strerror(errno);
     throw std::runtime_error(oss.str());
   }
   stream.close();
