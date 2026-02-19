@@ -156,6 +156,9 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
 PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
+PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
+    "logistic function for a point is less than the boundary, the class is "
+    "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
     "on the training set will be printed (verbose must also be specified).",
     "a");
@@ -169,7 +172,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const double stepSize = params.Get<double>("step_size");
   const size_t batchSize = (size_t) params.Get<int>("batch_size");
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
-  //const double decisionBoundary = params.Get<double>("decision_boundary");
+  const double decisionBoundary = params.Get<double>("decision_boundary");
 
   // One of training and input_model must be specified.
   RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
@@ -374,15 +377,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // We must perform predictions on the test set.  Training (and the
     // optimizer) are irrelevant here; we'll pass in the model we have.
-    // if (params.Has("predictions"))
-    // {
-    //   Log::Info << "Predicting classes of points in '"
-    //       << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    //   model->Classify(testSet, predictions, decisionBoundary);
+    if (params.Has("predictions"))
+    {
+      Log::Info << "Predicting classes of points in '"
+          << params.GetPrintable<arma::mat>("test") << "'." << endl;
+      model->Classify(testSet, predictions, decisionBoundary);
 
-    //   if (params.Has("predictions"))
-    //     params.Get<arma::Row<size_t>>("predictions") = predictions;
-    // }
+      if (params.Has("predictions"))
+        params.Get<arma::Row<size_t>>("predictions") = predictions;
+    }
 
     // if (params.Has("probabilities"))
     // {

@@ -88,7 +88,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Output predictions size must match the test data set size.
   REQUIRE(testY.n_rows == 1);
-  REQUIRE(testY.n_cols == testX.n_cols);
+  REQUIRE(testY.n_cols == M);
 }
 
 /**
@@ -600,6 +600,57 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
 
+}
+
+/**
+  * Ensuring decision_boundary parameter does something.
+ **/
+TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
+                 "LogisticRegressionTrainDecisionBoundaryTest",
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY;
+
+  // 10 responses.
+  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
+
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("decision_boundary", double(1));
+  SetInputParam("test", testX);
+
+  // First solution.
+  RUN_BINDING();
+
+  // Get the output after first training.
+  const arma::Row<size_t> output1 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Reset the settings.
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("training", trainX);
+  SetInputParam("labels", trainY);
+  SetInputParam("decision_boundary", double(0));
+  SetInputParam("test", testX);
+
+  // Second solution.
+  RUN_BINDING();
+
+  // Get the output after second training.
+  const arma::Row<size_t>& output2 =
+      params.Get<arma::Row<size_t>>("predictions");
+
+  // Check that the output changed when the decision boundary moved.
+  REQUIRE(accu(output1 != output2) > 0);
 }
 
 /**
