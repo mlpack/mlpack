@@ -23,11 +23,12 @@ using namespace mlpack;
 
 BINDING_TEST_FIXTURE(LogisticRegressionClassifyTestFixture);
 
+#if 1
 /**
-  * Ensuring that absence of test data is checked.
+  * Ensuring that absence of input model is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
-                 "LogisticRegressionClassifyNoData",
+                 "LogisticRegressionClassifyNoModel",
                  "[LogisticRegressionClassifyMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -35,19 +36,62 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY;
-  // 10 responses.
-  trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
-  // Training the model.
+  SetInputParam("test", std::move(testX));
+
+  // (Required) model is not provided. Should throw a runtime error.
+  // NB this currently requires a patch applied here too
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+#endif
+
+/**
+  * Ensuring that absence of estimated model is checked.
+ **/
+TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
+                 "LogisticRegressionClassifyEmptyModel",
+                 "[LogisticRegressionClassifyMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+  constexpr int M = 15;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+  arma::mat testX = arma::randu<arma::mat>(D, M);
+
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  //model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
-  //model->Train(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
 
-  // Test data is not provided. Should throw a runtime error.
+  // Model is not trained and has no parameters. Should throw a runtime error.
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
+
+
+/**
+  * Ensuring that absence of estimated model is checked.
+ **/
+TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
+                 "LogisticRegressionClassifyNoData",
+                 "[LogisticRegressionClassifyMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 3;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
+
+  // Training the model.
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Parameters() = zeros<arma::rowvec>(trainX.n_rows + 1);
+  model->Train(trainX, trainY);
+
+  SetInputParam("input_model", std::move(model));
+
+  // Required input data is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
