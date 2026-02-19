@@ -21,45 +21,16 @@ namespace mlpack {
  */
 inline bool CheckIfURL(const std::string& url)
 {
-  if (url.compare(0, 7, "http://") == 0 || url.compare(0, 8, "https://") == 0)
+  if (!url.empty())
   {
-    return true;
+    if (url.compare(0, 7, "http://") == 0 ||
+        url.compare(0, 8, "https://") == 0)
+    {
+      return true;
+    }
   }
   return false;
 }
-
-/**
- * Given an URL, extract the filename that is being downloaded using regex.
- *
- * @param filename to be extracted from URL.
- * @param url that contains the filename at the end.
- */
-inline void FilenameFromURL(std::string& filename, const std::string& url)
-{
-  std::regex rgx("[^/]+(?=/$|$)");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    //std::cout << "filename: " << match[0] << std::endl;
-    filename = match[0];
-  }
-}
-
-/**
- * Extract host from URL.
- */
-//inline bool URLToHost(const std::string& url, std::string& host)
-//{
-  //bool success = false;
-  //std::regex rgx(R"(^(?:https?)://(?:[^@/\n]+@)?([^:/?\n]+))");
-  //std::smatch match;
-  //if (std::regex_search(url, match, rgx))
-  //{
-    //host = match[1];
-  //}
-  //return host;
-//}
-
 
 void ParseURL(const std::string& url, std::string& host,
               std::string& filename, int& port)
@@ -73,39 +44,53 @@ void ParseURL(const std::string& url, std::string& host,
   pos = pos + 3;
 
   std::string possibleHost = url.substr(pos);
-  std::cout << "possible Host: " << possibleHost << std::endl;
 
-  size_t hostPos = possibleHost.find_first_of(":/");
+  size_t hostPos = possibleHost.find_first_of(".:/");
   if (hostPos == std::string::npos)
   {
-    throw std::runtime_error("Host name is not found."
-        " Host name ends either by '/' or ':'. Please check the provided URL");
+    throw std::runtime_error("Domain name is not valid."
+        " Domain name should contains '.' between the hostname and the top"
+        " level domain. Or '/' at the end. Please check the provided URL");
   }
 
-  host = possibleHost.substr(0, hostPos);
- // we should not use hostPos in here. 
-  char endChar = possibleHost.at(hostPos);
-  std::cout << "End Char:" << endChar << std::endl;
-  if (endChar == ':')
+  size_t endHost = possibleHost.find_first_of(":/");
+  if (endHost != std::string::npos)
   {
-    // we need to find the last char which is /
-    std::string findPort = possibleHost.substr(hostPos + 1);
-    std::cout << "possible port: " << findPort << std::endl;
-    size_t endPort = findPort.find("/");
-    port = std::stoi(findPort.substr(0, endPort));
-  }
-
-  size_t filePos = url.rfind("/");
-  // no need to throw an exception, if the file is not found this is not a
-  // problem with the URL.
-  if (filePos != std::string::npos)
-  {
-    std::string possibleFilename = url.substr(filePos);
-    std::cout << "possible filename:" << possibleFilename << std::endl;
-    size_t posFile = possibleFilename.find_first_of("?#");
-    if (posFile != std::string::npos)
+    host = possibleHost.substr(0, endHost);
+    char endChar = possibleHost.at(endHost);
+    if (endChar == ':')
     {
-      filename = possibleFilename.substr(posFile);
+      // We need to find the last char which is /
+      std::string findPort = possibleHost.substr(endHost + 1);
+      size_t endPort = findPort.find("/");
+      port = std::stoi(findPort.substr(0, endPort));
+    }
+  }
+
+  int firstPos = possibleHost.rfind(":");
+  int secPos   = possibleHost.rfind("/");
+  // Need to be sure that we are comparing valid number since npos is the
+  // highest possible value in size_t
+  if (firstPos == std::string::npos) firstPos = -1;
+  if (secPos == std::string::npos) secPos = -1;
+  if (secPos > firstPos)
+  {
+    size_t filePos = possibleHost.rfind("/");
+    // no need to throw an exception, if the file is not found this is not a
+    // problem with the URL.
+    if (filePos != std::string::npos)
+    {
+      std::string possibleFilename = possibleHost.substr(filePos + 1);
+      size_t posFile = possibleFilename.find_first_of("?#");
+      // we assume something is after the file name.
+      if (posFile != std::string::npos)
+      {
+        filename = possibleFilename.substr(0, posFile);
+      }
+      else
+      {
+        filename = possibleFilename;
+      }
     }
   }
 }
@@ -118,6 +103,11 @@ bool DownloadFile(const std::string& url,
   std::string host;
   ParseURL(url, host, filename, port);
 
+  // Sanity check if in case.
+  if (host.empty())
+  {
+    throw std::runtime_error("Domain name could not be parsed.");
+  }
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
   httplib::SSLClient cli(host, 443);
 #else
@@ -137,13 +127,11 @@ bool DownloadFile(const std::string& url,
     throw std::runtime_error(oss.str());
   }
 
-  std::string originalFilename;
-  FilenameFromURL(originalFilename, url);
-
-  filename = TempName();
+  std::string tmpFilename = TempName();
   // This is necessary to get the extension.
-  filename += originalFilename;
+  tmpFilename += filename;
   // @rcurtin, I do not like this, but this is the only option;
+  // Or I can take the internal of OpenFile, and use it here.
   DataOptions opts = NoFatal;
   if (!OpenFile(filename, opts, false, stream))
   {
@@ -157,7 +145,7 @@ bool DownloadFile(const std::string& url,
   if (!stream.good())
   {
     std::stringstream oss;
-    oss << "Error writing to a '" << filename << "' failed: "
+    oss << "Error writing to a '" << tmpFilename << "' failed: "
         << std::strerror(errno);
     throw std::runtime_error(oss.str());
   }
