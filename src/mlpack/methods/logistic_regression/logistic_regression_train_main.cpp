@@ -33,8 +33,7 @@ BINDING_SHORT_DESC(
     "future use.");
 
 // Long description.
-BINDING_LONG_DESC("TODO");
-#if 0
+BINDING_LONG_DESC(
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
     "regression problem"
@@ -94,7 +93,6 @@ BINDING_LONG_DESC("TODO");
     "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
     std::to_string(BINDING_MIN_LABEL + 1) + ".  For more classes, see the "
     "softmax regression implementation.");
-#endif
 
 // Example.
 BINDING_EXAMPLE(
@@ -102,20 +100,17 @@ BINDING_EXAMPLE(
     PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
     "with L2 regularization of 0.1, saving the model to '" +
     PRINT_MODEL("lr_model") + "', the following command may be used:" +
-    "\n\n" );//+
-#if 0
-    PRINT_CALL("logistic_regression", "training", "data", "labels", "labels",
+    "\n\n" +
+    PRINT_CALL("logistic_regression_train", "training", "data", "labels", "labels",
         "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
         true) +
     "\n\n"
-                );
     "Then, to use that model to predict classes for the dataset '" +
     PRINT_DATASET("test") + "', storing the output predictions in '" +
     PRINT_DATASET("predictions") + "', the following command may be used: "
     "\n\n" +
-    PRINT_CALL("logistic_regression", "input_model", "lr_model", "test", "test",
-              "predictions", "predictions"));
-#endif
+    PRINT_CALL("logistic_regression_train", "input_model", "lr_model", "test", "test",
+               "predictions", "predictions"));
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
@@ -130,7 +125,7 @@ BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
 // Training parameters.
 PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the matrix "
     "of predictors, X).", "t");
-PARAM_UROW_IN_REQ("labels", "A matrix containing labels (0 or 1) for the points "
+PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
 // Optimizer parameters.
