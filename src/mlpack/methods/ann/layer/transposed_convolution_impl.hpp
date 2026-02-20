@@ -1,50 +1,52 @@
 /**
- * @file methods/ann/layer/convolution_impl.hpp
+ * @file methods/ann/layer/transposed_convolution_impl.hpp
+ * @author Shikhar Jaiswal
  * @author Marcus Edel
+ * @author Ranjodh Singh
  *
- * Implementation of the Convolution module class.
+ * Implementation of the Transposed Convolution module class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
-#define MLPACK_METHODS_ANN_LAYER_CONVOLUTION_IMPL_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_TRANSPOSED_CONVOLUTION_IMPL_HPP
+#define MLPACK_METHODS_ANN_LAYER_TRANSPOSED_CONVOLUTION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "convolution.hpp"
+#include "transposed_convolution.hpp"
 
 namespace mlpack {
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Convolution() : Layer<MatType>()
+>::TransposedConvolution()
 {
   // Nothing to do here.
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Convolution(
+>::TransposedConvolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -52,34 +54,38 @@ Convolution<
     const size_t strideHeight,
     const size_t padW,
     const size_t padH,
+    const size_t outputPadW,
+    const size_t outputPadH,
     const std::string& paddingType,
     const bool useBias) :
-    Convolution(
-      maps,
-      kernelWidth,
-      kernelHeight,
-      strideWidth,
-      strideHeight,
-      std::tuple<size_t, size_t>(padW, padW),
-      std::tuple<size_t, size_t>(padH, padH),
-      paddingType,
-      useBias)
+    TransposedConvolution(
+        maps,
+        kernelWidth,
+        kernelHeight,
+        strideWidth,
+        strideHeight,
+        std::tuple<size_t, size_t>(padW, padW),
+        std::tuple<size_t, size_t>(padH, padH),
+        outputPadW,
+        outputPadH,
+        paddingType,
+        useBias)
 {
   // Nothing to do here.
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Convolution(
+>::TransposedConvolution(
     const size_t maps,
     const size_t kernelWidth,
     const size_t kernelHeight,
@@ -87,7 +93,9 @@ Convolution<
     const size_t strideHeight,
     const std::tuple<size_t, size_t>& padW,
     const std::tuple<size_t, size_t>& padH,
-    const std::string& paddingTypeIn,
+    const size_t outputPadW,
+    const size_t outputPadH,
+    const std::string& paddingType,
     const bool useBias) :
     Layer<MatType>(),
     maps(maps),
@@ -99,24 +107,26 @@ Convolution<
     padWRight(std::get<1>(padW)),
     padHBottom(std::get<1>(padH)),
     padHTop(std::get<0>(padH)),
+    outputPadW(outputPadW),
+    outputPadH(outputPadH),
     useBias(useBias)
 {
   // Transform paddingType to lowercase.
-  this->paddingType = util::ToLower(paddingTypeIn);
+  this->paddingType = util::ToLower(paddingType);
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Convolution(const Convolution& other) :
+>::TransposedConvolution(const TransposedConvolution& other) :
     Layer<MatType>(other),
     maps(other.maps),
     kernelWidth(other.kernelWidth),
@@ -127,30 +137,30 @@ Convolution<
     padWRight(other.padWRight),
     padHBottom(other.padHBottom),
     padHTop(other.padHTop),
+    outputPadW(other.outputPadW),
+    outputPadH(other.outputPadH),
     useBias(other.useBias),
     padding(other.padding),
     paddingBackward(other.paddingBackward),
     paddingType(other.paddingType),
     inMaps(other.inMaps),
-    higherInDimensions(other.higherInDimensions),
-    apparentWidth(other.apparentWidth),
-    apparentHeight(other.apparentHeight)
+    higherInDimensions(other.higherInDimensions)
 {
   // Nothing to do.
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Convolution(Convolution&& other) :
+>::TransposedConvolution(TransposedConvolution&& other) :
     Layer<MatType>(std::move(other)),
     maps(std::move(other.maps)),
     kernelWidth(std::move(other.kernelWidth)),
@@ -161,36 +171,36 @@ Convolution<
     padWRight(std::move(other.padWRight)),
     padHBottom(std::move(other.padHBottom)),
     padHTop(std::move(other.padHTop)),
+    outputPadW(std::move(other.outputPadW)),
+    outputPadH(std::move(other.outputPadH)),
     useBias(std::move(other.useBias)),
     padding(std::move(other.padding)),
     paddingBackward(std::move(other.paddingBackward)),
     paddingType(std::move(other.paddingType)),
     inMaps(std::move(other.inMaps)),
-    higherInDimensions(std::move(other.higherInDimensions)),
-    apparentWidth(std::move(other.apparentWidth)),
-    apparentHeight(std::move(other.apparentHeight))
+    higherInDimensions(std::move(other.higherInDimensions))
 {
   // Nothing to do.
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
 >&
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::operator=(const Convolution& other)
+>::operator=(const TransposedConvolution& other)
 {
   if (&other != this)
   {
@@ -204,37 +214,37 @@ Convolution<
     padWRight = other.padWRight;
     padHBottom = other.padHBottom;
     padHTop = other.padHTop;
+    outputPadW = other.outputPadW;
+    outputPadH = other.outputPadH;
     useBias = other.useBias;
     padding = other.padding;
     paddingBackward = other.paddingBackward;
     paddingType = other.paddingType;
     inMaps = other.inMaps;
     higherInDimensions = other.higherInDimensions;
-    apparentWidth = other.apparentWidth;
-    apparentHeight = other.apparentHeight;
   }
 
   return *this;
 }
 
-template<
+template <
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
 >&
-Convolution<
+TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::operator=(Convolution&& other)
+>::operator=(TransposedConvolution&& other)
 {
   if (&other != this)
   {
@@ -248,14 +258,14 @@ Convolution<
     padWRight = std::move(other.padWRight);
     padHBottom = std::move(other.padHBottom);
     padHTop = std::move(other.padHTop);
+    outputPadW = other.outputPadW;
+    outputPadH = other.outputPadH;
     useBias = std::move(other.useBias);
     padding = std::move(other.padding);
     paddingBackward = std::move(other.paddingBackward);
     paddingType = std::move(other.paddingType);
     inMaps = std::move(other.inMaps);
     higherInDimensions = std::move(other.higherInDimensions);
-    apparentWidth = std::move(other.apparentWidth);
-    apparentHeight = std::move(other.apparentHeight);
   }
 
   return *this;
@@ -267,7 +277,7 @@ template<
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
@@ -286,13 +296,14 @@ void Convolution<
   }
 }
 
+
 template<
     typename MatType,
     typename ForwardConvolutionRule,
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
@@ -301,45 +312,62 @@ void Convolution<
 {
   batchSize = input.n_cols;
 
-  // First, perform any padding if necessary.
-  const bool usingPadding =
-      (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
-  const size_t paddedRows = this->inputDimensions[0] + padWLeft + padWRight;
-  const size_t paddedCols = this->inputDimensions[1] + padHTop + padHBottom;
-  if (usingPadding)
+  // If input requires processing (expanding and/or padding) we will store
+  // the modified input in member variable inputTemp so that Gradient function
+  // can reuse it. Otherwise inputTemp will just be an alias to the input
+  // passed here.
+  if (expandInput || padInput)
   {
-    inputPadded.set_size(paddedRows * paddedCols * inMaps * higherInDimensions,
-        input.n_cols);
-    padding.Forward(input, inputPadded);
+    inputTemp.set_size(padding.OutputDimensions()[0],
+        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
   }
+  else
+  {
+    MakeAlias(inputTemp, input, padding.OutputDimensions()[0],
+        padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
+  }
+
+  // If we are using padding the final input will be stored in `inputPadded`.
+  // If we aren't using padding the final input may be in `inputExpanded`.
+  // If there is neither padding nor input expansion (no zero insertion), then
+  // `inputTemp` simply aliases `input`. All the cases are therefore handled.
+  MatType inputExpanded, inputPadded;
+  MakeAlias(padInput ? inputPadded : inputExpanded,
+      inputTemp, padding.OutputDimensions()[0] * padding.OutputDimensions()[1]
+      * inMaps * higherInDimensions, batchSize);
+
+  if (expandInput)
+    InsertZeros(input, inputExpanded);
+  if (padInput)
+    padding.Forward(expandInput ? inputExpanded : input, inputPadded);
 
   output.zeros();
 
+  CubeType outputBatch;
+
   // We "ignore" dimensions higher than the third---that means that we just pass
   // them through and treat them like different input points.
-  //
   // If we eventually have a way to do convolutions for a single kernel
   // in-batch, then this strategy may not be the most efficient solution.
-  #pragma omp parallel for schedule(dynamic) private(outputTemp)
+  #pragma omp parallel for schedule(dynamic) private(outputBatch)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
-    CubeType inputTemp;
 
-    MakeAlias(inputTemp, (usingPadding ? inputPadded : input), paddedRows,
-        paddedCols, inMaps, fullInputOffset * paddedRows * paddedCols);
-
-    MakeAlias(outputTemp, output, this->outputDimensions[0],
+    CubeType inputBatch;
+    MakeAlias(inputBatch, inputTemp, inputTemp.n_rows, inputTemp.n_cols, inMaps,
+        fullInputOffset * inputTemp.n_rows * inputTemp.n_cols);
+    MakeAlias(outputBatch, output, this->outputDimensions[0],
         this->outputDimensions[1], maps, fullOutputOffset *
         this->outputDimensions[0] * this->outputDimensions[1]);
 
     ForwardConvolutionRule::Convolution(
-        inputTemp,
+        inputBatch,
         weight,
-        outputTemp,
-        strideWidth,
-        strideHeight,
+        outputBatch,
+        1,
+        1,
         1,
         1,
         true);
@@ -348,7 +376,7 @@ void Convolution<
     if (useBias)
     {
       for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
-        outputTemp.slice(outMap) += bias(outMap);
+        outputBatch.slice(outMap) += bias(outMap);
     }
   }
 }
@@ -359,112 +387,74 @@ template<
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
->::Backward(
-    const MatType& /* input */,
-    const MatType& /* output */,
-    const MatType& gy,
-    MatType& g)
+>::Backward(const MatType& /* input */,
+            const MatType& /* output */,
+            const MatType& gy,
+            MatType& g)
 {
-  CubeType mappedError;
-  MakeAlias(mappedError, gy, this->outputDimensions[0],
-      this->outputDimensions[1], higherInDimensions * maps * batchSize);
+  MatType errorPadded;
+  const bool usingPaddingBackward = (
+      paddingBackward.PadWLeft() != 0 || paddingBackward.PadWRight() != 0 ||
+      paddingBackward.PadHTop() != 0 || paddingBackward.PadHBottom() != 0);
 
+  if (usingPaddingBackward)
+  {
+    errorPadded.set_size(paddingBackward.OutputDimensions()[0]
+        * paddingBackward.OutputDimensions()[1] * maps * higherInDimensions,
+        batchSize);
+
+    paddingBackward.Forward(gy, errorPadded);
+  }
+
+  CubeType mappedError;
+  MakeAlias(mappedError, (usingPaddingBackward ? errorPadded : gy),
+      paddingBackward.OutputDimensions()[0],
+      paddingBackward.OutputDimensions()[1],
+      maps * higherInDimensions * batchSize);
+
+  CubeType gTemp;
   MakeAlias(gTemp, g, this->inputDimensions[0], this->inputDimensions[1],
-      inMaps * higherInDimensions * batchSize);
+            inMaps * higherInDimensions * batchSize);
   gTemp.zeros();
 
-  const bool usingPadding =
-      (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
-
-  // To perform the backward pass, we need to rotate all the filters.
-  CubeType rotatedFilters(weight.n_rows,
-      weight.n_cols, weight.n_slices);
-
-  // To perform the backward pass, we need to dilate all the mappedError.
-  CubeType dilatedMappedError;
-  if (strideHeight == 1 && strideWidth == 1)
-  {
-    MakeAlias(dilatedMappedError, mappedError, mappedError.n_rows,
-        mappedError.n_cols, mappedError.n_slices);
-  }
-  else
-  {
-    dilatedMappedError.zeros(mappedError.n_rows * strideWidth -
-        (strideWidth - 1), mappedError.n_cols * strideHeight -
-        (strideHeight - 1), mappedError.n_slices);
-    #pragma omp parallel for collapse(3) schedule(static)
-    for (size_t i = 0; i < mappedError.n_slices; ++i)
-    {
-      for (size_t j = 0; j < mappedError.n_cols; ++j)
-      {
-        for (size_t k = 0; k < mappedError.n_rows; ++k)
-        {
-          dilatedMappedError(k * strideWidth, j * strideHeight, i)
-              = mappedError(k, j, i);
-        }
-      }
-    }
-  }
-
+  // Rotating the weights here allows the layer learns the rotated form
+  // directly. This removes the need to rotate during the forward pass,
+  // making inference faster without adding any extra cost during training.
+  CubeType rotatedFilters(weight.n_rows, weight.n_cols, weight.n_slices);
   #pragma omp parallel for schedule(static)
-  for (size_t map = 0; map < (size_t) (maps * inMaps); ++map)
-  {
+  for (size_t map = 0; map < (size_t)(maps * inMaps); ++map)
     Rotate180(weight.slice(map), rotatedFilters.slice(map));
-  }
 
-  MatType output(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize);
+  CubeType gTempBatch;
 
   // See Forward() for the overall iteration strategy.
-  #pragma omp parallel for schedule(dynamic) private(outputTemp)
+  #pragma omp parallel for schedule(dynamic) private(gTempBatch)
   for (size_t offset = 0; offset < (higherInDimensions * batchSize); ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType rotatedFiltersTemp;
+    CubeType mappedErrorBatch;
+    MakeAlias(mappedErrorBatch, mappedError, mappedError.n_rows,
+        mappedError.n_cols, maps,
+        fullOutputOffset * mappedError.n_rows * mappedError.n_cols);
+    MakeAlias(gTempBatch, gTemp, gTemp.n_rows, gTemp.n_cols,
+        inMaps, fullInputOffset * gTemp.n_rows * gTemp.n_cols);
 
-    MakeAlias(outputTemp, output, apparentWidth, apparentHeight, inMaps,
-        fullInputOffset * apparentWidth * apparentHeight);
-    // Iterate over output maps.
-    for (size_t outMap = 0; outMap < maps; ++outMap)
-    {
-      MakeAlias(rotatedFiltersTemp, rotatedFilters, rotatedFilters.n_rows,
-          rotatedFilters.n_cols, inMaps,
-          outMap * inMaps * rotatedFilters.n_rows * rotatedFilters.n_cols);
-      BackwardConvolutionRule::Convolution(
-          dilatedMappedError.slice(outMap + fullOutputOffset),
-          rotatedFiltersTemp,
-          outputTemp,
-          1,
-          1,
-          1,
-          1,
-          true);
-    }
-  }
-  MatType temp(padding.OutputDimensions()[0] * padding.OutputDimensions()[1] *
-      inMaps * higherInDimensions, batchSize);
-  CubeType tempCube;
-  MakeAlias(tempCube, temp, padding.OutputDimensions()[0],
-      padding.OutputDimensions()[1], inMaps * higherInDimensions * batchSize);
-  paddingBackward.Forward(output, temp);
-  if (usingPadding)
-  {
-    gTemp = tempCube.tube(
-        padWLeft,
-        padHTop,
-        padWLeft + gTemp.n_rows - 1,
-        padHTop + gTemp.n_cols - 1);
-  }
-  else
-  {
-    gTemp = tempCube;
+    BackwardConvolutionRule::Convolution(
+        mappedErrorBatch,
+        rotatedFilters,
+        gTempBatch,
+        strideWidth,
+        strideHeight,
+        1,
+        1,
+        true);
   }
 }
 
@@ -474,86 +464,62 @@ template<
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
 >::Gradient(
-    const MatType& input,
+    const MatType& /* input */,
     const MatType& error,
     MatType& gradient)
 {
-  CubeType mappedError;
-  MakeAlias(mappedError, error, this->outputDimensions[0],
-      this->outputDimensions[1], higherInDimensions * maps * batchSize);
-
-  // We are depending here on `inputPadded` being properly set from a call to
-  // Forward().
-  const bool usingPadding =
-      (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0);
-
-  MatType temp(apparentWidth * apparentHeight * inMaps * higherInDimensions,
-      batchSize);
-  paddingBackward.Backward(input, {} /* unused */,
-      usingPadding ? inputPadded : input, temp);
-
   // We will make an alias for the gradient, but note that this is only for the
   // convolution map weights!  The bias will be handled by direct accesses into
   // `gradient`.
+  CubeType gradientTemp;
+  MakeAlias(gradientTemp, gradient, kernelWidth, kernelHeight, inMaps * maps);
   gradient.zeros();
-  MakeAlias(gradientTemp, gradient, weight.n_rows, weight.n_cols,
-      weight.n_slices);
-
-  MatType tempSlice;
 
   // See Forward() for our iteration strategy.
-  #pragma omp parallel for schedule(dynamic) private(tempSlice)
+  #pragma omp parallel for schedule(dynamic)
   for (size_t offset = 0; offset < higherInDimensions * batchSize; ++offset)
   {
     const size_t fullInputOffset = offset * inMaps;
     const size_t fullOutputOffset = offset * maps;
 
-    CubeType mappedErrorTemp;
-    MakeAlias(mappedErrorTemp, error, this->outputDimensions[0],
+    CubeType errorTemp;
+    MakeAlias(errorTemp, error, this->outputDimensions[0],
         this->outputDimensions[1], maps, fullOutputOffset *
         this->outputDimensions[0] * this->outputDimensions[1]);
 
+    CubeType curError(gradientTemp.n_rows, gradientTemp.n_cols, maps);
     for (size_t inMap = 0; inMap < inMaps; ++inMap)
     {
-      CubeType gradientTempTemp(gradientTemp.n_rows, gradientTemp.n_cols,
-          maps);
-      // Make an alias of the slice directly instead of using a cube to avoid
-      // the overhead of creating a cube every time this function is called
-      MakeAlias(tempSlice, temp, apparentWidth, apparentHeight,
-          (inMap + fullInputOffset) * (apparentWidth * apparentHeight));
-
       GradientConvolutionRule::Convolution(
-          tempSlice,
-          mappedErrorTemp,
-          gradientTempTemp,
+          inputTemp.slice(inMap + fullInputOffset),
+          errorTemp,
+          curError,
           1,
           1,
-          strideWidth,
-          strideHeight,
-          true);
+          1,
+          1,
+          false);
 
-      // Reorder convolution output slices.
       #pragma omp critical
-      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+      for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
       {
         gradientTemp.slice((outMap * inMaps) + inMap) +=
-            gradientTempTemp.slice(outMap);
+            curError.slice(outMap);
       }
     }
 
     if (useBias)
     {
-      for (size_t outMap = 0; outMap < (size_t) maps; ++outMap)
+      for (size_t outMap = 0; outMap < (size_t) maps; outMap++)
       {
         #pragma omp atomic update
-        gradient[weight.n_elem + outMap] += accu(mappedErrorTemp
-            .slice(outMap));
+        gradient[weight.n_elem + outMap] += accu(errorTemp.slice(outMap));
       }
     }
   }
@@ -565,15 +531,15 @@ template<
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
     GradientConvolutionRule
 >::ComputeOutputDimensions()
 {
-  // First, we must make sure the padding sizes are up to date, which we can
-  // now do since inputDimensions is set correctly.
+  // First, we must make sure the padding sizes are up to date,
+  // which we can now do since inputDimensions is set correctly.
   if (paddingType == "valid")
   {
     padWLeft = 0;
@@ -583,25 +549,50 @@ void Convolution<
   }
   else if (paddingType == "same")
   {
+    if (strideWidth > 1 || strideHeight > 1)
+    {
+      throw std::logic_error(
+          "TransposedConvolution::ComputeOutputDimensions(): "
+          "Cannot apply 'same' padding with non-unit stride.");
+    }
     InitializeSamePadding();
   }
 
-  padding = Padding<MatType>(padWLeft, padWRight, padHTop, padHBottom);
+  // Calculate padding for the forward pass of transposed convolution
+  // based on the padding for the forward pass of regular convolution.
+  const size_t padWLeftForward = kernelWidth - padWLeft - 1;
+  const size_t padWRightForward = kernelWidth - padWRight - 1;
+  const size_t padHTopForward = kernelHeight - padHTop - 1;
+  const size_t padHBottomForward = kernelHeight - padHBottom - 1;
+
+  padding = Padding<MatType>(padWLeftForward, padWRightForward + outputPadW,
+      padHTopForward, padHBottomForward + outputPadH);
+
+  // Padding is applied after input expansion, so padding layer
+  // for the forward pass must account for the expanded size.
   padding.InputDimensions() = this->inputDimensions;
+  if (strideWidth > 1 || strideHeight > 1)
+  {
+    padding.InputDimensions()[0] = strideWidth
+        * (this->inputDimensions[0] - 1) + 1;
+    padding.InputDimensions()[1] = strideHeight
+        * (this->inputDimensions[1] - 1) + 1;
+  }
   padding.ComputeOutputDimensions();
 
   // We must ensure that the output has at least 3 dimensions, since we will
   // be adding some number of maps to the output.
-  this->outputDimensions = std::vector<size_t>(
-      std::max(this->inputDimensions.size(), size_t(3)), 1);
-  this->outputDimensions[0] = ConvOutSize(this->inputDimensions[0],
-      kernelWidth, strideWidth, padWLeft, padWRight);
-  this->outputDimensions[1] = ConvOutSize(this->inputDimensions[1],
-      kernelHeight, strideHeight, padHTop, padHBottom);
-
-  inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
+  this->outputDimensions = std::vector<size_t>(std::max(
+      this->inputDimensions.size(), size_t(3)), 1);
+  this->outputDimensions[0] = TConvOutSize(this->inputDimensions[0],
+      kernelWidth, strideWidth, padWLeft, padWRight, outputPadW);
+  this->outputDimensions[1] = TConvOutSize(this->inputDimensions[1],
+      kernelHeight, strideHeight, padHTop, padHBottom, outputPadH);
 
   // Compute and cache the total number of input maps.
+  inMaps = (this->inputDimensions.size() >= 3) ? this->inputDimensions[2] : 1;
+
+  // Dimensions higher than the third are treated as different input points.
   higherInDimensions = 1;
   for (size_t i = 3; i < this->inputDimensions.size(); ++i)
   {
@@ -609,17 +600,19 @@ void Convolution<
     this->outputDimensions[i] = this->inputDimensions[i];
   }
 
-  apparentWidth = (this->outputDimensions[0] - 1) * strideWidth + kernelWidth;
-  apparentHeight = (this->outputDimensions[1] - 1) * strideHeight +
-      kernelHeight;
-
-  paddingBackward = Padding<MatType>(0, padding.OutputDimensions()[0] -
-      apparentWidth, 0, padding.OutputDimensions()[1] - apparentHeight);
-  paddingBackward.InputDimensions() = std::vector<size_t>({ apparentWidth,
-      apparentHeight, inMaps * higherInDimensions });
+  // Backward transposed conv uses same padding as regular conv.
+  // Input dims are the forward output dims of transposed conv.
+  paddingBackward = Padding<MatType>(padWLeft, padWRight,
+      padHTop, padHBottom);
+  paddingBackward.InputDimensions() = this->outputDimensions;
   paddingBackward.ComputeOutputDimensions();
 
   this->outputDimensions[2] = maps;
+
+  // Flags
+  expandInput = (strideWidth > 1 || strideHeight > 1);
+  padInput = (padding.PadWLeft() != 0 || padding.PadWRight() != 0 ||
+              padding.PadHTop() != 0 || padding.PadHBottom() != 0);
 }
 
 template<
@@ -629,7 +622,7 @@ template<
     typename GradientConvolutionRule
 >
 template<typename Archive>
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
@@ -661,7 +654,7 @@ template<
     typename BackwardConvolutionRule,
     typename GradientConvolutionRule
 >
-void Convolution<
+void TransposedConvolution<
     MatType,
     ForwardConvolutionRule,
     BackwardConvolutionRule,
@@ -669,7 +662,10 @@ void Convolution<
 >::InitializeSamePadding()
 {
   /**
-   * Using O = (W - F + 2P) / s + 1;
+   * Compute 'same' padding using the standard conv formula:
+   * O = (W - F + 2P) / S + 1
+   * Transpose conv padding is later derived as: p' = k - p - 1
+   * in ComputeOutputDimensions()
    */
   size_t totalHorizontalPadding = (strideWidth - 1) * this->inputDimensions[0]
       + kernelWidth - strideWidth;

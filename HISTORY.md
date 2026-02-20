@@ -6,6 +6,8 @@ _????-??-??_
 
  * Fix header inclusion and warnings in R package (#4098).
 
+ * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
+
 ## mlpack 4.7.0
 
 _2026-01-30_

@@ -3,7 +3,7 @@
 name: 'Welcome message for new contributors'
 on:
   pull_request:
-    types: [open]
+    types: [opened]
 
 jobs:
   sticker_comment:

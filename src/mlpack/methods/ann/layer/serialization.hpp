@@ -50,6 +50,14 @@
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::TransposedConvolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::TransposedConvolution<__VA_ARGS__, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
     CEREAL_REGISTER_TYPE(mlpack::CReLU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::DropConnect<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
