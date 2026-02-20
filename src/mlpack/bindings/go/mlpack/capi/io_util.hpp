@@ -13,8 +13,9 @@
 #ifndef MLPACK_BINDINGS_GO_IO_UTIL_HPP
 #define MLPACK_BINDINGS_GO_IO_UTIL_HPP
 
-#include <mlpack/core/util/io.hpp>
-#include <mlpack/core/data/dataset_mapper.hpp>
+#include <mlpack/core.hpp>
+
+#include "io_util.h"
 
 namespace mlpack {
 namespace util {

@@ -10,9 +10,7 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/bindings/go/mlpack/capi/io_util.h>
 #include "io_util.hpp"
-#include <mlpack/core/util/io.hpp>
 
 namespace mlpack {
 

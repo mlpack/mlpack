@@ -33,6 +33,7 @@
 #ifdef MLPACK_ENABLE_HTTPLIB
   #ifndef MLPACK_DISABLE_HTTPLIB
     // Now include httplib headers
+    #pragma message("httplib has been included")
     #include "bundled/httplib.h"
   #endif
 #endif

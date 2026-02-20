@@ -10,9 +10,7 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/bindings/julia/julia_util.h>
-#include <mlpack/prereqs.hpp>
-#include <mlpack/core/util/io.hpp>
-#include <stdint.h>
+#include <mlpack/core.hpp>
 
 using namespace mlpack;
 
