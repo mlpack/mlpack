@@ -15,6 +15,8 @@
 
 #include <mlpack/core.hpp>
 
+#include "io_util.h"
+
 namespace mlpack {
 namespace util {
 
