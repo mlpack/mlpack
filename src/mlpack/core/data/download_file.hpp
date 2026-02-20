@@ -34,8 +34,8 @@ inline bool CheckIfURL(const std::string& url);
  * @param port Try To extract the port number from the url if provided.
  * @return void, only throws exception on failure
  */
-void ParseURL(const std::string& url, std::string& host,
-              std::string& filename, int& port);
+inline void ParseURL(const std::string& url, std::string& host,
+                     std::string& filename, int& port);
 
 /*
  * Try to download a file from a URL provided by the user.
@@ -46,10 +46,12 @@ void ParseURL(const std::string& url, std::string& host,
  * @return true if download is successful, otherwise, throw error on failure, or
  * return false.
  */
-bool DownloadFile(const std::string& url,
-                  std::string& filename);
+inline bool DownloadFile(const std::string& url,
+                         std::string& filename);
 
 } // namespace mlpack
+
+#include "download_file_impl.hpp"
 
 #endif
 

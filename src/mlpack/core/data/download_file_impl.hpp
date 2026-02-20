@@ -1,5 +1,5 @@
 /**
- * @file core/data/download_file.hpp
+ * @file core/data/download_file_impl.hpp
  * @author Omar Shrit
  *
  * mlpack Load function that download dataset from a URL.
@@ -9,16 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
-#define MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
+#ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_IMPL_HPP
+#define MLPACK_CORE_DATA_DOWNLOAD_FILE_IMPL_HPP
 
 #ifdef MLPACK_ENABLE_HTTPLIB
 
+#include "download_file.hpp"
+
 namespace mlpack {
 
-/**
- * return a true if the URL is provided.
- */
 inline bool CheckIfURL(const std::string& url)
 {
   if (!url.empty())
@@ -32,8 +31,8 @@ inline bool CheckIfURL(const std::string& url)
   return false;
 }
 
-void ParseURL(const std::string& url, std::string& host,
-              std::string& filename, int& port)
+inline void ParseURL(const std::string& url, std::string& host,
+                     std::string& filename, int& port)
 {
   if (!CheckIfURL(url) || url.size() <= 8)
   {
@@ -71,8 +70,8 @@ void ParseURL(const std::string& url, std::string& host,
   int secPos   = possibleHost.rfind("/");
   // Need to be sure that we are comparing valid number since npos is the
   // highest possible value in size_t
-  if (firstPos == std::string::npos) firstPos = -1;
-  if (secPos == std::string::npos) secPos = -1;
+  if (firstPos == (int)std::string::npos) firstPos = -1;
+  if (secPos == (int)std::string::npos) secPos = -1;
   if (secPos > firstPos)
   {
     size_t filePos = possibleHost.rfind("/");
@@ -95,8 +94,8 @@ void ParseURL(const std::string& url, std::string& host,
   }
 }
 
-bool DownloadFile(const std::string& url,
-                  std::string& filename)
+inline bool DownloadFile(const std::string& url,
+                         std::string& filename)
 {
   std::fstream stream;
   int port = -1;
@@ -111,7 +110,7 @@ bool DownloadFile(const std::string& url,
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
   httplib::SSLClient cli(host, 443);
 #else
-  if (port = -1)
+  if (port == -1)
   {
     port = 80;
   }
