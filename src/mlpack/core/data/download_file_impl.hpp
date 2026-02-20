@@ -81,14 +81,18 @@ inline void ParseURL(const std::string& url, std::string& host,
     {
       std::string possibleFilename = possibleHost.substr(filePos + 1);
       size_t posFile = possibleFilename.find_first_of("?#");
-      // we assume something is after the file name.
-      if (posFile != std::string::npos)
+      // Check for the '.' as a marker for extension
+      if (possibleFilename.find(".") != std::string::npos)
       {
-        filename = possibleFilename.substr(0, posFile);
-      }
-      else
-      {
-        filename = possibleFilename;
+        // we assume something is after the file name.
+        if (posFile != std::string::npos)
+        {
+          filename = possibleFilename.substr(0, posFile);
+        }
+        else
+        {
+          filename = possibleFilename;
+        }
       }
     }
   }

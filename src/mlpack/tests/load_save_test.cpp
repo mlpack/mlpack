@@ -3502,7 +3502,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   std::string host, filename;
   int port;
   ParseURL(testUrls.at(0), host, filename, port);
-  REQUIRE(host == "examples.com");
+  REQUIRE(host == "example.com");
   REQUIRE(filename == "report.pdf");
 
   ParseURL(testUrls.at(1), host, filename, port);
@@ -3583,7 +3583,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(port == 8080);
 
   ParseURL(testUrls.at(19), host, filename, port);
-  REQUIRE(host == "examples.com");
+  REQUIRE(host == "example.com");
   REQUIRE(filename == "file.backup.2024.01.15.sql.gz");
 
   REQUIRE_THROWS_AS(ParseURL(testUrls.at(20), host, filename, port),
@@ -3598,13 +3598,6 @@ TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
   arma::mat dataset;
   REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
         dataset, Fatal + Transpose) == true);
-}
-
-TEST_CASE("DownLoadWrongURL", "[LoadSaveTest]")
-{
-  arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
-        dataset, NoFatal + Transpose) == false);
 }
 
 #endif
