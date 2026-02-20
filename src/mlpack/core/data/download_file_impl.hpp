@@ -130,7 +130,7 @@ inline bool DownloadFile(const std::string& url,
     throw std::runtime_error(oss.str());
   }
 
-  std::string tmpFilename = TempName();
+  std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
   tmpFilename += filename;
   // @rcurtin, I do not like this, but this is the only option;
