@@ -16,142 +16,38 @@
 
 namespace mlpack {
 
-/**
- * return a true if the URL is provided.
+/*
+ * Check if the provided URL is valid or not.
+ *
+ * @param url to be checked.
+ * @return false on failure.
  */
-inline bool CheckIfURL(const std::string& url)
-{
-  if (!url.empty())
-  {
-    if (url.compare(0, 7, "http://") == 0 ||
-        url.compare(0, 8, "https://") == 0)
-    {
-      return true;
-    }
-  }
-  return false;
-}
+inline bool CheckIfURL(const std::string& url);
 
+/*
+ * Parse a given URL and try to extract hostname, filename and the port
+ * number.
+ *
+ * @param url Given URL to download dataset from.
+ * @param Extract hostname, throw exception on failure
+ * @param filename Try to extract the filename of the downloaded file.
+ * @param port Try To extract the port number from the url if provided.
+ * @return void, only throws exception on failure
+ */
 void ParseURL(const std::string& url, std::string& host,
-              std::string& filename, int& port)
-{
-  if (!CheckIfURL(url) || url.size() <= 8)
-  {
-    throw std::runtime_error("Invalid URL provided."
-        " URL should start with http or https");
-  }
-  size_t pos = url.find("://");
-  pos = pos + 3;
+              std::string& filename, int& port);
 
-  std::string possibleHost = url.substr(pos);
-
-  size_t hostPos = possibleHost.find_first_of(".:/");
-  if (hostPos == std::string::npos)
-  {
-    throw std::runtime_error("Domain name is not valid."
-        " Domain name should contains '.' between the hostname and the top"
-        " level domain. Or '/' at the end. Please check the provided URL");
-  }
-
-  size_t endHost = possibleHost.find_first_of(":/");
-  if (endHost != std::string::npos)
-  {
-    host = possibleHost.substr(0, endHost);
-    char endChar = possibleHost.at(endHost);
-    if (endChar == ':')
-    {
-      // We need to find the last char which is /
-      std::string findPort = possibleHost.substr(endHost + 1);
-      size_t endPort = findPort.find("/");
-      port = std::stoi(findPort.substr(0, endPort));
-    }
-  }
-
-  int firstPos = possibleHost.rfind(":");
-  int secPos   = possibleHost.rfind("/");
-  // Need to be sure that we are comparing valid number since npos is the
-  // highest possible value in size_t
-  if (firstPos == std::string::npos) firstPos = -1;
-  if (secPos == std::string::npos) secPos = -1;
-  if (secPos > firstPos)
-  {
-    size_t filePos = possibleHost.rfind("/");
-    // no need to throw an exception, if the file is not found this is not a
-    // problem with the URL.
-    if (filePos != std::string::npos)
-    {
-      std::string possibleFilename = possibleHost.substr(filePos + 1);
-      size_t posFile = possibleFilename.find_first_of("?#");
-      // we assume something is after the file name.
-      if (posFile != std::string::npos)
-      {
-        filename = possibleFilename.substr(0, posFile);
-      }
-      else
-      {
-        filename = possibleFilename;
-      }
-    }
-  }
-}
-
+/*
+ * Try to download a file from a URL provided by the user.
+ *
+ * @param url Given URL to download dataset from.
+ * @param filename return the filename of the file, or assign it to the file if
+ * it is specified by the user.
+ * @return true if download is successful, otherwise, throw error on failure, or
+ * return false.
+ */
 bool DownloadFile(const std::string& url,
-                  std::string& filename)
-{
-  std::fstream stream;
-  int port = -1;
-  std::string host;
-  ParseURL(url, host, filename, port);
-
-  // Sanity check if in case.
-  if (host.empty())
-  {
-    throw std::runtime_error("Domain name could not be parsed.");
-  }
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-  httplib::SSLClient cli(host, 443);
-#else
-  if (port = -1)
-  {
-    port = 80;
-  }
-  httplib::Client cli(host, port);
-#endif
-  cli.set_connection_timeout(2);
-  httplib::Result res = cli.Get(url);
-
-  if (res->status != 200)
-  {
-    std::stringstream oss;
-    oss <<  "Unable to connect, status returned: '" << res->status;
-    throw std::runtime_error(oss.str());
-  }
-
-  std::string tmpFilename = TempName();
-  // This is necessary to get the extension.
-  tmpFilename += filename;
-  // @rcurtin, I do not like this, but this is the only option;
-  // Or I can take the internal of OpenFile, and use it here.
-  DataOptions opts = NoFatal;
-  if (!OpenFile(filename, opts, false, stream))
-  {
-    std::stringstream oss;
-    oss <<  "Unable to open a temporary file for downloading data.";
-    throw std::runtime_error(oss.str());
-  }
-  errno = 0;
-  stream.write(res->body.data(), res->body.size());
-  stream.flush();
-  if (!stream.good())
-  {
-    std::stringstream oss;
-    oss << "Error writing to a '" << tmpFilename << "' failed: "
-        << std::strerror(errno);
-    throw std::runtime_error(oss.str());
-  }
-  stream.close();
-  return true;
-}
+                  std::string& filename);
 
 } // namespace mlpack
 
