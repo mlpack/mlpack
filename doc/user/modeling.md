@@ -69,4 +69,8 @@ Computations based on distance metrics.
  * [`KFN`](methods/kfn.md): `k`-furthest-neighbor search (exact and approximate)
    with tree-based algorithms.
 
+## Object Detection models
+
+* [`yolov3`](methods/yolov3.md): YOLOv3 object detection
+
 <!-- TODO: add more -->
