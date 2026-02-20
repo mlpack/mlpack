@@ -257,6 +257,7 @@ endif ()
 # Flag to be removed after release
 if (ENABLE_HTTPLIB)
   set(MLPACK_ENABLE_HTTPLIB ON)
+  message("MLPACK_ENABLE_HTTPLIB " ${MLPACK_ENABLE_HTTPLIB})
 endif ()
 
 # If the user would like to disable httplib for embedded system
@@ -370,6 +371,7 @@ endif()
 if (ENABLE_HTTPLIB)
   string(REGEX REPLACE "// #define MLPACK_ENABLE_HTTPLIB\n"
     "#define MLPACK_ENABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+   message("CONFIG_CONTENTS" ${CONFIG_CONTENTS})
 endif()
 
 if (DISABLE_HTTPLIB)
