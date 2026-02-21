@@ -21,6 +21,8 @@
 #include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
 
+#include <mlpack/core/data/image_letterbox.hpp>
+
 namespace mlpack {
 
 /**
@@ -45,9 +47,9 @@ namespace mlpack {
  * @endcode
  *
  */
-template <typename OutputLayerType = EmptyLoss,
-          typename InitializationRuleType = RandomInitialization,
-          typename MatType = arma::fmat>
+template <typename MatType = arma::fmat,
+          typename OutputLayerType = EmptyLoss,
+          typename InitializationRuleType = RandomInitialization>
 class YOLOv3
 {
  public:
@@ -98,6 +100,33 @@ class YOLOv3
   void Predict(const MatType& input,
                MatType& output)
   {
+    model.Predict(input, output);
+  }
+
+  /**
+   * Ordinary feed forward pass of the network. Performs image preprocessing
+   * by applying the letterbox transform and normalizing pixel values to be
+   * between 0 and 1 as well as grouping the channels before passing
+   * the input into the convolutional layers.
+   *
+   * @param input Input data used for evaluating the specified function.
+      The input matrix dimensions should be (imgSize * imgSize, batchSize).
+   * @param opt ImageOptions describes the dimensions of the image.
+      Gets updated to match the preprocessed input.
+   * @param output Resulting bounding boxes and classification probabilities.
+      The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
+      to the center of the box. The bounding boxes are normalized based on the
+      `imgSize`.
+   */
+  void Predict(const MatType& input,
+               ImageOptions& opt,
+               MatType& output)
+  {
+    const ElemType max = 255.0;
+    const ElemType grey = 0.5;
+    const MatType preprocessedImage =
+      LetterboxImages(input / max, opt, imgSize, imgSize, grey);
+    preprocessedImage = GroupChannels(preprocessedImage, opt);
     model.Predict(input, output);
   }
 

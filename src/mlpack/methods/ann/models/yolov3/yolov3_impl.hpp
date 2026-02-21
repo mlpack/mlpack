@@ -16,14 +16,11 @@
 
 namespace mlpack {
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-YOLOv3<
-           OutputLayerType,
-           InitializationRuleType,
-           MatType
->::YOLOv3(const size_t imgSize,
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+YOLOv3<MatType, OutputLayerType, InitializationRuleType>
+::YOLOv3(const size_t imgSize,
           const size_t numClasses,
           const size_t predictionsPerCell,
           const std::vector<ElemType>& anchors) :
@@ -155,10 +152,10 @@ YOLOv3<
   model.Reset();
 }
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-size_t YOLOv3<OutputLayerType, InitializationRuleType, MatType>
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+size_t YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 ::ConvolutionBlock(const size_t maps,
                    const size_t kernel,
                    const size_t stride,
@@ -186,10 +183,10 @@ size_t YOLOv3<OutputLayerType, InitializationRuleType, MatType>
   return model.Add(block);
 }
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-size_t YOLOv3<OutputLayerType, InitializationRuleType, MatType>
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+size_t YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 ::DownsampleBlock(const size_t previousLayer,
                   const size_t maps,
                   const size_t shortcuts)
@@ -223,15 +220,12 @@ size_t YOLOv3<OutputLayerType, InitializationRuleType, MatType>
   return previous;
 }
 
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MatType>
-template<typename Archive>
-void YOLOv3<
-    OutputLayerType,
-    InitializationRuleType,
-    MatType
->::serialize(Archive& ar, const uint32_t /* version */)
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+template <typename Archive>
+void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
+::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(imgSize));
