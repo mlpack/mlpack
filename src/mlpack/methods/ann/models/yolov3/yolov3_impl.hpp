@@ -21,13 +21,14 @@ template <typename MatType,
           typename InitializationRuleType>
 YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 ::YOLOv3(const size_t imgSize,
-          const size_t numClasses,
-          const size_t predictionsPerCell,
-          const std::vector<ElemType>& anchors) :
+         const std::vector<ElemType>& anchors,
+         const std::vector<std::string>& classNames) :
+  model(),
   imgSize(imgSize),
-  predictionsPerCell(predictionsPerCell),
-  numAttributes(numClasses + 5)
+  numAttributes(classNames.size() + 5),
+  classNames(classNames)
 {
+  const size_t predictionsPerCell = 3;
   if (anchors.size() != predictionsPerCell * 6)
   {
     std::ostringstream errMessage;
@@ -229,8 +230,8 @@ void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 {
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(imgSize));
-  ar(CEREAL_NVP(predictionsPerCell));
   ar(CEREAL_NVP(numAttributes));
+  ar(CEREAL_NVP(classNames));
 }
 
 } // namespace mlpack

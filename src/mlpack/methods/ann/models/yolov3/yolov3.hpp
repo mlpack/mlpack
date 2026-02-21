@@ -48,7 +48,7 @@ namespace mlpack {
  *
  */
 template <typename MatType = arma::fmat,
-          typename OutputLayerType = EmptyLoss,
+          typename OutputLayerType = EmptyLossType<MatType>,
           typename InitializationRuleType = RandomInitialization>
 class YOLOv3
 {
@@ -64,21 +64,17 @@ class YOLOv3
   /**
    * Create the YOLOv3 model.
    *
-   * @param imgSize The width and height of input images. Pretrained weights
-       used 416.
+   * @param imgSize The width and height of preprocessed images.
    * @param numClasses The number of output classes. Pretrained weights were
        trained on COCO which has 80 classes.
-   * @param predictionsPerCell Each YOLO layer predicts `predictionsPerCell`
-       boxes per grid cell. Pretrained weights use 3.
    * @param anchors Vector of anchor width and heights. Formatted as
       [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be
-      predictionsPerCell * 3 anchors, since YOLOv3 has three output layers.
-      Therefore, anchors.size() must be predictionsPerCell * 6.
+      3 * 3 anchors, since YOLOv3 has three output layers and makes 3 predictions
+      for each cell per layer. Therefore, anchors.size() must be 3 * 6.
    */
   YOLOv3(const size_t imgSize,
-         const size_t numClasses,
-         const size_t predictionsPerCell,
-         const std::vector<ElemType>& anchors);
+         const std::vector<ElemType>& anchors,
+         const std::vector<std::string>& classNames);
 
   ~YOLOv3() { /* Nothing to do. */ }
 
@@ -88,7 +84,26 @@ class YOLOv3
   ModelType& Model() { return model; }
 
   /**
-   * Ordinary feed forward pass of the network.
+   * Returns the width and height of the preprocessed image that
+   * gets passed into the network.
+   */
+  size_t ImageSize() { return imgSize; }
+
+  /**
+   * Returns the number of attributes that make up a bounding box.
+   * It includes x, y, w, h, the objectness score and the number
+   * of classes.
+   */
+  size_t NumAttributes() { return numAttributes; }
+
+  /**
+   * Returns the classes the model can identify.
+   */
+  const std::vector<std::string>& ClassNames() { return classNames; }
+
+  /**
+   * Ordinary feed forward pass of the network. Get raw outputs from the
+   * model.
    *
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
@@ -107,7 +122,7 @@ class YOLOv3
    * Ordinary feed forward pass of the network. Performs image preprocessing
    * by applying the letterbox transform and normalizing pixel values to be
    * between 0 and 1 as well as grouping the channels before passing
-   * the input into the convolutional layers.
+   * the input into the convolutional layers. TODO: post processing
    *
    * @param input Input data used for evaluating the specified function.
       The input matrix dimensions should be (imgSize * imgSize, batchSize).
@@ -118,16 +133,15 @@ class YOLOv3
       to the center of the box. The bounding boxes are normalized based on the
       `imgSize`.
    */
-  void Predict(const MatType& input,
+  void Predict(MatType& input,
                ImageOptions& opt,
                MatType& output)
   {
-    const ElemType max = 255.0;
     const ElemType grey = 0.5;
-    const MatType preprocessedImage =
-      LetterboxImages(input / max, opt, imgSize, imgSize, grey);
-    preprocessedImage = GroupChannels(preprocessedImage, opt);
-    model.Predict(input, output);
+    MatType preprocessed = input / 255.0;
+    LetterboxImages(preprocessed, opt, imgSize, imgSize, grey);
+    preprocessed = GroupChannels(preprocessed, opt);
+    model.Predict(preprocessed, output);
   }
 
   // Serialize the model.
@@ -178,10 +192,10 @@ class YOLOv3
   ModelType model;
   // Width and height of input image
   size_t imgSize;
-  // Predictions per cell for each YOLO layer
-  size_t predictionsPerCell;
   // Number of output classes + 5 for (x, y, w, h, objectness)
   size_t numAttributes;
+  // Class names for each possible object the model can identify.
+  std::vector<std::string> classNames;
 };
 
 } // namespace mlpack
