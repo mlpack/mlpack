@@ -28,37 +28,49 @@ and [format detection/selection](#formats).
 
 ## `Load()`
 
- - `Load(filename, X)`
-   * Load `X` from the given file `filename` with default options:
+ - `Load(filename, object)`
+   * Load `object` from the given file `filename` with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
+   * `object` can be [any supported load type](#types).
 
  - `Load(filename, object, Option1 + Option2 + ...)`
-   * Load `X` from the given file `filename` with the given options.
+   * Load `object` from the given file `filename` with the given options.
    * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
+   * `object` can be [any supported load type](#types).
    * The given options must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
-     of `X`.
+     of `object`.
 
  - `Load(filename, object, opts)`
-   * Load `X` from the given file `filename` with the given options specified in `opts`.
+   * Load `object` from the given file `filename` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
+   * `object` can be [any supported load type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `X`.
+     type of `object`.
+
+ - `Load(URL, object, opts)`
+   * Load `object` from the given URL `URL` with the given options specified in `opts`.
+   * Returns a `bool` indicating whether the load was a success.
+   * `object` can be [any supported load type](#types).
+   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
+     type of `object`.
+   * The given URL should be valid and start with either `http://` or `https://`.
+   * If the URL starts with `https://` then `#define MLPACK_USE_HTTPS` should be
+     declared before `#include <mlpack.hpp>`
+   * The downloaded file will be saved temporarily unless if the cache is
+     enabled.
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
- - `Load(filenames, X)`
- - `Load(filenames, X, Option1 + Option2 + ...)`
- - `Load(filenames, X, opts)`
-    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
-      - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
-      - For [image data](#image-data), each image is flattened into one column of `X`.
+ - `Load(filenames, object)`
+ - `Load(filenames, object, Option1 + Option2 + ...)`
+ - `Load(filenames, object, opts)`
+    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `object`.
+      - For [numeric data](#numeric-data), data loaded from each file is concatenated into `object`.
+      - For [image data](#image-data), each image is flattened into one column of `object`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
     - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
 
@@ -1205,3 +1217,42 @@ else
       << std::endl;
 }
 ```
+
+## Online data load example
+
+mlpack allows to load data hosted online directly into an armadillo matrix
+object. mlpack will download the files using cpp-httplib library. This library
+is bundled with mlpack for easy of use.
+
+```c++
+// Throw an exception if loading fails with the Fatal option.
+
+arma::mat dataset;
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
+
+arma::Row<size_t> labels;
+mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv",
+    labels, mlpack::Fatal);
+
+// Print information about the data.
+std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+
+std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
+std::cout << " - " << labels.n_elem << " labels." << std::endl;
+std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
+std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+
+// Modify and save the data.  Add 2 to the data and drop the last column.
+dataset += 2;
+dataset.shed_col(dataset.n_cols - 1);
+labels.shed_col(labels.n_cols - 1);
+
+// Don't throw an exception if saving fails.  Technically there is no need to
+// explicitly specify NoFatal---it is the default.
+mlpack::Save("satellite.train.mod.csv", dataset, mlpack::NoFatal);
+mlpack::Save("satellite.train.labels.mod.csv", labels, mlpack::NoFatal);
+```
+
