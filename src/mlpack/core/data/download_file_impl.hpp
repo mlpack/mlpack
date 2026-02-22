@@ -122,11 +122,10 @@ inline bool DownloadFile(const std::string& url,
 #endif
   cli.set_connection_timeout(2);
   httplib::Result res = cli.Get(url);
-
-  if (res->status != 200)
+  if (!res)
   {
     std::stringstream oss;
-    oss <<  "Unable to connect, status returned: '" << res->status;
+    oss << "Error: DownloadFile(): " << httplib::to_string(res.error());
     throw std::runtime_error(oss.str());
   }
 
@@ -139,7 +138,8 @@ inline bool DownloadFile(const std::string& url,
   if (!OpenFile(filename, opts, false, stream))
   {
     std::stringstream oss;
-    oss <<  "Unable to open a temporary file for downloading data.";
+    oss <<  "Cannot open temporary file '" << tmpFilename
+        << "' for storing downloaded data. Please check the file path.";
     throw std::runtime_error(oss.str());
   }
   errno = 0;
