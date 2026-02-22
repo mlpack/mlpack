@@ -14,6 +14,9 @@
 
 #ifdef MLPACK_ENABLE_HTTPLIB
 
+// In case if it is not included
+#include "../httplib/httplib.hpp"
+
 namespace mlpack {
 
 /*
