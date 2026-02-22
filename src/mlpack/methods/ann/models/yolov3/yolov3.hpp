@@ -142,35 +142,24 @@ class YOLOv3
     model.Predict(preprocessed, rawOutput);
 
     MatType rawOutputAlias;
-    const size_t numBoxes = 6300; // TODO: remove magic number.
-    assert(rawOutput.n_rows == numBoxes * numAttributes && rawOutput.n_cols == 1);
+    // TODO: remove magic number.
+    const size_t numBoxes = 6300;
 
     MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes);
     const size_t numClasses = classNames.size();
     const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
-    const MatType& classConfs = // class confs * objectness, confidence scores for each class
-      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1).each_row() %
-        rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+    const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+    const MatType& confs =
+      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
 
-    arma::imat classes = arma::imat(1, numBoxes).fill(-1);
-    arma::fmat confs = arma::fmat(1, numBoxes, arma::fill::zeros);
+    arma::ucolvec indices;
+    // TODO: not great, only doing objectness...
+    NMS<>::Evaluate(bboxes, objectness, indices, 0.4);
 
-    for (size_t c{}; c < numClasses; c++)
-    {
-      std::cout << "nms on class: " << c << "\n";
-      arma::ucolvec indices;
-      arma::frowvec rowConfs = classConfs.row(c);
-      NMS<>::Evaluate<MatType, MatType, arma::ucolvec>
-        (bboxes, rowConfs, indices);
-
-      arma::fmat currentConfs = rowConfs.cols(indices);
-      arma::fmat chosenConfs = confs.cols(indices);
-
-      arma::umat replace = currentConfs > chosenConfs;
-
-      classes.cols(find(replace)).fill(c);
-      confs.cols(indices) = arma::max(currentConfs, chosenConfs);
-    }
+    MatType chosenBoxes = bboxes.cols(indices);
+    MatType classConfs =
+      MatType(confs.cols(indices)).each_row() % objectness.cols(indices);
+    arma::umat chosenConfs = arma::index_max(classConfs, 0);
 
     const size_t width = inputOpt.Width();
     const size_t height = inputOpt.Height();
@@ -192,19 +181,23 @@ class YOLOv3
     }
 
     arma::fcolvec red = {255.0f, 0, 0};
-    for (size_t b{}; b < numBoxes; b++)
+    for (size_t b{}; b < indices.n_rows; b++)
     {
-      if (confs.at(0, b) < ignoreThresh)
+      size_t chosenClass = chosenConfs.at(0, b);
+      if (classConfs.at(chosenClass, b) < ignoreThresh)
         continue;
 
-      const std::string& label = classNames[classes.at(0, b)];
-      ElemType x1 = (bboxes.at(0, b) - bboxes.at(2, b) / 2 - xOffset) * xRatio;
-      ElemType y1 = (bboxes.at(1, b) - bboxes.at(3, b) / 2 - yOffset) * yRatio;
-      ElemType x2 = (bboxes.at(0, b) + bboxes.at(2, b) / 2 - xOffset) * xRatio;
-      ElemType y2 = (bboxes.at(1, b) + bboxes.at(3, b) / 2 - yOffset) * yRatio;
+      const std::string& label = classNames[chosenClass];
+      ElemType x1 =
+        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
+      ElemType y1 =
+        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
+      ElemType x2 =
+        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
+      ElemType y2 =
+        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
       arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
 
-      std::cout << "drawing at " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << ", conf: " << confs.at(0, b) << "\n";
       BoundingBoxImage(output, inputOpt, bbox, red, 1, label, 2);
     }
   }
