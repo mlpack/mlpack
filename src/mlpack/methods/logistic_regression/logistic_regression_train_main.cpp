@@ -96,21 +96,17 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "As an example, to train a logistic regression model on the data '" +
-    PRINT_DATASET("data") + "' with labels '" + PRINT_DATASET("labels") + "' "
-    "with L2 regularization of 0.1, saving the model to '" +
-    PRINT_MODEL("lr_model") + "', the following command may be used:" +
-    "\n\n" +
-    PRINT_CALL("logistic_regression_train", "training", "data", "labels", "labels",
-        "lambda", 0.1, "output_model", "lr_model", "print_training_accuracy",
-        true) +
-    "\n\n"
-    "Then, to use that model to predict classes for the dataset '" +
-    PRINT_DATASET("test") + "', storing the output predictions in '" +
-    PRINT_DATASET("predictions") + "', the following command may be used: "
-    "\n\n" +
-    PRINT_CALL("logistic_regression_train", "input_model", "lr_model", "test", "test",
-               "predictions", "predictions"));
+    IMPORT_EXT_LIB() + "\n" +
+    IMPORT_SPLIT() + "\n" +
+    IMPORT_THIS("logistic_regression") + "\n" +
+    GET_DATASET("X", "https://example.com") + "\n" +
+    GET_DATASET("y", "https://example.com") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
+    "0.2") + "\n" +
+    CREATE_OBJECT("model", "logistic_regression") + "\n" +
+    CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train",
+                "lambda", 0.1, "output_model", "lr_model"));
+
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
