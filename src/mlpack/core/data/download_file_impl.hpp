@@ -12,11 +12,11 @@
 #ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_IMPL_HPP
 #define MLPACK_CORE_DATA_DOWNLOAD_FILE_IMPL_HPP
 
-#ifdef MLPACK_ENABLE_HTTPLIB
-
 #include "download_file.hpp"
 
 namespace mlpack {
+
+#ifdef MLPACK_ENABLE_HTTPLIB
 
 inline bool CheckIfURL(const std::string& url)
 {
@@ -111,7 +111,7 @@ inline bool DownloadFile(const std::string& url,
   {
     throw std::runtime_error("Domain name could not be parsed.");
   }
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+#ifdef MLPACK_USE_HTTPS
   httplib::SSLClient cli(host, 443);
 #else
   if (port == -1)
@@ -156,8 +156,6 @@ inline bool DownloadFile(const std::string& url,
   return true;
 }
 
-} // namespace mlpack
-
 #else
 
 /**
@@ -171,7 +169,7 @@ inline bool CheckIfURL(const std::string& url)
       << "Please enable httplib by defining this in your code:" << std::endl
       << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
       << "If you would like to enable httplib when installing mlpack."
-      << "Please refer to our documentation page.";
+      << " Please refer to our documentation page.";
   throw std::runtime_error(oss.str());
   return false;
 }
@@ -188,7 +186,7 @@ inline void ParseURL(const std::string& url, std::string& host,
       << "Please enable httplib by defining this in your code:" << std::endl
       << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
       << "If you would like to enable httplib when installing mlpack."
-      << "Please refer to our documentation page.";
+      << " Please refer to our documentation page.";
   throw std::runtime_error(oss.str());
 }
 
@@ -202,11 +200,13 @@ inline bool DownloadFile(const std::string& url,
       << "Please enable httplib by defining this in your code:" << std::endl
       << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
       << "If you would like to enable httplib when installing mlpack."
-      << "Please refer to our documentation page.";
+      << " Please refer to our documentation page.";
   throw std::runtime_error(oss.str());
   return false;
 }
 
 #endif
+
+} // namespace mlpack
 
 #endif
