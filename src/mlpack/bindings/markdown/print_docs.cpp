@@ -10,6 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
+#include "print_docs.hpp"
+
 // Make sure that this is defined.
 #ifndef SRC_PREFIX
 #define SRC_PREFIX "https://github.com/mlpack/mlpack/blob/master/src/"
