@@ -12,7 +12,13 @@
 #ifndef MLPACK_BINDINGS_MARKDOWN_PRINT_DOCS_HPP
 #define MLPACK_BINDINGS_MARKDOWN_PRINT_DOCS_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core.hpp>
+
+#include "binding_info.hpp"
+#include "print_docs.hpp"
+#include "print_doc_functions.hpp"
+#include "print_param_table.hpp"
+#include "replace_all_copy.hpp"
 
 /**
  * Given the current settings of IO, print the header (which will be the
