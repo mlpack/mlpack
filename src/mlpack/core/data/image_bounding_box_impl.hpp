@@ -91,7 +91,7 @@ inline void BoundingBoxImage(ImageType& src,
   if (bbox.n_rows < 4) {
     std::ostringstream errMessage;
     errMessage << "BoundingBoxImage(): A bounding box is made up of 4 points "
-               "but was given " << color.n_rows;
+               "but was given " << bbox.n_rows;
     throw std::logic_error(errMessage.str());
   }
 

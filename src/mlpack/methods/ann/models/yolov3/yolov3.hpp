@@ -22,6 +22,7 @@
 #include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
 
 #include <mlpack/core/data/image_letterbox.hpp>
+#include <mlpack/core/data/image_bounding_box.hpp>
 
 namespace mlpack {
 
@@ -118,30 +119,94 @@ class YOLOv3
     model.Predict(input, output);
   }
 
-  /**
-   * Ordinary feed forward pass of the network. Performs image preprocessing
-   * by applying the letterbox transform and normalizing pixel values to be
-   * between 0 and 1 as well as grouping the channels before passing
-   * the input into the convolutional layers. TODO: post processing
-   *
-   * @param input Input data used for evaluating the specified function.
-      The input matrix dimensions should be (imgSize * imgSize, batchSize).
-   * @param opt ImageOptions describes the dimensions of the image.
-      Gets updated to match the preprocessed input.
-   * @param output Resulting bounding boxes and classification probabilities.
-      The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
-      to the center of the box. The bounding boxes are normalized based on the
-      `imgSize`.
+  /** TODO: add comment docs.
    */
-  void Predict(MatType& input,
-               ImageOptions& opt,
-               MatType& output)
+
+  // inference, for now, batchSize = 1.
+               // arma::ucolvec& numDetections,
+               // size_t maxDetections = 100)
+  void Predict(const MatType& input,
+               const ImageOptions& inputOpt,
+               MatType& output,
+               const double ignoreThresh = 0.7)
   {
+    output = input;
+
     const ElemType grey = 0.5;
     MatType preprocessed = input / 255.0;
-    LetterboxImages(preprocessed, opt, imgSize, imgSize, grey);
-    preprocessed = GroupChannels(preprocessed, opt);
-    model.Predict(preprocessed, output);
+    ImageOptions preprocessedOpt = inputOpt;
+    LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, grey);
+    preprocessed = GroupChannels(preprocessed, preprocessedOpt);
+
+    MatType rawOutput;
+    model.Predict(preprocessed, rawOutput);
+
+    MatType rawOutputAlias;
+    const size_t numBoxes = 6300; // TODO: remove magic number.
+    assert(rawOutput.n_rows == numBoxes * numAttributes && rawOutput.n_cols == 1);
+
+    MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes);
+    const size_t numClasses = classNames.size();
+    const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
+    const MatType& classConfs = // class confs * objectness, confidence scores for each class
+      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1).each_row() %
+        rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+
+    arma::imat classes = arma::imat(1, numBoxes).fill(-1);
+    arma::fmat confs = arma::fmat(1, numBoxes, arma::fill::zeros);
+
+    for (size_t c{}; c < numClasses; c++)
+    {
+      std::cout << "nms on class: " << c << "\n";
+      arma::ucolvec indices;
+      arma::frowvec rowConfs = classConfs.row(c);
+      NMS<>::Evaluate<MatType, MatType, arma::ucolvec>
+        (bboxes, rowConfs, indices);
+
+      arma::fmat currentConfs = rowConfs.cols(indices);
+      arma::fmat chosenConfs = confs.cols(indices);
+
+      arma::umat replace = currentConfs > chosenConfs;
+
+      classes.cols(find(replace)).fill(c);
+      confs.cols(indices) = arma::max(currentConfs, chosenConfs);
+    }
+
+    const size_t width = inputOpt.Width();
+    const size_t height = inputOpt.Height();
+
+    ElemType xRatio = (ElemType)width / imgSize;
+    ElemType yRatio = (ElemType)height / imgSize;
+
+    ElemType xOffset = 0;
+    ElemType yOffset = 0;
+
+    if (width > height) {
+      // landscape
+      yRatio =  (ElemType)width / imgSize;
+      yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
+    } else {
+      // portrait
+      xRatio =  (ElemType)height / imgSize;
+      xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
+    }
+
+    arma::fcolvec red = {255.0f, 0, 0};
+    for (size_t b{}; b < numBoxes; b++)
+    {
+      if (confs.at(0, b) < ignoreThresh)
+        continue;
+
+      const std::string& label = classNames[classes.at(0, b)];
+      ElemType x1 = (bboxes.at(0, b) - bboxes.at(2, b) / 2 - xOffset) * xRatio;
+      ElemType y1 = (bboxes.at(1, b) - bboxes.at(3, b) / 2 - yOffset) * yRatio;
+      ElemType x2 = (bboxes.at(0, b) + bboxes.at(2, b) / 2 - xOffset) * xRatio;
+      ElemType y2 = (bboxes.at(1, b) + bboxes.at(3, b) / 2 - yOffset) * yRatio;
+      arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
+
+      std::cout << "drawing at " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << ", conf: " << confs.at(0, b) << "\n";
+      BoundingBoxImage(output, inputOpt, bbox, red, 1, label, 2);
+    }
   }
 
   // Serialize the model.
