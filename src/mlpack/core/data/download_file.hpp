@@ -12,8 +12,6 @@
 #ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
 #define MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
 
-#ifdef MLPACK_ENABLE_HTTPLIB
-
 // In case if it is not included
 #include "../httplib/httplib.hpp"
 
@@ -55,7 +53,5 @@ inline bool DownloadFile(const std::string& url,
 } // namespace mlpack
 
 #include "download_file_impl.hpp"
-
-#endif
 
 #endif

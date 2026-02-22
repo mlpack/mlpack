@@ -158,6 +158,55 @@ inline bool DownloadFile(const std::string& url,
 
 } // namespace mlpack
 
+#else
+
+/**
+ * Implementation to be removed at the end of the integration.
+ */
+inline bool CheckIfURL(const std::string& url)
+{
+  std::stringstream oss;
+  oss << "Cannot check the provided URL: " << url << std::endl
+      << "httplib has not been enabled during compilation time." << std::endl
+      << "Please enable httplib by defining this in your code:" << std::endl
+      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
+      << "If you would like to enable httplib when installing mlpack."
+      << "Please refer to our documentation page.";
+  throw std::runtime_error(oss.str());
+  return false;
+}
+
+inline void ParseURL(const std::string& url, std::string& host,
+                     std::string& filename, int& port)
+{
+  host = url;
+  filename = "";
+  port = -1;
+  std::stringstream oss;
+  oss << "Cannot check the provided URL: " << url << std::endl
+      << "httplib has not been enabled during compilation time." << std::endl
+      << "Please enable httplib by defining this in your code:" << std::endl
+      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
+      << "If you would like to enable httplib when installing mlpack."
+      << "Please refer to our documentation page.";
+  throw std::runtime_error(oss.str());
+}
+
+inline bool DownloadFile(const std::string& url,
+                         std::string& filename)
+{
+  filename = "";
+  std::stringstream oss;
+  oss << "Cannot check the provided URL: " << url << std::endl
+      << "httplib has not been enabled during compilation time." << std::endl
+      << "Please enable httplib by defining this in your code:" << std::endl
+      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
+      << "If you would like to enable httplib when installing mlpack."
+      << "Please refer to our documentation page.";
+  throw std::runtime_error(oss.str());
+  return false;
+}
+
 #endif
 
 #endif
