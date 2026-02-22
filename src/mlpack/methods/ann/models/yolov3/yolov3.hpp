@@ -119,18 +119,20 @@ class YOLOv3
     model.Predict(input, output);
   }
 
-  /** TODO: add comment docs.
+  /**
+   * Ordinary feed forward pass of the network. Draws the bounding boxes
+   * onto the input image.
+   *
+   * @param image Image used for detection bounding boxes and drawing 
+      those bounding boxes.
+   * @param opt ImageOptions used for specifying the dimensions of the image.
+   * @param ignoreThresh used for ignoring boxes whose confidence is below
+      this threshold.
    */
-
-  // inference, for now, batchSize = 1.
-               // arma::ucolvec& numDetections,
-               // size_t maxDetections = 100)
   void Predict(MatType& image,
                const ImageOptions& opt,
                const double ignoreThresh = 0.7)
   {
-    // output = input;
-
     const ElemType grey = 0.5;
     MatType preprocessed = image / 255.0;
     ImageOptions preprocessedOpt = opt;
@@ -141,8 +143,7 @@ class YOLOv3
     model.Predict(preprocessed, rawOutput);
 
     MatType rawOutputAlias;
-    // TODO: remove magic number.
-    const size_t numBoxes = 6300;
+    const size_t numBoxes = model.OutputDimensions()[1];
 
     MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes);
     const size_t numClasses = classNames.size();
@@ -152,7 +153,8 @@ class YOLOv3
       rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
 
     arma::ucolvec indices;
-    // TODO: not great, only doing objectness...
+
+    // NMS on objectness, not class confidences.
     NMS<>::Evaluate(bboxes, objectness, indices, 0.4);
 
     MatType chosenBoxes = bboxes.cols(indices);
@@ -163,19 +165,18 @@ class YOLOv3
     const size_t width = opt.Width();
     const size_t height = opt.Height();
 
-    ElemType xRatio = (ElemType)width / imgSize;
-    ElemType yRatio = (ElemType)height / imgSize;
+    ElemType ratio;
 
     ElemType xOffset = 0;
     ElemType yOffset = 0;
 
     if (width > height) {
       // landscape
-      yRatio =  (ElemType)width / imgSize;
+      ratio =  (ElemType)width / imgSize;
       yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
     } else {
       // portrait
-      xRatio =  (ElemType)height / imgSize;
+      ratio =  (ElemType)height / imgSize;
       xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
     }
 
@@ -188,13 +189,13 @@ class YOLOv3
 
       const std::string& label = classNames[chosenClass];
       const ElemType x1 =
-        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
+        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
       const ElemType y1 =
-        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
+        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
       const ElemType x2 =
-        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
+        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
       const ElemType y2 =
-        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
+        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
       const arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
 
       BoundingBoxImage(image, opt, bbox, red, 1, label, 2);
