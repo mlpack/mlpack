@@ -125,16 +125,15 @@ class YOLOv3
   // inference, for now, batchSize = 1.
                // arma::ucolvec& numDetections,
                // size_t maxDetections = 100)
-  void Predict(const MatType& input,
-               const ImageOptions& inputOpt,
-               MatType& output,
+  void Predict(MatType& image,
+               const ImageOptions& opt,
                const double ignoreThresh = 0.7)
   {
-    output = input;
+    // output = input;
 
     const ElemType grey = 0.5;
-    MatType preprocessed = input / 255.0;
-    ImageOptions preprocessedOpt = inputOpt;
+    MatType preprocessed = image / 255.0;
+    ImageOptions preprocessedOpt = opt;
     LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, grey);
     preprocessed = GroupChannels(preprocessed, preprocessedOpt);
 
@@ -161,8 +160,8 @@ class YOLOv3
       MatType(confs.cols(indices)).each_row() % objectness.cols(indices);
     arma::umat chosenConfs = arma::index_max(classConfs, 0);
 
-    const size_t width = inputOpt.Width();
-    const size_t height = inputOpt.Height();
+    const size_t width = opt.Width();
+    const size_t height = opt.Height();
 
     ElemType xRatio = (ElemType)width / imgSize;
     ElemType yRatio = (ElemType)height / imgSize;
@@ -180,25 +179,25 @@ class YOLOv3
       xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
     }
 
-    arma::fcolvec red = {255.0f, 0, 0};
+    const arma::fcolvec red = {255.0f, 0, 0};
     for (size_t b{}; b < indices.n_rows; b++)
     {
-      size_t chosenClass = chosenConfs.at(0, b);
+      const size_t chosenClass = chosenConfs.at(0, b);
       if (classConfs.at(chosenClass, b) < ignoreThresh)
         continue;
 
       const std::string& label = classNames[chosenClass];
-      ElemType x1 =
+      const ElemType x1 =
         (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
-      ElemType y1 =
+      const ElemType y1 =
         (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
-      ElemType x2 =
+      const ElemType x2 =
         (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * xRatio;
-      ElemType y2 =
+      const ElemType y2 =
         (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * yRatio;
-      arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
+      const arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
 
-      BoundingBoxImage(output, inputOpt, bbox, red, 1, label, 2);
+      BoundingBoxImage(image, opt, bbox, red, 1, label, 2);
     }
   }
 
