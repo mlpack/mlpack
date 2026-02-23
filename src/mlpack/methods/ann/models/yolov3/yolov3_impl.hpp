@@ -151,6 +151,14 @@ YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 
   model.SetNetworkMode(false);
   model.Reset();
+
+  if (model.OutputDimensions()[0] != numAttributes) {
+    std::ostringstream errMessage;
+    errMessage << "Expected number of attributes (" << numAttributes
+      << ") does not match the output number of attributes ("
+      << model.OutputDimensions()[0] << ")";
+    throw std::logic_error(errMessage.str());
+  }
 }
 
 template <typename MatType,
