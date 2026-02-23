@@ -31,6 +31,35 @@ inline bool CheckIfURL(const std::string& url)
   return false;
 }
 
+inline bool CheckValidHost(const std::string& host)
+{
+  if (host.empty())
+    return false;
+  else if (host.size() > 253)
+    return false;
+
+  std::string traillingDots ("..");
+  if (host.find(traillingDots) != std::string::npos)
+    return false;
+
+  // Only lower case alpha, numeric and hyphen are allowed in a hostname.
+  struct InvalidHost
+  {
+    bool operator()(char c)
+    {
+      if (std::isdigit(c))
+        return false;
+      else if (std::islower(c))
+        return false;
+      else if (c == '-' || c== '.')
+        return false;
+      else
+        return true;
+    }
+  };
+  return std::find_if(host.begin(), host.end(), InvalidHost()) == host.end();
+}
+
 inline void ParseURL(const std::string& url, std::string& host,
                      std::string& filename, int& port)
 {
@@ -55,7 +84,13 @@ inline void ParseURL(const std::string& url, std::string& host,
   size_t endHost = possibleHost.find_first_of(":/");
   if (endHost != std::string::npos)
   {
-    host = possibleHost.substr(0, endHost);
+    std::string tmpHost = possibleHost.substr(0, endHost);
+    if (CheckValidHost(tmpHost))
+      host = tmpHost;
+    else
+      throw std::runtime_error("Invalid Host.\n"
+          "Valid host contains only lower letters, numeric and hyphen");
+
     char endChar = possibleHost.at(endHost);
     if (endChar == ':')
     {

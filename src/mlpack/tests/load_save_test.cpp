@@ -3496,7 +3496,13 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
       // 21 Corrupt URL
       "https://",
       // 22 No URL
-      ""
+      "",
+      // 23 Invalid host with special chars
+      "https://!@#$%^*^&*.com/invalid",
+      // 24 Invalid host with trailing dots
+      "https://examplesofinvalid..com/invalid",
+      // 25 Invalid host with capital letter
+      "https://examplesofinvalid..com/invalid"
   };
 
   std::string host, filename;
@@ -3590,6 +3596,15 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
       std::runtime_error);
 
   REQUIRE_THROWS_AS(ParseURL(testUrls.at(21), host, filename, port),
+      std::runtime_error);
+
+  REQUIRE_THROWS_AS(ParseURL(testUrls.at(22), host, filename, port),
+      std::runtime_error);
+
+  REQUIRE_THROWS_AS(ParseURL(testUrls.at(23), host, filename, port),
+      std::runtime_error);
+
+  REQUIRE_THROWS_AS(ParseURL(testUrls.at(24), host, filename, port),
       std::runtime_error);
 }
 
