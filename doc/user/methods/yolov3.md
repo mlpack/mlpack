@@ -5,27 +5,6 @@ the paper ["YOLOv3: An Incremental Improvement"](https://arxiv.org/abs/1804.0276
 object detection algorithm that takes in an image and predicts multiple bounding
 boxes in a single forward pass of the neural network.
 
-<p align="center">
-  <img src="../../img/dog.jpg" alt="dog, bicycle and truck">
-</p>
-
-```
-@article{DBLP:journals/corr/abs-1804-02767,
-  author       = {Joseph Redmon and
-                  Ali Farhadi},
-  title        = {YOLOv3: An Incremental Improvement},
-  journal      = {CoRR},
-  volume       = {abs/1804.02767},
-  year         = {2018},
-  url          = {http://arxiv.org/abs/1804.02767},
-  eprinttype    = {arXiv},
-  eprint       = {1804.02767},
-  timestamp    = {Mon, 13 Aug 2018 16:48:24 +0200},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-1804-02767.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
-}
-```
-
 **NOTE**: At the current time, only prediction is supported by the `YOLOv3`
 and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 
@@ -38,18 +17,20 @@ mlpack::Load("yolov3-320-coco.bin", model);
 
 // Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
 arma::fmat image;
-mlpack::ImageInfo info;
-mlpack::Load("dog.jpg", image, info, true);
+mlpack::ImageOptions opts;
+mlpack::Load("dog.jpg", image, opts);
 
 // Predict bounding boxes from an image using `YOLOv3` and draw them.
-// It will ignore boxes when the model's confidence of the object is below
-// `ignoreThreshold`
-const double ignoreThreshold = 0.7;
-model.Predict(image, info, ignoreThreshold);
+model.Predict(image, opts);
 
 // Save to "output.jpg"
-mlpack::Save("output.jpg", image, info, true);
+mlpack::Save("output.jpg", image, opts, true);
 ```
+
+<p align="center">
+  <img src="../../img/dog.jpg" alt="dog, bicycle and truck">
+</p>
+
 
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
@@ -90,21 +71,18 @@ Defaults and types are detailed in the
 
 Once the weights are loaded, you can compute likely object bounding boxes with with `Predict()`.
 
-#### Forms
-
 <!-- TODO: could have one that takes input and output file names? so image Load/Save is abstracted too. -->
 
- * `model.Predict(image, opt, ignoreThresh)`
-   - Predict objects in the given `image` (with metadata `opts`) and
+ * `model.Predict(image, opt, ignoreThresh=0.7)`
+   - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)) and
      draw the detections onto that image.
-   - Bounding boxes will not be drawn unless their confidence is
-     greater than `ignoreThreshold`.
+   - Bounding boxes will be drawn if their confidence is greater than `ignoreThresh`.
 
 
 | **name** | **type** | **description** | **default**|
 |----------|----------|-----------------|------------|
 | `image` | `arma::fmat` | Input image. See [example](#simple-usage-example) for details on loading an image with mlpack | n/a |
-| `opt` | `ImageOptions` | Image metadata. | n/a |
+| `opt` | [`ImageOptions`](../load_save.md#imageoptions) | Image metadata. | n/a |
 | `ignoreThreshold` | `double` | Minimum confidence to have the corresponding bounding box drawn onto `image`. | `0.7` |
 
 ---
@@ -133,14 +111,16 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
  * `Model()` will return the underlying
    [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) object that represents the model architecture.
 
- * `ImageSize()` will return the width and height of the image after
-    preprocessing. The `yolov3-320.bin` model for example converts the
+ * `ImageSize()` will return a `size_t` containing the expected width and height
+    of the image afte preprocessing. The `yolov3-320.bin` model for example converts the
     input image to shape `(320, 320, 3)`.
 
- * `NumAttributes()` will return the number of attributes that make up
-    a bounding box prediction. For example, if the model predicts 80
-    classes, it will return 85 to include the bounding box coordinates
-    and its objectness score.
+ * `NumClasses()` will return the number of classes that a
+    bounding box could contain. For example, the pretrained weights
+    were trained on the COCO dataset, which includes 80 different
+    classes.
+
+<!-- TODO: add a link to all the classes? maybe upload coco.names to mlpack.org -->
 
  * `ClassNames()` will return a vector of strings, each being the name
     of a class the model can predict.
@@ -162,22 +142,17 @@ The format for the name of each pretrained model is `<model name>-<image size>-<
 
 ### Simple Examples
 
-<!-- TODO: add example using raw output -->
+<!-- TODO: add example using raw output, batchSize > 1,  -->
 
 ### Advanced Functionality: Template Parameters
 
-The `YOLOv3` class also supports several template parameters, which can be
-used for custom behavior.  The full signature of the class is:
+The `YOLOv3` class also supports using different floating point types.
+The full signature of the class is:
 
 ```
-YOLOv3<MatType
-       OutputLayerType
-       InitializationRuleType>
+YOLOv3<MatType>
 ```
 
  * `MatType`: specifies the type of matrix used for learning and internal
-   representation of weights and biases. The pretrained weights used float-32, so that default is `arma::fmat`.
- * `OutputLayerType`: the loss function used to train the model. **NOTE**:
-   loss functions for object detection models are a work in progress.
- * `InitializationRuleType`: the way that weights are initialized before
-   training.
+   representation of weights and biases. The pretrained weights used float-32,
+   so the default is `arma::fmat`. training.

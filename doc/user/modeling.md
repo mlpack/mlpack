@@ -71,6 +71,6 @@ Computations based on distance metrics.
 
 ## Object Detection models
 
-* [`yolov3`](methods/yolov3.md): YOLOv3 object detection
+* [`yolov3`](methods/yolov3.md): pretrained YOLOv3 and YOLOv3-tiny models
 
 <!-- TODO: add more -->
