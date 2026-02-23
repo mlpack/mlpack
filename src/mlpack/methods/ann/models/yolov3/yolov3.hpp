@@ -69,9 +69,9 @@ class YOLOv3
    * @param numClasses The number of output classes. Pretrained weights were
        trained on COCO which has 80 classes.
    * @param anchors Vector of anchor width and heights. Formatted as
-      [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be
-      3 * 3 anchors, since YOLOv3 has three output layers and makes 3 predictions
-      for each cell per layer. Therefore, anchors.size() must be 3 * 6.
+      [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be 3 * 3
+      anchors, since YOLOv3 has three output layers and makes 3 predictions
+      for each cell per layer. Therefore, anchors.size() must be 3 * 6 = 18.
    */
   YOLOv3(const size_t imgSize,
          const std::vector<ElemType>& anchors,
@@ -91,11 +91,11 @@ class YOLOv3
   size_t ImageSize() { return imgSize; }
 
   /**
-   * Returns the number of attributes that make up a bounding box.
-   * It includes x, y, w, h, the objectness score and the number
-   * of classes.
+   * Returns the number of classes a bounding box may be. The pretrained
+   * weights were trained on the COCO dataset, which conatins 80 different
+   * classes.
    */
-  size_t NumAttributes() { return numAttributes; }
+  size_t NumClasses() { return numAttributes - 5; }
 
   /**
    * Returns the classes the model can identify.
@@ -123,8 +123,8 @@ class YOLOv3
    * Ordinary feed forward pass of the network. Draws the bounding boxes
    * onto the input image.
    *
-   * @param image Image used for detection bounding boxes and drawing 
-      those bounding boxes.
+   * @param image Image used for detection bounding boxes and drawing
+      those bounding boxes. Pixel values are expected to be 0-255.
    * @param opt ImageOptions used for specifying the dimensions of the image.
    * @param ignoreThresh used for ignoring boxes whose confidence is below
       this threshold.
@@ -133,72 +133,89 @@ class YOLOv3
                const ImageOptions& opt,
                const double ignoreThresh = 0.7)
   {
-    const ElemType grey = 0.5;
-    MatType preprocessed = image / 255.0;
+
+    // Preprocessing steps:
+    // normalize to 0-1, letterbox with grey = 0.5, group channels
     ImageOptions preprocessedOpt = opt;
+    MatType preprocessed = image / 255.0;
+    const ElemType grey = 0.5;
     LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, grey);
     preprocessed = GroupChannels(preprocessed, preprocessedOpt);
 
     MatType rawOutput;
     model.Predict(preprocessed, rawOutput);
 
-    MatType rawOutputAlias;
+    // Helpers
     const size_t numBoxes = model.OutputDimensions()[1];
+    const size_t size = opt.Width() * opt.Height() * opt.Channels();
 
-    MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes);
     const size_t numClasses = classNames.size();
-    const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
-    const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
-    const MatType& confs =
-      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
-
-    arma::ucolvec indices;
-
-    // NMS on objectness, not class confidences.
-    NMS<>::Evaluate(bboxes, objectness, indices, 0.4);
-
-    MatType chosenBoxes = bboxes.cols(indices);
-    MatType classConfs =
-      MatType(confs.cols(indices)).each_row() % objectness.cols(indices);
-    arma::umat chosenConfs = arma::index_max(classConfs, 0);
+    const arma::Col<ElemType> red = {255.0f, 0, 0};
 
     const size_t width = opt.Width();
     const size_t height = opt.Height();
 
-    ElemType ratio;
+    arma::ucolvec nmsIndices;
 
+    ElemType ratio;
     ElemType xOffset = 0;
     ElemType yOffset = 0;
 
-    if (width > height) {
+    if (width > height)
+    {
       // landscape
       ratio =  (ElemType)width / imgSize;
       yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
-    } else {
+    }
+    else
+    {
       // portrait
       ratio =  (ElemType)height / imgSize;
       xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
     }
 
-    const arma::fcolvec red = {255.0f, 0, 0};
-    for (size_t b{}; b < indices.n_rows; b++)
+    // Draw bounding boxes using NMS for each image in the batch.
+    for (size_t batch = 0; batch < rawOutput.n_cols; batch++)
     {
-      const size_t chosenClass = chosenConfs.at(0, b);
-      if (classConfs.at(chosenClass, b) < ignoreThresh)
-        continue;
+      MatType rawOutputAlias, imageAlias;
 
-      const std::string& label = classNames[chosenClass];
-      const ElemType x1 =
-        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
-      const ElemType y1 =
-        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
-      const ElemType x2 =
-        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
-      const ElemType y2 =
-        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
-      const arma::fcolvec bbox = arma::fcolvec({x1, y1, x2, y2});
+      MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes,
+          rawOutput.n_rows * batch);
+      MakeAlias(imageAlias, image, size, 1, size * batch);
 
-      BoundingBoxImage(image, opt, bbox, red, 1, label, 2);
+      const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
+      const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+      const MatType& confs =
+        rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
+
+
+      // NMS on objectness, not class confidences. Will produce false negatives.
+      NMS<>::Evaluate(bboxes, objectness, nmsIndices, 0.4);
+
+      MatType chosenBoxes = bboxes.cols(nmsIndices);
+      MatType classConfs =
+        MatType(confs.cols(nmsIndices)).each_row() % objectness.cols(nmsIndices);
+      arma::umat chosenConfs = arma::index_max(classConfs, 0);
+
+      for (size_t b = 0; b < nmsIndices.n_rows; b++)
+      {
+        const size_t chosenClass = chosenConfs.at(0, b);
+        if (classConfs.at(chosenClass, b) < ignoreThresh)
+          continue;
+
+        const std::string& label = classNames[chosenClass];
+        const ElemType x1 =
+          (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+        const ElemType y1 =
+          (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+        const ElemType x2 =
+          (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+        const ElemType y2 =
+          (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+
+        const arma::Col<ElemType> bbox = arma::Col<ElemType>({x1, y1, x2, y2});
+        BoundingBoxImage(imageAlias, opt, bbox, red, 1, label, 2);
+      }
     }
   }
 
