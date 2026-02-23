@@ -133,7 +133,6 @@ class YOLOv3
                const ImageOptions& opt,
                const double ignoreThresh = 0.7)
   {
-
     // Preprocessing steps:
     // normalize to 0-1, letterbox with grey = 0.5, group channels
     ImageOptions preprocessedOpt = opt;
@@ -193,8 +192,8 @@ class YOLOv3
       NMS<>::Evaluate(bboxes, objectness, nmsIndices, 0.4);
 
       MatType chosenBoxes = bboxes.cols(nmsIndices);
-      MatType classConfs =
-        MatType(confs.cols(nmsIndices)).each_row() % objectness.cols(nmsIndices);
+      MatType classConfs = MatType(confs.cols(nmsIndices)).each_row() %
+        objectness.cols(nmsIndices);
       arma::umat chosenConfs = arma::index_max(classConfs, 0);
 
       for (size_t b = 0; b < nmsIndices.n_rows; b++)
