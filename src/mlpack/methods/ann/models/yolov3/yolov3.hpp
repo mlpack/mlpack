@@ -146,6 +146,21 @@ class YOLOv3
     Predict(output, opt, ignoreThresh);
   }
 
+  /**
+   * Preprocesses the `input` image and writes to `output`. The steps for
+   * `YOLOv3` are normalize pixel values to be 0-1, letterbox the image
+   * then group the channels for convolutions.
+   */
+  void PreprocessImage(const MatType& input,
+                       const ImageOptions& opt,
+                       MatType& output)
+  {
+    MatType preprocessed = input / 255.0;
+    ImageOptions preprocessedOpt = opt;
+    LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, 0.5);
+    output = GroupChannels(preprocessed, preprocessedOpt);
+  }
+
   // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
@@ -189,21 +204,6 @@ class YOLOv3
   size_t DownsampleBlock(const size_t previousLayer,
                          const size_t maps,
                          const size_t shortcuts);
-
-  /**
-   * Preprocesses the `input` image and writes to `output`. The steps for
-   * `YOLOv3` are normalize pixel values to be 0-1, letterbox the image
-   * then group the channels for convolutions.
-   */
-  void PreprocessImage(const MatType& input,
-                       const ImageOptions& opt,
-                       MatType& output)
-  {
-    MatType preprocessed = input / 255.0;
-    ImageOptions preprocessedOpt = opt;
-    LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, 0.5);
-    output = GroupChannels(preprocessed, preprocessedOpt);
-  }
 
   /**
    * Read the raw output of the model and draw the bounding boxes onto the
