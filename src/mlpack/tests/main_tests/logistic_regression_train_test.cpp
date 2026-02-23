@@ -599,7 +599,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   { // adding a require to have the test 'count' rather than just not fail
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
-
 }
 
 /**

@@ -109,8 +109,10 @@ BINDING_EXAMPLE(
 
 
 // See also...
-BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
-BINDING_SEE_ALSO("@logistic_regression_probabilities", "#logistic_regression_probabilities");
+BINDING_SEE_ALSO("@logistic_regression_classify",
+    "#logistic_regression_classify");
+BINDING_SEE_ALSO("@logistic_regression_probabilities",
+    "#logistic_regression_probabilities");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",
@@ -119,8 +121,8 @@ BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
     "@doc/user/methods/logistic_regression.md");
 
 // Training parameters.
-PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the matrix "
-    "of predictors, X).", "t");
+PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the "
+    "matrix of predictors, X).", "t");
 PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
     "in the training set (y).", "l");
 
@@ -377,18 +379,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       if (params.Has("predictions"))
         params.Get<arma::Row<size_t>>("predictions") = predictions;
     }
-
-    // if (params.Has("probabilities"))
-    // {
-    //   Log::Info << "Calculating class probabilities of points in '"
-    //       << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    //   arma::mat probabilities;
-    //   model->Classify(testSet, predictions, probabilities);
-
-    //   if (params.Has("probabilities"))
-    //     params.Get<arma::mat>("probabilities") = std::move(probabilities);
-    // }
-
   }
 
   params.Get<LogisticRegression<>*>("output_model") = model;

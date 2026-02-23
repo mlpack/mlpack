@@ -41,7 +41,8 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_train", "#logistic_regression_train");
-BINDING_SEE_ALSO("@logistic_regression_classify", "#logistic_regression_classify");
+BINDING_SEE_ALSO("@logistic_regression_classify",
+    "#logistic_regression_classify");
 BINDING_SEE_ALSO("@softmax_regression", "#softmax_regression");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",
@@ -63,7 +64,8 @@ PARAM_MODEL_IN_REQ(LogisticRegression<>, "input_model", "Existing model "
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  LogisticRegression<>* model = params.Get<LogisticRegression<>*>("input_model");
+  LogisticRegression<>* model =
+    params.Get<LogisticRegression<>*>("input_model");
   const arma::mat& testSet = params.Get<arma::mat>("test");
 
   // Checking the dimensionality of the test data.
