@@ -30,7 +30,7 @@ BINDING_USER_NAME("L2-regularized Logistic Regression Training");
 BINDING_SHORT_DESC(
     "An implementation of L2-regularized logistic regression for two-class "
     "classification.  Given labeled data, a model is trained and saved for "
-    "future use.");
+    "future use; or, a pre-trained model can be used to classify new points.");
 
 // Long description.
 BINDING_LONG_DESC(

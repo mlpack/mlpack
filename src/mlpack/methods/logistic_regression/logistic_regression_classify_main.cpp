@@ -29,15 +29,10 @@ BINDING_USER_NAME("L2-regularized Logistic Regression Classification");
 // Short description.
 BINDING_SHORT_DESC(
     "An implementation of L2-regularized logistic regression for two-class "
-    "classification.  Given labeled data, a trained model can be used to "
-    "classify new points.");
+    "classification.  Uses a trained model to classify new points.");
 
-// Long description.
-BINDING_LONG_DESC(
-    "An implementation of L2-regularized logistic regression for two-class "
-    "classification.  Given labeled data, a trained model can be used to "
-    "classify new points.");
-    // TODO:FIXME:EXTEND ?
+// Long description. Taken from logistic_regression_train_main.cpp
+BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
