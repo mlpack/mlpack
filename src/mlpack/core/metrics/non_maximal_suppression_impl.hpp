@@ -46,7 +46,8 @@ void NMS<UseCoordinates>::Evaluate(
 
   // Obtain Sorted indices for bounding boxes according to
   // their confidence scores.
-  arma::ucolvec sortedIndices = arma::sort_index(confidenceScores);
+  typename GetUColType<ConfidenceScoreType>::type sortedIndices =
+      sort_index(confidenceScores);
 
   // Pre-Compute area of each bounding box.
   BoundingBoxesType area;
@@ -65,7 +66,8 @@ void NMS<UseCoordinates>::Evaluate(
     size_t selectedIndex = sortedIndices(sortedIndices.n_elem - 1);
 
     // Choose the box with the largest probability.
-    selectedIndices.insert_rows(0, arma::uvec(1).fill(selectedIndex));
+    selectedIndices.insert_rows(0, 1);
+    selectedIndices[0] = selectedIndex;
 
     // Check if there are other bounding boxes to compare with.
     if (sortedIndices.n_elem == 1)
@@ -106,23 +108,25 @@ void NMS<UseCoordinates>::Evaluate(
 
     // Calculate points of intersection between the bounding box with
     // highest confidence score and remaining bounding boxes.
-    x2 = arma::clamp(x2, DBL_MIN, selectedX2);
-    y2 = arma::clamp(y2, DBL_MIN, selectedY2);
-    x1 = arma::clamp(x1, selectedX1, DBL_MAX);
-    y1 = arma::clamp(y1, selectedY1, DBL_MAX);
+    typedef typename BoundingBoxesType::elem_type BoxElemType;
+    x2 = clamp(x2, std::numeric_limits<BoxElemType>::lowest(), selectedX2);
+    y2 = clamp(y2, std::numeric_limits<BoxElemType>::lowest(), selectedY2);
+    x1 = clamp(x1, selectedX1, std::numeric_limits<BoxElemType>::max());
+    y1 = clamp(y1, selectedY1, std::numeric_limits<BoxElemType>::max());
 
-    BoundingBoxesType intersectionArea = arma::clamp(x2 - x1, 0.0, DBL_MAX) %
-          arma::clamp(y2 - y1, 0.0, DBL_MAX);
+    BoundingBoxesType intersectionArea = clamp(x2 - x1, 0,
+        std::numeric_limits<BoxElemType>::max()) %
+        clamp(y2 - y1, 0.0, std::numeric_limits<BoxElemType>::max());
 
     // Calculate IoU of remaining boxes with the last bounding box with
     // the highest confidence score.
     BoundingBoxesType calculateIoU = intersectionArea /
         (area(sortedIndices).t() - intersectionArea + area(selectedIndex));
 
-    sortedIndices = sortedIndices(arma::find(calculateIoU <= threshold));
+    sortedIndices = sortedIndices(find(calculateIoU <= threshold));
   }
 
-  selectedIndices = arma::flipud(selectedIndices);
+  selectedIndices = flipud(selectedIndices);
 }
 
 template<bool UseCoordinates>
