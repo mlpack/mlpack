@@ -51,18 +51,6 @@ and [format detection/selection](#formats).
    * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
      type of `X`.
 
- - `Load(URL, X, opts)`
-   * Load `X` from the given URL `URL` with the given options specified in `opts`.
-   * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
-     type of `X`.
-   * The given URL should be valid and start with either `http://` or `https://`.
-   * If the URL starts with `https://` then `#define MLPACK_USE_HTTPS` should be
-     declared before `#include <mlpack.hpp>`
-   * The downloaded file will be saved temporarily unless if the cache is
-     enabled.
-
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
  - `Load(filenames, X)`
@@ -702,6 +690,50 @@ std::cout << "Loaded data from movielens-100k.csv; matrix size: "
 ```
 ---
 
+## Loading from remote URLs
+
+mlpack supports loading dataset hosted online directly into an armadillo matrix
+object. mlpack will download the files using cpp-httplib library. This library
+is bundled with mlpack for easy of use.
+
+ - `Load(URL, X, opts)`
+   * Load `X` from the given URL `URL` with the given options specified in `opts`.
+   * Returns a `bool` indicating whether the load was a success.
+   * `X` can be [any supported load type](#types).
+   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
+     type of `X`.
+   * The URL must start with either `http://` or `https://` or loading will
+     fail.
+   * If the URL starts with `https://` then `#define MLPACK_USE_HTTPS` should be
+     declared before `#include <mlpack.hpp>`
+   * For loading HTTPS data, support must be enabled with
+     [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
+     including mlpack, and the program must be additionally linked with `-lssl
+     -lcrypto`
+   * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
+     Linux systems).
+
+```c++
+// Throw an exception if loading fails with the Fatal option.
+arma::mat dataset;
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
+
+arma::Row<size_t> labels;
+mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv",
+    labels, mlpack::Fatal);
+
+// Print information about the data.
+std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+
+std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
+std::cout << " - " << labels.n_elem << " labels." << std::endl;
+std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
+std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+```
+
 ## Mixed categorical data
 
 mlpack supports mixed categorical data, e.g., data where some dimensions take
@@ -1220,39 +1252,4 @@ else
 
 ## Online data load example
 
-mlpack allows to load data hosted online directly into an armadillo matrix
-object. mlpack will download the files using cpp-httplib library. This library
-is bundled with mlpack for easy of use.
-
-```c++
-// Throw an exception if loading fails with the Fatal option.
-
-arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
-    mlpack::Fatal);
-
-arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv",
-    labels, mlpack::Fatal);
-
-// Print information about the data.
-std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
-std::cout << " - " << dataset.n_cols << " points." << std::endl;
-std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
-
-std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
-std::cout << " - " << labels.n_elem << " labels." << std::endl;
-std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
-std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
-
-// Modify and save the data.  Add 2 to the data and drop the last column.
-dataset += 2;
-dataset.shed_col(dataset.n_cols - 1);
-labels.shed_col(labels.n_cols - 1);
-
-// Don't throw an exception if saving fails.  Technically there is no need to
-// explicitly specify NoFatal---it is the default.
-mlpack::Save("satellite.train.mod.csv", dataset, mlpack::NoFatal);
-mlpack::Save("satellite.train.labels.mod.csv", labels, mlpack::NoFatal);
-```
 
