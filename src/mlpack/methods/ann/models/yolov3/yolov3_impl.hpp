@@ -26,7 +26,8 @@ YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   model(),
   imgSize(imgSize),
   numAttributes(classNames.size() + 5),
-  classNames(classNames)
+  classNames(classNames),
+  anchors(anchors)
 {
   const size_t predictionsPerCell = 3;
   if (anchors.size() != predictionsPerCell * 6)

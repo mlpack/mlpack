@@ -103,6 +103,11 @@ class YOLOv3
   const std::vector<std::string>& ClassNames() { return classNames; }
 
   /**
+   * Returns the anchors used in the YOLOv3 layers.
+   */
+  const std::vector<ElemType>& Anchors() { return anchors; }
+
+  /**
    * Ordinary feed forward pass of the network. Get raw outputs from the
    * model, with optional preprocessing done via the `preprocess` argument.
    *
@@ -218,6 +223,8 @@ class YOLOv3
   size_t numAttributes;
   // Class names for each possible object the model can identify.
   std::vector<std::string> classNames;
+  // Anchors for YOLOv3Layer for easy retrieval
+  std::vector<ElemType> anchors;
 };
 
 } // namespace mlpack
