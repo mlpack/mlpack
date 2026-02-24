@@ -147,7 +147,11 @@ inline bool DownloadFile(const std::string& url,
     throw std::runtime_error("DownloadFile(): domain name could not be parsed from URL '" + url + "'");
   }
 #ifdef MLPACK_USE_HTTPS
-  httplib::SSLClient cli(host, 443);
+  if (port == -1)
+  {
+    port = 443;
+  }
+  httplib::SSLClient cli(host, port);
 #else
   if (port == -1)
   {

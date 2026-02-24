@@ -28,35 +28,35 @@ and [format detection/selection](#formats).
 
 ## `Load()`
 
- - `Load(filename, object)`
-   * Load `object` from the given file `filename` with default options:
+ - `Load(filename, X)`
+   * Load `X` from the given file `filename` with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
-   * `object` can be [any supported load type](#types).
+   * `X` can be [any supported load type](#types).
 
- - `Load(filename, object, Option1 + Option2 + ...)`
-   * Load `object` from the given file `filename` with the given options.
+ - `Load(filename, X, Option1 + Option2 + ...)`
+   * Load `X` from the given file `filename` with the given options.
    * Returns a `bool` indicating whether the load was a success.
-   * `object` can be [any supported load type](#types).
+   * `X` can be [any supported load type](#types).
    * The given options must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
-     of `object`.
+     of `X`.
 
- - `Load(filename, object, opts)`
-   * Load `object` from the given file `filename` with the given options specified in `opts`.
+ - `Load(filename, X, opts)`
+   * Load `X` from the given file `filename` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
-   * `object` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `object`.
+   * `X` can be [any supported load type](#types).
+   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
+     type of `X`.
 
- - `Load(URL, object, opts)`
-   * Load `object` from the given URL `URL` with the given options specified in `opts`.
+ - `Load(URL, X, opts)`
+   * Load `X` from the given URL `URL` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
-   * `object` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `object`.
+   * `X` can be [any supported load type](#types).
+   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
+     type of `X`.
    * The given URL should be valid and start with either `http://` or `https://`.
    * If the URL starts with `https://` then `#define MLPACK_USE_HTTPS` should be
      declared before `#include <mlpack.hpp>`
@@ -65,14 +65,14 @@ and [format detection/selection](#formats).
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
- - `Load(filenames, object)`
- - `Load(filenames, object, Option1 + Option2 + ...)`
- - `Load(filenames, object, opts)`
-    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `object`.
-      - For [numeric data](#numeric-data), data loaded from each file is concatenated into `object`.
-      - For [image data](#image-data), each image is flattened into one column of `object`.
+ - `Load(filenames, X)`
+ - `Load(filenames, X, Option1 + Option2 + ...)`
+ - `Load(filenames, X, opts)`
+    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
+      - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
+      - For [image data](#image-data), each image is flattened into one column of `X`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
-    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
+    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` X](#dataoptions).
 
 ---
 
