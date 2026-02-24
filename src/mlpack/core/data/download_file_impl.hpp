@@ -160,7 +160,7 @@ inline bool DownloadFile(const std::string& url,
   if (!res)
   {
     std::stringstream oss;
-    oss << "Error: DownloadFile(): " << httplib::to_string(res.error());
+    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
     throw std::runtime_error(oss.str());
   }
 
