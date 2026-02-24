@@ -89,7 +89,7 @@
 #endif
 
 //
-// MLPACK_DISABLE_HTTPLIB is used to enable usage of locally installed
+// MLPACK_DISABLE_HTTPLIB is used to disable usage of locally installed
 // cpp-httplib.
 //
 #if !defined(MLPACK_DISABLE_HTTPLIB)
