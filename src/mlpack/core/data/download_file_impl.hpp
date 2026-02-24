@@ -166,7 +166,7 @@ inline bool DownloadFile(const std::string& url,
 
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
-  tmpFilename += filename;
+  tmpFilename += Extension(filename);
   // @rcurtin, I do not like this, but this is the only option;
   // Or I can take the internal of OpenFile, and use it here.
   DataOptions opts = NoFatal;
