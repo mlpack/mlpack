@@ -467,7 +467,7 @@ inline std::filesystem::path TempName()
   static constexpr auto num_bits = 32;
   for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
   {
-      nameStream << RandInt(0, 9);
+    nameStream << RandInt(0, 9);
   }
   return std::filesystem::temp_directory_path() / nameStream.str();
 }
