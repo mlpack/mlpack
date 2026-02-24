@@ -139,14 +139,13 @@ PARAM_DOUBLE_IN("step_size", "Step size for SGD optimizer.",
     "s", 0.01);
 PARAM_INT_IN("batch_size", "Batch size for SGD.", "b", 64);
 
-// Model loading/saving. (Input model used for unit tests)
-PARAM_MODEL_IN(LogisticRegression<>, "input_model", "Existing model "
-    "(parameters).", "m");
+// Model saving.
 PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
 
 // Testing.
-PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
+// PARAM_MATRIX_IN("test", "Matrix containing test dataset. Used only for "
+//                 "unit tests.", "T");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
 PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
@@ -165,10 +164,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const double stepSize = params.Get<double>("step_size");
   const size_t batchSize = (size_t) params.Get<int>("batch_size");
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
-  const double decisionBoundary = params.Get<double>("decision_boundary");
-
-  // One of training and input_model must be specified.
-  RequireAtLeastOnePassed(params, { "training", "input_model" }, true);
 
   // If no output file is given, the user should know that the model will not be
   // saved
@@ -178,17 +173,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         "will not be saved");
   }
 
-  //RequireAtLeastOnePassed(params, { "output_model", "predictions",
-  //    "probabilities"}, false, "no output will be saved");
-
-  // ReportIgnoredParam(params, {{ "test", false }}, "predictions");
-  // ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
-
   ReportIgnoredParam(params, {{ "training", false }},
       "print_training_accuracy");
 
   RequireAtLeastOnePassed(params,
-      { "test", "output_model", "print_training_accuracy" }, false,
+      { "output_model", "print_training_accuracy" }, false,
       "the trained logistic regression model will not be used or saved");
 
   // Max Iterations needs to be positive.
@@ -211,11 +200,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Lambda must be positive.
   RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
       true, "lambda must be positive or zero");
-
-  // Decision boundary must be between 0 and 1.
-  // RequireParamValue<double>(params, "decision_boundary",
-  //     [](double x) { return x >= 0.0 && x <= 1.0; }, true,
-  //     "decision boundary must be between 0.0 and 1.0");
 
   RequireParamValue<double>(params, "step_size",
       [](double x) { return x >= 0.0; }, true, "step size must be positive");
@@ -246,18 +230,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   // Load the model, if necessary.
   LogisticRegression<>* model;
-  if (params.Has("input_model"))
-    model = params.Get<LogisticRegression<>*>("input_model");
-  else
-  {
-    model = new LogisticRegression<>(0, 0);
 
-    // Set the size of the parameters vector, if necessary.
-    if (!params.Has("labels"))
-      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows);
-    else
-      model->Parameters() = zeros<arma::rowvec>(regressors.n_rows + 1);
-  }
+  model = new LogisticRegression<>(0, 0);
+
+  // Set the size of the parameters vector, if necessary.
+  if (!params.Has("labels"))
+    model->Parameters() = zeros<arma::rowvec>(regressors.n_rows);
+  else
+    model->Parameters() = zeros<arma::rowvec>(regressors.n_rows + 1);
 
   // Check if the responses are in a separate file.
   if (params.Has("training") && params.Has("labels"))
@@ -265,10 +245,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
     {
-      // Clean memory if needed.
-      if (!params.Has("input_model"))
-        delete model;
-
       Log::Fatal << "The labels must have the same number of points as the "
           << "training dataset." << endl;
     }
@@ -278,10 +254,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
     {
-      // Clean memory if needed.
-      if (!params.Has("input_model"))
-        delete model;
-
       Log::Fatal << "Can't get responses from training data since it has less "
           << "than 2 rows." << endl;
     }
@@ -295,10 +267,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Verify the labels.
   if (params.Has("training") && max(responses) > 1)
   {
-    // // Clean memory if needed.
-    if (!params.Has("input_model"))
-       delete model;
-
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
   }
@@ -348,36 +316,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << "training set ("
           << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
       timers.Stop("lr_prediction");
-    }
-  }
-
-  if (params.Has("test"))
-  {
-    const arma::mat& testSet = params.Get<arma::mat>("test");
-
-    // Checking the dimensionality of the test data.
-    if (testSet.n_rows != model->Parameters().n_cols - 1)
-    {
-      // Clean memory if needed.
-      const size_t trainingDimensionality = model->Parameters().n_cols - 1;
-      if (!params.Has("input_model"))
-        delete model;
-
-      Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
-          << "be the same as the dimensionality of the training data ("
-          << trainingDimensionality << ")!" << endl;
-    }
-
-    // We must perform predictions on the test set.  Training (and the
-    // optimizer) are irrelevant here; we'll pass in the model we have.
-    if (params.Has("predictions"))
-    {
-      Log::Info << "Predicting classes of points in '"
-          << params.GetPrintable<arma::mat>("test") << "'." << endl;
-      model->Classify(testSet, predictions, decisionBoundary);
-
-      if (params.Has("predictions"))
-        params.Get<arma::Row<size_t>>("predictions") = predictions;
     }
   }
 

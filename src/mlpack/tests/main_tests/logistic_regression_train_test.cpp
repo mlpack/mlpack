@@ -53,7 +53,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   SetInputParam("training", std::move(trainX));
 
-  // Labels to the training data is not provided. It should throw
+  // Labels to the training data are not provided. It should throw
   // a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
@@ -70,21 +70,15 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   constexpr int M = 15;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY;
+  arma::Row<size_t> trainY, testY;
   // 10 responses.
   trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("labels", std::move(trainY));
-  SetInputParam("test", std::move(testX));
-
   // Training the model.
-  RUN_BINDING();
-
-  // Get the output predictions of the test data.
-  const arma::Row<size_t>& testY =
-      params.Get<arma::Row<size_t>>("predictions");
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Train(trainX, trainY);
+  model->Classify(testX, testY, 0.5);
 
   // Output predictions size must match the test data set size.
   REQUIRE(testY.n_rows == 1);
@@ -107,11 +101,11 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // 8 responses - incorrect size.
   trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("labels", std::move(trainY));
+  // Training the model.
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
 
   // Labels with incorrect size. It should throw a runtime error.
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(model->Train(trainX, trainY), std::runtime_error);
 }
 
 /**
@@ -124,16 +118,15 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 {
   arma::mat trainX1({{1.0, 2.0, 3.0}, {1.0, 4.0, 9.0}, {0, 1, 1}});
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
+  arma::Row<size_t> trainY1, testY1;
 
   SetInputParam("training", std::move(trainX1));
-  SetInputParam("test", testX);
 
-  // The first solution.
+  // Train the model
   RUN_BINDING();
-
-  // Get the output.
-  const arma::Row<size_t> testY1 =
-      std::move(params.Get<arma::Row<size_t>>("predictions"));
+  LogisticRegression<>* model1 =
+      params.Get<LogisticRegression<>*>("output_model");
+  model1->Classify(testX, testY1, 0.5);
 
   // Reset the settings.
   CleanMemory();
@@ -145,14 +138,16 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   SetInputParam("training", std::move(trainX2));
   SetInputParam("labels", std::move(trainY2));
-  SetInputParam("test", std::move(testX));
-
   // The second solution.
   RUN_BINDING();
 
-  // get the output
-  const arma::Row<size_t>& testY2 =
-      params.Get<arma::Row<size_t>>("predictions");
+  arma::Row<size_t> testY2;
+
+  // Get the output model obtained from training.
+  LogisticRegression<>* model2 =
+      params.Get<LogisticRegression<>*>("output_model");
+  // and the output
+  model2->Classify(testX, testY2, 0.5);
 
   // Both solutions should be equal.
   CheckMatrices(testY1, testY2);
@@ -177,33 +172,18 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   arma::mat testX = arma::randu<arma::mat>(D, M);
+  arma::Row<size_t> testY1;
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("labels", std::move(trainY));
-  SetInputParam("test", testX);
-
-  // First solution
-  RUN_BINDING();
-
-  // Get the output model obtained from training.
-  LogisticRegression<>* model =
-      params.Get<LogisticRegression<>*>("output_model");
-  // Get the output.
-  const arma::Row<size_t> testY1 =
-      std::move(params.Get<arma::Row<size_t>>("predictions"));
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Train(trainX, trainY);
+  model->Classify(testX, testY1, 0.5);
 
   // Reset the data passed.
   ResetSettings();
 
-  SetInputParam("input_model", model);
-  SetInputParam("test", std::move(testX));
-
-  // Second solution.
-  RUN_BINDING();
-
   // Get the output.
-  const arma::Row<size_t>& testY2 =
-      params.Get<arma::Row<size_t>>("predictions");
+  arma::Row<size_t> testY2;
+  model->Classify(testX, testY2, 0.5);
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);
@@ -220,7 +200,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   constexpr int D = 4;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY;
+  arma::Row<size_t> trainY, testY;
 
   // 10 responses.
   trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
@@ -228,12 +208,11 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-1, N);
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("labels", std::move(trainY));
-  SetInputParam("test", std::move(testX));
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  model->Train(trainX, trainY);
 
-  // Dimensionality of test data is wrong. It should throw a runtime error.
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  // Dimensionality of test data is wrong. It should throw a logic error.
+  REQUIRE_THROWS_AS(model->Classify(testX, testY, 0.5), std::logic_error);
 }
 
 /**
@@ -267,13 +246,13 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 
   // Test data with Wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
-  SetInputParam("input_model", model);
-  SetInputParam("test", std::move(testX));
+  arma::Row<size_t> testY;
 
-  // Test data dimensionality is wrong. It should throw a runtime error.
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  // Test data dimensionality is wrong. It should throw a logic error.
+  model->Train(trainX, trainY);
+  REQUIRE_THROWS_AS(model->Classify(testX, testY, 0.5), std::logic_error);
+
 }
-
 
 /**
   * Ensuring that training responses contain only two classes (0 or 1).
@@ -599,57 +578,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   { // adding a require to have the test 'count' rather than just not fail
     REQUIRE(arma::all((parameters1-parameters2) != 0));
   }
-}
-
-/**
-  * Ensuring decision_boundary parameter does something.
- **/
-TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
-                 "LogisticRegressionTrainDecisionBoundaryTest",
-                 "[LogisticRegressionTrainMainTest][BindingTests]")
-{
-  constexpr int N = 10;
-  constexpr int D = 3;
-  constexpr int M = 15;
-
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY;
-
-  // 10 responses.
-  trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
-
-  arma::mat testX = arma::randu<arma::mat>(D, M);
-
-  SetInputParam("training", trainX);
-  SetInputParam("labels", trainY);
-  SetInputParam("decision_boundary", double(1));
-  SetInputParam("test", testX);
-
-  // First solution.
-  RUN_BINDING();
-
-  // Get the output after first training.
-  const arma::Row<size_t> output1 =
-      params.Get<arma::Row<size_t>>("predictions");
-
-  // Reset the settings.
-  CleanMemory();
-  ResetSettings();
-
-  SetInputParam("training", trainX);
-  SetInputParam("labels", trainY);
-  SetInputParam("decision_boundary", double(0));
-  SetInputParam("test", testX);
-
-  // Second solution.
-  RUN_BINDING();
-
-  // Get the output after second training.
-  const arma::Row<size_t>& output2 =
-      params.Get<arma::Row<size_t>>("predictions");
-
-  // Check that the output changed when the decision boundary moved.
-  REQUIRE(accu(output1 != output2) > 0);
 }
 
 /**
