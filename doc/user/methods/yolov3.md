@@ -31,7 +31,6 @@ mlpack::Save("output.jpg", image, opts, true);
   <img src="../../img/dog.jpg" alt="dog, bicycle and truck">
 </p>
 
-
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick Links:
@@ -58,7 +57,6 @@ mlpack::Save("output.jpg", image, opts, true);
 
 Construct a `YOLOv3` object using one of the constructors below.
 Defaults and types are detailed in the
-[Constructor Parameters](#constructor-parameters) section below.
 
  * `model = YOLOv3()`
    - Create an uninitialized YOLOv3 model.
@@ -70,8 +68,6 @@ Defaults and types are detailed in the
 ### Predicting Bounding Boxes
 
 Once the weights are loaded, you can compute likely object bounding boxes with with `Predict()`.
-
-<!-- TODO: could have one that takes input and output file names? so image Load/Save is abstracted too. -->
 
  * `model.Predict(image, opt, ignoreThresh=0.7)`
    - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)) and

@@ -152,9 +152,10 @@ YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   model.SetNetworkMode(false);
   model.Reset();
 
-  if (model.OutputDimensions()[0] != numAttributes) {
+  if (model.OutputDimensions()[0] != numAttributes)
+  {
     std::ostringstream errMessage;
-    errMessage << "Expected number of attributes (" << numAttributes
+    errMessage << "YOLOv3::YOLOv3(): Expected number of attributes (" << numAttributes
       << ") does not match the output number of attributes ("
       << model.OutputDimensions()[0] << ")";
     throw std::logic_error(errMessage.str());
@@ -174,7 +175,7 @@ size_t YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   if (kernel != 3 && kernel != 1)
   {
     std::ostringstream errMessage;
-    errMessage << "Kernel size for convolutions in yolov3-tiny must be 3"
+    errMessage << "YOLOv3::ConvolutionBlock(): Kernel size for convolutions in yolov3-tiny must be 3"
         "or 1, but you gave " << kernel;
     throw std::logic_error(errMessage.str());
   }

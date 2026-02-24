@@ -82,20 +82,20 @@ class YOLOv3
   /**
    * Returns the graph representation of the model.
    */
-  ModelType& Model() { return model; }
+  ModelType& Model() const { return model; }
 
   /**
    * Returns the width and height of the preprocessed image that
    * gets passed into the network.
    */
-  size_t ImageSize() { return imgSize; }
+  size_t ImageSize() const { return imgSize; }
 
   /**
    * Returns the number of classes a bounding box may be. The pretrained
    * weights were trained on the COCO dataset, which conatins 80 different
    * classes.
    */
-  size_t NumClasses() { return numAttributes - 5; }
+  size_t NumClasses() const { return numAttributes - 5; }
 
   /**
    * Returns the classes the model can identify.
@@ -114,9 +114,20 @@ class YOLOv3
       `imgSize`.
    */
   void Predict(const MatType& input,
-               MatType& output)
+               const ImageOptions& opts,
+               MatType& output,
+               const bool preprocess = false)
   {
-    model.Predict(input, output);
+    if (preprocess)
+    {
+      MatType preprocessed;
+      PreprocessImage(input, opts, preprocessed);
+      model.Predict(preprocessed, output);
+    }
+    else
+    {
+      model.Predict(input, output);
+    }
   }
 
   /**
@@ -153,7 +164,7 @@ class YOLOv3
    */
   void PreprocessImage(const MatType& input,
                        const ImageOptions& opt,
-                       MatType& output)
+                       MatType& output) const
   {
     MatType preprocessed = input / 255.0;
     ImageOptions preprocessedOpt = opt;
