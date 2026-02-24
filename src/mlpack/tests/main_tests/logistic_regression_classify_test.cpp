@@ -160,13 +160,15 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
                  "LogisticRegressionClassifyDecisionBoundaryTest",
                  "[LogisticRegressionClassifyMainTest][BindingTests]")
 {
-  constexpr int N = 10;
   constexpr int D = 3;
   constexpr int M = 50;
-
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::mat trainX = {
+    {0, 0, 0, 0, 1, 1, 1, 1, 22, 5},
+    {0, 0, 1, 1, 0, 0, 1, 1, 33, 25},
+    {0, 1, 0, 1, 0, 1, 0, 1, 44, 55}
+  };
   arma::Row<size_t> trainY = { 1, 0, 0, 1, 0, 1, 0, 1, 0, 1 };
-  arma::mat testX = arma::randu<arma::mat>(D, M);
+  arma::mat testX = arma::randn<arma::mat>(D, M);
 
   // Training the model.
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
@@ -175,7 +177,7 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
 
   SetInputParam("input_model", model);
   SetInputParam("test", testX);
-  SetInputParam("decision_boundary", double(0.2));
+  SetInputParam("decision_boundary", double(0.1));
 
   // First solution.
   RUN_BINDING();
@@ -195,7 +197,7 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
-  SetInputParam("decision_boundary", double(0.8));
+  SetInputParam("decision_boundary", double(0.9));
 
   // Second solution.
   RUN_BINDING();
