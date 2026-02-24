@@ -47,7 +47,7 @@ YOLOv3Tiny<
 
   const std::vector<double> scaleFactor = { 2.0, 2.0 };
 
-  model = Model();
+  model = ModelType();
   model.InputDimensions() = { imgSize, imgSize, 3 };
 
   size_t convolution0 = ConvolutionBlock(16, 3);
