@@ -1919,100 +1919,6 @@ $ mlpack_local_coordinate_coding --input_model_file lcc_model.bin --test_file
  - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
-## mlpack_logistic_regression
-{: #logistic_regression }
-
-#### L2-regularized Logistic Regression and Prediction
-{: #logistic_regression_descr }
-
-```bash
-$ mlpack_logistic_regression [--batch_size 64] [--decision_boundary 0.5]
-        [--help] [--info <string>] [--input_model_file <string>] [--labels_file
-        <string>] [--lambda 0] [--max_iterations 10000] [--optimizer 'lbfgs']
-        [--print_training_accuracy] [--step_size 0.01] [--test_file <string>]
-        [--tolerance 1e-10] [--training_file <string>] [--verbose] [--version]
-        [--output_model_file <string>] [--predictions_file <string>]
-        [--probabilities_file <string>]
-```
-
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--batch_size (-b)` | [`int`](#doc_int) | Batch size for SGD. | `64` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--decision_boundary (-d)` | [`double`](#doc_double) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`LogisticRegression<> file`](#doc_model) | Existing model (parameters). | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
-| `--lambda (-L)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
-| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). |  |
-| `--step_size (-s)` | [`double`](#doc_double) | Step size for SGD optimizer. | `0.01` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
-| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`LogisticRegression<> file`](#doc_model) | Output for trained logistic regression model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #logistic_regression_detailed-documentation }
-
-An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
-
-  y = (1 / 1 + e^-(X * b)).
-
-In this setting, y corresponds to class labels and X corresponds to data.
-
-This program allows loading a logistic regression model (via the `--input_model_file (-m)` parameter) or training a logistic regression model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained logistic regression model may be saved using the `--output_model_file (-M)` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-L)` option, and the optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `--step_size (-s)` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `--batch_size (-b)` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `--max_iterations (-n)` should be set to the number of points in the dataset.
-
-Optionally, the model can be used to predict the responses for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing logistic regression model is given with the `--input_model_file (-m)` parameter.  The output predictions from the logistic regression model may be saved with the `--predictions_file (-P)` parameter.
-
-This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
-
-### Example
-As an example, to train a logistic regression model on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lr_model.bin'`', the following command may be used:
-
-```bash
-$ mlpack_logistic_regression --training_file data.csv --labels_file labels.csv
-  --lambda 0.1 --output_model_file lr_model.bin --print_training_accuracy
-```
-
-Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
-
-```bash
-$ mlpack_logistic_regression --input_model_file lr_model.bin --test_file
-  test.csv --predictions_file predictions.csv
-```
-
-### See also
-
- - [mlpack_softmax_regression](#softmax_regression)
- - [mlpack_random_forest](#random_forest)
- - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
-
 ## mlpack_lsh
 {: #lsh }
 
@@ -3496,6 +3402,100 @@ $ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
+## mlpack_logistic_regression
+{: #logistic_regression }
+
+#### L2-regularized Logistic Regression and Prediction
+{: #logistic_regression_descr }
+
+```bash
+$ mlpack_logistic_regression [--batch_size 64] [--decision_boundary 0.5]
+        [--help] [--info <string>] [--input_model_file <string>] [--labels_file
+        <string>] [--lambda 0] [--max_iterations 10000] [--optimizer 'lbfgs']
+        [--print_training_accuracy] [--step_size 0.01] [--test_file <string>]
+        [--tolerance 1e-10] [--training_file <string>] [--verbose] [--version]
+        [--output_model_file <string>] [--predictions_file <string>]
+        [--probabilities_file <string>]
+```
+
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--batch_size (-b)` | [`int`](#doc_int) | Batch size for SGD. | `64` |
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--decision_boundary (-d)` | [`double`](#doc_double) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`LogisticRegression<> file`](#doc_model) | Existing model (parameters). | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
+| `--lambda (-L)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
+| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). |  |
+| `--step_size (-s)` | [`double`](#doc_double) | Step size for SGD optimizer. | `0.01` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
+| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`LogisticRegression<> file`](#doc_model) | Output for trained logistic regression model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #logistic_regression_detailed-documentation }
+
+An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
+
+  y = (1 / 1 + e^-(X * b)).
+
+In this setting, y corresponds to class labels and X corresponds to data.
+
+This program allows loading a logistic regression model (via the `--input_model_file (-m)` parameter) or training a logistic regression model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained logistic regression model may be saved using the `--output_model_file (-M)` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-L)` option, and the optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `--step_size (-s)` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `--batch_size (-b)` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `--max_iterations (-n)` should be set to the number of points in the dataset.
+
+Optionally, the model can be used to predict the responses for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing logistic regression model is given with the `--input_model_file (-m)` parameter.  The output predictions from the logistic regression model may be saved with the `--predictions_file (-P)` parameter.
+
+This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
+
+### Example
+As an example, to train a logistic regression model on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lr_model.bin'`', the following command may be used:
+
+```bash
+$ mlpack_logistic_regression --training_file data.csv --labels_file labels.csv
+  --lambda 0.1 --output_model_file lr_model.bin --print_training_accuracy
+```
+
+Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
+
+```bash
+$ mlpack_logistic_regression --input_model_file lr_model.bin --test_file
+  test.csv --predictions_file predictions.csv
+```
+
+### See also
+
+ - [mlpack_softmax_regression](#softmax_regression)
+ - [mlpack_random_forest](#random_forest)
+ - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
+ - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
 
 ## mlpack_linear_regression
 {: #linear_regression }

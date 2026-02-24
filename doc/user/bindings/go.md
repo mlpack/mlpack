@@ -2371,125 +2371,6 @@ new_codes, _, _ := mlpack.LocalCoordinateCoding(param)
  - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
-## LogisticRegression()
-{: #logistic_regression }
-
-#### L2-regularized Logistic Regression and Prediction
-{: #logistic_regression_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for LogisticRegression().
-param := mlpack.LogisticRegressionOptions()
-param.BatchSize = 64
-param.DecisionBoundary = 0.5
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Lambda = 0
-param.MaxIterations = 10000
-param.Optimizer = "lbfgs"
-param.PrintTrainingAccuracy = false
-param.StepSize = 0.01
-param.Test = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities :=
-    mlpack.LogisticRegression(param)
-```
-
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `BatchSize` | [`int`](#doc_int) | Batch size for SGD. | `64` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `DecisionBoundary` | [`float64`](#doc_float64) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
-| `InputModel` | [`logisticRegression`](#doc_model) | Existing model (parameters). | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
-| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'sgd'). | `"lbfgs"` |
-| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `false` |
-| `StepSize` | [`float64`](#doc_float64) | Step size for SGD optimizer. | `0.01` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`logisticRegression`](#doc_model) | Output for trained logistic regression model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #logistic_regression_detailed-documentation }
-
-An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
-
-  y = (1 / 1 + e^-(X * b)).
-
-In this setting, y corresponds to class labels and X corresponds to data.
-
-This program allows loading a logistic regression model (via the `InputModel` parameter) or training a logistic regression model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained logistic regression model may be saved using the `OutputModel` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `BatchSize` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `MaxIterations` should be set to the number of points in the dataset.
-
-Optionally, the model can be used to predict the responses for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing logistic regression model is given with the `InputModel` parameter.  The output predictions from the logistic regression model may be saved with the `Predictions` parameter.
-
-This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
-
-### Example
-As an example, to train a logistic regression model on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lr_model`', the following command may be used:
-
-```go
-// Initialize optional parameters for LogisticRegression().
-param := mlpack.LogisticRegressionOptions()
-param.Training = data
-param.Labels = labels
-param.Lambda = 0.1
-param.PrintTrainingAccuracy = true
-
-lr_model, _, _ := mlpack.LogisticRegression(param)
-```
-
-Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
-
-```go
-// Initialize optional parameters for LogisticRegression().
-param := mlpack.LogisticRegressionOptions()
-param.InputModel = &lr_model
-param.Test = test
-
-_, predictions, _ := mlpack.LogisticRegression(param)
-```
-
-### See also
-
- - [SoftmaxRegression()](#softmax_regression)
- - [RandomForest()](#random_forest)
- - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
-
 ## Lsh()
 {: #lsh }
 
@@ -4344,6 +4225,125 @@ _, predictions, _ := mlpack.Adaboost(param)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
+## LogisticRegression()
+{: #logistic_regression }
+
+#### L2-regularized Logistic Regression and Prediction
+{: #logistic_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for LogisticRegression().
+param := mlpack.LogisticRegressionOptions()
+param.BatchSize = 64
+param.DecisionBoundary = 0.5
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Lambda = 0
+param.MaxIterations = 10000
+param.Optimizer = "lbfgs"
+param.PrintTrainingAccuracy = false
+param.StepSize = 0.01
+param.Test = mat.NewDense(1, 1, nil)
+param.Tolerance = 1e-10
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities :=
+    mlpack.LogisticRegression(param)
+```
+
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `BatchSize` | [`int`](#doc_int) | Batch size for SGD. | `64` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `DecisionBoundary` | [`float64`](#doc_float64) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
+| `InputModel` | [`logisticRegression`](#doc_model) | Existing model (parameters). | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
+| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0` |
+| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'sgd'). | `"lbfgs"` |
+| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `false` |
+| `StepSize` | [`float64`](#doc_float64) | Step size for SGD optimizer. | `0.01` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
+| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`logisticRegression`](#doc_model) | Output for trained logistic regression model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #logistic_regression_detailed-documentation }
+
+An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
+
+  y = (1 / 1 + e^-(X * b)).
+
+In this setting, y corresponds to class labels and X corresponds to data.
+
+This program allows loading a logistic regression model (via the `InputModel` parameter) or training a logistic regression model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained logistic regression model may be saved using the `OutputModel` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `BatchSize` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `MaxIterations` should be set to the number of points in the dataset.
+
+Optionally, the model can be used to predict the responses for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing logistic regression model is given with the `InputModel` parameter.  The output predictions from the logistic regression model may be saved with the `Predictions` parameter.
+
+This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
+
+### Example
+As an example, to train a logistic regression model on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lr_model`', the following command may be used:
+
+```go
+// Initialize optional parameters for LogisticRegression().
+param := mlpack.LogisticRegressionOptions()
+param.Training = data
+param.Labels = labels
+param.Lambda = 0.1
+param.PrintTrainingAccuracy = true
+
+lr_model, _, _ := mlpack.LogisticRegression(param)
+```
+
+Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
+
+```go
+// Initialize optional parameters for LogisticRegression().
+param := mlpack.LogisticRegressionOptions()
+param.InputModel = &lr_model
+param.Test = test
+
+_, predictions, _ := mlpack.LogisticRegression(param)
+```
+
+### See also
+
+ - [SoftmaxRegression()](#softmax_regression)
+ - [RandomForest()](#random_forest)
+ - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
+ - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
 
 ## LinearRegression()
 {: #linear_regression }

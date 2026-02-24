@@ -1934,102 +1934,6 @@ R> new_codes <- output$codes
  - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
-## logistic_regression()
-{: #logistic_regression }
-
-#### L2-regularized Logistic Regression and Prediction
-{: #logistic_regression_descr }
-
-```R
-R> library(mlpack)
-R> d <- logistic_regression(batch_size=64, decision_boundary=0.5,
-        input_model=NA, labels=matrix(integer(), 0, 0), lambda=0,
-        max_iterations=10000, optimizer="lbfgs", print_training_accuracy=FALSE,
-        step_size=0.01, test=matrix(numeric(), 0, 0), tolerance=1e-10,
-        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
-        FALSE))
-R> output_model <- d$output_model
-R> predictions <- d$predictions
-R> probabilities <- d$probabilities
-```
-
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `batch_size` | [`integer`](#doc_integer) | Batch size for SGD. | `64` |
-| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `decision_boundary` | [`numeric`](#doc_numeric) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
-| `input_model` | [`LogisticRegression`](#doc_model) | Existing model (parameters). | `NA` |
-| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | `matrix(integer(), 0, 0)` |
-| `lambda` | [`numeric`](#doc_numeric) | L2-regularization parameter for training. | `0` |
-| `max_iterations` | [`integer`](#doc_integer) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `optimizer` | [`character`](#doc_character) | Optimizer to use for training ('lbfgs' or 'sgd'). | `"lbfgs"` |
-| `print_training_accuracy` | [`logical`](#doc_logical) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `FALSE` |
-| `step_size` | [`numeric`](#doc_numeric) | Step size for SGD optimizer. | `0.01` |
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | `matrix(numeric(), 0, 0)` |
-| `tolerance` | [`numeric`](#doc_numeric) | Convergence tolerance for optimizer. | `1e-10` |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-
-### Output options
-
-Results are returned in a R list.  The keys of the list are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. | 
-| `predictions` | [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #logistic_regression_detailed-documentation }
-
-An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
-
-  y = (1 / 1 + e^-(X * b)).
-
-In this setting, y corresponds to class labels and X corresponds to data.
-
-This program allows loading a logistic regression model (via the `input_model` parameter) or training a logistic regression model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained logistic regression model may be saved using the `output_model` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `batch_size` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `max_iterations` should be set to the number of points in the dataset.
-
-Optionally, the model can be used to predict the responses for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing logistic regression model is given with the `input_model` parameter.  The output predictions from the logistic regression model may be saved with the `predictions` parameter.
-
-This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
-
-### Example
-As an example, to train a logistic regression model on the data '`"data"`' with labels '`"labels"`' with L2 regularization of 0.1, saving the model to '`"lr_model"`', the following command may be used:
-
-```R
-R> output <- logistic_regression(training=data, labels=labels, lambda=0.1,
-  print_training_accuracy=TRUE)
-R> lr_model <- output$output_model
-```
-
-Then, to use that model to predict classes for the dataset '`"test"`', storing the output predictions in '`"predictions"`', the following command may be used: 
-
-```R
-R> output <- logistic_regression(input_model=lr_model, test=test)
-R> predictions <- output$predictions
-```
-
-### See also
-
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
-
 ## lsh()
 {: #lsh }
 
@@ -3537,6 +3441,102 @@ R> predictions <- output$predictions
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
+## logistic_regression()
+{: #logistic_regression }
+
+#### L2-regularized Logistic Regression and Prediction
+{: #logistic_regression_descr }
+
+```R
+R> library(mlpack)
+R> d <- logistic_regression(batch_size=64, decision_boundary=0.5,
+        input_model=NA, labels=matrix(integer(), 0, 0), lambda=0,
+        max_iterations=10000, optimizer="lbfgs", print_training_accuracy=FALSE,
+        step_size=0.01, test=matrix(numeric(), 0, 0), tolerance=1e-10,
+        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
+        FALSE))
+R> output_model <- d$output_model
+R> predictions <- d$predictions
+R> probabilities <- d$probabilities
+```
+
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_size` | [`integer`](#doc_integer) | Batch size for SGD. | `64` |
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `decision_boundary` | [`numeric`](#doc_numeric) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
+| `input_model` | [`LogisticRegression`](#doc_model) | Existing model (parameters). | `NA` |
+| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | `matrix(integer(), 0, 0)` |
+| `lambda` | [`numeric`](#doc_numeric) | L2-regularization parameter for training. | `0` |
+| `max_iterations` | [`integer`](#doc_integer) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `optimizer` | [`character`](#doc_character) | Optimizer to use for training ('lbfgs' or 'sgd'). | `"lbfgs"` |
+| `print_training_accuracy` | [`logical`](#doc_logical) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `FALSE` |
+| `step_size` | [`numeric`](#doc_numeric) | Step size for SGD optimizer. | `0.01` |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | `matrix(numeric(), 0, 0)` |
+| `tolerance` | [`numeric`](#doc_numeric) | Convergence tolerance for optimizer. | `1e-10` |
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | `matrix(numeric(), 0, 0)` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Output options
+
+Results are returned in a R list.  The keys of the list are the names of the output parameters.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. | 
+| `predictions` | [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #logistic_regression_detailed-documentation }
+
+An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
+
+  y = (1 / 1 + e^-(X * b)).
+
+In this setting, y corresponds to class labels and X corresponds to data.
+
+This program allows loading a logistic regression model (via the `input_model` parameter) or training a logistic regression model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained logistic regression model may be saved using the `output_model` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `batch_size` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `max_iterations` should be set to the number of points in the dataset.
+
+Optionally, the model can be used to predict the responses for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing logistic regression model is given with the `input_model` parameter.  The output predictions from the logistic regression model may be saved with the `predictions` parameter.
+
+This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
+
+### Example
+As an example, to train a logistic regression model on the data '`"data"`' with labels '`"labels"`' with L2 regularization of 0.1, saving the model to '`"lr_model"`', the following command may be used:
+
+```R
+R> output <- logistic_regression(training=data, labels=labels, lambda=0.1,
+  print_training_accuracy=TRUE)
+R> lr_model <- output$output_model
+```
+
+Then, to use that model to predict classes for the dataset '`"test"`', storing the output predictions in '`"predictions"`', the following command may be used: 
+
+```R
+R> output <- logistic_regression(input_model=lr_model, test=test)
+R> predictions <- output$predictions
+```
+
+### See also
+
+ - [softmax_regression()](#softmax_regression)
+ - [random_forest()](#random_forest)
+ - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
+ - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
 
 ## linear_regression()
 {: #linear_regression }
