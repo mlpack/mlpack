@@ -57,7 +57,7 @@ void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts);
 
 /**
- * Return the type based on extension that are eligibale for serialization.
+ * Return the type based on extension that are eligible for serialization.
  *
  * @param filename Name of the file whose type we should detect.
  * @param DataOptionsType Type of the data option, text, data, matrix, etc.
