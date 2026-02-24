@@ -243,6 +243,88 @@ void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   ar(CEREAL_NVP(classNames));
 }
 
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
+::DrawBoundingBoxes(const MatType& rawOutput,
+                    MatType& image,
+                    const ImageOptions& opts,
+                    const double ignoreThresh)
+{
+  // Helpers
+  const size_t numBoxes = model.OutputDimensions()[1];
+  const size_t size = opts.Width() * opts.Height() * opts.Channels();
+
+  const size_t numClasses = classNames.size();
+  const arma::Col<ElemType> red = {255.0f, 0, 0};
+
+  const size_t width = opts.Width();
+  const size_t height = opts.Height();
+
+  arma::ucolvec nmsIndices;
+
+  ElemType ratio;
+  ElemType xOffset = 0;
+  ElemType yOffset = 0;
+
+  if (width > height)
+  {
+    // landscape
+    ratio =  (ElemType)width / imgSize;
+    yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
+  }
+  else
+  {
+    // portrait
+    ratio =  (ElemType)height / imgSize;
+    xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
+  }
+
+  // Draw bounding boxes using NMS for each image in the batch.
+  for (size_t batch = 0; batch < rawOutput.n_cols; batch++)
+  {
+    MatType rawOutputAlias, imageAlias;
+
+    MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes,
+        rawOutput.n_rows * batch);
+    MakeAlias(imageAlias, image, size, 1, size * batch);
+
+    const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
+    const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+    const MatType& confs =
+      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
+
+    // NMS on objectness, not class confidences. Will produce false negatives.
+    NMS<>::Evaluate(bboxes, objectness, nmsIndices, 0.4);
+
+    MatType chosenBoxes = bboxes.cols(nmsIndices);
+    MatType classConfs = MatType(confs.cols(nmsIndices)).each_row() %
+      objectness.cols(nmsIndices);
+    arma::umat chosenConfs = arma::index_max(classConfs, 0);
+
+    for (size_t b = 0; b < nmsIndices.n_rows; b++)
+    {
+      const size_t chosenClass = chosenConfs.at(0, b);
+      if (classConfs.at(chosenClass, b) < ignoreThresh)
+        continue;
+
+      const std::string& label = classNames[chosenClass];
+      const ElemType x1 =
+        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+      const ElemType y1 =
+        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+      const ElemType x2 =
+        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+      const ElemType y2 =
+        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+
+      const arma::Col<ElemType> bbox = arma::Col<ElemType>({x1, y1, x2, y2});
+      BoundingBoxImage(imageAlias, opts, bbox, red, 1, label, 2);
+    }
+  }
+}
+
 } // namespace mlpack
 
 #endif
