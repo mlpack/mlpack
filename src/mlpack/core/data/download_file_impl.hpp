@@ -60,6 +60,11 @@ inline bool CheckValidHost(const std::string& host)
   return std::find_if(host.begin(), host.end(), InvalidHost()) == host.end();
 }
 
+inline bool IsDigits(const std::string &str)
+{
+  return std::all_of(str.begin(), str.end(), ::isdigit);
+}
+
 inline void ParseURL(const std::string& url, std::string& host,
                      std::string& filename, int& port)
 {
@@ -73,13 +78,13 @@ inline void ParseURL(const std::string& url, std::string& host,
 
   std::string possibleHost = url.substr(pos);
 
-  size_t hostPos = possibleHost.find_first_of(".:/");
-  if (hostPos == std::string::npos)
-  {
-    throw std::runtime_error("Domain name is not valid."
-        " Domain name should contains '.' between the hostname and the top"
-        " level domain. Or '/' at the end. Please check the provided URL");
-  }
+  //size_t hostPos = possibleHost.find_first_of(".:/");
+  //if (hostPos == std::string::npos)
+  //{
+    //throw std::runtime_error("Domain name is not valid."
+        //" Domain name should contains '.' between the hostname and the top"
+        //" level domain. Or '/' at the end. Please check the provided URL");
+  //}
 
   size_t endHost = possibleHost.find_first_of(":/");
   if (endHost != std::string::npos)
@@ -97,8 +102,17 @@ inline void ParseURL(const std::string& url, std::string& host,
       // We need to find the last char which is /
       std::string findPort = possibleHost.substr(endHost + 1);
       size_t endPort = findPort.find("/");
-      port = std::stoi(findPort.substr(0, endPort));
+      if (IsDigits(findPort.substr(0, endPort)))
+        port = std::stoi(findPort.substr(0, endPort));
     }
+  }
+  else // In case of using http://localhost or similar
+  {
+    if (CheckValidHost(possibleHost))
+      host = possibleHost;
+     else
+      throw std::runtime_error("Invalid Host.\n"
+          "Valid host contains only lower letters, numeric and hyphen");
   }
 
   int firstPos = possibleHost.rfind(":");
@@ -171,10 +185,15 @@ inline bool DownloadFile(const std::string& url,
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
   tmpFilename += Extension(filename);
-  // @rcurtin, I do not like this, but this is the only option;
-  // Or I can take the internal of OpenFile, and use it here.
-  DataOptions opts = NoFatal;
-  if (!OpenFile(filename, opts, false, stream))
+
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::in
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::in);
+#endif
+
+  if (!stream.is_open())
   {
     std::stringstream oss;
     oss <<  "Cannot open temporary file '" << tmpFilename
@@ -202,14 +221,7 @@ inline bool DownloadFile(const std::string& url,
  */
 inline bool CheckIfURL(const std::string& url)
 {
-  std::stringstream oss;
-  oss << "Cannot check the provided URL: " << url << std::endl
-      << "httplib has not been enabled during compilation time." << std::endl
-      << "Please enable httplib by defining this in your code:" << std::endl
-      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
-      << "If you would like to enable httplib when installing mlpack."
-      << " Please refer to our documentation page.";
-  throw std::runtime_error(oss.str());
+  std::string url2 = url; // Avoid compiler warning.
   return false;
 }
 

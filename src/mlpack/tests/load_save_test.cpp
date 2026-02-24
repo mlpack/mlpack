@@ -18,8 +18,6 @@
 using namespace mlpack;
 using namespace std;
 
-#define MLPACK_ENABLE_HTTPLIB
-
 /**
  * Make sure failure occurs when no extension given.
  */
@@ -3452,159 +3450,158 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 
 TEST_CASE("URLTests", "[LoadSaveTest]")
 {
-  std::vector<std::string> testUrls = {
-      // 1.  Simple file
-      "https://example.com/files/report.pdf",
-      // 2.  Image file
-      "http://cdn.server.org/images/photo.jpg",
-      // 3.  With port + file"
-      "https://example.com:8080/api/data/export.csv",
-      // 4.  Compound extension
-      "ftp://files.host.net:21/backup/archive.tar.gz",
-      // 5.  File + query
-      "https://example.com/docs/manual.html?page=3",
-      // 6.  File + fragment
-      "https://example.com/docs/manual.html#chapter2",
-      // 7.  File + query + fragment// ---- No filename / path-only ----
-      "https://example.com/dl/setup.exe?v=2.1&os=win#mirror",
-      // 8.  Basic URL
-      "https://example.com",
-      // 9.  Trailing slash only
-      "https://example.com/",
-      // 10. Path with no extension// ---- Deep paths ----
-      "https://example.com/api/v2/users",
-      // 11. Deeply nested file
-      "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm",
-      // 12. Trailing slash (no file)// ---- Special filenames ----
-      "https://example.com/path/to/dir/",
-      // 13. Dotfile (no extension)
-      "https://example.com/.hidden",
-      // 14. Dotfile with extension
-      "https://example.com/files/.env.production",
-      // 15. URL-encoded spaces + parens
-      "https://example.com/files/my%20file%20(1).pdf",
-      // 16. Unicode in filename// ---- Edge cases ----
-      "https://example.com/files/résumé.docx",
-      // 17. IP address as host
-      "https://192.168.1.1:3000/logs/debug.log",
-      // 18. Port, no path, no file
-      "https://example.com:443",
-      // 19. Localhost
-      "http://localhost:8080/index.html",
-      // 20. Many dots in filename
-      "https://example.com/file.backup.2024.01.15.sql.gz",
-      // 21 Corrupt URL
-      "https://",
-      // 22 No URL
-      "",
-      // 23 Invalid host with special chars
-      "https://!@#$%^*^&*.com/invalid",
-      // 24 Invalid host with trailing dots
-      "https://examplesofinvalid..com/invalid",
-      // 25 Invalid host with capital letter
-      "https://examplesofinvalid..com/invalid"
-  };
-
-  std::string host, filename;
+  std::string host, filename, testUrl;
   int port;
-  ParseURL(testUrls.at(0), host, filename, port);
+
+  // 1.  Simple file
+  testUrl = "https://example.com/files/report.pdf";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "report.pdf");
 
-  ParseURL(testUrls.at(1), host, filename, port);
+  // 2.  Image file
+ "http://cdn.server.org/images/photo.jpg";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "cdn.server.org");
   REQUIRE(filename == "photo.jpg");
 
-  ParseURL(testUrls.at(2), host, filename, port);
+  // 3.  With port + file"
+  testUrl = "https://example.com:8080/api/data/export.csv";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "export.csv");
   REQUIRE(port == 8080);
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(3), host, filename, port),
+  // 4.  Compound extension
+  testUrl = "ftp://files.host.net:21/backup/archive.tar.gz";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  ParseURL(testUrls.at(4), host, filename, port);
+  // 5.  File + query
+  testUrl = "https://example.com/docs/manual.html?page=3";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "manual.html");
 
-  ParseURL(testUrls.at(5), host, filename, port);
+  // 6.  File + fragment
+  testUrl = "https://example.com/docs/manual.html#chapter2";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "manual.html");
 
-  ParseURL(testUrls.at(6), host, filename, port);
+  // 7.  File + query + fragment// ---- No filename / path-only ----
+  testUrl = "https://example.com/dl/setup.exe?v=2.1&os=win#mirror";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "setup.exe");
 
   // Our target here is to show that we are not modifying the filename.
   filename = "";
-  ParseURL(testUrls.at(7), host, filename, port);
+  // 8.  Basic URL
+  testUrl = "https://example.com";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "");
 
-  ParseURL(testUrls.at(8), host, filename, port);
+  // 9.  Trailing slash only
+  testUrl = "https://example.com/";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "");
 
-  ParseURL(testUrls.at(9), host, filename, port);
+  // 10. Path with no extension// ---- Deep paths ----
+  testUrl = "https://example.com/api/v2/users";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "");
 
-  ParseURL(testUrls.at(10), host, filename, port);
+  // 11. Deeply nested file
+  testUrl = "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "cdn.example.com");
   REQUIRE(filename == "deep_file.wasm");
 
   filename = "";
-  ParseURL(testUrls.at(11), host, filename, port);
+  // 12. Trailing slash (no file)// ---- Special filenames ----
+  testUrl = "https://example.com/path/to/dir/";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "");
 
-  ParseURL(testUrls.at(12), host, filename, port);
+  // 13. Dotfile (no extension)
+  testUrl = "https://example.com/.hidden";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == ".hidden");
 
-  ParseURL(testUrls.at(13), host, filename, port);
+  // 14. Dotfile with extension
+  testUrl = "https://example.com/files/.env.production";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == ".env.production");
 
-  ParseURL(testUrls.at(14), host, filename, port);
+  // 15. URL-encoded spaces + parens
+  testUrl = "https://example.com/files/my%20file%20(1).pdf";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "my%20file%20(1).pdf");
 
-  ParseURL(testUrls.at(15), host, filename, port);
+  // 16. Unicode in filename// ---- Edge cases ----
+  testUrl = "https://example.com/files/résumé.docx";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "résumé.docx");
 
-  ParseURL(testUrls.at(16), host, filename, port);
+  // 17. IP address as host
+  testUrl = "https://192.168.1.1:3000/logs/debug.log";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "192.168.1.1");
   REQUIRE(filename == "debug.log");
   REQUIRE(port == 3000);
 
-  ParseURL(testUrls.at(17), host, filename, port);
+  // 18. Port, no path, no file
+  testUrl = "https://example.com:443";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
   REQUIRE(port == 443);
 
-  ParseURL(testUrls.at(18), host, filename, port);
+  // 19. Localhost
+  testUrl = "http://localhost:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "localhost");
   REQUIRE(filename == "index.html");
   REQUIRE(port == 8080);
 
-  ParseURL(testUrls.at(19), host, filename, port);
+  // 20. Many dots in filename
+  testUrl = "https://example.com/file.backup.2024.01.15.sql.gz";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "file.backup.2024.01.15.sql.gz");
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(20), host, filename, port),
+  // 21 Corrupt URL
+  testUrl = "https://";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(21), host, filename, port),
+  // 22 No URL
+  testUrl = "";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(22), host, filename, port),
+  // 23 Invalid host with special chars
+  testUrl = "https://!@#$%^*^&*.com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(23), host, filename, port),
+  // 24 Invalid host with trailing dots
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  REQUIRE_THROWS_AS(ParseURL(testUrls.at(24), host, filename, port),
+  // 25 Invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 }
 
@@ -3613,6 +3610,13 @@ TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
   arma::mat dataset;
   REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
         dataset, Fatal + Transpose) == true);
+}
+
+TEST_CASE("DownLoad404File", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE_THROWS_AS(Load("http://datasets.mlpack.org/nonexistent_file.csv",
+        dataset, Fatal + Transpose), std::runtime_error);
 }
 
 #endif
