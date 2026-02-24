@@ -38,7 +38,7 @@ inline bool CheckValidHost(const std::string& host)
   else if (host.size() > 253)
     return false;
 
-  std::string traillingDots ("..");
+  std::string traillingDots("..");
   if (host.find(traillingDots) != std::string::npos)
     return false;
 
@@ -110,7 +110,7 @@ inline void ParseURL(const std::string& url, std::string& host,
   {
     if (CheckValidHost(possibleHost))
       host = possibleHost;
-     else
+    else
       throw std::runtime_error("Invalid Host.\n"
           "Valid host contains only lower letters, numeric and hyphen");
   }
@@ -158,7 +158,8 @@ inline bool DownloadFile(const std::string& url,
   // Sanity check if in case.
   if (host.empty())
   {
-    throw std::runtime_error("DownloadFile(): domain name could not be parsed from URL '" + url + "'");
+    throw std::runtime_error("DownloadFile(): domain name could not be parsed"
+        " from URL '" + url + "'");
   }
 #ifdef MLPACK_USE_HTTPS
   if (port == -1)

@@ -3460,7 +3460,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(filename == "report.pdf");
 
   // 2.  Image file
- "http://cdn.server.org/images/photo.jpg";
+  "http://cdn.server.org/images/photo.jpg";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "cdn.server.org");
   REQUIRE(filename == "photo.jpg");
