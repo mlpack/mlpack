@@ -194,32 +194,32 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 
   // x
   outputCube.tube(0, 0, grid - 1, cols) =
-    (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
+    (xOffset + 1 / (1 + exp(-inputCube.tube(0, 0, grid - 1, cols))))
     * stride;
 
   // y
   outputCube.tube(grid, 0, grid * 2 - 1, cols) = (yOffset +
-    1 / (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride;
+    1 / (1 + exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride;
 
   // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
     anchorsWBS %
-    arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
+    exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
   // h
   outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
     anchorsHBS %
-    arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
+    exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
   outputCube.tube(grid * 4, 0, outputCube.n_rows - 1, cols) = 1. /
-    (1 + arma::exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
+    (1 + exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
 
   // Reshape, for each batch item.
   for (size_t i = 0; i < reshapedCube.n_slices; i++)
   {
-    reshapedCube.slice(i) = arma::reshape(
-      arma::reshape(
+    reshapedCube.slice(i) = reshape(
+      reshape(
         outputCube.slice(i), grid, numAttributes * predictionsPerCell).t(),
         numAttributes, predictionsPerCell * grid);
   }
