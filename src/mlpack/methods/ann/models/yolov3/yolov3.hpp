@@ -104,72 +104,41 @@ class YOLOv3
 
   /**
    * Ordinary feed forward pass of the network. Get raw outputs from the
-   * model.
+   * model, with optional preprocessing done via the `preprocess` argument.
    *
    * @param input Input data used for evaluating the specified function.
-      The input matrix dimensions should be (imgSize * imgSize, batchSize).
+      The input matrix dimensions should be (imgSize * imgSize * 3, batchSize).
    * @param output Resulting bounding boxes and classification probabilities.
       The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
       to the center of the box. The bounding boxes are normalized based on the
       `imgSize`.
    */
-  void Predict(const MatType& input,
+
+  void Predict(MatType& image,
                const ImageOptions& opts,
-               MatType& output,
+               const double ignoreThreshold = 0.7)
+  {
+    MatType preprocessed, rawOutput;
+    PreprocessImage(image, opts, preprocessed);
+    model.Predict(preprocessed, rawOutput);
+    DrawBoundingBoxes(rawOutput, image, opts, ignoreThreshold);
+  }
+
+  void Predict(const MatType& image,
+               const ImageOptions& opts,
+               MatType& rawOutput,
                const bool preprocess = false)
   {
+    MatType preprocessed;
     if (preprocess)
     {
-      MatType preprocessed;
-      PreprocessImage(input, opts, preprocessed);
-      model.Predict(preprocessed, output);
+      PreprocessImage(image, opts, preprocessed);
+      model.Predict(preprocessed, rawOutput);
     }
     else
     {
-      model.Predict(input, output);
+      model.Predict(image, rawOutput);
     }
-  }
-
-  /**
-   * Ordinary feed forward pass of the network. Draws the bounding boxes
-   * onto the input `image`.
-   */
-  void Predict(MatType& image,
-               const ImageOptions& opt,
-               const double ignoreThresh = 0.7)
-  {
-    MatType preprocessed, rawOutput;
-
-    PreprocessImage(image, opt, preprocessed);
-    model.Predict(preprocessed, rawOutput);
-    DrawBoundingBoxes(rawOutput, image, opt, ignoreThresh);
-  }
-
-  /**
-   * Identical to the last overload, except writes to a different matrix.
-   */
-  void Predict(const MatType& input,
-               const ImageOptions& opt,
-               MatType& output,
-               const double ignoreThresh = 0.7)
-  {
-    output = input;
-    Predict(output, opt, ignoreThresh);
-  }
-
-  /**
-   * Preprocesses the `input` image and writes to `output`. The steps for
-   * `YOLOv3` are normalize pixel values to be 0-1, letterbox the image
-   * then group the channels for convolutions.
-   */
-  void PreprocessImage(const MatType& input,
-                       const ImageOptions& opt,
-                       MatType& output) const
-  {
-    MatType preprocessed = input / 255.0;
-    ImageOptions preprocessedOpt = opt;
-    LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, 0.5);
-    output = GroupChannels(preprocessed, preprocessedOpt);
   }
 
   // Serialize the model.
@@ -217,24 +186,39 @@ class YOLOv3
                          const size_t shortcuts);
 
   /**
+   * Preprocesses the `input` image and writes to `output`. The steps for
+   * `YOLOv3` are normalize pixel values to be 0-1, letterbox the image
+   * then group the channels for convolutions.
+   */
+  void PreprocessImage(const MatType& input,
+                       const ImageOptions& opts,
+                       MatType& output) const
+  {
+    MatType preprocessed = input / 255.0;
+    ImageOptions preprocessedOpt = opts;
+    LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, 0.5);
+    output = GroupChannels(preprocessed, preprocessedOpt);
+  }
+
+  /**
    * Read the raw output of the model and draw the bounding boxes onto the
    * given `image`. If the bounding boxes confidence is greater than
    * `ignoreThresh` it will be drawn onto the image.
    */
   void DrawBoundingBoxes(const MatType& rawOutput,
                          MatType& image,
-                         const ImageOptions& opt,
+                         const ImageOptions& opts,
                          const double ignoreThresh)
   {
     // Helpers
     const size_t numBoxes = model.OutputDimensions()[1];
-    const size_t size = opt.Width() * opt.Height() * opt.Channels();
+    const size_t size = opts.Width() * opts.Height() * opts.Channels();
 
     const size_t numClasses = classNames.size();
     const arma::Col<ElemType> red = {255.0f, 0, 0};
 
-    const size_t width = opt.Width();
-    const size_t height = opt.Height();
+    const size_t width = opts.Width();
+    const size_t height = opts.Height();
 
     arma::ucolvec nmsIndices;
 
@@ -294,7 +278,7 @@ class YOLOv3
           (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
 
         const arma::Col<ElemType> bbox = arma::Col<ElemType>({x1, y1, x2, y2});
-        BoundingBoxImage(imageAlias, opt, bbox, red, 1, label, 2);
+        BoundingBoxImage(imageAlias, opts, bbox, red, 1, label, 2);
       }
     }
   }
