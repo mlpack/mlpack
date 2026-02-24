@@ -251,7 +251,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Test data dimensionality is wrong. It should throw a logic error.
   model->Train(trainX, trainY);
   REQUIRE_THROWS_AS(model->Classify(testX, testY, 0.5), std::logic_error);
-
 }
 
 /**
