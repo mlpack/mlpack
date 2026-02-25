@@ -15,16 +15,16 @@ and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 mlpack::YOLOv3 model;
 mlpack::Load("yolov3-320-coco-f64.bin", model);
 
-// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
-arma::mat image;
+// Download: https://models.mlpack.org/yolo/dog.jpg
+arma::mat inputImage, outputImage;
 mlpack::ImageOptions opts;
-mlpack::Load("dog.jpg", image, opts);
+mlpack::Load("dog.jpg", inputImage, opts);
 
-// Predict bounding boxes from an image using `YOLOv3` and draw them.
-model.Predict(image, opts);
+// Preprocess the `inputImage`, predict bounding boxes using `YOLOv3` and draw them onto `outputImage`.
+model.Predict(inputImage, opts, outputImage, true);
 
 // Save to "output.jpg"
-mlpack::Save("output.jpg", image, opts, true);
+mlpack::Save("output.jpg", outputImage, opts);
 ```
 
 <p align="center">
@@ -51,7 +51,11 @@ mlpack::Save("output.jpg", image, opts, true);
  * [Object Detection on Wikipedia](https://en.wikipedia.org/wiki/Object_detection)
  * [You Only Look Once (original YOLO paper)](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf)
  * [YOLOv3 paper](https://arxiv.org/abs/1804.02767) where the YOLOv3 architecture is described.
+ * [COCO dataset](https://cocodataset.org/) was used to train the pretrained weights included.
+ * [COCO class names](https://models.mlpack.org/yolo/coco.names) in their correct order.
  * [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) is used internally to represent the model.
+ * [`LetterboxImages()`](../core/images.md#letterbox-transform) is used to make the input image square but retain the aspect ratio of the original image.
+ * [`GroupChannels()`](../core/images.md#groupchannels) is used to group the image channels for the convolutional layers.
 
 ### Constructors
 
@@ -69,22 +73,28 @@ Defaults and types are detailed in the
 
 Once the weights are loaded, you can compute likely object bounding boxes with with `Predict()`.
 
- * `model.Predict(image, opt, ignoreThresh=0.7)`
-   - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)) and
-     draw the detections onto that image.
+<!-- NOTE: make to say if you're not doing post processing what the bounding boxes are relative to-->
+
+ * `model.Predict(image, opts, output, drawBoxes=false ignoreThresh=0.7)`
+   - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)).
+   - Image pixel values are expected to be between 0-255.
+   - If `drawBoxes` is true, output will be a copy of image with the bounding boxes from the model drawn onto it.
    - Bounding boxes will be drawn if their confidence is greater than `ignoreThresh`.
+   - If `drawBoxes` is false, the output will be the raw outputs of the model.
 
 
 | **name** | **type** | **description** | **default**|
 |----------|----------|-----------------|------------|
-| `image` | `arma::fmat` | Input image. See [example](#simple-usage-example) for details on loading an image with mlpack | n/a |
+| `image` | `arma::mat` | Input image. See [example](#simple-usage-example) for details on loading an image with mlpack | n/a |
 | `opt` | [`ImageOptions`](../load_save.md#imageoptions) | Image metadata. | n/a |
-| `ignoreThreshold` | `double` | Minimum confidence to have the corresponding bounding box drawn onto `image`. | `0.7` |
+| `output` | `arma::mat` | Output. Will be an output image with bounding boxes or raw outputs of the model depending on `drawBoxes`. | n/a |
+| `drawBoxes` | `bool` | Boolean to decide to copy `image` to `output` and draw bounding boxes or simply return raw outputs in `output`. | `false` |
+| `ignoreThreshold` | `double` | Minimum confidence to have the corresponding bounding box drawn onto `output`, if `drawBoxes` is true. | `0.7` |
 
 ---
 
- * `model.Predict(input, output)`
-  - Takes in a preprocessed `input`. See [example](#simple-examples)
+ * `model.Predict(preprocessedInput, rawOutput)`
+  - Takes in a preprocessed `input`. See [example](#simple-examples).
   - `output` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numDetections, batchSize)`.
   - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
   - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
@@ -116,10 +126,11 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
     were trained on the COCO dataset, which includes 80 different
     classes.
 
-<!-- TODO: add a link to all the classes? maybe upload coco.names to mlpack.org -->
-
  * `ClassNames()` will return a vector of strings, each being the name
-    of a class the model can predict.
+    of a class the model can predict. You can find all the COCO names in order [here](https://models.mlpack.org/yolo/coco.names).
+
+ * `Anchors()` returns a vector of doubles representing the anchors used
+    during inference.
 
 ### `YOLOv3Tiny`
 
@@ -130,7 +141,8 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 Because training a `YOLOv3` model from scratch is time-consuming,
 a number of pretrained models are available for download:
 
-The format for the name of each pretrained model is `<model name>-<image size>-<finetuned dataset name>.bin`.
+The format for the name of each YOLOv3 pretrained model is
+`<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
 
  * [`https://models.mlpack.org/yolo/yolov3-320-coco.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco.bin)
 
@@ -138,7 +150,100 @@ The format for the name of each pretrained model is `<model name>-<image size>-<
 
 ### Simple Examples
 
-<!-- TODO: add example using raw output, batchSize > 1,  -->
+See also the [simple usage example](#simple-usage-example) for a trivial usage
+of the `YOLOv3` class.
+
+---
+
+Preprocess the image, predict bounding boxes and get the raw output of the model.
+
+```c++
+// Step 1: load the pretrained weights.
+// Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
+mlpack::YOLOv3 model;
+mlpack::Load("yolov3-320-coco-f64.bin", model);
+
+// Step 2: load the image.
+// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+arma::mat inputImage, rawOutput;
+mlpack::ImageOptions opts;
+mlpack::Load("dog.jpg", inputImage, opts);
+
+// Step 3: Preprocess the `inputImage`, predict bounding boxes using `YOLOv3`.
+// Set `drawBoxes` to false in order to store raw outputs in `rawOutput`.
+model.Predict(inputImage, opts, rawOutput, false);
+
+// Step 4: Inspect the first possible bounding box.
+std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
+    << (size_t) rawOutput(1, 0) << ", " << (size_t) rawOutput(2, 0) << ", "
+    << (size_t) rawOutput(3, 0) << "]." << std::endl;
+```
+
+---
+
+Simple example of doing custom preprocessing on the input image, and getting raw output of the model.
+
+```c++
+// Step 1: load the pretrained model.
+// Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
+mlpack::YOLOv3 model;
+mlpack::Load("yolov3-320-coco-f64.bin", model);
+
+// Step 2: load the image.
+// Download: https://models.mlpack.org/yolo/dog.jpg
+arma::mat inputImage, preprocessedImage, rawOutput;
+mlpack::ImageOptions opts;
+mlpack::Load("dog.jpg", inputImage, opts);
+
+// Step 3: preprocess the image.
+// Normalize pixel values to be between 0-1.
+preprocessedImage = inputImage / 255.0;
+
+// Change the dimensions of the image to the model's input dimensions while
+// keeping the aspect ratio of the original image using `LetterboxImages`.
+mlpack::ImageOptions preprocessedOpts = opts;
+const size_t imgSize = model.ImageSize();
+const double greyValue = 0.5;
+LetterboxImages(preprocessedImage, preprocessedOpts, imgSize, imgSize, greyValue);
+
+// Change the layout of the channels such that they're grouped.
+preprocessedImage = GroupChannels(preprocessedImage, preprocessedOpts);
+
+// Step 4: detect objects in the image.
+// Get raw output from model and store in `rawOutput`.
+model.Predict(preprocessedImage, rawOutput);
+
+// Step 5: Inspect the first possible bounding box.
+std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
+    << (size_t) rawOutput(1, 0) << ", " << (size_t) rawOutput(2, 0) << ", "
+    << (size_t) rawOutput(3, 0) << "]." << std::endl;
+```
+
+---
+
+Predict and draw bounding boxes on multiple images. **NOTE**: Each image must have the same dimensions.
+
+```c++
+// Step 1: load the pretrained model.
+// Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
+mlpack::YOLOv3 model;
+mlpack::Load("yolov3-320-coco-f64.bin", model);
+
+// Step 2: load the images, in this case copies of the same image three times.
+// Download: https://models.mlpack.org/yolo/dog.jpg
+arma::mat inputImages, outputImages;
+mlpack::ImageOptions opts;
+
+std::vector<std::string> inputFiles = {"dog.jpg", "dog.jpg", "dog.jpg"};
+mlpack::Load(inputFiles, inputImages, opts);
+
+// Step 3: Preprocess each `inputImages`, detect bounding boxes and draw them onto each `outputImages`. Each column is a seperate image.
+model.Predict(inputImages, opts, outputImages, true);
+
+// Step 4: Save each image.
+std::vector<std::string> outputFiles = {"1.jpg", "2.jpg", "3.jpg"};
+mlpack::Save(outputFiles, outputImages, opts);
+```
 
 ### Advanced Functionality: Template Parameters
 
@@ -157,19 +262,22 @@ representation of weights and biases. The default is `arma::mat`.
 The example below uses YOLOv3 using the `arma::fmat` weights.
 
 ```c++
+// Step 1: load the pretrained arma::fmat weights.
 // Download: https://models.mlpack.org/yolo/yolov3-320-coco-f32.bin
 mlpack::YOLOv3<arma::fmat> model;
 mlpack::Load("yolov3-320-coco-f32.bin", model);
 
-// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+// Step 2: load the image into an arma::fmat.
+// Download: https://models.mlpack.org/yolo/dog.jpg
 // Note: the image type must also be `arma::fmat`
 arma::fmat image;
 mlpack::ImageOptions opts;
 mlpack::Load("dog.jpg", image, opts);
 
+// Step 3: Preprocess the input image, detect bounding boxes and draw them onto `outputImage`.
 // Predict bounding boxes from an image using `YOLOv3` and draw them.
 model.Predict(image, opts);
 
-// Save to "output.jpg"
+// Step 4: Save to "output.jpg"
 mlpack::Save("output.jpg", image, opts, true);
 ```

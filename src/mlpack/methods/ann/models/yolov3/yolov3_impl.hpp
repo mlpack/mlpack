@@ -23,7 +23,6 @@ YOLOv3<MatType, OutputLayerType, InitializationRuleType>
 ::YOLOv3(const size_t imgSize,
          const std::vector<ElemType>& anchors,
          const std::vector<std::string>& classNames) :
-  model(),
   imgSize(imgSize),
   numAttributes(classNames.size() + 5),
   classNames(classNames),
