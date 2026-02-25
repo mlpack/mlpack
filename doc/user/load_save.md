@@ -692,9 +692,9 @@ std::cout << "Loaded data from movielens-100k.csv; matrix size: "
 
 ## Loading from remote URLs
 
-mlpack supports loading dataset hosted online directly into an armadillo matrix
-object. mlpack will download the files using cpp-httplib library. This library
-is bundled with mlpack for easy of use.
+mlpack supports loading datasets from URLs.  Files will be downloaded using the
+[cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
+with mlpack for ease of use.
 
  - `Load(URL, X, opts)`
    * Load `X` from the given URL `URL` with the given options specified in `opts`.
