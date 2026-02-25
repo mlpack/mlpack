@@ -696,22 +696,20 @@ mlpack supports loading datasets from URLs.  Files will be downloaded using the
 [cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
 with mlpack for ease of use.
 
- - `Load(URL, X, opts)`
-   * Load `X` from the given URL `URL` with the given options specified in `opts`.
-   * Returns a `bool` indicating whether the load was a success.
-   * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
-     type of `X`.
-   * The URL must start with either `http://` or `https://` or loading will
-     fail.
-   * If the URL starts with `https://` then `#define MLPACK_USE_HTTPS` should be
-     declared before `#include <mlpack.hpp>`
-   * For loading HTTPS data, support must be enabled with
+When a remote URL is given to `Load()`:
+
+ * The URL must start with either `http://` or `https://` or loading will fail.
+
+ * If the URL starts with `https://`, then [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) should be
+     declared before `#include <mlpack.hpp>`.
+
+ * For loading HTTPS data, support must be enabled with
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
-     including mlpack, and the program must be additionally linked with `-lssl
-     -lcrypto`
-   * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
-     Linux systems).
+     including mlpack, and the program must be additionally [linked with `-lssl
+     -lcrypto`](compile.md#linking-without-the-armadillo-wrapper)
+
+ * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
+    Linux systems).
 
 ```c++
 // Throw an exception if loading fails with the Fatal option.
