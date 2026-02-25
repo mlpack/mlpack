@@ -188,10 +188,10 @@ inline bool DownloadFile(const std::string& url,
   tmpFilename = tmpFilename + "." + Extension(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::in
-        | std::fstream::binary);
+  stream.open(filename.c_str(), std::fstream::in
+      | std::fstream::binary);
 #else
-    stream.open(filename.c_str(), std::fstream::in);
+  stream.open(filename.c_str(), std::fstream::in);
 #endif
 
   if (!stream.is_open())
