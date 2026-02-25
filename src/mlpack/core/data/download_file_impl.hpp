@@ -100,10 +100,9 @@ inline void ParseURL(const std::string& url, std::string& host,
     if (endChar == ':')
     {
       // We need to find the last char which is /
-      std::string findPort = possibleHost.substr(endHost + 1);
-      size_t endPort = findPort.find("/");
-      if (IsDigits(findPort.substr(0, endPort)))
-        port = std::stoi(findPort.substr(0, endPort));
+      size_t endPort = possibleHost.find("/", endHost + 1);
+      if (IsDigits(possibleHost.substr(endHost + 1, endPort)))
+        port = std::stoi(possibleHost.substr(endHost + 1, endPort));
     }
   }
   else // In case of using http://localhost or similar
