@@ -11,12 +11,12 @@ and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 #### Simple usage example:
 
 ```c++
-// Download: https://models.mlpack.org/yolo/yolov3-320-coco.bin
+// Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
 mlpack::YOLOv3 model;
-mlpack::Load("yolov3-320-coco.bin", model);
+mlpack::Load("yolov3-320-coco-f64.bin", model);
 
 // Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
-arma::fmat image;
+arma::mat image;
 mlpack::ImageOptions opts;
 mlpack::Load("dog.jpg", image, opts);
 
@@ -149,6 +149,27 @@ The full signature of the class is:
 YOLOv3<MatType>
 ```
 
- * `MatType`: specifies the type of matrix used for learning and internal
-   representation of weights and biases. The pretrained weights used float-32,
-   so the default is `arma::fmat`. training.
+`MatType`: specifies the type of matrix used for learning and internal
+representation of weights and biases. The default is `arma::mat`.
+
+ * Any matrix type that implements the Armadillo API can be used.
+
+The example below uses YOLOv3 using the `arma::fmat` weights.
+
+```c++
+// Download: https://models.mlpack.org/yolo/yolov3-320-coco-f32.bin
+mlpack::YOLOv3<arma::fmat> model;
+mlpack::Load("yolov3-320-coco-f32.bin", model);
+
+// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+// Note: the image type must also be `arma::fmat`
+arma::fmat image;
+mlpack::ImageOptions opts;
+mlpack::Load("dog.jpg", image, opts);
+
+// Predict bounding boxes from an image using `YOLOv3` and draw them.
+model.Predict(image, opts);
+
+// Save to "output.jpg"
+mlpack::Save("output.jpg", image, opts, true);
+```
