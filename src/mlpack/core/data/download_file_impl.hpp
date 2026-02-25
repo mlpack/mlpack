@@ -185,7 +185,7 @@ inline bool DownloadFile(const std::string& url,
 
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
-  tmpFilename += Extension(filename);
+  tmpFilename = tmpFilename + "." + Extension(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
     stream.open(filename.c_str(), std::fstream::in

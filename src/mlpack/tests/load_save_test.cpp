@@ -3448,6 +3448,9 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
+#ifndef MLPACK_DISABLE_HTTP
+#ifdef MLPACK_ENABLE_HTTP
+
 TEST_CASE("URLTests", "[LoadSaveTest]")
 {
   std::string host, filename, testUrl;
@@ -3618,5 +3621,8 @@ TEST_CASE("DownLoad404File", "[LoadSaveTest]")
   REQUIRE_THROWS_AS(Load("http://datasets.mlpack.org/nonexistent_file.csv",
         dataset, Fatal + Transpose), std::runtime_error);
 }
+
+#endif
+#endif
 
 #endif
