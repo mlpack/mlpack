@@ -30,12 +30,9 @@ TEST_CASE_METHOD(LogisticRegressionProbabilitiesTestFixture,
                  "LogisticRegressionProbabilitiesNoModel",
                  "[LogisticRegressionProbabilitiesMainTest][BindingTests]")
 {
-  constexpr int N = 10;
   constexpr int D = 3;
   constexpr int M = 15;
 
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("test", std::move(testX));
@@ -52,12 +49,9 @@ TEST_CASE_METHOD(LogisticRegressionProbabilitiesTestFixture,
                  "LogisticRegressionProbabilitiesEmptyModel",
                  "[LogisticRegressionProbabilitiesMainTest][BindingTests]")
 {
-  constexpr int N = 10;
   constexpr int D = 3;
   constexpr int M = 15;
 
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);

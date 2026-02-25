@@ -25,7 +25,7 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(LogisticRegressionTestFixture);
 
 /**
-  * Ensuring that absence of training data is checked.
+ * Ensuring that absence of training data is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture,
                  "LogisticRegressionLRNoTrainingData",
@@ -93,7 +93,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 }
 
 /**
-  * Ensuring that the response size is checked.
+ * Ensuring that the response size is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture,
                  "LogisticRegressionLRWrongResponseSizeTest",

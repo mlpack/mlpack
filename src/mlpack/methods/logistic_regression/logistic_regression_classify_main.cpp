@@ -1,6 +1,7 @@
 /**
  * @file methods/logistic_regression/logistic_regression_classify_main.cpp
  * @author Ryan Curtin
+ * @author Dirk Eddelbuettel
  *
  * Main executable for logistic regression classification step.
  *

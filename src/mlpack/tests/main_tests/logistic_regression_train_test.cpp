@@ -24,7 +24,7 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(LogisticRegressionTrainTestFixture);
 
 /**
-  * Ensuring that absence of training data is checked.
+ * Ensuring that absence of training data is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
                  "LogisticRegressionTrainNoTrainingData",
@@ -86,7 +86,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
 }
 
 /**
-  * Ensuring that the response size is checked.
+ * Ensuring that the response size is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
                  "LogisticRegressionTrainWrongResponseSizeTest",
@@ -395,15 +395,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Max Iteration changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  if (arma::all((parameters1-parameters2) == 0))
-  {
-    FAIL("parameters1 and parameters2 are equal. "
-         "Parameter(Max Iteration) has no effect on the output");
-  }
-  else
-  {   // adding a require to have the test 'count' rather than just not fail
-      REQUIRE(arma::all((parameters1-parameters2) != 0));
-  }
+  REQUIRE(arma::all((parameters1-parameters2) != 0));
 }
 
 /**
@@ -451,15 +443,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures lambda changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  if (arma::all((parameters1-parameters2) == 0))
-  {
-    FAIL("parameters1 and parameters2 are equal. "
-         "Parameter(lambda) has no effect on the output");
-  }
-  else
-  { // adding a require to have the test 'count' rather than just not fail
-    REQUIRE(arma::all((parameters1-parameters2) != 0));
-  }
+  REQUIRE(arma::all((parameters1-parameters2) != 0));
 }
 
 /**
@@ -510,15 +494,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Check that the parameters (parameters1 and parameters2) are not equal
   // which ensures Step Size changes the output model.
   // arma::all function checks that each element of the vector is equal to zero.
-  if (arma::all((parameters1-parameters2) == 0))
-  {
-    FAIL("parameters1 and parameters2 are equal. "
-         "Parameter(Step Size) has no effect on the output");
-  }
-  else
-  { // adding a require to have the test 'count' rather than just not fail
-    REQUIRE(arma::all((parameters1-parameters2) != 0));
-  }
+  REQUIRE(arma::all((parameters1-parameters2) != 0));
 }
 
 /**
@@ -568,15 +544,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Check that the parameters (parameters1 and parameters2) are not equal which
   // ensures that different optimizer converge to different results.
   // arma::all function checks that each element of the vector is equal to zero.
-  if (arma::all((parameters1 - parameters2) == 0))
-  {
-    FAIL("parameters1 and parameters2 are equal. "
-         "Parameter(Step Size) has no effect on the output");
-  }
-  else
-  { // adding a require to have the test 'count' rather than just not fail
-    REQUIRE(arma::all((parameters1-parameters2) != 0));
-  }
+  REQUIRE(arma::all((parameters1-parameters2) != 0));
 }
 
 /**
@@ -585,7 +553,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
  **/
 TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
                  "LogisticRegressionTrainPrintTrainingAccuracyTest",
-                "[LogisticRegressionTrainMainTest][BindingTests]")
+                 "[LogisticRegressionTrainMainTest][BindingTests]")
 {
   constexpr int N = 100;
   constexpr int D = 5;

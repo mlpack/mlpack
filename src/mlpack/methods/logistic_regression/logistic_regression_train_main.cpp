@@ -1,6 +1,7 @@
 /**
  * @file methods/logistic_regression/logistic_regression_train_main.cpp
  * @author Ryan Curtin
+ * @author Dirk Eddelbuettel
  *
  * Main executable for logistic regression training step.
  *
@@ -144,13 +145,6 @@ PARAM_MODEL_OUT(LogisticRegression<>, "output_model", "Output for trained "
     "logistic regression model.", "M");
 
 // Testing.
-// PARAM_MATRIX_IN("test", "Matrix containing test dataset. Used only for "
-//                 "unit tests.", "T");
-PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
-    "the predictions for the test set will be saved.", "P");
-PARAM_DOUBLE_IN("decision_boundary", "Decision boundary for prediction; if the "
-    "logistic function for a point is less than the boundary, the class is "
-    "taken to be 0; otherwise, the class is 1.", "d", 0.5);
 PARAM_FLAG("print_training_accuracy", "If set, then the accuracy of the model "
     "on the training set will be printed (verbose must also be specified).",
     "a");
@@ -218,26 +212,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
   }
 
-  // These are the matrices we might use.
-  arma::mat regressors;
+  // These are the matrices and model.
+  arma::mat regressors = std::move(params.Get<arma::mat>("training"));
+  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
   arma::Row<size_t> responses;
-  arma::mat testSet;
-  arma::Row<size_t> predictions;
-
-  // Load data matrix.
-  if (params.Has("training"))
-    regressors = std::move(params.Get<arma::mat>("training"));
-
-  // Load the model, if necessary.
-  LogisticRegression<>* model;
-
-  model = new LogisticRegression<>(0, 0);
-
-  // Set the size of the parameters vector, if necessary.
-  if (!params.Has("labels"))
-    model->Parameters() = zeros<arma::rowvec>(regressors.n_rows);
-  else
-    model->Parameters() = zeros<arma::rowvec>(regressors.n_rows + 1);
 
   // Check if the responses are in a separate file.
   if (params.Has("training") && params.Has("labels"))
@@ -272,51 +250,48 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Now, do the training.
-  if (params.Has("training"))
+  model->Lambda() = lambda;
+
+  if (optimizerType == "sgd")
   {
-    model->Lambda() = lambda;
+    ens::SGD<> sgdOpt;
+    sgdOpt.MaxIterations() = maxIterations;
+    sgdOpt.Tolerance() = tolerance;
+    sgdOpt.StepSize() = stepSize;
+    sgdOpt.BatchSize() = batchSize;
+    Log::Info << "Training model with SGD optimizer." << endl;
 
-    if (optimizerType == "sgd")
-    {
-      ens::SGD<> sgdOpt;
-      sgdOpt.MaxIterations() = maxIterations;
-      sgdOpt.Tolerance() = tolerance;
-      sgdOpt.StepSize() = stepSize;
-      sgdOpt.BatchSize() = batchSize;
-      Log::Info << "Training model with SGD optimizer." << endl;
+    // This will train the model.
+    timers.Start("logistic_regression_optimization");
+    model->Train(regressors, responses, sgdOpt);
+    timers.Stop("logistic_regression_optimization");
+  }
+  else if (optimizerType == "lbfgs")
+  {
+    ens::L_BFGS lbfgsOpt;
+    lbfgsOpt.MaxIterations() = maxIterations;
+    lbfgsOpt.MinGradientNorm() = tolerance;
+    Log::Info << "Training model with L-BFGS optimizer." << endl;
 
-      // This will train the model.
-      timers.Start("logistic_regression_optimization");
-      model->Train(regressors, responses, sgdOpt);
-      timers.Stop("logistic_regression_optimization");
-    }
-    else if (optimizerType == "lbfgs")
-    {
-      ens::L_BFGS lbfgsOpt;
-      lbfgsOpt.MaxIterations() = maxIterations;
-      lbfgsOpt.MinGradientNorm() = tolerance;
-      Log::Info << "Training model with L-BFGS optimizer." << endl;
+    // This will train the model.
+    timers.Start("logistic_regression_optimization");
+    model->Train(regressors, responses, lbfgsOpt);
+    timers.Stop("logistic_regression_optimization");
+  }
 
-      // This will train the model.
-      timers.Start("logistic_regression_optimization");
-      model->Train(regressors, responses, lbfgsOpt);
-      timers.Stop("logistic_regression_optimization");
-    }
+  // // Did we want training accuracy?
+  if (params.Has("print_training_accuracy"))
+  {
+    timers.Start("lr_prediction");
+    arma::Row<size_t> predictions;
+    model->Classify(regressors, predictions);
 
-    // // Did we want training accuracy?
-    if (params.Has("print_training_accuracy"))
-    {
-      timers.Start("lr_prediction");
-      arma::Row<size_t> predictions;
-      model->Classify(regressors, predictions);
+    const size_t correct = accu(predictions == responses);
 
-      const size_t correct = accu(predictions == responses);
-
-      Log::Info << correct << " of " << responses.n_elem << " correct on "
-          << "training set ("
-          << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
-      timers.Stop("lr_prediction");
-    }
+    Log::Info << correct << " of " << responses.n_elem << " correct on "
+        << "training set ("
+        << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
+    timers.Stop("lr_prediction");
   }
 
   params.Get<LogisticRegression<>*>("output_model") = model;

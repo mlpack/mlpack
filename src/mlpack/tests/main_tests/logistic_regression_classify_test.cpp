@@ -30,12 +30,9 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
                  "LogisticRegressionClassifyNoModel",
                  "[LogisticRegressionClassifyMainTest][BindingTests]")
 {
-  constexpr int N = 10;
   constexpr int D = 3;
   constexpr int M = 15;
 
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   SetInputParam("test", std::move(testX));
@@ -52,12 +49,9 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
                  "LogisticRegressionClassifyEmptyModel",
                  "[LogisticRegressionClassifyMainTest][BindingTests]")
 {
-  constexpr int N = 10;
   constexpr int D = 3;
   constexpr int M = 15;
 
-  arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   LogisticRegression<>* model = new LogisticRegression<>(0, 0);
@@ -90,7 +84,7 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
 
   SetInputParam("input_model", std::move(model));
 
-  // Required input data is not provided. Should throw a runtime error.
+  // Test data has the wrong dimensionality. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
