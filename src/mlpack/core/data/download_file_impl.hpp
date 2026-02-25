@@ -246,14 +246,10 @@ inline bool DownloadFile(const std::string& url,
                          std::string& filename)
 {
   filename = "";
-  std::stringstream oss;
-  oss << "Cannot check the provided URL: " << url << std::endl
-      << "httplib has not been enabled during compilation time." << std::endl
-      << "Please enable httplib by defining this in your code:" << std::endl
-      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
-      << "If you would like to enable httplib when installing mlpack."
-      << " Please refer to our documentation page.";
-  throw std::runtime_error(oss.str());
+```suggestion
+  throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
+      " check provided URL '" + url + "'.  Enable httplib by adding '#define "
+      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
   return false;
 }
 
