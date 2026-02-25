@@ -1975,15 +1975,13 @@ An implementation of L2-regularized logistic regression using either the L-BFGS 
 
 In this setting, y corresponds to class labels and X corresponds to data.
 
-This program allows loading a logistic regression model (via the `input_model` parameter) or training a logistic regression model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained logistic regression model may be saved using the `output_model` output parameter.
+This implementation can train a logistic regression model given training data (specified with the `training` parameter). The trained logistic regression model may be saved using the `output_model` output parameter. A trained logistic regression model can then be loaded (via the `input_model` parameter) in order to perform classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. Alternatively, classification probabilities can be computed and saved with the `probabilities` parameter.
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
 
 When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'sgd' (stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer.  The batch size for SGD is controlled with the `batch_size` parameter. If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
 
 For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `max_iterations` should be set to the number of points in the dataset.
-
-Optionally, the model can be used to predict the responses for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing logistic regression model is given with the `input_model` parameter.  The output predictions from the logistic regression model may be saved with the `predictions` parameter.
 
 This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
 ### Parameters
@@ -2008,8 +2006,8 @@ This implementation of logistic regression does not support the general multi-cl
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import LogisticRegression
->>> X = pd.read_csv('https://example.com')
->>> y = pd.read_csv('https://example.com')
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']
