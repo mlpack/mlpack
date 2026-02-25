@@ -93,8 +93,8 @@ inline void ParseURL(const std::string& url, std::string& host,
     if (CheckValidHost(tmpHost))
       host = tmpHost;
     else
-      throw std::runtime_error("Invalid Host.\n"
-          "Valid host contains only lower letters, numeric and hyphen");
+      throw std::runtime_error("ParseURL(): invalid host '" + tmpHost + "'. "
+          "Valid hostnames must contain only lowercase letters, digits, and hyphens.");
 
     char endChar = possibleHost.at(endHost);
     if (endChar == ':')
