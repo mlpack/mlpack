@@ -43,16 +43,18 @@ BINDING_LONG_DESC(
     "\n\n"
     "In this setting, y corresponds to class labels and X corresponds to data."
     "\n\n"
-    "This program allows loading a logistic regression model (via the " +
-    PRINT_PARAM_STRING("input_model") + " parameter) "
-    "or training a logistic regression model given training data (specified "
-    "with the " + PRINT_PARAM_STRING("training") + " parameter), or both "
-    "those things at once.  In addition, this program allows classification on "
-    "a test dataset (specified with the " + PRINT_PARAM_STRING("test") + " "
-    "parameter) and the classification results may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " output parameter."
-    " The trained logistic regression model may be saved using the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter."
+    "This implementation can train a logistic regression model given training "
+    "data (specified with the " + PRINT_PARAM_STRING("training") +
+    " parameter). The trained logistic regression model may be saved using "
+    "the " + PRINT_PARAM_STRING("output_model") + " output parameter. "
+    "A trained logistic regression model can then be loaded (via "
+    "the " + PRINT_PARAM_STRING("input_model") + " parameter) in order to "
+    "perform classification on a test dataset (specified with the " +
+    PRINT_PARAM_STRING("test") + " parameter) and the classification results "
+    "may be saved with the " + PRINT_PARAM_STRING("predictions") + " "
+    "output parameter. Alternatively, classification probabilities can be "
+    "computed and saved with the " + PRINT_PARAM_STRING("probabilities") +
+    " parameter."
     "\n\n"
     "The training data, if specified, may have class labels as its last "
     "dimension.  Alternately, the " + PRINT_PARAM_STRING("labels") + " "
@@ -80,15 +82,6 @@ BINDING_LONG_DESC(
     "over the dataset with SGD, " + PRINT_PARAM_STRING("max_iterations") +
     " should be set to the number of points in the dataset."
     "\n\n"
-    "Optionally, the model can be used to predict the responses for another "
-    "matrix of data points, if " + PRINT_PARAM_STRING("test") + " is "
-    "specified.  The " + PRINT_PARAM_STRING("test") + " parameter can be "
-    "specified without the " + PRINT_PARAM_STRING("training") + " parameter, "
-    "so long as an existing logistic regression model is given with the " +
-    PRINT_PARAM_STRING("input_model") + " parameter.  The output predictions "
-    "from the logistic regression model may be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " parameter." +
-    "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any labels must be "
     "either " + STRINGIFY(BINDING_MIN_LABEL) + " or " +
@@ -100,14 +93,13 @@ BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
     IMPORT_THIS("logistic_regression") + "\n" +
-    GET_DATASET("X", "https://example.com") + "\n" +
-    GET_DATASET("y", "https://example.com") + "\n" +
+    GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
+    GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
     "0.2") + "\n" +
     CREATE_OBJECT("model", "logistic_regression") + "\n" +
     CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train",
                 "lambda", 0.1, "output_model", "lr_model"));
-
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_classify",
