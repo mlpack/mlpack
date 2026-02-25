@@ -70,7 +70,7 @@ inline void ParseURL(const std::string& url, std::string& host,
 {
   if (!CheckIfURL(url) || url.size() <= 8)
   {
-    throw std::runtime_error("Invalid URL provided."
+    throw std::runtime_error("ParseURL(): invalid URL '" + url + "' provided."
         " URL should start with 'http://' or 'https://'.");
   }
   size_t pos = url.find("://");
