@@ -76,8 +76,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Train(trainX, trainY);
+  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
   model->Classify(testX, testY, 0.5);
 
   // Output predictions size must match the test data set size.
@@ -172,8 +171,7 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   // Test data with wrong dimensionality.
   arma::mat testX = arma::randu<arma::mat>(D-1, N);
 
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Train(trainX, trainY);
+  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
 
   // Dimensionality of test data is wrong. It should throw a logic error.
   REQUIRE_THROWS_AS(model->Classify(testX, testY, 0.5), std::logic_error);

@@ -78,9 +78,7 @@ TEST_CASE_METHOD(LogisticRegressionProbabilitiesTestFixture,
   arma::Row<size_t> trainY = { 0, 1, 0, 1, 1, 1, 0, 1, 0, 0 };
 
   // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Parameters() = zeros<arma::rowvec>(D + 1);
-  model->Train(trainX, trainY);
+  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));
 
@@ -104,9 +102,7 @@ TEST_CASE_METHOD(LogisticRegressionProbabilitiesTestFixture,
   arma::mat testX = arma::randu<arma::mat>(D - 1, M);
 
   // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Parameters() = zeros<arma::rowvec>(D + 1);
-  model->Train(trainX, trainY);
+  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
 
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
@@ -131,9 +127,7 @@ TEST_CASE_METHOD(LogisticRegressionProbabilitiesTestFixture,
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
-  model->Parameters() = zeros<arma::rowvec>(D + 1);
-  model->Train(trainX, trainY);
+  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
