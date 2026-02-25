@@ -242,6 +242,7 @@ void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   ar(CEREAL_NVP(imgSize));
   ar(CEREAL_NVP(numAttributes));
   ar(CEREAL_NVP(classNames));
+  ar(CEREAL_NVP(anchors));
 }
 
 template <typename MatType,
