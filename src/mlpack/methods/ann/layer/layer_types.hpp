@@ -72,6 +72,9 @@
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 
+// Custom layers for models
+#include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
+
 // Include definitions for polymorphic serialization.  Note that this can cause
 // significant compilation overhead, so we only do it if
 // MLPACK_ENABLE_ANN_SERIALIZATION is enabled.
