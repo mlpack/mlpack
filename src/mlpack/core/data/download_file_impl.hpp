@@ -232,14 +232,9 @@ inline void ParseURL(const std::string& url, std::string& host,
   host = url;
   filename = "";
   port = -1;
-  std::stringstream oss;
-  oss << "Cannot check the provided URL: " << url << std::endl
-      << "httplib has not been enabled during compilation time." << std::endl
-      << "Please enable httplib by defining this in your code:" << std::endl
-      << "#define MLPACK_ENABLE_HTTPLIB" << std::endl
-      << "If you would like to enable httplib when installing mlpack."
-      << " Please refer to our documentation page.";
-  throw std::runtime_error(oss.str());
+  throw std::runtime_error("ParseURL(): httplib support not enabled; cannot "
+      "check provided URL '" + url + "'.  Enable httplib by adding '#define "
+      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
 }
 
 inline bool DownloadFile(const std::string& url,
