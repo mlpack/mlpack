@@ -13,7 +13,6 @@
 #ifndef MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 #define MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/util/params.hpp>
 
 namespace mlpack {

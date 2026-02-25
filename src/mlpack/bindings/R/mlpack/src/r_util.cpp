@@ -10,7 +10,9 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <rcpp_mlpack.h>
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 using namespace mlpack;
 using namespace Rcpp;

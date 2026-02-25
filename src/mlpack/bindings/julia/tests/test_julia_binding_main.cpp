@@ -9,7 +9,9 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME test_julia_binding

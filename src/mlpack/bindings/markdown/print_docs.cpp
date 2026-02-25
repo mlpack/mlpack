@@ -9,8 +9,15 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
+#include <mlpack/core/util/io.hpp>
+#include <mlpack/core/util/binding_details.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
+#include "binding_info.hpp"
 #include "print_docs.hpp"
+#include "print_doc_functions.hpp"
+#include "print_param_table.hpp"
+#include "replace_all_copy.hpp"
 
 // Make sure that this is defined.
 #ifndef SRC_PREFIX

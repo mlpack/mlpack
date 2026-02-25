@@ -11,6 +11,9 @@
  */
 #include "clean_memory.hpp"
 
+#include <mlpack/core.hpp>
+#include <mlpack/core/util/params.hpp>
+
 namespace mlpack {
 namespace bindings {
 namespace tests {
