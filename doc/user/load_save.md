@@ -60,7 +60,7 @@ For some types of data, it is also possible to load multiple images at once from
       - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
       - For [image data](#image-data), each image is flattened into one column of `X`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
-    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` X](#dataoptions).
+    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
 
 ---
 
