@@ -48,7 +48,7 @@ namespace mlpack {
  * @endcode
  *
  */
-template <typename MatType = arma::fmat,
+template <typename MatType = arma::mat,
           typename OutputLayerType = EmptyLossType<MatType>,
           typename InitializationRuleType = RandomInitialization>
 class YOLOv3
