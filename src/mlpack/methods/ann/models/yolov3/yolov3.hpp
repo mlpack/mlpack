@@ -108,42 +108,45 @@ class YOLOv3
   const std::vector<ElemType>& Anchors() { return anchors; }
 
   /**
-   * Ordinary feed forward pass of the network. Get raw outputs from the
-   * model, with optional preprocessing done via the `preprocess` argument.
+   * Ordinary feed forward pass of the network. Preprocesses image
+   * and writes to `output`, which can optionally be the raw outputs
+   * of the model, or a copy of `image` with the bounding boxes
+   * drawn onto it.
    *
-   * @param input Input data used for evaluating the specified function.
-      The input matrix dimensions should be (imgSize * imgSize * 3, batchSize).
-   * @param output Resulting bounding boxes and classification probabilities.
-      The bounding boxes are represented as (cx, cy, w, h) where (cx, cy) points
-      to the center of the box. The bounding boxes are normalized based on the
-      `imgSize`.
+   * The image is expected to contain pixel values between 0-255.
    */
-
-  void Predict(MatType& image,
-               const ImageOptions& opts,
-               const double ignoreThreshold = 0.7)
-  {
-    MatType preprocessed, rawOutput;
-    PreprocessImage(image, opts, preprocessed);
-    model.Predict(preprocessed, rawOutput);
-    DrawBoundingBoxes(rawOutput, image, opts, ignoreThreshold);
-  }
-
   void Predict(const MatType& image,
                const ImageOptions& opts,
-               MatType& rawOutput,
-               const bool preprocess = false)
+               MatType& output,
+               const bool drawBoxes = false,
+               const double ignoreThreshold = 0.7)
   {
     MatType preprocessed;
-    if (preprocess)
+    PreprocessImage(image, opts, preprocessed);
+
+    if (drawBoxes)
     {
-      PreprocessImage(image, opts, preprocessed);
+      MatType rawOutput;
+      output = image;
       model.Predict(preprocessed, rawOutput);
+      DrawBoundingBoxes(rawOutput, output, opts, ignoreThreshold);
     }
     else
     {
-      model.Predict(image, rawOutput);
+      model.Predict(preprocessed, output);
     }
+  }
+
+  /**
+   * Ordinary feed forward pass of the network.
+   *
+   * Expects preprocessing to be done by the user. Returns the raw
+   * outputs of the model.
+   */
+  void Predict(const MatType& preprocessedInput,
+               MatType& rawOutput)
+  {
+    model.Predict(preprocessedInput, rawOutput);
   }
 
   // Serialize the model.
