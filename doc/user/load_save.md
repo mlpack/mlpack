@@ -48,7 +48,7 @@ and [format detection/selection](#formats).
    * Load `X` from the given file `filename` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` X](#dataoptions) whose subtype matches the
+   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
      type of `X`.
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
