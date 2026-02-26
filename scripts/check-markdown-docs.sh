@@ -5,16 +5,17 @@
 # -DBUILD_MARKDOWN_BINDINGS=ON, use this simple script to detect changes in the
 # documentation that should be committed.
 #
-# The only argument of the script is to the build directory.
-if [ "$#" -ne 1 ];
-then
+# The only argument of the script is to the build directory. We use a default
+# value of 'build' in the current directory as is common with 'cmake'.
+build_dir=${1:-"build"}
+
+# If the directory does not exist, complain and exit.
+if [[ ! -d ${build_dir} ]]; then
   echo "Usage: $0 build/";
-  echo "  (replace build/ with your build directory, where you already"
+  echo "  (replace build/ with your build directory where you already"
   echo "   ran 'make markdown')";
   exit 1;
 fi
-
-build_dir="$1";
 
 # Check that Markdown documentation has been built.
 if [[ ! -d "$build_dir/doc/" ]];
@@ -24,10 +25,12 @@ then
   exit 1;
 fi
 
+# Overall state, default to no issues.
+good=0
+
 # Now check every file in the main repository bindings.
 for f in doc/user/bindings/*;
 do
-  echo "Checking $f...";
   f_base=`basename $f`;
 
   if [[ ! -f "$build_dir/doc/$f_base" ]];
@@ -38,16 +41,17 @@ do
     exit 1;
   fi
 
-  diff -Nau $f "$build_dir/doc/$f_base";
+  diff -Naq $f "$build_dir/doc/$f_base";
 
-  if [ "$?" -ne 0 ];
+  if [[ "$?" -ne 0 ]];
   then
-    echo "";
-    echo "";
-    echo "Files $f and $build_dir/doc/$f_base differ!  (See above.)";
-    echo "";
-    echo "If the sidebar differs, be sure to check if updates are needed in ";
-    echo "quickstart/*.sidebar.html!";
-    exit 1;
+    echo -n "   *** Files $f and $build_dir/doc/$f_base differ! Run 'diff' "
+    echo    "manually to examine";
+    good=1
   fi
 done
+
+# If issue found, exit with error code.
+if [[ ${good} -eq 1 ]]; then
+    exit 1
+fi
