@@ -45,16 +45,11 @@ BINDING_LONG_DESC(
     "\n\n"
     "This implementation can train a logistic regression model given training "
     "data (specified with the " + PRINT_PARAM_STRING("training") +
-    " parameter). The trained logistic regression model may be saved using "
-    "the " + PRINT_PARAM_STRING("output_model") + " output parameter. "
-    "A trained logistic regression model can then be loaded (via "
-    "the " + PRINT_PARAM_STRING("input_model") + " parameter) in order to "
+    " parameter).  A trained logistic regression model can then be used to "
     "perform classification on a test dataset (specified with the " +
-    PRINT_PARAM_STRING("test") + " parameter) and the classification results "
-    "may be saved with the " + PRINT_PARAM_STRING("predictions") + " "
-    "output parameter. Alternatively, classification probabilities can be "
-    "computed and saved with the " + PRINT_PARAM_STRING("probabilities") +
-    " parameter."
+    PRINT_PARAM_STRING("test") + " parameter).  Alternatively, classification "
+    "probabilities can be computed and saved with the " +
+    PRINT_PARAM_STRING("probabilities") + " parameter."
     "\n\n"
     "The training data, if specified, may have class labels as its last "
     "dimension.  Alternately, the " + PRINT_PARAM_STRING("labels") + " "

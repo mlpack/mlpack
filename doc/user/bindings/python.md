@@ -1975,7 +1975,7 @@ An implementation of L2-regularized logistic regression using either the L-BFGS 
 
 In this setting, y corresponds to class labels and X corresponds to data.
 
-This implementation can train a logistic regression model given training data (specified with the `training` parameter). The trained logistic regression model may be saved using the `output_model` output parameter. A trained logistic regression model can then be loaded (via the `input_model` parameter) in order to perform classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. Alternatively, classification probabilities can be computed and saved with the `probabilities` parameter.
+This implementation can train a logistic regression model given training data (specified with the `training` parameter).  A trained logistic regression model can then be used to perform classification on a test dataset (specified with the `test` parameter).  Alternatively, classification probabilities can be computed and saved with the `probabilities` parameter.
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
 
