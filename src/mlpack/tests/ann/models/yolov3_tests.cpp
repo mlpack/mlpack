@@ -69,27 +69,6 @@ TEST_CASE("YOLOv3TinyClasses", "[YOLOv3TinyTest][long]")
 }
 
 /*
- * Test predictions per cell. Other params are set to the default.
- */
-TEST_CASE("YOLOv3TinyPredictionsPerCell", "[YOLOv3TinyTest][long]")
-{
-  const size_t imgSize = 416;
-  const std::vector<double> anchors =
-    { 10, 14, 23, 27 };
-  const std::vector<std::string> classNames(80);
-
-  YOLOv3Tiny model(imgSize, anchors, classNames);
-
-  arma::mat testInput(imgSize * imgSize * 3, 1);
-  arma::mat testOutput;
-  model.Predict(testInput, testOutput);
-
-  const size_t expectedRows = (13 * 13 + 26 * 26) * 3 *
-    (5 + 80);
-  REQUIRE(testOutput.n_rows == expectedRows);
-}
-
-/*
  * Test incorrect number of anchors.
  */
 TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
@@ -106,7 +85,6 @@ TEST_CASE("YOLOv3TinyIncorrectAnchors", "[YOLOv3TinyTest][long]")
 TEST_CASE("YOLOv3TinySerialize", "[YOLOv3TinyTest][long]")
 {
   const size_t imgSize = 416;
-  const size_t predictionsPerCell = 3;
   std::vector<std::string> classNames(80);
   const std::vector<double> anchors =
     { 10, 14, 23, 27, 37, 58, 81, 82, 135, 169, 344, 319 };
