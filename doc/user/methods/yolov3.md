@@ -193,10 +193,8 @@ the output.
 | **model** | **Image Size** | **Number of Boxes** |
 |----------|----------|-----------------|
 | `yolov3` | `320` | 6300 |
-| `yolov3` | `416` | 22745|
-| `yolov3` | `608` | 10647|
-| `yolov3-tiny` | `416` | 2535|
-
+| `yolov3` | `416` | `10647`|
+| `yolov3` | `608` | `22745` |
 
 The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).
 A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) is available too.
