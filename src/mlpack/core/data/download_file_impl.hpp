@@ -83,7 +83,8 @@ inline void ParseURL(const std::string& url, std::string& host,
     host = tmpHost;
   else
     throw std::runtime_error("ParseURL(): invalid host '" + tmpHost + "'. "
-        "Valid hostnames must contain only lowercase letters, digits, and hyphens.");
+        "Valid hostnames must contain only lowercase letters, digits,"
+        " and hyphens.");
 
   if (endHost != std::string::npos)
   {
@@ -219,7 +220,6 @@ inline bool DownloadFile(const std::string& url,
                          std::string& filename)
 {
   filename = "";
-```suggestion
   throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
       " check provided URL '" + url + "'.  Enable httplib by adding '#define "
       "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
