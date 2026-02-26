@@ -73,14 +73,12 @@ Defaults and types are detailed in the
 
 Once the weights are loaded, you can compute likely object bounding boxes with with `Predict()`.
 
-<!-- NOTE: make to say if you're not doing post processing what the bounding boxes are relative to-->
-
  * `model.Predict(image, opts, output, drawBoxes=false ignoreThresh=0.7)`
    - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)).
-   - Image pixel values are expected to be between 0-255.
+   - Image pixel values are expected to be between 0-255. A [letterbox](../core/images.md#letterbox-transform) transform will be applied to the image.
    - If `drawBoxes` is true, output will be a copy of image with the bounding boxes from the model drawn onto it.
    - Bounding boxes will be drawn if their confidence is greater than `ignoreThresh`.
-   - If `drawBoxes` is false, the output will be the raw outputs of the model.
+   - If `drawBoxes` is false, the output will be the raw outputs of the model. The bounding box coordinates will be in the original image's space.
 
 
 | **name** | **type** | **description** | **default**|
@@ -139,14 +137,16 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 ### Pretrained weights
 
 Because training a `YOLOv3` model from scratch is time-consuming,
-a number of pretrained models are available for download:
+a number of pretrained models are available for download.
 
 The format for the name of each YOLOv3 pretrained model is
 `<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
-
  * [`https://models.mlpack.org/yolo/yolov3-320-coco.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco.bin)
 
 <!-- TODO: update and add other models -->
+
+The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).
+A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) is available too.
 
 ### Simple Examples
 
@@ -221,7 +221,7 @@ std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
 
 ---
 
-Predict and draw bounding boxes on multiple images. **NOTE**: Each image must have the same dimensions.
+Predict and draw bounding boxes on multiple images. **NOTE**: On this example, each image must have the same dimensions.
 
 ```c++
 // Step 1: load the pretrained model.
@@ -231,10 +231,12 @@ mlpack::Load("yolov3-320-coco-f64.bin", model);
 
 // Step 2: load the images, in this case copies of the same image three times.
 // Download: https://models.mlpack.org/yolo/dog.jpg
+// Download: https://models.mlpack.org/yolo/cat.jpg
+// Download: https://models.mlpack.org/yolo/fish.jpg
 arma::mat inputImages, outputImages;
 mlpack::ImageOptions opts;
 
-std::vector<std::string> inputFiles = {"dog.jpg", "dog.jpg", "dog.jpg"};
+std::vector<std::string> inputFiles = {"dog.jpg", "cat.jpg", "fish.jpg"};
 mlpack::Load(inputFiles, inputImages, opts);
 
 // Step 3: Preprocess each `inputImages`, detect bounding boxes and draw them onto each `outputImages`. Each column is a seperate image.
@@ -244,6 +246,8 @@ model.Predict(inputImages, opts, outputImages, true);
 std::vector<std::string> outputFiles = {"1.jpg", "2.jpg", "3.jpg"};
 mlpack::Save(outputFiles, outputImages, opts);
 ```
+
+---
 
 ### Advanced Functionality: Template Parameters
 
