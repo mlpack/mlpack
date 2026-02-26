@@ -260,27 +260,10 @@ void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   const size_t numClasses = classNames.size();
   const arma::Col<ElemType> red = {255.0f, 0, 0};
 
-  const size_t width = opts.Width();
-  const size_t height = opts.Height();
-
   arma::ucolvec nmsIndices;
 
-  ElemType ratio;
-  ElemType xOffset = 0;
-  ElemType yOffset = 0;
-
-  if (width > height)
-  {
-    // landscape
-    ratio =  (ElemType)width / imgSize;
-    yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
-  }
-  else
-  {
-    // portrait
-    ratio =  (ElemType)height / imgSize;
-    xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
-  }
+  ElemType ratio, xOffset, yOffset;
+  FixBoundingBoxes(opts.Width(), opts.Height(), ratio, xOffset, yOffset);
 
   // Draw bounding boxes using NMS for each image in the batch.
   for (size_t batch = 0; batch < rawOutput.n_cols; batch++)

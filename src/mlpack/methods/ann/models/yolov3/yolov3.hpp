@@ -134,6 +134,18 @@ class YOLOv3
     else
     {
       model.Predict(preprocessed, output);
+
+      // Update coordinates to be in the original image space.
+      const size_t numBoxes = model.OutputDimensions()[1];
+      ElemType ratio, xOffset, yOffset;
+      FixBoundingBoxes(opts.Width(), opts.Height(), ratio, xOffset, yOffset);
+      CubeType outputAlias;
+      MakeAlias(outputAlias, output, numAttributes, numBoxes, output.n_cols);
+
+      outputAlias.row(0) = (outputAlias.row(0) - xOffset) * ratio;
+      outputAlias.row(1) = (outputAlias.row(1) - yOffset) * ratio;
+      outputAlias.row(2) = outputAlias.row(2) * ratio;
+      outputAlias.row(3) = outputAlias.row(3) * ratio;
     }
   }
 
@@ -206,6 +218,33 @@ class YOLOv3
     ImageOptions preprocessedOpt = opts;
     LetterboxImages(preprocessed, preprocessedOpt, imgSize, imgSize, 0.5);
     output = GroupChannels(preprocessed, preprocessedOpt);
+  }
+
+  /**
+   * Used to fix bounding boxes when the input images use the `LetterboxImages`
+   * transform. Writes to `ratio`, `xOffset` and `yOffset`.
+   */
+  void FixBoundingBoxes(const size_t width,
+                        const size_t height,
+                        ElemType& ratio,
+                        ElemType& xOffset,
+                        ElemType& yOffset)
+  {
+    xOffset = 0;
+    yOffset = 0;
+
+    if (width > height)
+    {
+      // landscape
+      ratio =  (ElemType)width / imgSize;
+      yOffset = (imgSize - (height * imgSize / (ElemType)width)) / 2;
+    }
+    else
+    {
+      // portrait
+      ratio =  (ElemType)height / imgSize;
+      xOffset = (imgSize - (width * imgSize / (ElemType)height)) / 2;
+    }
   }
 
   /**
