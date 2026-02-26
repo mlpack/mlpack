@@ -143,6 +143,10 @@ The format for the name of each YOLOv3 pretrained model is
 `<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
  * [`https://models.mlpack.org/yolo/yolov3-320-coco.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco.bin)
 
+An increased image size means the model will be able to detect smaller objects
+at the cost of speed. Similarly, smaller matrix types allow for faster loading
+of models and faster inference times.
+
 <!-- TODO: update and add other models -->
 
 The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).

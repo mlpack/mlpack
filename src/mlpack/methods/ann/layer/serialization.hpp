@@ -90,6 +90,12 @@
     CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<__VA_ARGS__>); \
 
+#ifdef MLPACK_ENABLE_ANN_SERIALIZATION_FMAT
+CEREAL_REGISTER_MLPACK_LAYERS(arma::fmat);
+#endif
+
+#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
+#endif
 
 #endif

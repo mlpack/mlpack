@@ -78,7 +78,8 @@
 // Include definitions for polymorphic serialization.  Note that this can cause
 // significant compilation overhead, so we only do it if
 // MLPACK_ENABLE_ANN_SERIALIZATION is enabled.
-#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
+#if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+    defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT)
 #include <mlpack/methods/ann/layer/serialization.hpp>
 #endif
 
