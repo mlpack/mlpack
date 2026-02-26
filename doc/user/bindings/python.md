@@ -1965,7 +1965,7 @@ An LCC model may be saved using the `output_model` output parameter.  Then, to e
 ## class LogisticRegression
 {: #logistic_regression }
 
-#### L2-regularized Logistic Regression Training
+#### L2-regularized Logistic Regression Training and Prediction
 {: #logistic_regression_descr }
 
 
