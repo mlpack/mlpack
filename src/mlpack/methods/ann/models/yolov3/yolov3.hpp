@@ -65,13 +65,13 @@ class YOLOv3
   /**
    * Create the YOLOv3 model.
    *
-   * @param imgSize The width and height of preprocessed images.
-   * @param numClasses The number of output classes. Pretrained weights were
-       trained on COCO which has 80 classes.
-   * @param anchors Vector of anchor width and heights. Formatted as
+   * imgSize The width and height of preprocessed images.
+   * anchors Vector of anchor width and heights. Formatted as
       [w0, h0, w1, h1, ... ]. Each anchors is a [w, h] pair. There must be 3 * 3
       anchors, since YOLOv3 has three output layers and makes 3 predictions
       for each cell per layer. Therefore, anchors.size() must be 3 * 6 = 18.
+   * classNames Vector of strings where each string is a name corresponding
+      to a class the model can predict.
    */
   YOLOv3(const size_t imgSize,
          const std::vector<ElemType>& anchors,

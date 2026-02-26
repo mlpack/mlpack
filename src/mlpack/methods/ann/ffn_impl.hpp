@@ -393,8 +393,8 @@ void FFN<
       if (!std::is_same<MatType, arma::fmat>::value)
       {
         throw std::runtime_error("FFN::serialize(): Cannot serialize"
-            " a neural network with type `arma::fmat` when the actual type of"
-            " the network is not `arma::fmat`.");
+          " a neural network with `MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` since"
+          " the network's matrix type is not `arma::fmat`.");
       }
     #endif
 
@@ -402,8 +402,8 @@ void FFN<
       if (!std::is_same<MatType, arma::mat>::value)
       {
         throw std::runtime_error("FFN::serialize(): Cannot serialize"
-            " a neural network with type `arma::mat` when the actual type of"
-            " the network is not `arma::mat`.");
+          " a neural network with `MLPACK_ENABLE_ANN_SERIALIZATION` since"
+          " the network's matrix type is not `arma::mat`.");
       }
     #endif
     // Serialize the output layer and initialization rule.

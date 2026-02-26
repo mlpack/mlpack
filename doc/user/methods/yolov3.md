@@ -143,7 +143,33 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 
 ### `YOLOv3Tiny`
 
-<!-- TODO: update when YOLOv3Tiny is updated. -->
+`YOLOv3Tiny` is a smaller object detection model based off of `YOLOv3` but for
+low-resource machines. `YOLOv3Tiny` has an identical API to `YOLOv3` so it can
+be used as a drop-in replacement. `YOLOv3` has ~60 million parameters, while
+`YOLOv3Tiny` has ~8 million.
+
+[Pretrained weights](#pretrained-weights) are also included for `YOLOv3Tiny`.
+
+#### Simple example usage of `YOLOv3Tiny`
+
+```c++
+// Step 1: load the pretrained `YOLOv3Tiny` weights.
+// Download: https://models.mlpack.org/yolo/yolov3-tiny-416-coco-f64.bin
+mlpack::YOLOv3Tiny model;
+mlpack::Load("yolov3-tiny-416-coco-f64.bin", model);
+
+// Step 2: load the image
+// Download: https://models.mlpack.org/yolo/dog.jpg
+arma::mat image, outputImage;
+mlpack::ImageOptions opts;
+mlpack::Load("dog.jpg", image, opts);
+
+// Step 3: Preprocess the input image, detect bounding boxes and draw them onto `outputImage`.
+model.Predict(image, opts, outputImage, true);
+
+// Step 4: Save to "output.jpg"
+mlpack::Save("output.jpg", outputImage, opts, true);
+```
 
 ### Pretrained weights
 
@@ -152,13 +178,19 @@ a number of pretrained models are available for download.
 
 The format for the name of each YOLOv3 pretrained model is
 `<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
- * [`https://models.mlpack.org/yolo/yolov3-320-coco.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco.bin)
 
-An increased image size means the model will be able to detect smaller objects
+ * [`yolov3-320-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f64.bin)
+ * [`yolov3-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f64.bin)
+ * [`yolov3-608-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f64.bin)
+ * [`yolov3-320-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f32.bin)
+ * [`yolov3-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f32.bin)
+ * [`yolov3-608-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f32.bin)
+ * [`yolov3-tiny-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f64.bin)
+ * [`yolov3-tiny-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f32.bin)
+
+An increased image size means the model will be able to better detect smaller objects
 at the cost of speed. Similarly, smaller matrix types allow for faster loading
 of models and faster inference times.
-
-<!-- TODO: update and add other models -->
 
 The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).
 A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) is available too.
@@ -295,14 +327,23 @@ mlpack::Load("yolov3-320-coco-f32.bin", model);
 // Step 2: load the image into an arma::fmat.
 // Download: https://models.mlpack.org/yolo/dog.jpg
 // Note: the image type must also be `arma::fmat`
-arma::fmat image;
+arma::fmat image, outputImage;
 mlpack::ImageOptions opts;
 mlpack::Load("dog.jpg", image, opts);
 
 // Step 3: Preprocess the input image, detect bounding boxes and draw them onto `outputImage`.
-// Predict bounding boxes from an image using `YOLOv3` and draw them.
-model.Predict(image, opts);
+model.Predict(image, opts, outputImage, true);
 
 // Step 4: Save to "output.jpg"
-mlpack::Save("output.jpg", image, opts, true);
+mlpack::Save("output.jpg", outputImage, opts, true);
+```
+
+
+Since `YOLOv3Tiny` has an identical API, we can use the `arma::fmat`
+weights for faster inference times.
+
+```c++
+// Download: https://models.mlpack.org/yolo/yolov3-tiny-416-coco-f32.bin
+mlpack::YOLOv3Tiny<arma::fmat> model;
+mlpack::Load("yolov3-tiny-416-coco-f32.bin", model);
 ```

@@ -8,6 +8,7 @@
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ *
  */
 #ifndef MLPACK_METHODS_ANN_MODELS_MODELS_YOLOV3_TINY_IMPL_HPP
 #define MLPACK_METHODS_ANN_MODELS_MODELS_YOLOV3_TINY_IMPL_HPP
@@ -16,21 +17,19 @@
 
 namespace mlpack {
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-YOLOv3Tiny<
-           OutputLayerType,
-           InitializationRuleType,
-           MatType
->::YOLOv3Tiny(const size_t imgSize,
-              const size_t numClasses,
-              const size_t predictionsPerCell,
-              const std::vector<ElemType>& anchors) :
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
+::YOLOv3Tiny(const size_t imgSize,
+             const std::vector<ElemType>& anchors,
+             const std::vector<std::string>& classNames) :
   imgSize(imgSize),
-  predictionsPerCell(predictionsPerCell),
-  numAttributes(numClasses + 5)
+  numAttributes(classNames.size() + 5),
+  classNames(classNames),
+  anchors(anchors)
 {
+  const size_t predictionsPerCell = 3;
   if (anchors.size() != predictionsPerCell * 4)
   {
     std::ostringstream errMessage;
@@ -130,10 +129,10 @@ YOLOv3Tiny<
   model.Reset();
 }
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+size_t YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
 ::ConvolutionBlock(const size_t maps,
                    const size_t kernel,
                    const bool batchNorm,
@@ -160,10 +159,10 @@ size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
   return model.Add(block);
 }
 
-template <typename OutputLayerType,
-          typename InitializationRuleType,
-          typename MatType>
-size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+size_t YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
 ::MaxPool2x2(const size_t stride)
 {
   // All max pool layers have kernel size 2
@@ -179,20 +178,86 @@ size_t YOLOv3Tiny<OutputLayerType, InitializationRuleType, MatType>
   return model.Add(block);
 }
 
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename MatType>
+template<typename MatType,
+         typename OutputLayerType,
+         typename InitializationRuleType>
 template<typename Archive>
 void YOLOv3Tiny<
+    MatType,
     OutputLayerType,
-    InitializationRuleType,
-    MatType
+    InitializationRuleType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(imgSize));
-  ar(CEREAL_NVP(predictionsPerCell));
   ar(CEREAL_NVP(numAttributes));
+  ar(CEREAL_NVP(classNames));
+  ar(CEREAL_NVP(anchors));
+}
+
+template <typename MatType,
+          typename OutputLayerType,
+          typename InitializationRuleType>
+void YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
+::DrawBoundingBoxes(const MatType& rawOutput,
+                    MatType& image,
+                    const ImageOptions& opts,
+                    const double ignoreThresh)
+{
+  // Helpers
+  const size_t numBoxes = model.OutputDimensions()[1];
+  const size_t size = opts.Width() * opts.Height() * opts.Channels();
+
+  const size_t numClasses = classNames.size();
+  const arma::Col<ElemType> red = {255.0f, 0, 0};
+
+  arma::ucolvec nmsIndices;
+
+  ElemType ratio, xOffset, yOffset;
+  FixBoundingBoxes(opts.Width(), opts.Height(), ratio, xOffset, yOffset);
+
+  // Draw bounding boxes using NMS for each image in the batch.
+  for (size_t batch = 0; batch < rawOutput.n_cols; batch++)
+  {
+    MatType rawOutputAlias, imageAlias;
+
+    MakeAlias(rawOutputAlias, rawOutput, numAttributes, numBoxes,
+        rawOutput.n_rows * batch);
+    MakeAlias(imageAlias, image, size, 1, size * batch);
+
+    const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
+    const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+    const MatType& confs =
+      rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
+
+    // NMS on objectness, not class confidences. Will produce false negatives.
+    NMS<>::Evaluate(bboxes, objectness, nmsIndices, 0.4);
+
+    MatType chosenBoxes = bboxes.cols(nmsIndices);
+    MatType classConfs = MatType(confs.cols(nmsIndices)).each_row() %
+      objectness.cols(nmsIndices);
+    arma::umat chosenConfs = arma::index_max(classConfs, 0);
+
+    for (size_t b = 0; b < nmsIndices.n_rows; b++)
+    {
+      const size_t chosenClass = chosenConfs.at(0, b);
+      if (classConfs.at(chosenClass, b) < ignoreThresh)
+        continue;
+
+      const std::string& label = classNames[chosenClass];
+      const ElemType x1 =
+        (chosenBoxes.at(0, b) - chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+      const ElemType y1 =
+        (chosenBoxes.at(1, b) - chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+      const ElemType x2 =
+        (chosenBoxes.at(0, b) + chosenBoxes.at(2, b) / 2 - xOffset) * ratio;
+      const ElemType y2 =
+        (chosenBoxes.at(1, b) + chosenBoxes.at(3, b) / 2 - yOffset) * ratio;
+
+      const arma::Col<ElemType> bbox = arma::Col<ElemType>({x1, y1, x2, y2});
+      BoundingBoxImage(imageAlias, opts, bbox, red, 1, label, 2);
+    }
+  }
 }
 
 } // namespace mlpack
