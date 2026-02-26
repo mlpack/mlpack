@@ -10,6 +10,9 @@ and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 
 #### Simple usage example:
 
+**NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
+to serialize and deserialize models that use `arma::mat` as the data type.
+
 ```c++
 // Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
 mlpack::YOLOv3 model;
@@ -157,6 +160,9 @@ A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) 
 See also the [simple usage example](#simple-usage-example) for a trivial usage
 of the `YOLOv3` class.
 
+**NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
+to serialize and deserialize models that use `arma::mat` as the data type.
+
 ---
 
 Preprocess the image, predict bounding boxes and get the raw output of the model.
@@ -268,6 +274,9 @@ representation of weights and biases. The default is `arma::mat`.
  * Any matrix type that implements the Armadillo API can be used.
 
 The example below uses YOLOv3 using the `arma::fmat` weights.
+
+**NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` macro
+to serialize and deserialize models that use `arma::fmat` as the data type.
 
 ```c++
 // Step 1: load the pretrained arma::fmat weights.
