@@ -146,14 +146,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const size_t batchSize = (size_t) params.Get<int>("batch_size");
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
 
-  // If no output file is given, the user should know that the model will not be
-  // saved
-  if (params.Has("training"))
-  {
-    RequireAtLeastOnePassed(params, { "output_model" }, false, "trained model "
-        "will not be saved");
-  }
-
   ReportIgnoredParam(params, {{ "training", false }},
       "print_training_accuracy");
 
