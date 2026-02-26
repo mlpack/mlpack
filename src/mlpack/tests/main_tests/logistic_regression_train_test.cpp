@@ -100,16 +100,14 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   constexpr int N = 10;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  arma::Row<size_t> trainY; // Response vector with wrong size.
+  // Response vector with wrong size: 8 responses
+  arma::Row<size_t> trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
 
-  // 8 responses - incorrect size.
-  trainY = { 0, 0, 1, 0, 1, 1, 1, 0 };
-
-  // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(0, 0);
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
 
   // Labels with incorrect size. It should throw a runtime error.
-  REQUIRE_THROWS_AS(model->Train(trainX, trainY), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**
@@ -216,7 +214,6 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   arma::Row<size_t> testY;
 
   // Test data dimensionality is wrong. It should throw a logic error.
-  model->Train(trainX, trainY);
   REQUIRE_THROWS_AS(model->Classify(testX, testY, 0.5), std::logic_error);
 }
 
