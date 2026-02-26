@@ -210,7 +210,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::Row<size_t> responses;
 
   // Check if the responses are in a separate file.
-  if (params.Has("training") && params.Has("labels"))
+  if (params.Has("labels"))
   {
     responses = std::move(params.Get<arma::Row<size_t>>("labels"));
     if (responses.n_cols != regressors.n_cols)
@@ -219,7 +219,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << "training dataset." << endl;
     }
   }
-  else if (params.Has("training"))
+  else
   {
     // Checking the size of training data if no labels are passed.
     if (regressors.n_rows < 2)
@@ -235,7 +235,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Verify the labels.
-  if (params.Has("training") && max(responses) > 1)
+  if (max(responses) > 1)
   {
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;

@@ -77,7 +77,11 @@ TEST_CASE_METHOD(LogisticRegressionTrainTestFixture,
   arma::mat testX = arma::randu<arma::mat>(D, M);
 
   // Training the model.
-  LogisticRegression<>* model = new LogisticRegression<>(trainX, trainY);
+  SetInputParam("training", std::move(trainX));
+  SetInputParam("labels", std::move(trainY));
+  RUN_BINDING();
+  LogisticRegression<>* model =
+      params.Get<LogisticRegression<>*>("output_model");
   model->Classify(testX, testY, 0.5);
 
   // Output predictions size must match the test data set size.

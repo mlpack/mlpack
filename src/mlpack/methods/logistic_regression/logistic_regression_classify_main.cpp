@@ -97,5 +97,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   model->Classify(testSet, predictions, decisionBoundary);
   timers.Stop("logistic_regression_classification");
 
-  params.Get<arma::Row<size_t>>("predictions") = predictions;
+  params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
 }
