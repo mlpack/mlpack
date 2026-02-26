@@ -34,6 +34,14 @@ mlpack::Save("output.jpg", outputImage, opts);
   <img src="../../img/dog.jpg" alt="dog, bicycle and truck">
 </p>
 
+<p align="center">
+  <img src="../../img/fish.jpg" alt="fish">
+</p>
+
+<p align="center">
+  <img src="../../img/cat.jpg" alt="cat">
+</p>
+
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick Links:
