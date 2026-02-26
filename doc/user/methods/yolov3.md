@@ -95,12 +95,13 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 ---
 
  * `model.Predict(preprocessedInput, rawOutput)`
-  - Takes in a preprocessed `input`. See [example](#simple-examples).
-  - `output` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numDetections, batchSize)`.
-  - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
+  - Takes in a `preprocessedInput`. See [example](#simple-examples).
+  - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numDetections, batchSize)`.
   - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
+  - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
+  - The number of detections depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
   - Objectness means how likely an object is in the given box.
-  - The class probability means that given there's an object in the box, what's the probability that it's this class.
+  - The class probability means that given there's an object in the box, what's the probability that it's a particular class.
 
 
 | **name** | **type** | **description** |
@@ -182,6 +183,20 @@ The format for the name of each YOLOv3 pretrained model is
 An increased image size means the model will be able to better detect smaller objects
 at the cost of speed. Similarly, smaller matrix types allow for faster loading
 of models and faster inference times.
+
+When using `YOLOv3`, different image sizes will affect how many possible boxes
+the model can output. For example, `yolov3-320` will output 6300 possible boxes.
+Below is a table with all the pretrained models and how many possible boxes
+the output.
+
+
+| **model** | **Image Size** | **Number of Boxes** |
+|----------|----------|-----------------|
+| `yolov3` | `320` | 6300 |
+| `yolov3` | `416` | 22745|
+| `yolov3` | `608` | 10647|
+| `yolov3-tiny` | `416` | 2535|
+
 
 The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).
 A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) is available too.
