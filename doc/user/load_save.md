@@ -714,11 +714,11 @@ When a remote URL is given to `Load()`:
 ```c++
 // Throw an exception if loading fails with the Fatal option.
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv",
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
     labels, mlpack::Fatal);
 
 // Print information about the data.
@@ -1247,7 +1247,3 @@ else
       << std::endl;
 }
 ```
-
-## Online data load example
-
-

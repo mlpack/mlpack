@@ -42,8 +42,8 @@ inline void ParseURL(const std::string& url, std::string& host,
  * Try to download a file from a URL provided by the user.
  *
  * @param url Given URL to download dataset from.
- * @param filename return the filename of the file, or assign it to the file if
- * it is specified by the user.
+ * @param filename The path to save the downloaded file to; if empty,
+ * then a temporary filename is generated.
  * @return true if download is successful, otherwise, throw error on failure, or
  * return false.
  */

@@ -77,25 +77,16 @@ inline void ParseURL(const std::string& url, std::string& host,
   pos = pos + 3;
 
   std::string possibleHost = url.substr(pos);
-
-  //size_t hostPos = possibleHost.find_first_of(".:/");
-  //if (hostPos == std::string::npos)
-  //{
-    //throw std::runtime_error("Domain name is not valid."
-        //" Domain name should contains '.' between the hostname and the top"
-        //" level domain. Or '/' at the end. Please check the provided URL");
-  //}
-
   size_t endHost = possibleHost.find_first_of(":/");
+  std::string tmpHost = possibleHost.substr(0, endHost);
+  if (CheckValidHost(tmpHost))
+    host = tmpHost;
+  else
+    throw std::runtime_error("ParseURL(): invalid host '" + tmpHost + "'. "
+        "Valid hostnames must contain only lowercase letters, digits, and hyphens.");
+
   if (endHost != std::string::npos)
   {
-    std::string tmpHost = possibleHost.substr(0, endHost);
-    if (CheckValidHost(tmpHost))
-      host = tmpHost;
-    else
-      throw std::runtime_error("ParseURL(): invalid host '" + tmpHost + "'. "
-          "Valid hostnames must contain only lowercase letters, digits, and hyphens.");
-
     char endChar = possibleHost.at(endHost);
     if (endChar == ':')
     {
@@ -104,14 +95,6 @@ inline void ParseURL(const std::string& url, std::string& host,
       if (IsDigits(possibleHost.substr(endHost + 1, endPort)))
         port = std::stoi(possibleHost.substr(endHost + 1, endPort));
     }
-  }
-  else // In case of using http://localhost or similar
-  {
-    if (CheckValidHost(possibleHost))
-      host = possibleHost;
-    else
-      throw std::runtime_error("Invalid Host.\n"
-          "Valid host contains only lower letters, numeric and hyphen");
   }
 
   int firstPos = possibleHost.rfind(":");
@@ -129,18 +112,14 @@ inline void ParseURL(const std::string& url, std::string& host,
     {
       std::string possibleFilename = possibleHost.substr(filePos + 1);
       size_t posFile = possibleFilename.find_first_of("?#");
-      // Check for the '.' as a marker for extension
-      if (possibleFilename.find(".") != std::string::npos)
+      // we assume something is after the file name.
+      if (posFile != std::string::npos)
       {
-        // we assume something is after the file name.
-        if (posFile != std::string::npos)
-        {
-          filename = possibleFilename.substr(0, posFile);
-        }
-        else
-        {
-          filename = possibleFilename;
-        }
+        filename = possibleFilename.substr(0, posFile);
+      }
+      else
+      {
+        filename = possibleFilename;
       }
     }
   }
@@ -184,13 +163,13 @@ inline bool DownloadFile(const std::string& url,
 
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
-  tmpFilename = tmpFilename + "." + Extension(filename);
+  tmpFilename +=  "." + Extension(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in
+  stream.open(tmpFilename.c_str(), std::fstream::in
       | std::fstream::binary);
 #else
-  stream.open(filename.c_str(), std::fstream::in);
+  stream.open(tmpFilename.c_str(), std::fstream::in);
 #endif
 
   if (!stream.is_open())
