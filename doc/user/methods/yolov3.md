@@ -72,8 +72,6 @@ Defaults and types are detailed in the
    - After this step, load [pretrained weights](#pretrained-weights) into the
      model with [`Load()`](../load_save.md#load).
 
----
-
 ### Predicting Bounding Boxes
 
 Once the weights are loaded, you can compute likely object bounding boxes with with `Predict()`.
@@ -110,7 +108,6 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 | `input` | `MatType` | Input image. See [example](#simple-usage-example) for details on preprocessing the input image |
 | `output` | `MatType` | Raw outputs of the model |
 
----
 
 ### Other Functionality
 
@@ -197,8 +194,6 @@ of the `YOLOv3` class.
 **NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
 to serialize and deserialize models that use `arma::mat` as the data type.
 
----
-
 Preprocess the image, predict bounding boxes and get the raw output of the model.
 
 ```c++
@@ -283,15 +278,14 @@ mlpack::ImageOptions opts;
 std::vector<std::string> inputFiles = {"dog.jpg", "cat.jpg", "fish.jpg"};
 mlpack::Load(inputFiles, inputImages, opts);
 
-// Step 3: Preprocess each `inputImages`, detect bounding boxes and draw them onto each `outputImages`. Each column is a seperate image.
+// Step 3: Preprocess each `inputImages`, detect bounding boxes and draw them onto each `outputImages`.
+// Each column is a seperate image.
 model.Predict(inputImages, opts, outputImages, true);
 
 // Step 4: Save each image.
 std::vector<std::string> outputFiles = {"1.jpg", "2.jpg", "3.jpg"};
 mlpack::Save(outputFiles, outputImages, opts);
 ```
-
----
 
 ### Advanced Functionality: Template Parameters
 
