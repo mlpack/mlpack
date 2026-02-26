@@ -146,9 +146,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const size_t batchSize = (size_t) params.Get<int>("batch_size");
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");
 
-  ReportIgnoredParam(params, {{ "training", false }},
-      "print_training_accuracy");
-
   RequireAtLeastOnePassed(params,
       { "output_model", "print_training_accuracy" }, false,
       "the trained logistic regression model will not be used or saved");
