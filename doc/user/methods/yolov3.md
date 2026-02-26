@@ -31,15 +31,15 @@ mlpack::Save("output.jpg", outputImage, opts);
 ```
 
 <p align="center">
-  <img src="../../img/dog.jpg" alt="dog, bicycle and truck">
+  <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck">
 </p>
 
 <p align="center">
-  <img src="../../img/fish.jpg" alt="fish">
+  <img src="../../img/person_bbox.jpg" alt="fish">
 </p>
 
 <p align="center">
-  <img src="../../img/cat.jpg" alt="cat">
+  <img src="../../img/cat_bbox.jpg" alt="cat">
 </p>
 
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
