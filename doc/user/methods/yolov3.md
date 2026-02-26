@@ -30,17 +30,11 @@ model.Predict(inputImage, opts, outputImage, true);
 mlpack::Save("output.jpg", outputImage, opts);
 ```
 
-<p align="center">
+<div style="display: flex; gap: 10px;">
   <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck">
-</p>
-
-<p align="center">
   <img src="../../img/person_bbox.jpg" alt="fish">
-</p>
-
-<p align="center">
   <img src="../../img/cat_bbox.jpg" alt="cat">
-</p>
+</div>
 
 <p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
