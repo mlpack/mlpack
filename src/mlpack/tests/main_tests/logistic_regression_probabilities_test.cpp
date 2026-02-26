@@ -1,6 +1,7 @@
 /**
   * @file logistic_regression_probabilities_test.cpp
   * @author B Kartheek Reddy
+  * @author Dirk Eddelbuettel
   *
   * Test RUN_BINDING() of logistic_regression_probabilities_main.cpp
   *

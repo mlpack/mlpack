@@ -1,6 +1,7 @@
 /**
   * @file logistic_regression_classify_test.cpp
   * @author B Kartheek Reddy
+  * @author Dirk Eddelbuettel
   *
   * Test RUN_BINDING() of logistic_regression_classify_main.cpp
   *

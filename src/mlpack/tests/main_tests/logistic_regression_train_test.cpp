@@ -1,6 +1,7 @@
 /**
   * @file logistic_regression_train_test.cpp
   * @author B Kartheek Reddy
+  * @author Dirk Eddelbuettel
   *
   * Test RUN_BINDING() of logistic_regression_train_main.cpp
   *
