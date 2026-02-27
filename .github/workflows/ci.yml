@@ -82,14 +82,14 @@ jobs:
             os: 'macOS',
             name: 'CLI',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
-            cores: 3
+            cores: 1
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
-            cores: 3
+            cores: 1
           }
         ]
 
