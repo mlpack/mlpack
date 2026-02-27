@@ -108,6 +108,14 @@ class YOLOv3
   const std::vector<ElemType>& Anchors() { return anchors; }
 
   /**
+   * Returns the number of possible bounding boxes.
+   */
+  const std::vector<ElemType>& NumBoxes()
+  {
+    return model.OutputDimensions()[1];
+  }
+
+  /**
    * Ordinary feed forward pass of the network. Preprocesses image
    * and writes to `output`, which can optionally be the raw outputs
    * of the model, or a copy of `image` with the bounding boxes

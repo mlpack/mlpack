@@ -78,8 +78,8 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 
  * `model.Predict(image, opts, output, drawBoxes=false ignoreThresh=0.7)`
    - Predict objects in the given `image` (with metadata [`opts`](../load_save.md#imageoptions)).
-   - Image pixel values are expected to be between 0-255. A [letterbox](../core/images.md#letterbox-transform) transform will be applied to the image.
-   - If `drawBoxes` is true, output will be a copy of image with the bounding boxes from the model drawn onto it.
+   - Predict will apply a [letterbox](../core/images.md#letterbox-transform) transform to `image`. Image pixel values are expected to be between 0-255.
+   - If `drawBoxes` is true, `output` will be a copy of image with the bounding boxes from the model drawn onto it.
    - Bounding boxes will be drawn if their confidence is greater than `ignoreThresh`.
    - If `drawBoxes` is false, the output will be the raw outputs of the model. The bounding box coordinates will be in the original image's space.
 
@@ -96,10 +96,12 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 
  * `model.Predict(preprocessedInput, rawOutput)`
   - Takes in a `preprocessedInput`. See [example](#simple-examples).
-  - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numDetections, batchSize)`.
+  - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numBoxes, batchSize)`.
   - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
   - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
-  - The number of detections depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
+  - The `numBoxes` depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
+  - You can get the `numBoxes` of the model from [`model.NumBoxes()`](#other-functionality).
+  -  `cx` and `cy` are the coordinates for the center of the box. `w` and `h` are respectively the width and height of that bounding box.
   - Objectness means how likely an object is in the given box.
   - The class probability means that given there's an object in the box, what's the probability that it's a particular class.
 
@@ -119,8 +121,7 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
    [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) object that represents the model architecture.
 
  * `ImageSize()` will return a `size_t` containing the expected width and height
-    of the image afte preprocessing. The `yolov3-320.bin` model for example converts the
-    input image to shape `(320, 320, 3)`.
+    of the image after preprocessing. The `yolov3-320-coco-f64.bin` model for example takes in an image where the width and height are `320` pixels.
 
  * `NumClasses()` will return the number of classes that a
     bounding box could contain. For example, the pretrained weights
@@ -132,6 +133,8 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 
  * `Anchors()` returns a vector of doubles representing the anchors used
     during inference.
+
+ * `NumBoxes()` returns the number of possible bounding boxes the model can detect.
 
 ### `YOLOv3Tiny`
 
@@ -185,16 +188,17 @@ at the cost of speed. Similarly, smaller matrix types allow for faster loading
 of models and faster inference times.
 
 When using `YOLOv3`, different image sizes will affect how many possible boxes
-the model can output. For example, `yolov3-320` will output 6300 possible boxes.
+the model can output. For example, `yolov3-320-coco-f64.bin` will output `6300` possible boxes.
 Below is a table with all the pretrained models and how many possible boxes
-the output.
+they output.
 
 
-| **model** | **Image Size** | **Number of Boxes** |
+| **Model** | **Image Size** | **Number of Boxes** |
 |----------|----------|-----------------|
-| `yolov3` | `320` | 6300 |
+| `yolov3` | `320` | `6300` |
 | `yolov3` | `416` | `10647`|
-| `yolov3` | `608` | `22745` |
+| `yolov3` | `608` | `22743` |
+| `yolov3-tiny` | `416` | `2535` |
 
 The pretrained models available were all finetuned on the [COCO dataset](https://cocodataset.org/).
 A link to all the [COCO class names](https://models.mlpack.org/yolo/coco.names) is available too.
@@ -207,7 +211,7 @@ of the `YOLOv3` class.
 **NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
 to serialize and deserialize models that use `arma::mat` as the data type.
 
-Preprocess the image, predict bounding boxes and get the raw output of the model.
+Simple example loading the image, passing it to [`Predict()`](#predicting-bounding-boxes) and saving the output.
 
 ```c++
 // Step 1: load the pretrained weights.
@@ -233,7 +237,7 @@ std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
 
 ---
 
-Simple example of doing custom preprocessing on the input image, and getting raw output of the model.
+Example of doing custom preprocessing on the input image, and getting raw output of the model.
 
 ```c++
 // Step 1: load the pretrained model.
@@ -273,7 +277,7 @@ std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
 
 ---
 
-Predict and draw bounding boxes on multiple images. **NOTE**: On this example, each image must have the same dimensions.
+Example of predicting and drawing with multiple images simultaneously. **NOTE**: On this example, each image must have the same dimensions.
 
 ```c++
 // Step 1: load the pretrained model.
