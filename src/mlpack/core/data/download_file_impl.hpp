@@ -176,8 +176,8 @@ inline bool DownloadFile(const std::string& url,
   if (!stream.is_open())
   {
     std::stringstream oss;
-    oss <<  "DownloadFile(): cannot open temporary file '" << tmpFilename
-        << "' for storing downloaded data. Please check the file path.";
+    oss <<  "DownloadFile(): cannot open temporary file " << tmpFilename
+        << " for storing downloaded data. Please check the file path.";
     throw std::runtime_error(oss.str());
   }
   errno = 0;
