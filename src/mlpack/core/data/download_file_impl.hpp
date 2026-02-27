@@ -186,7 +186,7 @@ inline bool DownloadFile(const std::string& url,
   if (!stream.good())
   {
     std::stringstream oss;
-    oss << "Error writing to file '" << tmpFilename << "': "
+    oss << "Error writing to file " << tmpFilename << ": "
         << std::strerror(errno);
     throw std::runtime_error(oss.str());
   }
