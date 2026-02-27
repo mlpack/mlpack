@@ -82,14 +82,14 @@ jobs:
             os: 'macOS',
             name: 'CLI',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
-            cores: 3
+            cores: 1
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
-            cores: 3
+            cores: 1
           }
         ]
 
@@ -103,6 +103,7 @@ jobs:
       # Set up ccache.
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
+        if: matrix.config.os != 'macOS'
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           append-timestamp: false
@@ -111,6 +112,7 @@ jobs:
 
       - name: Configure ccache
         shell: bash
+        if: matrix.config.os != 'macOS'
         run: |
           ccache --set-config "sloppiness=include_file_ctime"
           ccache --set-config "hash_dir=false"
@@ -158,7 +160,7 @@ jobs:
         if: matrix.config.os == 'macOS'
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-          brew install libomp openblas armadillo cereal ensmallen ccache
+          brew install libomp openblas armadillo cereal ensmallen
 
       # Because mlpack's precompiled headers basically include everything
       # (mlpack.hpp, core.hpp, etc.), changes to a single file will invalidate
