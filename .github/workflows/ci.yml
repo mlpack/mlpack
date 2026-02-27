@@ -103,6 +103,7 @@ jobs:
       # Set up ccache.
       - name: Get ccache
         uses: hendrikmuhs/ccache-action@v1.2
+        if: matrix.config.os != 'macOS'
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
           append-timestamp: false
