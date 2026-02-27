@@ -180,6 +180,7 @@ The format for the name of each YOLOv3 pretrained model is
  * [`yolov3-tiny-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f64.bin)
 
 `arma::fmat` weights are also included. These weights [need custom template behaviour](#advanced-functionality-template-parameters).
+
  * [`yolov3-320-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f32.bin)
  * [`yolov3-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f32.bin)
  * [`yolov3-608-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f32.bin)
