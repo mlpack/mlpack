@@ -94,3 +94,8 @@ add_markdown_docs(preprocess preprocess_imputer "cli" "")
 add_category(range_search "Geometry")
 add_cli_executable(range_search range_search)
 add_markdown_docs(range_search range_search "cli" "")
+
+# tSNE CLI Executable
+add_category(tsne "Transformations")
+add_cli_executable(tsne tsne)
+add_markdown_docs(tsne tsne "cli" "")

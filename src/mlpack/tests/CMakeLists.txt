@@ -149,6 +149,7 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   xgboost_test.cpp
+  tsne_test.cpp
 
   # Tests for individual bindings.
   main_tests/adaboost_test.cpp
