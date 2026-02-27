@@ -95,15 +95,15 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
 ---
 
  * `model.Predict(preprocessedInput, rawOutput)`
-  - Takes in a `preprocessedInput`. See [example](#simple-examples).
-  - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numBoxes, batchSize)`.
-  - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
-  - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
-  - The `numBoxes` depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
-  - You can get the `numBoxes` of the model from [`model.NumBoxes()`](#other-functionality).
-  -  `cx` and `cy` are the coordinates for the center of the box. `w` and `h` are respectively the width and height of that bounding box.
-  - Objectness means how likely an object is in the given box.
-  - The class probability means that given there's an object in the box, what's the probability that it's a particular class.
+   - Takes in a `preprocessedInput`. See [example](#simple-examples).
+   - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numBoxes, batchSize)`.
+   - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
+   - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
+   - The `numBoxes` depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
+   - You can get the `numBoxes` of the model from [`model.NumBoxes()`](#other-functionality).
+   -  `cx` and `cy` are the coordinates for the center of the box. `w` and `h` are respectively the width and height of that bounding box.
+   - Objectness means how likely an object is in the given box.
+   - The class probability means that given there's an object in the box, what's the probability that it's a particular class.
 
 
 | **name** | **type** | **description** |
