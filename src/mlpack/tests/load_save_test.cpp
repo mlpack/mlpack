@@ -3448,4 +3448,181 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
+#ifndef MLPACK_DISABLE_HTTP
+#ifdef MLPACK_ENABLE_HTTP
+
+TEST_CASE("URLTests", "[LoadSaveTest]")
+{
+  std::string host, filename, testUrl;
+  int port;
+
+  // 1.  Simple file
+  testUrl = "https://example.com/files/report.pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "report.pdf");
+
+  // 2.  Image file
+  "http://cdn.server.org/images/photo.jpg";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.server.org");
+  REQUIRE(filename == "photo.jpg");
+
+  // 3.  With port + file"
+  testUrl = "https://example.com:8080/api/data/export.csv";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "export.csv");
+  REQUIRE(port == 8080);
+
+  // 4.  Compound extension
+  testUrl = "ftp://files.host.net:21/backup/archive.tar.gz";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 5.  File + query
+  testUrl = "https://example.com/docs/manual.html?page=3";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 6.  File + fragment
+  testUrl = "https://example.com/docs/manual.html#chapter2";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 7.  File + query + fragment// ---- No filename / path-only ----
+  testUrl = "https://example.com/dl/setup.exe?v=2.1&os=win#mirror";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "setup.exe");
+
+  // Our target here is to show that we are not modifying the filename.
+  filename = "";
+  // 8.  Basic URL
+  testUrl = "https://example.com";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 9.  Trailing slash only
+  testUrl = "https://example.com/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 10. Path with no extension// ---- Deep paths ----
+  testUrl = "https://example.com/api/v2/users";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 11. Deeply nested file
+  testUrl = "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.example.com");
+  REQUIRE(filename == "deep_file.wasm");
+
+  filename = "";
+  // 12. Trailing slash (no file)// ---- Special filenames ----
+  testUrl = "https://example.com/path/to/dir/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 13. Dotfile (no extension)
+  testUrl = "https://example.com/.hidden";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".hidden");
+
+  // 14. Dotfile with extension
+  testUrl = "https://example.com/files/.env.production";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".env.production");
+
+  // 15. URL-encoded spaces + parens
+  testUrl = "https://example.com/files/my%20file%20(1).pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "my%20file%20(1).pdf");
+
+  // 16. Unicode in filename// ---- Edge cases ----
+  testUrl = "https://example.com/files/résumé.docx";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "résumé.docx");
+
+  // 17. IP address as host
+  testUrl = "https://192.168.1.1:3000/logs/debug.log";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "192.168.1.1");
+  REQUIRE(filename == "debug.log");
+  REQUIRE(port == 3000);
+
+  // 18. Port, no path, no file
+  testUrl = "https://example.com:443";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+  REQUIRE(port == 443);
+
+  // 19. Localhost
+  testUrl = "http://localhost:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 20. Many dots in filename
+  testUrl = "https://example.com/file.backup.2024.01.15.sql.gz";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "file.backup.2024.01.15.sql.gz");
+
+  // 21 Corrupt URL
+  testUrl = "https://";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 22 No URL
+  testUrl = "";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 23 Invalid host with special chars
+  testUrl = "https://!@#$%^*^&*.com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 24 Invalid host with trailing dots
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 25 Invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+}
+
+TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
+        dataset, Fatal + Transpose) == true);
+}
+
+TEST_CASE("DownLoad404File", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE_THROWS_AS(Load("http://datasets.mlpack.org/nonexistent_file.csv",
+        dataset, Fatal + Transpose), std::runtime_error);
+}
+
+#endif
+#endif
+
 #endif

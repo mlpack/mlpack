@@ -12,6 +12,7 @@
 #include <rcpp_mlpack.h>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 using namespace mlpack;
 using namespace Rcpp;

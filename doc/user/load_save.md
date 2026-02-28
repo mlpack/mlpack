@@ -36,7 +36,7 @@ and [format detection/selection](#formats).
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
 
- - `Load(filename, object, Option1 + Option2 + ...)`
+ - `Load(filename, X, Option1 + Option2 + ...)`
    * Load `X` from the given file `filename` with the given options.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
@@ -44,7 +44,7 @@ and [format detection/selection](#formats).
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
 
- - `Load(filename, object, opts)`
+ - `Load(filename, X, opts)`
    * Load `X` from the given file `filename` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
@@ -689,6 +689,48 @@ std::cout << "Loaded data from movielens-100k.csv; matrix size: "
     << dataset.n_rows << " x " << dataset.n_cols << "." << std::endl;
 ```
 ---
+
+## Loading from remote URLs
+
+mlpack supports loading datasets from URLs.  Files will be downloaded using the
+[cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
+with mlpack for ease of use.
+
+When a remote URL is given to `Load()`:
+
+ * The URL must start with either `http://` or `https://` or loading will fail.
+
+ * If the URL starts with `https://`, then [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) should be
+     declared before `#include <mlpack.hpp>`.
+
+ * For loading HTTPS data, support must be enabled with
+     [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
+     including mlpack, and the program must be additionally [linked with `-lssl
+     -lcrypto`](compile.md#linking-without-the-armadillo-wrapper)
+
+ * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
+    Linux systems).
+
+```c++
+// Throw an exception if loading fails with the Fatal option.
+arma::mat dataset;
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
+
+arma::Row<size_t> labels;
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
+    labels, mlpack::Fatal);
+
+// Print information about the data.
+std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+
+std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
+std::cout << " - " << labels.n_elem << " labels." << std::endl;
+std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
+std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+```
 
 ## Mixed categorical data
 

@@ -367,6 +367,17 @@ if (USE_SYSTEM_HTTPLIB)
     "#define MLPACK_USE_SYSTEM_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
+if (ENABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_ENABLE_HTTPLIB\n"
+    "#define MLPACK_ENABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+   message("CONFIG_CONTENTS" ${CONFIG_CONTENTS})
+endif()
+
+if (DISABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_HTTPLIB\n"
+    "#define MLPACK_DISALBLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)

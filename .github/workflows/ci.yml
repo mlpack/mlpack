@@ -32,63 +32,63 @@ jobs:
             os: 'Linux',
             name: 'Debug',
             # Disable [DEBUG] output from the tests because it's WAY too verbose.
-            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF -DCMAKE_CXX_FLAGS="-DMLPACK_NO_PRINT_DEBUG"',
+            cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF -DCMAKE_CXX_FLAGS="-DMLPACK_NO_PRINT_DEBUG" -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'Python',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'Julia',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_JULIA_BINDINGS=ON -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'R',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DENABLE_HTTPLIB=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'Go',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_GO_BINDINGS=ON -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'Markdown',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_MARKDOWN_BINDINGS=ON -DENABLE_HTTPLIB=ON',
             cores: 4
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
             cores: 3
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DENABLE_HTTPLIB=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
             cores: 3
           }
         ]
@@ -284,6 +284,7 @@ jobs:
               -DENSMALLEN_INCLUDE_DIR=../deps/ensmallen.2.17.0/installed/x64-linux/include/ \
               -DCEREAL_INCLUDE_DIR=../deps/cereal-1.3.2/include/ \
               -DCMAKE_VERBOSE_MAKEFILE=ON \
+              -DENABLE_HTTPLIB=ON \
               ../
 
       - name: Build mlpack
