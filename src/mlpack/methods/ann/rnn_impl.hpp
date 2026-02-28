@@ -544,7 +544,6 @@ void RNN<
           "`MLPACK_ENABLE_ANN_SERIALIZATION` is not defined.");
       }
     #endif
-    #endif
     ar(CEREAL_NVP(bpttSteps));
     ar(CEREAL_NVP(single));
     ar(CEREAL_NVP(network));
