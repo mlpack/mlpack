@@ -35,14 +35,42 @@
      public: \
       CLASS_NAME() : MainTestFixture(IO::Parameters(STRINGIFY(BINDING_NAME))) \
       { } \
+      \
+      static void CheckRequiredAndRun(util::Params& params, \
+                                      util::Timers& timers) \
+      { \
+        CheckRequired(params); \
+        BINDING_FUNCTION(params, timers); \
+      } \
     };
+
+/**
+ * Check that all required input parameters have been specified.  This throws a
+ * std::runtime_error if any required input parameter is missing.  If all
+ * required input parameters are correctly given, then the binding is run via a
+ * call to BINDING_FUNCTION().
+ */
+inline void CheckRequired(util::Params& params)
+{
+  for (const std::pair<std::string, ParamData> p : params.Parameters())
+  {
+    if (p.second.required && !p.second.wasPassed)
+    {
+      std::ostringstream oss;
+      oss << "Required parameter '" << p.first << "' was not set before "
+          << "calling RUN_BINDING()!";
+      throw std::runtime_error(oss.str());
+    }
+  }
+}
 
 /**
  * Run the binding.  This depends on the `BINDING_NAME` macro being defined
  * appropriately.  This is generally done simply by including the binding's
- * `*_main.cpp` file.
+ * `*_main.cpp` file.  Before running the binding, we check that all required
+ * parameters are specified.
  */
-#define RUN_BINDING() BINDING_FUNCTION(params, timers)
+#define RUN_BINDING() CheckRequiredAndRun(params, timers)
 
 /**
  * MainTestFixture is a base class for Catch fixtures for mlpack binding tests.

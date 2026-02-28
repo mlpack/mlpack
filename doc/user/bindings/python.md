@@ -1962,61 +1962,12 @@ An LCC model may be saved using the `output_model` output parameter.  Then, to e
  - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
-## logistic_regression()
+## class LogisticRegression
 {: #logistic_regression }
 
-#### L2-regularized Logistic Regression and Prediction
+#### L2-regularized Logistic Regression Training and Prediction
 {: #logistic_regression_descr }
 
-```python
->>> from mlpack import logistic_regression
->>> d = logistic_regression(batch_size=64, check_input_matrices=False,
-        copy_all_inputs=False, decision_boundary=0.5, input_model=None,
-        labels=np.empty([0], dtype=np.uint64), lambda_=0, max_iterations=10000,
-        optimizer='lbfgs', print_training_accuracy=False, step_size=0.01,
-        test=np.empty([0, 0]), tolerance=1e-10, training=np.empty([0, 0]),
-        verbose=False)
->>> output_model = d['output_model']
->>> predictions = d['predictions']
->>> probabilities = d['probabilities']
-```
-
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `batch_size` | [`int`](#doc_int) | Batch size for SGD. | `64` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `decision_boundary` | [`float`](#doc_float) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
-| `input_model` | [`LogisticRegression<>Type`](#doc_model) | Existing model (parameters). | `None` |
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | `np.empty([0], dtype=np.uint64)` |
-| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0` |
-| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
-| `print_training_accuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `False` |
-| `step_size` | [`float`](#doc_float) | Step size for SGD optimizer. | `0.01` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | `np.empty([0, 0])` |
-| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LogisticRegression<>Type`](#doc_model) | Output for trained logistic regression model. | 
-| `predictions` | [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `probabilities` | [`matrix`](#doc_matrix) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #logistic_regression_detailed-documentation }
 
 An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
 
@@ -2024,7 +1975,7 @@ An implementation of L2-regularized logistic regression using either the L-BFGS 
 
 In this setting, y corresponds to class labels and X corresponds to data.
 
-This program allows loading a logistic regression model (via the `input_model` parameter) or training a logistic regression model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained logistic regression model may be saved using the `output_model` output parameter.
+This implementation can train a logistic regression model given training data (specified with the `training` parameter).  A trained logistic regression model can then be used to perform classification on a test dataset (specified with the `test` parameter).  Alternatively, classification probabilities can be computed and saved with the `probabilities` parameter.
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
 
@@ -2032,32 +1983,101 @@ When a model is being trained, there are many options.  L2 regularization (to pr
 
 For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `max_iterations` should be set to the number of points in the dataset.
 
-Optionally, the model can be used to predict the responses for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing logistic regression model is given with the `input_model` parameter.  The output predictions from the logistic regression model may be saved with the `predictions` parameter.
-
 This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_size` | [`int`](#doc_int) | Batch size for SGD. | `64` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0` |
+| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
+| `print_training_accuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `False` |
+| `step_size` | [`float`](#doc_float) | Step size for SGD optimizer. | `0.01` |
+| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `decision_boundary` | [`float`](#doc_float) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
 
 ### Example
-As an example, to train a logistic regression model on the data '`'data'`' with labels '`'labels'`' with L2 regularization of 0.1, saving the model to '`'lr_model'`', the following command may be used:
 
 ```python
->>> output = logistic_regression(training=data, labels=labels, lambda_=0.1,
-  print_training_accuracy=True)
->>> lr_model = output['output_model']
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import LogisticRegression
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = LogisticRegression(batch_size=64, check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0, max_iterations=10000, optimizer='lbfgs',
+  print_training_accuracy=False, step_size=0.01, tolerance=1e-10,
+  verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
 ```
 
-Then, to use that model to predict classes for the dataset '`'test'`', storing the output predictions in '`'predictions'`', the following command may be used: 
+### Methods
 
-```python
->>> output = logistic_regression(input_model=lr_model, test=test)
->>> predictions = output['predictions']
-```
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points. |
+| predict | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
+| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties. |
 
-### See also
+### 1. fit
 
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LogisticRegression<>Type`](#doc_model) | Output for trained logistic regression model. | 
+
+### 2. predict
+
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+
+### 3. predict_proba
+
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
 
 ## lsh()
 {: #lsh }

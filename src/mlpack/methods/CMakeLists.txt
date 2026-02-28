@@ -36,7 +36,18 @@ add_all_bindings(linear_svm linear_svm "Classification")
 add_all_bindings(lmnn lmnn "Transformations")
 add_all_bindings(local_coordinate_coding local_coordinate_coding
     "Transformations")
-add_all_bindings(logistic_regression logistic_regression "Classification")
+
+add_category(logistic_regression "Classification")
+group_bindings(logistic_regression logistic_regression
+  "train;classify;probabilities")
+add_python_wrapper(logistic_regression logistic_regression)
+add_cli_executable(logistic_regression logistic_regression)
+add_julia_binding(logistic_regression logistic_regression)
+add_go_binding(logistic_regression logistic_regression)
+add_r_binding(logistic_regression logistic_regression)
+add_markdown_docs(logistic_regression logistic_regression
+  "cli;python;julia;go;r" "python")
+
 add_all_bindings(lsh lsh "Geometry")
 add_all_bindings(mean_shift mean_shift "Clustering")
 add_all_bindings(naive_bayes nbc "Classification")
@@ -70,6 +81,8 @@ add_julia_binding(adaboost adaboost)
 add_go_binding(adaboost adaboost)
 add_r_binding(adaboost adaboost)
 add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
+
+
 
 # Linear Regression has a Python wrapper class that encapsulates its
 # functionality in a few methods.
