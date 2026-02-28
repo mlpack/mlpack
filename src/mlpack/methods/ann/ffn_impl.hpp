@@ -389,7 +389,8 @@ void FFN<
 
     (void) ar;
   #else
-    #ifndef MLPACK_ENABLE_ANN_SERIALIZATION_FMAT
+    #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
+        !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
       if (std::is_same<MatType, arma::fmat>::value)
       {
         throw std::runtime_error("FFN::serialize(): Cannot serialize"
@@ -398,7 +399,8 @@ void FFN<
       }
     #endif
 
-    #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
+    #ifndef MLPACK_ENABLE_ANN_SERIALIZATION && \
+        !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
       if (std::is_same<MatType, arma::mat>::value)
       {
         throw std::runtime_error("FFN::serialize(): Cannot serialize"
