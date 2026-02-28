@@ -114,6 +114,10 @@ support, and dataset download is supported by default. If you prefer to
 use versions available on your system, see
 [the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
 
+mlpack bundles dr\_mp3 and dr\_wav libs to load mp3 and wav dataset files by
+default.If you prefer to use versions available on your system, see
+[the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
+
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
 ## 3. Installation
