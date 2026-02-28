@@ -26,9 +26,8 @@ namespace mlpack {
  *
  * @param src The source matrix that contains the images.
  * @param srcOpt Contains relevant information on each source image.
- * @param dest The destination matrix that will have the source image
-          embedded onto it
- * @param imgSize The width and height of each output image.
+ * @param width The width of each output image.
+ * @param height The height of each output image.
  * @param fillValue The whitespace value.
  */
 template<typename eT>
@@ -36,7 +35,7 @@ void LetterboxImages(arma::Mat<eT>& src,
                     ImageOptions& srcOpt,
                     const size_t width,
                     const size_t height,
-                    const eT fillValue)
+                    const double fillValue)
 {
   const size_t expectedRows =
     srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();

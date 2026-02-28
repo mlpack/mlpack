@@ -1577,17 +1577,39 @@ void DAGNetwork<
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
   #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
       !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
     // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
     // better ensure that every layer you are serializing has had
     // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
     // more information.
-    throw std::runtime_error("Cannot serialize a neural network unless "
-        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-        "build options\" section of the README for more information.");
+    throw std::runtime_error("DAGNetwork::serialize(): Cannot serialize"
+        " unless MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See"
+        " the additional build options\" section of the README for more"
+        " information.");
 
     (void) ar;
   #else
+    #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
+        !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+      if (std::is_same<MatType, arma::fmat>::value)
+      {
+        throw std::runtime_error("DAGNetwork::serialize(): Cannot serialize"
+          " a neural network with type `arma::fmat` if "
+          "`MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` is not defined.");
+      }
+    #endif
+
+    #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+        !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+      if (std::is_same<MatType, arma::mat>::value)
+      {
+        throw std::runtime_error("DAGNetwork::serialize(): Cannot serialize"
+          " a neural network with type `arma::mat` if "
+          "`MLPACK_ENABLE_ANN_SERIALIZATION` is not defined.");
+      }
+    #endif
+
     // Serialize the output layer and initialization rule.
     ar(CEREAL_NVP(outputLayer));
     ar(CEREAL_NVP(initializeRule));

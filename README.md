@@ -143,6 +143,10 @@ add `#define MLPACK_ENABLE_ANN_SERIALIZATION` before including `<mlpack.hpp>`.
 If you don't define `MLPACK_ENABLE_ANN_SERIALIZATION` and your code serializes a
 neural network, a compilation error will occur.
 
+`MLPACK_ENABLE_ANN_SERIALIZATION` allows you to serialize networks using
+`arma::mat` as their matrix type. You can also define
+`MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` to serialize networks using `arma::fmat`.
+
 ***Warning:*** older versions of OpenBLAS (0.3.26 and older) compiled to use
 pthreads may use too many threads for computation, causing significant slowdown.
 OpenBLAS versions compiled with OpenMP do not suffer from this issue.  See the
