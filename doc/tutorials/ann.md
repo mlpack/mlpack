@@ -445,6 +445,43 @@ void ExampleLayer<MatType>::SetWeights(typename MatType::elem_type* weightsPtr)
 }
 ```
 
+## Reshaping Output
+
+In some network architectures, particularly in Convolutional Neural Networks (CNNs), you may need to transition from a fully connected layer (which outputs a flat vector) to a convolutional layer (which expects a 3D volume, e.g., `height x width x channels` channels).
+Since mlpack does not strictly enforce a dedicated `Reshape` utility layer for all cases, you can create a custom layer wrapper to handle this specific transformation. Below is an example of a `ReshapeLayer` template, which can inherit from any existing layer type (defaulting to the `ExampleLayer` shown above) and override the output dimensions without altering the data or gradients.
+
+### Custom ReshapeLayer
+
+This custom layer wrapper allows you to specify target dimensions that will be enforced during the `ComputeOutputDimensions` phase. Because it inherits from a functional base layer, there is no need to re-implement `Forward`, `Backward`, or `Gradient` unless you wish to change their behavior.
+
+```c++
+template<typename LayerType = ExampleLayer<MatType>>
+class ReshapeLayer : public LayerType
+{
+ public:
+  ReshapeLayer(const std::vector<size_t>& targetDims) :
+      LayerType(), // Add arguments for base class if needed
+      targetDims(targetDims)
+  {
+    // Nothing to do here.
+  }
+
+  virtual ~ReshapeLayer() { }
+
+  void ComputeOutputDimensions()
+  {
+    // Call base class to ensure internal state of ExampleLayer is initialized.
+    LayerType::ComputeOutputDimensions();
+    
+    // Now overwrite the output dimensions.
+    this->outputDimensions = targetDims;
+  }
+
+ private:
+  std::vector<size_t> targetDims;
+};
+```
+
 ## Model Setup & Training
 
 Once the base container is selected (`FNN` or `RNN`), the `Add` method can be
