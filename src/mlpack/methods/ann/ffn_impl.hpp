@@ -399,7 +399,7 @@ void FFN<
       }
     #endif
 
-    #ifndef MLPACK_ENABLE_ANN_SERIALIZATION && \
+    #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
         !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
       if (std::is_same<MatType, arma::mat>::value)
       {
