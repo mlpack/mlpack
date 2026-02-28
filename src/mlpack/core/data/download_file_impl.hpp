@@ -167,10 +167,10 @@ inline bool DownloadFile(const std::string& url,
   tmpFilename +=  "." + Extension(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(tmpFilename.c_str(), std::fstream::in
+  stream.open(tmpFilename.c_str(), std::fstream::out
       | std::fstream::binary);
 #else
-  stream.open(tmpFilename.c_str(), std::fstream::in);
+  stream.open(tmpFilename.c_str(), std::fstream::out);
 #endif
 
   if (!stream.is_open())
@@ -196,9 +196,6 @@ inline bool DownloadFile(const std::string& url,
 
 #else
 
-/**
- * Implementation to be removed at the end of the integration.
- */
 inline bool CheckIfURL(const std::string& url)
 {
   std::string url2 = url; // Avoid compiler warning.
