@@ -63,6 +63,7 @@ add_executable(mlpack_test
   distance_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
+  emd_test.cpp
   emst_test.cpp
   facilities_test.cpp
   fastmks_test.cpp
