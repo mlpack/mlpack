@@ -11,7 +11,7 @@ and `YOLOv3Tiny` classes. Support for training and fine-tuning is in progress.
 #### Simple usage example:
 
 **NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
-to serialize and deserialize models that use `arma::mat` as the data type.
+to load a `YOLOv3` model from disk.
 
 ```c++
 // Download: https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin
@@ -30,13 +30,12 @@ model.Predict(inputImage, opts, outputImage, true);
 mlpack::Save("output.jpg", outputImage, opts);
 ```
 
+<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
+
 <div style="display: flex; gap: 10px; justify-content:center;">
-  <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck" style="width:200px; height:auto;">
-  <img src="../../img/person_bbox.jpg" alt="fish" style="width:200px; height:auto;">
-  <img src="../../img/cat_bbox.jpg" alt="cat" style="width:200px; height:auto;">
+  <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck" style="width:250px; height:auto;">
 </div>
 
-<p style="text-align: center; font-size: 85%"><a href="#simple-examples">More examples...</a></p>
 
 #### Quick Links:
 
@@ -56,8 +55,6 @@ mlpack::Save("output.jpg", outputImage, opts);
  * [Object Detection on Wikipedia](https://en.wikipedia.org/wiki/Object_detection)
  * [You Only Look Once (original YOLO paper)](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf)
  * [YOLOv3 paper](https://arxiv.org/abs/1804.02767) where the YOLOv3 architecture is described.
- * [COCO dataset](https://cocodataset.org/) was used to train the pretrained weights included.
- * [COCO class names](https://models.mlpack.org/yolo/coco.names) in their correct order.
  * [`DAGNetwork`](/src/mlpack/methods/ann/dag_network.hpp) is used internally to represent the model.
  * [`LetterboxImages()`](../core/images.md#letterbox-transform) is used to make the input image square but retain the aspect ratio of the original image.
  * [`GroupChannels()`](../core/images.md#groupchannels) is used to group the image channels for the convolutional layers.
@@ -82,28 +79,42 @@ Once the weights are loaded, you can compute likely object bounding boxes with w
    - If `drawBoxes` is true, `output` will be a copy of image with the bounding boxes from the model drawn onto it.
    - Bounding boxes will be drawn if their confidence is greater than `ignoreThresh`.
    - If `drawBoxes` is false, the output will be the raw outputs of the model. The bounding box coordinates will be in the original image's space.
+     * The format of the `output` matrix is described in the documentation for the next overload, below.
+
 
 
 | **name** | **type** | **description** | **default**|
 |----------|----------|-----------------|------------|
-| `image` | `arma::mat` | Input image. See [example](#simple-usage-example) for details on loading an image with mlpack | n/a |
+| `image` | [`arma::mat`](../matrices.md) | Input [image](../load_save.md#image-data). | n/a |
 | `opt` | [`ImageOptions`](../load_save.md#imageoptions) | Image metadata. | n/a |
-| `output` | `arma::mat` | Output. Will be an output image with bounding boxes or raw outputs of the model depending on `drawBoxes`. | n/a |
-| `drawBoxes` | `bool` | Boolean to decide to copy `image` to `output` and draw bounding boxes or simply return raw outputs in `output`. | `false` |
+| `output` | [`arma::mat`](../matrices.md) | Output: either an output image with bounding boxes or raw outputs of the model, depending on `drawBoxes`. | n/a |
+| `drawBoxes` | `bool` | If `true`, copy `image` to `output` and draw bounding boxes; otherwise, simply return raw bounding boxes and class probabilities in `output`. | `false` |
 | `ignoreThreshold` | `double` | Minimum confidence to have the corresponding bounding box drawn onto `output`, if `drawBoxes` is true. | `0.7` |
 
 ---
 
  * `model.Predict(preprocessedInput, rawOutput)`
-   - Takes in a `preprocessedInput`. See [example](#simple-examples).
-   - `rawOutput` stores the raw detection data. The shape of the output matrix will be `(numAttributes * numBoxes, batchSize)`.
-   - Each bounding box is made up of `numAttributes` number of data points. This includes `cx`, `cy`, `w`, `h`, objectness and class probabilities.
-   - You can get the `numAttributes` of the model from [`model.NumAttributes()`](#other-functionality).
-   - The `numBoxes` depends on the model size. See the [pretrained weights](#pretrained-weights) section for more info.
-   - You can get the `numBoxes` of the model from [`model.NumBoxes()`](#other-functionality).
-   -  `cx` and `cy` are the coordinates for the center of the box. `w` and `h` are respectively the width and height of that bounding box.
-   - Objectness means how likely an object is in the given box.
-   - The class probability means that given there's an object in the box, what's the probability that it's a particular class.
+   - Takes in a manually preprocessed image. See [example](#simple-examples).
+   - `rawOutput` stores the raw detection data. The shape of the output matrix will be
+     `(numAttributes * numBoxes, preprocessedInput.n_cols)`.
+   - Each bounding box is made up of `numAttributes` elements: `cx`, `cy`, `w`,
+     `h`, the objectness score, and class probabilities for each class.
+     * `cx` and `cy` are the coordinates for the center of the bounding box.
+     * `w` and `h` are respectively the width and height of the bounding box.
+     * Objectness represents how likely an object is in the given box (`0` to
+       `1`).
+     * The class probability represents the conditional probability that an
+       object is of a particular class *given* that there is an object in the
+       box.
+   - `numAttributes` can be obtained from
+     [`model.NumAttributes()`](#other-functionality).
+   - `numBoxes` depends on the model size and can be obtained from
+     [`model.NumBoxes()`](#other-functionality).  See the
+     [pretrained weights](#pretrained-weights) section for more info.
+   - So, e.g., `output(j * numAttributes + (5 + i), k)` obtains the class
+     probability of the `i`th class in the `j`th bounding box of the `k`th image
+     in `preprocessedInput`.  See [examples](#simple-examples) for usage
+     samples.
 
 
 | **name** | **type** | **description** |
@@ -170,6 +181,11 @@ mlpack::Save("output.jpg", outputImage, opts, true);
 
 Because training a `YOLOv3` model from scratch is time-consuming,
 a number of pretrained models are available for download.
+
+The pretrained weights were trained on the COCO dataset.
+
+ * [COCO dataset](https://cocodataset.org/) was used to train the pretrained weights included.
+ * [COCO class names](https://models.mlpack.org/yolo/coco.names) in their correct order.
 
 The format for the name of each YOLOv3 pretrained model is
 `<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
@@ -240,7 +256,7 @@ std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
 
 ---
 
-Example of doing custom preprocessing on the input image, and getting raw output of the model.
+Example of doing manual preprocessing on the input image, and getting raw output of the model.
 
 ```c++
 // Step 1: load the pretrained model.
@@ -280,7 +296,7 @@ std::cout << "First bounding box: [" << (size_t) rawOutput(0, 0) << ", "
 
 ---
 
-Example of predicting and drawing with multiple images simultaneously. **NOTE**: On this example, each image must have the same dimensions.
+Example of predicting and drawing with multiple images simultaneously. **NOTE**: in this example, each image must have the same dimensions.
 
 ```c++
 // Step 1: load the pretrained model.
@@ -288,7 +304,7 @@ Example of predicting and drawing with multiple images simultaneously. **NOTE**:
 mlpack::YOLOv3 model;
 mlpack::Load("yolov3-320-coco-f64.bin", model);
 
-// Step 2: load the images, in this case copies of the same image three times.
+// Step 2: load the images
 // Download: https://models.mlpack.org/yolo/dog.jpg
 // Download: https://models.mlpack.org/yolo/cat.jpg
 // Download: https://models.mlpack.org/yolo/fish.jpg
@@ -307,18 +323,23 @@ std::vector<std::string> outputFiles = {"1.jpg", "2.jpg", "3.jpg"};
 mlpack::Save(outputFiles, outputImages, opts);
 ```
 
+<div style="display: flex; gap: 10px; justify-content:center;">
+  <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck" style="width:250px; height:auto;">
+  <img src="../../img/person_bbox.jpg" alt="fish" style="width:250px; height:auto;">
+  <img src="../../img/cat_bbox.jpg" alt="cat" style="width:250px; height:auto;">
+</div>
+
 ### Advanced Functionality: Template Parameters
 
-The `YOLOv3` class also supports using different floating point types.
+The `YOLOv3` class also supports using different element types to represent weights and predictions.
 The full signature of the class is:
 
 ```
 YOLOv3<MatType>
 ```
 
-`MatType`: specifies the type of matrix used for learning and internal
+ * `MatType`: specifies the type of matrix used for learning and internal
 representation of weights and biases. The default is `arma::mat`.
-
  * Any matrix type that implements the Armadillo API can be used.
 
 The example below uses YOLOv3 using the `arma::fmat` weights.
@@ -346,6 +367,7 @@ model.Predict(image, opts, outputImage, true);
 mlpack::Save("output.jpg", outputImage, opts, true);
 ```
 
+---
 
 Since `YOLOv3Tiny` has an identical API, we can use the `arma::fmat`
 weights for faster inference times.

@@ -110,7 +110,7 @@ class YOLOv3
   /**
    * Returns the number of possible bounding boxes.
    */
-  const std::vector<ElemType>& NumBoxes()
+  const std::vector<size_t>& NumBoxes()
   {
     return model.OutputDimensions()[1];
   }
@@ -152,8 +152,7 @@ class YOLOv3
 
       outputAlias.row(0) = (outputAlias.row(0) - xOffset) * ratio;
       outputAlias.row(1) = (outputAlias.row(1) - yOffset) * ratio;
-      outputAlias.row(2) = outputAlias.row(2) * ratio;
-      outputAlias.row(3) = outputAlias.row(3) * ratio;
+      outputAlias.rows(2, 3) *= ratio;
     }
   }
 

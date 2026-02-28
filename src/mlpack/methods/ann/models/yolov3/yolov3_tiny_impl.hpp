@@ -8,7 +8,6 @@
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
- *
  */
 #ifndef MLPACK_METHODS_ANN_MODELS_MODELS_YOLOV3_TINY_IMPL_HPP
 #define MLPACK_METHODS_ANN_MODELS_MODELS_YOLOV3_TINY_IMPL_HPP
@@ -225,9 +224,9 @@ void YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
         rawOutput.n_rows * batch);
     MakeAlias(imageAlias, image, size, 1, size * batch);
 
-    const MatType& bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
-    const MatType& objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
-    const MatType& confs =
+    const MatType bboxes = rawOutputAlias.submat(0, 0, 3, numBoxes - 1);
+    const MatType objectness = rawOutputAlias.submat(4, 0, 4, numBoxes - 1);
+    const MatType confs =
       rawOutputAlias.submat(5, 0, numAttributes - 1, numBoxes - 1);
 
     // NMS on objectness, not class confidences. Will produce false negatives.
