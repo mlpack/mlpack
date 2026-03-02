@@ -272,7 +272,7 @@ calls to set members of an instantiated `DataOptions` object.
 | `NoFatal` _(default)_     | `opts.Fatal() = false;` | All [data types](#types). | `false` will be returned on failure.  A warning will also be printed if [`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions) is defined. |
 |---------------------------|-------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                         |                           |                   |
-| `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
+| `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension of the filename and (if loading) inspecting the file contents. |
 | _For loading [mlpack models and objects](#mlpack-models-and-objects)._ | |      |                   |
 | `BIN`                     | `opts.Format() = FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
 | `JSON`                    | `opts.Format() = FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
