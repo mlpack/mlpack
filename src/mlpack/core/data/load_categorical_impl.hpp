@@ -371,6 +371,81 @@ bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
   return true;
 }
 
+template<typename eT>
+bool LoadCategorical(const std::string& filename,
+                     arma::Mat<eT>& matrix,
+                     TextOptions& opts)
+{
+  Timer::Start("loading_data");
+
+  bool success = false;
+
+  if (opts.Format() == FileType::CSVASCII ||
+      opts.Format() == FileType::TSVASCII ||
+      opts.Format() == FileType::RawASCII)
+  {
+    Log::Info << "Loading '" << filename << "' as "
+        << opts.FileTypeToString() << ".  " << std::flush;
+
+    // Determine the delimiter to use while loading.
+    char delimiter = ',';
+    if (opts.Semicolon())
+      delimiter = ';';
+    else if (opts.Format() == FileType::TSVASCII)
+      delimiter = '\t';
+    else if (opts.Format() == FileType::RawASCII)
+      delimiter = ' ';
+
+    LoadCSV loader(filename, opts.Fatal(), delimiter);
+    success = loader.LoadCategoricalCSV(matrix, opts);
+    if (!success)
+    {
+      Timer::Stop("loading_data");
+      return false;
+    }
+  }
+  else if (opts.Format() == FileType::ARFFASCII)
+  {
+    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
+        << std::flush;
+
+    // Semicolons are not supported by ARFF.
+    if (opts.Semicolon())
+    {
+      Log::Warn << "Semicolon delimiter not supported by ARFF; setting will "
+          << "be ignored during load.";
+    }
+
+    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
+    if (!success)
+    {
+      Timer::Stop("loading_data");
+      return false;
+    }
+    // Retranspose back as we are transposing by default
+    if (opts.NoTranspose())
+    {
+      inplace_trans(matrix);
+    }
+  }
+  else
+  {
+    // The type is unknown.
+    Timer::Stop("loading_data");
+    std::stringstream oss;
+    oss << "Loading " << opts.FileTypeToString() << " not supported for "
+        << "categorical data; format must be FileType::CSVASCII, "
+        << "FileType::RawASCII, or FileType::TSVASCII.";
+    return HandleError(oss, opts);
+  }
+
+  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
+
+  Timer::Stop("loading_data");
+
+  return true;
+}
+
 } // namespace mlpack
 
 #endif
