@@ -15,28 +15,62 @@
 
 namespace mlpack {
 
-template<typename MatType, typename DataOptionsType>
+template<typename MatType>
 bool SaveMatrix(const MatType& matrix,
-                const DataOptionsType& opts,
-#ifdef ARMA_USE_HDF5
+                TextOptions& opts,
                 const std::string& filename,
-#else
-                const std::string& /* filename */,
-#endif
                 std::fstream& stream)
 {
   bool success = false;
-  if (opts.Format() == FileType::HDF5Binary)
+  if (opts.Format() == FileType::CSVASCII)
   {
-#ifdef ARMA_USE_HDF5
-    // We can't save with streams for HDF5.
-    success = matrix.save(filename, opts.ArmaFormat());
-#endif
+    // Build Armadillo flags for saving based on our settings.
+    // Note that MissingToNan() is ignored.
+    arma::csv_opts::opts flags =
+        NoTransposeOpt(opts.NoTranspose()) +
+        HasHeadersOpt(opts.HasHeaders()) +
+        SemicolonOpt(opts.Semicolon());
+
+    stream.close(); // save directly to the file
+    if (opts.HasHeaders())
+    {
+      success = matrix.save(arma::csv_name(filename, opts.Headers(), flags),
+          arma::csv_ascii);
+    }
+    else
+    {
+      success = matrix.save(arma::csv_name(filename, flags), arma::csv_ascii);
+    }
   }
+#ifdef ARMA_USE_HDF5
+  else if (opts.Format() == FileType::HDF5Binary)
+  {
+    if (opts.NoTranspose())
+    {
+      success = matrix.save(filename);
+    }
+    else
+    {
+      success = matrix.save(arma::hdf5_name(filename, "",
+          arma::hdf5_opts::trans));
+    }
+  }
+#endif
   else
   {
-    success = matrix.save(stream, opts.ArmaFormat());
+    // Other formats cannot be automatically transposed by Armadillo so we must
+    // do it manually.
+    if (!opts.NoTranspose())
+    {
+      MatType tmp = matrix.t();
+      success = tmp.save(stream, opts.ArmaFormat());
+    }
+    else
+    {
+      success = matrix.save(stream, opts.ArmaFormat());
+    }
   }
+
   return success;
 }
 
