@@ -3516,7 +3516,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   testUrl = "https://example.com/api/v2/users";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
-  REQUIRE(filename == "");
+  REQUIRE(filename == "users");
 
   // 11. Deeply nested file
   testUrl = "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm";
