@@ -225,7 +225,7 @@ metadata resulting from a load or save operation to be stored:
 
 ```c
 // Different data types will use DataOptions, MatrixOptions, TextOptions,
-// ModelOptions, or other types.  See the documentation for each class below.
+// ImageOptions, or other types.  See the documentation for each class below.
 mlpack::ImageOptions opts;
 opts.Channels() = 1; // Force loading in grayscale.
 mlpack::Load("filename.png", X, opts);
@@ -246,7 +246,7 @@ object, so does the type of `opts`:
    [standalone options](#textoptions-standalone-operators-and-members);
  * ***Image data***: [`ImageOptions`](#imageoptions) and its
    [standalone options](#imageoptions-standalone-operators-and-members);
- * ***mlpack models and objects***: [`ModelOptions`](#modeloptions) and its
+ * ***mlpack models and objects***: [`DataOptions`](#dataoptions) and its
    [standalone options](#modeloptions-standalone-operators-and-members).
 
 ### `DataOptions`
@@ -349,15 +349,16 @@ is set.
 | _Load/save behavior._     |                             |                           |                   |
 | `HasHeaders`              | `opts.HasHeaders() = true;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV format.. | If `true`, the first row of the file contains column names instead of data.  See note below. |
 | `Categorical`             | `opts.Categorical() = true;` | [Categorical](#mixed-categorical-data), only for the CSV or ARFF formats. | If `true`, the data to be loaded or saved is mixed categorical data.  See note below. |
-| `SemiColon`               | `opts.SemiColon() = true;`  | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV, `CoordAscii`, and `RawAscii` formats. | If `true`, the field separator in the file is a semicolon instead of a comma. |
+| `Semicolon`               | `opts.Semicolon() = true;`  | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV, `CoordASCII`, and `RawASCII` formats. | If `true`, the field separator in the file is a semicolon instead of a comma. |
 | `MissingToNan` | `opts.MissingToNan() = true;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | If `true`, any missing data elements will be represented as `NaN` instead of 0. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                             |                           |                   |
-| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
-| `ArmaAscii`               | `opts.Format() = mlpack::FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
-| `RawAscii`                | `opts.Format() = mlpack::FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values or tab-separated values (TSV) with no header. |
-| `CoordAscii`              | `opts.Format() = mlpack::FileType::CoordAscii;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
-| `ARFF`                    | `opts.Format() = mlpack::FileType::ARFFAscii;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
+| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `ArmaASCII`               | `opts.Format() = mlpack::FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
+| `RawASCII`                | `opts.Format() = mlpack::FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values with no header.  If loading a sparse matrix and the file has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `CoordASCII`              | `opts.Format() = mlpack::FileType::CoordASCII;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+| `ARFF`                    | `opts.Format() = mlpack::FileType::ARFFASCII;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Metadata._               |                             |                           |                   |
 | _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV. |
@@ -450,43 +451,6 @@ is set.
  * The `opts.Quality()` option is only relevant when calling
    [`Save()`](#save) when using the `JPG` format.
 
-### `ModelOptions`
-
-The `ModelOptions` class represents options specific to
-[mlpack models and objects](#mlpack-models-and-objects).  `ModelOptions` is a
-child class of [`DataOptions`](#dataoptions) and thus any
-[standalone operators or member functions from `DataOptions`](#dataoptions-standalone-operators-and-members)
-(e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
-`ImageOptions`.
-
-#### `ModelOptions` standalone operators and members
-
-The options below can be used as standalone operators to the
-[`Load()`](#load) and [`Save()`](#save) functions, or as
-calls to set members of an instantiated `MatrixOptions` object.
-
-If an option is given that does not match the type of data being loaded or
-saved, if [`Fatal()`](#dataoptions-standalone-operators-and-members) is set,
-then an exception will be thrown; otherwise, a warning will be printed if
-[`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions)
-is set.
-
-| ***Standalone operator*** | ***Member function***                 | ***Available for:***      | ***Description*** |
-|---------------------------|---------------------------------------|---------------------------|-------------------|
-| [_Formats._](#formats)    |                                       |                           |                   |
-| `BIN`                     | `opts.Format() = mlpack::FileType::BIN;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
-| `JSON`                    | `opts.Format() = mlpack::FileType::JSON;`      | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
-| `XML`                     | `opts.Format() = mlpack::FileType::XML;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
-|---------------------------|---------------------------------------|---------------------------|-------------------|
-
-***Notes:***
-
- - `FileType::BIN` (`.bin`) is recommended for the sake of size; objects in
-   binary format may be an order of magnitude or more smaller than JSON!
-
- - `FileType::JSON` (`.json`) and `FileType::XML` (`.xml`) produce human-readable
-   files, but they may be quite large.
-
 ## Formats
 
 The [`Load()`](#load) and [`Save()`](#save) functions
@@ -504,11 +468,12 @@ given in the table.
 |---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
 | `AutoDetect` _(default)_  | `opts.Format() = FileType::AutoDetect`  | _(n/a)_                   | All [data types](#types). | The format of the file is autodetected as one of the formats below. |
 |---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
-| `CSV`                     | `opts.Format() = FileType::CSVASCII;`   | `.csv`, `.tsv`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
-| `ArmaAscii`               | `opts.Format() = FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
-| `RawAscii`                | `opts.Format() = FileType::RawASCII;`   | `.txt`                    | [Numeric](#numeric-data) data | Space-separated values or tab-separated values (TSV) with no header. |
-| `CoordAscii`              | `opts.Format() = FileType::CoordAscii;` | `.txt` (if `X` is sparse) | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
-| `ARFF`                    | `opts.Format() = FileType::ARFFAscii;`  | `.arff`                   | [Categorical](#mixed-categorical-data) data | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
+| `CSV`                     | `opts.Format() = FileType::CSVASCII;`   | `.csv`, `.tsv`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `ArmaASCII`               | `opts.Format() = FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
+| `RawASCII`                | `opts.Format() = FileType::RawASCII;`   | `.txt`                    | [Numeric](#numeric-data) data | Space-separated values with no header.  If loading a sparse matrix and the file has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `CoordASCII`              | `opts.Format() = FileType::CoordASCII;` | `.txt` (if `X` is sparse) | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+| `ARFF`                    | `opts.Format() = FileType::ARFFASCII;`  | `.arff`                   | [Categorical](#mixed-categorical-data) data | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
 | `PGM`                     | `opts.Format() = FileType::PGMBinary;`  | `.pgm`                    | [Numeric](#numeric-data) data | Load/save in the PGM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
 | `PPM`                     | `opts.Format() = FileType::PPMBinary;`  | `.ppm`                    | [Numeric](#numeric-data) data | Load/save in the PPM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
 | `HDF5`                    | `opts.Format() = FileType::HDF5Binary;` | `.h5`, `.hdf5`, `.hdf`, `.he5` | [Numeric](#numeric-data) data | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
@@ -1119,10 +1084,16 @@ namespace) can be saved with [`Save()`](#save) and loaded with
    should be the desired mlpack model or object type.
 
  * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
-   object, the [`ModelOptions`](#modeloptions) subtype can be used.
+   object, the base [`DataOptions`](#dataoptions) subtype should be used.
 
  * Supported formats are binary, JSON, and XML; see
    [the table of format options](#formats).
+
+   - `FileType::BIN` (`.bin`) is recommended for the sake of size; objects in
+     binary format may be an order of magnitude or more smaller than JSON!
+
+   - `FileType::JSON` (`.json`) and `FileType::XML` (`.xml`) produce
+     human-readable files, but they may be quite large.
 
 ***Note:*** when loading an object that was saved in the binary format
 ([`BIN`](#modeloptions-standalone-operators-and-members)), the C++ type of the

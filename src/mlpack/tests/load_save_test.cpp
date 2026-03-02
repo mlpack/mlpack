@@ -261,9 +261,9 @@ TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest][tiny]")
 }
 
 /**
- * Make sure a TSV is loaded correctly.
+ * Make sure a TSV is loaded correctly even when it is specified as a .csv.
  */
-TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+TEST_CASE("LoadTSVAutodetectCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -3449,3 +3449,52 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 }
 
 #endif
+
+/**
+ * Test that the TSV format loads correctly.
+ */
+TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+  f << "9\t10\t11\t12" << std::endl;
+
+  arma::mat dataset;
+
+  Load("test.tsv", dataset, TSV);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    REQUIRE(dataset[i] == Approx(i + 1));
+
+  remove("test.tsv");
+}
+
+/**
+ * Test that the TSV format loads correctly for categorical data.
+ */
+TEST_CASE("LoadTSVCategoricalTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\ta\t4" << std::endl;
+  f << "5\t6\tb\t8" << std::endl;
+  f << "9\t10\tc\t12" << std::endl;
+
+  arma::mat dataset;
+
+  TextOptions opts = TSV + Fatal + Categorical;
+  Load("test.tsv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(dataset[0] == Approx(1));
+  REQUIRE(dataset[1] == Approx(2));
+  REQUIRE(dataset[2] == Approx(0));
+  REQUIRE(dataset[3] == Approx(4));
+
+  remove("test.tsv");
+}
