@@ -14,8 +14,7 @@
 #define MLPACK_CORE_DATA_SAVE_NUMERIC_HPP
 
 #include "text_options.hpp"
-#include "save_sparse.hpp"
-#include "save_dense.hpp"
+#include "save_matrix.hpp"
 
 namespace mlpack {
 
@@ -28,27 +27,24 @@ bool SaveNumeric(const std::string& filename,
   bool success = false;
 
   TextOptions txtOpts(std::move(opts));
-  if constexpr (IsSparseMat<ObjectType>::value)
-  {
-    success = SaveSparse(matrix, txtOpts, filename, stream);
-  }
-  else if constexpr (IsCol<ObjectType>::value)
+  if constexpr (IsCol<ObjectType>::value)
   {
     const bool oldNoTranspose = txtOpts.NoTranspose();
     txtOpts.NoTranspose() = true; // Force no transpose for a column.
-    success = SaveDense(matrix, txtOpts, filename, stream);
+    success = SaveMatrix(matrix, txtOpts, filename, stream);
     txtOpts.NoTranspose() = oldNoTranspose;
   }
   else if constexpr (IsRow<ObjectType>::value)
   {
     const bool oldNoTranspose = txtOpts.NoTranspose();
     txtOpts.NoTranspose() = false; // Force transpose for a row.
-    success = SaveDense(matrix, txtOpts, filename, stream);
+    success = SaveMatrix(matrix, txtOpts, filename, stream);
     txtOpts.NoTranspose() = oldNoTranspose;
   }
-  else if constexpr (IsDense<ObjectType>::value)
+  else if constexpr (IsDense<ObjectType>::value ||
+                     IsSparse<ObjectType>::value)
   {
-    success = SaveDense(matrix, txtOpts, filename, stream);
+    success = SaveMatrix(matrix, txtOpts, filename, stream);
   }
   static_cast<DataOptionsType&>(opts) = std::move(txtOpts);
 

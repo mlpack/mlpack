@@ -8,6 +8,8 @@ _????-??-??_
 
  * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
 
+ * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
