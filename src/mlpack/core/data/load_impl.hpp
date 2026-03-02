@@ -203,16 +203,12 @@ bool LoadCategorical(const std::string& filename,
   {
     Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
         << std::flush;
-    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
+    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal(),
+        !opts.NoTranspose());
     if (!success)
     {
       Timer::Stop("loading_data");
       return false;
-    }
-    // Retranspose back as we are transposing by default
-    if (opts.NoTranspose())
-    {
-      inplace_trans(matrix);
     }
   }
   else
