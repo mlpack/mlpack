@@ -247,7 +247,7 @@ object, so does the type of `opts`:
  * ***Image data***: [`ImageOptions`](#imageoptions) and its
    [standalone options](#imageoptions-standalone-operators-and-members);
  * ***mlpack models and objects***: [`DataOptions`](#dataoptions) and its
-   [standalone options](#modeloptions-standalone-operators-and-members).
+   [standalone options](#dataoptions-standalone-operators-and-members).
 
 ### `DataOptions`
 
@@ -273,6 +273,10 @@ calls to set members of an instantiated `DataOptions` object.
 |---------------------------|-------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                         |                           |                   |
 | `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
+| _For loading [mlpack models and objects](#mlpack-models-and-objects)._ | |      |                   |
+| `BIN`                     | `opts.Format() = FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
+| `JSON`                    | `opts.Format() = FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
+| `XML`                     | `opts.Format() = FileType::XML`         | `.xml`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
 |---------------------------|-------------------------|---------------------------|-------------------|
 
 ### `MatrixOptions`
@@ -1096,7 +1100,7 @@ namespace) can be saved with [`Save()`](#save) and loaded with
      human-readable files, but they may be quite large.
 
 ***Note:*** when loading an object that was saved in the binary format
-([`BIN`](#modeloptions-standalone-operators-and-members)), the C++ type of the
+([`BIN`](#dataoptions-standalone-operators-and-members)), the C++ type of the
 object must be ***exactly the same*** (including template parameters) as the
 type used to save the object.  If not, undefined behavior will occur---most
 likely a crash.
