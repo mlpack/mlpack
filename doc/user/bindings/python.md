@@ -165,7 +165,7 @@ An implementation of the bayesian linear regression. [Detailed documentation](#b
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | `np.empty([0, 0])` |
-| `input_model` | [`BayesianLinearRegression<>Type`](#doc_model) | Trained BayesianLinearRegression model to use. | `None` |
+| `input_model` | [`BayesianLinearRegressionType`](#doc_model) | Trained BayesianLinearRegression model to use. | `None` |
 | `responses` | [`vector`](#doc_vector) | Matrix of responses/observations (y). | `np.empty([0])` |
 | `scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `False` |
 | `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | `np.empty([0, 0])` |
@@ -177,7 +177,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`BayesianLinearRegression<>Type`](#doc_model) | Output BayesianLinearRegression model. | 
+| `output_model` | [`BayesianLinearRegressionType`](#doc_model) | Output BayesianLinearRegression model. | 
 | `predictions` | [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
 | `stds` | [`matrix`](#doc_matrix) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
 
@@ -534,7 +534,7 @@ An implementation of density estimation trees for the density estimation task.  
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `folds` | [`int`](#doc_int) | The number of folds of cross-validation to perform for the estimation (0 is LOOCV) | `10` |
-| `input_model` | [`DTree<>Type`](#doc_model) | Trained density estimation tree to load. | `None` |
+| `input_model` | [`DTreeType`](#doc_model) | Trained density estimation tree to load. | `None` |
 | `max_leaf_size` | [`int`](#doc_int) | The maximum size of a leaf in the unpruned, fully grown DET. | `10` |
 | `min_leaf_size` | [`int`](#doc_int) | The minimum size of a leaf in the unpruned, fully grown DET. | `5` |
 | `path_format` | [`str`](#doc_str) | The format of path printing: 'lr', 'id-lr', or 'lr-id'. | `'lr'` |
@@ -549,7 +549,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DTree<>Type`](#doc_model) | Output to save trained density estimation tree to. | 
+| `output_model` | [`DTreeType`](#doc_model) | Output to save trained density estimation tree to. | 
 | `tag_counters_file` | [`str`](#doc_str) | The file to output the number of points that went to each leaf. | 
 | `tag_file` | [`str`](#doc_str) | The file to output the tags (and possibly paths) for each sample in the test set. | 
 | `test_set_estimates` | [`matrix`](#doc_matrix) | The output estimates on the test set from the final optimally pruned tree. | 
@@ -1613,7 +1613,7 @@ An implementation of Least Angle Regression (Stagewise/laSso), also known as LAR
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | `np.empty([0, 0])` |
-| `input_model` | [`LARS<>Type`](#doc_model) | Trained LARS model to use. | `None` |
+| `input_model` | [`LARSType`](#doc_model) | Trained LARS model to use. | `None` |
 | `lambda1` | [`float`](#doc_float) | Regularization parameter for l1-norm penalty. | `0` |
 | `lambda2` | [`float`](#doc_float) | Regularization parameter for l2-norm penalty. | `0` |
 | `no_intercept` | [`bool`](#doc_bool) | Do not fit an intercept in the model. | `False` |
@@ -1629,7 +1629,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`LARS<>Type`](#doc_model) | Output LARS model. | 
+| `output_model` | [`LARSType`](#doc_model) | Output LARS model. | 
 | `output_predictions` | [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
 
 ### Detailed documentation
@@ -1907,7 +1907,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary. | `np.empty([0, 0])` |
-| `input_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Input LCC model. | `None` |
+| `input_model` | [`LocalCoordinateCodingType`](#doc_model) | Input LCC model. | `None` |
 | `lambda_` | [`float`](#doc_float) | Weighted l1-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for LCC (0 indicates no limit). | `0` |
 | `normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `False` |
@@ -1925,7 +1925,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Output codes matrix. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Output dictionary matrix. | 
-| `output_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Output for trained LCC model. | 
+| `output_model` | [`LocalCoordinateCodingType`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -2045,7 +2045,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LogisticRegression<>Type`](#doc_model) | Output for trained logistic regression model. | 
+| [`LogisticRegressionType`](#doc_model) | Output for trained logistic regression model. | 
 
 ### 2. predict
 
@@ -2109,7 +2109,7 @@ An implementation of approximate k-nearest-neighbor search with locality-sensiti
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `hash_width` | [`float`](#doc_float) | The hash width for the first-level hashing in the LSH preprocessing. By default, the LSH class automatically estimates a hash width for its use. | `0` |
-| `input_model` | [`LSHSearch<>Type`](#doc_model) | Input LSH model. | `None` |
+| `input_model` | [`LSHSearchType`](#doc_model) | Input LSH model. | `None` |
 | `k` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
 | `num_probes` | [`int`](#doc_int) | Number of additional probes for multiprobe LSH; if 0, traditional LSH is used. | `0` |
 | `projections` | [`int`](#doc_int) | The number of hash functions for each table | `10` |
@@ -2129,7 +2129,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `distances` | [`matrix`](#doc_matrix) | Matrix to output distances into. | 
 | `neighbors` | [`int matrix`](#doc_int_matrix) | Matrix to output neighbors into. | 
-| `output_model` | [`LSHSearch<>Type`](#doc_model) | Output for trained LSH model. | 
+| `output_model` | [`LSHSearchType`](#doc_model) | Output for trained LSH model. | 
 
 ### Detailed documentation
 {: #lsh_detailed-documentation }
@@ -3385,7 +3385,7 @@ An implementation of softmax regression for classification, which is a multiclas
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `input_model` | [`SoftmaxRegression<>Type`](#doc_model) | File containing existing model (parameters). | `None` |
+| `input_model` | [`SoftmaxRegressionType`](#doc_model) | File containing existing model (parameters). | `None` |
 | `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `np.empty([0], dtype=np.uint64)` |
 | `lambda_` | [`float`](#doc_float) | L2-regularization constant | `0.0001` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
@@ -3402,7 +3402,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegression<>Type`](#doc_model) | File to save trained softmax regression model to. | 
+| `output_model` | [`SoftmaxRegressionType`](#doc_model) | File to save trained softmax regression model to. | 
 | `predictions` | [`int vector`](#doc_int_vector) | Matrix to save predictions for test dataset into. | 
 | `probabilities` | [`matrix`](#doc_matrix) | Matrix to save class probabilities for test dataset into. | 
 
@@ -3470,7 +3470,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary matrix. | `np.empty([0, 0])` |
-| `input_model` | [`SparseCoding<>Type`](#doc_model) | File containing input sparse coding model. | `None` |
+| `input_model` | [`SparseCodingType`](#doc_model) | File containing input sparse coding model. | `None` |
 | `lambda1` | [`float`](#doc_float) | Sparse coding l1-norm regularization parameter. | `0` |
 | `lambda2` | [`float`](#doc_float) | Sparse coding l2-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
@@ -3490,7 +3490,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Matrix to save the output dictionary to. | 
-| `output_model` | [`SparseCoding<>Type`](#doc_model) | File to save trained sparse coding model to. | 
+| `output_model` | [`SparseCodingType`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -3687,7 +3687,7 @@ Train a linear regression model.
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LinearRegression<>Type`](#doc_model) | Output LinearRegression model. | 
+| [`LinearRegressionType`](#doc_model) | Output LinearRegression model. | 
 
 ### 2. predict
 
