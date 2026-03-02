@@ -2463,7 +2463,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info(6);
 
-  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
 
   remove("test.arff");
 }
@@ -2476,7 +2476,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info;
 
-  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true, true));
 }
 
 /**
@@ -2489,7 +2489,8 @@ TEST_CASE("CaseTest", "[LoadSaveTest][tiny]")
 
   DatasetMapper<IncrementPolicy> info;
 
-  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true);
+  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true,
+      true);
 
   REQUIRE(dataset.n_rows == 2);
   REQUIRE(dataset.n_cols == 3);
