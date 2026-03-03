@@ -1,6 +1,7 @@
 /**
  * @file tests/main_tests/linear_regression_train_test.cpp
  * @author Nippun Sharma
+ * @author Dirk Eddelbuettel
  *
  * Test RUN_BINDING() of linear_regression_fit_main.cpp.
  *
@@ -23,48 +24,131 @@ using namespace mlpack;
 
 BINDING_TEST_FIXTURE(LarsFitTestFixture);
 
-#if 0
 /**
- * Training a model with different regularization parameter and ensuring that
- * predictions are different.
+ * Ensuring a minimally viable fit works.
  */
-TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitDifferentLambdas",
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitMVPTest",
+                 "[LarsTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 2;
+
+  arma::mat trainX = arma::randu<arma::mat>(N, D);
+  arma::rowvec trainY = arma::randu<arma::rowvec>(N);
+  //trainX.print("trainX");
+  //trainY.print("trainY");
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("responses", std::move(trainY));
+  RUN_BINDING();
+
+  arma::rowvec preds;
+  arma::mat testX = { 0.123, 0.134 };
+  testX = trans(testX);
+  //testX.print("testX");
+  params.Get<LARS<>*>("output_model")->Predict(testX, preds);
+  //preds.print("preds");
+  REQUIRE(preds.n_elem == 1);
+}
+
+/**
+ * Training a model with different regularization parameter lambda1 and
+ * ensuring that predictions are different.
+ */
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitDifferentLambda1s",
                  "[LarsTrainMainTest][BindingTests]")
 {
   // A required minimal difference between solutions.
   const double delta = 0.1;
 
   arma::mat trainX({1.0, 2.0, 3.0});
+  trainX = trans(trainX);
+
   arma::mat testX({4.0});
   arma::rowvec trainY({1.0, 4.0, 9.0});
 
-  SetInputParam("training", trainX);
-  SetInputParam("training_responses", trainY);
-  SetInputParam("lambda", 0.1);
+  SetInputParam("input", trainX);
+  SetInputParam("responses", trainY);
+  SetInputParam("lambda1", 0.1);
 
   // The first solution.
   RUN_BINDING();
   arma::rowvec preds1;
-  params.Get<LinearRegression<>*>("output_model")->Predict(testX, preds1);
+  params.Get<LARS<>*>("output_model")->Predict(testX, preds1);
   const double testY1 = preds1(0);
 
   ResetSettings();
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("training_responses", std::move(trainY));
-  SetInputParam("lambda", 1.0);
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("responses", std::move(trainY));
+  SetInputParam("lambda1", 0.9);
 
   // The second solution.
   RUN_BINDING();
   arma::rowvec preds2;
-  params.Get<LinearRegression<>*>("output_model")->Predict(testX, preds2);
+  params.Get<LARS<>*>("output_model")->Predict(testX, preds2);
   const double testY2 = preds2(0);
 
-  // Second solution has stronger regularization,
-  // so the predicted value should be smaller.
-  REQUIRE(testY1 - delta > testY2);
+  REQUIRE(std::abs(testY1 - testY2) > delta);
 }
-#endif
+
+/**
+ * Training a model with different regularization parameter lambda2 and
+ * ensuring that predictions are different.
+ */
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitDifferentLambda2s",
+                 "[LarsTrainMainTest][BindingTests]")
+{
+  // A required minimal difference between solutions.
+  const double delta = 0.1;
+
+  arma::mat trainX({1.0, 2.0, 3.0});
+  trainX = trans(trainX);
+
+  arma::mat testX({4.0});
+  arma::rowvec trainY({1.0, 4.0, 9.0});
+
+  SetInputParam("input", trainX);
+  SetInputParam("responses", trainY);
+  SetInputParam("lambda1", 0.1);
+  SetInputParam("lambda2", 0.1);
+
+  // The first solution.
+  RUN_BINDING();
+  arma::rowvec preds1;
+  params.Get<LARS<>*>("output_model")->Predict(testX, preds1);
+  const double testY1 = preds1(0);
+
+  ResetSettings();
+
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("responses", std::move(trainY));
+  SetInputParam("lambda1", 0.9);
+  SetInputParam("lambda2", 0.9);
+
+  // The second solution.
+  RUN_BINDING();
+  arma::rowvec preds2;
+  params.Get<LARS<>*>("output_model")->Predict(testX, preds2);
+  const double testY2 = preds2(0);
+
+  REQUIRE(std::abs(testY1 - testY2) > delta);
+}
+
+
+/**
+ * Ensuring that absense of training data is checked.
+ */
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitMissingTrainingDataTest",
+                 "[LarsTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  arma::rowvec trainY = arma::randu<arma::rowvec>(N);
+
+  // No required input data for training.
+  SetInputParam("responses", std::move(trainY));
+
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+}
 
 /**
  * Ensuring that response size is checked.
@@ -77,7 +161,6 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitWrongResponseSizeTest",
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
   arma::rowvec trainY = arma::randu<arma::rowvec>(N + 3); // Wrong size.
-  //arma::mat trainY = arma::randu<arma::mat>(N + 3,1); // Wrong size.
 
   SetInputParam("input", std::move(trainX));
   SetInputParam("responses", std::move(trainY));

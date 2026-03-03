@@ -106,7 +106,7 @@ BINDING_SEE_ALSO("Least angle regression (pdf)",
     "https://mlpack.org/papers/lars.pdf");
 BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
-PARAM_TMATRIX_IN("input", "Matrix of covariates (X).", "i");
+PARAM_TMATRIX_IN_REQ("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN("responses", "Row vector of responses/observations (y).", "r");
 
 PARAM_MODEL_IN(LARS<>, "input_model", "Trained LARS model to use.", "m");
@@ -136,69 +136,32 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   bool noIntercept = params.Has("no_intercept");
   bool noNormalize = params.Has("no_normalize");
 
-  // Check parameters -- make sure everything given makes sense.
-  RequireOnlyOnePassed(params, { "input", "input_model" }, true);
-  if (params.Has("input"))
-  {
-    RequireOnlyOnePassed(params, { "responses" }, true, "if input data is "
-        "specified, responses must also be specified");
-  }
-  ReportIgnoredParam(params, {{ "input", false }}, "responses");
-  ReportIgnoredParam(params, {{ "input", false }}, "no_intercept");
-  ReportIgnoredParam(params, {{ "input", false }}, "no_normalize");
+  RequireOnlyOnePassed(params, { "responses" }, true, "responses must "
+      "also be specified");
 
   RequireAtLeastOnePassed(params, { "output_predictions", "output_model" },
       false, "no results will be saved");
   ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
-  LARS<>* lars;
-  if (params.Has("input"))
-  {
-    // Initialize the object.
-    lars = new LARS<>(useCholesky, lambda1, lambda2);
-    lars->FitIntercept(!noIntercept);
-    lars->NormalizeData(!noNormalize);
+  // Initialize the object.
+  LARS<>* lars = new LARS<>(useCholesky, lambda1, lambda2);
+  lars->FitIntercept(!noIntercept);
+  lars->NormalizeData(!noNormalize);
 
-    // Load covariates.  We can avoid LARS transposing our data by choosing to
-    // not transpose this data (that's why we used PARAM_TMATRIX_IN).
-    mat matX = std::move(params.Get<arma::mat>("input"));
+  // Load covariates.  We can avoid LARS transposing our data by choosing to
+  // not transpose this data (that's why we used PARAM_TMATRIX_IN).
+  mat matX = std::move(params.Get<arma::mat>("input"));
 
-    // Load responses.  The responses should be a one-dimensional vector.
-    arma::rowvec y = std::move(params.Get<arma::rowvec>("responses"));
+  // Load responses.  The responses should be a one-dimensional vector.
+  arma::rowvec y = std::move(params.Get<arma::rowvec>("responses"));
 
-    if (y.n_elem != matX.n_rows)
-      Log::Fatal << "Number of responses must be equal to number of rows of X!"
-          << endl;
+  if (y.n_elem != matX.n_rows)
+    Log::Fatal << "Number of responses must be equal to number of rows of X!"
+        << endl;
 
-    timers.Start("lars_regression");
-    lars->Train(matX, y, false /* do not transpose */);
-    timers.Stop("lars_regression");
-  }
-  else // We must have --input_model_file.
-  {
-    lars = params.Get<LARS<>*>("input_model");
-  }
-
-  if (params.Has("test"))
-  {
-    Log::Info << "Regressing on test points." << endl;
-
-    // Load test points.
-    mat testPoints = std::move(params.Get<arma::mat>("test"));
-
-    // Make sure the dimensionality is right.  We haven't transposed, so, we
-    // check n_cols not n_rows.
-    if (testPoints.n_cols != lars->BetaPath().back().n_elem)
-      Log::Fatal << "Dimensionality of test set (" << testPoints.n_cols << ") "
-          << "is not equal to the dimensionality of the model ("
-          << lars->BetaPath().back().n_elem << ")!" << endl;
-
-    arma::rowvec predictions;
-    lars->Predict(testPoints.t(), predictions, false);
-
-    // Save test predictions (one per line).
-    params.Get<arma::mat>("output_predictions") = predictions.t();
-  }
+  timers.Start("lars_regression");
+  lars->Train(matX, y, false /* do not transpose */);
+  timers.Stop("lars_regression");
 
   params.Get<LARS<>*>("output_model") = lars;
 }
