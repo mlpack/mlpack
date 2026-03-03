@@ -88,7 +88,7 @@ BINDING_EXAMPLE(
       "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "lars") + "\n" +
     CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
-                "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));
+      "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));
 
 // See also...
 BINDING_SEE_ALSO("@lars_predict", "#lars_predict");
