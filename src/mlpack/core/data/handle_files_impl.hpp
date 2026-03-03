@@ -464,7 +464,7 @@ bool OpenFile(const std::string& filename,
 inline std::filesystem::path TempName()
 {
   std::stringstream nameStream;
-  static constexpr auto num_bits = 16;
+  static constexpr auto num_bits = 128;
   for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
   {
     nameStream << RandInt(0, 9);
