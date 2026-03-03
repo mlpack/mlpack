@@ -3525,38 +3525,43 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(host == "cdn.example.com");
   REQUIRE(filename == "deep_file.wasm");
 
-  filename = "";
   // 12. Trailing slash (no file)// ---- Special filenames ----
+  filename = "";
   testUrl = "https://example.com/path/to/dir/";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "");
 
   // 13. Dotfile (no extension)
+  filename = "";
   testUrl = "https://example.com/.hidden";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == ".hidden");
 
   // 14. Dotfile with extension
+  filename = "";
   testUrl = "https://example.com/files/.env.production";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == ".env.production");
 
   // 15. URL-encoded spaces + parens
+  filename = "";
   testUrl = "https://example.com/files/my%20file%20(1).pdf";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "my%20file%20(1).pdf");
 
   // 16. Unicode in filename// ---- Edge cases ----
+  filename = "";
   testUrl = "https://example.com/files/résumé.docx";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
   REQUIRE(filename == "résumé.docx");
 
   // 17. IP address as host
+  filename = "";
   testUrl = "https://192.168.1.1:3000/logs/debug.log";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "192.168.1.1");
@@ -3564,6 +3569,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(port == 3000);
 
   // 18. Port, no path, no file
+  filename = "";
   testUrl = "https://example.com:443";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
@@ -3571,6 +3577,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(port == 443);
 
   // 19. Localhost
+  filename = "";
   testUrl = "http://localhost:8080/index.html";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "localhost");
@@ -3578,6 +3585,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(port == 8080);
 
   // 20. Many dots in filename
+  filename = "";
   testUrl = "https://example.com/file.backup.2024.01.15.sql.gz";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
@@ -3604,8 +3612,8 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
       std::runtime_error);
 
   // 25 invalid host with capital letter
-  testurl = "https://examplesofinvalid..com/invalid";
-  require_throws_as(parseurl(testurl, host, filename, port),
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
   // 26 Invalid host with capital letter
@@ -3624,6 +3632,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   // 28. 3 number port number + https + a filename
   port = -1;
   testUrl = "https://localhost:330/index.html";
+  ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "localhost");
   REQUIRE(filename == "index.html");
   REQUIRE(port == 330);
@@ -3632,8 +3641,16 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
+  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
         dataset, Fatal + Transpose) == true);
+}
+
+TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  TextOptions opts = Fatal + Categorical;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+        dataset, opts) == true);
 }
 
 TEST_CASE("DownLoad404File", "[LoadSaveTest]")
