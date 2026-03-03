@@ -9,3 +9,10 @@ Testing/
 *.swp
 *.swo
 *~
+local/
+local-*
+.editorconfig
+# three files from GNU global
+GPATH
+GRTAGS
+GTAGS
