@@ -34,7 +34,7 @@ add_all_bindings(kmeans kmeans "Clustering")
 
 #add_all_bindings(lars lars "Regression")
 add_category(lars "Regression")
-group_bindings(lars lars "train")
+group_bindings(lars lars "train;predict")
 add_python_wrapper(lars lars)
 add_cli_executable(lars lars)
 add_julia_binding(lars lars)

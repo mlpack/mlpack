@@ -1,9 +1,9 @@
 /**
- * @file tests/main_tests/linear_regression_train_test.cpp
+ * @file tests/main_tests/lars_train_test.cpp
  * @author Nippun Sharma
  * @author Dirk Eddelbuettel
  *
- * Test RUN_BINDING() of linear_regression_fit_main.cpp.
+ * Test RUN_BINDING() of lars_train_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the

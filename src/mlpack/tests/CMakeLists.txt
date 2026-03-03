@@ -180,6 +180,7 @@ add_executable(mlpack_test
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/lars_train_test.cpp
+  main_tests/lars_predict_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/linear_regression_train_test.cpp
   main_tests/linear_regression_predict_test.cpp
