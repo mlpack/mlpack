@@ -25,24 +25,24 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("LARS");
+BINDING_USER_NAME("LARS Training");
 
 // Short description.
 BINDING_SHORT_DESC(
     "An implementation of Least Angle Regression (stagewise/lasso), also known"
-    " as LARS.  This can train a LARS/LASSO/Elastic Net model, and a "
-    "pre-trained model can be used to output regression predictions from a "
+    " as LARS.  This can train a LARS/LASSO/Elastic Net model, and save the"
+    " pre-trained model for later use to output regression predictions from a"
     " test set.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of LARS: Least Angle Regression (stagewise/laso).  "
+    "An implementation of LARS: Least Angle Regression (stagewise/lasso).  "
     "This is a stage-wise homotopy-based algorithm for L1-regularized linear "
     "regression (LASSO) and L1+L2-regularized linear regression (Elastic Net)."
     "\n\n"
     "This program is able to train a LARS/LASSO/Elastic Net model or load a "
-    "model from file, output regression predictions for a test set, and save "
-    "the trained model to a file.  The LARS algorithm is described in more "
+    "model from a file, output regression predictions for a test set, and save"
+    " the trained model to a file.  The LARS algorithm is described in more "
     "detail below:"
     "\n\n"
     "Let X be a matrix where each row is a point and each column is a "
@@ -76,26 +76,20 @@ BINDING_LONG_DESC(
     "\n\n");
 
 // Example.
-BINDING_EXAMPLE("");
-#if 0
-    "For example, the following command trains a model on the data " +
-    PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
-    " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
-    "solved), and then the model is saved to " + PRINT_MODEL("lasso_model") +
-    ":"
-    "\n\n" +
-    PRINT_CALL("lars", "input", "data", "responses", "responses", "lambda1",
-        0.4, "lambda2", 0.0, "output_model", "lasso_model") +
-    "\n\n"
-    "The following command uses the " + PRINT_MODEL("lasso_model") + " to "
-    "provide predicted responses for the data " + PRINT_DATASET("test") + " "
-    "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
-    "\n\n" +
-    PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"));
-#endif
+BINDING_EXAMPLE(
+    IMPORT_EXT_LIB() + "\n" +
+    IMPORT_SPLIT() + "\n" +
+    IMPORT_THIS("lars") + "\n" +
+    GET_DATASET("X", "http://datasets.mlpack.org/admissions_predict.csv") + "\n" +
+    GET_DATASET("y", "http://datasets.mlpack.org/admissions_predict.responses.csv") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
+    "0.2") + "\n" +
+    CREATE_OBJECT("model", "lars") + "\n" +
+    CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
+                "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));
 
 // See also...
+BINDING_SEE_ALSO("@lars_predict", "#lars_predict");
 BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
 BINDING_SEE_ALSO("Least angle regression (pdf)",
     "https://mlpack.org/papers/lars.pdf");

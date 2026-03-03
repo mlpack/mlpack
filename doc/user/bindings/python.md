@@ -1586,58 +1586,16 @@ To run k-means on that same dataset with initial centroids specified in `'initia
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
-## lars()
+## class Lars
 {: #lars }
 
-#### LARS
+#### LARS Training
 {: #lars_descr }
 
-```python
->>> from mlpack import lars
->>> d = lars(check_input_matrices=False, copy_all_inputs=False,
-        input_=np.empty([0, 0]), input_model=None, lambda1=0, lambda2=0,
-        no_intercept=False, no_normalize=False, responses=np.empty([0, 0]),
-        test=np.empty([0, 0]), use_cholesky=False, verbose=False)
->>> output_model = d['output_model']
->>> output_predictions = d['output_predictions']
-```
 
-An implementation of Least Angle Regression (Stagewise/laSso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model and use that model or a pre-trained model to output regression predictions for a test set. [Detailed documentation](#lars_detailed-documentation).
+An implementation of LARS: Least Angle Regression (stagewise/lasso).  This is a stage-wise homotopy-based algorithm for L1-regularized linear regression (LASSO) and L1+L2-regularized linear regression (Elastic Net).
 
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | `np.empty([0, 0])` |
-| `input_model` | [`LARSType`](#doc_model) | Trained LARS model to use. | `None` |
-| `lambda1` | [`float`](#doc_float) | Regularization parameter for l1-norm penalty. | `0` |
-| `lambda2` | [`float`](#doc_float) | Regularization parameter for l2-norm penalty. | `0` |
-| `no_intercept` | [`bool`](#doc_bool) | Do not fit an intercept in the model. | `False` |
-| `no_normalize` | [`bool`](#doc_bool) | Do not normalize data to unit variance before modeling. | `False` |
-| `responses` | [`matrix`](#doc_matrix) | Matrix of responses/observations (y). | `np.empty([0, 0])` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | `np.empty([0, 0])` |
-| `use_cholesky` | [`bool`](#doc_bool) | Use Cholesky decomposition during computation rather than explicitly computing the full Gram matrix. | `False` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LARSType`](#doc_model) | Output LARS model. | 
-| `output_predictions` | [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-
-### Detailed documentation
-{: #lars_detailed-documentation }
-
-An implementation of LARS: Least Angle Regression (Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for L1-regularized linear regression (LASSO) and L1+L2-regularized linear regression (Elastic Net).
-
-This program is able to train a LARS/LASSO/Elastic Net model or load a model from file, output regression predictions for a test set, and save the trained model to a file.  The LARS algorithm is described in more detail below:
+This program is able to train a LARS/LASSO/Elastic Net model or load a model from a file, output regression predictions for a test set, and save the trained model to a file.  The LARS algorithm is described in more detail below:
 
 Let X be a matrix where each row is a point and each column is a dimension, and let y be a vector of targets.
 
@@ -1655,28 +1613,79 @@ For efficiency reasons, it is not recommended to use this algorithm with `lambda
 
 To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters must be given.  The `lambda1`, `lambda2`, and `use_cholesky` parameters control the training options.  A trained model can be saved with the `output_model`.  If no training is desired at all, a model can be passed via the `input_model` parameter.
 
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `test` parameter.  Predicted responses to the test points can be saved with the `output_predictions` output parameter.
+
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda1` | [`float`](#doc_float) | Regularization parameter for l1-norm penalty. | `0` |
+| `lambda2` | [`float`](#doc_float) | Regularization parameter for l2-norm penalty. | `0` |
+| `no_intercept` | [`bool`](#doc_bool) | Do not fit an intercept in the model. | `False` |
+| `no_normalize` | [`bool`](#doc_bool) | Do not normalize data to unit variance before modeling. | `False` |
+| `use_cholesky` | [`bool`](#doc_bool) | Use Cholesky decomposition during computation rather than explicitly computing the full Gram matrix. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
 ### Example
-For example, the following command trains a model on the data `'data'` and responses `'responses'` with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being solved), and then the model is saved to `'lasso_model'`:
 
 ```python
->>> output = lars(input_=data, responses=responses, lambda1=0.4, lambda2=0)
->>> lasso_model = output['output_model']
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import Lars
+>>> X = pd.read_csv('http://datasets.mlpack.org/admissions_predict.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/admissions_predict.responses.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = Lars(check_input_matrices=False, copy_all_inputs=False, lambda1=0,
+  lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
+  verbose=False)
+>>> output_model = model.fit(input_=X_train, responses=y_train)
+>>> output_predictions = lars_model.predict(test=X_test)
 ```
 
-The following command uses the `'lasso_model'` to provide predicted responses for the data `'test'` and save those responses to `'test_predictions'`: 
+### Methods
 
-```python
->>> output = lars(input_model=lasso_model, test=test)
->>> test_predictions = output['output_predictions']
-```
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model, and save the pre-trained model for later use to output regression predictions from a test set. |
+| predict | An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This program can use a pre-trained LARS/LASSO/Elastic Net model to output regression predictions from a test set. |
 
-### See also
+### 1. fit
 
- - [linear_regression()](#linear_regression)
- - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
- - [LARS C++ class documentation](../../user/methods/lars.md)
+An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model, and save the pre-trained model for later use to output regression predictions from a test set.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | 
+| `responses` | [`vector`](#doc_vector) | Row vector of responses/observations (y). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LARSType`](#doc_model) | Output LARS model. | 
+
+### 2. predict
+
+An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This program can use a pre-trained LARS/LASSO/Elastic Net model to output regression predictions from a test set.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
 
 ## linear_svm()
 {: #linear_svm }

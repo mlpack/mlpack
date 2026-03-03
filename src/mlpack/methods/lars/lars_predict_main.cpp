@@ -25,7 +25,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("LARS");
+BINDING_USER_NAME("LARS Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -38,26 +38,10 @@ BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-    CALL_METHOD("model", "classify", "test", "X_test"));
-#if 0
-    "For example, the following command trains a model on the data " +
-    PRINT_DATASET("data") + " and responses " + PRINT_DATASET("responses") +
-    " with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being "
-    "solved), and then the model is saved to " + PRINT_MODEL("lasso_model") +
-    ":"
-    "\n\n" +
-    PRINT_CALL("lars", "input", "data", "responses", "responses", "lambda1",
-        0.4, "lambda2", 0.0, "output_model", "lasso_model") +
-    "\n\n"
-    "The following command uses the " + PRINT_MODEL("lasso_model") + " to "
-    "provide predicted responses for the data " + PRINT_DATASET("test") + " "
-    "and save those responses to " + PRINT_DATASET("test_predictions") + ": "
-    "\n\n" +
-    PRINT_CALL("lars", "input_model", "lasso_model", "test", "test",
-        "output_predictions", "test_predictions"));
-#endif
+    CALL_METHOD("lars_model", "predict", "test", "X_test"));
 
 // See also...
+BINDING_SEE_ALSO("@lars_train", "#lars_train");
 BINDING_SEE_ALSO("@linear_regression", "#linear_regression");
 BINDING_SEE_ALSO("Least angle regression (pdf)",
     "https://mlpack.org/papers/lars.pdf");
