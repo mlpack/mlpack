@@ -3448,8 +3448,8 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
-#ifndef MLPACK_DISABLE_HTTP
-#ifdef MLPACK_ENABLE_HTTP
+#ifndef MLPACK_DISABLE_HTTPLIB
+#ifdef MLPACK_ENABLE_HTTPLIB
 
 TEST_CASE("URLTests", "[LoadSaveTest]")
 {
@@ -3463,7 +3463,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(filename == "report.pdf");
 
   // 2.  Image file
-  "http://cdn.server.org/images/photo.jpg";
+  testUrl = "http://cdn.server.org/images/photo.jpg";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "cdn.server.org");
   REQUIRE(filename == "photo.jpg");
@@ -3516,6 +3516,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   testUrl = "https://example.com/api/v2/users";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
+  std::cout << filename << std::endl;
   REQUIRE(filename == "users");
 
   // 11. Deeply nested file
@@ -3602,10 +3603,30 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
 
-  // 25 Invalid host with capital letter
+  // 25 invalid host with capital letter
+  testurl = "https://examplesofinvalid..com/invalid";
+  require_throws_as(parseurl(testurl, host, filename, port),
+      std::runtime_error);
+
+  // 26 Invalid host with capital letter
   testUrl = "https://examplesofinvalid..com/invalid";
   REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
       std::runtime_error);
+
+  // 27. Double ltd at the end + port number
+  port = -1;
+  testUrl = "http://localhost.co.uk:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost.co.uk");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 28. 3 number port number + https + a filename
+  port = -1;
+  testUrl = "https://localhost:330/index.html";
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 330);
 }
 
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")

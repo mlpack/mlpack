@@ -60,7 +60,7 @@ inline bool CheckValidHost(const std::string& host)
   return std::find_if(host.begin(), host.end(), InvalidHost()) == host.end();
 }
 
-inline bool IsDigits(const std::string &str)
+inline bool IsDigits(const std::string& str)
 {
   return std::all_of(str.begin(), str.end(), ::isdigit);
 }
@@ -91,10 +91,12 @@ inline void ParseURL(const std::string& url, std::string& host,
     char endChar = possibleHost.at(endHost);
     if (endChar == ':')
     {
-      // We need to find the last char which is /
-      size_t endPort = possibleHost.find("/", endHost + 1);
-      if (IsDigits(possibleHost.substr(endHost + 1, endPort)))
-        port = std::stoi(possibleHost.substr(endHost + 1, endPort));
+      // We need to find the first '/' as we might have several.
+      std::string possiblePort = possibleHost.substr(endHost + 1);
+      size_t endPort = possiblePort.find_first_of("/");
+      possiblePort = possiblePort.substr(0, endPort);
+      if (IsDigits(possiblePort))
+        port = std::stoi(possiblePort);
     }
   }
 
@@ -167,10 +169,10 @@ inline bool DownloadFile(const std::string& url,
   tmpFilename +=  "." + Extension(filename);
 
 #ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(tmpFilename.c_str(), std::fstream::out
+  stream.open(tmpFilename, std::fstream::out
       | std::fstream::binary);
 #else
-  stream.open(tmpFilename.c_str(), std::fstream::out);
+  stream.open(tmpFilename, std::fstream::out);
 #endif
 
   if (!stream.is_open())
@@ -191,6 +193,7 @@ inline bool DownloadFile(const std::string& url,
     throw std::runtime_error(oss.str());
   }
   stream.close();
+  filename = tmpFilename;
   return true;
 }
 
