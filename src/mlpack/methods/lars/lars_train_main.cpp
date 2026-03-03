@@ -1,5 +1,5 @@
 /**
- * @file methods/lars/lars_main.cpp
+ * @file methods/lars/lars_train_main.cpp
  * @author Nishant Mehta
  * @author Dirk Eddelbuettel
  *
@@ -73,12 +73,7 @@ BINDING_LONG_DESC(
     PRINT_PARAM_STRING("output_model") + ".  If no training is desired at all,"
     " a model can be passed via the " + PRINT_PARAM_STRING("input_model") +
     " parameter."
-    "\n\n"
-    "The program can also provide predictions for test data using either the "
-    "trained model or the given input model.  Test points can be specified with"
-    " the " + PRINT_PARAM_STRING("test") + " parameter.  Predicted responses "
-    "to the test points can be saved with the " +
-    PRINT_PARAM_STRING("output_predictions") + " output parameter.");
+    "\n\n");
 
 // Example.
 BINDING_EXAMPLE("");
@@ -109,14 +104,7 @@ BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 PARAM_TMATRIX_IN_REQ("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN("responses", "Row vector of responses/observations (y).", "r");
 
-PARAM_MODEL_IN(LARS<>, "input_model", "Trained LARS model to use.", "m");
 PARAM_MODEL_OUT(LARS<>, "output_model", "Output LARS model.", "M");
-
-PARAM_TMATRIX_IN("test", "Matrix containing points to regress on (test "
-    "points).", "t");
-
-PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
-    "file is where the predicted responses will be saved.", "o");
 
 PARAM_DOUBLE_IN("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
@@ -139,9 +127,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireOnlyOnePassed(params, { "responses" }, true, "responses must "
       "also be specified");
 
-  RequireAtLeastOnePassed(params, { "output_predictions", "output_model" },
+  RequireAtLeastOnePassed(params, { "output_model" },
       false, "no results will be saved");
-  ReportIgnoredParam(params, {{ "test", true }}, "output_predictions");
 
   // Initialize the object.
   LARS<>* lars = new LARS<>(useCholesky, lambda1, lambda2);

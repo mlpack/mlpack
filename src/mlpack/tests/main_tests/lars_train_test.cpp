@@ -35,8 +35,6 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitMVPTest",
 
   arma::mat trainX = arma::randu<arma::mat>(N, D);
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
-  //trainX.print("trainX");
-  //trainY.print("trainY");
   SetInputParam("input", std::move(trainX));
   SetInputParam("responses", std::move(trainY));
   RUN_BINDING();
@@ -44,9 +42,7 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitMVPTest",
   arma::rowvec preds;
   arma::mat testX = { 0.123, 0.134 };
   testX = trans(testX);
-  //testX.print("testX");
   params.Get<LARS<>*>("output_model")->Predict(testX, preds);
-  //preds.print("preds");
   REQUIRE(preds.n_elem == 1);
 }
 
@@ -168,7 +164,6 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitWrongResponseSizeTest",
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
-#if 0
 /**
  * Ensuring that absence of responses is checked.
  */
@@ -179,7 +174,7 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNoResponses",
   constexpr int D = 1;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
-  SetInputParam("training", std::move(trainX));
+  SetInputParam("input", std::move(trainX));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
@@ -193,16 +188,16 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNoTrainingData",
   constexpr int N = 10;
 
   arma::rowvec trainY = arma::randu<arma::rowvec>(N);
-  SetInputParam("training_responses", std::move(trainY));
+  SetInputParam("responses", std::move(trainY));
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**
  * Ensuring that error is thrown when negative regularization
- * is passed.
+ * lambda1 is passed.
  */
-TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNegRegularization",
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNegL1Regularization",
                 "[LarsTrainMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -210,28 +205,59 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNegRegularization",
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
 
-  SetInputParam("training", std::move(trainX));
-  SetInputParam("lambda", double(-1)); // negative regularization.
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("lambda1", double(-1)); // negative regularization.
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**
- * Ensuring that the when no responses are given then last
- * row is automatically considered as responses.
+ * Ensuring that error is thrown when negative regularization
+ * lambda2 is passed.
  */
-TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNoResponses2",
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNegL2Regularization",
                 "[LarsTrainMainTest][BindingTests]")
 {
   constexpr int N = 10;
-  constexpr int D = 3;
+  constexpr int D = 1;
 
   arma::mat trainX = arma::randu<arma::mat>(D, N);
 
-  SetInputParam("training", std::move(trainX));
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("lambda2", double(-1)); // negative regularization.
 
-  // Intentionally not passing training_responses.
-
-  RUN_BINDING();
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
-#endif
+
+/**
+ * Training a model with and without intercept should lead to intercept
+ * estimates of non-zero and zero values, respectively.
+ */
+TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitWithAndWithoutIntercept",
+                 "[LarsTrainMainTest][BindingTests]")
+{
+  arma::mat trainX({1.0, 2.0, 3.0});
+  trainX = trans(trainX);
+
+  arma::mat testX({4.0});
+  arma::rowvec trainY({1.0, 4.0, 9.0});
+
+  SetInputParam("input", trainX);
+  SetInputParam("responses", trainY);
+
+  // The first solution.
+  RUN_BINDING();
+  double alpha1 = params.Get<LARS<>*>("output_model")->Intercept();
+  REQUIRE(alpha1 != 0);
+
+  ResetSettings();
+
+  SetInputParam("input", std::move(trainX));
+  SetInputParam("responses", std::move(trainY));
+  SetInputParam("no_intercept", true);
+
+  // The second solution.
+  RUN_BINDING();
+  double alpha2 = params.Get<LARS<>*>("output_model")->Intercept();
+  CHECK(alpha2 == 0.0f);
+}
