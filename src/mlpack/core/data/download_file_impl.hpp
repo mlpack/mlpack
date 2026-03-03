@@ -163,6 +163,13 @@ inline bool DownloadFile(const std::string& url,
     oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
     throw std::runtime_error(oss.str());
   }
+  if (res->status == 404)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: Page / File not found: "
+        << res->status << " returned.";
+    throw std::runtime_error(oss.str());
+  }
 
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
