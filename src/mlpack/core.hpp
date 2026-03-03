@@ -36,6 +36,7 @@
 
 // Now the core mlpack classes.
 #include <mlpack/core/stb/stb.hpp>
+#include <mlpack/core/httplib/httplib.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/ens_traits.hpp>
 #include <mlpack/core/util/first_element_is_arma.hpp>

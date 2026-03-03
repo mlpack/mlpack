@@ -82,14 +82,14 @@ jobs:
             os: 'macOS',
             name: 'CLI',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON',
-            cores: 3
+            cores: 2
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
-            cores: 3
+            cores: 2
           }
         ]
 
@@ -393,4 +393,4 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack-windows-installer
-          path: dist/win-installer/mlpack-win-installer/bin/Release/mlpack-windows.msi
+          path: dist/win-installer/mlpack-win-installer/bin/x64/Release/mlpack-windows.msi
