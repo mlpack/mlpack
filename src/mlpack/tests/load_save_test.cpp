@@ -3516,7 +3516,6 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   testUrl = "https://example.com/api/v2/users";
   ParseURL(testUrl, host, filename, port);
   REQUIRE(host == "example.com");
-  std::cout << filename << std::endl;
   REQUIRE(filename == "users");
 
   // 11. Deeply nested file
