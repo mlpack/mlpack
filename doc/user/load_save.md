@@ -28,24 +28,24 @@ and [format detection/selection](#formats).
 
 ## `Load()`
 
- - `Load(filename, X)`
-   * Load `X` from the given file `filename` with default options:
+ - `Load(path, X)`
+   * Load `X` from the given local file or remote URL `path` with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
 
- - `Load(filename, X, Option1 + Option2 + ...)`
-   * Load `X` from the given file `filename` with the given options.
+ - `Load(path, X, Option1 + Option2 + ...)`
+   * Load `X` from the given local file or remote URL `path` with the given options.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
    * The given options must be from the
      [list of standalone operators](#dataoptions) and be appropriate for the type
      of `X`.
 
- - `Load(filename, X, opts)`
-   * Load `X` from the given file `filename` with the given options specified in `opts`.
+ - `Load(path, X, opts)`
+   * Load `X` from the given local file or remote URL `path` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
    * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
@@ -53,13 +53,13 @@ and [format detection/selection](#formats).
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
- - `Load(filenames, X)`
- - `Load(filenames, X, Option1 + Option2 + ...)`
- - `Load(filenames, X, opts)`
-    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
+ - `Load(paths, X)`
+ - `Load(paths, X, Option1 + Option2 + ...)`
+ - `Load(paths, X, opts)`
+    * Load data from `paths` (a `std::vector<std::string>`) into the matrix `X`.
       - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
       - For [image data](#image-data), each image is flattened into one column of `X`.
-    - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
+    - Metadata (e.g. image size, number of columns, etc.) in all files in `paths` must match or loading will fail.
     - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
 
 ---
@@ -86,9 +86,20 @@ std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
 ```
 
+Another simple example, loading the file from a URL:
+
+```c++
+arma::mat data;
+bool success = mlpack::Load("http://datasets.mlpack.org/iris.csv",
+    data, mlpack::NoFatal);
+if (!success)
+    std::cout << "Error loading dataset" << std::endl;
+```
+
 See also the other examples for each [supported load type](#types):
 
  * [Numeric data](#numeric-data-loadsave-examples)
+ * [Loading from remote URLs](#loading-from-remote-urls)
  * [Categorical data](#categorical-data-loadsave-examples)
  * [Image data](#image-data-loadsave-examples)
  * [mlpack models and objects](#mlpack-models-and-objects-loadsave-examples)
@@ -700,10 +711,7 @@ When a remote URL is given to `Load()`:
 
  * The URL must start with either `http://` or `https://` or loading will fail.
 
- * If the URL starts with `https://`, then [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) should be
-     declared before `#include <mlpack.hpp>`.
-
- * For loading HTTPS data, support must be enabled with
+ * If the URL starts with `https://`, support must be enabled with
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
