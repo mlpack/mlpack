@@ -80,10 +80,12 @@ BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
     IMPORT_THIS("lars") + "\n" +
-    GET_DATASET("X", "http://datasets.mlpack.org/admissions_predict.csv") + "\n" +
-    GET_DATASET("y", "http://datasets.mlpack.org/admissions_predict.responses.csv") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
-    "0.2") + "\n" +
+    GET_DATASET("X",
+      "http://datasets.mlpack.org/admissions_predict.csv") + "\n" +
+    GET_DATASET("y",
+      "http://datasets.mlpack.org/admissions_predict.responses.csv") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test",
+      "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "lars") + "\n" +
     CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
                 "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));
