@@ -108,7 +108,6 @@ inline void SiftingStep(ColType& h,
 
   FindExtrema(h, maxIdx, minIdx);
 
-  using mlpack::BuildSplineEnvelope;
   BuildSplineEnvelope(h, maxIdx, upper);
   BuildSplineEnvelope(h, minIdx, lower);
 
