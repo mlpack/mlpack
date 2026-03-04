@@ -59,23 +59,23 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
     // Step 1: assemble h_i segment lengths and rhs alpha.
     arma::Col<eT> hSeg = idx.subvec(1, m - 1) - idx.subvec(0, m - 2);
     arma::Col<eT> alpha(m - 1, arma::fill::zeros);
-    
     alpha.subvec(1, m - 2) = eT(3) * (
       (y.subvec(2, m - 1) - y.subvec(1, m - 2)) / hSeg.subvec(1, m - 2) -
       (y.subvec(1, m - 2) - y.subvec(0, m - 3)) / hSeg.subvec(0, m - 3));
 
     // Step 2: solve tridiagonal system for spline second deriv (c).
     arma::Mat<eT> M(m, m, arma::fill::zeros);
-    M(0,0)=1; M(m-1,m-1)=1;
-    M.diag(0).subvec(1,m-2) = eT(2) * (hSeg.subvec(0,m-3) + hSeg.subvec(1,m-2));
-    M.diag(-1).subvec(0,m-3) = hSeg.subvec(0,m-3);
-    M.diag(+1).subvec(1,m-2) = hSeg.subvec(1,m-2);
+    M(0, 0) = 1; M(m - 1, m - 1) = 1;
+    M.diag(0).subvec(1, m - 2) = eT(2) *
+      (hSeg.subvec(0, m - 3) + hSeg.subvec(1, m - 2));
+    M.diag(-1).subvec(0, m - 3) = hSeg.subvec(0, m - 3);
+    M.diag(+1).subvec(1, m - 2) = hSeg.subvec(1, m - 2);
 
     arma::Col<eT> rhs(m, arma::fill::zeros);
-    rhs.subvec(1,m-2) = alpha.subvec(1,m-2);
+    rhs.subvec(1, m - 2) = alpha.subvec(1, m - 2);
 
-    const bool ok = arma::solve(c, M, rhs); 
-    if (!ok) c.zeros();  // fallback 
+    const bool ok = arma::solve(c, M, rhs);
+    if (!ok) c.zeros();  // fallback
   }
   // Step 3: evaluate spline on each segment and fill envelope values
   env.zeros();
