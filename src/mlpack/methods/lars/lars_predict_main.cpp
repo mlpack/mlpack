@@ -49,17 +49,14 @@ BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
 PARAM_MODEL_IN_REQ(LARS<>, "input_model", "Trained LARS model to use.", "m");
 
-PARAM_TMATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
+PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
     "points).", "t");
 
-PARAM_TMATRIX_OUT("output_predictions", "If --test_file is specified, this "
+PARAM_MATRIX_OUT("output_predictions", "If --test_file is specified, this "
     "file is where the predicted responses will be saved.", "o");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
-  //RequireOnlyOnePassed(params, { "responses" }, true, "responses must "
-  //    "also be specified");
-
   // Initialize the object.
   LARS<>* lars = params.Get<LARS<>*>("input_model");
 
@@ -75,9 +72,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   arma::rowvec predictions;
   timers.Start("lars_prediction");
-  lars->Predict(testPoints.t(), predictions, false);
+  lars->Predict(testPoints, predictions, false);
   timers.Stop("lars_prediction");
 
   // Save test predictions (one per line).
-  params.Get<arma::mat>("output_predictions") = predictions.t();
+  params.Get<arma::mat>("output_predictions") = predictions;
 }
