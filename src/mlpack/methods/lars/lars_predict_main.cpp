@@ -52,8 +52,7 @@ PARAM_MODEL_IN_REQ(LARS<>, "input_model", "Trained LARS model to use.", "m");
 PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
     "points).", "t");
 
-PARAM_MATRIX_OUT("output_predictions", "If --test_file is specified, this "
-    "file is where the predicted responses will be saved.", "o");
+PARAM_MATRIX_OUT("predictions", "Matrix containing predicted responses.", "o");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -76,5 +75,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   timers.Stop("lars_prediction");
 
   // Save test predictions (one per line).
-  params.Get<arma::mat>("output_predictions") = predictions;
+  params.Get<arma::mat>("predictions") = predictions;
 }

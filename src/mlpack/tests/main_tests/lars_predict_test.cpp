@@ -38,7 +38,6 @@ TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictNoModel",
   * Ensuring that test data size is checked
  **/
 TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictDataDim"
-                 "LogisticRegressionClassifyNoData",
                  "[LarsPredictMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -62,10 +61,35 @@ TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictDataDim"
 }
 
 /**
+  * Ensuring that predicting single data point works
+ **/
+TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictionSinglePoint",
+                 "[LarsPredictMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 2;
+
+  arma::mat trainX = arma::randu<arma::mat>(D, N);
+  arma::rowvec trainY = arma::randu<arma::rowvec>(N);
+
+  // Training the model.
+  LARS<>* model = new LARS<>(trainX, trainY);
+  SetInputParam("input_model", std::move(model));
+
+  // Test data point
+  arma::mat testP = arma::randu<arma::mat>(1,D);
+  SetInputParam("test", std::move(testP));
+  RUN_BINDING();
+
+  const arma::mat prediction = params.Get<arma::mat>("predictions");
+  REQUIRE(prediction(0,0) != 0);
+  REQUIRE(prediction.n_elem == 1);
+}
+
+/**
   * Ensuring that predicting data points works
  **/
-TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictionDim"
-                 "LogisticRegressionClassifyNoData",
+TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictionPoints",
                  "[LarsPredictMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -79,13 +103,12 @@ TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictionDim"
   LARS<>* model = new LARS<>(trainX, trainY);
   SetInputParam("input_model", std::move(model));
 
-  // Test data point
-  arma::vec testP = arma::randu<arma::vec>(D);
-  const double prediction = model->Predict(testP);
-  REQUIRE(prediction != 0);
+  // Test data points
+  arma::mat testP = arma::randu<arma::mat>(M, D);
+  SetInputParam("test", std::move(testP));
+  RUN_BINDING();
 
-  arma::mat testX = arma::randu<arma::mat>(D, M);
-  arma::rowvec predX;
-  model->Predict(testX, predX);
-  REQUIRE(predX.n_elem == 5);
+  const arma::mat prediction = params.Get<arma::mat>("predictions");
+  REQUIRE(arma::all(arma::all(prediction != 0) == 1) == 1);
+  REQUIRE(prediction.n_elem == M);
 }
