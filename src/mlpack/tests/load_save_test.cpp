@@ -3635,6 +3635,18 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
   REQUIRE(host == "localhost");
   REQUIRE(filename == "index.html");
   REQUIRE(port == 330);
+
+  port = -1;
+  testUrl = "http://www.mlpack.org/file_with_no_extension";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "file_with_no_extension");
+
+  filename = "something_random";
+  testUrl = "http://www.mlpack.org/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "");
 }
 
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
