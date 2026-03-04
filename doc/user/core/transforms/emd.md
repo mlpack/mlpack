@@ -8,7 +8,7 @@ processing methods like FFT.
 #### See also:
 
  * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
- * [EMD for nonlinear and non-stationary time series analysis](https://royalsocietypublishing.org/rspa/article-pdf/454/1971/903/634025/rspa.1998.0193.pdf) (original EMD paper, pdf)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
 
 ## Inputs 
 Basic usage is
