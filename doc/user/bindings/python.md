@@ -1644,7 +1644,7 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
   lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
   verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
->>> output_predictions = lars_model.predict(test=X_test)
+>>> predictions = lars_model.predict(test=X_test)
 ```
 
 ### Methods
@@ -1685,7 +1685,7 @@ An implementation of Least Angle Regression (stagewise/lasso), also known as LAR
 
 | **type** | **description** |
 |----------|-----------------|
-| [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| [`matrix`](#doc_matrix) | Matrix containing predicted responses. | 
 
 ## linear_svm()
 {: #linear_svm }

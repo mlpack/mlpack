@@ -37,7 +37,7 @@ TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictNoModel",
 /**
   * Ensuring that test data size is checked
  **/
-TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictDataDim"
+TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictDataDim",
                  "[LarsPredictMainTest][BindingTests]")
 {
   constexpr int N = 10;
