@@ -25,7 +25,6 @@ inline void FindExtrema(const ColType& h,
   // Identify indices of strict local maxima and minima (discrete neighbors) and
   // always include endpoints. This determines whether the residue is monotone
   // and supplies knots for spline envelopes in sifting.
-  using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
   maxIdx.reset();
@@ -49,21 +48,20 @@ inline void FindExtrema(const ColType& h,
   }
 
   maxIdx = arma::find(
-    (h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2)) %
-    (h.subvec(1, h.n_elem - 2) > h.subvec(2, h.n_elem - 1))) + 1;
+    (h.subvec(0, N - 3) < h.subvec(1, N - 2)) %
+    (h.subvec(1, N - 2) > h.subvec(2, N - 1))) + 1;
   minIdx = arma::find(
-    (h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2)) %
-    (h.subvec(1, h.n_elem - 2) < h.subvec(2, h.n_elem - 1))) + 1;
+    (h.subvec(0, N - 3) > h.subvec(1, N - 2)) %
+    (h.subvec(1, N - 2) < h.subvec(2, N - 1))) + 1;
   // Always include endpoints to allow envelope construction on monotone data.
-  if (maxIdx.empty() || maxIdx.front() != 0)
-    maxIdx.insert(maxIdx.begin(), arma::uword(0));
-  if (maxIdx.back() != arma::uword(N - 1))
-    maxIdx.push_back(arma::uword(N - 1));
-  
-  if (minIdx.empty() || minIdx.front() != 0)
-    minIdx.insert(minIdx.begin(), arma::uword(0));
-  if (minIdx.back() != (arma::uword) (N - 1))
-    minIdx.push_back((arma::uword) (N - 1));
+  if (maxIdx.is_empty() || maxIdx[0] != 0)
+    maxIdx = arma::join_cols(arma::uvec{0}, maxIdx);
+  if (maxIdx.is_empty() || maxIdx[maxIdx.n_elem - 1] != (N - 1))
+    maxIdx = arma::join_cols(maxIdx, arma::uvec{N - 1});
+  if (minIdx.is_empty() || minIdx[0] != 0)
+    minIdx = arma::join_cols(arma::uvec{0}, minIdx);
+  if (minIdx.is_empty() || minIdx[minIdx.n_elem - 1] != (N - 1))
+    minIdx = arma::join_cols(minIdx, arma::uvec{N - 1});
 }
 
 //helper to count zero crossings as part of IMF stopping criteria
@@ -95,7 +93,6 @@ inline void SiftingStep(ColType& h,
                         ColType& meanEnvOut,
                         size_t& numExtremaOut)
 {
-  using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
   if (N == 0) { meanEnvOut.reset(); numExtremaOut = 0; return; }
@@ -185,8 +182,6 @@ inline void EMD(const ColType& signal,
                 const size_t maxSiftIter = 50,
                 const double tol = 1e-3)
 {
-  using eT = typename ColType::elem_type;
-
   const size_t N = signal.n_elem;
   imfs.reset();
   residue = signal;
