@@ -84,8 +84,8 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
     const arma::uword i0 = idx[seg];
     const arma::uword i1 = idx[seg + 1];
 
-    const eT x0 = x[seg];
-    const eT x1 = x[seg + 1];
+    const eT x0 = eT(idx[seg]);
+    const eT x1 = eT(idx[seg + 1]);
     const eT hSegLen = x1 - x0;
 
     if (hSegLen == eT(0))
