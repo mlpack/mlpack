@@ -48,14 +48,21 @@ inline void FindExtrema(const ColType& h,
     return;
   }
 
-  arma::uvec maxIdx = find(
-    h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2) %
-    h.subvec(1, h.n_elem - 2) > h.subvec(2, h.n_elem - 1));
-  arma::uvec minIdx = find(
-    h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2) %
-    h.subvec(1, h.n_elem - 2) < h.subvec(2, h.n_elem - 1));
+  maxIdx = arma::find(
+    (h.subvec(0, h.n_elem - 3) < h.subvec(1, h.n_elem - 2)) %
+    (h.subvec(1, h.n_elem - 2) > h.subvec(2, h.n_elem - 1))
+  ) + 1;
+  minIdx = arma::find(
+    (h.subvec(0, h.n_elem - 3) > h.subvec(1, h.n_elem - 2)) %
+    (h.subvec(1, h.n_elem - 2) < h.subvec(2, h.n_elem - 1))
+  ) + 1;
 
   // Always include endpoints to allow envelope construction on monotone data.
+  if (maxIdx.empty() || maxIdx.front() != 0)
+    maxIdx.insert(maxIdx.begin(), arma::uword(0));
+  if (maxIdx.back() != arma::uword(N - 1))
+    maxIdx.push_back(arma::uword(N - 1));
+  
   if (minIdx.empty() || minIdx.front() != 0)
     minIdx.insert(minIdx.begin(), arma::uword(0));
   if (minIdx.back() != (arma::uword) (N - 1))
