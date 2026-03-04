@@ -25,7 +25,7 @@ inline void FindExtrema(const ColType& h,
   // Identify indices of strict local maxima and minima (discrete neighbors) and
   // always include endpoints. This determines whether the residue is monotone
   // and supplies knots for spline envelopes in sifting.
-  using eT = typename ColType::elem_type; 
+  using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
 
   maxIdx.reset();
@@ -108,9 +108,8 @@ inline void SiftingStep(ColType& h,
   meanEnvOut = (upper + lower)/2;
 
   h -= meanEnvOut; //in-place update to next h
-  
-  // count the number of extrema 
-  numExtremaOut = 
+  // count the number of extrema
+  numExtremaOut =
     (maxIdx.n_elem >= 2 ? maxIdx.n_elem - 2 : 0) +
     (minIdx.n_elem >= 2 ? minIdx.n_elem - 2 : 0);
 }
@@ -202,7 +201,7 @@ inline void EMD(const ColType& signal,
     ColType imf;
     double imfNorm;
     // Get next IMF via sifting
-    if (!NextImf(residue, imf, maxSiftIter, tol, imfNorm)) 
+    if (!NextImf(residue, imf, maxSiftIter, tol, imfNorm))
       break;
 
     // stop if IMF is negligible compared to original signal
@@ -210,7 +209,7 @@ inline void EMD(const ColType& signal,
       break;
 
     imfList.push_back(std::move(imf));
-    residue -= imfList.back(); 
+    residue -= imfList.back();
   }
 
   if (!imfList.empty())
