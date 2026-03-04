@@ -28,7 +28,6 @@ inline void BuildSplineEnvelope(const ColType& h,
   BuildSplineEnvelope(arma::Col<eT>(h), idx, envTemp);
   env = envTemp;
   }
-}
 
 template<typename eT>
 inline void BuildSplineEnvelope(const arma::Col<eT>& h,
@@ -51,7 +50,6 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   }
 
   // x: knot positions (indices) and y: knot values.
-  arma::Col<eT> x = arma::conv_to<arma::Col<eT>>::from(idx);
   arma::Col<eT> y = h.elem(idx);
 
   arma::Col<eT> c(m, arma::fill::zeros);
@@ -59,7 +57,7 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   if (m > 2)
   {
     // Step 1: assemble h_i segment lengths and rhs alpha.
-    arma::Col<eT> hSeg = x.subvec(1, m - 1) - x.subvec(0, m - 2);
+    arma::Col<eT> hSeg = idx.subvec(1, m - 1) - idx.subvec(0, m - 2);
     arma::Col<eT> alpha(m - 1, arma::fill::zeros);
     
     alpha.subvec(1, m - 2) = eT(3) * (
