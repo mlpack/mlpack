@@ -206,9 +206,8 @@ inline bool DownloadFile(const std::string& url,
 
 #else
 
-inline bool CheckIfURL(const std::string& url)
+inline bool CheckIfURL(const std::string& /* url */)
 {
-  std::string url2 = url; // Avoid compiler warning.
   return false;
 }
 
