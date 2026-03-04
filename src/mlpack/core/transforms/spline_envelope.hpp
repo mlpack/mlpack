@@ -27,7 +27,6 @@ inline void BuildSplineEnvelope(const ColType& h,
   // endpoints), as in classical EMD
   // see ref: Burden & Faires, Numerical Analysis, Algorithm 3.4. pp 149
   using eT = typename ColType::elem_type;
-  
   const size_t N = h.n_elem;
   env.set_size(N);
 
@@ -42,7 +41,6 @@ inline void BuildSplineEnvelope(const ColType& h,
   ColType y = h.elem(idx);
   ColType c(m);
   c.zeros();
-  
   if (m > 2)
   {
     // Step 1: assemble h_i segment lengths and rhs alpha.
