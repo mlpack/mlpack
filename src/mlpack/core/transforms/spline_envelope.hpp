@@ -23,18 +23,10 @@ inline void BuildSplineEnvelope(const ColType& h,
                                 ColType& env)
 {
   using eT = typename ColType::elem_type;
-  if constexpr (arma::is_arma_type<ColType>::value)
-  {
-    // reduce copies for arma::Col type
-    arma::Col<eT> envCpu;
-    BuildSplineEnvelope(arma::Col<eT>(h), idx, envCpu);
-    env = envCpu;
-  }
-  else{
-    arma::Col<eT> hCpu(h);
-    arma::Col<eT> envCpu;
-    BuildSplineEnvelope(hCpu, idx, envCpu);
-    env = envCpu;
+
+  arma::Col<eT> envTemp;
+  BuildSplineEnvelope(arma::Col<eT>(h), idx, envTemp);
+  env = envTemp;
   }
 }
 
@@ -67,39 +59,25 @@ inline void BuildSplineEnvelope(const arma::Col<eT>& h,
   if (m > 2)
   {
     // Step 1: assemble h_i segment lengths and rhs alpha.
-    arma::Col<eT> hSeg = arma::diff(x);
-
+    arma::Col<eT> hSeg = x.subvec(1, m - 1) - x.subvec(0, m - 2);
     arma::Col<eT> alpha(m - 1, arma::fill::zeros);
-    for (arma::uword i = 1; i < m - 1; ++i)
-    {
-      const eT invHi   = eT(1) / hSeg[i];
-      const eT invHim1 = eT(1) / hSeg[i - 1];
-      const eT s1 = (y[i + 1] - y[i]) * invHi;
-      const eT s0 = (y[i]     - y[i - 1]) * invHim1;
-      alpha[i] = eT(3) * (s1 - s0); // kept scaler for readability
-    }
+    
+    alpha.subvec(1, m - 2) = eT(3) * (
+      (y.subvec(2, m - 1) - y.subvec(1, m - 2)) / hSeg.subvec(1, m - 2) -
+      (y.subvec(1, m - 2) - y.subvec(0, m - 3)) / hSeg.subvec(0, m - 3));
 
     // Step 2: solve tridiagonal system for spline second deriv (c).
-    arma::Col<eT> l(m), mu(m), z(m);
-    l[0]  = eT(1);
-    mu[0] = eT(0);
-    z[0]  = eT(0);
+    arma::Mat<eT> M(m, m, arma::fill::zeros);
+    M(0,0)=1; M(m-1,m-1)=1;
+    M.diag(0).subvec(1,m-2) = eT(2) * (hSeg.subvec(0,m-3) + hSeg.subvec(1,m-2));
+    M.diag(-1).subvec(0,m-3) = hSeg.subvec(0,m-3);
+    M.diag(+1).subvec(1,m-2) = hSeg.subvec(1,m-2);
 
-    for (arma::uword i = 1; i < m - 1; ++i)
-    {
-      l[i]  = eT(2) * (x[i + 1] - x[i - 1]) - hSeg[i - 1] * mu[i - 1];
-      mu[i] = hSeg[i] / l[i];
-      z[i]  = (alpha[i] - hSeg[i - 1] * z[i - 1]) / l[i];
-    }
+    arma::Col<eT> rhs(m, arma::fill::zeros);
+    rhs.subvec(1,m-2) = alpha.subvec(1,m-2);
 
-    l[m - 1] = eT(1);
-    z[m - 1] = eT(0);
-    c[m - 1] = eT(0);
-
-    for (arma::sword j = static_cast<arma::sword>(m) - 2; j >= 0; --j)
-    {
-      c[j] = z[j] - mu[j] * c[j + 1];
-    }
+    const bool ok = arma::solve(c, M, rhs); 
+    if (!ok) c.zeros();  // fallback 
   }
   // Step 3: evaluate spline on each segment and fill envelope values
   env.zeros();
