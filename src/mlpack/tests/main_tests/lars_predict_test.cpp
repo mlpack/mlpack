@@ -77,12 +77,12 @@ TEST_CASE_METHOD(LarsPredictTestFixture, "LarsPredictionSinglePoint",
   SetInputParam("input_model", std::move(model));
 
   // Test data point
-  arma::mat testP = arma::randu<arma::mat>(1,D);
+  arma::mat testP = arma::randu<arma::mat>(1, D);
   SetInputParam("test", std::move(testP));
   RUN_BINDING();
 
   const arma::mat prediction = params.Get<arma::mat>("predictions");
-  REQUIRE(prediction(0,0) != 0);
+  REQUIRE(prediction(0, 0) != 0);
   REQUIRE(prediction.n_elem == 1);
 }
 
