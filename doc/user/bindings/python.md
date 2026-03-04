@@ -1633,8 +1633,8 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import Lars
->>> X = pd.read_csv('http://datasets.mlpack.org/admissions_predict.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/admissions_predict.responses.csv')
+>>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']
