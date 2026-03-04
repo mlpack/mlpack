@@ -93,7 +93,7 @@ arma::mat data;
 bool success = mlpack::Load("http://datasets.mlpack.org/iris.csv",
     data, mlpack::NoFatal);
 if (!success)
-    std::cout << "Error loading dataset" << std::endl;
+  std::cout << "Error loading dataset" << std::endl;
 ```
 
 See also the other examples for each [supported load type](#types):
