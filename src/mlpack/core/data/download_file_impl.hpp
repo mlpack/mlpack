@@ -200,7 +200,7 @@ inline bool DownloadFile(const std::string& url,
     throw std::runtime_error(oss.str());
   }
   stream.close();
-  filename = tmpFilename;
+  filename = tmpFilename.generic_string();
   return true;
 }
 
