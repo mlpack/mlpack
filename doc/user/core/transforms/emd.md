@@ -65,7 +65,7 @@ whichever occurs first.
 arma::mat imfs;
 arma::vec residue;
 
-// Use up to 10 IMFs, 50 sifts per IMF, tol = 1e-3
+// Use up to 5 IMFs, 50 sifts per IMF, tol = 1e-6
 mlpack::EMD(signal, imfs, residue, 5, 50, 5e-6);
 ```
 
