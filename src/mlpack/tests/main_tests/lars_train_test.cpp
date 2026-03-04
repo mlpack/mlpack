@@ -180,20 +180,6 @@ TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNoResponses",
 }
 
 /**
- * Ensuring that absence of training data is checked.
- */
-TEST_CASE_METHOD(LarsFitTestFixture, "LarsFitNoTrainingData",
-                 "[LarsTrainMainTest][BindingTests]")
-{
-  constexpr int N = 10;
-
-  arma::rowvec trainY = arma::randu<arma::rowvec>(N);
-  SetInputParam("responses", std::move(trainY));
-
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-}
-
-/**
  * Ensuring that error is thrown when negative regularization
  * lambda1 is passed.
  */

@@ -81,9 +81,9 @@ BINDING_EXAMPLE(
     IMPORT_SPLIT() + "\n" +
     IMPORT_THIS("lars") + "\n" +
     GET_DATASET("X",
-      "http://datasets.mlpack.org/admissions_predict.csv") + "\n" +
+      "http://datasets.mlpack.org/admission_predict.csv") + "\n" +
     GET_DATASET("y",
-      "http://datasets.mlpack.org/admissions_predict.responses.csv") + "\n" +
+      "http://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test",
       "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "lars") + "\n" +
@@ -98,7 +98,7 @@ BINDING_SEE_ALSO("Least angle regression (pdf)",
 BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
 PARAM_TMATRIX_IN_REQ("input", "Matrix of covariates (X).", "i");
-PARAM_ROW_IN("responses", "Row vector of responses/observations (y).", "r");
+PARAM_ROW_IN_REQ("responses", "Row vector of responses/observations (y).", "r");
 
 PARAM_MODEL_OUT(LARS<>, "output_model", "Output LARS model.", "M");
 
@@ -120,16 +120,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   bool noIntercept = params.Has("no_intercept");
   bool noNormalize = params.Has("no_normalize");
 
-  RequireOnlyOnePassed(params, { "responses" }, true, "responses must "
-      "also be specified");
-
   RequireAtLeastOnePassed(params, { "output_model" },
       false, "no results will be saved");
-
-  // Initialize the object.
-  LARS<>* lars = new LARS<>(useCholesky, lambda1, lambda2);
-  lars->FitIntercept(!noIntercept);
-  lars->NormalizeData(!noNormalize);
 
   // Load covariates.  We can avoid LARS transposing our data by choosing to
   // not transpose this data (that's why we used PARAM_TMATRIX_IN).
@@ -141,6 +133,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (y.n_elem != matX.n_rows)
     Log::Fatal << "Number of responses must be equal to number of rows of X!"
         << endl;
+
+  // Initialize the object.
+  LARS<>* lars = new LARS<>(useCholesky, lambda1, lambda2);
+  lars->FitIntercept(!noIntercept);
+  lars->NormalizeData(!noNormalize);
 
   timers.Start("lars_regression");
   lars->Train(matX, y, false /* do not transpose */);
