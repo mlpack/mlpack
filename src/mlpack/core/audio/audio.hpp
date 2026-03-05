@@ -13,6 +13,12 @@
 #ifndef MLPACK_CORE_AUDIO_AUDIO_HPP
 #define MLPACK_CORE_AUDIO_AUDIO_HPP
 
+//
+// MP3 Includes
+//
+
+#ifndef MLPACK_DISABLE_MP3
+
 #undef  DRMP3_API
 #define DRMP3_API  static
 
@@ -23,7 +29,7 @@
   #define DR_MP3_IMPLEMENTATION
 #endif
 
-#if defined(MLPACK_USE_SYSTEM_MP3)
+#if defined(MLPACK_USE_SYSTEM_DR_LIBS)
   #if __has_include(<dr_mp3.h>)
     #include <dr_mp3.h>
   #else
@@ -31,11 +37,19 @@
     #include "bundled/dr_mp3.h"
 #endif
 
+#endif //MLPACK_DISABLE_MP3
+
 #else
 
 #include "bundled/dr_mp3.h"
 
 #endif
+
+//
+// WAV Includes
+//
+
+#ifndef MLPACK_DISABLE_WAV
 
 #undef  DRWAV_API
 #define DRWAV_API  static
@@ -47,7 +61,7 @@
   #define DR_WAV_IMPLEMENTATION
 #endif
 
-#if defined(MLPACK_USE_SYSTEM_WAV)
+#if defined(MLPACK_USE_SYSTEM_DR_LIBS)
   #if __has_include(<dr_wav.h>)
     #include <dr_wav.h>
   #else
@@ -60,5 +74,7 @@
 #include "bundled/dr_wav.h"
 
 #endif
+
+#endif // MLPACK_DISABLE_WAV
 
 #endif // MLPACK_CODE_AUDIO_AUDIO_HPP
