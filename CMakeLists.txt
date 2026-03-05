@@ -387,6 +387,18 @@ if (USE_SYSTEM_HTTPLIB)
     "#define MLPACK_USE_SYSTEM_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
+if (STB_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${STB_INCLUDE_DIR}")
+endif ()
+
+if (HTTPLIB_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${HTTPLIB_INCLUDE_DIR}")
+endif ()
+
+if (DR_LIBS_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${DR_LIBS_INCLUDE_DIR}")
+endif ()
+
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
