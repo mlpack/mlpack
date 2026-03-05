@@ -66,8 +66,9 @@ program (before including mlpack or Armadillo!).
 |*Configuration.* |||
 | `-DMLPACK_USE_SYSTEM_STB` | `#define MLPACK_USE_SYSTEM_STB` | Use the version of STB available on the system instead of the version bundled with mlpack.  If set, make sure `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` are available. |
 | `-DMLPACK_DONT_USE_SYSTEM_STB` | `#define MLPACK_DONT_USE_SYSTEM_STB` | Force usage of the bundled version of STB.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_STB=ON`. |
-| `-DMLPACK_USE_SYSTEM_MP3` | `#define MLPACK_USE_SYSTEM_MP3` | Use the version of dr\_mp3 available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` is available. |
-| `-DMLPACK_USE_SYSTEM_WAV` | `#define MLPACK_USE_SYSTEM_WAV` | Use the version of dr\_wav available on the system instead of the version bundled with mlpack.  If set, make sure `dr_wav.h` is available. |
+| `-DMLPACK_USE_SYSTEM_DR_LIBS` | `#define MLPACK_USE_SYSTEM_DR_LIBS` | Use the version of dr\_mp3 and dr\_wav available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` and `dr_wav.h` are available. |
+| `-DMLPACK_DISABLE_WAV` | `#define MLPACK_DISABLE_WAV` | Disable WAV file's loading support within mlpack; use this if you do not have an audio support on your system or if you simply not planning to load audio files. |
+| `-DMLPACK_DISABLE_MP3` | `#define MLPACK_DISABLE_MP3` | Disable MP3 file's loading support within mlpack; use this if you do not have an audio support on your system or if you simply not planning to load audio files. |
 | `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISABLE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems).|
