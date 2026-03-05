@@ -110,7 +110,7 @@ class YOLOv3
   /**
    * Returns the number of possible bounding boxes.
    */
-  const std::vector<size_t>& NumBoxes()
+  size_t NumBoxes()
   {
     return model.OutputDimensions()[1];
   }
