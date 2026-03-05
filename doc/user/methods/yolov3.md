@@ -195,7 +195,7 @@ The format for the name of each YOLOv3 pretrained model is
  * [`yolov3-608-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f64.bin)
  * [`yolov3-tiny-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f64.bin)
 
-`arma::fmat` weights are also included. These weights [need custom template behaviour](#advanced-functionality-template-parameters).
+[`arma::fmat`](../matrices.md) weights are also included. These weights [need custom template behaviour](#advanced-functionality-template-parameters).
 
  * [`yolov3-320-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f32.bin)
  * [`yolov3-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f32.bin)
@@ -228,7 +228,7 @@ See also the [simple usage example](#simple-usage-example) for a trivial usage
 of the `YOLOv3` class.
 
 **NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION` macro
-to serialize and deserialize models that use `arma::mat` as the data type.
+to serialize and deserialize models that use [`arma::mat`](../matrices.md) as the data type.
 
 Simple example loading the image, passing it to [`Predict()`](#predicting-bounding-boxes) and saving the output.
 
@@ -339,13 +339,13 @@ YOLOv3<MatType>
 ```
 
  * `MatType`: specifies the type of matrix used for learning and internal
-representation of weights and biases. The default is `arma::mat`.
+representation of weights and biases. The default is [`arma::mat`](../matrices.md).
  * Any matrix type that implements the Armadillo API can be used.
 
-The example below uses YOLOv3 using the `arma::fmat` weights.
+The example below uses YOLOv3 using the [`arma::fmat`](../matrices.md) weights.
 
 **NOTE**: You must define the `MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` macro
-to serialize and deserialize models that use `arma::fmat` as the data type.
+to serialize and deserialize models that use [`arma::fmat`](../matrices.md) as the data type.
 
 ```c++
 // Step 1: load the pretrained arma::fmat weights.
@@ -369,7 +369,7 @@ mlpack::Save("output.jpg", outputImage, opts, true);
 
 ---
 
-Since `YOLOv3Tiny` has an identical API, we can use the `arma::fmat`
+Since `YOLOv3Tiny` has an identical API, we can use the [`arma::fmat`](../matrices.md)
 weights for faster inference times.
 
 ```c++
