@@ -18,6 +18,10 @@ permissions:
   contents: read
 name: mlpack.mlpack
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ###
   ### Linux and macOS test matrix for all binding types.
