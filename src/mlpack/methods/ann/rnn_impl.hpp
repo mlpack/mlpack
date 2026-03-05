@@ -514,7 +514,7 @@ void RNN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
+  // Note: if you define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING, you had
   // better ensure that every layer you are serializing has had
   // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
   // more information.
@@ -528,8 +528,10 @@ void RNN<
     }
 
     (void) ar;
-  #elif !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
-        !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+  #endif
+
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
     if (std::is_same_v<MatType, arma::fmat>)
     {
       throw std::runtime_error("RNN::serialize(): Cannot serialize"
@@ -538,7 +540,11 @@ void RNN<
     }
 
     (void) ar;
-  #else
+  #endif
+
+  #if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+      defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) || \
+      defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
 
     ar(CEREAL_NVP(bpttSteps));
     ar(CEREAL_NVP(single));

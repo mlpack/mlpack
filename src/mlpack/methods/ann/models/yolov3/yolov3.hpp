@@ -82,7 +82,9 @@ class YOLOv3
   /**
    * Returns the graph representation of the model.
    */
-  ModelType& Model() const { return model; }
+  const ModelType& Model() const { return model; }
+
+  ModelType& Model() { return model; }
 
   /**
    * Returns the width and height of the preprocessed image that

@@ -97,7 +97,7 @@ void LetterboxImages(arma::Mat<eT>& src,
   const size_t dx = (width - newWidth) / 2;
   const size_t dy = (height - newHeight) / 2;
 
-  cubeDest.fill(fillValue);
+  cubeDest.fill(static_cast<eT>(fillValue));
   // Fill RGB
   cubeDest.subcube(dx * srcOpt.Channels(),
                    dy,
