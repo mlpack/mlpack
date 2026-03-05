@@ -170,7 +170,9 @@ TEST_CASE("YOLOv3IncorrectAnchors", "[YOLOvTest][long]")
 // {
 //   const size_t imgSize = 416;
 //   const std::vector<double> anchors = {
-//     10, 13, 16, 30, 33, 23, 30, 61, 62, 45, 59, 119, 116, 90, 156, 198, 373, 326
+//     10, 13, 16, 30, 33, 23,
+//     30, 61, 62, 45, 59, 119,
+//     116, 90, 156, 198, 373, 326
 //   };
 //   const std::vector<std::string> classNames(80);
 //   YOLOv3<arma::mat, EmptyLoss, ConstInitialization>
