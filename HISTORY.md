@@ -10,6 +10,8 @@ _????-??-??_
 
  * Fix rendering of Python documentation (#4126).
 
+ * Add `EMD` signal preprocessing utility (#4044).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
