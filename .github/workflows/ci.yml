@@ -2,6 +2,8 @@
 # Linux and macOS, we run a matrix job that tests all the bindings.  For
 # Windows, we just run one build (see the later part of the file).
 
+name: Continuous Integration
+
 on:
   workflow_dispatch:
   push:
