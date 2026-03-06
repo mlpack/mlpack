@@ -192,17 +192,17 @@ The pretrained weights were trained on the COCO dataset.
 The format for the name of each YOLOv3 pretrained model is
 `<model name>-<image size>-<finetuned dataset name>-<matrix type>.bin`.
 
- * [`yolov3-320-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f64.bin)
- * [`yolov3-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f64.bin)
- * [`yolov3-608-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f64.bin)
- * [`yolov3-tiny-416-coco-f64.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f64.bin)
+ * [`yolov3-320-coco-f64.bin`](https://models.mlpack.org/yolo/yolov3-320-coco-f64.bin)
+ * [`yolov3-416-coco-f64.bin`](https://models.mlpack.org/yolo/yolov3-416-coco-f64.bin)
+ * [`yolov3-608-coco-f64.bin`](https://models.mlpack.org/yolo/yolov3-608-coco-f64.bin)
+ * [`yolov3-tiny-416-coco-f64.bin`](https://models.mlpack.org/yolo/yolov3-tiny-416-coco-f64.bin)
 
 [`arma::fmat`](../matrices.md) weights (e.g 32-bit precision) are also available. These weights [need custom template behaviour](#advanced-functionality-template-parameters).
 
- * [`yolov3-320-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-320-coco-f32.bin)
- * [`yolov3-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-416-coco-f32.bin)
- * [`yolov3-608-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-608-coco-f32.bin)
- * [`yolov3-tiny-416-coco-f32.bin`](https://models.mlpack.org/yolov3/yolov3-tiny-416-coco-f32.bin)
+ * [`yolov3-320-coco-f32.bin`](https://models.mlpack.org/yolo/yolov3-320-coco-f32.bin)
+ * [`yolov3-416-coco-f32.bin`](https://models.mlpack.org/yolo/yolov3-416-coco-f32.bin)
+ * [`yolov3-608-coco-f32.bin`](https://models.mlpack.org/yolo/yolov3-608-coco-f32.bin)
+ * [`yolov3-tiny-416-coco-f32.bin`](https://models.mlpack.org/yolo/yolov3-tiny-416-coco-f32.bin)
 
 An increased image size means the model will be able to better detect smaller objects
 at the cost of speed. Similarly, smaller matrix types allow for faster loading
@@ -328,8 +328,8 @@ mlpack::Save(outputFiles, outputImages, opts);
 
 <div style="display: flex; gap: 10px; justify-content:center;">
   <img src="../../img/dog_bbox.jpg" alt="dog, bicycle and truck" style="width:250px; height:auto;">
-  <img src="../../img/person_bbox.jpg" alt="fish" style="width:250px; height:auto;">
   <img src="../../img/cat_bbox.jpg" alt="cat" style="width:250px; height:auto;">
+  <img src="../../img/person_bbox.jpg" alt="fish" style="width:250px; height:auto;">
 </div>
 
 ### Advanced Functionality: Template Parameters
