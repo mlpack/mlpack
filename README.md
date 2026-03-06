@@ -109,9 +109,15 @@ Citations are beneficial for the growth and improvement of mlpack.
  - [ensmallen](https://ensmallen.org)      &emsp;>= 2.10.0
  - [cereal](http://uscilab.github.io/cereal/)         &ensp;&nbsp;&emsp;&emsp;>= 1.1.2
 
-mlpack bundles the STB and httplib header-only libraries for Image loading
-support, and dataset download is supported by default. If you prefer to
-use versions available on your system, see
+mlpack bundles the [STB](https://github.com/nothings/stb) and
+[httplib](https://github.com/yhirose/cpp-httplib/tree/master) header-only
+libraries for Image loading support, and dataset download is supported by
+default. If you prefer to use versions available on your system, see
+[the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
+
+mlpack bundles the [`dr\_libs`](https://github.com/mackron/dr_libs) audio
+libraries to load audio dataset files by default.  If you prefer to use
+a version available on your system, see
 [the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
