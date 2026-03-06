@@ -2,6 +2,8 @@
 # Linux and macOS, we run a matrix job that tests all the bindings.  For
 # Windows, we just run one build (see the later part of the file).
 
+name: Continuous Integration
+
 on:
   workflow_dispatch:
   push:
@@ -16,7 +18,6 @@ on:
     types: [published, created, edited]
 permissions:
   contents: read
-name: mlpack.mlpack
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
