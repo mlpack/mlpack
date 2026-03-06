@@ -18,7 +18,7 @@
 
 #include "image_options.hpp"
 #include "text_options.hpp"
-#include "detect_file_type.hpp"
+#include "handle_files.hpp"
 #include "save_deprecated.hpp"
 #include "save_numeric.hpp"
 #include "save_model.hpp"
