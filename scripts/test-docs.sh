@@ -160,6 +160,12 @@ extract_code_blocks()
             sed -i '1s/^/#include <xtensor\/xrandom.hpp>\n/' $output_prefix$output_file_display.cpp;
             sed -i '1s/^/#include <xtensor\/xarray.hpp>\n/' $output_prefix$output_file_display.cpp;
           fi
+
+          # NOTE: this is a hack to add serialization for neural networks where needed.
+          if [ "$input_file" == "yolov3" ];
+          then
+            sed -i '1s/^/#define MLPACK_ENABLE_ANN_SERIALIZATION\n/' $output_prefix$output_file_display.cpp;
+          fi
         fi
       fi
 
