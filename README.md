@@ -7,11 +7,11 @@
   <a href="https://mlpack.org">Home</a> |
   <a href="https://www.mlpack.org/download.html">Download</a> |
   <a href="https://www.mlpack.org/doc/index.html">Documentation</a> |
-  <a href="https://www.mlpack.org/questions.html">Help</a> |
+  <a href="https://www.mlpack.org/questions.html">Help</a>
 </h5>
 
 <p align="center">
-  <a href="https://dev.azure.com/mlpack/mlpack/_build?definitionId=1"><img alt="Azure DevOps builds (job)" src="https://img.shields.io/azure-devops/build/mlpack/84320e87-76e3-4b6e-8b6e-3adaf6b36eed/1/master?job=Linux&label=Linux%20Build&style=flat-square"></a>
+  <a href="https://github.com/mlpack/mlpack/actions/workflows/ci.yml"><img alt="GitHub Actions CI" src="https://github.com/mlpack/mlpack/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://opensource.org/license/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License"></a>
   <a href="https://numfocus.org/donate-to-mlpack"><img src="https://img.shields.io/badge/sponsored%20by-NumFOCUS-orange.svg?style=flat-square&colorA=E1523D&colorB=007D8A" alt="NumFOCUS"></a>
 </p>
