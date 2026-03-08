@@ -716,12 +716,36 @@ When a remote URL is given to `Load()`:
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
 
- * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
-    Linux systems).
+ * The downloaded file will be saved to the directory where the binary is
+   located.
+
+ * The downloaded file will be cached locally for 5 hours. Passing this period
+   `mlpack::Load()` and `mlpack::DownloadFile()` will download the dataset file
+   again if they are called.
+
+ * The user can specify the name of the downloaded file using `DownloadFile()`,
+   see the second example for usage detail.
+    <!-- 
+    @rcurtin, if the user has changed the filename, we should also cache it
+    correct ? in this case, we should have a map between the original file name
+    on the server and the name the user chose
+
+    I also a problem here: what if the user recall mlpack::DownloadFile()
+    with a different name, but the same URL ? would be consider that the user
+    is trying to downloading the file again ? The same problem applies if they
+    first calls mlpack::Load() with the URL without specifying a filename, and
+    then call mlpack::Load(DownloadFile(differentfile.csv))?
+
+    -->
+ 
+ * If the user specifies `#define MLPACK_DISABLE_CACHE_REMOTE_DATASETS`,  the downloaded file
+   will be saved to the system temporary directory (e.g. `/tmp/` on Linux systems).
 
 ```c++
 // Throw an exception if loading fails with the Fatal option.
 arma::mat dataset;
+// satellite.train.csv is downloaded and saved in the same location as the
+// binary.
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
@@ -739,6 +763,33 @@ std::cout << " - " << labels.n_elem << " labels." << std::endl;
 std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 ```
+
+Specify the filename when downloaded, in the following we are loading a dataset
+that has a header.
+
+```c++
+arma::fmat dataset;
+// We have to make a TextOptions object so that we can recover the headers.
+mlpack::TextOptions opts;
+opts.Format() = mlpack::FileType::CSVASCII;
+opts.HasHeaders() = true;
+
+// Download `Admission_Predict.csv` file and save it as `myDataset`.
+// Note: We opted to remove the `.csv` extension to demonstrate that you can 
+// load files without explicit extension if `opts.Format()` is defined.
+mlpack::Load(DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
+    "myDataset"), dataset, opts);
+
+std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
+for (size_t i = 0; i < opts.Headers().size(); ++i)
+{
+  std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
+      << std::endl;
+}
+```
+
+
+
 
 ## Mixed categorical data
 
