@@ -66,23 +66,26 @@ bool Load(const std::string& src,
   std::string filename;
   bool success = false;
 
-  if (checkIfURL(src))
+  if (CheckIfURL(src))
   {
     // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
     // the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
-    success = DownloadFile(src, filename, stream, opts);
+    success = DownloadFile(src, filename);
+    if (!success)
+    {
+      Timer::Stop("loading_data");
+      return HandleError("Cannot download the dataset from the provided link. "
+          "Please check the link or the data format.", opts);
+    }
 #else
     return HandleError("HTTPLIB support is disabled, please define "
         "MLPACK_ENABLE_HTTPLIB, to download dataset as URL.", opts);
 #endif
   }
-
-  if (!success)
+  else
   {
-    Timer::Stop("loading_data");
-    return HandleError("Cannot download the dataset from the provoided link. "
-        "Please check the link or the data format.", opts);
+    filename = src;
   }
 
   success = OpenFile(filename, opts, true, stream);

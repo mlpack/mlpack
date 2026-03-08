@@ -2,6 +2,8 @@
 # Linux and macOS, we run a matrix job that tests all the bindings.  For
 # Windows, we just run one build (see the later part of the file).
 
+name: Continuous Integration
+
 on:
   workflow_dispatch:
   push:
@@ -16,7 +18,10 @@ on:
     types: [published, created, edited]
 permissions:
   contents: read
-name: mlpack.mlpack
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ###
@@ -81,15 +86,15 @@ jobs:
             runner: macOS-latest,
             os: 'macOS',
             name: 'CLI',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON -DENABLE_HTTPLIB=ON',
-            cores: 3
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
+            cores: 2
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DENABLE_HTTPLIB=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
-            cores: 3
+            cores: 2
           }
         ]
 
@@ -394,4 +399,4 @@ jobs:
         uses: actions/upload-artifact@v4.4.0
         with:
           name: mlpack-windows-installer
-          path: dist/win-installer/mlpack-win-installer/bin/Release/mlpack-windows.msi
+          path: dist/win-installer/mlpack-win-installer/bin/x64/Release/mlpack-windows.msi

@@ -13,12 +13,13 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_HANLE_FILES_HPP
-#define MLPACK_CORE_DATA_HANLE_FILES_HPP
+#ifndef MLPACK_CORE_DATA_HANDLE_FILES_HPP
+#define MLPACK_CORE_DATA_HANDLE_FILES_HPP
 
 #include "extension.hpp"
 #include "string_algorithms.hpp"
 #include "text_options.hpp"
+#include "../math/random.hpp"
 
 namespace mlpack {
 
@@ -37,10 +38,6 @@ namespace mlpack {
  */
 inline FileType AutoDetectFile(std::fstream& stream,
                                const std::string& filename);
-/**
- * return a true if the URL is provided.
- */
-inline bool checkIfURL(const std::string& url);
 
 /**
  * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
@@ -60,7 +57,7 @@ void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts);
 
 /**
- * Return the type based on extension that are eligibale for serialization.
+ * Return the type based on extension that are eligible for serialization.
  *
  * @param filename Name of the file whose type we should detect.
  * @param DataOptionsType Type of the data option, text, data, matrix, etc.
@@ -84,14 +81,6 @@ bool DetectFileType(const std::string& filename,
                     DataOptionsType& opts,
                     bool isLoading,
                     std::fstream* stream = nullptr);
-
-/**
- * Given an URL, extract the filename that is being downloaded using regex.
- * 
- * @param filename to be extracted from URL.
- * @param url that contains the filename at the end.
- */
-inline void FilenameFromURL(std::string& filename, const std::string& url);
 
 /**
  * Given an istream, attempt to guess the file type.  This is taken originally
@@ -123,23 +112,12 @@ bool OpenFile(const std::string& filename,
               std::fstream& stream);
 
 /**
- * Write to a file from a string stream.
+ * Generate a random file name that is located in the temporary directory.
+ * This function only generate the name, it does not write the file.
  *
- * param filename filename with extension to be opened.
- * param opts DataOption type describing the file.
- * param data to write to the file.
- * param stream the stream that will hold the content of the file.
- * @return bool if opening the file was successful.
+ * @return std::filesystem::path to the temporary file.
  */
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream);
-/**
- * Extract host from URL.
- */
-inline std::string URLToHost(const std::string& url);
+inline std::filesystem::path TempName();
 
 } // namespace mlpack
 

@@ -165,7 +165,7 @@ An implementation of the bayesian linear regression. [Detailed documentation](#b
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | `np.empty([0, 0])` |
-| `input_model` | [`BayesianLinearRegression<>Type`](#doc_model) | Trained BayesianLinearRegression model to use. | `None` |
+| `input_model` | [`BayesianLinearRegressionType`](#doc_model) | Trained BayesianLinearRegression model to use. | `None` |
 | `responses` | [`vector`](#doc_vector) | Matrix of responses/observations (y). | `np.empty([0])` |
 | `scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `False` |
 | `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | `np.empty([0, 0])` |
@@ -177,7 +177,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`BayesianLinearRegression<>Type`](#doc_model) | Output BayesianLinearRegression model. | 
+| `output_model` | [`BayesianLinearRegressionType`](#doc_model) | Output BayesianLinearRegression model. | 
 | `predictions` | [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
 | `stds` | [`matrix`](#doc_matrix) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
 
@@ -534,7 +534,7 @@ An implementation of density estimation trees for the density estimation task.  
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `folds` | [`int`](#doc_int) | The number of folds of cross-validation to perform for the estimation (0 is LOOCV) | `10` |
-| `input_model` | [`DTree<>Type`](#doc_model) | Trained density estimation tree to load. | `None` |
+| `input_model` | [`DTreeType`](#doc_model) | Trained density estimation tree to load. | `None` |
 | `max_leaf_size` | [`int`](#doc_int) | The maximum size of a leaf in the unpruned, fully grown DET. | `10` |
 | `min_leaf_size` | [`int`](#doc_int) | The minimum size of a leaf in the unpruned, fully grown DET. | `5` |
 | `path_format` | [`str`](#doc_str) | The format of path printing: 'lr', 'id-lr', or 'lr-id'. | `'lr'` |
@@ -549,7 +549,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DTree<>Type`](#doc_model) | Output to save trained density estimation tree to. | 
+| `output_model` | [`DTreeType`](#doc_model) | Output to save trained density estimation tree to. | 
 | `tag_counters_file` | [`str`](#doc_str) | The file to output the number of points that went to each leaf. | 
 | `tag_file` | [`str`](#doc_str) | The file to output the tags (and possibly paths) for each sample in the test set. | 
 | `test_set_estimates` | [`matrix`](#doc_matrix) | The output estimates on the test set from the final optimally pruned tree. | 
@@ -1586,58 +1586,16 @@ To run k-means on that same dataset with initial centroids specified in `'initia
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
-## lars()
+## class Lars
 {: #lars }
 
-#### LARS
+#### LARS Training
 {: #lars_descr }
 
-```python
->>> from mlpack import lars
->>> d = lars(check_input_matrices=False, copy_all_inputs=False,
-        input_=np.empty([0, 0]), input_model=None, lambda1=0, lambda2=0,
-        no_intercept=False, no_normalize=False, responses=np.empty([0, 0]),
-        test=np.empty([0, 0]), use_cholesky=False, verbose=False)
->>> output_model = d['output_model']
->>> output_predictions = d['output_predictions']
-```
 
-An implementation of Least Angle Regression (Stagewise/laSso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model and use that model or a pre-trained model to output regression predictions for a test set. [Detailed documentation](#lars_detailed-documentation).
+An implementation of LARS: Least Angle Regression (stagewise/lasso).  This is a stage-wise homotopy-based algorithm for L1-regularized linear regression (LASSO) and L1+L2-regularized linear regression (Elastic Net).
 
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | `np.empty([0, 0])` |
-| `input_model` | [`LARS<>Type`](#doc_model) | Trained LARS model to use. | `None` |
-| `lambda1` | [`float`](#doc_float) | Regularization parameter for l1-norm penalty. | `0` |
-| `lambda2` | [`float`](#doc_float) | Regularization parameter for l2-norm penalty. | `0` |
-| `no_intercept` | [`bool`](#doc_bool) | Do not fit an intercept in the model. | `False` |
-| `no_normalize` | [`bool`](#doc_bool) | Do not normalize data to unit variance before modeling. | `False` |
-| `responses` | [`matrix`](#doc_matrix) | Matrix of responses/observations (y). | `np.empty([0, 0])` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | `np.empty([0, 0])` |
-| `use_cholesky` | [`bool`](#doc_bool) | Use Cholesky decomposition during computation rather than explicitly computing the full Gram matrix. | `False` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LARS<>Type`](#doc_model) | Output LARS model. | 
-| `output_predictions` | [`matrix`](#doc_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-
-### Detailed documentation
-{: #lars_detailed-documentation }
-
-An implementation of LARS: Least Angle Regression (Stagewise/laSso).  This is a stage-wise homotopy-based algorithm for L1-regularized linear regression (LASSO) and L1+L2-regularized linear regression (Elastic Net).
-
-This program is able to train a LARS/LASSO/Elastic Net model or load a model from file, output regression predictions for a test set, and save the trained model to a file.  The LARS algorithm is described in more detail below:
+This program is able to train a LARS/LASSO/Elastic Net model or load a model from a file, output regression predictions for a test set, and save the trained model to a file.  The LARS algorithm is described in more detail below:
 
 Let X be a matrix where each row is a point and each column is a dimension, and let y be a vector of targets.
 
@@ -1655,28 +1613,79 @@ For efficiency reasons, it is not recommended to use this algorithm with `lambda
 
 To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters must be given.  The `lambda1`, `lambda2`, and `use_cholesky` parameters control the training options.  A trained model can be saved with the `output_model`.  If no training is desired at all, a model can be passed via the `input_model` parameter.
 
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `test` parameter.  Predicted responses to the test points can be saved with the `output_predictions` output parameter.
+
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda1` | [`float`](#doc_float) | Regularization parameter for l1-norm penalty. | `0` |
+| `lambda2` | [`float`](#doc_float) | Regularization parameter for l2-norm penalty. | `0` |
+| `no_intercept` | [`bool`](#doc_bool) | Do not fit an intercept in the model. | `False` |
+| `no_normalize` | [`bool`](#doc_bool) | Do not normalize data to unit variance before modeling. | `False` |
+| `use_cholesky` | [`bool`](#doc_bool) | Use Cholesky decomposition during computation rather than explicitly computing the full Gram matrix. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
 ### Example
-For example, the following command trains a model on the data `'data'` and responses `'responses'` with lambda1 set to 0.4 and lambda2 set to 0 (so, LASSO is being solved), and then the model is saved to `'lasso_model'`:
 
 ```python
->>> output = lars(input_=data, responses=responses, lambda1=0.4, lambda2=0)
->>> lasso_model = output['output_model']
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import Lars
+>>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = Lars(check_input_matrices=False, copy_all_inputs=False, lambda1=0,
+  lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
+  verbose=False)
+>>> output_model = model.fit(input_=X_train, responses=y_train)
+>>> predictions = lars_model.predict(test=X_test)
 ```
 
-The following command uses the `'lasso_model'` to provide predicted responses for the data `'test'` and save those responses to `'test_predictions'`: 
+### Methods
 
-```python
->>> output = lars(input_model=lasso_model, test=test)
->>> test_predictions = output['output_predictions']
-```
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model, and save the pre-trained model for later use to output regression predictions from a test set. |
+| predict | An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This program can use a pre-trained LARS/LASSO/Elastic Net model to output regression predictions from a test set. |
 
-### See also
+### 1. fit
 
- - [linear_regression()](#linear_regression)
- - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
- - [LARS C++ class documentation](../../user/methods/lars.md)
+An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This can train a LARS/LASSO/Elastic Net model, and save the pre-trained model for later use to output regression predictions from a test set.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | 
+| `responses` | [`vector`](#doc_vector) | Row vector of responses/observations (y). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LARSType`](#doc_model) | Output LARS model. | 
+
+### 2. predict
+
+An implementation of Least Angle Regression (stagewise/lasso), also known as LARS.  This program can use a pre-trained LARS/LASSO/Elastic Net model to output regression predictions from a test set.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Matrix containing predicted responses. | 
 
 ## linear_svm()
 {: #linear_svm }
@@ -1907,7 +1916,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary. | `np.empty([0, 0])` |
-| `input_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Input LCC model. | `None` |
+| `input_model` | [`LocalCoordinateCodingType`](#doc_model) | Input LCC model. | `None` |
 | `lambda_` | [`float`](#doc_float) | Weighted l1-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for LCC (0 indicates no limit). | `0` |
 | `normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `False` |
@@ -1925,7 +1934,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Output codes matrix. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Output dictionary matrix. | 
-| `output_model` | [`LocalCoordinateCoding<>Type`](#doc_model) | Output for trained LCC model. | 
+| `output_model` | [`LocalCoordinateCodingType`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -1962,61 +1971,12 @@ An LCC model may be saved using the `output_model` output parameter.  Then, to e
  - [Nonlinear learning using local coordinate coding (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/2afe4567e1bf64d32a5527244d104cea-Paper.pdf)
  - [LocalCoordinateCoding C++ class documentation](../../user/methods/local_coordinate_coding.md)
 
-## logistic_regression()
+## class LogisticRegression
 {: #logistic_regression }
 
-#### L2-regularized Logistic Regression and Prediction
+#### L2-regularized Logistic Regression Training and Prediction
 {: #logistic_regression_descr }
 
-```python
->>> from mlpack import logistic_regression
->>> d = logistic_regression(batch_size=64, check_input_matrices=False,
-        copy_all_inputs=False, decision_boundary=0.5, input_model=None,
-        labels=np.empty([0], dtype=np.uint64), lambda_=0, max_iterations=10000,
-        optimizer='lbfgs', print_training_accuracy=False, step_size=0.01,
-        test=np.empty([0, 0]), tolerance=1e-10, training=np.empty([0, 0]),
-        verbose=False)
->>> output_model = d['output_model']
->>> predictions = d['predictions']
->>> probabilities = d['probabilities']
-```
-
-An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#logistic_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `batch_size` | [`int`](#doc_int) | Batch size for SGD. | `64` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `decision_boundary` | [`float`](#doc_float) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
-| `input_model` | [`LogisticRegression<>Type`](#doc_model) | Existing model (parameters). | `None` |
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | `np.empty([0], dtype=np.uint64)` |
-| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0` |
-| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
-| `print_training_accuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `False` |
-| `step_size` | [`float`](#doc_float) | Step size for SGD optimizer. | `0.01` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | `np.empty([0, 0])` |
-| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LogisticRegression<>Type`](#doc_model) | Output for trained logistic regression model. | 
-| `predictions` | [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `probabilities` | [`matrix`](#doc_matrix) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #logistic_regression_detailed-documentation }
 
 An implementation of L2-regularized logistic regression using either the L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the regression problem
 
@@ -2024,7 +1984,7 @@ An implementation of L2-regularized logistic regression using either the L-BFGS 
 
 In this setting, y corresponds to class labels and X corresponds to data.
 
-This program allows loading a logistic regression model (via the `input_model` parameter) or training a logistic regression model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained logistic regression model may be saved using the `output_model` output parameter.
+This implementation can train a logistic regression model given training data (specified with the `training` parameter).  A trained logistic regression model can then be used to perform classification on a test dataset (specified with the `test` parameter).  Alternatively, classification probabilities can be computed and saved with the `probabilities` parameter.
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
 
@@ -2032,32 +1992,101 @@ When a model is being trained, there are many options.  L2 regularization (to pr
 
 For SGD, an iteration refers to a single point. So to take a single pass over the dataset with SGD, `max_iterations` should be set to the number of points in the dataset.
 
-Optionally, the model can be used to predict the responses for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing logistic regression model is given with the `input_model` parameter.  The output predictions from the logistic regression model may be saved with the `predictions` parameter.
-
 This implementation of logistic regression does not support the general multi-class case but instead only the two-class case.  Any labels must be either 0 or 1.  For more classes, see the softmax regression implementation.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_size` | [`int`](#doc_int) | Batch size for SGD. | `64` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0` |
+| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'sgd'). | `'lbfgs'` |
+| `print_training_accuracy` | [`bool`](#doc_bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `False` |
+| `step_size` | [`float`](#doc_float) | Step size for SGD optimizer. | `0.01` |
+| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `decision_boundary` | [`float`](#doc_float) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
 
 ### Example
-As an example, to train a logistic regression model on the data '`'data'`' with labels '`'labels'`' with L2 regularization of 0.1, saving the model to '`'lr_model'`', the following command may be used:
 
 ```python
->>> output = logistic_regression(training=data, labels=labels, lambda_=0.1,
-  print_training_accuracy=True)
->>> lr_model = output['output_model']
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import LogisticRegression
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = LogisticRegression(batch_size=64, check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0, max_iterations=10000, optimizer='lbfgs',
+  print_training_accuracy=False, step_size=0.01, tolerance=1e-10,
+  verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
 ```
 
-Then, to use that model to predict classes for the dataset '`'test'`', storing the output predictions in '`'predictions'`', the following command may be used: 
+### Methods
 
-```python
->>> output = logistic_regression(input_model=lr_model, test=test)
->>> predictions = output['predictions']
-```
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points. |
+| predict | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
+| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties. |
 
-### See also
+### 1. fit
 
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Logistic regression on Wikipedia](https://en.wikipedia.org/wiki/Logistic_regression)
- - [:LogisticRegression C++ class documentation](../../user/methods/logistic_regression.md)
+An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LogisticRegressionType`](#doc_model) | Output for trained logistic regression model. | 
+
+### 2. predict
+
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+
+### 3. predict_proba
+
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
 
 ## lsh()
 {: #lsh }
@@ -2089,7 +2118,7 @@ An implementation of approximate k-nearest-neighbor search with locality-sensiti
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `hash_width` | [`float`](#doc_float) | The hash width for the first-level hashing in the LSH preprocessing. By default, the LSH class automatically estimates a hash width for its use. | `0` |
-| `input_model` | [`LSHSearch<>Type`](#doc_model) | Input LSH model. | `None` |
+| `input_model` | [`LSHSearchType`](#doc_model) | Input LSH model. | `None` |
 | `k` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
 | `num_probes` | [`int`](#doc_int) | Number of additional probes for multiprobe LSH; if 0, traditional LSH is used. | `0` |
 | `projections` | [`int`](#doc_int) | The number of hash functions for each table | `10` |
@@ -2109,7 +2138,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `distances` | [`matrix`](#doc_matrix) | Matrix to output distances into. | 
 | `neighbors` | [`int matrix`](#doc_int_matrix) | Matrix to output neighbors into. | 
-| `output_model` | [`LSHSearch<>Type`](#doc_model) | Output for trained LSH model. | 
+| `output_model` | [`LSHSearchType`](#doc_model) | Output for trained LSH model. | 
 
 ### Detailed documentation
 {: #lsh_detailed-documentation }
@@ -3365,7 +3394,7 @@ An implementation of softmax regression for classification, which is a multiclas
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `input_model` | [`SoftmaxRegression<>Type`](#doc_model) | File containing existing model (parameters). | `None` |
+| `input_model` | [`SoftmaxRegressionType`](#doc_model) | File containing existing model (parameters). | `None` |
 | `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `np.empty([0], dtype=np.uint64)` |
 | `lambda_` | [`float`](#doc_float) | L2-regularization constant | `0.0001` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
@@ -3382,7 +3411,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegression<>Type`](#doc_model) | File to save trained softmax regression model to. | 
+| `output_model` | [`SoftmaxRegressionType`](#doc_model) | File to save trained softmax regression model to. | 
 | `predictions` | [`int vector`](#doc_int_vector) | Matrix to save predictions for test dataset into. | 
 | `probabilities` | [`matrix`](#doc_matrix) | Matrix to save class probabilities for test dataset into. | 
 
@@ -3450,7 +3479,7 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary matrix. | `np.empty([0, 0])` |
-| `input_model` | [`SparseCoding<>Type`](#doc_model) | File containing input sparse coding model. | `None` |
+| `input_model` | [`SparseCodingType`](#doc_model) | File containing input sparse coding model. | `None` |
 | `lambda1` | [`float`](#doc_float) | Sparse coding l1-norm regularization parameter. | `0` |
 | `lambda2` | [`float`](#doc_float) | Sparse coding l2-norm regularization parameter. | `0` |
 | `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
@@ -3470,7 +3499,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 |------------|------------|-------------------|
 | `codes` | [`matrix`](#doc_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
 | `dictionary` | [`matrix`](#doc_matrix) | Matrix to save the output dictionary to. | 
-| `output_model` | [`SparseCoding<>Type`](#doc_model) | File to save trained sparse coding model to. | 
+| `output_model` | [`SparseCodingType`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -3667,7 +3696,7 @@ Train a linear regression model.
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LinearRegression<>Type`](#doc_model) | Output LinearRegression model. | 
+| [`LinearRegressionType`](#doc_model) | Output LinearRegression model. | 
 
 ### 2. predict
 

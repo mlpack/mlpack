@@ -12,6 +12,7 @@
 #include <mlpack/bindings/julia/julia_util.h>
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 #include <stdint.h>
 
 using namespace mlpack;

@@ -167,17 +167,6 @@ inline FileType AutoDetectFile(std::fstream& stream,
   return detectedLoadType;
 }
 
-inline bool checkIfURL(const std::string& url)
-{
-  std::regex rgx("^https?://");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    return true;
-  }
-  return false;
-}
-
 inline size_t CountCols(std::fstream& f)
 {
   f.clear();
@@ -342,17 +331,6 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-inline void FilenameFromURL(std::string& filename, const std::string& url)
-{
-  std::regex rgx("[^/]+(?=/$|$)");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    //std::cout << "filename: " << match[0] << std::endl;
-    filename = match[0];
-  }
-}
-
 inline FileType GuessFileType(std::istream& f)
 {
   f.clear();
@@ -483,49 +461,15 @@ bool OpenFile(const std::string& filename,
   return true;
 }
 
-template<typename DataOptionsType>
-bool WriteToFile(const std::string& filename,
-                 DataOptionsType& opts,
-                 std::string data,
-                 std::fstream& stream)
+inline std::filesystem::path TempName()
 {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::out);
-#endif
-   if (!stream.is_open())
-   {
-    std::stringstream oss;
-    oss << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing.";
-    return HandleError(oss, opts);
-   }
-
-  stream.write(data.data(), data.size());
-  // Check if we need to flush in here.
-  if (!stream.good())
+  std::stringstream nameStream;
+  static constexpr auto num_bits = 128;
+  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
   {
-    std::stringstream oss;
-    oss << "Error writing to a '" << filename << "'.  "
-          << "Please check permissions or disk space.";
-    return HandleError(oss, opts);
+    nameStream << RandInt(0, 9);
   }
-  stream.close();
-  return true;
-}
-
-inline std::string URLToHost(const std::string& url)
-{
-  std::string host;
-  std::regex rgx(R"(^(?:https?|ftp)://(?:[^@/\n]+@)?([^:/?\n]+))");
-  std::smatch match;
-  if (std::regex_search(url, match, rgx))
-  {
-    host = match[1];
-  }
-  return host;
+  return std::filesystem::temp_directory_path() / nameStream.str();
 }
 
 } // namespace mlpack

@@ -12,156 +12,46 @@
 #ifndef MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
 #define MLPACK_CORE_DATA_DOWNLOAD_FILE_HPP
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+// In case if it is not included
+#include "../httplib/httplib.hpp"
 
 namespace mlpack {
 
-//@rcurtin, it seems that using tmpnam is a bad idea, since the software was
-//sefgaulting and the compiler was throwing the following warning:
-//
-// (.text+0x83d4b): warning: the use of `tmpnam' is dangerous, better use `mkstemp'  
-//
-//
-// After checking online, a lot of people and discussion pointed out to avoid
-// using std::tmpname since it is not safe in the case of race condition.
-//
-//
-// https://stackoverflow.com/questions/78535907/can-we-implement-a-facility-to-safely-create-temporary-files-in-c23
-//
-// https://stackoverflow.com/questions/75867045/temporary-files-in-c-tmpnam-alternatives
-//
-// https://stackoverflow.com/questions/35188145/warning-the-use-of-tmpnam-is-dangerous-better-use-mkstemp
-//
-// I have also seen some stupid proposals, saying, just ignore or disable the
-// compiler warning. 
-//
-// The main problem with the compiler proposal of using mkstemp is the need
-// to define the name of the temporary file, which defies the first reason we used this one.
-//
-// Here is a code sinppet that might looks like to use mkstemp():
-// char filename[] = "/tmp/tempXXXXXX";
-// int fd = mkstemp(filename);
-// if (fd != -1)
-// {
-//   std::cout << "random file opened" << std::endl;
-// }
-// 
-// Assuming that the directory problem is solved on Windows, the above solution 
-// would segfault sometimes and run normally other times, it depends on the
-// runs. This was not really constructive to debug with gdb, so I abadndone
-// this idea, as I thought, there should be probably a better way that is used
-// by everyone to solve this simple problem, and here is the solution in the
-// following function:
-//
-// For the following function , I have adapted the following implementation
-// from C++20 to C++17 below:
-//
-// https://codereview.stackexchange.com/questions/292241/generate-unique-temporary-file-names-in-c20
-//
-// If this works on Windows, I would recommend using it as it is, as
-// it is going to be much easier to be handle with our current infrastrucutre
-// without the need to use any C function. 
-//
-std::filesystem::path TempName()
-{
-  static std::mt19937 gen{std::random_device{}()};
-  static std::uniform_int_distribution<>
-      dist{0, std::numeric_limits<uint8_t>::max()};
-  std::stringstream nameStream;
-  // i.e. long enough to avoid collisions (see UUID)
-  static constexpr auto num_bits = 128;
-  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
-  {
-      nameStream << dist(gen);
-  }
-  return std::filesystem::temp_directory_path() / nameStream.str();
-}
+/*
+ * Check if the provided URL is valid or not.
+ *
+ * @param url to be checked.
+ * @return false on failure.
+ */
+inline bool CheckIfURL(const std::string& url);
 
-template<typename DataOptionsType>
-bool DownloadFile(const std::string& url,
-                  std::string& filename,
-                  std::fstream& stream,
-                  DataOptionsType& opts)
-{
-  bool success = false;
-  std::string originalFilename;
-  FilenameFromURL(originalFilename, url);
+/*
+ * Parse a given URL and try to extract hostname, filename and the port
+ * number.
+ *
+ * @param url Given URL to download dataset from.
+ * @param Extract hostname, throw exception on failure
+ * @param filename Try to extract the filename of the downloaded file.
+ * @param port Try To extract the port number from the url if provided.
+ * @return void, only throws exception on failure
+ */
+inline void ParseURL(const std::string& url, std::string& host,
+                     std::string& filename, int& port);
 
-#ifdef MLPACK_CACHE_REMOTE_DATASETS
-  if (std::filesystem::exists(originalFilename))
-  {
-    std::filesystem::file_time_type fileTime =
-        std::filesystem::last_write_time(originalFilename);
-
-    std::chrono::time_point<std::filesystem::file_time_type::clock,
-        FileTimeClock::duration> now = FileTimeClock::now();
-
-    FileTimeClock::duration difference = now - fileTime;
-
-    std::chrono::hours difference =
-        std::chrono::duration_cast<std::chrono::hours>(difference);
-    if (difference.count() > 5)
-    {
-      // only return, the file exist and we don't need to download it
-      return true;
-    }
-  }
-#endif
-
-  // If host is not extracted correctly, we will get a segmentation fault from
-  // httplib
-  std::string host = URLToHost(url);
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-  auto port = 443;
-  httplib::SSLClient cli(host, port);
-#else
-  auto port = 80;
-  httplib::Client cli(host, port);
-#endif
-  cli.set_connection_timeout(2);
-  httplib::Result res = cli.Get(url);
-
-  if (res->status != 200)
-  {
-    std::stringstream oss;
-    oss <<  "Unable to connect, status returned: '" << res->status;
-    return HandleError(oss, opts);
-  }
-
-  std::stringstream data(res->body);
-
-#ifdef MLPACK_CACHE_REMOTE_DATASETS
-  success = WriteToFile(originalFilename, opts, data.str(), stream);
-#else
-  // This does not work, please see above.
-  // filename = std::tmpnam(nullptr); 
-
-  filename = TempName();
-  // This is necessary to get the extension.
-  filename += originalFilename;
-  success = OpenFile(filename, opts, false, stream);
-  if (!success)
-  {
-    std::stringstream oss;
-    oss <<  "Unable to open a temporary file for downloading data.";
-    return HandleError(oss, opts);
-  }
-
-  stream.write(data.str().data(), data.str().size());
-  if (!stream.good())
-  {
-    std::stringstream oss;
-    oss << "Error writing to a '" << filename << "'.  "
-          << "Please check permissions or disk space.";
-    return HandleError(oss, opts);
-  }
-  stream.close();
-#endif
-  return success;
-}
+/*
+ * Try to download a file from a URL provided by the user.
+ *
+ * @param url Given URL to download dataset from.
+ * @param filename The path to save the downloaded file to; if empty,
+ * then `filename` is set to a generated temporary filename.
+ * @return true if download is successful, otherwise, throw error on failure, or
+ * return false.
+ */
+inline bool DownloadFile(const std::string& url,
+                         std::string& filename);
 
 } // namespace mlpack
 
-#endif
+#include "download_file_impl.hpp"
 
 #endif
