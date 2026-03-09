@@ -31,7 +31,17 @@ add_all_bindings(preprocess image_converter "Preprocessing")
 add_all_bindings(kde kde "Misc. / Other")
 add_all_bindings(kernel_pca kernel_pca "Transformations")
 add_all_bindings(kmeans kmeans "Clustering")
-add_all_bindings(lars lars "Regression")
+
+#add_all_bindings(lars lars "Regression")
+add_category(lars "Regression")
+group_bindings(lars lars "train;predict")
+add_python_wrapper(lars lars)
+add_cli_executable(lars lars)
+add_julia_binding(lars lars)
+add_go_binding(lars lars)
+add_r_binding(lars lars)
+add_markdown_docs(lars lars "cli;python;julia;go;r" "python")
+
 add_all_bindings(linear_svm linear_svm "Classification")
 add_all_bindings(lmnn lmnn "Transformations")
 add_all_bindings(local_coordinate_coding local_coordinate_coding

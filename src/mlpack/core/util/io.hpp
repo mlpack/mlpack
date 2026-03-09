@@ -28,9 +28,6 @@
 #include "params.hpp"
 #include "params_impl.hpp"
 
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
-
 // TODO: this entire set of code is related to the bindings and maybe should go
 // into src/mlpack/bindings/util/.
 namespace mlpack {
