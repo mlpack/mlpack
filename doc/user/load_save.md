@@ -41,15 +41,15 @@ and [format detection/selection](#formats).
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
    * The given options must be from the
-     [list of standalone operators](#dataoptions) and be appropriate for the type
-     of `X`.
+     [list of standalone operators](#dataoptions-types) and be appropriate for
+     the type of `X`.
 
  - `Load(path, X, opts)`
    * Load `X` from the given local file or remote URL `path` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `X`.
+   * `opts` is a [`DataOptions` object](#dataoptions-types) whose subtype
+     matches the type of `X`.
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
@@ -60,7 +60,8 @@ For some types of data, it is also possible to load multiple images at once from
       - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
       - For [image data](#image-data), each image is flattened into one column of `X`.
     - Metadata (e.g. image size, number of columns, etc.) in all files in `paths` must match or loading will fail.
-    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
+    - Loading options can be specified by either standalone options or an
+      instantiated [`DataOptions` object](#dataoptions-types).
 
 ---
 
@@ -216,7 +217,7 @@ object `X` to be loaded or saved:
    - See [mlpack model and object examples](#mlpack-models-and-objects-loadsave-examples)
      for example usage.
 
-## `DataOptions`
+## `DataOptions` types
 
 The [`Load()`](#load) and [`Save()`](#save) functions allow
 specifying options in a standalone manner or with an instantiated `DataOptions`
@@ -260,7 +261,7 @@ object, so does the type of `opts`:
  * ***mlpack models and objects***: [`ModelOptions`](#modeloptions) and its
    [standalone options](#modeloptions-standalone-operators-and-members).
 
-### `DataOptions`
+## `DataOptions`
 
 The `DataOptions` class is the base class from which all options classes
 specific to [data types](#types) are derived.  It is default-constructible and
@@ -270,7 +271,7 @@ Any members or standalone operators available in `DataOptions` are also
 available when using other options types (e.g. [`TextOptions`](#textoptions),
 [`ImageOptions`](#imageoptions), etc.).
 
-#### `DataOptions` standalone operators and members
+### `DataOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -286,11 +287,11 @@ calls to set members of an instantiated `DataOptions` object.
 | `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
 |---------------------------|-------------------------|---------------------------|-------------------|
 
-### `MatrixOptions`
+## `MatrixOptions`
 
 The `MatrixOptions` class represents options specific to matrix types
 ([numeric](#numeric-data) and [categorical](#mixed-categorical-data) data).
-`MatrixOptions` is derived from [`DataOptions`](#dataoptions) and thus any
+`MatrixOptions` is derived from [`DataOptions`](#dataoptions-types) and thus any
 [standalone operators or member functions from `DataOptions`](#dataoptions-standalone-operators-and-members)
 (e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
 `MatrixOptions`.
@@ -299,7 +300,7 @@ The `MatrixOptions` class represents options specific to matrix types
 specifically for loading numeric or categorical data from plaintext formats.
 `MatrixOptions` is used for non-plaintext numeric data formats.
 
-#### `MatrixOptions` standalone operators and members
+### `MatrixOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -325,7 +326,7 @@ is set.
 | `RawBinary`               | `opts.Format() = mlpack::FileType::RawBinary;`  | [Numeric](#numeric-data) data. | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 
-### `TextOptions`
+## `TextOptions`
 
 The `TextOptions` class represents options specific to matrix types stored in
 plaintext formats ([numeric](#numeric-data) and [categorical](#mixed-categorical-data)
@@ -341,7 +342,7 @@ data).  `TextOptions` is a child class and thus any standalone operators or memb
    - `opts.Transpose()` member
    - See the [`MatrixOptions` operator and member documentation](#matrixoptions-standalone-operators-and-members)
 
-#### `TextOptions` standalone operators and members
+### `TextOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -406,7 +407,7 @@ is set.
    `DatasetInfo` can be set before saving, and all dimensions of the data
    will be saved as numeric data.
 
-### `ImageOptions`
+## `ImageOptions`
 
 The `ImageOptions` class represents options specific to [images](#image-data).
 `ImageOptions` is a child class of [`DataOptions`](#dataoptions) and thus any
@@ -414,7 +415,7 @@ The `ImageOptions` class represents options specific to [images](#image-data).
 (e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
 `ImageOptions`.
 
-#### `ImageOptions` standalone operators and members
+### `ImageOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -461,7 +462,7 @@ is set.
  * The `opts.Quality()` option is only relevant when calling
    [`Save()`](#save) when using the `JPG` format.
 
-### `ModelOptions`
+## `ModelOptions`
 
 The `ModelOptions` class represents options specific to
 [mlpack models and objects](#mlpack-models-and-objects).  `ModelOptions` is a
@@ -470,7 +471,7 @@ child class of [`DataOptions`](#dataoptions) and thus any
 (e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
 `ImageOptions`.
 
-#### `ModelOptions` standalone operators and members
+### `ModelOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -504,7 +505,7 @@ The [`Load()`](#load) and [`Save()`](#save) functions
 support numerous different formats for loading and saving.  Not all formats are
 relevant for all types of data.  The table below lists standalone options that
 can be used to specify the format, as well as member functions for a
-[`DataOptions`](#dataoptions) object.
+[`DataOptions`](#dataoptions-types) object.
 
 When `AutoDetect` (the default) is specified as the format, the actual file
 format is auto-detected using the filename's extension and (if loading)
@@ -555,8 +556,9 @@ saving are supported.
    must have the same number of dimensions and header names (if using
    CSVs with headers).  All files will be concatenated into the output matrix `X`.
 
- * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
-   object, the [`MatrixOptions`](#matrixoptions) and
+ * When loading and saving with an instantiated
+   [`DataOptions`](#dataoptions-types) object, the
+   [`MatrixOptions`](#matrixoptions) and
    [`TextOptions`](#textoptions) subtypes can be used.
 
  * Supported formats are CSV, TSV, text, binary, ARFF, and others;
