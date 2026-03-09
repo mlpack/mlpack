@@ -162,9 +162,10 @@ extract_code_blocks()
           fi
 
           # NOTE: this is a hack to add serialization for neural networks where needed.
-          if [ "$input_file" == "yolov3" ];
+          if [ "$input_file" == "yolov3.md" ];
           then
             sed -i '1s/^/#define MLPACK_ENABLE_ANN_SERIALIZATION\n/' $output_prefix$output_file_display.cpp;
+            sed -i '1s/^/#define MLPACK_ENABLE_ANN_SERIALIZATION_FMAT\n/' $output_prefix$output_file_display.cpp;
           fi
         fi
       fi
