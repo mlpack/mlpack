@@ -73,7 +73,8 @@
 #endif
 
 //
-// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally installed dr_mp3.
+// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally 
+// installed dr_mp3 and dr_wav.
 //
 #if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
   // #define MLPACK_USE_SYSTEM_DR_LIBS
