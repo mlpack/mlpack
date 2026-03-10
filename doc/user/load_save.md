@@ -707,7 +707,9 @@ mlpack supports loading datasets from URLs.  Files will be downloaded using the
 [cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
 with mlpack for ease of use.
 
-When a remote URL is given to `Load()`:
+A remote URL can be given to either `DownloadFile()` or `Load()`:
+
+ - `DownloadFile(URL, filename)`
 
  * The URL must start with either `http://` or `https://` or loading will fail.
 
@@ -716,26 +718,30 @@ When a remote URL is given to `Load()`:
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
 
- * The downloaded file will be saved to the directory where the binary is
-   located.
+ * `filename` A given name to the local file that will store the dataset. The name should include
+   the full path to the location where the file should be saved. If the path is not specified explicitly,
+   the downloaded file will be saved to the directory where the binary is located.
 
- * The downloaded file will be cached locally for 5 hours. Passing this period
-   `mlpack::Load()` and `mlpack::DownloadFile()` will download the dataset file
-   again if they are called.
+ * The downloaded file will be cached locally. If `mlpack::Load()` or `mlpack::DownloadFile()`
+   are called again on the same URL, the function will check for any difference in dataset size. 
+   If the dataset size does not match, the will download the dataset file again.
 
- * The user can specify the name of the downloaded file using `DownloadFile()`,
-   see the second example for usage detail.
     <!-- 
-    @rcurtin, if the user has changed the filename, we should also cache it
-    correct ? in this case, we should have a map between the original file name
-    on the server and the name the user chose
+    @rcurtin,  Possible confusion here: 
+    (I wrote it as a code since it is better expressed
+    than my broken English).
 
-    I also a problem here: what if the user recall mlpack::DownloadFile()
-    with a different name, but the same URL ? would be consider that the user
-    is trying to downloading the file again ? The same problem applies if they
-    first calls mlpack::Load() with the URL without specifying a filename, and
-    then call mlpack::Load(DownloadFile(differentfile.csv))?
+    // Suppose Cache Enabled by default.
+    // First function call.
+    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myIris.csv);
+        
+    // After 10K line of the code, suppose the user call it again and try to
+    store it to a new new file called: myNewIris.csv 
+    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myNewIris.csv);
 
+    In this case, we should re-download and store a second file.
+
+    If you are expecting a different behaviour please let me know.
     -->
  
  * If the user specifies `#define MLPACK_DISABLE_CACHE_REMOTE_DATASETS`,  the downloaded file
@@ -787,9 +793,6 @@ for (size_t i = 0; i < opts.Headers().size(); ++i)
       << std::endl;
 }
 ```
-
-
-
 
 ## Mixed categorical data
 
