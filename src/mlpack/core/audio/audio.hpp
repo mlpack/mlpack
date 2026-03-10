@@ -17,8 +17,6 @@
 // MP3 Includes
 //
 
-#ifndef MLPACK_DISABLE_MP3
-
 #undef  DRMP3_API
 #define DRMP3_API  static
 
@@ -37,8 +35,6 @@
     #include "bundled/dr_mp3.h"
 #endif
 
-#endif //MLPACK_DISABLE_MP3
-
 #else
 
 #include "bundled/dr_mp3.h"
@@ -48,8 +44,6 @@
 //
 // WAV Includes
 //
-
-#ifndef MLPACK_DISABLE_WAV
 
 #undef  DRWAV_API
 #define DRWAV_API  static
@@ -74,7 +68,5 @@
 #include "bundled/dr_wav.h"
 
 #endif
-
-#endif // MLPACK_DISABLE_WAV
 
 #endif // MLPACK_CODE_AUDIO_AUDIO_HPP
