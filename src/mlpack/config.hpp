@@ -73,17 +73,19 @@
 #endif
 
 //
-// MLPACK_USE_SYSTEM_MP3 is used to enable usage of locally installed dr_mp3.
+// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally installed dr_mp3.
 //
-#if !defined(MLPACK_USE_SYSTEM_MP3)
-  // #define MLPACK_USE_SYSTEM_MP3
+#if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  // #define MLPACK_USE_SYSTEM_DR_LIBS
 #endif
 
 //
-// MLPACK_USE_SYSTEM_WAV is used to enable usage of locally installed dr_wav.
+// This is necessary if we would like to overwrite the default packaging
+// condition.
 //
-#if !defined(MLPACK_USE_SYSTEM_WAV)
-  // #define MLPACK_USE_SYSTEM_WAV
+#if defined(MLPACK_DONT_USE_SYSTEM_DR_LIBS) \
+  && defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  #undef MLPACK_USE_SYSTEM_DR_LIBS
 #endif
 
 //
