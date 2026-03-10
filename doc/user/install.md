@@ -116,7 +116,7 @@ cmake`.
 
 mlpack bundles the [STB](https://github.com/nothings/stb),
 [httplib](https://github.com/yhirose/cpp-httplib/tree/master), and
-[`dr\_libs`](https://github.com/mackron/dr_libs) header-only libraries to
+[`dr_libs`](https://github.com/mackron/dr_libs) header-only libraries to
 provide image loading support, dataset download, and audio loading support,
 respectively. If you prefer to use versions available on your system, see
 [the compilation options](compile.md#configuring-mlpack-with-compile-time-definitions)
