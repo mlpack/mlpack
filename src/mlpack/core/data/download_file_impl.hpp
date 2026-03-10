@@ -129,38 +129,18 @@ inline void ParseURL(const std::string& url, std::string& host,
 }
 
 inline bool DownloadFile(const std::string& url,
+                         const std::string& filename)
+{
+
+}
+
+inline bool DownloadFile(const std::string& url,
                          std::string& filename)
 {
   std::fstream stream;
   int port = -1;
   std::string host;
   ParseURL(url, host, filename, port);
-
-  // We need to find the correct way to integrate this functionallity
-  // 1. Make it as independant function
-  // 2. Check how this wil fit with the current filename
-  // 3. Be sure that we do not have conflict with docs and user expectation.
-  // 4. Solve problem related to DownLoadFile overload
-#ifdef MLPACK_CACHE_REMOTE_DATASETS
-  if (std::filesystem::exists(originalFilename))
-  {
-    std::filesystem::file_time_type fileTime =
-        std::filesystem::last_write_time(originalFilename);
-
-    std::chrono::time_point<std::filesystem::file_time_type::clock,
-        FileTimeClock::duration> now = FileTimeClock::now();
-
-    FileTimeClock::duration difference = now - fileTime;
-
-    std::chrono::hours difference =
-        std::chrono::duration_cast<std::chrono::hours>(difference);
-    if (difference.count() > 5)
-    {
-      // only return, the file exist and we don't need to download it
-      return true;
-    }
-  }
-#endif
 
   // Sanity check if in case.
   if (host.empty())
@@ -182,6 +162,15 @@ inline bool DownloadFile(const std::string& url,
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
+
+#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+
+
+#else
+
+  // Get the file in any case.
+#endif
+
   httplib::Result res = cli.Get(url);
   if (!res)
   {
