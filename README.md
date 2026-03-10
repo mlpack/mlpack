@@ -114,7 +114,7 @@ mlpack bundles the [STB](https://github.com/nothings/stb),
 [`dr_libs`](https://github.com/mackron/dr_libs) header-only libraries to
 provide image loading support, dataset download, and audio loading support,
 respectively. If you prefer to use versions available on your system, see
-[the compilation options](compile.md#configuring-mlpack-with-compile-time-definitions)
+[the compilation options](doc/user/compile.md#configuring-mlpack-with-compile-time-definitions)
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
