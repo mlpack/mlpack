@@ -11,6 +11,7 @@
  */
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 #include "binding_info.hpp"
 #include "print_param_table.hpp"
