@@ -358,8 +358,6 @@ then an exception will be thrown; otherwise, a warning will be printed if
 [`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions)
 is set.
 
-<!-- TODO for Omar: what happens when HasHeaders() is true for saving? -->
-
 | ***Standalone operator*** | ***Member function***       | ***Available for:***      | ***Description*** |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Load/save behavior._     |                             |                           |                   |
