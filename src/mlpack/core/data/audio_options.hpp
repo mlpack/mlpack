@@ -78,16 +78,19 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration       = std::move(other.audioDuration);
     avgBytesPerSec      = std::move(other.avgBytesPerSec);
     bitPerSample        = std::move(other.bitPerSample);
-    blockAlign          = std::move(other.blockAlign);
     channels            = std::move(other.channels);
-    containerType       = std::move(other.containerType);
-    dataChunkSize       = std::move(other.dataChunkSize);
     fileBitRate         = std::move(other.fileBitRate);
-    formatTag           = std::move(other.formatTag);
     sampleRate          = std::move(other.sampleRate);
     totalFramesRead     = std::move(other.totalFramesRead);
     totalPCMFramesCount = std::move(other.totalPCMFramesCount);
     totalSamples        = std::move(other.totalSamples);
+
+    // Not relevant for machine learning
+    containerType       = std::move(other.containerType);
+    formatTag           = std::move(other.formatTag);
+    blockAlign          = std::move(other.blockAlign);
+    dataChunkSize       = std::move(other.dataChunkSize);
+    
 
     // Move base members.
     DataOptionsBase<AudioOptions>::operator=(std::move(other));
