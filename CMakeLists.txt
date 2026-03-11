@@ -19,6 +19,9 @@ option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." 
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 option(USE_SYSTEM_MP3 "Use system dr_mp3 instead of version bundled with mlpack." OFF)
 option(USE_SYSTEM_WAV "Use system dr_wav instead of version bundled with mlpack." OFF)
+option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with mlpack." OFF)
+option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
+option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -257,6 +260,20 @@ if (USE_SYSTEM_WAV)
   set(MLPACK_USE_SYSTEM_WAV ON)
 endif ()
 
+if (USE_SYSTEM_HTTPLIB)
+  set(MLPACK_USE_SYSTEM_HTTPLIB ON)
+endif ()
+
+# Flag to be removed after release
+if (ENABLE_HTTPLIB)
+  set(MLPACK_ENABLE_HTTPLIB ON)
+endif ()
+
+# If the user would like to disable httplib for embedded system
+if (DISABLE_HTTPLIB)
+  set(MLPACK_DISABLE_HTTPLIB ON)
+endif ()
+
 set(MLPACK_DONT_FIND_MLPACK 1)
 if (CMAKE_CROSSCOMPILING OR DOWNLOAD_DEPENDENCIES)
   fetch_mlpack(ON)
@@ -355,6 +372,7 @@ if (USE_SYSTEM_STB)
       "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
+<<<<<<< HEAD
 if (USE_SYSTEM_MP3)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_MP3\n"
       "#define MLPACK_USE_SYSTEM_MP3\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
@@ -365,6 +383,24 @@ if (USE_SYSTEM_WAV)
       "#define MLPACK_USE_SYSTEM_WAV\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
+||||||| 1b6e87be45
+=======
+if (USE_SYSTEM_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_HTTPLIB\n"
+    "#define MLPACK_USE_SYSTEM_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (ENABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_ENABLE_HTTPLIB\n"
+    "#define MLPACK_ENABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_HTTPLIB\n"
+    "#define MLPACK_DISALBLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+>>>>>>> master
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)
 add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)

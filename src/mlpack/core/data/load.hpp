@@ -20,7 +20,8 @@
 
 #include "image_options.hpp"
 #include "text_options.hpp"
-#include "detect_file_type.hpp"
+#include "handle_files.hpp"
+#include "download_file.hpp"
 #include "load_deprecated.hpp"
 #include "load_arff.hpp"
 #include "load_numeric.hpp"

@@ -114,8 +114,10 @@ on Debian and Ubuntu, all relevant dependencies can be installed with `sudo
 apt-get install libarmadillo-dev libensmallen-dev libcereal-dev libstb-dev g++
 cmake`.
 
-If the STB library headers are available, image loading support will be
-available.
+mlpack bundles the STB and httplib header-only libraries for Image loading
+support, and dataset download is supported by default. If you prefer to
+use versions available on your system, see
+[the compilation options](compile.md#configuring-mlpack-with-compile-time-definitions)
 
 mlpack bundles dr\_mp3 and dr\_wav libs to load mp3 and wav dataset files by
 default.If you prefer to use versions available on your system, see
@@ -201,6 +203,8 @@ The following options can be used when configuring mlpack.
 | `-DUSE_SYSTEM_STB=OFF` | Use version of STB bundled with mlpack. If set to `ON` make sure `stb_image.h`, `stb_image_write.h`, and `stb_image_resize2.h` are available. | `OFF` |
 | `-DUSE_SYSTEM_MP3=OFF` | Use the version of dr\_mp3 available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` is available. | `OFF` |
 | `-DUSE_SYSTEM_WAV=OFF ` | Use the version of dr\_wav available on the system instead of the version bundled with mlpack.  If set, make sure `dr_wav.h` is available. | `OFF` |
+| `-DUSE_SYSTEM_HTTPLIB=OFF` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. | `OFF` |
+| `-DDISABLE_HTTPLIB=OFF` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems). | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||
@@ -211,6 +215,7 @@ The following options can be used when configuring mlpack.
 | `-DSTB_INCLUDE_DIR=/path/to/stb/include/` | Path containing `stb.h` and `stb_image.h`. ||
 | `-DDR_MP3_INCLUDE_DIR=/path/to/dr_mp3/include/` | Path containing `dr_mp3.h`. ||
 | `-DDR_WAV_INCLUDE_DIR=/path/to/dr_wav/include/` | Path containing `dr_wav.h`. ||
+| `-DHTTPLIB_INCLUDE_DIR=/path/to/httplib/include/` | Path containing `httplib.h` ||
 |--------------|-------------------|---------------|
 | ***Bindings*** |||
 | `-DBUILD_CLI_EXECUTABLES=ON` | Enable building command-line programs. | `OFF` |
