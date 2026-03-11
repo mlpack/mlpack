@@ -202,8 +202,6 @@ The following options can be used when configuring mlpack.
 | `-DUSE_SYSTEM_DR_LIBS=OFF` | Use the version of dr\_mp3 and dr\_wav available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` and `dr_wav.h` are available. | `OFF` |
 | `-DUSE_SYSTEM_HTTPLIB=OFF` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. | `OFF` |
 | `-DDISABLE_HTTPLIB=OFF` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems). | `OFF` |
-| `-DDISABLE_WAV=OFF` | Disable WAV file's loading support within mlpack; use this if you do not have an audio support on your system or if you simply not planning to load audio files. | `OFF` |
-| `-DDISABLE_MP3=OFF` | Disable MP3 file's loading support within mlpack; use this if you do not have an audio support on your system or if you simply not planning to load audio files. | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||
