@@ -504,12 +504,13 @@ class RNN
                     URowType& sequenceLengths);
 
   // Calculates the number of active points in the batch.
+  template <typename SeqLenType = URowType>
   void CalculateActivePoints(size_t& activeBatchSize,
                              const size_t begin,
-                             URowType& sequenceLengths,
+                             const SeqLenType& sequenceLengths,
                              const size_t step,
                              const std::enable_if_t<
-                                 IsArma<URowType>::value>* = 0)
+                                 IsArma<SeqLenType>::value>* = 0)
   {
     // Since we know that `sequenceLengths` is sorted in order of descending
     // lengths and `activeBatchSize` only decreases as `step` increases, we
@@ -520,22 +521,19 @@ class RNN
       activeBatchSize--;
   }
 
-  #if defined(MLPACK_HAS_COOT)
-
+  template <typename SeqLenType = URowType>
   void CalculateActivePoints(size_t& activeBatchSize,
                              const size_t begin,
-                             const URowType& sequenceLengths,
+                             const SeqLenType& sequenceLengths,
                              const size_t step,
                              const std::enable_if_t<
-                                 IsCoot<URowType>::value>* = 0)
+                                 IsCoot<SeqLenType>::value>* = 0)
   {
-    // Individual element access is probably slower if `URowType` is a
+    // Individual element access is probably slower if `SeqLenType` is a
     // Bandicoot type so we don't use the optimized version.
     activeBatchSize = accu(sequenceLengths
         .subvec(begin, begin + activeBatchSize - 1) > step);
   }
-
-  #endif // defined(MLPACK_HAS_COOT)
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
