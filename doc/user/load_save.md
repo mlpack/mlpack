@@ -102,8 +102,8 @@ See also the other examples for each [supported load type](#types):
  * [Numeric data](#numeric-data-loadsave-examples)
  * [Loading from remote URLs](#loading-from-remote-urls)
  * [Categorical data](#categorical-data-loadsave-examples)
- * [Audio data](#audio-data)
- * [Image data](#image-data)
+ * [Audio data](#audio-data-loadsave-examples)
+ * [Image data](#image-data-loadsave-examples)
  * [mlpack models and objects](#mlpack-models-and-objects-loadsave-examples)
 
 ## `Save()`
@@ -1060,7 +1060,7 @@ mlpack::Save("categorical-data.csv", dataset, opts);
 ## Audio data
 
 mlpack only loads WAV and MP3 audio data using the
-[dr\_libs](https://github.com/mackron/dr_libs). dr\_libs are a set of
+[dr_libs](https://github.com/mackron/dr_libs). dr\_libs are a set of
 header-only libraries that decodes WAV, MP3 and FLAC files. mlpack bundles WAV
 and MP3; but, it is also possible to use a version of dr\_libs 
 [available on the system](compile.md#configuring-mlpack-with-compile-time-definitions).
@@ -1076,17 +1076,10 @@ vector in a data matrix; each row of the resulting vector will correspond to a
 a sample value (between -1 and +1). If an [`AudioOptions`](#audiooptions), it
 will be populated with the metadata of the audio file.
 
-Note that, saving audio data is not supported since dr\_libs only support
-decoding for wav and mp3 and encoding for wav only.
-
-<!--
-    @rcurtin, I am happy to add save function for wav only. but we need to be
-    clear in the documentation that this is the only supported type. The code
-    for this is simple.
--->
-
  * Supported audio loading formats are WAV and MP3; see
    [the table of formats](#formats) for more details.
+
+ * Supported audio saving formats is WAV only.
 
 <!-- 
     @rcurtin for a next PR we need to think of the following:
@@ -1094,16 +1087,8 @@ decoding for wav and mp3 and encoding for wav only.
     * mlpack offers several utility functions for audio resize and preprocessing, documented in
    [Audio preprocessing](core/audio.md)
     
-    This means:
-
-    * We need to find a way to resize all the Audio to have an identical
-      length, here are the available technices:
-        1. Zero padding all to match the biggest audio file.
-        2. Take the average length for all audio file. zero pad or cut others
-           to achieve the average.
-        3. Other technics are also possible, feel free to suggest what can be
-           the best
-
+    * Take the average length for all audio file. zero pad or cut others to achieve the average.
+        
     * For now, I prefer to complete load audio for one file, for several files we need to
       think of the above strategy.
 
@@ -1135,16 +1120,16 @@ Load and save a single audio file:
 mlpack::AudioOptions opts;
 opts.Fatal() = true;
 arma::mat matrix;
-mlpack::Load("numfocus-logo.png", matrix, opts /* format autodetected */);
+mlpack::Load("file.wav", matrix, opts /* format autodetected */);
 
 // `matrix` should now contain one column.
 
-// Print information about the audio file.
-std::cout << "Information about the audio file in 'numfocus-logo.png': "
+// Print some information about the audio file.
+std::cout << "Information about the audio file in 'file.wav': "
     << std::endl;
-std::cout << " - " << opts. << " " << std::endl;
-std::cout << " - " << opts. << " " << std::endl;
-std::cout << " - " << opts.Channels() << " audio channels." << std::endl;
+std::cout << "Audio Duration: " << opts.AudioDuration() << std::endl;
+std::cout << "Audio Channels: " << opts.Channels() << std::endl;
+std::cout << "Sampling Rate: "  << opts.SampleRate() << std::endl;
 
 // Only if we opt to allow saving wav files.
 mlpack::Save("file2.wav", matrix, opts);
