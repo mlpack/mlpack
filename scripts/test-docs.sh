@@ -107,8 +107,20 @@ extract_code_blocks()
 
         if [ $has_main -eq 0 -a $class_decl -eq 0 ];
         then
+
+          # NOTE: this is a hack to add serialization for neural networks where needed.
+          if [ "$input_file" == "doc/user/methods/yolov3.md" ];
+          then
+            echo "#define MLPACK_ENABLE_ANN_SERIALIZATION" > $output_prefix$output_file_display.cpp;
+            echo "#define MLPACK_ENABLE_ANN_SERIALIZATION_FMAT" >> $output_prefix$output_file_display.cpp;
+            echo "" >> $output_prefix$output_file_display.cpp;
+
+            echo "#include <mlpack.hpp>" >> $output_prefix$output_file_display.cpp;
+          else
+            echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
+          fi
+
           # Create main() function to wrap the code in.
-          echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
           echo "" >> $output_prefix$output_file_display.cpp;
 
           # Insert any class definitions.
@@ -159,13 +171,6 @@ extract_code_blocks()
           then
             sed -i '1s/^/#include <xtensor\/xrandom.hpp>\n/' $output_prefix$output_file_display.cpp;
             sed -i '1s/^/#include <xtensor\/xarray.hpp>\n/' $output_prefix$output_file_display.cpp;
-          fi
-
-          # NOTE: this is a hack to add serialization for neural networks where needed.
-          if [ "$input_file" == "yolov3.md" ];
-          then
-            sed -i '1s/^/#define MLPACK_ENABLE_ANN_SERIALIZATION\n/' $output_prefix$output_file_display.cpp;
-            sed -i '1s/^/#define MLPACK_ENABLE_ANN_SERIALIZATION_FMAT\n/' $output_prefix$output_file_display.cpp;
           fi
         fi
       fi
