@@ -35,7 +35,7 @@ void LetterboxImages(arma::Mat<eT>& src,
                     ImageOptions& srcOpt,
                     const size_t width,
                     const size_t height,
-                    const eT fillValue)
+                    const double fillValue)
 {
   const size_t expectedRows =
     srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
