@@ -51,12 +51,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration       = other.audioDuration;
     avgBytesPerSec      = other.avgBytesPerSec;
     bitPerSample        = other.bitPerSample;
-    blockAlign          = other.blockAlign;
     channels            = other.channels;
-    containerType       = other.containerType;
-    dataChunkSize       = other.dataChunkSize;
     fileBitRate         = other.fileBitRate;
-    formatTag           = other.formatTag;
     sampleRate          = other.sampleRate;
     totalFramesRead     = other.totalFramesRead;
     totalPCMFramesCount = other.totalPCMFramesCount;
@@ -84,13 +80,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     totalFramesRead     = std::move(other.totalFramesRead);
     totalPCMFramesCount = std::move(other.totalPCMFramesCount);
     totalSamples        = std::move(other.totalSamples);
-
-    // Not relevant for machine learning
-    containerType       = std::move(other.containerType);
-    formatTag           = std::move(other.formatTag);
-    blockAlign          = std::move(other.blockAlign);
-    dataChunkSize       = std::move(other.dataChunkSize);
-    
 
     // Move base members.
     DataOptionsBase<AudioOptions>::operator=(std::move(other));
@@ -162,19 +151,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       }
     }
 
-    if (!blockAlign.has_value() && other.blockAlign.has_value())
-    {
-      blockAlign = other.blockAlign;
-    }
-    else if (blockAlign.has_value() && other.blockAlign.has_value())
-    {
-      if (blockAlign.has_value() != other.blockAlign.has_value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "blockAlign with different values!");
-      }
-    }
-
     if (!channels.has_value() && other.channels.has_value())
     {
       channels = other.channels;
@@ -188,19 +164,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       }
     }
 
-    if (!dataChunkSize.has_value() && other.dataChunkSize.has_value())
-    {
-      dataChunkSize = other.dataChunkSize;
-    }
-    else if (dataChunkSize.has_value() && other.dataChunkSize.has_value())
-    {
-      if (dataChunkSize.has_value() != other.dataChunkSize.has_value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "dataChunkSize with different values!");
-      }
-    }
-
     if (!fileBitRate.has_value() && other.fileBitRate.has_value())
     {
       fileBitRate = other.fileBitRate;
@@ -211,19 +174,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "fileBitRate with different values!");
-      }
-    }
-
-    if (!formatTag.has_value() && other.formatTag.has_value())
-    {
-      formatTag = other.formatTag;
-    }
-    else if (formatTag.has_value() && other.formatTag.has_value())
-    {
-      if (formatTag.has_value() != other.formatTag.has_value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "formatTag with different values!");
       }
     }
 
@@ -291,18 +241,10 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       this->WarnOptionConversion("avgBytesPerSec", dataDescription);
     if (bitPerSample.has_value() && bitPerSample != defaultBitPerSample)
       this->WarnOptionConversion("bitPerSample", dataDescription);
-    if (blockAlign.has_value() && blockAlign != defaultBlockAlign)
-      this->WarnOptionConversion("blockAlign", dataDescription);
     if (channels.has_value() && channels != defaultChannels)
       this->WarnOptionConversion("channels", dataDescription);
-  //  if (containerType.has_value() && containerType != defaultContainerType)
-  //    this->WarnOptionConversion("containerType", dataDescription);
-    if (dataChunkSize.has_value() && dataChunkSize != defaultDataChunkSize)
-      this->WarnOptionConversion("dataChunkSize", dataDescription);
     if (fileBitRate.has_value() && fileBitRate != defaultFileBitRate)
       this->WarnOptionConversion("fileBitRate", dataDescription);
-    if (formatTag.has_value() && formatTag != defaultFormatTag)
-      this->WarnOptionConversion("formatTag", dataDescription);
     if (sampleRate.has_value() && sampleRate != defaultSampleRate)
       this->WarnOptionConversion("sampleRate", dataDescription);
     if (totalFramesRead.has_value() &&
@@ -322,12 +264,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration.reset();
     avgBytesPerSec.reset();
     bitPerSample.reset();
-    blockAlign.reset();
     channels.reset();
-    containerType.reset();
-    dataChunkSize.reset();
     fileBitRate.reset();
-    formatTag.reset();
     sampleRate.reset();
     totalFramesRead.reset();
     totalPCMFramesCount.reset();
@@ -366,16 +304,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(bitPerSample, defaultBitPerSample);
   }
 
-  drwav_uint16 BlockAlign() const
-  {
-    return this->AccessMember(blockAlign, defaultBlockAlign);
-  }
-
-  drwav_uint16& BlockAlign()
-  {
-    return this->ModifyMember(blockAlign, defaultBlockAlign);
-  }
-
   drwav_uint16 Channels() const
   {
     return this->AccessMember(channels, defaultChannels);
@@ -404,16 +332,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   drwav_uint64& FileBitRate()
   {
     return this->ModifyMember(fileBitRate, defaultFileBitRate);
-  }
-
-  drwav_uint16 FormatTag() const
-  {
-    return this->AccessMember(formatTag, defaultFormatTag);
-  }
-
-  drwav_uint16& FormatTag()
-  {
-    return this->ModifyMember(formatTag, defaultFormatTag);
   }
 
   drwav_uint32 SampleRate() const
@@ -458,23 +376,13 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(totalSamples, defaultTotalSamples);
   }
 
-  // we will need to create our own enum that wrapper the one from WAV
-  // Also we need to be sure that the type is not MP3 when these are being
-  // accessed
-  // Maybe assign -1 my default ? but these are unsigned int.
-  // So how we can make it easy?
-
  private:
 
   std::optional<drwav_uint64> audioDuration;
   std::optional<drwav_uint32> avgBytesPerSec;
   std::optional<drwav_uint16> bitPerSample;
-  std::optional<drwav_uint16> blockAlign;
   std::optional<drwav_uint16> channels;
-  std::optional<drwav_container> containerType;
-  std::optional<drwav_uint64> dataChunkSize;
   std::optional<drwav_uint64> fileBitRate;
-  std::optional<drwav_uint16> formatTag;
   std::optional<drwav_uint32> sampleRate;
   std::optional<drwav_uint64> totalFramesRead;
   std::optional<drwav_uint64> totalPCMFramesCount;
@@ -483,12 +391,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const drwav_uint64 defaultAudioDuration    = 0;
   constexpr static const drwav_uint32 defaultAvgBytesPerSec   = 0;
   constexpr static const drwav_uint16 defaultBitPerSample     = 0;
-  constexpr static const drwav_uint16 defaultBlockAlign       = 0;
   constexpr static const drwav_uint16 defaultChannels         = 0;
-  //constexpr static const drwav_container defaultContainerType = 0; // Check
-  constexpr static const drwav_uint64 defaultDataChunkSize    = 0;
   constexpr static const drwav_uint64 defaultFileBitRate      = 0;
-  constexpr static const drwav_uint16 defaultFormatTag        = 0;
   constexpr static const drwav_uint32 defaultSampleRate       = 0;
   constexpr static const drwav_uint64 defaultTotalFramesRead  = 0;
   constexpr static const drwav_uint64 defaultTotalPCMFramesCount = 0;
