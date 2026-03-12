@@ -1,16 +1,16 @@
 /**
- * @file core/data/load_wav.hpp
+ * @file core/data/load_audio.hpp
  * @author Omar Shrit
  *
- * Load wav data functions implementation.
+ * Load audio data functions implementation (WAV or MP3).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_LOAD_WAV_HPP
-#define MLPACK_CORE_DATA_LOAD_WAV_HPP
+#ifndef MLPACK_CORE_DATA_LOAD_AUDIO_HPP
+#define MLPACK_CORE_DATA_LOAD_AUDIO_HPP
 
 #include "audio_options.hpp"
 
@@ -64,7 +64,7 @@ namespace mlpack {
  * for MP3 or WAV format.
  */
 template<typename MatType>
-bool LoadWav(const std::vector<std::string>& files,
+bool LoadWAV(const std::vector<std::string>& files,
              MatType& matrix,
              AudioOptions& opts)
 {
@@ -150,6 +150,88 @@ bool LoadWav(const std::vector<std::string>& files,
 // loads a set of files at the same time ?
 // Note if this is the case, the padding truncate functionality needs to be
 // implmented with in this file.
+
+template<typename MatType>
+bool LoadMP3(const std::vector<std::string>& files,
+             MatType& matrix,
+             AudioOptions& opts)
+{
+  drwav wav;
+  drwav_uint64 framesRead;
+  drwav_uint64 totalFramesRead = 0;
+  arma::fmat fullFileFrames;
+
+  if (!drwav_init_file(&wav, files.at(0).c_str(), NULL))
+  {
+    return HandleError("Failed to read wav file. Please check the file "
+        "and try again.", opts);
+  }
+
+  opts.TotalPCMFramesCount() = wav.totalPCMFrameCount;
+  opts.Channels() = wav.channels;
+
+  drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
+  drwav_seek_to_pcm_frame(&wav, 0);
+
+  // The size of the array is defined by drlibs for easy memory management.
+  float pcm[4096];
+
+  std::vector<float> fullFrames;
+  fullFrames.reserve(opts.TotalPCMFramesCount() * opts.Channels());
+  // We will read iterately the PCM frames, each time we fill the buffer we
+  // insert it to std::vector<> and repeat again until we read the entire file.
+  for (;;)
+  {
+    framesRead = drwav_read_pcm_frames_f32(&wav,
+        sizeof(pcm)/sizeof(pcm[0])/opts.Channels(), pcm);
+    if (framesRead == 0)
+      break;
+
+    size_t samplesRead = framesRead * opts.Channels();
+    fullFrames.insert(fullFrames.end(), pcm, pcm + samplesRead);
+
+    opts.TotalFramesRead() += framesRead;
+  }
+
+  if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
+  {
+    std::stringstream oss;
+    oss << "Frame count mismatch: " << (int)opts.TotalPCMFramesCount()
+        << "(queried) != " << (int)opts.TotalFramesRead() <<" (read)";
+    return HandleError(oss, opts);
+  }
+  // Something to discuss in here related to how we handle the information
+  // related to each file, if we have N files ?
+  // Should we for instance have all of these stored into a vector ?
+  // or do we impose the same rules we have in images ?
+  opts.SampleRate() = wav.sampleRate;
+  opts.BitsPerSample() = wav.bitsPerSample;
+  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
+  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
+  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
+      * opts.Channels();
+
+
+  // Also another question is how to make all the read audio files the same
+  // size.
+  //
+  // The safest strategy is to do zero padding
+  //
+  // First load all of them using std::vector at the start,
+  // then identify the longest one using AudioDuration, once this one is
+  // identified we can do zero padding for the remaining files.
+  //
+  // Second idea, is to define the mean average length for all of them, and
+  // then truncate or do zero padding based on the audio duration of each file.
+  // This might result in some loss of audio data (if the data where located at
+  // the end), but allows us to avoid anomalies in case of one file has a much
+  // longer duration.
+  //
+  // What would be the best solution in this case?
+  //
+  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(fullFrames));
+  return true;
+}
 
 } //namespace mlpack
 
