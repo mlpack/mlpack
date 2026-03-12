@@ -118,7 +118,6 @@ bool LoadWav(const std::vector<std::string>& files,
   // or do we impose the same rules we have in images ?
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
-  //  opts.ContainerType() = wav.container;
   opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
