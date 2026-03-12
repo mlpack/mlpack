@@ -3675,3 +3675,28 @@ TEST_CASE("DownLoad404File", "[LoadSaveTest]")
 #endif
 
 #endif
+
+/**
+ * Ensure that saving with HasHeaders() produces a file that has headers.
+ */
+TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
+{
+  arma::mat X = arma::randi<arma::mat>(3, 20, arma::distr_param(0, 100));
+  TextOptions opts;
+  opts.HasHeaders() = true;
+  opts.Headers() = { "a", "b", "c" };
+  Save("test.csv", X, opts);
+
+  arma::mat Y;
+  TextOptions opts2;
+  opts2.HasHeaders() = true;
+  Load("test.csv", Y, opts2);
+
+  REQUIRE(opts2.Headers().size() == 3);
+  REQUIRE(opts2.Headers()[0] == "a");
+  REQUIRE(opts2.Headers()[1] == "b");
+  REQUIRE(opts2.Headers()[2] == "c");
+  REQUIRE(arma::approx_equal(X, Y, "both", 1e-5, 1e-5));
+
+  remove("test.csv");
+}

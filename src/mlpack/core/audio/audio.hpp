@@ -13,6 +13,10 @@
 #ifndef MLPACK_CORE_AUDIO_AUDIO_HPP
 #define MLPACK_CORE_AUDIO_AUDIO_HPP
 
+//
+// MP3 Includes
+//
+
 #undef  DRMP3_API
 #define DRMP3_API  static
 
@@ -23,7 +27,7 @@
   #define DR_MP3_IMPLEMENTATION
 #endif
 
-#if defined(MLPACK_USE_SYSTEM_MP3)
+#if defined(MLPACK_USE_SYSTEM_DR_LIBS)
   #if __has_include(<dr_mp3.h>)
     #include <dr_mp3.h>
   #else
@@ -37,6 +41,10 @@
 
 #endif
 
+//
+// WAV Includes
+//
+
 #undef  DRWAV_API
 #define DRWAV_API  static
 
@@ -47,13 +55,13 @@
   #define DR_WAV_IMPLEMENTATION
 #endif
 
-#if defined(MLPACK_USE_SYSTEM_WAV)
+#if defined(MLPACK_USE_SYSTEM_DR_LIBS)
   #if __has_include(<dr_wav.h>)
     #include <dr_wav.h>
   #else
     #pragma warning("System's dr_wav not found; including bundled dr_wav")
     #include "bundled/dr_wav.h"
-#endif
+  #endif
 
 #else
 
