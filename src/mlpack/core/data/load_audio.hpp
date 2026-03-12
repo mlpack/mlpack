@@ -69,9 +69,6 @@ bool LoadWAV(const std::vector<std::string>& files,
              AudioOptions& opts)
 {
   drwav wav;
-  drwav_uint64 framesRead;
-  drwav_uint64 totalFramesRead = 0;
-  arma::fmat fullFileFrames;
 
   if (!drwav_init_file(&wav, files.at(0).c_str(), NULL))
   {
@@ -79,37 +76,23 @@ bool LoadWAV(const std::vector<std::string>& files,
         "and try again.", opts);
   }
 
-  opts.TotalPCMFramesCount() = wav.totalPCMFrameCount;
+  opts.TotalPCMFramesCount() = (size_t)wav.totalPCMFrameCount;
   opts.Channels() = wav.channels;
 
-  drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
-  drwav_seek_to_pcm_frame(&wav, 0);
+  // These two lines were in the example, but I am not sure if it is really required.
+  //drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
+  //drwav_seek_to_pcm_frame(&wav, 0);
 
-  // The size of the array is defined by drlibs for easy memory management.
-  float pcm[4096];
+  std::vector<float> samples(opts.TotalPCMFramesCount() * opts.Channels());
 
-  std::vector<float> fullFrames;
-  fullFrames.reserve(opts.TotalPCMFramesCount() * opts.Channels());
-  // We will read iterately the PCM frames, each time we fill the buffer we
-  // insert it to std::vector<> and repeat again until we read the entire file.
-  for (;;)
-  {
-    framesRead = drwav_read_pcm_frames_f32(&wav,
-        sizeof(pcm)/sizeof(pcm[0])/opts.Channels(), pcm);
-    if (framesRead == 0)
-      break;
-
-    size_t samplesRead = framesRead * opts.Channels();
-    fullFrames.insert(fullFrames.end(), pcm, pcm + samplesRead);
-
-    opts.TotalFramesRead() += framesRead;
-  }
+  opts.TotalFramesRead() = (size_t)drwav_read_pcm_frames_f32(&wav,
+        opts.TotalPCMFramesCount(), samples.data());
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
     std::stringstream oss;
-    oss << "Frame count mismatch: " << (int)opts.TotalPCMFramesCount()
-        << "(queried) != " << (int)opts.TotalFramesRead() <<" (read)";
+    oss << "Frame count mismatch: " << opts.TotalPCMFramesCount()
+        << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
   // Something to discuss in here related to how we handle the information
@@ -122,7 +105,6 @@ bool LoadWAV(const std::vector<std::string>& files,
   opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
-
 
   // Also another question is how to make all the read audio files the same
   // size.
@@ -140,8 +122,9 @@ bool LoadWAV(const std::vector<std::string>& files,
   // longer duration.
   //
   // What would be the best solution in this case?
-  //
-  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(fullFrames));
+
+  drwav_uninit(&mp3);
+  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
   return true;
 }
 
@@ -156,42 +139,22 @@ bool LoadMP3(const std::vector<std::string>& files,
              MatType& matrix,
              AudioOptions& opts)
 {
-  drwav wav;
-  drwav_uint64 framesRead;
-  drwav_uint64 totalFramesRead = 0;
-  arma::fmat fullFileFrames;
+  drmp3 mp3;
 
-  if (!drwav_init_file(&wav, files.at(0).c_str(), NULL))
+  if (!drmp3_init_file(&mp3, files.at(0).c_str(), nullptr))
   {
-    return HandleError("Failed to read wav file. Please check the file "
+    return HandleError("Failed to read mp3 file. Please check the file "
         "and try again.", opts);
   }
 
-  opts.TotalPCMFramesCount() = wav.totalPCMFrameCount;
-  opts.Channels() = wav.channels;
+  // Read all frames as float32
+  opts.TotalPCMFramesCount() = drmp3_get_pcm_frame_count(&mp3);
+  opts.Channels() = mp3.channels;
 
-  drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
-  drwav_seek_to_pcm_frame(&wav, 0);
+  std::vector<float> samples(opts.TotalPCMFramesCount() * opts.Channels());
 
-  // The size of the array is defined by drlibs for easy memory management.
-  float pcm[4096];
-
-  std::vector<float> fullFrames;
-  fullFrames.reserve(opts.TotalPCMFramesCount() * opts.Channels());
-  // We will read iterately the PCM frames, each time we fill the buffer we
-  // insert it to std::vector<> and repeat again until we read the entire file.
-  for (;;)
-  {
-    framesRead = drwav_read_pcm_frames_f32(&wav,
-        sizeof(pcm)/sizeof(pcm[0])/opts.Channels(), pcm);
-    if (framesRead == 0)
-      break;
-
-    size_t samplesRead = framesRead * opts.Channels();
-    fullFrames.insert(fullFrames.end(), pcm, pcm + samplesRead);
-
-    opts.TotalFramesRead() += framesRead;
-  }
+  opts.TotalFramesRead() = drmp3_read_pcm_frames_f32(&mp3, 
+      opts.TotalPCMFramesCount(), samples.data());
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
@@ -200,38 +163,27 @@ bool LoadMP3(const std::vector<std::string>& files,
         << "(queried) != " << (int)opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
-  // Something to discuss in here related to how we handle the information
-  // related to each file, if we have N files ?
-  // Should we for instance have all of these stored into a vector ?
-  // or do we impose the same rules we have in images ?
-  opts.SampleRate() = wav.sampleRate;
-  opts.BitsPerSample() = wav.bitsPerSample;
-  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
-  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
-  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
-      * opts.Channels();
 
+  drmp3_uninit(&mp3);
 
-  // Also another question is how to make all the read audio files the same
-  // size.
-  //
-  // The safest strategy is to do zero padding
-  //
-  // First load all of them using std::vector at the start,
-  // then identify the longest one using AudioDuration, once this one is
-  // identified we can do zero padding for the remaining files.
-  //
-  // Second idea, is to define the mean average length for all of them, and
-  // then truncate or do zero padding based on the audio duration of each file.
-  // This might result in some loss of audio data (if the data where located at
-  // the end), but allows us to avoid anomalies in case of one file has a much
-  // longer duration.
-  //
-  // What would be the best solution in this case?
-  //
-  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(fullFrames));
+  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
   return true;
 }
+
+//StereoToMono()
+//{
+    //// This needs to be moved to another function
+    //// If stereo, mix down to mono
+    //if (mp3.channels == 2) {
+        //m_allSamples.resize(framesRead);
+        //for (size_t i = 0; i < framesRead; ++i)
+            //m_allSamples[i] = (decoded[i * 2] + decoded[i * 2 + 1]) * 0.5f;
+    //} else {
+        //m_allSamples.assign(decoded.begin(), decoded.begin() + framesRead);
+    //}
+
+    //return true;
+//}
 
 } //namespace mlpack
 
