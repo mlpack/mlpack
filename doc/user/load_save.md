@@ -1087,7 +1087,7 @@ decoding for wav and mp3 and encoding for wav only.
     for this is simple.
 -->
 
- * Supported image loading formats are WAV and MP3; see
+ * Supported audio loading formats are WAV and MP3; see
    [the table of formats](#formats) for more details.
 
 <!-- 
