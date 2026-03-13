@@ -138,7 +138,7 @@ bool Load(const std::string& src,
       else
       {
         AudioOptions audOpts(std::move(opts));
-        success = LoadWAV(src, dest, audOpts);
+        success = LoadAudio(src, dest, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
       }

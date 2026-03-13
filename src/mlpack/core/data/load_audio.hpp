@@ -63,35 +63,55 @@ namespace mlpack {
  * In real life, most of digital audio data, is 2 channels (L,R) whether this
  * for MP3 or WAV format.
  */
+
 template<typename MatType>
-bool LoadWAV(const std::string files,
+bool LoadAudio(const std::string file,
+               MatType& matrix,
+               AudioOptions& opts)
+{
+  if (opts.Format() == FileType::WAV)
+  {
+    return LoadWAV(file, matrix, opts);
+  }
+  else if (opts.Format() == FileType::MP3)
+  {
+    return LoadMP3(file, matrix, opts);
+  }
+  else
+  {
+    std::stringstream oss;
+    oss << "LoadAudio(): Only loading WAV and MP3 formats are supported.\n"
+        << " Please check the filetype.";
+    return HandleError(oss, opts);
+  }
+}
+
+template<typename MatType>
+bool LoadWAV(const std::string file,
              MatType& matrix,
              AudioOptions& opts)
 {
   drwav wav;
 
-  if (!drwav_init_file(&wav, files.c_str(), nullptr))
+  if (!drwav_init_file(&wav, file.c_str(), nullptr))
   {
-    return HandleError("Failed to read wav file. Please check the file "
-        "and try again.", opts);
+    return HandleError("LoadWAV(): Failed to read wav file. Probably a "
+        "corrupted file.", opts);
   }
 
   opts.TotalPCMFramesCount() = (size_t)wav.totalPCMFrameCount;
   opts.Channels() = wav.channels;
 
-  // These two lines were in the example, but I am not sure if it is really required.
-  //drwav_seek_to_pcm_frame(&wav, opts.TotalPCMFramesCount() / 2);
-  //drwav_seek_to_pcm_frame(&wav, 0);
-
-  std::vector<float> samples(opts.TotalPCMFramesCount() * opts.Channels());
+  // For now we are loading only one file.
+  arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
 
   opts.TotalFramesRead() = (size_t)drwav_read_pcm_frames_f32(&wav,
-        opts.TotalPCMFramesCount(), samples.data());
+        opts.TotalPCMFramesCount(), samples.memptr());
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
     std::stringstream oss;
-    oss << "Frame count mismatch: " << opts.TotalPCMFramesCount()
+    oss << "LoadWAV(): Frame count mismatch: " << opts.TotalPCMFramesCount()
         << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
@@ -109,34 +129,41 @@ bool LoadWAV(const std::string files,
 }
 
 template<typename MatType>
-bool LoadMP3(const std::string files,
+bool LoadMP3(const std::string file,
              MatType& matrix,
              AudioOptions& opts)
 {
   drmp3 mp3;
 
-  if (!drmp3_init_file(&mp3, files.c_str(), nullptr))
+  if (!drmp3_init_file(&mp3, file.c_str(), nullptr))
   {
-    return HandleError("Failed to read mp3 file. Please check the file "
-        "and try again.", opts);
+    return HandleError("LoadMP3(): Failed to read wav file. Probably a "
+        "corrupted file.", opts);
   }
 
   // Read all frames as float32
   opts.TotalPCMFramesCount() = drmp3_get_pcm_frame_count(&mp3);
   opts.Channels() = mp3.channels;
 
-  std::vector<float> samples(opts.TotalPCMFramesCount() * opts.Channels());
+  arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
 
   opts.TotalFramesRead() = drmp3_read_pcm_frames_f32(&mp3, 
-      opts.TotalPCMFramesCount(), samples.data());
+      opts.TotalPCMFramesCount(), samples.memptr());
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
     std::stringstream oss;
-    oss << "Frame count mismatch: " << (int)opts.TotalPCMFramesCount()
-        << "(queried) != " << (int)opts.TotalFramesRead() <<" (read)";
+    oss << "LoadMP3(): Frame count mismatch: " << opts.TotalPCMFramesCount()
+        << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
+
+  opts.SampleRate() = mp3.sampleRate;
+  opts.BitsPerSample() = 32; // For now we are loading float point
+  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
+  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
+  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
+      * opts.Channels();
 
   drmp3_uninit(&mp3);
 
