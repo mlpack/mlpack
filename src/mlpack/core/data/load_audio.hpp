@@ -70,7 +70,7 @@ bool LoadWAV(const std::vector<std::string>& files,
 {
   drwav wav;
 
-  if (!drwav_init_file(&wav, files.at(0).c_str(), NULL))
+  if (!drwav_init_file(&wav, files.at(0).c_str(), nullptr))
   {
     return HandleError("Failed to read wav file. Please check the file "
         "and try again.", opts);
@@ -95,10 +95,7 @@ bool LoadWAV(const std::vector<std::string>& files,
         << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
-  // Something to discuss in here related to how we handle the information
-  // related to each file, if we have N files ?
-  // Should we for instance have all of these stored into a vector ?
-  // or do we impose the same rules we have in images ?
+  // These must be identical even if we have several files.
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
   opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
@@ -106,42 +103,19 @@ bool LoadWAV(const std::vector<std::string>& files,
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
-  // Also another question is how to make all the read audio files the same
-  // size.
-  //
-  // The safest strategy is to do zero padding
-  //
-  // First load all of them using std::vector at the start,
-  // then identify the longest one using AudioDuration, once this one is
-  // identified we can do zero padding for the remaining files.
-  //
-  // Second idea, is to define the mean average length for all of them, and
-  // then truncate or do zero padding based on the audio duration of each file.
-  // This might result in some loss of audio data (if the data where located at
-  // the end), but allows us to avoid anomalies in case of one file has a much
-  // longer duration.
-  //
-  // What would be the best solution in this case?
-
   drwav_uninit(&mp3);
   matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
   return true;
 }
 
-// Also should we have one function that loads only one file, or follow the
-// same logic as we did in imageOptions ? which is basically have one function that
-// loads a set of files at the same time ?
-// Note if this is the case, the padding truncate functionality needs to be
-// implmented with in this file.
-
 template<typename MatType>
-bool LoadMP3(const std::vector<std::string>& files,
+bool LoadMP3(const std::string files,
              MatType& matrix,
              AudioOptions& opts)
 {
   drmp3 mp3;
 
-  if (!drmp3_init_file(&mp3, files.at(0).c_str(), nullptr))
+  if (!drmp3_init_file(&mp3, files.c_str(), nullptr))
   {
     return HandleError("Failed to read mp3 file. Please check the file "
         "and try again.", opts);
@@ -169,21 +143,6 @@ bool LoadMP3(const std::vector<std::string>& files,
   matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
   return true;
 }
-
-//StereoToMono()
-//{
-    //// This needs to be moved to another function
-    //// If stereo, mix down to mono
-    //if (mp3.channels == 2) {
-        //m_allSamples.resize(framesRead);
-        //for (size_t i = 0; i < framesRead; ++i)
-            //m_allSamples[i] = (decoded[i * 2] + decoded[i * 2 + 1]) * 0.5f;
-    //} else {
-        //m_allSamples.assign(decoded.begin(), decoded.begin() + framesRead);
-    //}
-
-    //return true;
-//}
 
 } //namespace mlpack
 
