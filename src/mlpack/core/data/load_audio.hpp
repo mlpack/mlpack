@@ -64,9 +64,9 @@ namespace mlpack {
  * for MP3 or WAV format.
  */
 
-template<typename MatType>
+template<typename eT>
 bool LoadAudio(const std::string file,
-               MatType& matrix,
+               arma::Mat<eT>& matrix,
                AudioOptions& opts)
 {
   if (opts.Format() == FileType::WAV)
@@ -86,9 +86,9 @@ bool LoadAudio(const std::string file,
   }
 }
 
-template<typename MatType>
+template<typename eT>
 bool LoadWAV(const std::string file,
-             MatType& matrix,
+             arma::Mat<eT>& matrix,
              AudioOptions& opts)
 {
   drwav wav;
@@ -124,13 +124,13 @@ bool LoadWAV(const std::string file,
       * opts.Channels();
 
   drwav_uninit(&wav);
-  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
+  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   return true;
 }
 
-template<typename MatType>
+template<typename eT>
 bool LoadMP3(const std::string file,
-             MatType& matrix,
+             arma::Mat<eT>& matrix,
              AudioOptions& opts)
 {
   drmp3 mp3;
@@ -167,7 +167,7 @@ bool LoadMP3(const std::string file,
 
   drmp3_uninit(&mp3);
 
-  matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
+  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   return true;
 }
 
