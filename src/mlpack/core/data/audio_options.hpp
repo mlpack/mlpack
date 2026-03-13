@@ -49,7 +49,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       return *this;
 
     audioDuration       = other.audioDuration;
-    avgBytesPerSec      = other.avgBytesPerSec;
     bitPerSample        = other.bitPerSample;
     channels            = other.channels;
     fileBitRate         = other.fileBitRate;
@@ -72,7 +71,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       return *this;
 
     audioDuration       = std::move(other.audioDuration);
-    avgBytesPerSec      = std::move(other.avgBytesPerSec);
     bitPerSample        = std::move(other.bitPerSample);
     channels            = std::move(other.channels);
     fileBitRate         = std::move(other.fileBitRate);
@@ -122,19 +120,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "audioDuration with different values!");
-      }
-    }
-
-    if (!avgBytesPerSec.has_value() && other.avgBytesPerSec.has_value())
-    {
-      avgBytesPerSec = other.avgBytesPerSec;
-    }
-    else if (avgBytesPerSec.has_value() && other.avgBytesPerSec.has_value())
-    {
-      if (avgBytesPerSec.has_value() != other.avgBytesPerSec.has_value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "avgBytesPerSec with different values!");
       }
     }
 
@@ -237,8 +222,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   {
     if (audioDuration.has_value() && audioDuration != defaultAudioDuration)
       this->WarnOptionConversion("audioDuration", dataDescription);
-    if (avgBytesPerSec.has_value() && avgBytesPerSec != defaultAvgBytesPerSec)
-      this->WarnOptionConversion("avgBytesPerSec", dataDescription);
     if (bitPerSample.has_value() && bitPerSample != defaultBitPerSample)
       this->WarnOptionConversion("bitPerSample", dataDescription);
     if (channels.has_value() && channels != defaultChannels)
@@ -262,7 +245,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   void Reset()
   {
     audioDuration.reset();
-    avgBytesPerSec.reset();
     bitPerSample.reset();
     channels.reset();
     fileBitRate.reset();
@@ -272,121 +254,107 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     totalSamples.reset();
   }
 
-  drwav_uint64 AudioDuration() const
+  size_t AudioDuration() const
   {
     return this->AccessMember(audioDuration, defaultAudioDuration);
   }
 
-  drwav_uint64& AudioDuration()
+  size_t& AudioDuration()
   {
     return this->ModifyMember(audioDuration, defaultAudioDuration);
   }
 
-  drwav_uint32 AvgBytesPerSec() const
-  {
-    return this->AccessMember(avgBytesPerSec, defaultAvgBytesPerSec);
-  }
-
-  drwav_uint32& AvgBytesPerSec()
-  {
-    return this->ModifyMember(avgBytesPerSec, defaultAvgBytesPerSec);
-  }
-
-  // @rcurtin Not available on MP3, only WAV. How we can expose this nicely?
-  drwav_uint16 BitsPerSample() const
+  size_t BitsPerSample() const
   {
     return this->AccessMember(bitPerSample, defaultBitPerSample);
   }
 
-  // @rcurtin Not available on MP3, only WAV. How we can expose this nicely?
-  drwav_uint16& BitsPerSample()
+  size_t& BitsPerSample()
   {
     return this->ModifyMember(bitPerSample, defaultBitPerSample);
   }
 
-  drwav_uint16 Channels() const
+  size_t Channels() const
   {
     return this->AccessMember(channels, defaultChannels);
   }
 
-  drwav_uint16& Channels()
+  size_t& Channels()
   {
     return this->ModifyMember(channels, defaultChannels);
   }
 
-  drwav_uint64 FileBitRate() const
+  size_t FileBitRate() const
   {
     return this->AccessMember(fileBitRate, defaultFileBitRate);
   }
 
-  drwav_uint64& FileBitRate()
+  size_t& FileBitRate()
   {
     return this->ModifyMember(fileBitRate, defaultFileBitRate);
   }
 
-  drwav_uint32 SampleRate() const
+  size_t SampleRate() const
   {
     return this->AccessMember(sampleRate, defaultSampleRate);
   }
 
-  drwav_uint32& SampleRate()
+  size_t& SampleRate()
   {
     return this->ModifyMember(sampleRate, defaultSampleRate);
   }
 
-  drwav_uint64 TotalFramesRead() const
+  size_t TotalFramesRead() const
   {
     return this->AccessMember(totalFramesRead, defaultTotalFramesRead);
   }
 
-  drwav_uint64& TotalFramesRead()
+  size_t& TotalFramesRead()
   {
     return this->ModifyMember(totalFramesRead, defaultTotalFramesRead);
   }
 
-  drwav_uint64 TotalPCMFramesCount() const
+  size_t TotalPCMFramesCount() const
   {
     return this->AccessMember(totalPCMFramesCount,
         defaultTotalPCMFramesCount);
   }
 
-  drwav_uint64& TotalPCMFramesCount()
+  size_t& TotalPCMFramesCount()
   {
     return this->ModifyMember(totalPCMFramesCount,
         defaultTotalPCMFramesCount);
   }
 
-  drwav_uint64 TotalSamples() const
+  size_t TotalSamples() const
   {
     return this->AccessMember(totalSamples, defaultTotalSamples);
   }
 
-  drwav_uint64& TotalSamples()
+  size_t& TotalSamples()
   {
     return this->ModifyMember(totalSamples, defaultTotalSamples);
   }
 
  private:
 
-  std::optional<drwav_uint64> audioDuration;
-  std::optional<drwav_uint32> avgBytesPerSec;
-  std::optional<drwav_uint16> bitPerSample;
-  std::optional<drwav_uint16> channels;
-  std::optional<drwav_uint64> fileBitRate;
-  std::optional<drwav_uint32> sampleRate;
-  std::optional<drwav_uint64> totalFramesRead;
-  std::optional<drwav_uint64> totalPCMFramesCount;
-  std::optional<drwav_uint64> totalSamples;
+  std::optional<size_t> audioDuration;
+  std::optional<size_t> bitPerSample;
+  std::optional<size_t> channels;
+  std::optional<size_t> fileBitRate;
+  std::optional<size_t> sampleRate;
+  std::optional<size_t> totalFramesRead;
+  std::optional<size_t> totalPCMFramesCount;
+  std::optional<size_t> totalSamples;
 
-  constexpr static const drwav_uint64 defaultAudioDuration    = 0;
-  constexpr static const drwav_uint32 defaultAvgBytesPerSec   = 0;
-  constexpr static const drwav_uint16 defaultBitPerSample     = 0;
-  constexpr static const drwav_uint16 defaultChannels         = 0;
-  constexpr static const drwav_uint64 defaultFileBitRate      = 0;
-  constexpr static const drwav_uint32 defaultSampleRate       = 0;
-  constexpr static const drwav_uint64 defaultTotalFramesRead  = 0;
-  constexpr static const drwav_uint64 defaultTotalPCMFramesCount = 0;
-  constexpr static const drwav_uint64 defaultTotalSamples     = 0;
+  constexpr static const size_t defaultAudioDuration    = 0;
+  constexpr static const size_t defaultBitPerSample     = 0;
+  constexpr static const size_t defaultChannels         = 0;
+  constexpr static const size_t defaultFileBitRate      = 0;
+  constexpr static const size_t defaultSampleRate       = 0;
+  constexpr static const size_t defaultTotalFramesRead  = 0;
+  constexpr static const size_t defaultTotalPCMFramesCount = 0;
+  constexpr static const size_t defaultTotalSamples     = 0;
 };
 
 template<>
