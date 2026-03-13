@@ -707,7 +707,9 @@ mlpack supports loading datasets from URLs.  Files will be downloaded using the
 [cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
 with mlpack for ease of use.
 
-When a remote URL is given to `Load()`:
+A remote URL can be given to either `DownloadFile()` or `Load()`:
+
+ - `DownloadFile(URL, filename)`
 
  * The URL must start with either `http://` or `https://` or loading will fail.
 
@@ -716,12 +718,40 @@ When a remote URL is given to `Load()`:
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
 
- * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
-    Linux systems).
+ * `filename` A given name to the local file that will store the dataset. The name should include
+   the full path to the location where the file should be saved. If the path is not specified explicitly,
+   the downloaded file will be saved to the directory where the binary is located.
+
+ * The downloaded file will be cached locally. If `mlpack::Load()` or `mlpack::DownloadFile()`
+   are called again on the same URL, the function will check for any difference in dataset size. 
+   If the dataset size does not match, the will download the dataset file again.
+
+    <!-- 
+    @rcurtin,  Possible confusion here: 
+    (I wrote it as a code since it is better expressed
+    than my broken English).
+
+    // Suppose Cache Enabled by default.
+    // First function call.
+    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myIris.csv);
+        
+    // After 10K line of the code, suppose the user call it again and try to
+    store it to a new new file called: myNewIris.csv 
+    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myNewIris.csv);
+
+    In this case, we should re-download and store a second file.
+
+    If you are expecting a different behaviour please let me know.
+    -->
+ 
+ * If the user specifies `#define MLPACK_DISABLE_CACHE_REMOTE_DATASETS`,  the downloaded file
+   will be saved to the system temporary directory (e.g. `/tmp/` on Linux systems).
 
 ```c++
 // Throw an exception if loading fails with the Fatal option.
 arma::mat dataset;
+// satellite.train.csv is downloaded and saved in the same location as the
+// binary.
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
@@ -738,6 +768,30 @@ std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
 std::cout << " - " << labels.n_elem << " labels." << std::endl;
 std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+```
+
+Specify the filename when downloaded, in the following we are loading a dataset
+that has a header.
+
+```c++
+arma::fmat dataset;
+// We have to make a TextOptions object so that we can recover the headers.
+mlpack::TextOptions opts;
+opts.Format() = mlpack::FileType::CSVASCII;
+opts.HasHeaders() = true;
+
+// Download `Admission_Predict.csv` file and save it as `myDataset`.
+// Note: We opted to remove the `.csv` extension to demonstrate that you can 
+// load files without explicit extension if `opts.Format()` is defined.
+mlpack::Load(DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
+    "myDataset"), dataset, opts);
+
+std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
+for (size_t i = 0; i < opts.Headers().size(); ++i)
+{
+  std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
+      << std::endl;
+}
 ```
 
 ## Mixed categorical data
