@@ -64,13 +64,13 @@ namespace mlpack {
  * for MP3 or WAV format.
  */
 template<typename MatType>
-bool LoadWAV(const std::vector<std::string>& files,
+bool LoadWAV(const std::string files,
              MatType& matrix,
              AudioOptions& opts)
 {
   drwav wav;
 
-  if (!drwav_init_file(&wav, files.at(0).c_str(), nullptr))
+  if (!drwav_init_file(&wav, files.c_str(), nullptr))
   {
     return HandleError("Failed to read wav file. Please check the file "
         "and try again.", opts);
@@ -103,7 +103,7 @@ bool LoadWAV(const std::vector<std::string>& files,
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
-  drwav_uninit(&mp3);
+  drwav_uninit(&wav);
   matrix = arma::conv_to<arma::Mat<float>>::from(std::move(samples));
   return true;
 }

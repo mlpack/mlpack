@@ -314,16 +314,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(channels, defaultChannels);
   }
 
-  drwav_uint64 DataChunkSize() const
-  {
-    return this->AccessMember(dataChunkSize, defaultDataChunkSize);
-  }
-
-  drwav_uint64& DataChunkSize()
-  {
-    return this->ModifyMember(dataChunkSize, defaultDataChunkSize);
-  }
-
   drwav_uint64 FileBitRate() const
   {
     return this->AccessMember(fileBitRate, defaultFileBitRate);

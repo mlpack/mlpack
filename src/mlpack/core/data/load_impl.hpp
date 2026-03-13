@@ -130,18 +130,15 @@ bool Load(const std::string& src,
     }
     else if (isAudioFormat)
     {
-      std::cout << "it is not possible to be here" << std::endl;
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot load image data into a sparse matrix. "
+        return HandleError("Cannot load audio data into a sparse matrix. "
         "Please use dense matrix instead.", opts);
       }
       else
       {
         AudioOptions audOpts(std::move(opts));
-        std::vector<std::string> files;
-        files.push_back(filename);
-        success = LoadWav(files, matrix, audOpts);
+        success = LoadWAV(src, dest, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
       }
@@ -215,13 +212,6 @@ bool Load(const std::vector<std::string>& files,
     success = LoadImage(files, matrix, imgOpts);
     if (copyBack)
       opts = std::move(imgOpts);
-  }
-  else if (isAudioFormat)
-  {
-    AudioOptions audOpts(std::move(opts));
-    success = LoadWav(files, matrix, audOpts);
-    if (copyBack)
-      opts = std::move(audOpts);
   }
   else
   {
