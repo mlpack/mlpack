@@ -57,7 +57,7 @@ TEST_CASE("LoadImageOptionsITest", "[ImageLoadTest]")
 {
   arma::Mat<unsigned char> matrix;
 
-  ImageOptions opts = Fatal + FileType::PNG;
+  ImageOptions opts = Fatal + PNG;
 
   REQUIRE(Load("test_image.png", matrix, opts) == true);
   // width * height * channels.
