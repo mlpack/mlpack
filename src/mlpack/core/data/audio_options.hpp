@@ -360,14 +360,14 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
 
  private:
 
-  std::optional<size_t> audioDuration;
-  std::optional<size_t> bitPerSample;
   std::optional<size_t> channels;
-  std::optional<size_t> fileBitRate;
   std::optional<size_t> sampleRate;
-  std::optional<size_t> totalFramesRead;
+  std::optional<size_t> bitPerSample;
+  std::optional<size_t> audioDuration;
   std::optional<size_t> totalPCMFramesCount;
+  std::optional<size_t> totalFramesRead;
   std::optional<size_t> totalSamples;
+  std::optional<size_t> fileBitRate;
 
   constexpr static const size_t defaultAudioDuration    = 0;
   constexpr static const size_t defaultBitPerSample     = 0;
@@ -377,6 +377,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const size_t defaultTotalFramesRead  = 0;
   constexpr static const size_t defaultTotalPCMFramesCount = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
+
 };
 
 template<>
