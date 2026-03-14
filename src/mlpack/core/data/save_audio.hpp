@@ -16,51 +16,107 @@
 
 namespace mlpack {
 
-template<typename MatType>
-bool SaveWAV(const std::string& file,
-             MatType& matrix,
-             AudioOptions& opts)
+  /**
+ * Save audio matrix data to a WAV file.
+ *
+ * Dispatches based on BitsPerSample() in AudioOptions:
+ *   - 16 (or 0/unset): PCM 16-bit signed integer format.
+ *     Input is clamped to [-1, 1], scaled to [-32767, 32767], and written
+ *     as int16.
+ *   - 32: 32-bit IEEE float format.
+ *     Input is clamped to [-1, 1] and written directly as float32.
+ *
+ * The matrix layout must match the one produced by LoadWAV():
+ *   - Shape: 1 x (totalPCMFrames * channels)
+ *   - Interleaved channel samples: [L0, R0, L1, R1, ..., LN, RN]
+ *
+ * @param file Path to the output WAV file.
+ * @param matrix Armadillo matrix containing audio samples.
+ * @param opts AudioOptions with Channels() and SampleRate() set.
+ * @return true on success, false on failure.
+ */
+template<typename eT>
+bool SaveAudio(const std::string& file,
+               arma::Mat<eT>& matrix,
+               AudioOptions& opts)
 {
   size_t framesWritten = 0;
-  // We cannot save filetype other than wav.
-  if (!opts.Format() == FileType::WAV)
+
+  if (opts.Format() != FileType::WAV)
   {
     return HandleError("SaveWav(): Only WAV format is supported."
        " Please specify the file extension or the FileFormat.", opts);
   }
 
-  // Convert float [-1,1] → int16
-  std::vector<int16_t> pcm16(m_allSamples.size());
-  for (size_t i = 0; i < m_allSamples.size(); ++i)
+  if (opts.Channels() == 0 || opts.SampleRate() == 0)
   {
-    float clamped = std::clamp(m_allSamples[i], -1.0f, 1.0f);
-    pcm16[i] = static_cast<int16_t>(clamped * 32767.0f);
+    std::stringstream oss;
+    oss << "SaveAudio(): Number of channels or sample rate is not set. Please"
+        << " set AudioOptions::Channels() or AudioOptions::SampleRate()"
+        << " before saving.";
+    return HandleError(oss, opts);
   }
 
-  drwav_data_format format;
-  //  format.container     = drwav_container_riff;
-  //  format.format        = DR_WAVE_FORMAT_PCM;
-  format.channels      = opts.Channels();
-  format.sampleRate    = opts.SampleRate();
-  format.bitsPerSample = 16;
+  if (opts.BitsPerSamples() != 16 || opts.BitsPerSamples != 32)
+  {
+    std::stringstream oss;
+    oss << "SaveAudio(): Unsupported BitsPerSample value: "
+        << opts.BitsPerSamples() << ". Only 16 and 32 are supported.";
+    return HandleError(oss, opts);
+  }
+
+  opts.TotalPCMFramesCount() = matrix.n_elem / opts.Channels();
+
+  drwav_data_format dataFormat;
+  dataFormat.container     = drwav_container_riff;
+  dataFormat.channels      = opts.Channels();
+  dataFormat.sampleRate    = opts.SampleRate();
+  dataFormat.bitsPerSample = opts.BitsPerSamples();
+
+  if (opts.BitsPerSamples() == 32)
+    dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
+  else
+    dataFormat.format = DR_WAVE_FORMAT_PCM;
 
   drwav wav;
-  if (!drwav_init_file_write(&wav, file, &format, nullptr))
+  if (!drwav_init_file_write(&wav, file.c_str(), &dataFormat, nullptr))
   {
-    return HandleError("SaveWav(): Failed to open wav file for writing."
-       " Please check the file and try again.", opts);
+    return HandleError("SaveAudio(): Failed to open WAV file for writing."
+        " Please check the file path and permissions.", opts);
   }
 
-  // Write all frames (1 frame = 1 sample for mono)
-  framesWritten = (size_t)drwav_write_pcm_frames(&wav, pcm16.size(), pcm16.data());
+  // Need to convert in anycase to float32.
+  arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+  pcm32.clamp(-1.0f, 1.0f);
 
-  if (framesWritten != pcm16.size())
+  if (opts.BitsPerSamples() == 32)
   {
-    return HandleError("SaveWav(): The number of written Frames mismatches "
-       "the number of frames to be stored.", opts);
+    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+        opts.TotalPCMFramesCount(), pcm32.memptr()));
+  }
+  else
+  {
+    pcm32 *= 32767.0f;
+
+    arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
+    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+          opts.TotalPCMFramesCount(), pcm16.memptr()));
   }
 
   drwav_uninit(&wav);
+
+  if (framesWritten != opts.TotalPCMFramesCount())
+  {
+    std::stringstream oss;
+    oss << "SaveWav(): Frames count mismatches: expected to write "
+        << opts.TotalPCMFramesCount() << " frames but only wrote " << framesWritten
+        << " frames.";
+    return HandleError(oss, opts);
+  }
+
+  opts.TotalSamples() = matrix.n_elem;
+  opts.AudioDuration() = totalFrames / opts.SampleRate();
+
   return true;
 }
 
