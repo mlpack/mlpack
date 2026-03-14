@@ -22,7 +22,29 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
 {
  public:
 
-  AudioOptions()
+  AudioOptions(std::optional<size_t> channels = std::nullopt,
+               std::optional<size_t> sampleRate = std::nullopt,
+               std::optional<size_t> bitsPerSample = std::nullopt,
+               std::optional<size_t> audioDuration = std::nullopt,
+               std::optional<size_t> totalPCMFramesCount = std::nullopt,
+               std::optional<size_t> totalFramesRead = std::nullopt,
+               std::optional<size_t> totalSamples = std::nullopt,
+               std::optional<size_t> fileBitRate = std::nullopt) :
+    DataOptionsBase<AudioOptions>(),
+    channels(channels),
+    sampleRate(sampleRate),
+    bitPerSample(bitsPerSample),
+    audioDuration(audioDuration),
+    totalPCMFramesCount(totalPCMFramesCount),
+    totalFramesRead(totalFramesRead),
+    totalSamples(totalSamples),
+    fileBitRate(fileBitRate)
+  {
+    // Do nothing.
+  }
+
+  AudioOptions(const DataOptions& opts) :
+      DataOptionsBase<AudioOptions>(opts)
   {
     // Do nothing.
   }
@@ -116,7 +138,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (audioDuration.has_value() && other.audioDuration.has_value())
     {
-      if (audioDuration.has_value() != other.audioDuration.has_value())
+      if (audioDuration.value() != other.audioDuration.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "audioDuration with different values!");
@@ -129,7 +151,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (bitPerSample.has_value() && other.bitPerSample.has_value())
     {
-      if (bitPerSample.has_value() != other.bitPerSample.has_value())
+      if (bitPerSample.value() != other.bitPerSample.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "bitPerSample with different values!");
@@ -142,7 +164,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (channels.has_value() && other.channels.has_value())
     {
-      if (channels.has_value() != other.channels.has_value())
+      if (channels.value() != other.channels.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "channels with different values!");
@@ -155,7 +177,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (fileBitRate.has_value() && other.fileBitRate.has_value())
     {
-      if (fileBitRate.has_value() != other.fileBitRate.has_value())
+      if (fileBitRate.value() != other.fileBitRate.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "fileBitRate with different values!");
@@ -168,7 +190,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (sampleRate.has_value() && other.sampleRate.has_value())
     {
-      if (sampleRate.has_value() != other.sampleRate.has_value())
+      if (sampleRate.value() != other.sampleRate.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "sampleRate with different values!");
@@ -181,7 +203,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (totalFramesRead.has_value() && other.totalFramesRead.has_value())
     {
-      if (totalFramesRead.has_value() != other.totalFramesRead.has_value())
+      if (totalFramesRead.value() != other.totalFramesRead.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "totalFramesRead with different values!");
@@ -196,8 +218,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     else if (totalPCMFramesCount.has_value() &&
         other.totalPCMFramesCount.has_value())
     {
-      if (totalPCMFramesCount.has_value() !=
-          other.totalPCMFramesCount.has_value())
+      if (totalPCMFramesCount.value() !=
+          other.totalPCMFramesCount.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "totalPCMFramesCount with different values!");
@@ -210,7 +232,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     }
     else if (totalSamples.has_value() && other.totalSamples.has_value())
     {
-      if (totalSamples.has_value() != other.totalSamples.has_value())
+      if (totalSamples.value() != other.totalSamples.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
             "totalSamples with different values!");
