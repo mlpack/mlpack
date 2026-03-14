@@ -3,6 +3,8 @@
  * @author Omar Shrit
  *
  * Load audio data functions implementation (WAV or MP3).
+ * Supports loading as float32 or signed 16-bit PCM depending on the
+ * element type of the destination matrix.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -87,7 +89,7 @@ bool LoadAudio(const std::string file,
 }
 
 template<typename eT>
-bool LoadWAV(const std::string file,
+bool LoadWAV(const std::string& file,
              arma::Mat<eT>& matrix,
              AudioOptions& opts)
 {
@@ -101,12 +103,31 @@ bool LoadWAV(const std::string file,
 
   opts.TotalPCMFramesCount() = static_cast<size_t>(wav.totalPCMFrameCount);
   opts.Channels() = wav.channels;
+  opts.SampleRate() = wav.sampleRate;
+  opts.BitsPerSample() = wav.bitsPerSample;
 
   // For now we are loading only one file.
-  arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
+  if (opts.BitsPerSample() == 32)
+  {
+    arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
 
-  opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_f32(&wav,
-        opts.TotalPCMFramesCount(), samples.memptr()));
+    opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_f32(
+        &wav, opts.TotalPCMFramesCount(), samples.memptr()));
+
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+  else if (opts.BitsPerSample() == 16)
+  {
+    arma::Mat<int16_t> samples(1,
+        opts.TotalPCMFramesCount() * opts.Channels());
+
+    opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_s16(
+        &wav, opts.TotalPCMFramesCount(), samples.memptr()));
+
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+
+  drwav_uninit(&wav);
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
@@ -115,21 +136,17 @@ bool LoadWAV(const std::string file,
         << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
-  // These must be identical even if we have several files.
-  opts.SampleRate() = wav.sampleRate;
-  opts.BitsPerSample() = wav.bitsPerSample;
+
   opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
-  drwav_uninit(&wav);
-  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   return true;
 }
 
 template<typename eT>
-bool LoadMP3(const std::string file,
+bool LoadMP3(const std::string& file,
              arma::Mat<eT>& matrix,
              AudioOptions& opts)
 {
@@ -144,11 +161,36 @@ bool LoadMP3(const std::string file,
   opts.TotalPCMFramesCount() =
       static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
+  opts.SampleRate() = mp3.sampleRate;
 
-  arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
+  // MP3 is compressed by default, so it is up to the user to specify the
+  // BitsPerSample(). If nothing specified, we should assign float by default.
+  if (opts.BitsPerSample() != 32 && opts.BitsPerSample() !=16)
+  {
+    opts.BitsPerSample() = 32;
+  }
 
-  opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_f32(&mp3,
-      opts.TotalPCMFramesCount(), samples.memptr()));
+  if (opts.BitsPerSample() == 32)
+  {
+    arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
+
+    opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_f32(
+        &mp3, opts.TotalPCMFramesCount(), samples.memptr()));
+
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+  else if (opts.BitsPerSample() == 16)
+  {
+    arma::Mat<int16_t> samples(1,
+        opts.TotalPCMFramesCount() * opts.Channels());
+
+    opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_s16(
+        &mp3, opts.TotalPCMFramesCount(), samples.memptr()));
+
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+
+  drmp3_uninit(&mp3);
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
@@ -158,16 +200,11 @@ bool LoadMP3(const std::string file,
     return HandleError(oss, opts);
   }
 
-  opts.SampleRate() = mp3.sampleRate;
-  opts.BitsPerSample() = 32; // For now we are loading float point
   opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
-  drmp3_uninit(&mp3);
-
-  matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   return true;
 }
 
