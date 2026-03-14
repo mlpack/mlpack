@@ -21,7 +21,6 @@ namespace mlpack {
 class AudioOptions : public DataOptionsBase<AudioOptions>
 {
  public:
-
   AudioOptions(std::optional<size_t> channels = std::nullopt,
                std::optional<size_t> sampleRate = std::nullopt,
                std::optional<size_t> bitsPerSample = std::nullopt,
@@ -359,7 +358,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   }
 
  private:
-
   std::optional<size_t> channels;
   std::optional<size_t> sampleRate;
   std::optional<size_t> bitPerSample;
@@ -377,7 +375,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const size_t defaultTotalFramesRead  = 0;
   constexpr static const size_t defaultTotalPCMFramesCount = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
-
 };
 
 template<>
