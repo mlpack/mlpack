@@ -51,6 +51,25 @@ TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 }
 
 /**
+ * Test that the image is loaded correctly into the matrix.
+ */
+TEST_CASE("LoadImageOptionsITest", "[ImageLoadTest]")
+{
+  arma::Mat<unsigned char> matrix;
+
+  ImageOptions opts = Fatal + PNG;
+
+  REQUIRE(Load("test_image.png", matrix, opts) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(opts.Height() == 50);
+  REQUIRE(opts.Width() == 50);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+
+/**
  * Test that the image is loaded correctly when specifying the type.
  */
 TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")

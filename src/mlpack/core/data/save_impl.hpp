@@ -53,6 +53,9 @@ bool Save(const std::string& filename,
     return false;
   }
 
+  const bool isAudioFormat = opts.Format() == FileType::WAV ||
+      opts.Format() == FileType::MP3;
+
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -60,7 +63,7 @@ bool Save(const std::string& filename,
       opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
   std::fstream stream;
-  if (!isImageFormat)
+  if (!isImageFormat || !isAudioFormat)
   {
     success = OpenFile(filename, opts, false, stream);
     if (!success)
@@ -95,6 +98,20 @@ bool Save(const std::string& filename,
         files.push_back(filename);
         success = SaveImage(files, matrix, imgOpts);
         opts = std::move(imgOpts);
+      }
+    }
+    else if (isAudioFormat)
+    {
+      if constexpr (isSparseMatrixType)
+      {
+        return HandleError("Cannot save audio data into a sparse matrix. "
+        "Please use dense matrix instead.", opts);
+      }
+      else
+      {
+        AudioOptions audOpts(std::move(opts));
+        success = SaveAudio(filename, matrix, audOpts);
+        opts = std::move(audOpts);
       }
     }
     else

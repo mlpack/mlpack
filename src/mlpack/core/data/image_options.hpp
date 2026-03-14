@@ -52,6 +52,12 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     // Do nothing.
   }
 
+  ImageOptions(const DataOptions& opts) :
+      DataOptionsBase<ImageOptions>(opts)
+  {
+    // Do nothing.
+  }
+
   ImageOptions(const DataOptionsBase<ImageOptions>& opts) :
       DataOptionsBase<ImageOptions>()
   {
@@ -137,7 +143,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (width.has_value() && other.width.has_value())
     {
-      if (width.has_value() != other.width.has_value())
+      if (width.value() != other.width.value())
       {
         throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
             "width with different values!");
@@ -150,7 +156,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (height.has_value() && other.height.has_value())
     {
-      if (height.has_value() != other.height.has_value())
+      if (height.value() != other.height.value())
       {
         throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
             "height with different values!");
@@ -163,7 +169,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (channels.has_value() && other.channels.has_value())
     {
-      if (channels.has_value() != other.channels.has_value())
+      if (channels.value() != other.channels.value())
       {
         throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
             "channels with different values!");
@@ -176,7 +182,7 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (quality.has_value() && other.quality.has_value())
     {
-      if (quality.has_value() != other.quality.has_value())
+      if (quality.value() != other.quality.value())
       {
         throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
             "quality with different values!");

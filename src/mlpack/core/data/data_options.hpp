@@ -52,7 +52,9 @@ enum struct FileType
   PSD,        // PhotoShop image type.
   GIF,        // Graphics Interchange Format image type.
   PIC,        // PICtor image format.
-  PNM         // Portable Anymap format.
+  PNM,        // Portable Anymap format.
+  WAV,        // Wavform Audio File Format.
+  MP3         // MPEG Audio Layer 3 Format.
 };
 
 // This should be removed in mlpack 5.0.0. It is only here for backward
@@ -315,6 +317,8 @@ class DataOptionsBase
       case FileType::GIF:         return "GIF image data";
       case FileType::PIC:         return "PICtor image data";
       case FileType::PNM:         return "Portable Anymap data";
+      case FileType::WAV:         return "Waveform Audio data";
+      case FileType::MP3:         return "MP3 Audio data";
       default:                    return "";
     }
   }
@@ -465,6 +469,8 @@ static const DataOptions PSD = DataOptions(std::nullopt, FileType::PSD);
 static const DataOptions GIF = DataOptions(std::nullopt, FileType::GIF);
 static const DataOptions PIC = DataOptions(std::nullopt, FileType::PIC);
 static const DataOptions PNM = DataOptions(std::nullopt, FileType::PNM);
+static const DataOptions WAV = DataOptions(std::nullopt, FileType::WAV);
+static const DataOptions MP3 = DataOptions(std::nullopt, FileType::MP3);
 static const DataOptions Image = DataOptions(std::nullopt,
     FileType::ImageType);
 

@@ -27,6 +27,7 @@
 #include "load_numeric.hpp"
 #include "load_image.hpp"
 #include "load_model.hpp"
+#include "load_audio.hpp"
 
 namespace mlpack {
 

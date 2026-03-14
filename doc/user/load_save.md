@@ -103,6 +103,7 @@ See also the other examples for each [supported load type](#types):
  * [Loading from remote URLs](#loading-from-remote-urls)
  * [Categorical data](#categorical-data-loadsave-examples)
  * [Image data](#image-data-loadsave-examples)
+ * [Audio data](#audio-data-loadsave-examples)
  * [mlpack models and objects](#mlpack-models-and-objects-loadsave-examples)
 
 ## `Save()`
@@ -207,6 +208,18 @@ object `X` to be loaded or saved:
      see [the table of format options](#formats).
    - See [image data examples](#image-data-loadsave-examples) for example usage.
 
+ * For [***audio data***](#audio-data),
+   - `X` should have type
+     [`arma::mat` or any supported matrix type](matrices.md) (e.g.
+     `arma::fmat`, `arma::umat`, etc.).
+   - Audio files are represented in a vectorized form; see [audio data](#audio-data)
+     for details.
+   - An [`AudioOptions`](#audiooptions) object is used for representing metadata
+     specific to audio formats.
+   - Supported formats are MP3 and WAV;
+     see [the table of format options](#formats).
+   - See [audio data examples](#audio-data-loadsave-examples) for example usage.
+
  * For [***mlpack models and objects***](#mlpack-models-and-objects),
    - `X` can have type equivalent to any mlpack class or type (e.g.
      [`mlpack::RandomForest`](methods/random_forest.md),
@@ -258,6 +271,8 @@ object, so does the type of `opts`:
    [standalone options](#textoptions-standalone-operators-and-members);
  * ***Image data***: [`ImageOptions`](#imageoptions) and its
    [standalone options](#imageoptions-standalone-operators-and-members);
+ * ***Audio data***: [`AudioOptions`](#audiooptions) and its
+   [standalone options](#audiooptions-standalone-operators-and-members);
  * ***mlpack models and objects***: [`ModelOptions`](#modeloptions) and its
    [standalone options](#modeloptions-standalone-operators-and-members).
 
@@ -443,8 +458,8 @@ is set.
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 | _Metadata._               |                                       |                            |                   |
 | _(n/a)_                   | `opts.Height()`                       | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
-| _(n/a)_                   | `opts.Width()`                        | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
-| _(n/a)_                   | `opts.Channels()`                     | [Image data](#image-data)  | Returns a `size_t` representing the height in pixels of the loaded image(s), or the desired height in pixels for saving. |
+| _(n/a)_                   | `opts.Width()`                        | [Image data](#image-data)  | Returns a `size_t` representing the width in pixels of the loaded image(s), or the desired width in pixels for saving. |
+| _(n/a)_                   | `opts.Channels()`                     | [Image data](#image-data)  | Returns a `size_t` representing the number of channels of the loaded image(s). |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 
 ***Notes:***
@@ -459,6 +474,43 @@ is set.
 
  * The `opts.Quality()` option is only relevant when calling
    [`Save()`](#save) when using the `JPG` format.
+
+## `AudioOptions`
+
+The `AudioOptions` class represents options specific to [audio files](#audio-data).
+`AudioOptions` is a child class of [`DataOptions`](#dataoptions) and thus any
+[standalone operators or member functions from `DataOptions`](#dataoptions-standalone-operators-and-members)
+(e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
+`AudioOptions`.
+
+### `AudioOptions` standalone operators and members
+
+The options below can be used as standalone operators to the
+[`Load()`](#load) and [`Save()`](#save) functions, or as
+calls to set members of an instantiated `AudioOptions` object.
+
+If an option is given that does not match the type of data being loaded or
+saved, if [`Fatal()`](#dataoptions-standalone-operators-and-members) is set,
+then an exception will be thrown; otherwise, a warning will be printed if
+[`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions)
+is set.
+
+| ***Standalone operator*** | ***Member function***                 | ***Available for:***       | ***Description*** |
+|---------------------------|---------------------------------------|----------------------------|-------------------|
+| [_Formats._](#formats)    |                                       |                            |                   |
+| `WAV`                     | `opts.Format() = mlpack::FileType::WAV;` | [Audio data](#audio-data). | Load/save as a WAV file. |
+| `MP3`                     | `opts.Format() = mlpack::FileType::MP3;` | [Audio data](#audio-data). | Load/save as a MP3 file. |
+|---------------------------|---------------------------------------|----------------------------|-------------------|
+| _Metadata._               |                                       |                            |                   |
+| _(n/a)_                   | `opts.AudioDuration()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the duration of the loaded audio, in seconds. Set after loading / saving. |
+| _(n/a)_                   | `opts.BitPerSample()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample (e.g. 16 or 32). Set after loading, or before saving to choose PCM format. |
+| _(n/a)_                   | `opts.Channels()`                     | [Audio data](#audio-data)  | Returns a `size_t` representing the number of audio channels (e.g. 1 for mono, 2 for stereo). Set after loading, or before saving. |
+| _(n/a)_                   | `opts.FileBitRate()`                  | [Audio data](#audio-data)  | Returns a `size_t` representing the overall bit rate of the file, in bits per second. Set after loading. |
+| _(n/a)_                   | `opts.SampleRate()`                   | [Audio data](#audio-data)  | Returns a `size_t` representing the sample rate in Hz (e.g. 44100, 48000). Set after loading, or before saving. |
+| _(n/a)_                   | `opts.TotalFramesRead()`              | [Audio data](#audio-data)  | Returns a `size_t` representing the number of PCM frames successfully read during loading. |
+| _(n/a)_                   | `opts.TotalPCMFramesCount()`          | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of PCM frames reported by the file header. |
+| _(n/a)_                   | `opts.TotalSamples()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of samples loaded (TotalPCMFramesCount() * Channels()). |
+|---------------------------|---------------------------------------|----------------------------|-------------------|
 
 ## `ModelOptions`
 
@@ -524,7 +576,10 @@ given in the table.
 | `HDF5`                    | `opts.Format() = FileType::HDF5Binary;` | `.h5`, `.hdf5`, `.hdf`, `.he5` | [Numeric](#numeric-data) data | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
 | `ArmaBin`                 | `opts.Format() = FileType::ArmaBinary;` | `.bin` (if `X` is an Armadillo type) | [Numeric](#numeric-data) data | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
 | `RawBinary`               | `opts.Format() = FileType::RawBinary;`  |                                | [Numeric](#numeric-data) data | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
+|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
+| `WAV`                     | `opts.Format() = FileType::WAV`         | `.wav`, `.wave`           | [Audio data](#audio-data) | Load/save as wave file. |
+| `MP3`                     | `opts.Format() = FileType::MP3`         | `.mp3`                    | [Audio data](#audio-data) | Load as mp3 file.       |
+|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
 | `Image`                   | `opts.Format() = FileType::ImageType`   | _(n/a)_                   | [Image data](#image-data) | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
 | `PNG`                     | `opts.Format() = FileType::PNG`         | `.png`                    | [Image data](#image-data) | Load/save as a PNG image. |
 | `JPG`                     | `opts.Format() = FileType::JPG`         | `.jpg`, `.jpeg`           | [Image data](#image-data) | Load/save as a JPEG image. |
@@ -999,7 +1054,7 @@ mlpack::Save("categorical-data.csv", dataset, opts);
 
 ## Image data
 
-mlpack load, saves, and modifies image data using the
+mlpack loads, saves, and modifies image data using the
 [STB library](https://github.com/nothings/stb/).  STB is a
 header-only library that is bundled with mlpack; but, it is also possible to use
 a version of STB
@@ -1068,7 +1123,7 @@ saving.
 Load a single image, but don't store the metadata (so, e.g., height, width, and
 number of channels are unavailable after loading!).
 
-```
+```c++
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
 arma::mat image;
 mlpack::Load("numfocus-logo.png", image, PNG);
@@ -1156,6 +1211,84 @@ outImages.push_back("armadillo-favicon-inv.jpeg");
 outImages.push_back("bandicoot-favicon-inv.jpeg");
 
 mlpack::Save(outImages, matrix, opts);
+```
+
+## Audio data
+
+mlpack only loads WAV and MP3 audio data using the
+[dr_libs](https://github.com/mackron/dr_libs). dr\_libs are a set of
+header-only libraries that decodes WAV, MP3 and FLAC files. mlpack bundles WAV
+and MP3; but, it is also possible to use a version of dr\_libs 
+[available on the system](compile.md#configuring-mlpack-with-compile-time-definitions).
+
+dr\_libs decodes MP3 and WAV files into Pulse Coded Modulation (PCM) frames.
+Each frames contains a set of samples depending on the number of channels. For
+instance, in the case of mono, then we have one channel which means one sample
+per frame. In the case of a stereo, we have 2 channels per frames (2 samples
+per frame).
+
+When loading audio files, each file is represented as a flattened single column
+vector in a data matrix; each row of the resulting vector will correspond to a
+a sample value (between -1 and +1). If an [`AudioOptions`](#audiooptions), it
+will be populated with the metadata of the audio file.
+
+ * Supported audio loading formats are WAV and MP3; see
+   [the table of formats](#formats) for more details.
+
+ * Supported audio saving formats is WAV only.
+
+<!-- 
+    @rcurtin for a next PR we need to think of the following:
+
+    * mlpack offers several utility functions for audio resize and preprocessing, documented in
+   [Audio preprocessing](core/audio.md)
+    
+    * Take the average length for all audio file. zero pad or cut others to achieve the average.
+        
+    * For now, I prefer to complete load audio for one file, for several files we need to
+      think of the above strategy.
+
+    * Audio preprocessing, MFE / MFCC ? if yes this will be documented in a
+      next step, it is a preprocessing when it comes to the ML model, but post
+      processing when it comes to loading.
+   -->
+
+### Audio data load/save examples
+
+Load a single audio file, but don't store the metadata (
+number of channels are unavailable after loading!).
+
+```c++
+// Need to upload some audio files to datasets.mlpack.org.
+arma::mat audio;
+mlpack::Load("file.wav", audio, WAV);
+
+// If we wanted image metadata, we would need to pass an AudioOptions.  See the
+// next example.
+
+std::cout << "The audio file in 'file.wav' contains " << audio.n_rows
+    << " samples." << std::endl;
+```
+
+Load and save a single audio file:
+
+```c++
+mlpack::AudioOptions opts;
+opts.Fatal() = true;
+arma::mat matrix;
+mlpack::Load("file.wav", matrix, opts /* format autodetected */);
+
+// `matrix` should now contain one column.
+
+// Print some information about the audio file.
+std::cout << "Information about the audio file in 'file.wav': "
+    << std::endl;
+std::cout << "Audio Duration: " << opts.AudioDuration() << std::endl;
+std::cout << "Audio Channels: " << opts.Channels() << std::endl;
+std::cout << "Sampling Rate: "  << opts.SampleRate() << std::endl;
+
+// Only if we opt to allow saving wav files.
+mlpack::Save("file2.wav", matrix, opts);
 ```
 
 ## mlpack models and objects
