@@ -37,7 +37,7 @@ namespace mlpack {
  */
 template<typename eT>
 bool SaveAudio(const std::string& file,
-               arma::Mat<eT>& matrix,
+               const arma::Mat<eT>& matrix,
                AudioOptions& opts)
 {
   size_t framesWritten = 0;
@@ -57,11 +57,11 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  if (opts.BitsPerSamples() != 16 || opts.BitsPerSamples != 32)
+  if (opts.BitsPerSample() != 16 && opts.BitsPerSample() != 32)
   {
     std::stringstream oss;
     oss << "SaveAudio(): Unsupported BitsPerSample value: "
-        << opts.BitsPerSamples() << ". Only 16 and 32 are supported.";
+        << opts.BitsPerSample() << ". Only 16 and 32 are supported.";
     return HandleError(oss, opts);
   }
 
@@ -71,9 +71,9 @@ bool SaveAudio(const std::string& file,
   dataFormat.container     = drwav_container_riff;
   dataFormat.channels      = opts.Channels();
   dataFormat.sampleRate    = opts.SampleRate();
-  dataFormat.bitsPerSample = opts.BitsPerSamples();
+  dataFormat.bitsPerSample = opts.BitsPerSample();
 
-  if (opts.BitsPerSamples() == 32)
+  if (opts.BitsPerSample() == 32)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   else
     dataFormat.format = DR_WAVE_FORMAT_PCM;
@@ -89,7 +89,7 @@ bool SaveAudio(const std::string& file,
   arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
   pcm32.clamp(-1.0f, 1.0f);
 
-  if (opts.BitsPerSamples() == 32)
+  if (opts.BitsPerSample() == 32)
   {
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
         opts.TotalPCMFramesCount(), pcm32.memptr()));
@@ -115,7 +115,7 @@ bool SaveAudio(const std::string& file,
   }
 
   opts.TotalSamples() = matrix.n_elem;
-  opts.AudioDuration() = totalFrames / opts.SampleRate();
+  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
 
   return true;
 }
