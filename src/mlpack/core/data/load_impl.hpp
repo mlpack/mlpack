@@ -101,8 +101,8 @@ bool Load(const std::string& src,
     Timer::Stop("loading_data");
     return false;
   }
-  const bool isAudioFormat = opts.Format() == FileType::WAV;
-  std::cout << isAudioFormat << std::endl;
+  const bool isAudioFormat = opts.Format() == FileType::WAV ||
+      opts.Format() == FileType::MP3;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -199,7 +199,6 @@ bool Load(const std::vector<std::string>& files,
 
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
 
-  const bool isAudioFormat = opts.Format() == FileType::WAV;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||

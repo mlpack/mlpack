@@ -99,14 +99,14 @@ bool LoadWAV(const std::string file,
         "corrupted file.", opts);
   }
 
-  opts.TotalPCMFramesCount() = (size_t)wav.totalPCMFrameCount;
+  opts.TotalPCMFramesCount() = static_cast<size_t>(wav.totalPCMFrameCount);
   opts.Channels() = wav.channels;
 
   // For now we are loading only one file.
   arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
 
-  opts.TotalFramesRead() = (size_t)drwav_read_pcm_frames_f32(&wav,
-        opts.TotalPCMFramesCount(), samples.memptr());
+  opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_f32(&wav,
+        opts.TotalPCMFramesCount(), samples.memptr()));
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
@@ -141,14 +141,14 @@ bool LoadMP3(const std::string file,
         "corrupted file.", opts);
   }
 
-  // Read all frames as float32
-  opts.TotalPCMFramesCount() = drmp3_get_pcm_frame_count(&mp3);
+  opts.TotalPCMFramesCount() =
+      static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
 
   arma::fmat samples(1, opts.TotalPCMFramesCount() * opts.Channels());
 
-  opts.TotalFramesRead() = drmp3_read_pcm_frames_f32(&mp3, 
-      opts.TotalPCMFramesCount(), samples.memptr());
+  opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_f32(&mp3,
+      opts.TotalPCMFramesCount(), samples.memptr()));
 
   if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
   {
