@@ -1247,7 +1247,6 @@ will be populated with the metadata of the audio file.
         
     * For now, I prefer to complete load audio for one file, for several files we need to
       think of the above strategy.
-
     * Audio preprocessing, MFE / MFCC ? if yes this will be documented in a
       next step, it is a preprocessing when it comes to the ML model, but post
       processing when it comes to loading.
