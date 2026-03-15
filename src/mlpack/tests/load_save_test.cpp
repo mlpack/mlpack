@@ -3730,8 +3730,8 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + WAV;
   REQUIRE(Load("voice.wav", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 237568);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 1);
@@ -3743,8 +3743,8 @@ TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + WAV;
   REQUIRE(Load("collectathon.wav", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 7500224);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 7500224);
   REQUIRE(opts.AudioDuration() == 85);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 2);
@@ -3756,8 +3756,8 @@ TEST_CASE("SaveWAVFileOptions", "[LoadSaveTest]")
   arma::mat matrix, matrix2;
   AudioOptions opts = Fatal + WAV;
   REQUIRE(Load("voice.wav", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 237568);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 1);
@@ -3780,8 +3780,8 @@ TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
   arma::mat matrix, matrix2;
   AudioOptions opts = Fatal + WAV;
   REQUIRE(Load("voice.wav", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 237568);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 1);
@@ -3832,8 +3832,8 @@ TEST_CASE("LoadMP3FileOptions", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
   REQUIRE(Load("voice.mp3", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 237568);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
   REQUIRE(opts.BitsPerSample() == 32);
   REQUIRE(opts.Channels() == 1);
@@ -3846,8 +3846,8 @@ TEST_CASE("LoadMP3FileOptionsStereoPCM16", "[LoadSaveTest]")
   AudioOptions opts = Fatal + MP3;
   opts.BitsPerSample() = 16;
   REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 7500224);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 7500224);
   REQUIRE(opts.AudioDuration() == 85);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 2);
@@ -3859,8 +3859,8 @@ TEST_CASE("LoadMP3FileOptionsStereo", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
   REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 7500224);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 7500224);
   REQUIRE(opts.AudioDuration() == 85);
   REQUIRE(opts.BitsPerSample() == 32);
   REQUIRE(opts.Channels() == 2);
@@ -3872,8 +3872,8 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
   REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
-  REQUIRE(matrix.n_rows == 1);
-  REQUIRE(matrix.n_cols == 7500224);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 7500224);
   REQUIRE(opts.AudioDuration() == 85);
   REQUIRE(opts.BitsPerSample() == 32);
   REQUIRE(opts.Channels() == 2);
