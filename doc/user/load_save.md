@@ -1262,7 +1262,7 @@ Load a single audio file, but don't store the metadata
 arma::mat audio;
 mlpack::Load("file.wav", audio, WAV);
 
-// If we wanted image metadata, we would need to pass an AudioOptions.  See the
+// If we wanted audio metadata, we would need to pass an AudioOptions.  See the
 // next example.
 
 std::cout << "The audio file in 'file.wav' contains " << audio.n_rows
