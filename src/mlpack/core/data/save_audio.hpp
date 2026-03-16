@@ -44,7 +44,7 @@ bool SaveAudio(const std::string& file,
 
   if (opts.Format() != FileType::WAV)
   {
-    return HandleError("SaveWav(): Only WAV format is supported."
+    return HandleError("SaveAudio(): Only WAV format is supported."
        " Please specify the file extension or the FileFormat.", opts);
   }
 
