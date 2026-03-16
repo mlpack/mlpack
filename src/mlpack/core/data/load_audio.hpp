@@ -53,7 +53,7 @@ namespace mlpack {
  *   │  L₀  │  R₀  │  │  L₁  │  R₁  │  │  L₂  │  R₂  │
  *   └──────┴──────┘  └──────┴──────┘  └──────┴──────┘
  *
- * Channels are represented continsously when it comes to the following code.
+ * Channels are represented continuously when it comes to the following code.
  * Therefore, in the following PCM buffer. Each frame will be followed by the
  * next Frame in time as represented above.
  *
