@@ -1254,8 +1254,8 @@ will be populated with the metadata of the audio file.
 
 ### Audio data load/save examples
 
-Load a single audio file, but don't store the metadata (
-number of channels are unavailable after loading!).
+Load a single audio file, but don't store the metadata
+(note that this means the number of channels are unavailable after loading!).
 
 ```c++
 // Need to upload some audio files to datasets.mlpack.org.
