@@ -47,21 +47,21 @@ inline void FindExtrema(const ColType& h,
     return;
   }
 
-  maxIdx = arma::find(
+  maxIdx = find(
     (h.subvec(0, N - 3) < h.subvec(1, N - 2)) %
     (h.subvec(1, N - 2) > h.subvec(2, N - 1))) + 1;
-  minIdx = arma::find(
+  minIdx = find(
     (h.subvec(0, N - 3) > h.subvec(1, N - 2)) %
     (h.subvec(1, N - 2) < h.subvec(2, N - 1))) + 1;
   // Always include endpoints to allow envelope construction on monotone data.
   if (maxIdx.is_empty() || maxIdx[0] != 0)
-    maxIdx = arma::join_cols(arma::uvec{0}, maxIdx);
+    maxIdx = join_cols(arma::uvec{0}, maxIdx);
   if (maxIdx.is_empty() || maxIdx[maxIdx.n_elem - 1] != (N - 1))
-    maxIdx = arma::join_cols(maxIdx, arma::uvec{N - 1});
+    maxIdx = join_cols(maxIdx, arma::uvec{N - 1});
   if (minIdx.is_empty() || minIdx[0] != 0)
-    minIdx = arma::join_cols(arma::uvec{0}, minIdx);
+    minIdx = join_cols(arma::uvec{0}, minIdx);
   if (minIdx.is_empty() || minIdx[minIdx.n_elem - 1] != (N - 1))
-    minIdx = arma::join_cols(minIdx, arma::uvec{N - 1});
+    minIdx = join_cols(minIdx, arma::uvec{N - 1});
 }
 
 //helper to count zero crossings as part of IMF stopping criteria
@@ -70,21 +70,16 @@ inline size_t CountZeroCrossings(const ColType& h)
 {
   using eT = typename ColType::elem_type;
   const size_t N = h.n_elem;
-  if (N < 2) return 0;
+  if (N < 2)
+    return 0;
 
-  auto sgn = [](eT v) -> int { return (v > eT(0)) - (v < eT(0)); };
+  const ColType left  = h.subvec(0, N - 2);
+  const ColType right = h.subvec(1, N - 1);
 
-  int prev = 0;
-  size_t zc = 0;
+  // Zero crossing when adjacent samples have opposite sign
+  const auto crossings = find((left % right) < eT(0));
 
-  for (size_t i = 0; i < N; ++i)
-  {
-    const int cur = sgn(h[i]);
-    if (cur == 0) continue;
-    if (prev != 0 && cur != prev) ++zc;
-    prev = cur;
-  }
-  return zc;
+  return crossings.n_elem;
 }
 
 // sifting step extracts mean envelope and produces next h
