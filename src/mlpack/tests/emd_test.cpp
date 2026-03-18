@@ -21,9 +21,9 @@ TEST_CASE("EMDSingleTone", "[EMD]")
 {
   const arma::uword N = 2000;
   arma::vec t = linspace<arma::vec>(0.0, 1.0, N);
-  arma::vec sin = sin(2.0 * datum::pi * 5.0 * t);
+  arma::vec Sin = sin(2.0 * datum::pi * 5.0 * t);
   arma::vec noise = 0.05 * randn<arma::vec>(N);
-  arma::vec x = sin + noise;
+  arma::vec x = Sin + noise;
   arma::mat imfs;
   arma::vec r;
 

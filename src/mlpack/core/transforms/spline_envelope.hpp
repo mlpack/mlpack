@@ -55,10 +55,19 @@ inline void BuildSplineEnvelope(const ColType& h,
     typename GetDenseMatType<ColType>::type M(m, m);
     M(0, 0) = 1;
     M(m - 1, m - 1) = 1;
-    M.diag(0).subvec(1, m - 2) = 2 *
-      (hSeg.subvec(0, m - 3) + hSeg.subvec(1, m - 2));
-    M.diag(-1).subvec(0, m - 3) = hSeg.subvec(0, m - 3);
-    M.diag(+1).subvec(1, m - 2) = hSeg.subvec(1, m - 2);
+    // Use ColType of diagonal for sub vector slicing 
+    // M.diag(0).subvec(1, m - 2) 
+    ColType d0 = M.diag(0);
+    d0.subvec(1, m - 2) = 2 * (hSeg.subvec(0, m - 3) + hSeg.subvec(1, m - 2));
+    M.diag(0) = d0;
+    // M.diag(-1).subvec(0, m - 3)
+    ColType d_m1 = M.diag(-1);
+    d_m1.subvec(0, m - 3) = hSeg.subvec(0, m - 3);
+    M.diag(-1) = d_m1;
+    // M.diag(+1).subvec(1, m - 2)
+    ColType d_p1 = M.diag(+1);
+    d_p1.subvec(1, m - 2) = hSeg.subvec(1, m - 2);
+    M.diag(+1) = d_p1;
 
     ColType rhs(m);
     rhs.subvec(1, m - 2) = alpha.subvec(1, m - 2);
@@ -94,7 +103,6 @@ inline void BuildSplineEnvelope(const ColType& h,
           (hSegLen * hSegLen) / eT(6);
     }
   }
-}
 
 } // namespace mlpack
 

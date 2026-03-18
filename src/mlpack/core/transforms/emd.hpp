@@ -77,7 +77,7 @@ inline size_t CountZeroCrossings(const ColType& h)
   const ColType right = h.subvec(1, N - 1);
 
   // Zero crossing when adjacent samples have opposite sign
-  const auto crossings = find((left % right) < eT(0));
+  const arma::uvec crossings = find((left % right) < eT(0));
 
   return crossings.n_elem;
 }
