@@ -1,32 +1,43 @@
-# `EMD`
+# Signal preprocessing
 
-Empirical Mode Decomposition (`EMD`) adaptively decomposes a 1D signal into a
-small set of Intrinsic Mode Functions (IMFs) plus a residue. This can be used
-for vibration monitoring pipelines as a nonlinear alternative to signal
-processing methods like FFT.  
+mlpack provides Empirical Mode Decomposition (`EMD`) to preprocess signals
+for training and testing.  This can be used for signal monitoring pipelines
+in nonlinear and nonstationary problems.
 
-#### See also:
+* `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
+ Functions (IMFs) plus a residue.
+<!-- TODO: add EEMD and CEEMDAN -->
 
- * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+## EMD 
+The `EMD()` function can be used to extract IMFs from a uniformly sample 
+periodic signal:
 
-## Inputs 
-Basic usage is
+#### `EMD()` Parameters
 
-`mlpack::EMD(signal, imfs, residue)`
+- `EMD(signal, imfs, residue, maxImfs, maxSiftIter, tol)`
+   * `signal` is a [column vector](../../matrices.md) containing the 1D signal
+     data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
-- Takes in a 1D signal (uniformly sampled)
+   * `imfs` is a [matrix](../../matrices.md) that will be modified to contain
+     the extracted IMFs. It will have shape `N x K`, where `N` is the length
+     of `signal` and `K` is the number of extracted IMFs.
 
-- Extracts periodic components (imfs) from high to low frequency
+   * `residue` is a column vector (of length `N`) that will be modified to
+     contain the final residual signal after extracting the IMFs.
 
-## Outputs
+   * `maxImfs` (of type `size_t`) is the maximum number of IMFs to extract.
 
-- `imfs`: matrix with shape `N x K` whose columns are IMFs.
-- `residue`: final residual signal after removing all IMFs.
+   * `maxSiftIter` (of type `size_t`) is the maximum sifting iterations per IMF.
 
-The original signal can be reconstructed as the sum of the IMFs and residue: 
+   * `tol` (`double`) is the stopping tolerance used on sifting iterations.
 
-`signal ~ Σ_k imfs.col(k) + residue`
+   * ***NOTES:*** the original signal can be reconstructed as 
+     `signal ~ Σ_k imfs.col(k) + residue`
+
+   * The stopping criterion is based on the normalized mean envelope magnitude.
+
+   * Sifting will terminate when zero-crossings and extrema are equal or
+     differing by at most one. Specifically, the S-number is set to S=1.
 
 *Original signal(a);*
 *Original signal with envelopes about the local minima and maxima(b)*
@@ -36,52 +47,35 @@ The original signal can be reconstructed as the sum of the IMFs and residue:
   <img src="../../../img/emd_visualization.svg" alt="signal with envelopes">
 </p>
 
-### Simple Example
-
-Create some periodic, time-varying signal `S`.
+Example using `EMD` on a time-varying signal `S`.
 
 ```c++
 const arma::uword N = 400;
 const double tMin = 0.0;
 const double tMax = arma::datum::pi;
-arma::vec T = arma::linspace<arma::vec>(tMin, tMax, N);
+arma::vec time = arma::linspace<arma::vec>(tMin, tMax, N);
 
-// S = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
-arma::vec S =
+// signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
+arma::vec signal =
     arma::sin( 20.0 * T % (1.0 + 0.2 * T) ) +
     arma::square(T) +
     arma::sin(13.0 * T);
-```
 
-Then you can pass `S` into `EMD` by specifying the number of IMFs,
-the maximum number of sifting operations per IMF, and the tolerance. 
-A smaller tolerance sets a stricter stopping criterion. The algorithim will
-terminates when either `maxSiftIter` is reached or the `tol` is satisfied, 
-whichever occurs first. 
-
-```c++
 arma::mat imfs;
 arma::vec residue;
 
 // Use up to 5 IMFs, 50 sifts per IMF, tol = 1e-6
 mlpack::EMD(signal, imfs, residue, 5, 50, 5e-6);
-```
 
-Check if the `EMD` parameters are appropriate by computing the
-dominant frequency of the first IMFs. Using an FFT, the first
-IMF should be consistent with the highest freqeuncies present in the signal.
-Given our signal, the frequency increases from ~3 Hz in the first second 
-to ~7 Hz in the third second. 
-
-```c++
 // Print dominant frequency for the first 3 IMFs 
-//check if EMD is extracting the correct IMFs
+// to check if EMD is extracting the correct IMFs
 const size_t numToShow = std::min<size_t>(3, imfs.n_cols);
-const double dt = t(1) - t(0);
+const double dt = time(1) - time(0);
 const double fs = 1.0 / dt;
 for (size_t k = 0; k < numToShow; ++k)
 {
   arma::cx_vec spectrum = arma::fft(imfs.col(k));
+  // Use only the first half of the spectrum
   arma::vec mag = arma::abs(spectrum.rows(0, spectrum.n_elem / 2));
   arma::uword idx = 0;
   mag.max(idx);
@@ -90,18 +84,12 @@ for (size_t k = 0; k < numToShow; ++k)
 }
 ```
 
-#### `EMD()` Parameters
+***NOTE*** 
+- A smaller tolerance sets a stricter stopping criterion. The algorithm will
+terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
+whichever occurs first.
 
-| **name** | **type** | **default** | **description** |
-|----------|----------|-------------|-----------------|
-| `signal` | `arma::Col<eT>` | — | Uniformly sampled 1D input signal. |
-| `maxImfs` | `size_t` | `10` | Maximum number of IMFs to extract. |
-| `maxSiftIter` | `size_t` | `50` | Maximum sifting iterations per IMF. |
-| `tol` | `double` | `1e-3` | Stopping tolerance on mean envelope ratio. |
+#### See also:
 
-***Notes:*** 
-- `signal` may use any Armadillo column scalar type `eT`. The 
-stopping criterion is based on the normalized mean envelope magnitude.
-
-- Sifting will terminate when zero-crossings and extrema are equal or differing
-by at most one. Specifically, S-number is set to S=1.
+ * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
