@@ -16,9 +16,9 @@
 
 namespace mlpack {
 
-template<typename ColType>
+template<typename ColType, typename UColType>
 inline void BuildSplineEnvelope(const ColType& h,
-                                const arma::uvec& idx,
+                                const UColType& idx,
                                 ColType& env)
 {
   // Build a natural cubic spline through extrema (idx) and evaluate it on the
@@ -43,7 +43,8 @@ inline void BuildSplineEnvelope(const ColType& h,
   if (m > 2)
   {
     // Step 1: assemble h_i segment lengths and rhs alpha.
-    ColType hSeg = idx.subvec(1, m - 1) - idx.subvec(0, m - 2);
+    ColType hSeg = conv_to<ColType>::from(
+      idx.subvec(1, m - 1) - idx.subvec(0, m - 2));
     ColType alpha(m - 1);
     alpha.zeros();
     alpha.subvec(1, m - 2) = 3 * (

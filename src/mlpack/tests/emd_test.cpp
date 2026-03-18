@@ -20,9 +20,9 @@ using namespace arma;
 TEST_CASE("EMDSingleTone", "[EMD]")
 {
   const arma::uword N = 2000;
-  arma::vec t = arma::linspace<arma::vec>(0.0, 1.0, N);
-  arma::vec sin = arma::sin(2.0 * arma::datum::pi * 5.0 * t);
-  arma::vec noise = 0.05 * arma::randn<arma::vec>(N);
+  arma::vec t = linspace<arma::vec>(0.0, 1.0, N);
+  arma::vec sin = sin(2.0 * datum::pi * 5.0 * t);
+  arma::vec noise = 0.05 * randn<arma::vec>(N);
   arma::vec x = sin + noise;
   arma::mat imfs;
   arma::vec r;
@@ -30,7 +30,8 @@ TEST_CASE("EMDSingleTone", "[EMD]")
   // run emd
   // add timer to test
   const auto start = std::chrono::high_resolution_clock::now();
-  mlpack::EMD(x, imfs, r, /*maxImfs=*/5, /*maxSiftIter=*/50, /*tol=*/1e-3);
+  // maxImfs=5, maxSiftIter=50, tol=1e-3
+  mlpack::EMD(x, imfs, r, 5, 50, 1e-3);
   const auto stop = std::chrono::high_resolution_clock::now();
   const auto ms =
       std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -57,14 +58,14 @@ TEST_CASE("EMDSingleTone", "[EMD]")
 TEST_CASE("EMDMonotone", "[EMD]")
 {
   // Monotone input should yield 0 IMFs and residue equals input
-  arma::vec x = arma::linspace<arma::vec>(0.0, 5.0, 500);
+  arma::vec x = linspace<arma::vec>(0.0, 5.0, 500);
 
   arma::mat imfs;
   arma::vec r;
   mlpack::EMD(x, imfs, r);
 
   REQUIRE(imfs.n_cols == 0);
-  const double relResid = arma::norm(r - x, 2) / arma::norm(x, 2);
+  const double relResid = norm(r - x, 2) / norm(x, 2);
   REQUIRE(relResid < 1e-12);
 }
 
@@ -73,10 +74,10 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 {
   using eT = TestType;
 
-  arma::Col<eT> t = arma::linspace<arma::Col<eT>>(eT(0), eT(1), 800);
-  arma::Col<eT> x = arma::sin(eT(2)*eT(arma::datum::pi)*eT(4)*t)
-                  + eT(0.25) * arma::sin(eT(2)*eT(arma::datum::pi)*eT(14)*t);
+  arma::Col<eT> t = linspace<arma::Col<eT>>(eT(0), eT(1), 800);
   // x = sin(2*pi*4*t) + 0.25*sin(2*pi*14*t)
+  arma::Col<eT> x = sin(eT(2)*datum::pi*eT(4)*t)
+                  + eT(0.25) * sin(eT(2)*datum::pi*eT(14)*t);
 
   arma::Mat<eT> imfs;
   arma::Col<eT> r;
@@ -88,7 +89,7 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   for (arma::uword k = 0; k < imfs.n_cols; ++k)
     recon += imfs.col(k);
 
-  const double relErr = arma::norm(recon - x, 2) / arma::norm(x, 2);
+  const double relErr = norm(recon - x, 2) / norm(x, 2);
   UNSCOPED_INFO("Template reconstruction relErr=" << relErr);
   REQUIRE(relErr < 1e-3);
 }
