@@ -139,7 +139,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (audioDuration.value() != other.audioDuration.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "audioDuration with different values!");
       }
     }
@@ -152,7 +152,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (bitPerSample.value() != other.bitPerSample.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "bitPerSample with different values!");
       }
     }
@@ -165,7 +165,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (channels.value() != other.channels.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "channels with different values!");
       }
     }
@@ -178,7 +178,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (fileBitRate.value() != other.fileBitRate.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "fileBitRate with different values!");
       }
     }
@@ -191,7 +191,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (sampleRate.value() != other.sampleRate.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "sampleRate with different values!");
       }
     }
@@ -204,7 +204,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (totalFramesRead.value() != other.totalFramesRead.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "totalFramesRead with different values!");
       }
     }
@@ -220,7 +220,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       if (totalPCMFrameCount.value() !=
           other.totalPCMFrameCount.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "totalPCMFrameCount with different values!");
       }
     }
@@ -233,7 +233,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (totalSamples.value() != other.totalSamples.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "totalSamples with different values!");
       }
     }
