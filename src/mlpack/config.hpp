@@ -73,6 +73,23 @@
 #endif
 
 //
+// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally
+// installed dr_mp3 and dr_wav.
+//
+#if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  // #define MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_DR_LIBS) \
+  && defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  #undef MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
 // MLPACK_USE_SYSTEM_HTTPLIB is used to enable usage of locally installed
 // cpp-httplib.
 //

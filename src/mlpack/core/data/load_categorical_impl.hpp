@@ -416,7 +416,8 @@ bool LoadCategorical(const std::string& filename,
           << "be ignored during load.";
     }
 
-    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
+    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal(),
+        !opts.NoTranspose());
     if (!success)
     {
       Timer::Stop("loading_data");
