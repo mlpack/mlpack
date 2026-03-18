@@ -40,6 +40,8 @@ add_cli_executable(lars lars)
 add_julia_binding(lars lars)
 add_go_binding(lars lars)
 add_r_binding(lars lars "include")
+add_r_binding(lars lars_train "skip")
+add_r_binding(lars lars_predict "skip")
 add_markdown_docs(lars lars "cli;python;julia;go;r" "python")
 
 add_all_bindings(linear_svm linear_svm "Classification")
@@ -55,6 +57,8 @@ add_cli_executable(logistic_regression logistic_regression)
 add_julia_binding(logistic_regression logistic_regression)
 add_go_binding(logistic_regression logistic_regression)
 add_r_binding(logistic_regression logistic_regression "include")
+add_r_binding(logistic_regression logistic_regression_train "skip")
+add_r_binding(logistic_regression logistic_regression_probabilities "skip")
 add_markdown_docs(logistic_regression logistic_regression
   "cli;python;julia;go;r" "python")
 
@@ -107,6 +111,8 @@ add_cli_executable(linear_regression linear_regression)
 add_julia_binding(linear_regression linear_regression)
 add_go_binding(linear_regression linear_regression)
 add_r_binding(linear_regression linear_regression "include")
+add_r_binding(linear_regression linear_regression_train "skip")
+add_r_binding(linear_regression linear_regression_predict "skip")
 add_markdown_docs(linear_regression linear_regression "cli;python;julia;go;r"
     "python")
 
