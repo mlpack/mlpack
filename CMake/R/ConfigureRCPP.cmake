@@ -3,8 +3,9 @@
 #
 # This file depends on the following variables being set:
 #
-#  * PROGRAM_NAME: name of the binding
+#  * PROGRAM_NAME: name of the binding.
 #  * PROGRAM_MAIN_FILE: the file containing the mlpackMain() function.
+#  * PROGRAM_MODEL_PTR_IMPL: do not include model ptr implementation.
 #  * R_CPP_IN: path of the r_method.cpp.in file.
 #  * R_CPP_OUT: name of the output .cpp file.
 include("${SOURCE_DIR}/CMake/StripType.cmake")
@@ -12,7 +13,7 @@ strip_type("${PROGRAM_MAIN_FILE}")
 
 # Extract the required part from *main.cpp.
 # Example: mlpack/methods/adaboost/adaboost_main.cpp
-string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE 
+string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE
     "${PROGRAM_MAIN_FILE}")
 
 file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
@@ -24,15 +25,16 @@ if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
   # Append content to the list.
   if (${NUM_MODEL_TYPES} GREATER 0)
     math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
-    foreach (INDEX RANGE ${LOOP_MAX})
-      list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
-      list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
+    if (NOT "${PROGRAM_MODEL_PTR_IMPL}" STREQUAL "skip")
+      foreach (INDEX RANGE ${LOOP_MAX})
+        list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
+        list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
 
-      # Define typedef for the model.
-      set(MODEL_PTR_TYPEDEF "${MODEL_PTR_TYPEDEF}Rcpp::XPtr<${MODEL_TYPE}>")
+        # Define typedef for the model.
+        set(MODEL_PTR_TYPEDEF "${MODEL_PTR_TYPEDEF}Rcpp::XPtr<${MODEL_TYPE}>")
 
-      # Generate the implementation.
-      set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
+        # Generate the implementation.
+        set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
 SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
@@ -100,7 +102,8 @@ SEXP Deserialize${MODEL_SAFE_TYPE}Ptr(Rcpp::RawVector str)
   return std::move((${MODEL_PTR_TYPEDEF})ptr);
 }
 ")
-    endforeach ()
+      endforeach ()
+    endif()
   endif()
 endif()
 

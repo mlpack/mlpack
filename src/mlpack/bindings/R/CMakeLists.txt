@@ -336,7 +336,7 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-macro (add_r_binding directory name)
+macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
 
   # Append content to the list of models.
@@ -353,6 +353,7 @@ if (BUILD_R_BINDINGS)
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
+          -DPROGRAM_MODEL_PTR_IMPL=${model_ptr_impl}
           -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
