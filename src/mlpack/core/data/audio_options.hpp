@@ -25,7 +25,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
                std::optional<size_t> sampleRate = std::nullopt,
                std::optional<size_t> bitsPerSample = std::nullopt,
                std::optional<size_t> audioDuration = std::nullopt,
-               std::optional<size_t> totalPCMFramesCount = std::nullopt,
+               std::optional<size_t> totalPCMFrameCount = std::nullopt,
                std::optional<size_t> totalFramesRead = std::nullopt,
                std::optional<size_t> totalSamples = std::nullopt,
                std::optional<size_t> fileBitRate = std::nullopt) :
@@ -34,7 +34,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     sampleRate(sampleRate),
     bitPerSample(bitsPerSample),
     audioDuration(audioDuration),
-    totalPCMFramesCount(totalPCMFramesCount),
+    totalPCMFrameCount(totalPCMFrameCount),
     totalFramesRead(totalFramesRead),
     totalSamples(totalSamples),
     fileBitRate(fileBitRate)
@@ -75,7 +75,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     fileBitRate         = other.fileBitRate;
     sampleRate          = other.sampleRate;
     totalFramesRead     = other.totalFramesRead;
-    totalPCMFramesCount = other.totalPCMFramesCount;
+    totalPCMFrameCount = other.totalPCMFrameCount;
     totalSamples        = other.totalSamples;
 
     // Copy base members.
@@ -97,7 +97,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     fileBitRate         = std::move(other.fileBitRate);
     sampleRate          = std::move(other.sampleRate);
     totalFramesRead     = std::move(other.totalFramesRead);
-    totalPCMFramesCount = std::move(other.totalPCMFramesCount);
+    totalPCMFrameCount = std::move(other.totalPCMFrameCount);
     totalSamples        = std::move(other.totalSamples);
 
     // Move base members.
@@ -209,19 +209,19 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       }
     }
 
-    if (!totalPCMFramesCount.has_value() &&
-        other.totalPCMFramesCount.has_value())
+    if (!totalPCMFrameCount.has_value() &&
+        other.totalPCMFrameCount.has_value())
     {
-      totalPCMFramesCount = other.totalPCMFramesCount;
+      totalPCMFrameCount = other.totalPCMFrameCount;
     }
-    else if (totalPCMFramesCount.has_value() &&
-        other.totalPCMFramesCount.has_value())
+    else if (totalPCMFrameCount.has_value() &&
+        other.totalPCMFrameCount.has_value())
     {
-      if (totalPCMFramesCount.value() !=
-          other.totalPCMFramesCount.value())
+      if (totalPCMFrameCount.value() !=
+          other.totalPCMFrameCount.value())
       {
         throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "totalPCMFramesCount with different values!");
+            "totalPCMFrameCount with different values!");
       }
     }
 
@@ -254,9 +254,9 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     if (totalFramesRead.has_value() &&
         totalFramesRead != defaultTotalFramesRead)
       this->WarnOptionConversion("totalFramesRead", dataDescription);
-    if (totalPCMFramesCount.has_value() &&
-        totalPCMFramesCount != defaultTotalPCMFramesCount)
-      this->WarnOptionConversion("totalPCMFramesCount", dataDescription);
+    if (totalPCMFrameCount.has_value() &&
+        totalPCMFrameCount != defaultTotalPCMFrameCount)
+      this->WarnOptionConversion("totalPCMFrameCount", dataDescription);
     if (totalSamples.has_value() && totalSamples != defaultTotalSamples)
       this->WarnOptionConversion("totalSamples", dataDescription);
   }
@@ -271,7 +271,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     fileBitRate.reset();
     sampleRate.reset();
     totalFramesRead.reset();
-    totalPCMFramesCount.reset();
+    totalPCMFrameCount.reset();
     totalSamples.reset();
   }
 
@@ -335,16 +335,16 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(totalFramesRead, defaultTotalFramesRead);
   }
 
-  size_t TotalPCMFramesCount() const
+  size_t TotalPCMFrameCount() const
   {
-    return this->AccessMember(totalPCMFramesCount,
-        defaultTotalPCMFramesCount);
+    return this->AccessMember(totalPCMFrameCount,
+        defaultTotalPCMFrameCount);
   }
 
-  size_t& TotalPCMFramesCount()
+  size_t& TotalPCMFrameCount()
   {
-    return this->ModifyMember(totalPCMFramesCount,
-        defaultTotalPCMFramesCount);
+    return this->ModifyMember(totalPCMFrameCount,
+        defaultTotalPCMFrameCount);
   }
 
   size_t TotalSamples() const
@@ -362,7 +362,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   std::optional<size_t> sampleRate;
   std::optional<size_t> bitPerSample;
   std::optional<size_t> audioDuration;
-  std::optional<size_t> totalPCMFramesCount;
+  std::optional<size_t> totalPCMFrameCount;
   std::optional<size_t> totalFramesRead;
   std::optional<size_t> totalSamples;
   std::optional<size_t> fileBitRate;
@@ -373,7 +373,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const size_t defaultFileBitRate      = 0;
   constexpr static const size_t defaultSampleRate       = 0;
   constexpr static const size_t defaultTotalFramesRead  = 0;
-  constexpr static const size_t defaultTotalPCMFramesCount = 0;
+  constexpr static const size_t defaultTotalPCMFrameCount = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
 };
 

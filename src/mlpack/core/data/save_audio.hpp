@@ -65,7 +65,7 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  opts.TotalPCMFramesCount() = matrix.n_elem / opts.Channels();
+  opts.TotalPCMFrameCount() = matrix.n_elem / opts.Channels();
 
   drwav_data_format dataFormat;
   dataFormat.container     = drwav_container_riff;
@@ -92,7 +92,7 @@ bool SaveAudio(const std::string& file,
   if (opts.BitsPerSample() == 32)
   {
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalPCMFramesCount(), pcm32.memptr()));
+        opts.TotalPCMFrameCount(), pcm32.memptr()));
   }
   else
   {
@@ -100,22 +100,22 @@ bool SaveAudio(const std::string& file,
 
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalPCMFramesCount(), pcm16.memptr()));
+          opts.TotalPCMFrameCount(), pcm16.memptr()));
   }
 
   drwav_uninit(&wav);
 
-  if (framesWritten != opts.TotalPCMFramesCount())
+  if (framesWritten != opts.TotalPCMFrameCount())
   {
     std::stringstream oss;
     oss << "SaveWav(): Frames count mismatches: expected to write "
-        << opts.TotalPCMFramesCount() << " frames but only wrote "
+        << opts.TotalPCMFrameCount() << " frames but only wrote "
         << framesWritten << " frames.";
     return HandleError(oss, opts);
   }
 
   opts.TotalSamples() = matrix.n_elem;
-  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
+  opts.AudioDuration() = opts.TotalPCMFrameCount() / opts.SampleRate();
 
   return true;
 }

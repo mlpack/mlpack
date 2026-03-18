@@ -101,7 +101,7 @@ bool LoadWAV(const std::string& file,
         "corrupted file.", opts);
   }
 
-  opts.TotalPCMFramesCount() = static_cast<size_t>(wav.totalPCMFrameCount);
+  opts.TotalPCMFrameCount() = static_cast<size_t>(wav.totalPCMFrameCount);
   opts.Channels() = wav.channels;
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
@@ -109,36 +109,36 @@ bool LoadWAV(const std::string& file,
   // For now we are loading only one file.
   if (opts.BitsPerSample() == 32)
   {
-    arma::fmat samples(opts.TotalPCMFramesCount() * opts.Channels(), 1);
+    arma::fmat samples(opts.TotalPCMFrameCount() * opts.Channels(), 1);
 
     opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_f32(
-        &wav, opts.TotalPCMFramesCount(), samples.memptr()));
+        &wav, opts.TotalPCMFrameCount(), samples.memptr()));
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
   else if (opts.BitsPerSample() == 16)
   {
-    arma::Mat<int16_t> samples(opts.TotalPCMFramesCount() * opts.Channels(),
+    arma::Mat<int16_t> samples(opts.TotalPCMFrameCount() * opts.Channels(),
         1);
 
     opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_s16(
-        &wav, opts.TotalPCMFramesCount(), samples.memptr()));
+        &wav, opts.TotalPCMFrameCount(), samples.memptr()));
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
   drwav_uninit(&wav);
 
-  if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
+  if (opts.TotalFramesRead() != opts.TotalPCMFrameCount())
   {
     std::stringstream oss;
-    oss << "LoadWAV(): Frame count mismatch: " << opts.TotalPCMFramesCount()
+    oss << "LoadWAV(): Frame count mismatch: " << opts.TotalPCMFrameCount()
         << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
 
-  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
-  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
+  opts.AudioDuration() = opts.TotalPCMFrameCount() / opts.SampleRate();
+  opts.TotalSamples() = opts.TotalPCMFrameCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
@@ -158,7 +158,7 @@ bool LoadMP3(const std::string& file,
         "corrupted file.", opts);
   }
 
-  opts.TotalPCMFramesCount() =
+  opts.TotalPCMFrameCount() =
       static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
   opts.SampleRate() = mp3.sampleRate;
@@ -172,36 +172,36 @@ bool LoadMP3(const std::string& file,
 
   if (opts.BitsPerSample() == 32)
   {
-    arma::fmat samples(opts.TotalPCMFramesCount() * opts.Channels(), 1);
+    arma::fmat samples(opts.TotalPCMFrameCount() * opts.Channels(), 1);
 
     opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_f32(
-        &mp3, opts.TotalPCMFramesCount(), samples.memptr()));
+        &mp3, opts.TotalPCMFrameCount(), samples.memptr()));
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
   else if (opts.BitsPerSample() == 16)
   {
-    arma::Mat<int16_t> samples(opts.TotalPCMFramesCount() * opts.Channels(),
+    arma::Mat<int16_t> samples(opts.TotalPCMFrameCount() * opts.Channels(),
         1);
 
     opts.TotalFramesRead() = static_cast<size_t>(drmp3_read_pcm_frames_s16(
-        &mp3, opts.TotalPCMFramesCount(), samples.memptr()));
+        &mp3, opts.TotalPCMFrameCount(), samples.memptr()));
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
   drmp3_uninit(&mp3);
 
-  if (opts.TotalFramesRead() != opts.TotalPCMFramesCount())
+  if (opts.TotalFramesRead() != opts.TotalPCMFrameCount())
   {
     std::stringstream oss;
-    oss << "LoadMP3(): Frame count mismatch: " << opts.TotalPCMFramesCount()
+    oss << "LoadMP3(): Frame count mismatch: " << opts.TotalPCMFrameCount()
         << "(queried) != " << opts.TotalFramesRead() <<" (read)";
     return HandleError(oss, opts);
   }
 
-  opts.AudioDuration() = opts.TotalPCMFramesCount() / opts.SampleRate();
-  opts.TotalSamples() = opts.TotalPCMFramesCount() * opts.Channels();
+  opts.AudioDuration() = opts.TotalPCMFrameCount() / opts.SampleRate();
+  opts.TotalSamples() = opts.TotalPCMFrameCount() * opts.Channels();
   opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
       * opts.Channels();
 
