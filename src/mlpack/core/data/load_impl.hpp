@@ -238,62 +238,6 @@ bool Load(const std::vector<std::string>& files,
   return success;
 }
 
-template<typename eT>
-bool LoadCategorical(const std::string& filename,
-                     arma::Mat<eT>& matrix,
-                     TextOptions& opts)
-{
-  // Get the extension and load as necessary.
-  Timer::Start("loading_data");
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-  bool success = false;
-
-  if (extension == "csv" || extension == "tsv" || extension == "txt")
-  {
-    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    LoadCSV loader(filename, opts.Fatal());
-    success = loader.LoadCategoricalCSV(matrix, opts);
-    if (!success)
-    {
-      Timer::Stop("loading_data");
-      return false;
-    }
-  }
-  else if (extension == "arff")
-  {
-    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
-    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
-    if (!success)
-    {
-      Timer::Stop("loading_data");
-      return false;
-    }
-    // Retranspose back as we are transposing by default
-    if (opts.NoTranspose())
-    {
-      inplace_trans(matrix);
-    }
-  }
-  else
-  {
-    // The type is unknown.
-    Timer::Stop("loading_data");
-    std::stringstream oss;
-    oss << "Unable to detect type of '" << filename << "'; "
-          << "Incorrect extension?";
-    return HandleError(oss, opts);
-  }
-
-  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
-
-  Timer::Stop("loading_data");
-
-  return true;
-}
-
 } // namespace mlpack
 
 #endif

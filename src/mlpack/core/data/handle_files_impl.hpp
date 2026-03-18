@@ -17,23 +17,30 @@
 
 namespace mlpack {
 
-inline FileType AutoDetectFile(std::fstream& stream,
-                               const std::string& filename)
+template<typename DataOptionsType>
+inline void AutoDetectFile(std::fstream& stream,
+                           const std::string& filename,
+                           DataOptionsType& opts)
 {
   // Get the extension.
   std::string extension = Extension(filename);
-  FileType detectedLoadType = FileType::FileTypeUnknown;
 
   if (extension == "csv" || extension == "tsv")
   {
-    detectedLoadType = GuessFileType(stream);
-    if (detectedLoadType == FileType::CSVASCII)
+    GuessFileType(stream, opts);
+    if (opts.Format() == FileType::CSVASCII)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
     }
-    else if (detectedLoadType == FileType::RawASCII) // .csv file can be tsv.
+    else if (opts.Format() == FileType::TSVASCII)
+    {
+      if (extension == "csv")
+        Log::Warn << "'" << filename << "' is tab-separated, not "
+            "comma-separated!" << std::endl;
+    }
+    else if (opts.Format() == FileType::RawASCII) // .csv file can be tsv.
     {
       if (extension == "csv")
       {
@@ -60,7 +67,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
     }
     else
     {
-      detectedLoadType = FileType::FileTypeUnknown;
+      opts.Format() = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "txt")
@@ -80,15 +87,16 @@ inline FileType AutoDetectFile(std::fstream& stream,
 
     if (rawHeader == ARMA_MAT_TXT)
     {
-      detectedLoadType = FileType::ArmaASCII;
+      opts.Format() = FileType::ArmaASCII;
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      detectedLoadType = GuessFileType(stream);
+      GuessFileType(stream, opts);
 
-      if (detectedLoadType != FileType::RawASCII &&
-          detectedLoadType != FileType::CSVASCII)
-        detectedLoadType = FileType::FileTypeUnknown;
+      if (opts.Format() != FileType::RawASCII &&
+          opts.Format() != FileType::CSVASCII &&
+          opts.Format() != FileType::TSVASCII)
+        opts.Format() = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "bin")
@@ -107,57 +115,57 @@ inline FileType AutoDetectFile(std::fstream& stream,
 
     if (rawHeader == ARMA_MAT_BIN || rawHeader == ARMA_SPM_BIN)
     {
-      detectedLoadType = FileType::ArmaBinary;
+      opts.Format() = FileType::ArmaBinary;
     }
     else // We can only assume it's raw binary.
     {
-      detectedLoadType = FileType::RawBinary;
+      opts.Format() = FileType::RawBinary;
     }
   }
   else if (extension == "pgm")
   {
-    detectedLoadType = FileType::PGMBinary;
+    opts.Format() = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    detectedLoadType = FileType::HDF5Binary;
+    opts.Format() = FileType::HDF5Binary;
   }
   else if (extension == "arff")
   {
-    detectedLoadType = FileType::ARFFASCII;
+    opts.Format() = FileType::ARFFASCII;
   }
   else if (extension == "png")
   {
-    detectedLoadType = FileType::PNG;
+    opts.Format() = FileType::PNG;
   }
   else if (extension == "jpg" || extension == "jpeg")
   {
-    detectedLoadType = FileType::JPG;
+    opts.Format() = FileType::JPG;
   }
   else if (extension == "tga")
   {
-    detectedLoadType = FileType::TGA;
+    opts.Format() = FileType::TGA;
   }
   else if (extension == "psd")
   {
-    detectedLoadType = FileType::PSD;
+    opts.Format() = FileType::PSD;
   }
   else if (extension == "gif")
   {
-    detectedLoadType = FileType::GIF;
+    opts.Format() = FileType::GIF;
   }
   else if (extension == "pic")
   {
-    detectedLoadType = FileType::PIC;
+    opts.Format() = FileType::PIC;
   }
   else if (extension == "pnm")
   {
-    detectedLoadType = FileType::PNM;
+    opts.Format() = FileType::PNM;
   }
   else if (extension == "bmp")
   {
-    detectedLoadType = FileType::BMP;
+    opts.Format() = FileType::BMP;
   }
   else if (extension == "wav" || extension == "wave")
   {
@@ -170,10 +178,8 @@ inline FileType AutoDetectFile(std::fstream& stream,
 
   else // Unknown extension...
   {
-    detectedLoadType = FileType::FileTypeUnknown;
+    opts.Format() = FileType::FileTypeUnknown;
   }
-
-  return detectedLoadType;
 }
 
 inline size_t CountCols(std::fstream& f)
@@ -208,6 +214,10 @@ void DetectFromExtension(const std::string& filename,
   if (extension == "csv")
   {
     opts.Format() = FileType::CSVASCII;
+  }
+  else if (extension == "tsv")
+  {
+    opts.Format() = FileType::TSVASCII;
   }
   else if (extension == "txt")
   {
@@ -329,7 +339,7 @@ bool DetectFileType(const std::string& filename,
       if (isLoading)
       {
         // Attempt to auto-detect the type from the given file.
-        opts.Format() = AutoDetectFile(*stream, filename);
+        AutoDetectFile(*stream, filename, opts);
       }
       else
       {
@@ -348,7 +358,18 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-inline FileType GuessFileType(std::istream& f)
+// Utility helper function: set delimiter and semicolon for TextOptions, but
+// only for TextOptions.
+template<typename DataOptionsType>
+inline void SetSemicolon(DataOptionsType& /* unused */) { }
+template<>
+inline void SetSemicolon<TextOptions>(TextOptions& opts)
+{
+  opts.Semicolon() = true;
+}
+
+template<typename DataOptionsType>
+inline void GuessFileType(std::istream& f, DataOptionsType& opts)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
@@ -369,7 +390,10 @@ inline FileType GuessFileType(std::istream& f)
 
   // Handle empty files.
   if (nMax == 0)
-    return FileType::FileTypeUnknown;
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
+  }
 
   const arma::uword nUse = std::min(nMax, arma::uword(4096));
 
@@ -386,14 +410,15 @@ inline FileType GuessFileType(std::istream& f)
 
   if (!loadOkay)
   {
-    delete[] dataMem;
-    return FileType::FileTypeUnknown;
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
   }
 
   bool hasBinary = false;
   bool hasBracket = false;
   bool hasComma = false;
   bool hasSemicolon = false;
+  bool hasTabs = false;
 
   for (arma::uword i = 0; i < nUse; ++i)
   {
@@ -418,20 +443,29 @@ inline FileType GuessFileType(std::istream& f)
     {
       hasComma = true;
     }
+
+    if (val == '\t')
+    {
+      hasTabs = true;
+    }
   }
 
   delete[] dataMem;
 
   if (hasBinary)
-    return FileType::RawBinary;
+    opts.Format() = FileType::RawBinary;
 
   if (hasSemicolon && (hasBracket == false))
-    return FileType::CSVASCII;
+    opts.Format() = FileType::CSVASCII;
+  else if (hasComma && (hasBracket == false))
+    opts.Format() = FileType::CSVASCII;
+  else if (hasTabs && (hasBracket == false))
+    opts.Format() = FileType::TSVASCII;
+  else
+    opts.Format() = FileType::RawASCII;
 
-  if (hasComma && (hasBracket == false))
-    return FileType::CSVASCII;
-
-  return FileType::RawASCII;
+  if (hasSemicolon)
+    SetSemicolon(opts);
 }
 
 template<typename DataOptionsType>

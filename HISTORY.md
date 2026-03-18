@@ -10,6 +10,8 @@ _????-??-??_
 
  * Fix rendering of Python documentation (#4126).
 
+ * Add `TSVASCII` format for loading TSVs (#4127).
+
  * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
 
 ## mlpack 4.7.0
