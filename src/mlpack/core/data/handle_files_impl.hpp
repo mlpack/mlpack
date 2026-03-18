@@ -1,7 +1,8 @@
 /**
- * @file core/data/detect_file_type_impl.hpp
+ * @file core/data/handle_files_impl.hpp
  * @author Conrad Sanderson
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
  * Functionality to guess the type of a file by inspecting it.  Parts of the
  * implementation are adapted from the Armadillo sources and relicensed to be a
@@ -12,181 +13,34 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "detect_file_type.hpp"
+#include "handle_files.hpp"
 
 namespace mlpack {
 
 template<typename DataOptionsType>
-bool OpenFile(const std::string& filename,
-              DataOptionsType& opts,
-              bool isLoading,
-              std::fstream& stream)
-{
-  if (isLoading)
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::in
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::in);
-#endif
-  }
-  else
-  {
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-    stream.open(filename.c_str(), std::fstream::out
-        | std::fstream::binary);
-#else
-    stream.open(filename.c_str(), std::fstream::out);
-#endif
-  }
-
-  if (!stream.is_open())
-  {
-    std::stringstream oss;
-    if (isLoading)
-    {
-      oss << "Cannot open file '" << filename << "' for loading.  "
-          << "Please check if the file exists.";
-      return HandleError(oss, opts);
-    }
-    else if (!isLoading)
-    {
-      oss << "Cannot open file '" << filename << "' for saving.  "
-          << "Please check if you have permissions for writing.";
-      return HandleError(oss, opts);
-    }
-  }
-  return true;
-}
-
-/**
- * Given an istream, attempt to guess the file type.  This is taken originally
- * from Armadillo's function guess_file_type_internal(), but we avoid using
- * internal Armadillo functionality.
- *
- * If the file is detected as a CSV, and the CSV is detected to have a header
- * row, the stream `f` will be fast-forwarded to point at the second line of the
- * file.
- *
- * @param f Opened istream to look into to guess the file type.
- */
-inline FileType GuessFileType(std::istream& f)
-{
-  f.clear();
-  const std::fstream::pos_type pos1 = f.tellg();
-
-  f.clear();
-  f.seekg(0, std::ios::end);
-
-  f.clear();
-  // Get the length of the stream.
-  const std::fstream::pos_type pos2 = f.tellg();
-
-  // Compute length of the stream.
-  const arma::uword nMax = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
-      arma::uword(pos2 - pos1) : arma::uword(0);
-
-  f.clear();
-  f.seekg(pos1);
-
-  // Handle empty files.
-  if (nMax == 0)
-    return FileType::FileTypeUnknown;
-
-  const arma::uword nUse = std::min(nMax, arma::uword(4096));
-
-  unsigned char* dataMem = new unsigned char[nUse];
-  memset(dataMem, 0, nUse);
-
-  f.clear();
-  f.read(reinterpret_cast<char*>(dataMem), std::streamsize(nUse));
-
-  const bool loadOkay = f.good();
-
-  f.clear();
-  f.seekg(pos1);
-
-  if (!loadOkay)
-  {
-    delete[] dataMem;
-    return FileType::FileTypeUnknown;
-  }
-
-  bool hasBinary = false;
-  bool hasBracket = false;
-  bool hasComma = false;
-  bool hasSemicolon = false;
-
-  for (arma::uword i = 0; i < nUse; ++i)
-  {
-    const unsigned char val = dataMem[i];
-    if (val <= 8)
-    {
-      hasBinary = true;
-      break;
-    }  // The range checking can be made more elaborate.
-
-    if ((val == '(') || (val == ')'))
-    {
-      hasBracket = true;
-    }
-
-    if (val == ';')
-    {
-      hasSemicolon = true;
-    }
-
-    if (val == ',')
-    {
-      hasComma = true;
-    }
-  }
-
-  delete[] dataMem;
-
-  if (hasBinary)
-    return FileType::RawBinary;
-
-  if (hasSemicolon && (hasBracket == false))
-    return FileType::CSVASCII;
-
-  if (hasComma && (hasBracket == false))
-    return FileType::CSVASCII;
-
-  return FileType::RawASCII;
-}
-
-/**
- * Attempt to auto-detect the type of a file given its extension, and by
- * inspecting the parts of the file to disambiguate between types when
- * necessary.  (For instance, a .csv file could be delimited by spaces, commas,
- * or tabs.)  This is meant to be used during loading.
- *
- * If the file is detected as a CSV, and the CSV is detected to have a header
- * row, `stream` will be fast-forwarded to point at the second line of the file.
- *
- * @param stream Opened file stream to look into for autodetection.
- * @param filename Name of the file.
- * @return The detected file type.
- */
-inline FileType AutoDetectFile(std::fstream& stream,
-                               const std::string& filename)
+inline void AutoDetectFile(std::fstream& stream,
+                           const std::string& filename,
+                           DataOptionsType& opts)
 {
   // Get the extension.
   std::string extension = Extension(filename);
-  FileType detectedLoadType = FileType::FileTypeUnknown;
 
   if (extension == "csv" || extension == "tsv")
   {
-    detectedLoadType = GuessFileType(stream);
-    if (detectedLoadType == FileType::CSVASCII)
+    GuessFileType(stream, opts);
+    if (opts.Format() == FileType::CSVASCII)
     {
       if (extension == "tsv")
         Log::Warn << "'" << filename << "' is comma-separated, not "
             "tab-separated!" << std::endl;
     }
-    else if (detectedLoadType == FileType::RawASCII) // .csv file can be tsv.
+    else if (opts.Format() == FileType::TSVASCII)
+    {
+      if (extension == "csv")
+        Log::Warn << "'" << filename << "' is tab-separated, not "
+            "comma-separated!" << std::endl;
+    }
+    else if (opts.Format() == FileType::RawASCII) // .csv file can be tsv.
     {
       if (extension == "csv")
       {
@@ -213,7 +67,7 @@ inline FileType AutoDetectFile(std::fstream& stream,
     }
     else
     {
-      detectedLoadType = FileType::FileTypeUnknown;
+      opts.Format() = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "txt")
@@ -233,15 +87,16 @@ inline FileType AutoDetectFile(std::fstream& stream,
 
     if (rawHeader == ARMA_MAT_TXT)
     {
-      detectedLoadType = FileType::ArmaASCII;
+      opts.Format() = FileType::ArmaASCII;
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      detectedLoadType = GuessFileType(stream);
+      GuessFileType(stream, opts);
 
-      if (detectedLoadType != FileType::RawASCII &&
-          detectedLoadType != FileType::CSVASCII)
-        detectedLoadType = FileType::FileTypeUnknown;
+      if (opts.Format() != FileType::RawASCII &&
+          opts.Format() != FileType::CSVASCII &&
+          opts.Format() != FileType::TSVASCII)
+        opts.Format() = FileType::FileTypeUnknown;
     }
   }
   else if (extension == "bin")
@@ -260,71 +115,87 @@ inline FileType AutoDetectFile(std::fstream& stream,
 
     if (rawHeader == ARMA_MAT_BIN || rawHeader == ARMA_SPM_BIN)
     {
-      detectedLoadType = FileType::ArmaBinary;
+      opts.Format() = FileType::ArmaBinary;
     }
     else // We can only assume it's raw binary.
     {
-      detectedLoadType = FileType::RawBinary;
+      opts.Format() = FileType::RawBinary;
     }
   }
   else if (extension == "pgm")
   {
-    detectedLoadType = FileType::PGMBinary;
+    opts.Format() = FileType::PGMBinary;
   }
   else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
            extension == "he5")
   {
-    detectedLoadType = FileType::HDF5Binary;
+    opts.Format() = FileType::HDF5Binary;
   }
   else if (extension == "arff")
   {
-    detectedLoadType = FileType::ARFFASCII;
+    opts.Format() = FileType::ARFFASCII;
   }
   else if (extension == "png")
   {
-    detectedLoadType = FileType::PNG;
+    opts.Format() = FileType::PNG;
   }
   else if (extension == "jpg" || extension == "jpeg")
   {
-    detectedLoadType = FileType::JPG;
+    opts.Format() = FileType::JPG;
   }
   else if (extension == "tga")
   {
-    detectedLoadType = FileType::TGA;
+    opts.Format() = FileType::TGA;
   }
   else if (extension == "psd")
   {
-    detectedLoadType = FileType::PSD;
+    opts.Format() = FileType::PSD;
   }
   else if (extension == "gif")
   {
-    detectedLoadType = FileType::GIF;
+    opts.Format() = FileType::GIF;
   }
   else if (extension == "pic")
   {
-    detectedLoadType = FileType::PIC;
+    opts.Format() = FileType::PIC;
   }
   else if (extension == "pnm")
   {
-    detectedLoadType = FileType::PNM;
+    opts.Format() = FileType::PNM;
   }
   else if (extension == "bmp")
   {
-    detectedLoadType = FileType::BMP;
+    opts.Format() = FileType::BMP;
   }
   else // Unknown extension...
   {
-    detectedLoadType = FileType::FileTypeUnknown;
+    opts.Format() = FileType::FileTypeUnknown;
   }
-
-  return detectedLoadType;
 }
 
-/**
- * Update FileType in DataOptions based on extension.
- *
- * @param filename Name of the file whose type we should detect.
- */
+inline size_t CountCols(std::fstream& f)
+{
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  std::string firstLine;
+  std::getline(f, firstLine);
+
+  // Extract tokens from the first line using whitespace.
+  std::stringstream str(firstLine);
+  size_t cols = 0;
+  std::string token;
+
+  while (str >> token)
+    ++cols;
+
+  // Reset to wherever we were.
+  f.clear();
+  f.seekg(pos1);
+
+  return cols;
+}
+
 template<typename ObjectType, typename DataOptionsType>
 void DetectFromExtension(const std::string& filename,
                          DataOptionsType& opts)
@@ -334,6 +205,10 @@ void DetectFromExtension(const std::string& filename,
   if (extension == "csv")
   {
     opts.Format() = FileType::CSVASCII;
+  }
+  else if (extension == "tsv")
+  {
+    opts.Format() = FileType::TSVASCII;
   }
   else if (extension == "txt")
   {
@@ -447,7 +322,7 @@ bool DetectFileType(const std::string& filename,
       if (isLoading)
       {
         // Attempt to auto-detect the type from the given file.
-        opts.Format() = AutoDetectFile(*stream, filename);
+        AutoDetectFile(*stream, filename, opts);
       }
       else
       {
@@ -466,31 +341,169 @@ bool DetectFileType(const std::string& filename,
   return true;
 }
 
-/**
- * Count the number of columns in the file.  The file must be a CSV/TSV/TXT file
- * with no header.
- */
-inline size_t CountCols(std::fstream& f)
+// Utility helper function: set delimiter and semicolon for TextOptions, but
+// only for TextOptions.
+template<typename DataOptionsType>
+inline void SetSemicolon(DataOptionsType& /* unused */) { }
+template<>
+inline void SetSemicolon<TextOptions>(TextOptions& opts)
+{
+  opts.Semicolon() = true;
+}
+
+template<typename DataOptionsType>
+inline void GuessFileType(std::istream& f, DataOptionsType& opts)
 {
   f.clear();
   const std::fstream::pos_type pos1 = f.tellg();
 
-  std::string firstLine;
-  std::getline(f, firstLine);
+  f.clear();
+  f.seekg(0, std::ios::end);
 
-  // Extract tokens from the first line using whitespace.
-  std::stringstream str(firstLine);
-  size_t cols = 0;
-  std::string token;
+  f.clear();
+  // Get the length of the stream.
+  const std::fstream::pos_type pos2 = f.tellg();
 
-  while (str >> token)
-    ++cols;
+  // Compute length of the stream.
+  const arma::uword nMax = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
+      arma::uword(pos2 - pos1) : arma::uword(0);
 
-  // Reset to wherever we were.
   f.clear();
   f.seekg(pos1);
 
-  return cols;
+  // Handle empty files.
+  if (nMax == 0)
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
+  }
+
+  const arma::uword nUse = std::min(nMax, arma::uword(4096));
+
+  unsigned char* dataMem = new unsigned char[nUse];
+  memset(dataMem, 0, nUse);
+
+  f.clear();
+  f.read(reinterpret_cast<char*>(dataMem), std::streamsize(nUse));
+
+  const bool loadOkay = f.good();
+
+  f.clear();
+  f.seekg(pos1);
+
+  if (!loadOkay)
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
+  }
+
+  bool hasBinary = false;
+  bool hasBracket = false;
+  bool hasComma = false;
+  bool hasSemicolon = false;
+  bool hasTabs = false;
+
+  for (arma::uword i = 0; i < nUse; ++i)
+  {
+    const unsigned char val = dataMem[i];
+    if (val <= 8)
+    {
+      hasBinary = true;
+      break;
+    }  // The range checking can be made more elaborate.
+
+    if ((val == '(') || (val == ')'))
+    {
+      hasBracket = true;
+    }
+
+    if (val == ';')
+    {
+      hasSemicolon = true;
+    }
+
+    if (val == ',')
+    {
+      hasComma = true;
+    }
+
+    if (val == '\t')
+    {
+      hasTabs = true;
+    }
+  }
+
+  delete[] dataMem;
+
+  if (hasBinary)
+    opts.Format() = FileType::RawBinary;
+
+  if (hasSemicolon && (hasBracket == false))
+    opts.Format() = FileType::CSVASCII;
+  else if (hasComma && (hasBracket == false))
+    opts.Format() = FileType::CSVASCII;
+  else if (hasTabs && (hasBracket == false))
+    opts.Format() = FileType::TSVASCII;
+  else
+    opts.Format() = FileType::RawASCII;
+
+  if (hasSemicolon)
+    SetSemicolon(opts);
+}
+
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream)
+{
+  if (isLoading)
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::in
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::in);
+#endif
+  }
+  else
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+  }
+
+  if (!stream.is_open())
+  {
+    std::stringstream oss;
+    if (isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists.";
+      return HandleError(oss, opts);
+    }
+    else if (!isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+      return HandleError(oss, opts);
+    }
+  }
+  return true;
+}
+
+inline std::filesystem::path TempName()
+{
+  std::stringstream nameStream;
+  static constexpr auto num_bits = 128;
+  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
+  {
+    nameStream << RandInt(0, 9);
+  }
+  return std::filesystem::temp_directory_path() / nameStream.str();
 }
 
 } // namespace mlpack

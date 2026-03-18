@@ -261,9 +261,9 @@ TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest][tiny]")
 }
 
 /**
- * Make sure a TSV is loaded correctly.
+ * Make sure a TSV is loaded correctly even when it is specified as a .csv.
  */
-TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+TEST_CASE("LoadTSVAutodetectCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -2463,7 +2463,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info(6);
 
-  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
 
   remove("test.arff");
 }
@@ -2476,7 +2476,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info;
 
-  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true, true));
 }
 
 /**
@@ -2489,7 +2489,8 @@ TEST_CASE("CaseTest", "[LoadSaveTest][tiny]")
 
   DatasetMapper<IncrementPolicy> info;
 
-  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true);
+  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true,
+      true);
 
   REQUIRE(dataset.n_rows == 2);
   REQUIRE(dataset.n_cols == 3);
@@ -3448,4 +3449,304 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
+#ifndef MLPACK_DISABLE_HTTPLIB
+#ifdef MLPACK_ENABLE_HTTPLIB
+
+TEST_CASE("URLTests", "[LoadSaveTest]")
+{
+  std::string host, filename, testUrl;
+  int port;
+
+  // 1.  Simple file
+  testUrl = "https://example.com/files/report.pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "report.pdf");
+
+  // 2.  Image file
+  testUrl = "http://cdn.server.org/images/photo.jpg";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.server.org");
+  REQUIRE(filename == "photo.jpg");
+
+  // 3.  With port + file"
+  testUrl = "https://example.com:8080/api/data/export.csv";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "export.csv");
+  REQUIRE(port == 8080);
+
+  // 4.  Compound extension
+  testUrl = "ftp://files.host.net:21/backup/archive.tar.gz";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 5.  File + query
+  testUrl = "https://example.com/docs/manual.html?page=3";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 6.  File + fragment
+  testUrl = "https://example.com/docs/manual.html#chapter2";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 7.  File + query + fragment// ---- No filename / path-only ----
+  testUrl = "https://example.com/dl/setup.exe?v=2.1&os=win#mirror";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "setup.exe");
+
+  // Our target here is to show that we are not modifying the filename.
+  filename = "";
+  // 8.  Basic URL
+  testUrl = "https://example.com";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 9.  Trailing slash only
+  testUrl = "https://example.com/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 10. Path with no extension// ---- Deep paths ----
+  testUrl = "https://example.com/api/v2/users";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "users");
+
+  // 11. Deeply nested file
+  testUrl = "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.example.com");
+  REQUIRE(filename == "deep_file.wasm");
+
+  // 12. Trailing slash (no file)// ---- Special filenames ----
+  filename = "";
+  testUrl = "https://example.com/path/to/dir/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 13. Dotfile (no extension)
+  filename = "";
+  testUrl = "https://example.com/.hidden";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".hidden");
+
+  // 14. Dotfile with extension
+  filename = "";
+  testUrl = "https://example.com/files/.env.production";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".env.production");
+
+  // 15. URL-encoded spaces + parens
+  filename = "";
+  testUrl = "https://example.com/files/my%20file%20(1).pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "my%20file%20(1).pdf");
+
+  // 16. Unicode in filename// ---- Edge cases ----
+  filename = "";
+  testUrl = "https://example.com/files/résumé.docx";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "résumé.docx");
+
+  // 17. IP address as host
+  filename = "";
+  testUrl = "https://192.168.1.1:3000/logs/debug.log";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "192.168.1.1");
+  REQUIRE(filename == "debug.log");
+  REQUIRE(port == 3000);
+
+  // 18. Port, no path, no file
+  filename = "";
+  testUrl = "https://example.com:443";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+  REQUIRE(port == 443);
+
+  // 19. Localhost
+  filename = "";
+  testUrl = "http://localhost:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 20. Many dots in filename
+  filename = "";
+  testUrl = "https://example.com/file.backup.2024.01.15.sql.gz";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "file.backup.2024.01.15.sql.gz");
+
+  // 21 Corrupt URL
+  testUrl = "https://";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 22 No URL
+  testUrl = "";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 23 Invalid host with special chars
+  testUrl = "https://!@#$%^*^&*.com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 24 Invalid host with trailing dots
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 25 invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 26 Invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 27. Double ltd at the end + port number
+  port = -1;
+  testUrl = "http://localhost.co.uk:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost.co.uk");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 28. 3 number port number + https + a filename
+  port = -1;
+  testUrl = "https://localhost:330/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 330);
+
+  port = -1;
+  testUrl = "http://www.mlpack.org/file_with_no_extension";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "file_with_no_extension");
+
+  filename = "something_random";
+  testUrl = "http://www.mlpack.org/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "");
+}
+
+TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
+        dataset, Fatal + Transpose) == true);
+}
+
+TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  TextOptions opts = Fatal + Categorical;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+        dataset, opts) == true);
+}
+
+TEST_CASE("DownLoad404File", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE_THROWS_AS(Load("http://datasets.mlpack.org/nonexistent_file.csv",
+        dataset, Fatal + Transpose), std::runtime_error);
+}
+
 #endif
+#endif
+
+#endif
+
+/**
+ * Test that the TSV format loads correctly.
+ */
+TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+  f << "9\t10\t11\t12" << std::endl;
+
+  arma::mat dataset;
+
+  Load("test.tsv", dataset, TSV);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    REQUIRE(dataset[i] == Approx(i + 1));
+
+  remove("test.tsv");
+}
+
+/**
+ * Test that the TSV format loads correctly for categorical data.
+ */
+TEST_CASE("LoadTSVCategoricalTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\ta\t4" << std::endl;
+  f << "5\t6\tb\t8" << std::endl;
+  f << "9\t10\tc\t12" << std::endl;
+
+  arma::mat dataset;
+
+  TextOptions opts = TSV + Fatal + Categorical;
+  Load("test.tsv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(dataset[0] == Approx(1));
+  REQUIRE(dataset[1] == Approx(2));
+  REQUIRE(dataset[2] == Approx(0));
+  REQUIRE(dataset[3] == Approx(4));
+
+  remove("test.tsv");
+}
+
+/*
+ * Ensure that saving with HasHeaders() produces a file that has headers.
+ */
+TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
+{
+  arma::mat X = arma::randi<arma::mat>(3, 20, arma::distr_param(0, 100));
+  TextOptions opts;
+  opts.HasHeaders() = true;
+  opts.Headers() = { "a", "b", "c" };
+  Save("test.csv", X, opts);
+
+  arma::mat Y;
+  TextOptions opts2;
+  opts2.HasHeaders() = true;
+  Load("test.csv", Y, opts2);
+
+  REQUIRE(opts2.Headers().size() == 3);
+  REQUIRE(opts2.Headers()[0] == "a");
+  REQUIRE(opts2.Headers()[1] == "b");
+  REQUIRE(opts2.Headers()[2] == "c");
+  REQUIRE(arma::approx_equal(X, Y, "both", 1e-5, 1e-5));
+
+  remove("test.csv");
+}

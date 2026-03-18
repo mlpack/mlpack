@@ -23,7 +23,8 @@ template<typename eT, typename PolicyType>
 bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
               DatasetMapper<PolicyType>& info,
-              bool fatal)
+              bool fatal,
+              bool transpose)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -203,7 +204,10 @@ bool LoadARFF(const std::string& filename,
   ifs.seekg(pos);
 
   // Now, set the size of the matrix.
-  matrix.set_size(dimensionality, row);
+  if (transpose)
+    matrix.set_size(dimensionality, row);
+  else
+    matrix.set_size(row, dimensionality);
 
   // Now we are looking at the @data section.
   row = 0;
@@ -237,7 +241,7 @@ bool LoadARFF(const std::string& filename,
          ++it)
     {
       // Check that we are not too many columns in.
-      if (col >= matrix.n_rows)
+      if (col >= (transpose ? matrix.n_rows : matrix.n_cols))
       {
         std::stringstream error;
         error << "Too many columns in line " << (headerLines + row) << ".";
@@ -278,8 +282,12 @@ bool LoadARFF(const std::string& filename,
           return false;
         }
 
-        // We load transposed.
-        matrix(col, row) = result;
+        // Set the value of the matrix depending on whether or not we are
+        // transposing.
+        if (transpose)
+          matrix(col, row) = result;
+        else
+          matrix(row, col) = result;
       }
       else if (info.Type(col) == Datatype::numeric)
       {
@@ -325,13 +333,17 @@ bool LoadARFF(const std::string& filename,
         }
 
         // If we made it to here, we have a value.
-        matrix(col, row) = val; // We load transposed.
+        if (transpose)
+          matrix(col, row) = val;
+        else
+          matrix(row, col) = val;
       }
 
       ++col;
     }
     ++row;
   }
+
   return true;
 }
 

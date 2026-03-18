@@ -28,39 +28,40 @@ and [format detection/selection](#formats).
 
 ## `Load()`
 
- - `Load(filename, X)`
-   * Load `X` from the given file `filename` with default options:
+ - `Load(path, X)`
+   * Load `X` from the given local file or remote URL `path` with default options:
      - the format of the file is [auto-detected](#formats) based on the
        extension of the file, and
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
 
- - `Load(filename, object, Option1 + Option2 + ...)`
-   * Load `X` from the given file `filename` with the given options.
+ - `Load(path, X, Option1 + Option2 + ...)`
+   * Load `X` from the given local file or remote URL `path` with the given options.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
    * The given options must be from the
-     [list of standalone operators](#dataoptions) and be appropriate for the type
-     of `X`.
+     [list of standalone operators](#dataoptions-types) and be appropriate for
+     the type of `X`.
 
- - `Load(filename, object, opts)`
-   * Load `X` from the given file `filename` with the given options specified in `opts`.
+ - `Load(path, X, opts)`
+   * Load `X` from the given local file or remote URL `path` with the given options specified in `opts`.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * `opts` is a [`DataOptions` object](#dataoptions) whose subtype matches the
-     type of `X`.
+   * `opts` is a [`DataOptions` object](#dataoptions-types) whose subtype
+     matches the type of `X`.
 
 For some types of data, it is also possible to load multiple images at once from a set of files:
 
- - `Load(filenames, X)`
- - `Load(filenames, X, Option1 + Option2 + ...)`
- - `Load(filenames, X, opts)`
-    * Load data from `filenames` (a `std::vector<std::string>`) into the matrix `X`.
+ - `Load(paths, X)`
+ - `Load(paths, X, Option1 + Option2 + ...)`
+ - `Load(paths, X, opts)`
+    * Load data from `paths` (a `std::vector<std::string>`) into the matrix `X`.
       - For [numeric data](#numeric-data), data loaded from each file is concatenated into `X`.
       - For [image data](#image-data), each image is flattened into one column of `X`.
-    - Metadata (e.g. image size, number of columns, etc.) in all files in `filenames` must match or loading will fail.
-    - Loading options can be specified by either standalone options or an instantiated [`DataOptions` object](#dataoptions).
+    - Metadata (e.g. image size, number of columns, etc.) in all files in `paths` must match or loading will fail.
+    - Loading options can be specified by either standalone options or an
+      instantiated [`DataOptions` object](#dataoptions-types).
 
 ---
 
@@ -86,9 +87,20 @@ std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
 ```
 
+Another simple example, loading the file from a URL:
+
+```c++
+arma::mat data;
+bool success = mlpack::Load("http://datasets.mlpack.org/iris.csv",
+    data, mlpack::NoFatal);
+if (!success)
+  std::cout << "Error loading dataset" << std::endl;
+```
+
 See also the other examples for each [supported load type](#types):
 
  * [Numeric data](#numeric-data-loadsave-examples)
+ * [Loading from remote URLs](#loading-from-remote-urls)
  * [Categorical data](#categorical-data-loadsave-examples)
  * [Image data](#image-data-loadsave-examples)
  * [mlpack models and objects](#mlpack-models-and-objects-loadsave-examples)
@@ -205,7 +217,7 @@ object `X` to be loaded or saved:
    - See [mlpack model and object examples](#mlpack-models-and-objects-loadsave-examples)
      for example usage.
 
-## `DataOptions`
+## `DataOptions` types
 
 The [`Load()`](#load) and [`Save()`](#save) functions allow
 specifying options in a standalone manner or with an instantiated `DataOptions`
@@ -225,7 +237,7 @@ metadata resulting from a load or save operation to be stored:
 
 ```c
 // Different data types will use DataOptions, MatrixOptions, TextOptions,
-// ModelOptions, or other types.  See the documentation for each class below.
+// ImageOptions, or other types.  See the documentation for each class below.
 mlpack::ImageOptions opts;
 opts.Channels() = 1; // Force loading in grayscale.
 mlpack::Load("filename.png", X, opts);
@@ -246,10 +258,10 @@ object, so does the type of `opts`:
    [standalone options](#textoptions-standalone-operators-and-members);
  * ***Image data***: [`ImageOptions`](#imageoptions) and its
    [standalone options](#imageoptions-standalone-operators-and-members);
- * ***mlpack models and objects***: [`ModelOptions`](#modeloptions) and its
-   [standalone options](#modeloptions-standalone-operators-and-members).
+ * ***mlpack models and objects***: [`DataOptions`](#dataoptions) and its
+   [standalone options](#dataoptions-standalone-operators-and-members).
 
-### `DataOptions`
+## `DataOptions`
 
 The `DataOptions` class is the base class from which all options classes
 specific to [data types](#types) are derived.  It is default-constructible and
@@ -259,7 +271,7 @@ Any members or standalone operators available in `DataOptions` are also
 available when using other options types (e.g. [`TextOptions`](#textoptions),
 [`ImageOptions`](#imageoptions), etc.).
 
-#### `DataOptions` standalone operators and members
+### `DataOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -272,14 +284,18 @@ calls to set members of an instantiated `DataOptions` object.
 | `NoFatal` _(default)_     | `opts.Fatal() = false;` | All [data types](#types). | `false` will be returned on failure.  A warning will also be printed if [`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions) is defined. |
 |---------------------------|-------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                         |                           |                   |
-| `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension fo the filename and (if loading) inspecting the file contents. |
+| `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect;` | All [data types](#types). | The format of the file is autodetected using the extension of the filename and (if loading) inspecting the file contents. |
+| _For loading [mlpack models and objects](#mlpack-models-and-objects)._ | |      |                   |
+| `BIN`                     | `opts.Format() = FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
+| `JSON`                    | `opts.Format() = FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
+| `XML`                     | `opts.Format() = FileType::XML`         | `.xml`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
 |---------------------------|-------------------------|---------------------------|-------------------|
 
-### `MatrixOptions`
+## `MatrixOptions`
 
 The `MatrixOptions` class represents options specific to matrix types
 ([numeric](#numeric-data) and [categorical](#mixed-categorical-data) data).
-`MatrixOptions` is derived from [`DataOptions`](#dataoptions) and thus any
+`MatrixOptions` is derived from [`DataOptions`](#dataoptions-types) and thus any
 [standalone operators or member functions from `DataOptions`](#dataoptions-standalone-operators-and-members)
 (e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
 `MatrixOptions`.
@@ -288,7 +304,7 @@ The `MatrixOptions` class represents options specific to matrix types
 specifically for loading numeric or categorical data from plaintext formats.
 `MatrixOptions` is used for non-plaintext numeric data formats.
 
-#### `MatrixOptions` standalone operators and members
+### `MatrixOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -314,7 +330,7 @@ is set.
 | `RawBinary`               | `opts.Format() = mlpack::FileType::RawBinary;`  | [Numeric](#numeric-data) data. | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 
-### `TextOptions`
+## `TextOptions`
 
 The `TextOptions` class represents options specific to matrix types stored in
 plaintext formats ([numeric](#numeric-data) and [categorical](#mixed-categorical-data)
@@ -330,7 +346,7 @@ data).  `TextOptions` is a child class and thus any standalone operators or memb
    - `opts.Transpose()` member
    - See the [`MatrixOptions` operator and member documentation](#matrixoptions-standalone-operators-and-members)
 
-#### `TextOptions` standalone operators and members
+### `TextOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -342,22 +358,21 @@ then an exception will be thrown; otherwise, a warning will be printed if
 [`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions)
 is set.
 
-<!-- TODO for Omar: what happens when HasHeaders() is true for saving? -->
-
 | ***Standalone operator*** | ***Member function***       | ***Available for:***      | ***Description*** |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Load/save behavior._     |                             |                           |                   |
 | `HasHeaders`              | `opts.HasHeaders() = true;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV format.. | If `true`, the first row of the file contains column names instead of data.  See note below. |
 | `Categorical`             | `opts.Categorical() = true;` | [Categorical](#mixed-categorical-data), only for the CSV or ARFF formats. | If `true`, the data to be loaded or saved is mixed categorical data.  See note below. |
-| `SemiColon`               | `opts.SemiColon() = true;`  | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV, `CoordAscii`, and `RawAscii` formats. | If `true`, the field separator in the file is a semicolon instead of a comma. |
+| `Semicolon`               | `opts.Semicolon() = true;`  | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data, only for the CSV, `CoordASCII`, and `RawASCII` formats. | If `true`, the field separator in the file is a semicolon instead of a comma. |
 | `MissingToNan` | `opts.MissingToNan() = true;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | If `true`, any missing data elements will be represented as `NaN` instead of 0. |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | [_Formats._](#formats)    |                             |                           |                   |
-| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
-| `ArmaAscii`               | `opts.Format() = mlpack::FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
-| `RawAscii`                | `opts.Format() = mlpack::FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values or tab-separated values (TSV) with no header. |
-| `CoordAscii`              | `opts.Format() = mlpack::FileType::CoordAscii;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
-| `ARFF`                    | `opts.Format() = mlpack::FileType::ARFFAscii;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
+| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;` | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `ArmaASCII`               | `opts.Format() = mlpack::FileType::ArmaASCII;` | [Numeric](#numeric-data) data. | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
+| `RawASCII`                | `opts.Format() = mlpack::FileType::RawASCII;` | [Numeric](#numeric-data) data. | Space-separated values with no header.  If loading a sparse matrix and the file has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `CoordASCII`              | `opts.Format() = mlpack::FileType::CoordASCII;` | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+| `ARFF`                    | `opts.Format() = mlpack::FileType::ARFFASCII;` | [Categorical](#mixed-categorical-data) data. | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
 |---------------------------|-----------------------------|---------------------------|-------------------|
 | _Metadata._               |                             |                           |                   |
 | _(n/a)_                   | `opts.Headers()`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | Returns a `std::vector<std::string>` with headers detected after loading a CSV. |
@@ -395,7 +410,7 @@ is set.
    `DatasetInfo` can be set before saving, and all dimensions of the data
    will be saved as numeric data.
 
-### `ImageOptions`
+## `ImageOptions`
 
 The `ImageOptions` class represents options specific to [images](#image-data).
 `ImageOptions` is a child class of [`DataOptions`](#dataoptions) and thus any
@@ -403,7 +418,7 @@ The `ImageOptions` class represents options specific to [images](#image-data).
 (e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
 `ImageOptions`.
 
-#### `ImageOptions` standalone operators and members
+### `ImageOptions` standalone operators and members
 
 The options below can be used as standalone operators to the
 [`Load()`](#load) and [`Save()`](#save) functions, or as
@@ -450,85 +465,49 @@ is set.
  * The `opts.Quality()` option is only relevant when calling
    [`Save()`](#save) when using the `JPG` format.
 
-### `ModelOptions`
-
-The `ModelOptions` class represents options specific to
-[mlpack models and objects](#mlpack-models-and-objects).  `ModelOptions` is a
-child class of [`DataOptions`](#dataoptions) and thus any
-[standalone operators or member functions from `DataOptions`](#dataoptions-standalone-operators-and-members)
-(e.g. `Fatal`, `NoFatal`, and `AutoDetect`) can also be used with
-`ImageOptions`.
-
-#### `ModelOptions` standalone operators and members
-
-The options below can be used as standalone operators to the
-[`Load()`](#load) and [`Save()`](#save) functions, or as
-calls to set members of an instantiated `MatrixOptions` object.
-
-If an option is given that does not match the type of data being loaded or
-saved, if [`Fatal()`](#dataoptions-standalone-operators-and-members) is set,
-then an exception will be thrown; otherwise, a warning will be printed if
-[`MLPACK_PRINT_WARN`](compile.md#configuring-mlpack-with-compile-time-definitions)
-is set.
-
-| ***Standalone operator*** | ***Member function***                 | ***Available for:***      | ***Description*** |
-|---------------------------|---------------------------------------|---------------------------|-------------------|
-| [_Formats._](#formats)    |                                       |                           |                   |
-| `BIN`                     | `opts.Format() = mlpack::FileType::BIN;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
-| `JSON`                    | `opts.Format() = mlpack::FileType::JSON;`      | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
-| `XML`                     | `opts.Format() = mlpack::FileType::XML;`       | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
-|---------------------------|---------------------------------------|---------------------------|-------------------|
-
-***Notes:***
-
- - `FileType::BIN` (`.bin`) is recommended for the sake of size; objects in
-   binary format may be an order of magnitude or more smaller than JSON!
-
- - `FileType::JSON` (`.json`) and `FileType::XML` (`.xml`) produce human-readable
-   files, but they may be quite large.
-
 ## Formats
 
 The [`Load()`](#load) and [`Save()`](#save) functions
 support numerous different formats for loading and saving.  Not all formats are
 relevant for all types of data.  The table below lists standalone options that
 can be used to specify the format, as well as member functions for a
-[`DataOptions`](#dataoptions) object.
+[`DataOptions`](#dataoptions-types) object.
 
 When `AutoDetect` (the default) is specified as the format, the actual file
 format is auto-detected using the filename's extension and (if loading)
 inspecting the file contents.  Accepted filename extensions for each type are
 given in the table.
 
-| ***Standalone operator*** | ***Member function***                   | ***Filename extensions*** | ***Available for:***      | ***Description*** |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
-| `AutoDetect` _(default)_  | `opts.Format() = FileType::AutoDetect`  | _(n/a)_                   | All [data types](#types). | The format of the file is autodetected as one of the formats below. |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
-| `CSV`                     | `opts.Format() = FileType::CSVASCII;`   | `.csv`, `.tsv`            | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV or TSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
-| `ArmaAscii`               | `opts.Format() = FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
-| `RawAscii`                | `opts.Format() = FileType::RawASCII;`   | `.txt`                    | [Numeric](#numeric-data) data | Space-separated values or tab-separated values (TSV) with no header. |
-| `CoordAscii`              | `opts.Format() = FileType::CoordAscii;` | `.txt` (if `X` is sparse) | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
-| `ARFF`                    | `opts.Format() = FileType::ARFFAscii;`  | `.arff`                   | [Categorical](#mixed-categorical-data) data | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
-| `PGM`                     | `opts.Format() = FileType::PGMBinary;`  | `.pgm`                    | [Numeric](#numeric-data) data | Load/save in the PGM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
-| `PPM`                     | `opts.Format() = FileType::PPMBinary;`  | `.ppm`                    | [Numeric](#numeric-data) data | Load/save in the PPM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
-| `HDF5`                    | `opts.Format() = FileType::HDF5Binary;` | `.h5`, `.hdf5`, `.hdf`, `.he5` | [Numeric](#numeric-data) data | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
-| `ArmaBin`                 | `opts.Format() = FileType::ArmaBinary;` | `.bin` (if `X` is an Armadillo type) | [Numeric](#numeric-data) data | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
-| `RawBinary`               | `opts.Format() = FileType::RawBinary;`  |                                | [Numeric](#numeric-data) data | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
-| `Image`                   | `opts.Format() = FileType::ImageType`   | _(n/a)_                   | [Image data](#image-data) | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
-| `PNG`                     | `opts.Format() = FileType::PNG`         | `.png`                    | [Image data](#image-data) | Load/save as a PNG image. |
-| `JPG`                     | `opts.Format() = FileType::JPG`         | `.jpg`, `.jpeg`           | [Image data](#image-data) | Load/save as a JPEG image. |
-| `TGA`                     | `opts.Format() = FileType::TGA`         | `.tga`                    | [Image data](#image-data) | Load/save as a TGA image. |
-| `BMP`                     | `opts.Format() = FileType::BMP`         | `.bmp`                    | [Image data](#image-data) | Load/save as a BMP image. |
-| `PSD`                     | `opts.Format() = FileType::PSD`         | `.psd`                    | [Image data](#image-data) | Load/save as a PSD (Photoshop) image.  *Only for loading.* |
-| `GIF`                     | `opts.Format() = FileType::GIF`         | `.gif`                    | [Image data](#image-data) | Load/save as a GIF image.  *Only for loading.* |
-| `PIC`                     | `opts.Format() = FileType::PIC`         | `.pic`                    | [Image data](#image-data) | Load/save as a PIC (PICtor) image.  *Only for loading.* |
-| `PNM`                     | `opts.Format() = FileType::PNM`         | `.pnm`                    | [Image data](#image-data) | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
-| `BIN`                     | `opts.Format() = FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
-| `JSON`                    | `opts.Format() = FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
-| `XML`                     | `opts.Format() = FileType::XML`         | `.xml`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
+| ***Standalone operator*** | ***Member function***                           | ***Filename extensions*** | ***Available for:***      | ***Description*** |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect`  | _(n/a)_                   | All [data types](#types). | The format of the file is autodetected as one of the formats below. |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;`   | `.csv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;`   | `.tsv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `ArmaASCII`               | `opts.Format() = mlpack::FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
+| `RawASCII`                | `opts.Format() = mlpack::FileType::RawASCII;`   | `.txt`                    | [Numeric](#numeric-data) data | Space-separated values with no header.  If loading a sparse matrix and the file has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+| `CoordASCII`              | `opts.Format() = mlpack::FileType::CoordASCII;` | `.txt` (if `X` is sparse) | [Numeric](#numeric-data) data where `X` is a sparse matrix (e.g. `arma::sp_mat`). | Coordinate list format for sparse data (see [`coord_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat)). |
+| `ARFF`                    | `opts.Format() = mlpack::FileType::ARFFASCII;`  | `.arff`                   | [Categorical](#mixed-categorical-data) data | ARFF filetype. Used specifically to load mixed categorical dataset.  See [ARFF documentation](https://ml.cms.waikato.ac.nz/weka/arff.html).  *Only for loading.* |
+| `PGM`                     | `opts.Format() = mlpack::FileType::PGMBinary;`  | `.pgm`                    | [Numeric](#numeric-data) data | Load/save in the PGM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
+| `PPM`                     | `opts.Format() = mlpack::FileType::PPMBinary;`  | `.ppm`                    | [Numeric](#numeric-data) data | Load/save in the PPM image format; data should have values in the range `[0, 255]`.  The size of the image will be the same as the size of the matrix (after any transpose is applied). |
+| `HDF5`                    | `opts.Format() = mlpack::FileType::HDF5Binary;` | `.h5`, `.hdf5`, `.hdf`, `.he5` | [Numeric](#numeric-data) data | Load/save in the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) binary format; only available if Armadillo is configured with [HDF5 support](https://arma.sourceforge.net/docs.html#config_hpp). |
+| `ArmaBin`                 | `opts.Format() = mlpack::FileType::ArmaBinary;` | `.bin` (if `X` is an Armadillo type) | [Numeric](#numeric-data) data | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
+| `RawBinary`               | `opts.Format() = mlpack::FileType::RawBinary;`  |                                | [Numeric](#numeric-data) data | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| `Image`                   | `opts.Format() = mlpack::FileType::ImageType`   | _(n/a)_                   | [Image data](#image-data) | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
+| `PNG`                     | `opts.Format() = mlpack::FileType::PNG`         | `.png`                    | [Image data](#image-data) | Load/save as a PNG image. |
+| `JPG`                     | `opts.Format() = mlpack::FileType::JPG`         | `.jpg`, `.jpeg`           | [Image data](#image-data) | Load/save as a JPEG image. |
+| `TGA`                     | `opts.Format() = mlpack::FileType::TGA`         | `.tga`                    | [Image data](#image-data) | Load/save as a TGA image. |
+| `BMP`                     | `opts.Format() = mlpack::FileType::BMP`         | `.bmp`                    | [Image data](#image-data) | Load/save as a BMP image. |
+| `PSD`                     | `opts.Format() = mlpack::FileType::PSD`         | `.psd`                    | [Image data](#image-data) | Load/save as a PSD (Photoshop) image.  *Only for loading.* |
+| `GIF`                     | `opts.Format() = mlpack::FileType::GIF`         | `.gif`                    | [Image data](#image-data) | Load/save as a GIF image.  *Only for loading.* |
+| `PIC`                     | `opts.Format() = mlpack::FileType::PIC`         | `.pic`                    | [Image data](#image-data) | Load/save as a PIC (PICtor) image.  *Only for loading.* |
+| `PNM`                     | `opts.Format() = mlpack::FileType::PNM`         | `.pnm`                    | [Image data](#image-data) | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| `BIN`                     | `opts.Format() = mlpack::FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
+| `JSON`                    | `opts.Format() = mlpack::FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
+| `XML`                     | `opts.Format() = mlpack::FileType::XML`         | `.xml`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
 
 ## Numeric data
 
@@ -544,8 +523,9 @@ saving are supported.
    must have the same number of dimensions and header names (if using
    CSVs with headers).  All files will be concatenated into the output matrix `X`.
 
- * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
-   object, the [`MatrixOptions`](#matrixoptions) and
+ * When loading and saving with an instantiated
+   [`DataOptions`](#dataoptions-types) object, the
+   [`MatrixOptions`](#matrixoptions) and
    [`TextOptions`](#textoptions) subtypes can be used.
 
  * Supported formats are CSV, TSV, text, binary, ARFF, and others;
@@ -689,6 +669,45 @@ std::cout << "Loaded data from movielens-100k.csv; matrix size: "
     << dataset.n_rows << " x " << dataset.n_cols << "." << std::endl;
 ```
 ---
+
+## Loading from remote URLs
+
+mlpack supports loading datasets from URLs.  Files will be downloaded using the
+[cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
+with mlpack for ease of use.
+
+When a remote URL is given to `Load()`:
+
+ * The URL must start with either `http://` or `https://` or loading will fail.
+
+ * If the URL starts with `https://`, support must be enabled with
+     [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
+     including mlpack, and the program must be additionally [linked with `-lssl
+     -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
+
+ * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
+    Linux systems).
+
+```c++
+// Throw an exception if loading fails with the Fatal option.
+arma::mat dataset;
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
+
+arma::Row<size_t> labels;
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
+    labels, mlpack::Fatal);
+
+// Print information about the data.
+std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
+std::cout << " - " << dataset.n_cols << " points." << std::endl;
+std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
+
+std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
+std::cout << " - " << labels.n_elem << " labels." << std::endl;
+std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
+std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+```
 
 ## Mixed categorical data
 
@@ -1119,13 +1138,19 @@ namespace) can be saved with [`Save()`](#save) and loaded with
    should be the desired mlpack model or object type.
 
  * When loading and saving with an instantiated [`DataOptions`](#dataoptions)
-   object, the [`ModelOptions`](#modeloptions) subtype can be used.
+   object, the base [`DataOptions`](#dataoptions) subtype should be used.
 
  * Supported formats are binary, JSON, and XML; see
    [the table of format options](#formats).
 
+   - `FileType::BIN` (`.bin`) is recommended for the sake of size; objects in
+     binary format may be an order of magnitude or more smaller than JSON!
+
+   - `FileType::JSON` (`.json`) and `FileType::XML` (`.xml`) produce
+     human-readable files, but they may be quite large.
+
 ***Note:*** when loading an object that was saved in the binary format
-([`BIN`](#modeloptions-standalone-operators-and-members)), the C++ type of the
+([`BIN`](#dataoptions-standalone-operators-and-members)), the C++ type of the
 object must be ***exactly the same*** (including template parameters) as the
 type used to save the object.  If not, undefined behavior will occur---most
 likely a crash.

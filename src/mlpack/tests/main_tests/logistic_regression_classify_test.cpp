@@ -39,7 +39,6 @@ TEST_CASE_METHOD(LogisticRegressionClassifyTestFixture,
   SetInputParam("test", std::move(testX));
 
   // (Required) model is not provided. Should throw a runtime error.
-  // NB this currently requires a patch applied here too
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
