@@ -115,8 +115,17 @@ bool Load(const std::string& src,
     {
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot load image data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, tmp, imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
+
+        dest = arma::conv_to<arma::SpMat<typename ObjectType::elem_type>>
+            ::from(tmp);
       }
       else
       {
@@ -132,8 +141,15 @@ bool Load(const std::string& src,
     {
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot load audio data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(src, tmp, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
+
+        dest = arma::conv_to<arma::SpMat<typename ObjectType::elem_type>>
+            ::from(tmp);
       }
       else
       {
