@@ -3718,6 +3718,12 @@ TEST_CASE("LoadWAVFileSubOptions", "[LoadSaveTest]")
   REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
 }
 
+TEST_CASE("LoadWAVFileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
+  REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
+}
+
 TEST_CASE("LoadWAVNoFile", "[LoadSaveTest]")
 {
   arma::mat matrix;
@@ -3817,6 +3823,12 @@ TEST_CASE("LoadMP3FileNoOptions", "[LoadSaveTest]")
 TEST_CASE("LoadMP3FileSubOptions", "[LoadSaveTest]")
 {
   arma::mat matrix;
+  REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
+}
+
+TEST_CASE("LoadMP3FileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
   REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
 }
 
