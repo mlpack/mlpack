@@ -107,11 +107,21 @@ bool LoadWAV(const std::string& file,
   opts.BitsPerSample() = wav.bitsPerSample;
 
   // For now we are loading only one file.
-  if (opts.BitsPerSample() == 32)
+  if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
   {
     arma::fmat samples(opts.TotalPCMFrameCount() * opts.Channels(), 1);
 
     opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_f32(
+        &wav, opts.TotalPCMFrameCount(), samples.memptr()));
+
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+  else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
+  {
+    arma::Mat<int32_t> samples(opts.TotalPCMFrameCount() * opts.Channels(),
+        1);
+
+    opts.TotalFramesRead() = static_cast<size_t>(drwav_read_pcm_frames_s32(
         &wav, opts.TotalPCMFrameCount(), samples.memptr()));
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));

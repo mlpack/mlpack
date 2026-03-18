@@ -75,7 +75,9 @@ bool SaveAudio(const std::string& file,
 
   if (opts.BitsPerSample() == 32)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
-  else
+  else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
+    dataFormat.format = DR_WAVE_FORMAT_PCM;
+  else if (opts.BitsPerSample() == 16)
     dataFormat.format = DR_WAVE_FORMAT_PCM;
 
   drwav wav;
@@ -85,20 +87,34 @@ bool SaveAudio(const std::string& file,
         " Please check the file path and permissions.", opts);
   }
 
-  // Need to convert in anycase to float32.
-  arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-  pcm32.clamp(-1.0f, 1.0f);
-
-  if (opts.BitsPerSample() == 32)
+  if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
   {
+    arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+    pcm32.clamp(-1.0f, 1.0f);
+
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
         opts.TotalPCMFrameCount(), pcm32.memptr()));
   }
-  else
+  else if (opts.BitsPerSample() == 16 && std::is_floating_point_v<eT>)
   {
+    // We assume that the original values are in range of [-1, +1]
+    arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+    pcm32.clamp(-1.0f, 1.0f);
     pcm32 *= 32767.0f;
 
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
+    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+          opts.TotalPCMFrameCount(), pcm16.memptr()));
+  }
+  else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
+  {
+    arma::Mat<int32_t> pcm = arma::conv_to<arma::Mat<int32_t>>::from(matrix);
+    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+          opts.TotalPCMFrameCount(), pcm.memptr()));
+  }
+  else if (opts.BitsPerSample() == 16 && std::is_integral_v<eT>)
+  {
+    arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(matrix);
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
           opts.TotalPCMFrameCount(), pcm16.memptr()));
   }
