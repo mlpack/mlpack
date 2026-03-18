@@ -106,14 +106,19 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return *this;
   }
 
-  // Conversions must be explicit.
   template<typename Derived2>
-  explicit AudioOptions(const DataOptionsBase<Derived2>& other) :
-      DataOptionsBase<AudioOptions>(other) { }
+  AudioOptions(const DataOptionsBase<Derived2>& other) :
+      DataOptionsBase<AudioOptions>()
+  {
+    DataOptionsBase<AudioOptions>::operator=(other);
+  }
 
   template<typename Derived2>
-  explicit AudioOptions(DataOptionsBase<Derived2>&& other) :
-      DataOptionsBase<AudioOptions>(std::move(other)) { }
+  AudioOptions(DataOptionsBase<Derived2>&& other) :
+      DataOptionsBase<AudioOptions>()
+  {
+    DataOptionsBase<AudioOptions>::operator=(std::move(other));
+  }
 
   template<typename Derived2>
   AudioOptions& operator=(const DataOptionsBase<Derived2>& other)

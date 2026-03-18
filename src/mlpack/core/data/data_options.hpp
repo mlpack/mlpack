@@ -87,13 +87,13 @@ class DataOptionsBase
 
  public:
   template<typename Derived2>
-  explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
+  DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
     CopyOptions(opts);
   }
 
   template<typename Derived2>
-  explicit DataOptionsBase(DataOptionsBase<Derived2>&& opts)
+  DataOptionsBase(DataOptionsBase<Derived2>&& opts)
   {
     MoveOptions(std::move(opts));
   }
