@@ -275,12 +275,12 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     totalSamples.reset();
   }
 
-  size_t AudioDuration() const
+  double AudioDuration() const
   {
     return this->AccessMember(audioDuration, defaultAudioDuration);
   }
 
-  size_t& AudioDuration()
+  double& AudioDuration()
   {
     return this->ModifyMember(audioDuration, defaultAudioDuration);
   }
@@ -361,13 +361,13 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   std::optional<size_t> channels;
   std::optional<size_t> sampleRate;
   std::optional<size_t> bitPerSample;
-  std::optional<size_t> audioDuration;
+  std::optional<double> audioDuration;
   std::optional<size_t> totalPCMFrameCount;
   std::optional<size_t> totalFramesRead;
   std::optional<size_t> totalSamples;
   std::optional<size_t> fileBitRate;
 
-  constexpr static const size_t defaultAudioDuration    = 0;
+  constexpr static const double defaultAudioDuration    = 0.0;
   constexpr static const size_t defaultBitPerSample     = 0;
   constexpr static const size_t defaultChannels         = 0;
   constexpr static const size_t defaultFileBitRate      = 0;
