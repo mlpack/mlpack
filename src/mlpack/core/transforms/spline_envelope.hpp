@@ -40,7 +40,6 @@ inline void BuildSplineEnvelope(const ColType& h,
   // x: knot positions (indices) and y: knot values.
   ColType y = h.elem(idx);
   ColType c(m);
-  c.zeros();
   if (m > 2)
   {
     // Step 1: assemble h_i segment lengths and rhs alpha.
@@ -53,7 +52,6 @@ inline void BuildSplineEnvelope(const ColType& h,
 
     // Step 2: solve tridiagonal system for spline second deriv (c).
     typename GetDenseMatType<ColType>::type M(m, m);
-    M.zeros();
     M(0, 0) = 1;
     M(m - 1, m - 1) = 1;
     M.diag(0).subvec(1, m - 2) = 2 *
@@ -62,14 +60,12 @@ inline void BuildSplineEnvelope(const ColType& h,
     M.diag(+1).subvec(1, m - 2) = hSeg.subvec(1, m - 2);
 
     ColType rhs(m);
-    rhs.zeros();
     rhs.subvec(1, m - 2) = alpha.subvec(1, m - 2);
 
     const bool ok = solve(c, M, rhs);
     if (!ok) c.zeros();  // fallback
   }
   // Step 3: evaluate spline on each segment and fill envelope values
-  env.zeros();
   for (size_t seg = 0; seg < m - 1; ++seg)
   {
     const size_t i0 = idx[seg];
@@ -82,20 +78,19 @@ inline void BuildSplineEnvelope(const ColType& h,
     if (hSegLen == 0)
       continue;
 
-    for (size_t i = i0; i <= i1; ++i)
-    {
-      const eT xv = eT(i);
-      const eT A  = (x1 - xv) / hSegLen;
-      const eT B  = (xv - x0) / hSegLen;
+    const ColType xv = linspace<ColType>(i0, i1, i1 - i0 + 1);
 
-      //natural cubic spline formula:
-      // s(x) = A*y_i + B*y_{i+1} +
-      //        ((A^3 - A)*c_i + (B^3 - B)*c_{i+1}) * h_i^2 / 6
-      const eT Ai3 = A * A * A;
-      const eT Bi3 = B * B * B;
-      const eT C = ((Ai3 - A) * c[seg] +
-                        (Bi3 - B) * c[seg + 1]) * (hSegLen * hSegLen) / eT(6);
-      env[i] = A * y[seg] + B * y[seg + 1] + C;
+    const ColType A = (x1 - xv) / hSegLen;
+    const ColType B = (xv - x0) / hSegLen;
+
+    const ColType Ai3 = A % A % A;
+    const ColType Bi3 = B % B % B;
+
+    env.subvec(i0, i1) =
+        A * y[seg] +
+        B * y[seg + 1] +
+        ((Ai3 - A) * c[seg] + (Bi3 - B) * c[seg + 1]) *
+          (hSegLen * hSegLen) / eT(6);
     }
   }
 }
