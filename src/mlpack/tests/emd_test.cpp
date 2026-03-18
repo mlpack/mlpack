@@ -19,7 +19,7 @@ using namespace arma;
 
 TEST_CASE("EMDSingleTone", "[EMD]")
 {
-  const arma::uword N = 2000;
+  const arma::uword N = 50000;
   arma::vec t = linspace<arma::vec>(0.0, 1.0, N);
   arma::vec Sin = sin(2.0 * datum::pi * 5.0 * t);
   arma::vec noise = 0.05 * randn<arma::vec>(N);
@@ -28,15 +28,8 @@ TEST_CASE("EMDSingleTone", "[EMD]")
   arma::vec r;
 
   // run emd
-  // add timer to test
-  const auto start = std::chrono::high_resolution_clock::now();
   // maxImfs=5, maxSiftIter=50, tol=1e-3
   mlpack::EMD(x, imfs, r, 5, 50, 1e-3);
-  const auto stop = std::chrono::high_resolution_clock::now();
-  const auto ms =
-      std::chrono::duration_cast<std::chrono::milliseconds>(
-        stop - start).count();
-  UNSCOPED_INFO("EMD runtime for toy test (ms): " << ms);
 
   UNSCOPED_INFO("IMF count: " << imfs.n_cols);
   REQUIRE(imfs.n_cols >= 1);
