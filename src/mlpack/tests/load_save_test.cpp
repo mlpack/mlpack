@@ -3748,10 +3748,10 @@ TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
 {
   arma::mat matrix;
   AudioOptions opts = Fatal + WAV;
-  REQUIRE(Load("collectathon.wav", matrix, opts) == true);
+  REQUIRE(Load("collectathon_1_sec.wav", matrix, opts) == true);
   REQUIRE(matrix.n_cols == 1);
-  REQUIRE(matrix.n_rows == 7500224);
-  REQUIRE(opts.AudioDuration() == 85);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
@@ -3857,10 +3857,10 @@ TEST_CASE("LoadMP3FileOptionsStereoPCM16", "[LoadSaveTest]")
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
   opts.BitsPerSample() = 16;
-  REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
   REQUIRE(matrix.n_cols == 1);
-  REQUIRE(matrix.n_rows == 7500224);
-  REQUIRE(opts.AudioDuration() == 85);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
   REQUIRE(opts.BitsPerSample() == 16);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
@@ -3870,10 +3870,10 @@ TEST_CASE("LoadMP3FileOptionsStereo", "[LoadSaveTest]")
 {
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
-  REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
   REQUIRE(matrix.n_cols == 1);
-  REQUIRE(matrix.n_rows == 7500224);
-  REQUIRE(opts.AudioDuration() == 85);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
   REQUIRE(opts.BitsPerSample() == 32);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
@@ -3883,10 +3883,10 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
 {
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
-  REQUIRE(Load("collectathon.mp3", matrix, opts) == true);
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
   REQUIRE(matrix.n_cols == 1);
-  REQUIRE(matrix.n_rows == 7500224);
-  REQUIRE(opts.AudioDuration() == 85);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
   REQUIRE(opts.BitsPerSample() == 32);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
@@ -3895,5 +3895,5 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
   opts2.Channels() = opts.Channels();
   opts2.BitsPerSample() = opts.BitsPerSample();
   opts2.SampleRate() = opts.SampleRate();
-  REQUIRE(Save("collectathon2.wav", matrix, opts2) == true);
+  REQUIRE(Save("collectathon2_1_sec.wav", matrix, opts2) == true);
 }
