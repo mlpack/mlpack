@@ -343,6 +343,7 @@ bool LoadARFF(const std::string& filename,
     }
     ++row;
   }
+
   return true;
 }
 
