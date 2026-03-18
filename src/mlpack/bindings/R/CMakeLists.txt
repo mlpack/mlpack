@@ -354,9 +354,9 @@ if (BUILD_R_BINDINGS)
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
           -DPROGRAM_MODEL_PTR_IMPL=${model_ptr_impl}
-          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
+          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
+              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake)
 
   # 2. Generate ${name}.R.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp

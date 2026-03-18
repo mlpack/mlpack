@@ -1,4 +1,4 @@
-# ConfigureRCPP.cmake: generate an mlpack .cpp file for a R binding given
+# ConfigureRcpp.cmake: generate an mlpack .cpp file for a R binding given
 # input arguments.
 #
 # This file depends on the following variables being set:
