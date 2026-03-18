@@ -1254,9 +1254,9 @@ Load a single audio file, but don't store the metadata
 (note that this means the number of channels are unavailable after loading!).
 
 ```c++
-// Need to upload some audio files to datasets.mlpack.org.
+// See https://datasets.mlpack.org/sine.wav
 arma::mat audio;
-mlpack::Load("file.wav", audio, WAV);
+mlpack::Load("sine.wav", audio, WAV);
 
 // If we wanted audio metadata, we would need to pass an AudioOptions.  See the
 // next example.
@@ -1268,22 +1268,22 @@ std::cout << "The audio file in 'file.wav' contains " << audio.n_rows
 Load and save a single audio file:
 
 ```c++
+// See https://datasets.mlpack.org/fifths.mp3
 mlpack::AudioOptions opts;
 opts.Fatal() = true;
 arma::mat matrix;
-mlpack::Load("file.wav", matrix, opts /* format autodetected */);
+mlpack::Load("fifths.mp3", matrix, opts /* format autodetected */);
 
 // `matrix` contains one column.
 
 // Print some information about the audio file.
-std::cout << "Information about the audio file in 'file.wav': "
+std::cout << "Information about the audio file in 'fifths.mp3': "
     << std::endl;
 std::cout << "Audio Duration: " << opts.AudioDuration() << std::endl;
 std::cout << "Audio Channels: " << opts.Channels() << std::endl;
 std::cout << "Sampling Rate: "  << opts.SampleRate() << std::endl;
 
-// Only if we opt to allow saving wav files.
-mlpack::Save("file2.wav", matrix, opts);
+mlpack::Save("myFifths.wav", matrix, opts);
 ```
 
 ## mlpack models and objects
