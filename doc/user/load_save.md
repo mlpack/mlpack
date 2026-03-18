@@ -503,13 +503,13 @@ is set.
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 | _Metadata._               |                                       |                            |                   |
 | _(n/a)_                   | `opts.AudioDuration()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the duration of the loaded audio, in seconds. Set after loading / saving. |
-| _(n/a)_                   | `opts.BitPerSample()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample (e.g. 16 or 32). Set after loading, or before saving to choose PCM format. |
+| _(n/a)_                   | `opts.BistPerSample()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample (e.g. 16 or 32). Set after loading, or before saving to choose PCM format. |
 | _(n/a)_                   | `opts.Channels()`                     | [Audio data](#audio-data)  | Returns a `size_t` representing the number of audio channels (e.g. 1 for mono, 2 for stereo). Set after loading, or before saving. |
 | _(n/a)_                   | `opts.FileBitRate()`                  | [Audio data](#audio-data)  | Returns a `size_t` representing the overall bit rate of the file, in bits per second. Set after loading. |
 | _(n/a)_                   | `opts.SampleRate()`                   | [Audio data](#audio-data)  | Returns a `size_t` representing the sample rate in Hz (e.g. 44100, 48000). Set after loading, or before saving. |
 | _(n/a)_                   | `opts.TotalFramesRead()`              | [Audio data](#audio-data)  | Returns a `size_t` representing the number of PCM frames successfully read during loading. |
-| _(n/a)_                   | `opts.TotalPCMFramesCount()`          | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of PCM frames reported by the file header. |
-| _(n/a)_                   | `opts.TotalSamples()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of samples loaded (TotalPCMFramesCount() * Channels()). |
+| _(n/a)_                   | `opts.TotalPCMFrameCount()`          | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of PCM frames reported by the file header. |
+| _(n/a)_                   | `opts.TotalSamples()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of samples loaded (TotalPCMFrameCount() * Channels()). |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 
 ## `ModelOptions`
@@ -577,9 +577,6 @@ given in the table.
 | `ArmaBin`                 | `opts.Format() = FileType::ArmaBinary;` | `.bin` (if `X` is an Armadillo type) | [Numeric](#numeric-data) data | Load/save in the space-efficient [`arma_binary`](https://arma.sourceforge.net/docs.html#save_load_mat) format (packed binary data). |
 | `RawBinary`               | `opts.Format() = FileType::RawBinary;`  |                                | [Numeric](#numeric-data) data | Load/save as packed binary data with no header and no size information; data will be loaded as a single column vector _(not recommended)_. |
 |---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
-| `WAV`                     | `opts.Format() = FileType::WAV`         | `.wav`, `.wave`           | [Audio data](#audio-data) | Load/save as wave file. |
-| `MP3`                     | `opts.Format() = FileType::MP3`         | `.mp3`                    | [Audio data](#audio-data) | Load as mp3 file.       |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
 | `Image`                   | `opts.Format() = FileType::ImageType`   | _(n/a)_                   | [Image data](#image-data) | Load in the image format detected by the header of the file; save in the image format specified by the filename's extension. |
 | `PNG`                     | `opts.Format() = FileType::PNG`         | `.png`                    | [Image data](#image-data) | Load/save as a PNG image. |
 | `JPG`                     | `opts.Format() = FileType::JPG`         | `.jpg`, `.jpeg`           | [Image data](#image-data) | Load/save as a JPEG image. |
@@ -589,7 +586,10 @@ given in the table.
 | `GIF`                     | `opts.Format() = FileType::GIF`         | `.gif`                    | [Image data](#image-data) | Load/save as a GIF image.  *Only for loading.* |
 | `PIC`                     | `opts.Format() = FileType::PIC`         | `.pic`                    | [Image data](#image-data) | Load/save as a PIC (PICtor) image.  *Only for loading.* |
 | `PNM`                     | `opts.Format() = FileType::PNM`         | `.pnm`                    | [Image data](#image-data) | Load/save as a PNM (Portable Anymap) image.  *Only for loading.* |
-|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------|
+|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
+| `WAV`                     | `opts.Format() = FileType::WAV`         | `.wav`, `.wave`           | [Audio data](#audio-data) | Load/save as wave file. |
+| `MP3`                     | `opts.Format() = FileType::MP3`         | `.mp3`                    | [Audio data](#audio-data) | Load as mp3 file.       |
+|---------------------------|-----------------------------------------|---------------------------|---------------------------|-------------------------|
 | `BIN`                     | `opts.Format() = FileType::BIN`         | `.bin`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using an efficient packed binary format. |
 | `JSON`                    | `opts.Format() = FileType::JSON`        | `.json`                   | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using human- and machine-readable JSON. |
 | `XML`                     | `opts.Format() = FileType::XML`         | `.xml`                    | [mlpack models and objects](#mlpack-models-and-objects) | Load/save the object using XML (warning: may be very large). |
@@ -1221,36 +1221,32 @@ header-only library that decodes WAV, MP3 and FLAC files. mlpack bundles WAV
 and MP3; but, it is also possible to use a version of `dr_libs` 
 [available on the system](compile.md#configuring-mlpack-with-compile-time-definitions).
 
-dr\_libs decodes MP3 and WAV files into Pulse Coded Modulation (PCM) frames.
-Each frames contains a set of samples depending on the number of channels. For
-instance, in the case of mono, then we have one channel which means one sample
-per frame. In the case of a stereo, we have 2 channels per frames (2 samples
-per frame).
+`dr_libs` decodes audio files into Pulse-Code Modulation (PCM) frames.
+Each frame represents a single sample for each audio channel.  Thus, for mono
+(one channel), each frame has only one element; for stereo (2 channels), each
+frame has two elements.
 
-When loading audio files, each file is represented as a flattened single column
-vector in a data matrix; each row of the resulting vector will correspond to a
-a sample value (between -1 and +1). If an [`AudioOptions`](#audiooptions), it
-will be populated with the metadata of the audio file.
+When loading audio files, each audio file is flattened into a single column 
+vector in the loaded data matrix, in order of frames.  So, for a stereo audio 
+file, the rows of the column vector are in the ordering `[l0, r0, l1, r1, ..., ln, rn]`
+where `l0` and `r0` are the left and right samples in frame 0.
+
+ Visual representation for Stereo:
+ Time ──────────────────────────────►
+
+  Frame 0          Frame 1          Frame 2
+  ┌──────┬──────┐  ┌──────┬──────┐  ┌──────┬──────┐
+  │  L₀  │  R₀  │  │  L₁  │  R₁  │  │  L₂  │  R₂  │
+  └──────┴──────┘  └──────┴──────┘  └──────┴──────┘
+
+If an [`AudioOptions`](#audiooptions) is passed to `Load()`, it will be
+populated with the metadata of the audio file.
+
 
  * Supported audio loading formats are WAV and MP3; see
    [the table of formats](#formats) for more details.
 
  * Supported audio saving formats is WAV only.
-
-<!-- 
-    @rcurtin for a next PR we need to think of the following:
-
-    * mlpack offers several utility functions for audio resize and preprocessing, documented in
-   [Audio preprocessing](core/audio.md)
-    
-    * Take the average length for all audio file. zero pad or cut others to achieve the average.
-        
-    * For now, I prefer to complete load audio for one file, for several files we need to
-      think of the above strategy.
-    * Audio preprocessing, MFE / MFCC ? if yes this will be documented in a
-      next step, it is a preprocessing when it comes to the ML model, but post
-      processing when it comes to loading.
-   -->
 
 ### Audio data load/save examples
 
@@ -1277,7 +1273,7 @@ opts.Fatal() = true;
 arma::mat matrix;
 mlpack::Load("file.wav", matrix, opts /* format autodetected */);
 
-// `matrix` should now contain one column.
+// `matrix` contains one column.
 
 // Print some information about the audio file.
 std::cout << "Information about the audio file in 'file.wav': "
