@@ -6,7 +6,8 @@
 # Set generic minimization flags for all platforms.
 # These flags are the same for all cross-compilation cases and they are
 # mainly to reduce the binary footprint.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -s -fdata-sections -ffunction-sections")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -s -fdata-sections -ffunction-sections")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -s")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fomit-frame-pointer -fno-unwind-tables")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-asynchronous-unwind-tables -fvisibility=hidden")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fshort-enums -finline-small-functions")

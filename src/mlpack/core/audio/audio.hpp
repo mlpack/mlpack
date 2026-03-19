@@ -18,10 +18,10 @@
 //
 
 #undef  DRMP3_API
-#define DRMP3_API  static inline
+#define DRMP3_API  static
 
 #undef  DRMP3_PRIVATE
-#define DRMP3_PRIVATE  static inline
+#define DRMP3_PRIVATE  static
 
 #ifndef DR_MP3_IMPLEMENTATION
   #define DR_MP3_IMPLEMENTATION
@@ -46,10 +46,10 @@
 //
 
 #undef  DRWAV_API
-#define DRWAV_API  static inline
+#define DRWAV_API  static
 
 #undef  DRWAV_PRIVATE
-#define DRWAV_PRIVATE  static inline
+#define DRWAV_PRIVATE  static
 
 #ifndef DR_WAV_IMPLEMENTATION
   #define DR_WAV_IMPLEMENTATION
