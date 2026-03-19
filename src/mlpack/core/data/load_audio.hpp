@@ -107,25 +107,19 @@ bool LoadWAV(const std::string& file,
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
 
-  if (opts.BitsPerSample() != 16 && opts.BitsPerSample() != 32)
-  {
-    std::stringstream oss;
-    oss << "LoadAudio(): Unsupported BitsPerSample value: "
-        << opts.BitsPerSample() << ". Only 16 and 32 are supported.";
-    return HandleError(oss, opts);
-  }
-
-  // For now we are loading only one file.
-  if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
+  // Signed cases.
+  if constexpr (std::is_floating_point_v<eT>)
   {
     arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
 
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_f32(
         &wav, opts.TotalFrames(), samples.memptr()));
 
+    // 64 bits, 32 bits, 16 bits float.
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
-  else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
+  else if constexpr (std::is_signed_v<eT> && std::is_integral_v<eT>
+      && sizeof(eT) > 2)
   {
     arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -133,9 +127,22 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    // int64_t
+    if constexpr (sizeof(eT) > 4)
+    {
+      arma::Mat<int64_t> samplesExpand =
+          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
+      samplesExpand = samplesExpand * 4294967296;
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
+    }
+    // int32_t
+    else if constexpr (sizeof(eT) == 4)
+    {
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    }
   }
-  else if (opts.BitsPerSample() == 16)
+  else if constexpr (std::is_signed_v<eT> && std::is_integral_v<eT>
+      && sizeof(eT) <= 2)
   {
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -143,6 +150,54 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
         &wav, opts.TotalFrames(), samples.memptr()));
 
+    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+  }
+  // Non singed cases
+  else if constexpr (!std::is_signed_v<eT> && std::is_integral_v<eT>
+      && sizeof(eT) > 2)
+  {
+    arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
+        1);
+
+    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
+        &wav, opts.TotalFrames(), samples.memptr()));
+
+    // uint64_t
+    if constexpr (sizeof(eT) > 4)
+    {
+      arma::Mat<int64_t> samplesExpand =
+          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
+      samplesExpand = samplesExpand * 4294967296;
+      samplesExpand = samplesExpand + 4294967296;
+      matrix = arma::conv_to<arma::Mat<eT>>::from(samplesExpand);
+    }
+    // uint32_t
+    else if constexpr (sizeof(eT) == 4)
+    {
+      samples = samples + 2147483648;
+      matrix = arma::conv_to<arma::Mat<eT>>::from(samples);
+    }
+  }
+  else if constexpr (!std::is_signed_v<eT> && std::is_integral_v<eT>
+      && sizeof(eT) <= 2)
+  {
+    arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
+        1);
+
+    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
+        &wav, opts.TotalFrames(), samples.memptr()));
+
+     // uint8_t
+    if (sizeof(eT) == 1)
+    {
+      samples = samples / 256;
+      samples = samples + 256;
+    }
+    // uint16_t
+    else if (sizeof(eT) == 2)
+    {
+      samples = samples + 32768;
+    }
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 

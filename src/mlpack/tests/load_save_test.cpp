@@ -3794,6 +3794,35 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
   REQUIRE(opts.SampleRate() == 48000);
 }
 
+TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]")
+{
+  arma::Mat<char>    mat8Int;
+  arma::Mat<int16_t> mat16Int;
+  arma::Mat<int32_t> mat32Int;
+  arma::Mat<int64_t> mat64Int;
+
+  arma::Mat<uint8_t>  mat8UInt;
+  arma::Mat<uint16_t> mat16UInt;
+  arma::Mat<uint32_t> mat32UInt;
+  arma::Mat<uint64_t> mat64UInt;
+
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", mat8Int,  opts) == true);
+  REQUIRE(Load("voice.wav", mat16Int, opts) == true);
+  REQUIRE(Load("voice.wav", mat32Int, opts) == true);
+  REQUIRE(Load("voice.wav", mat64Int, opts) == true);
+
+  REQUIRE(Load("voice.wav", mat8UInt,  opts) == true);
+  REQUIRE(Load("voice.wav", mat16UInt, opts) == true);
+  REQUIRE(Load("voice.wav", mat32UInt, opts) == true);
+  REQUIRE(Load("voice.wav", mat64UInt, opts) == true);
+
+  REQUIRE(mat8UInt.min()  == 0);
+  REQUIRE(mat16UInt.min() == 0);
+  REQUIRE(mat32UInt.min() == 0);
+  REQUIRE(mat64UInt.min() == 0);
+}
+
 TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
 {
   arma::mat matrix;
