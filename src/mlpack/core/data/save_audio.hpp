@@ -65,7 +65,7 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  opts.TotalPCMFrameCount() = matrix.n_elem / opts.Channels();
+  opts.TotalFrames() = matrix.n_elem / opts.Channels();
 
   drwav_data_format dataFormat;
   dataFormat.container     = drwav_container_riff;
@@ -93,7 +93,7 @@ bool SaveAudio(const std::string& file,
     pcm32.clamp(-1.0f, 1.0f);
 
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalPCMFrameCount(), pcm32.memptr()));
+        opts.TotalFrames(), pcm32.memptr()));
   }
   else if (opts.BitsPerSample() == 16 && std::is_floating_point_v<eT>)
   {
@@ -104,34 +104,34 @@ bool SaveAudio(const std::string& file,
 
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalPCMFrameCount(), pcm16.memptr()));
+          opts.TotalFrames(), pcm16.memptr()));
   }
   else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
   {
     arma::Mat<int32_t> pcm = arma::conv_to<arma::Mat<int32_t>>::from(matrix);
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalPCMFrameCount(), pcm.memptr()));
+          opts.TotalFrames(), pcm.memptr()));
   }
   else if (opts.BitsPerSample() == 16 && std::is_integral_v<eT>)
   {
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(matrix);
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalPCMFrameCount(), pcm16.memptr()));
+          opts.TotalFrames(), pcm16.memptr()));
   }
 
   drwav_uninit(&wav);
 
-  if (framesWritten != opts.TotalPCMFrameCount())
+  if (framesWritten != opts.TotalFrames())
   {
     std::stringstream oss;
     oss << "SaveWav(): Frames count mismatches: expected to write "
-        << opts.TotalPCMFrameCount() << " frames but only wrote "
+        << opts.TotalFrames() << " frames but only wrote "
         << framesWritten << " frames.";
     return HandleError(oss, opts);
   }
 
   opts.TotalSamples() = matrix.n_elem;
-  opts.AudioDuration() = opts.TotalPCMFrameCount() / opts.SampleRate();
+  opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
 
   return true;
 }
