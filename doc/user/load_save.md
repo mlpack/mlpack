@@ -1220,22 +1220,20 @@ populated with the metadata of the audio file.
 
  * Loading WAV or MP3 files using a floating-point matrix type (e.g.
    arma::fmat) produces samples normalised to the range [-1.0, +1.0].
-   This is the recommended practice for most use cases.
-
- * Loading with an integral matrix type and a 16-bit depth
-   produces signed 16-bit samples in the range [-32768, +32767].
+   On the other hand loading using an integral matrix type and 16-bit depth
+   proces samples in the range [-32768, +32767].
 
  * Loading with an integral matrix type and a 32-bit depth produces signed 32-bit
-   samples in the full range [-2147483648, +2147483647]. Note that dr\_wav scales
-   all source formats up to fill the 32-bit range (e.g. a 16-bit sample is
-   left-shifted by 16 bits).  This option is only available for WAV files;
-   dr\_mp3 does not provide a 32-bit integer decoding function.
+   samples in the full range [-2147483648, +2147483647].
+
+ * Loading WAV or MP3 files with bit depth other than 16 and 32 bits is not
+   supported.
 
  * When saving to a WAV file, the output format depends on the element type
    of the matrix and the requested bit depth:
      - Floating-point matrix + 32-bit: IEEE float format, data in [-1, +1].
      - All other combinations: PCM format, storing samples as signed
-       integers whose width matches the requested bit depth (16 or 32).
+       integers whose width matches the supported bit depth (16 or 32).
 
 
 ### Audio data load/save examples
