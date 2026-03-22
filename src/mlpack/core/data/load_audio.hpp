@@ -96,7 +96,7 @@ bool LoadWAV(const std::string& file,
   size_t framesRead = 0;
   drwav wav;
 
-  if (!drwav_init_file(&wav, file.c_str(), nullptr))
+  if (!DrWavInitFile(&wav, file.c_str()))
   {
     return HandleError("LoadWAV(): Failed to read wav file. Probably a "
         "corrupted file.", opts);
@@ -112,8 +112,7 @@ bool LoadWAV(const std::string& file,
   {
     arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
 
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_f32(
-        &wav, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrWavReadF32(&wav, opts.TotalFrames(), samples.memptr());
 
     // 64 bits, 32 bits, 16 bits float.
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
@@ -124,8 +123,7 @@ bool LoadWAV(const std::string& file,
     arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
 
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
-        &wav, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrWavReadS32(&wav, opts.TotalFrames(), samples.memptr());
 
     // int64_t
     if constexpr (sizeof(eT) > 4)
@@ -147,8 +145,7 @@ bool LoadWAV(const std::string& file,
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
 
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
-        &wav, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrWavReadS16(&wav, opts.TotalFrames(), samples.memptr());
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
@@ -159,8 +156,7 @@ bool LoadWAV(const std::string& file,
     arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
 
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
-        &wav, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrWavReadS32(&wav, opts.TotalFrames(), samples.memptr());
 
     // uint64_t
     if constexpr (sizeof(eT) > 4)
@@ -184,8 +180,7 @@ bool LoadWAV(const std::string& file,
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
 
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
-        &wav, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrWavReadS16(&wav, opts.TotalFrames(), samples.memptr());
 
      // uint8_t
     if (sizeof(eT) == 1)
@@ -201,7 +196,7 @@ bool LoadWAV(const std::string& file,
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
-  drwav_uninit(&wav);
+  DrWavUninit(&wav);
 
   if (framesRead != opts.TotalFrames())
   {
@@ -227,14 +222,13 @@ bool LoadMP3(const std::string& file,
   drmp3 mp3;
   size_t framesRead = 0;
 
-  if (!drmp3_init_file(&mp3, file.c_str(), nullptr))
+  if (!DrMp3InitFile(&mp3, file.c_str()))
   {
-    return HandleError("LoadMP3(): Failed to read wav file. Probably a "
+    return HandleError("LoadMP3(): Failed to read mp3 file. Probably a "
         "corrupted file.", opts);
   }
 
-  opts.TotalFrames() =
-      static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
+  opts.TotalFrames() = DrMp3GetPCMFrameCount(&mp3);
   opts.Channels() = mp3.channels;
   opts.SampleRate() = mp3.sampleRate;
 
@@ -249,8 +243,7 @@ bool LoadMP3(const std::string& file,
   {
     arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
 
-    framesRead = static_cast<size_t>(drmp3_read_pcm_frames_f32(
-        &mp3, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrMp3ReadF32(&mp3, opts.TotalFrames(), samples.memptr());
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
@@ -259,13 +252,12 @@ bool LoadMP3(const std::string& file,
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
 
-    framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
-        &mp3, opts.TotalFrames(), samples.memptr()));
+    framesRead = DrMp3ReadS16(&mp3, opts.TotalFrames(), samples.memptr());
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
-  drmp3_uninit(&mp3);
+  DrMp3Uninit(&mp3);
 
   if (framesRead != opts.TotalFrames())
   {

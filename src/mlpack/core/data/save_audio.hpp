@@ -81,7 +81,7 @@ bool SaveAudio(const std::string& file,
     dataFormat.format = DR_WAVE_FORMAT_PCM;
 
   drwav wav;
-  if (!drwav_init_file_write(&wav, file.c_str(), &dataFormat, nullptr))
+  if (!DrWavInitFileWrite(&wav, file.c_str(), &dataFormat))
   {
     return HandleError("SaveAudio(): Failed to open WAV file for writing."
         " Please check the file path and permissions.", opts);
@@ -92,8 +92,8 @@ bool SaveAudio(const std::string& file,
     arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
     pcm32.clamp(-1.0f, 1.0f);
 
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), pcm32.memptr()));
+    framesWritten = DrWavWritePCMFrames(&wav,
+        opts.TotalFrames(), pcm32.memptr());
   }
   else if (opts.BitsPerSample() == 16 && std::is_floating_point_v<eT>)
   {
@@ -103,23 +103,23 @@ bool SaveAudio(const std::string& file,
     pcm32 *= 32767.0f;
 
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalFrames(), pcm16.memptr()));
+    framesWritten = DrWavWritePCMFrames(&wav,
+        opts.TotalFrames(), pcm16.memptr());
   }
   else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
   {
     arma::Mat<int32_t> pcm = arma::conv_to<arma::Mat<int32_t>>::from(matrix);
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalFrames(), pcm.memptr()));
+    framesWritten = DrWavWritePCMFrames(&wav,
+        opts.TotalFrames(), pcm.memptr());
   }
   else if (opts.BitsPerSample() == 16 && std::is_integral_v<eT>)
   {
     arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(matrix);
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalFrames(), pcm16.memptr()));
+    framesWritten = DrWavWritePCMFrames(&wav,
+        opts.TotalFrames(), pcm16.memptr());
   }
 
-  drwav_uninit(&wav);
+  DrWavUninit(&wav);
 
   if (framesWritten != opts.TotalFrames())
   {
