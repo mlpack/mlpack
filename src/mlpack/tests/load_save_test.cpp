@@ -3817,10 +3817,29 @@ TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]")
   REQUIRE(Load("voice.wav", mat32UInt, opts) == true);
   REQUIRE(Load("voice.wav", mat64UInt, opts) == true);
 
-  REQUIRE(mat8UInt.min()  == 0);
-  REQUIRE(mat16UInt.min() == 0);
-  REQUIRE(mat32UInt.min() == 0);
-  REQUIRE(mat64UInt.min() == 0);
+  REQUIRE(mat8Int.n_cols == 1);
+  REQUIRE(mat8Int.n_rows == 237568);
+
+  REQUIRE(mat16Int.n_cols == 1);
+  REQUIRE(mat16Int.n_rows == 237568);
+
+  REQUIRE(mat32Int.n_cols == 1);
+  REQUIRE(mat32Int.n_rows == 237568);
+
+  REQUIRE(mat64Int.n_cols == 1);
+  REQUIRE(mat64Int.n_rows == 237568);
+
+  REQUIRE(mat8UInt.n_cols == 1);
+  REQUIRE(mat8UInt.n_rows == 237568);
+
+  REQUIRE(mat16UInt.n_cols == 1);
+  REQUIRE(mat16UInt.n_rows == 237568);
+
+  REQUIRE(mat32UInt.n_cols == 1);
+  REQUIRE(mat32UInt.n_rows == 237568);
+
+  REQUIRE(mat64UInt.n_cols == 1);
+  REQUIRE(mat64UInt.n_rows == 237568);
 }
 
 TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")

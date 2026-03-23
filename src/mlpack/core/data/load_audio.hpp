@@ -132,7 +132,7 @@ bool LoadWAV(const std::string& file,
     {
       arma::Mat<int64_t> samplesExpand =
           arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand = samplesExpand * 4294967296;
+      samplesExpand *= std::pow(2, 8 * sizeof(eT));
       matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
     }
     // int32_t
@@ -150,8 +150,13 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
         &wav, opts.TotalFrames(), samples.memptr()));
 
+    if (sizeof(eT) != 2)
+    {
+      samples /= std::pow(2, 16 - 8 * sizeof(eT));
+    }
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
+
   // Non singed cases
   else if constexpr (!std::is_signed_v<eT> && std::is_integral_v<eT>
       && sizeof(eT) > 2)
@@ -167,14 +172,14 @@ bool LoadWAV(const std::string& file,
     {
       arma::Mat<int64_t> samplesExpand =
           arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand = samplesExpand * 4294967296;
-      samplesExpand = samplesExpand + 4294967296;
+      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 4);
+      samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
       matrix = arma::conv_to<arma::Mat<eT>>::from(samplesExpand);
     }
     // uint32_t
     else if constexpr (sizeof(eT) == 4)
     {
-      samples = samples + 2147483648;
+      samples += std::pow(2, 8 * sizeof(eT) - 1);
       matrix = arma::conv_to<arma::Mat<eT>>::from(samples);
     }
   }
@@ -187,17 +192,11 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-     // uint8_t
-    if (sizeof(eT) == 1)
+    if (sizeof(eT) != 2)
     {
-      samples = samples / 256;
-      samples = samples + 256;
+      samples /= std::pow(2, 16 - 8 * sizeof(eT));
     }
-    // uint16_t
-    else if (sizeof(eT) == 2)
-    {
-      samples = samples + 32768;
-    }
+    samples += std::pow(2, 16 - 8 * sizeof(eT) - 1);
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
