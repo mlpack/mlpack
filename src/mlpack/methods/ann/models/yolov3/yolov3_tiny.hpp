@@ -129,7 +129,7 @@ class YOLOv3Tiny
                const ImageOptions& opts,
                MatType& output,
                const bool drawBoxes = false,
-               const double ignoreThreshold = 0.7)
+               const double ignoreThreshold = 0.45)
   {
     MatType preprocessed;
     PreprocessImage(image, opts, preprocessed);
