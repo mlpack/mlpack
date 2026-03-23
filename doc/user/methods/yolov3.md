@@ -241,7 +241,7 @@ mlpack::YOLOv3 model;
 mlpack::Load("yolov3-320-coco-f64.bin", model);
 
 // Step 2: load the image.
-// Download: https://github.com/pjreddie/darknet/blob/master/data/dog.jpg
+// Download: https://models.mlpack.org/yolo/dog.jpg
 arma::mat inputImage, rawOutput;
 mlpack::ImageOptions opts;
 mlpack::Load("dog.jpg", inputImage, opts);
