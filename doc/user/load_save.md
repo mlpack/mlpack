@@ -1211,22 +1211,30 @@ where `l0` and `r0` are the left and right samples in frame 0.
 If an [`AudioOptions`](#audiooptions) is passed to `Load()`, it will be
 populated with the metadata of the audio file.
 
-
  * Supported audio loading formats are WAV and MP3; see
    [the table of formats](#formats) for more details.
 
+ * Loading a WAV file with an floating matrix is possible using the following types:
+   - float produces normalized samples in the range [-1.0, +1.0]
+   - double produces normalized samples in the range [-1.0, +1.0]
+
+ * Loading a WAV file with an integral matrix is possible using the following types:
+   -  int8\_t  produces samples in the range [-128, 127].
+   -  int16\_t produces samples in the range [-32768, 32767].
+   -  int32\_t produces samples in the range [-2147483648, +2147483647].
+   -  int64\_t produces samples in the range [-9223372036854775808, -9223372036854775807]
+
+ * Loading a WAV file with an unsinged integral matrix is possible using the following types:
+   -  uint8\_t  produces samples in the range [0, 255].
+   -  uint16\_t produces samples in the range [0, 65535].
+   -  uint32\_t produces samples in the range [0, 4294967295].
+   -  uint64\_t produces samples in the range [0, 18446744073709551615].
+
+ * Loading an MP3 file is possible using the following types:
+  - floating matrix type produces normalized samples in the range [-1.0, +1.0].
+  - int16\_t integral matrix type produces samples in the range [-32768, 32767].
+
  * Supported audio saving formats is WAV only.
-
- * Loading WAV or MP3 files using a floating-point matrix type (e.g.
-   arma::fmat) produces samples normalised to the range [-1.0, +1.0].
-   On the other hand loading using an integral matrix type and 16-bit depth
-   proces samples in the range [-32768, +32767].
-
- * Loading with an integral matrix type and a 32-bit depth produces signed 32-bit
-   samples in the full range [-2147483648, +2147483647].
-
- * Loading WAV or MP3 files with bit depth other than 16 and 32 bits is not
-   supported.
 
  * When saving to a WAV file, the output format depends on the element type
    of the matrix and the requested bit depth:
