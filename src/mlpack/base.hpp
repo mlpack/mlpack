@@ -83,6 +83,19 @@
   #error "Need to enable C++17 mode in your compiler"
 #endif
 
+// Armadillo does not provide an official support for unsigned / signed 8 bits
+// integers.
+// Since `char` might be represented differently on various hardware. We override
+// Armadillo definition for unsigned and signed 8 bits integer to use uint8_t /
+// int8_t respectively.
+#ifndef ARMA_U8_TYPE
+  #define ARMA_U8_TYPE uint8_t
+#endif
+
+#ifndef ARMA_S8_TYPE
+  #define ARMA_S8_TYPE  int8_t
+#endif
+
 // Now include Armadillo and traits that we use for it.
 #include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>

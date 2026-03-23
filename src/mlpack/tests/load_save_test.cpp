@@ -3796,7 +3796,7 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
 
 TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]")
 {
-  arma::Mat<char>    mat8Int;
+  arma::Mat<int8_t>  mat8Int;
   arma::Mat<int16_t> mat16Int;
   arma::Mat<int32_t> mat32Int;
   arma::Mat<int64_t> mat64Int;
