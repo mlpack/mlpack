@@ -63,7 +63,7 @@ bool Save(const std::string& filename,
       opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
   std::fstream stream;
-  if (!isImageFormat || !isAudioFormat)
+  if (!isImageFormat && !isAudioFormat)
   {
     success = OpenFile(filename, opts, false, stream);
     if (!success)
