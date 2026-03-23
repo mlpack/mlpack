@@ -17,6 +17,55 @@
 
 namespace mlpack {
 
+/**
+ * ========================================
+ *          Theorectical Concept.
+ * ========================================
+ *
+ * General MFCC algorithm concept as follows:
+ *
+ * 1. Take an audio signal.
+ * 1.1 Improve the signal by applying an Finit Impulse high pass filter.
+ * 2. Cut this signal into a set of overlapped subsignals using a sliding window
+ * function.
+ * 3. Applying Hamming window function to make the sides equal to zero.
+ * 4. Compute the Power Spectrum for each one of these subsignals.
+ * 5. Apply MelFilter banks to the 
+ * 6. Compte the log for each one of these sub signals.
+ *  -> So far we have MFE
+ * 7. Compute the FFT of the previous log by applying DCT function. Now we have
+ * MFCC
+ *
+ * Explains:
+ *
+ * 1. 
+ *
+ * 2. Step number two is required in order to preserve both time and frequency
+ * domain when we apply FFT, basically we are applying STFT (short time fourier
+ * transorm)
+ *
+ * 3. We must apply hamming window to make the signal goes to zeros on the
+ * sides to make it suitable for FFT and avoid spectral leakage.
+ *
+ * 4. Apply power spectrum, to extract the amplitude.
+ *
+ *
+ *  References:
+ *
+ *  https://www.youtube.com/watch?v=hF72sY70_IQ
+ *  https://www.youtube.com/watch?v=SJo7vPgRlBQ&t=223s&pp=ygULTUZDQyBmaWx0ZXI%3D
+ *
+ * Matrix structure of the above implementation
+ *
+ * 1. Audio signal represented as an armadillo Col.
+ * 2. Sub signals will result into an arma matrix, the cols are the sub signals
+ * and the rows are their number.
+ * 3. 
+ *
+ */
+
+
+
 template<typename eT>
 inline eT HzToMel(eT hz)
 {
@@ -61,78 +110,76 @@ inline void FinitImpulseResponseFilter(arma::Col<eT>& signal, float coeff)
 }
 
 /**
- * Split a single-column signal into overlapping windows.
- *
- * The input signal is sliced into numWindows columns of length frameLength,
- * each offset by frameStep samples from the previous.  If the signal is
- * shorter than one frame it is zero-padded.
- *
- * @return Matrix of shape (frameLength x numFrames), one frame per column.
- */
-template<typename eT>
-inline arma::Mat<eT> Framize(const arma::Col<eT>& signal,
-                             size_t frameLength,
-                             size_t frameStep)
-{
-  if (signal.n_elem < frameLength)
-  {
-    arma::Mat<eT> frames(frameLength, 1, arma::fill::zeros);
-    frames.col(0).subvec(0, signal.n_elem - 1) = signal;
-    return frames;
-  }
-
-  const size_t numFrames = (signal.n_elem - frameLength) / frameStep + 1;
-  arma::Mat<eT> frames(frameLength, numFrames);
-
-  for (size_t i = 0; i < numFrames; ++i)
-  {
-    const size_t start = i * frameStep;
-    frames.col(i) = signal.subvec(start, start + frameLength - 1);
-  }
-
-  return frames;
-}
-
-/**
- * Split a single-column signal into overlapping segments using a sliding
- * window.
+ * Split the signal into a set of overlapping windows.
  *
  * The input signal is sliced into numWindows columns of length windowLength,
- * each offset by hopSize samples from the previous.  If the signal is shorter
- * than one window it is zero-padded.
+ * each offset by windowStep samples from the previous.  If the signal is
+ * shorter than one window it is zero-padded.
+ *
+ * The signal is divided into a set of windows with identical lengths. These
+ * windows have an overlap that is defined by a step. Zero padding is
+ * applied in the case when the window is size is less than the 
+ * signal.
+ *
+ * All of these windows are conglomerated into one windows matrix
  *
  * @param signal       Input audio samples as a column vector.
  * @param windowLength Number of samples per window.
  * @param hopSize      Number of samples between the start of consecutive
  *                     windows.
- * @return Matrix of shape (windowLength x numWindows), one window per column.
+
+ * @return Matrix of shape (windowLength x numFrames), one window per column.
  */
 template<typename eT>
 inline arma::Mat<eT> SlidingWindow(const arma::Col<eT>& signal,
                                    size_t windowLength,
-                                   size_t hopSize)
+                                   size_t windowStep)
 {
   if (signal.n_elem < windowLength)
   {
-    arma::Mat<eT> windows(windowLength, 1, arma::fill::zeros);
+    arma::Mat<eT> windows(windowLength, 1);
     windows.col(0).subvec(0, signal.n_elem - 1) = signal;
     return windows;
   }
 
-  size_t numWindows = (signal.n_elem - windowLength) / hopSize + 1;
-  arma::Mat<eT> windows(windowLength, numWindows);
+  size_t numFrames = (signal.n_elem - windowLength) / windowStep + 1;
+  arma::Mat<eT> windows(windowLength, numFrames);
 
-  for (size_t i = 0; i < numWindows; ++i)
+  for (size_t i = 0; i < numFrames; ++i)
   {
-    size_t start = i * hopSize;
+    size_t start = i * windowStep;
     windows.col(i) = signal.subvec(start, start + windowLength - 1);
   }
 
   return windows;
 }
 
-
-
+/**
+ * Compute a Hamming window of the given length.
+ *
+ * The Hamming window is
+ * defined as:
+ *
+ *     w[n] = 0.54 - 0.46 * cos(2π * n / (N - 1))     n = 0, ..., N-1
+ *
+ * The window tapers the edges of each frame toward zero while keeping the
+ * center close to 1.0.  Compared to the rectangular window (no windowing),
+ * this greatly reduces spectral leakage — energy that bleeds from one
+ * frequency bin into its neighbours due to the abrupt truncation at frame
+ * boundaries.
+ *
+ * Implementation uses vectorised Armadillo operations: arma::linspace
+ * generates the index vector, arma::cos computes the cosine element-wise.
+ *
+ * @param length Window length in samples (must be >= 2).
+ * @return Column vector of length `length`.
+ */
+template<typename eT>
+inline arma::Col<eT> HammingWindow(size_t len)
+{
+  return (0.54 - (0.46 * arma::cos(2.0 * M_PI *
+     arma::linspace<arma::Col<eT>>(0, len - 1, len) / len - 1)));
+}
 
 } // namespace mlpack
 
