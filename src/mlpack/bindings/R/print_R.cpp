@@ -108,11 +108,13 @@ void PrintR(util::Params& params,
   }
   cout << "#'" << endl;
 
+  const bool is_main_method_call =
+    functionName.find("_predict") == std::string::npos &&
+    functionName.find("_classify") == std::string::npos &&
+    functionName.find("_probabilities") == std::string::npos;
   // Next print the long description as @details. But only if
   // we are not a '_predict' or '_classify' or '_probability' function
-  if (functionName.find("_predict") != std::string::npos &&
-      functionName.find("_classify") != std::string::npos &&
-      functionName.find("_probability") != std::string::npos)
+  if (is_main_method_call)
   {
     cout << "#' @details" << endl;
     cout << "#' ";
@@ -123,8 +125,9 @@ void PrintR(util::Params& params,
   cout << "#' mlpack developers" << endl;
   cout << "#'" << endl;
 
-  // Next print the example as @examples.
+  // Deal with roxygen2 export of the Rcpp-generated class
   cout << "#' @export" << endl;
+  // Next print the example as @examples.
   if (doc.example.size() != 0)
     cout << "#' @examples" << endl;
   for (size_t j = 0; j < doc.example.size(); ++j)
