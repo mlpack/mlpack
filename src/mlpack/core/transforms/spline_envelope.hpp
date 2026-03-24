@@ -46,34 +46,31 @@ inline void BuildSplineEnvelope(const ColType& h,
     ColType hSeg = conv_to<ColType>::from(
       idx.subvec(1, m - 1) - idx.subvec(0, m - 2));
     ColType alpha(m - 1);
-    alpha.zeros();
     alpha.subvec(1, m - 2) = 3 * (
       (y.subvec(2, m - 1) - y.subvec(1, m - 2)) / hSeg.subvec(1, m - 2) -
       (y.subvec(1, m - 2) - y.subvec(0, m - 3)) / hSeg.subvec(0, m - 3));
 
     // Step 2: solve tridiagonal system for spline second deriv (c).
-    typename GetDenseMatType<ColType>::type M(m, m);
-    M(0, 0) = 1;
-    M(m - 1, m - 1) = 1;
-    // Use ColType of diagonal for sub vector slicing
-    // M.diag(0).subvec(1, m - 2)
-    ColType d0 = M.diag(0);
-    d0.subvec(1, m - 2) = 2 * (hSeg.subvec(0, m - 3) + hSeg.subvec(1, m - 2));
-    M.diag(0) = d0;
-    // M.diag(-1).subvec(0, m - 3)
-    ColType d_m1 = M.diag(-1);
-    d_m1.subvec(0, m - 3) = hSeg.subvec(0, m - 3);
-    M.diag(-1) = d_m1;
-    // M.diag(+1).subvec(1, m - 2)
-    ColType d_p1 = M.diag(+1);
-    d_p1.subvec(1, m - 2) = hSeg.subvec(1, m - 2);
-    M.diag(+1) = d_p1;
+    ColType l(m), mu(m), z(m);
+    l[0]  = eT(1);
+    mu[0] = eT(0);
+    z[0]  = eT(0);
 
-    ColType rhs(m);
-    rhs.subvec(1, m - 2) = alpha.subvec(1, m - 2);
+    for (size_t i = 1; i < m - 1; ++i)
+    {
+      l[i]  = eT(2) * (idx[i + 1] - idx[i - 1]) - hSeg[i - 1] * mu[i - 1];
+      mu[i] = hSeg[i] / l[i];
+      z[i]  = (alpha[i] - hSeg[i - 1] * z[i - 1]) / l[i];
+    }
 
-    const bool ok = solve(c, M, rhs);
-    if (!ok) c.zeros();  // fallback
+    l[m - 1] = eT(1);
+    z[m - 1] = eT(0);
+    c[m - 1] = eT(0);
+
+    for (arma::sword j = static_cast<arma::sword>(m) - 2; j >= 0; --j)
+    {
+      c[j] = z[j] - mu[j] * c[j + 1];
+    }
   }
   // Step 3: evaluate spline on each segment and fill envelope values
   for (size_t seg = 0; seg < m - 1; ++seg)
