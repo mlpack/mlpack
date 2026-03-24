@@ -118,8 +118,7 @@ bool LoadWAV(const std::string& file,
     // 64 bits, 32 bits, 16 bits float.
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
-  else if constexpr (std::is_signed_v<eT> && std::is_integral_v<eT>
-      && sizeof(eT) > 2)
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) > 2)
   {
     arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -132,17 +131,24 @@ bool LoadWAV(const std::string& file,
     {
       arma::Mat<int64_t> samplesExpand =
           arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand *= std::pow(2, 8 * sizeof(eT));
+      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 4);
+      if constexpr (!std::is_signed_v<eT>)
+      {
+        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
+      }
       matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
     }
     // int32_t
     else if constexpr (sizeof(eT) == 4)
     {
+      if constexpr (!std::is_signed_v<eT>)
+      {
+        samples += std::pow(2, 8 * sizeof(eT) - 1);
+      }
       matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
     }
   }
-  else if constexpr (std::is_signed_v<eT> && std::is_integral_v<eT>
-      && sizeof(eT) <= 2)
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) <= 2)
   {
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -154,49 +160,10 @@ bool LoadWAV(const std::string& file,
     {
       samples /= std::pow(2, 16 - 8 * sizeof(eT));
     }
-    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
-  }
-
-  // Non singed cases
-  else if constexpr (!std::is_signed_v<eT> && std::is_integral_v<eT>
-      && sizeof(eT) > 2)
-  {
-    arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
-        1);
-
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
-        &wav, opts.TotalFrames(), samples.memptr()));
-
-    // uint64_t
-    if constexpr (sizeof(eT) > 4)
+    if constexpr (!std::is_signed_v<eT>)
     {
-      arma::Mat<int64_t> samplesExpand =
-          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 4);
-      samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
-      matrix = arma::conv_to<arma::Mat<eT>>::from(samplesExpand);
+      samples += std::pow(2, 16 - 8 * sizeof(eT) - 1);
     }
-    // uint32_t
-    else if constexpr (sizeof(eT) == 4)
-    {
-      samples += std::pow(2, 8 * sizeof(eT) - 1);
-      matrix = arma::conv_to<arma::Mat<eT>>::from(samples);
-    }
-  }
-  else if constexpr (!std::is_signed_v<eT> && std::is_integral_v<eT>
-      && sizeof(eT) <= 2)
-  {
-    arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
-        1);
-
-    framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
-        &wav, opts.TotalFrames(), samples.memptr()));
-
-    if (sizeof(eT) != 2)
-    {
-      samples /= std::pow(2, 16 - 8 * sizeof(eT));
-    }
-    samples += std::pow(2, 16 - 8 * sizeof(eT) - 1);
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
 
@@ -244,7 +211,7 @@ bool LoadMP3(const std::string& file,
     opts.BitsPerSample() = 32;
   }
 
-  if (opts.BitsPerSample() == 32)
+  if constexpr (std::is_floating_point_v<eT>)
   {
     arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
 
@@ -253,7 +220,7 @@ bool LoadMP3(const std::string& file,
 
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
-  else if (opts.BitsPerSample() == 16)
+  else if constexpr (std::is_integral_v<eT>)
   {
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -261,8 +228,49 @@ bool LoadMP3(const std::string& file,
     framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
         &mp3, opts.TotalFrames(), samples.memptr()));
 
-    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    // int64_t
+    if constexpr (sizeof(eT) > 4)
+    {
+      arma::Mat<int64_t> samplesExpand =
+          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
+      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 16);
+      if (!std::is_signed_v<eT>)
+      {
+        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
+      }
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
+    }
+    // int32_t
+    else if constexpr (sizeof(eT) == 4)
+    {
+      arma::Mat<int32_t> samplesExpand =
+          arma::conv_to<arma::Mat<int32_t>>::from(std::move(samples));
+      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 16);
+      if (!std::is_signed_v<eT>)
+      {
+        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
+      }
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    }
+    else if constexpr (sizeof(eT) == 2)
+    {
+      if (!std::is_signed_v<eT>)
+      {
+        samples += std::pow(2, 8 * sizeof(eT) - 1);
+      }
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    }
+    else if constexpr (sizeof(eT) == 1)
+    {
+      samples /= std::pow(2, 16 - 8 * sizeof(eT));
+      if (!std::is_signed_v<eT>)
+      {
+        samples += std::pow(2, 8 * sizeof(eT) - 1);
+      }
+      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    }
   }
+
 
   drmp3_uninit(&mp3);
 
