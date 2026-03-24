@@ -14,7 +14,7 @@ periodic signal:
 
 #### `EMD()` Parameters
 
-- `EMD(signal, imfs, residue, maxImfs, maxSiftIter, tol)`
+- `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
    * `signal` is a [column vector](../../matrices.md) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
@@ -31,8 +31,8 @@ periodic signal:
 
    * `tol` (`double`) is the stopping tolerance used on sifting iterations.
 
-   * ***NOTES:*** the original signal can be reconstructed as 
-     `signal ~ Σ_k imfs.col(k) + residue`
+   * ***NOTES:*** the original signal can be reconstructed as the sum of the
+      imfs and residue. 
 
    * The stopping criterion is based on the normalized mean envelope magnitude.
 
@@ -56,10 +56,10 @@ const double tMax = datum::pi;
 arma::vec time = linspace(tMin, tMax, N);
 
 // signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
+// see figure above 
 arma::vec signal =
     sin( 20.0 * time % (1.0 + 0.2 * time) ) +
-    square(T) +
-    sin(13.0 * time);
+    square(time) + sin(13.0 * time);
 
 arma::mat imfs;
 arma::vec residue;
