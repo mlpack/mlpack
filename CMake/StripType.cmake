@@ -17,6 +17,10 @@ function(strip_type PROGRAM_MAIN_FILE)
       "${MAIN_FILE}")
   string(REGEX MATCHALL "PARAM_MODEL_OUT\\([A-Za-z_<>]*," MODELS_OUT "${MAIN_FILE}")
 
+  message(STATUS ${MODELS_IN})
+  message(STATUS ${MODELS_IN_REQ})
+  message(STATUS ${MODELS_OUT})
+
   string(REGEX REPLACE "PARAM_MODEL_IN\\(" "" MODELS_IN_STRIP1 "${MODELS_IN}")
   string(REGEX REPLACE "," "" MODELS_IN_STRIP2 "${MODELS_IN_STRIP1}")
   string(REGEX REPLACE "[<>,]" "" MODELS_IN_SAFE_STRIP2 "${MODELS_IN_STRIP1}")
