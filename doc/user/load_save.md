@@ -1095,7 +1095,7 @@ number of channels are unavailable after loading!).
 ```c++
 // See https://www.mlpack.org/static/img/numfocus-logo.png.
 arma::mat image;
-mlpack::Load("numfocus-logo.png", image, PNG);
+mlpack::Load("numfocus-logo.png", image, mlpack::PNG);
 
 // If we wanted image metadata, we would need to pass an ImageOptions.  See the
 // next example.
@@ -1251,7 +1251,7 @@ Load a single audio file, but don't store the metadata
 ```c++
 // See https://datasets.mlpack.org/sine.wav
 arma::mat audio;
-mlpack::Load("sine.wav", audio, WAV);
+mlpack::Load("sine.wav", audio, mlpack::WAV);
 
 // If we wanted audio metadata, we would need to pass an AudioOptions.  See the
 // next example.
@@ -1264,7 +1264,7 @@ Load and save a single audio file:
 
 ```c++
 // See https://datasets.mlpack.org/fifths.mp3
-mlpack::AudioOptions opts;
+mlpack::AudioOptions opts, opts2;
 opts.Fatal() = true;
 arma::mat matrix;
 mlpack::Load("fifths.mp3", matrix, opts /* format autodetected */);
@@ -1278,7 +1278,8 @@ std::cout << "Audio Duration: " << opts.AudioDuration() << std::endl;
 std::cout << "Audio Channels: " << opts.Channels() << std::endl;
 std::cout << "Sampling Rate: "  << opts.SampleRate() << std::endl;
 
-mlpack::Save("myFifths.wav", matrix, opts);
+// opts will be populated with mp3 filetype, we need to use another options
+mlpack::Save("myFifths.wav", matrix, opts2);
 ```
 
 ## mlpack models and objects
