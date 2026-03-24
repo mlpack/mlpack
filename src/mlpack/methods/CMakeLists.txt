@@ -58,6 +58,7 @@ add_julia_binding(logistic_regression logistic_regression)
 add_go_binding(logistic_regression logistic_regression)
 add_r_binding(logistic_regression logistic_regression "include")
 add_r_binding(logistic_regression logistic_regression_train "skip")
+add_r_binding(logistic_regression logistic_regression_classify "skip")
 add_r_binding(logistic_regression logistic_regression_probabilities "skip")
 add_markdown_docs(logistic_regression logistic_regression
   "cli;python;julia;go;r" "python")
