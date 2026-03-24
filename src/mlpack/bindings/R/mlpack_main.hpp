@@ -97,7 +97,7 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 // TODO: Fill these in
 #define IMPORT_EXT_LIB(...) std::string(" ")
 #define IMPORT_SPLIT(...) std::string(" ")
-#define IMPORT_THIS(...) std::string(" ")
+#define IMPORT_THIS(...) std::string("#' library(mlpack)")
 #define GET_DATASET(...) std::string(" ")
 #define SPLIT_TRAIN_TEST(...) std::string(" ")
 #define CREATE_OBJECT(...) std::string(" ")

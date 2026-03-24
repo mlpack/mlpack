@@ -108,11 +108,17 @@ void PrintR(util::Params& params,
   }
   cout << "#'" << endl;
 
-  // Next print the long description as @details.
-  cout << "#' @details" << endl;
-  cout << "#' ";
-  cout << util::HyphenateString(doc.longDescription(), "#' ") << endl;
-  cout << "#'" << endl;
+  // Next print the long description as @details. But only if
+  // we are not a '_predict' or '_classify' or '_probability' function
+  if (functionName.find("_predict") != std::string::npos &&
+      functionName.find("_classify") != std::string::npos &&
+      functionName.find("_probability") != std::string::npos)
+  {
+    cout << "#' @details" << endl;
+    cout << "#' ";
+    cout << util::HyphenateString(doc.longDescription(), "#' ") << endl;
+    cout << "#'" << endl;
+  }
   cout << "#' @author" << endl;
   cout << "#' mlpack developers" << endl;
   cout << "#'" << endl;

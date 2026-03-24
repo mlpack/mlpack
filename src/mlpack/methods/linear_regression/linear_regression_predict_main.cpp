@@ -34,8 +34,7 @@ BINDING_SHORT_DESC("Predictions from model.");
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE(
-  CALL_METHOD("model", "predict", "test", "X_test"));
+BINDING_EXAMPLE(IMPORT_THIS("linear_regression"));
 
 PARAM_MODEL_IN_REQ(LinearRegression<>, "input_model", "Existing "
     "LinearRegression model to use.", "m");
