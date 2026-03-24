@@ -1644,7 +1644,7 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
   lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
   verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
->>> predictions = lars_model.predict(test=X_test)
+>>> from mlpack import Lars
 ```
 
 ### Methods
@@ -2027,8 +2027,8 @@ This implementation of logistic regression does not support the general multi-cl
   print_training_accuracy=False, step_size=0.01, tolerance=1e-10,
   verbose=False)
 >>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
+>>> from mlpack import LogisticRegression
+>>> from mlpack import LogisticRegression
 ```
 
 ### Methods
@@ -3575,8 +3575,8 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
   iterations=1000, tolerance=1e-10, verbose=False,
   weak_learner='decision_stump')
 >>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
+>>> from mlpack import Adaboost
+>>> from mlpack import Adaboost
 ```
 
 ### Methods
@@ -3671,7 +3671,7 @@ An implementation of simple linear regression and simple ridge regression using 
 >>> lr = LinearRegression(check_input_matrices=False, copy_all_inputs=False,
   lambda_=0, verbose=False)
 >>> output_model = lr.fit(training=X_train, training_responses=y_train)
->>> output_predictions = model.predict(test=X_test)
+>>> from mlpack import LinearRegression
 ```
 
 ### Methods
