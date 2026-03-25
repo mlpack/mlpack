@@ -25,5 +25,6 @@ documented yet.*
  * [Imputation](core/imputation.md): replace missing values in a dataset with
    imputed values using a variety of imputation strategies.
   
- * [Signal preprocessing](core/transforms/emd.md): extract predictive features
-   from time series signals for training and inference, including EMD. 
+ * [Signal preprocessing](core/transforms/signal_preprocessing.md): extract 
+  predictive features from time series signals for training and inference, 
+  including EMD.
