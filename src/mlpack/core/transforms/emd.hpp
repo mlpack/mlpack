@@ -72,7 +72,7 @@ inline size_t CountZeroCrossings(const ColType& h)
   const size_t N = h.n_elem;
   if (N < 2)
     return 0;
-  
+
   // Zero crossing when adjacent samples have opposite sign
   return accu((h.subvec(0, N - 2) % h.subvec(1, N - 1)) < eT(0));
 }
