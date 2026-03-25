@@ -39,6 +39,7 @@
 #include "imputer.hpp"
 #include "is_naninf.hpp"
 #include "matrix_options.hpp"
+#include "mfcc.hpp"
 #include "normalize_labels.hpp"
 #include "one_hot_encoding.hpp"
 #include "split_data.hpp"
