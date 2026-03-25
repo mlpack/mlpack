@@ -9,7 +9,6 @@
 #  * R_CPP_IN: path of the r_method.cpp.in file.
 #  * R_CPP_OUT: name of the output .cpp file.
 include("${SOURCE_DIR}/CMake/StripType.cmake")
-message(STATUS "program main file: ${PROGRAM_MAIN_FILE}")
 strip_type("${PROGRAM_MAIN_FILE}")
 
 # Extract the required part from *main.cpp.
@@ -17,10 +16,7 @@ strip_type("${PROGRAM_MAIN_FILE}")
 string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE
     "${PROGRAM_MAIN_FILE}")
 
-message(STATUS "model file type: ${MODEL_FILE}")
 file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
-message(STATUS "model file type: ${MODEL_FILE_TYPE}")
-message(STATUS "model safe types: ${MODEL_SAFE_TYPES}")
 if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
   file(APPEND "${MODEL_FILE}" "\"${MODEL_SAFE_TYPES}\"\n")
   # Now, generate the implementation of the functions we need.
@@ -29,9 +25,7 @@ if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
   # Append content to the list.
   if (${NUM_MODEL_TYPES} GREATER 0)
     math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
-    message(STATUS "program model ptr impl: ${PROGRAM_MODEL_PTR_IMPL}, file ${PROGRAM_MAIN_FILE}")
     if (NOT PROGRAM_MODEL_PTR_IMPL STREQUAL "skip")
-      message(STATUS "adding model for ${PROGRAM_MAIN_FILE}")
       foreach (INDEX RANGE ${LOOP_MAX})
         list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
         list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
