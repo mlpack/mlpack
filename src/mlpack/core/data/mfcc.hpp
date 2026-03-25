@@ -64,20 +64,16 @@ namespace mlpack {
  *
  */
 
-
-
 template<typename eT>
 inline eT HzToMel(eT hz)
 {
-  return static_cast<eT>(2595.0) * std::log10(static_cast<eT>(1.0) +
-      hz / static_cast<eT>(700.0));
+  return 2595 * std::log10(1.0 + hz / 700.0);
 }
 
 template<typename eT>
 inline eT MelToHz(eT mel)
 {
-  return static_cast<eT>(700.0) * (std::pow(static_cast<eT>(10.0),
-      mel / static_cast<eT>(2595.0)) - static_cast<eT>(1.0));
+  return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
 }
 
 inline size_t NextPowerOf2(size_t n)
@@ -157,8 +153,7 @@ inline arma::Mat<eT> SlidingWindow(const arma::Col<eT>& signal,
 /**
  * Compute a Hamming window of the given length.
  *
- * The Hamming window is
- * defined as:
+ * The Hamming window is defined as:
  *
  *     w[n] = 0.54 - 0.46 * cos(2π * n / (N - 1))     n = 0, ..., N-1
  *
@@ -167,9 +162,6 @@ inline arma::Mat<eT> SlidingWindow(const arma::Col<eT>& signal,
  * this greatly reduces spectral leakage — energy that bleeds from one
  * frequency bin into its neighbours due to the abrupt truncation at frame
  * boundaries.
- *
- * Implementation uses vectorised Armadillo operations: arma::linspace
- * generates the index vector, arma::cos computes the cosine element-wise.
  *
  * @param length Window length in samples (must be >= 2).
  * @return Column vector of length `length`.
@@ -180,6 +172,106 @@ inline arma::Col<eT> HammingWindow(size_t len)
   return (0.54 - (0.46 * arma::cos(2.0 * M_PI *
      arma::linspace<arma::Col<eT>>(0, len - 1, len) / len - 1)));
 }
+
+
+/**
+ * Compute the one-sided power spectrum of each window using arma::fft().
+ *
+ * Each column of `windows` is zero-padded to `nFFT` length, transformed via
+ * arma::fft(), and the squared magnitude of the first (nFFT/2 + 1) bins is
+ * kept.  The result has shape ((nFFT/2 + 1) x numFrames).
+ */
+template<typename eT>
+inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
+    size_t nFFT)
+{
+  // move the following three lines outside the function
+  size_t numBins = nFFT / 2 + 1;
+  size_t numWindows = windows.n_cols;
+  arma::Mat<eT> power(numBins, numWindows);
+
+  for (size_t i = 0; i < numWindows; ++i)
+  {
+    // Zero-pad window into a real vector of length nFFT, then FFT.
+    // @rcurtin, is there any more efficient way to avoid the copy ? maybe
+    // modify windows to be all with identical size to nFFT?
+    arma::Col<eT> padded(nFFT);
+    padded.subvec(0, windows.n_rows - 1) = windows.col(i);
+
+    arma::Col<std::complex<eT>> spectrum = arma::fft(padded);
+
+    // |X[k]|² for the one-sided spectrum, vectorised.
+    arma::Col<std::complex<eT>> oneSided = spectrum.subvec(0, numBins - 1);
+    power.col(i) = arma::real(oneSided % arma::conj(oneSided));
+  }
+}
+
+/**
+ * Build a mel-scaled triangular filterbank matrix.
+ *
+ * Places (numFilters + 2) points uniformly on the mel scale between lowFreq
+ * and highFreq, converts to Hz, maps to FFT bin indices, and constructs
+ * overlapping triangular filters.  Adjacent filters overlap at their half-power
+ * points so that the entire frequency range is covered without gaps.
+ *
+ * @return Matrix of shape (numFilters x (nFFT/2 + 1)).
+ */
+template<typename eT>
+inline arma::Mat<eT> MelFilterbank(size_t numFilters,
+                                   size_t nFFT,
+                                   size_t sampleRate,
+                                   float lowFreq,
+                                   float highFreq)
+{
+  size_t numBins = nFFT / 2 + 1;
+  eT melLow = HzToMel(lowFreq);
+  eT melHigh = HzToMel(highFreq);
+
+  size_t numPoints = numFilters + 2;
+  arma::Col<eT> melPoints = arma::linspace<arma::Col<eT>>(melLow, melHigh,
+      numPoints);
+
+  // Convert mel points → Hz → FFT bin index.
+  arma::Col<size_t> binIndices(numPoints);
+  for (size_t i = 0; i < numPoints; ++i)
+  {
+    eT hz = MelToHz(melPoints[i]);
+    binIndices[i] = static_cast<size_t>(std::floor((nFFT + 1) * hz / sampleRate));
+  }
+
+  // Build overlapping triangular filters.
+  arma::Mat<eT> filterbank(numFilters, numBins);
+
+  for (size_t m = 0; m < numFilters; ++m)
+  {
+    size_t left   = binIndices[m];
+    size_t center = binIndices[m + 1];
+    size_t right  = binIndices[m + 2];
+
+    // Rising slope: left → center.
+    if (center > left)
+    {
+      for (size_t k = left; k <= center && k < numBins; ++k)
+      {
+        filterbank(m, k) = (k - left) / (center - left);
+      }
+    }
+
+    // Falling slope: center → right.
+    if (right > center)
+    {
+      for (size_t k = center; k <= right && k < numBins; ++k)
+      {
+        filterbank(m, k) = static_cast<eT>(right - k) /
+                           static_cast<eT>(right - center);
+      }
+    }
+  }
+
+  return filterbank;
+}
+
+
 
 } // namespace mlpack
 
