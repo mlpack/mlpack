@@ -108,13 +108,15 @@ void PrintR(util::Params& params,
   }
   cout << "#'" << endl;
 
-  const bool is_main_method_call =
-    functionName.find("_predict") == std::string::npos &&
-    functionName.find("_classify") == std::string::npos &&
-    functionName.find("_probabilities") == std::string::npos;
+  const bool isMainMethodCall =
+    (functionName.find("_predict") == std::string::npos &&
+     functionName.find("_classify") == std::string::npos &&
+     functionName.find("_probabilities") == std::string::npos &&
+     functionName.find("gmm_generate") == std::string::npos) ||
+    functionName == std::string("linear_regression");
   // Next print the long description as @details. But only if
   // we are not a '_predict' or '_classify' or '_probability' function
-  if (is_main_method_call)
+  if (isMainMethodCall)
   {
     cout << "#' @details" << endl;
     cout << "#' ";
@@ -245,7 +247,7 @@ void PrintR(util::Params& params,
   }
 
   // If it is a trained / fitted object, class it.
-  if (is_main_method_call &&
+  if (isMainMethodCall &&
       functionName.find("preprocess_") == std::string::npos)
   {
     // Add binding name as class to the output.
