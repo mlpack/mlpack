@@ -76,6 +76,19 @@ inline eT MelToHz(eT mel)
   return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
 }
 
+/**
+ * It would be faster for FFT to use a window size that is pair and dividable
+ * by 2. Since we have a window size of 25 ms. This will produce a different
+ * samples sizes with different sampling frequencies, and we might ends up with
+ * arbitrary non easily dividable window size.
+ *
+ * Therefore the objective of this function is to multiply by 2 using bitwise
+ * operation as long as we are < n.
+ *
+ * @param n window size, number of samples generated from a specific window
+ * (default 25ms).
+ *
+ */
 inline size_t NextPowerOf2(size_t n)
 {
   size_t p = 1;
@@ -119,35 +132,33 @@ inline void FinitImpulseResponseFilter(arma::Col<eT>& signal, float coeff)
  *
  * All of these windows are conglomerated into one windows matrix
  *
- * @param signal       Input audio samples as a column vector.
+ * @param signal Input audio samples as a column vectors
+ * @param window Output audio signal converted into a set of sliding windows.
  * @param windowLength Number of samples per window.
- * @param hopSize      Number of samples between the start of consecutive
- *                     windows.
-
- * @return Matrix of shape (windowLength x numFrames), one window per column.
+ * @param windowStep Number of samples between the start of consecutive windows.
  */
 template<typename eT>
-inline arma::Mat<eT> SlidingWindow(const arma::Col<eT>& signal,
-                                   size_t windowLength,
-                                   size_t windowStep)
+inline void SlidingWindow(const arma::Col<eT>& signal,
+                          arma::Mat<eT>& windows,
+                          size_t windowLength,
+                          size_t windowStep)
 {
   if (signal.n_elem < windowLength)
   {
-    arma::Mat<eT> windows(windowLength, 1);
+    windows.set_size(windowLength, 1);
     windows.col(0).subvec(0, signal.n_elem - 1) = signal;
-    return windows;
   }
-
-  size_t numFrames = (signal.n_elem - windowLength) / windowStep + 1;
-  arma::Mat<eT> windows(windowLength, numFrames);
-
-  for (size_t i = 0; i < numFrames; ++i)
+  else
   {
-    size_t start = i * windowStep;
-    windows.col(i) = signal.subvec(start, start + windowLength - 1);
-  }
+    size_t numWindows = (signal.n_elem - windowLength) / windowStep + 1;
+    windows.set_size(windowLength, numWindows);
 
-  return windows;
+    for (size_t i = 0; i < numWindows; ++i)
+    {
+      size_t start = i * windowStep;
+      windows.col(i) = signal.subvec(start, start + windowLength - 1);
+    }
+  }
 }
 
 /**
@@ -175,34 +186,34 @@ inline arma::Col<eT> HammingWindow(size_t len)
 
 
 /**
- * Compute the one-sided power spectrum of each window using arma::fft().
+ * Compute the first part power spectrum of each window using arma::fft().
  *
  * Each column of `windows` is zero-padded to `nFFT` length, transformed via
- * arma::fft(), and the squared magnitude of the first (nFFT/2 + 1) bins is
- * kept.  The result has shape ((nFFT/2 + 1) x numFrames).
+ * arma::fft(), and the energy represented by squared magnitude of the first bins
+ * is kept.
  */
 template<typename eT>
 inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
     size_t nFFT)
 {
-  // move the following three lines outside the function
-  size_t numBins = nFFT / 2 + 1;
   size_t numWindows = windows.n_cols;
-  arma::Mat<eT> power(numBins, numWindows);
+  size_t numBins = nFFT / 2 + 1;
+  power.set_size(numBins, numWindows);
 
   for (size_t i = 0; i < numWindows; ++i)
   {
-    // Zero-pad window into a real vector of length nFFT, then FFT.
-    // @rcurtin, is there any more efficient way to avoid the copy ? maybe
-    // modify windows to be all with identical size to nFFT?
+    // @rcurtin, is there any more efficient way to avoid the copy ? (without move?
+    // This zero padding is required by FFT to keep it fast, since the window
+    // size might be arbitrary (depending on the sampling frequency).
     arma::Col<eT> padded(nFFT);
     padded.subvec(0, windows.n_rows - 1) = windows.col(i);
 
     arma::Col<std::complex<eT>> spectrum = arma::fft(padded);
 
-    // |X[k]|² for the one-sided spectrum, vectorised.
-    arma::Col<std::complex<eT>> oneSided = spectrum.subvec(0, numBins - 1);
-    power.col(i) = arma::real(oneSided % arma::conj(oneSided));
+    // Get the power by doing element wise multiplication, note that the
+    // spectrum is mirrored so we are getting the first part.
+    arma::Col<std::complex<eT>> firstPart = spectrum.subvec(0, numBins - 1);
+    power.col(i) = arma::real(firstPart % arma::conj(firstPart));
   }
 }
 
