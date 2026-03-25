@@ -77,8 +77,7 @@ for (size_t k = 0; k < numToShow; ++k)
   arma::cx_vec spectrum = arma::fft(imfs.col(k));
   // Use only the first half of the spectrum
   arma::vec mag = arma::abs(spectrum.rows(0, spectrum.n_elem / 2));
-  arma::uword idx = 0;
-  mag.index_max(idx);
+  arma::uword idx = mag.index_max();
   const double peakHz = (double) idx * fs / spectrum.n_elem;
   std::cout << "IMF " << k << " peak freq: " << peakHz << " Hz" << std::endl;
 }
