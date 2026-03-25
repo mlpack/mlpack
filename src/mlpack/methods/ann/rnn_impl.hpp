@@ -514,18 +514,38 @@ void RNN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
+  // Note: if you define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING, you had
+  // better ensure that every layer you are serializing has had
+  // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+  // more information.
   #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
       !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
-    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
-    // better ensure that every layer you are serializing has had
-    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
-    // more information.
-    throw std::runtime_error("Cannot serialize a neural network unless "
-        "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-        "build options\" section of the README for more information.");
+    if (std::is_same_v<MatType, arma::mat>)
+    {
+      throw std::runtime_error("RNN::serialize(): Cannot serialize"
+        " a neural network with type `arma::mat` if "
+        "`MLPACK_ENABLE_ANN_SERIALIZATION` is not defined.");
+    }
 
     (void) ar;
-  #else
+  #endif
+
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+    if (std::is_same_v<MatType, arma::fmat>)
+    {
+      throw std::runtime_error("RNN::serialize(): Cannot serialize"
+        " a neural network with type `arma::fmat` if "
+        "`MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` is not defined.");
+    }
+
+    (void) ar;
+  #endif
+
+  #if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+      defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) || \
+      defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+
     ar(CEREAL_NVP(bpttSteps));
     ar(CEREAL_NVP(single));
     ar(CEREAL_NVP(network));
