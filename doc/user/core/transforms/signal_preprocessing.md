@@ -9,8 +9,8 @@ in nonlinear and nonstationary problems.
 <!-- TODO: add EEMD and CEEMDAN -->
 
 ## EMD 
-The `EMD()` function can be used to extract IMFs from a uniformly sample 
-periodic signal:
+The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
+from a uniformly sampled periodic signal:
 
 #### `EMD()` Parameters
 
@@ -31,17 +31,26 @@ periodic signal:
 
    * `tol` (`double`) is the stopping tolerance used on sifting iterations.
 
-   * ***NOTES:*** the original signal can be reconstructed as the sum of the
-      imfs and residue. 
+   ***NOTES:***
+
+   * The original signal can be reconstructed as the sum of the imfs and residue. 
 
    * The stopping criterion is based on the normalized mean envelope magnitude.
 
    * Sifting will terminate when zero-crossings and extrema are equal or
      differing by at most one. Specifically, the S-number is set to S=1.
+    
+   * A smaller tolerance sets a stricter stopping criterion. The algorithm will
+     terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
+     whichever occurs first.
 
-*Original signal(a);*
-*Original signal with envelopes about the local minima and maxima(b)*
-*The first IMF extracted from the original signal via sifting(c)*
+The figures below show the signal decomposition process with EMD:
+
+ * (a) original signal;
+
+ * (b) original signal with envelopes about the local minima and maxima;
+
+ * (c) the first IMF extracted from the original signal via sifting.
 
 <p align="center">
   <img src="../../../img/emd_visualization.svg" alt="signal with envelopes">
@@ -82,11 +91,6 @@ for (size_t k = 0; k < numToShow; ++k)
   std::cout << "IMF " << k << " peak freq: " << peakHz << " Hz" << std::endl;
 }
 ```
-
-***NOTE*** 
-- A smaller tolerance sets a stricter stopping criterion. The algorithm will
-terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
-whichever occurs first.
 
 #### See also:
 
