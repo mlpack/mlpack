@@ -72,14 +72,9 @@ inline size_t CountZeroCrossings(const ColType& h)
   const size_t N = h.n_elem;
   if (N < 2)
     return 0;
-
-  const ColType left  = h.subvec(0, N - 2);
-  const ColType right = h.subvec(1, N - 1);
-
+  
   // Zero crossing when adjacent samples have opposite sign
-  const arma::uvec crossings = find((left % right) < eT(0));
-
-  return crossings.n_elem;
+  return accu((h.subvec(0, N - 2) % h.subvec(1, N - 1)) < eT(0));
 }
 
 // sifting step extracts mean envelope and produces next h
@@ -114,9 +109,9 @@ inline void SiftingStep(ColType& h,
 template<typename ColType>
 inline bool NextImf(const ColType& signal,
                      ColType& imf,
+                     double& imfNormOut,
                      const size_t maxSiftIter = 50,
-                     const double tolMean = 1e-3,
-                     double& imfNormOut = 0.0)
+                     const double tolMean = 1e-3)
 {
   imf = signal;
   ColType meanEnv(signal.n_elem);
@@ -148,6 +143,7 @@ inline bool NextImf(const ColType& signal,
   imfNormOut = norm(imf, 2);
   return true;
 }
+
 /**
  * Empirical Mode Decomposition on a 1D signal.
  *
@@ -177,6 +173,9 @@ inline void EMD(const ColType& signal,
                 const size_t maxSiftIter = 50,
                 const double tol = 1e-3)
 {
+  if (signal.n_cols > 1)
+    throw std::runtime_error("EMD(): given signal must have only one column!");
+
   const size_t N = signal.n_elem;
   imfs.reset();
   residue = signal;
@@ -194,11 +193,11 @@ inline void EMD(const ColType& signal,
     ColType imf;
     double imfNorm;
     // Get next IMF via sifting
-    if (!NextImf(residue, imf, maxSiftIter, tol, imfNorm))
+    if (!NextImf(residue, imf, imfNorm, maxSiftIter, tol))
       break;
 
     // stop if IMF is negligible compared to original signal
-    if (imfNorm < std::numeric_limits<double>::epsilon() * signalNorm)
+    if (imfNorm < 1e-8 * signalNorm)
       break;
 
     imfList.push_back(std::move(imf));

@@ -16,7 +16,6 @@
 using namespace mlpack;
 using namespace arma;
 
-
 TEST_CASE("EMDSingleTone", "[EMD]")
 {
   const arma::uword N = 50000;
