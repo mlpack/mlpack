@@ -16,25 +16,23 @@ strip_type("${PROGRAM_MAIN_FILE}")
 string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE
     "${PROGRAM_MAIN_FILE}")
 
-file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
-if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
-  file(APPEND "${MODEL_FILE}" "\"${MODEL_SAFE_TYPES}\"\n")
-  # Now, generate the implementation of the functions we need.
-  set(MODEL_PTR_IMPLS "")
-  list(LENGTH MODEL_TYPES NUM_MODEL_TYPES)
-  # Append content to the list.
-  if (${NUM_MODEL_TYPES} GREATER 0)
-    math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
-    if (NOT PROGRAM_MODEL_PTR_IMPL STREQUAL "skip")
-      foreach (INDEX RANGE ${LOOP_MAX})
-        list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
-        list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
+# Now, generate the implementation of the functions we need.
+set(MODEL_PTR_IMPLS "")
+list(LENGTH MODEL_TYPES NUM_MODEL_TYPES)
+# Append content to the list.
+if (${NUM_MODEL_TYPES} GREATER 0)
+  math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
+  if (NOT PROGRAM_MODEL_PTR_IMPL STREQUAL "skip")
+    message(STATUS "Emitting definition for ${PROGRAM_MODEL_PTR_IMPL} (${PROGRAM_MAIN_FILE})")
+    foreach (INDEX RANGE ${LOOP_MAX})
+      list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
+      list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)
 
-        # Define typedef for the model.
-        set(MODEL_PTR_TYPEDEF "${MODEL_PTR_TYPEDEF}Rcpp::XPtr<${MODEL_TYPE}>")
+      # Define typedef for the model.
+      set(MODEL_PTR_TYPEDEF "${MODEL_PTR_TYPEDEF}Rcpp::XPtr<${MODEL_TYPE}>")
 
-        # Generate the implementation.
-        set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
+      # Generate the implementation.
+      set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
 // [[Rcpp::export]]
 SEXP GetParam${MODEL_SAFE_TYPE}Ptr(SEXP params,
@@ -102,8 +100,7 @@ SEXP Deserialize${MODEL_SAFE_TYPE}Ptr(Rcpp::RawVector str)
   return std::move((${MODEL_PTR_TYPEDEF})ptr);
 }
 ")
-      endforeach ()
-    endif()
+    endforeach ()
   endif()
 endif()
 

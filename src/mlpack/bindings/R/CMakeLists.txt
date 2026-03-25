@@ -280,10 +280,6 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
-  # This file will take care of multiple definition of functions in .cpp files.
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E touch
-          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/model.txt")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
@@ -297,13 +293,6 @@ if (BUILD_R_BINDINGS)
 
   # Do the actual build.
   add_custom_target(r_build ALL)
-
-  # "model.txt" is no longer useful, after generating src/.cpp files.
-  # Remove this file.
-  add_custom_command(TARGET r_build POST_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E remove -f "model.txt"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mlpack"
-  )
 
   # Build RcppExports.cpp/.R, NAMESPACE and man/ files.
   add_custom_command(TARGET r_build POST_BUILD
@@ -339,7 +328,6 @@ set_property(GLOBAL PROPERTY R_MODELS "")
 
 macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
-
   # Append content to the list of models.
   set_property(GLOBAL APPEND PROPERTY R_MODELS
       ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
@@ -348,7 +336,6 @@ if (BUILD_R_BINDINGS)
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
