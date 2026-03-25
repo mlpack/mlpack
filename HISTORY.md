@@ -9,11 +9,11 @@ _????-??-??_
  * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
 
  * Fix rendering of Python documentation (#4126).
- 
+
  * Add `TSVASCII` format for loading TSVs (#4127).
 
  * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
- 
+
  * Add `EMD` signal preprocessing utility (#4044).
 
 ## mlpack 4.7.0
