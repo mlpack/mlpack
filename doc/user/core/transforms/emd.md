@@ -52,14 +52,14 @@ Example using `EMD` on a time-varying signal `S`.
 ```c++
 const arma::uword N = 400;
 const double tMin = 0.0;
-const double tMax = datum::pi;
-arma::vec time = linspace(tMin, tMax, N);
+const double tMax = arma::datum::pi;
+arma::vec time = arma::linspace(tMin, tMax, N);
 
 // signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
 // see figure above 
 arma::vec signal =
-    sin( 20.0 * time % (1.0 + 0.2 * time) ) +
-    square(time) + sin(13.0 * time);
+    arma::sin( 20.0 * time % (1.0 + 0.2 * time) ) +
+    arma::square(time) + arma::sin(13.0 * time);
 
 arma::mat imfs;
 arma::vec residue;
@@ -76,7 +76,7 @@ for (size_t k = 0; k < numToShow; ++k)
 {
   arma::cx_vec spectrum = arma::fft(imfs.col(k));
   // Use only the first half of the spectrum
-  arma::vec mag = abs(spectrum.rows(0, spectrum.n_elem / 2));
+  arma::vec mag = arma::abs(spectrum.rows(0, spectrum.n_elem / 2));
   arma::uword idx = 0;
   mag.index_max(idx);
   const double peakHz = (double) idx * fs / spectrum.n_elem;
