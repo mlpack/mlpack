@@ -228,7 +228,7 @@ void PrintR(util::Params& params,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     if (i == 0)
-       cout << indentStr;
+      cout << indentStr;
     util::ParamData& d = parameters.at(outputOptions[i]);
     params.functionMap[d.tname]["PrintOutputProcessing"](d, NULL, NULL);
     // Print newlines if we are returning multiple output options.
@@ -237,10 +237,21 @@ void PrintR(util::Params& params,
   }
   cout << endl << "  )" << endl << endl;
 
-  // Add binding name as class to the output.
-  cout << "  # Add binding name as class to the output." << endl;
-  cout << "  class(out) <- c(\"mlpack_" << bindingName
-       << "\", \"mlpack_model_binding\", \"list\")" << endl;
+  // If it is a list of one, collapse it
+  if (outputOptions.size() == 1)
+  {
+    cout << "  # If output list is single element, flatten it." << endl;
+    cout << "  out <- out[[1]]" << endl << endl;
+  }
+
+  // If it is a trained / fitted object, class it.
+  if (is_main_method_call)
+  {
+    // Add binding name as class to the output.
+    cout << "  # Add binding name as class to the output." << endl;
+    cout << "  class(out) <- c(\"mlpack_" << bindingName
+         << "\", \"mlpack_model_binding\", \"list\")" << endl;
+  }
 
   cout << endl;
   cout << "  return(out)" << endl << "}" << endl;

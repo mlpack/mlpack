@@ -5,7 +5,7 @@ print.mlpack_model_binding <- function(x, ...) {
 }
 
 #' @export
-predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+predict.mlpack_adaboost_train <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -20,7 +20,7 @@ predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "prob
 }
 
 #' @export
-predict.mlpack_logistic_regression <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+predict.mlpack_logistic_regression_train <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -35,7 +35,7 @@ predict.mlpack_logistic_regression <- function(object, newdata, type=c("predicti
 }
 
 #' @export
-predict.mlpack_linear_regression <- function(object, newdata, ...) {
+predict.mlpack_linear_regression_train <- function(object, newdata, ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -44,7 +44,7 @@ predict.mlpack_linear_regression <- function(object, newdata, ...) {
 }
 
 #' @export
-predict.mlpack_lars <- function(object, newdata, ...) {
+predict.mlpack_lars_train <- function(object, newdata, ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
