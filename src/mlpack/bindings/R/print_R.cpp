@@ -245,7 +245,8 @@ void PrintR(util::Params& params,
   }
 
   // If it is a trained / fitted object, class it.
-  if (is_main_method_call && functionName.find("preprocess_") == std::string::npos)
+  if (is_main_method_call &&
+      functionName.find("preprocess_") == std::string::npos)
   {
     // Add binding name as class to the output.
     cout << "  # Add binding name as class to the output." << endl;
