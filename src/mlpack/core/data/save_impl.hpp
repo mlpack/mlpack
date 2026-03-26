@@ -104,8 +104,12 @@ bool Save(const std::string& filename,
     {
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot save audio data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
+        arma::Mat<typename ObjectType::elem_type> tmp =
+            arma::conv_to<arma::Mat<
+            typename ObjectType::elem_type>>::from(matrix);
+        AudioOptions audOpts(std::move(opts));
+        success = SaveAudio(filename, tmp, audOpts);
+        opts = std::move(audOpts);
       }
       else
       {
