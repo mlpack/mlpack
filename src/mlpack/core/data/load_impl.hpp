@@ -147,8 +147,7 @@ bool Load(const std::string& src,
         if (copyBack)
           opts = std::move(audOpts);
 
-        dest = arma::conv_to<arma::SpMat<typename ObjectType::elem_type>>
-            ::from(tmp);
+        dest = arma::conv_to<ObjectType>::from(tmp);
       }
       else
       {
