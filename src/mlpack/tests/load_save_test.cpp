@@ -3794,88 +3794,26 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
   REQUIRE(opts.SampleRate() == 48000);
 }
 
-TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]")
+TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_t,
+    uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
 {
-  arma::Mat<int8_t>  mat8Int,  mat8IntMP3;
-  arma::Mat<int16_t> mat16Int, mat16IntMP3;
-  arma::Mat<int32_t> mat32Int, mat32IntMP3;
-  arma::Mat<int64_t> mat64Int, mat64IntMP3;
+  typedef TestType eT;
 
-  arma::Mat<uint8_t>  mat8UInt,  mat8UIntMP3;
-  arma::Mat<uint16_t> mat16UInt, mat16UIntMP3;
-  arma::Mat<uint32_t> mat32UInt, mat32UIntMP3;
-  arma::Mat<uint64_t> mat64UInt, mat64UIntMP3;
+  arma::Mat<eT>  mat,  matMP3;
 
   AudioOptions optsWAV = Fatal + WAV;
   AudioOptions optsMP3 = Fatal + MP3;
-  REQUIRE(Load("voice.wav", mat8Int,  optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat16Int, optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat32Int, optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat64Int, optsWAV) == true);
 
-  REQUIRE(Load("voice.wav", mat8UInt,  optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat16UInt, optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat32UInt, optsWAV) == true);
-  REQUIRE(Load("voice.wav", mat64UInt, optsWAV) == true);
+  REQUIRE(Load("voice.wav", mat8Int,  optsWAV) == true);
 
   REQUIRE(Load("voice.mp3", mat8IntMP3,  optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat16IntMP3, optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat32IntMP3, optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat64IntMP3, optsMP3) == true);
 
-  REQUIRE(Load("voice.mp3", mat8UIntMP3,  optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat16UIntMP3, optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat32UIntMP3, optsMP3) == true);
-  REQUIRE(Load("voice.mp3", mat64UIntMP3, optsMP3) == true);
-
-  REQUIRE(mat8Int.n_cols == 1);
-  REQUIRE(mat8Int.n_rows == 237568);
-
-  REQUIRE(mat16Int.n_cols == 1);
-  REQUIRE(mat16Int.n_rows == 237568);
-
-  REQUIRE(mat32Int.n_cols == 1);
-  REQUIRE(mat32Int.n_rows == 237568);
-
-  REQUIRE(mat64Int.n_cols == 1);
-  REQUIRE(mat64Int.n_rows == 237568);
-
-  REQUIRE(mat8UInt.n_cols == 1);
-  REQUIRE(mat8UInt.n_rows == 237568);
-
-  REQUIRE(mat16UInt.n_cols == 1);
-  REQUIRE(mat16UInt.n_rows == 237568);
-
-  REQUIRE(mat32UInt.n_cols == 1);
-  REQUIRE(mat32UInt.n_rows == 237568);
-
-  REQUIRE(mat64UInt.n_cols == 1);
-  REQUIRE(mat64UInt.n_rows == 237568);
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
 
   // MP3
-  REQUIRE(mat8IntMP3.n_cols == 1);
-  REQUIRE(mat8IntMP3.n_rows == 237568);
-
-  REQUIRE(mat16IntMP3.n_cols == 1);
-  REQUIRE(mat16IntMP3.n_rows == 237568);
-
-  REQUIRE(mat32IntMP3.n_cols == 1);
-  REQUIRE(mat32IntMP3.n_rows == 237568);
-
-  REQUIRE(mat64IntMP3.n_cols == 1);
-  REQUIRE(mat64IntMP3.n_rows == 237568);
-
-  REQUIRE(mat8UIntMP3.n_cols == 1);
-  REQUIRE(mat8UIntMP3.n_rows == 237568);
-
-  REQUIRE(mat16UIntMP3.n_cols == 1);
-  REQUIRE(mat16UIntMP3.n_rows == 237568);
-
-  REQUIRE(mat32UIntMP3.n_cols == 1);
-  REQUIRE(mat32UIntMP3.n_rows == 237568);
-
-  REQUIRE(mat64UIntMP3.n_cols == 1);
-  REQUIRE(mat64UIntMP3.n_rows == 237568);
+  REQUIRE(matMP3.n_cols == 1);
+  REQUIRE(matMP3.n_rows == 237568);
 }
 
 TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
@@ -3939,6 +3877,8 @@ TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
   REQUIRE(opts2.BitsPerSample() == opts.BitsPerSample());
   REQUIRE(opts2.Channels() == opts.Channels());
   REQUIRE(opts2.SampleRate() == opts.SampleRate());
+
+  remove("voice2.wav");
 }
 
 TEST_CASE("SaveWAVFileNoOptions", "[LoadSaveTest]")
@@ -4030,4 +3970,6 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
   opts2.BitsPerSample() = opts.BitsPerSample();
   opts2.SampleRate() = opts.SampleRate();
   REQUIRE(Save("collectathon2_1_sec.wav", matrix, opts2) == true);
+
+  remove("collectathon2_1_sec.wav");
 }
