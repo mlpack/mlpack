@@ -5,6 +5,10 @@ print.mlpack_model_binding <- function(x, ...) {
 }
 
 #' @rdname adaboost_train
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param type A character value selection predictions or probabilities
+#' @param ... Additional optional arguments affecting the prediction
 #' @examples
 #' data(iris)
 #' pp <- preprocess_split(input=iris[,1:4], input_label=as.matrix(as.integer(iris[,5])))
@@ -14,7 +18,7 @@ print.mlpack_model_binding <- function(x, ...) {
 #' table(tst)
 #' table(levels(iris[,5])[tst])
 #' @export
-predict.mlpack_adaboost_train <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -29,6 +33,10 @@ predict.mlpack_adaboost_train <- function(object, newdata, type=c("predictions",
 }
 
 #' @rdname logistic_regression_train
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param type A character value selection predictions or probabilities
+#' @param ... Additional optional arguments affecting the prediction
 #' @examples
 #' data(iris)
 #' pp <- preprocess_split(input=iris[,1:4], input_label=as.matrix(as.integer(iris[,5])))
@@ -39,7 +47,7 @@ predict.mlpack_adaboost_train <- function(object, newdata, type=c("predictions",
 #' table(tst)
 #' table(levels(iris[,5])[tst])
 #' @export
-predict.mlpack_logistic_regression_train <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+predict.mlpack_logistic_regression <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -54,6 +62,9 @@ predict.mlpack_logistic_regression_train <- function(object, newdata, type=c("pr
 }
 
 #' @rdname linear_regression_train
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param ... Additional optional arguments affecting the prediction
 #' @examples
 #' data(mtcars)
 #' pp <- preprocess_split(input=mtcars[,-1], input_label=as.matrix(as.integer(mtcars[,1])))
@@ -62,7 +73,7 @@ predict.mlpack_logistic_regression_train <- function(object, newdata, type=c("pr
 #' tst <- predict(trn, pp$test)
 #' tst
 #' @export
-predict.mlpack_linear_regression_train <- function(object, newdata, ...) {
+predict.mlpack_linear_regression <- function(object, newdata, ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -71,6 +82,9 @@ predict.mlpack_linear_regression_train <- function(object, newdata, ...) {
 }
 
 #' @rdname lars_train
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param ... Additional optional arguments affecting the prediction
 #' @examples
 #' data(mtcars)
 #' pp <- preprocess_split(input=mtcars[,-1], input_label=as.matrix(as.integer(mtcars[,1])))
@@ -79,7 +93,7 @@ predict.mlpack_linear_regression_train <- function(object, newdata, ...) {
 #' tst <- predict(trn, t(pp$test))
 #' tst
 #' @export
-predict.mlpack_lars_train <- function(object, newdata, ...) {
+predict.mlpack_lars <- function(object, newdata, ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }

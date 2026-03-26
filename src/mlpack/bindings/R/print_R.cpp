@@ -111,11 +111,9 @@ void PrintR(util::Params& params,
   const bool isMainMethodCall =
     (functionName.find("_predict") == std::string::npos &&
      functionName.find("_classify") == std::string::npos &&
-     functionName.find("_probabilities") == std::string::npos &&
-     functionName.find("gmm_generate") == std::string::npos) ||
-    functionName == std::string("linear_regression");
+     functionName.find("_probabilities") == std::string::npos);
   // Next print the long description as @details. But only if
-  // we are not a '_predict' or '_classify' or '_probability' function
+  // we are not a '_predict' or '_classify' or '_probabilities' function
   if (isMainMethodCall)
   {
     cout << "#' @details" << endl;
@@ -252,7 +250,7 @@ void PrintR(util::Params& params,
   {
     // Add binding name as class to the output.
     cout << "  # Add binding name as class to the output." << endl;
-    cout << "  class(out) <- c(\"mlpack_" << bindingName
+    cout << "  class(out) <- c(\"mlpack_" << SplitBindingName(bindingName)
          << "\", \"mlpack_model_binding\", \"list\")" << endl;
   }
 
