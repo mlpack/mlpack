@@ -80,12 +80,17 @@ bool SaveAudio(const std::string& file,
     dataFormat.format = DR_WAVE_FORMAT_PCM;
   else if (opts.BitsPerSample() == 16)
     dataFormat.format = DR_WAVE_FORMAT_PCM;
+  else if (opts.BitsPerSample() == 8)
+    dataFormat.format = DR_WAVE_FORMAT_PCM;
+
 
   drwav wav;
   if (!drwav_init_file_write(&wav, file.c_str(), &dataFormat, nullptr))
   {
-    return HandleError("SaveAudio(): failed to open WAV file '"
-        << file << "'; please check the file path and permissions.", opts);
+    std::stringstream oss;
+    oss << "SaveAudio(): failed to open WAV file '"
+        << file << "'; please check the file path and permissions.";
+    return HandleError(oss, opts);
   }
 
   if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
