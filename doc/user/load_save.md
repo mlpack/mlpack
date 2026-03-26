@@ -508,7 +508,7 @@ is set.
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 | _Metadata._               |                                       |                            |                   |
 | _(n/a)_                   | `opts.AudioDuration()`                | [Audio data](#audio-data)  | Returns a `double` representing the duration of the loaded audio, in seconds. Set after loading / saving. |
-| _(n/a)_                   | `opts.BistPerSample()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample (e.g. 16 or 32). Set after loading, or before saving to choose PCM format. |
+| _(n/a)_                   | `opts.BitsPerSample()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample. Set after loading.  This must be set to either `16` or `32` when saving. |
 | _(n/a)_                   | `opts.Channels()`                     | [Audio data](#audio-data)  | Returns a `size_t` representing the number of audio channels (e.g. 1 for mono, 2 for stereo). Set after loading, or before saving. |
 | _(n/a)_                   | `opts.FileBitRate()`                  | [Audio data](#audio-data)  | Returns a `size_t` representing the overall bit rate of the file, in bits per second. Set after loading. |
 | _(n/a)_                   | `opts.SampleRate()`                   | [Audio data](#audio-data)  | Returns a `size_t` representing the sample rate in Hz (e.g. 44100, 48000). Set after loading, or before saving. |
