@@ -20,7 +20,7 @@ namespace mlpack {
 
 /**
  * ========================================
- *          Theorectical Concept.
+ *          Theoretical Concept.
  * ========================================
  *
  * The following text is valid for MP3 and WAV formats.
