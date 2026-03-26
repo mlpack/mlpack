@@ -37,7 +37,7 @@ BINDING_SHORT_DESC(
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE(IMPORT_THIS("lars"));
+BINDING_EXAMPLE("");
 
 // See also...
 BINDING_SEE_ALSO("@lars_train", "#lars_train");

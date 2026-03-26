@@ -37,7 +37,7 @@ BINDING_SHORT_DESC(
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE(IMPORT_THIS("logistic_regression"));
+BINDING_EXAMPLE("");
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_train", "#logistic_regression_train");

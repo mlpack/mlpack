@@ -56,7 +56,7 @@ BINDING_SHORT_DESC("Class probabilities from model.");
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE(IMPORT_THIS("adaboost"));
+BINDING_EXAMPLE("");
 
 // Classification options.
 PARAM_MATRIX_IN_REQ("test", "Test dataset.", "T");
