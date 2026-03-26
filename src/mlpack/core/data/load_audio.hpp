@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_audio.hpp
  * @author Omar Shrit
+ * @author Ryan Curtin
  *
  * Load audio data functions implementation (WAV or MP3).
  * Supports loading as float32 or signed 16-bit PCM depending on the
@@ -66,6 +67,47 @@ namespace mlpack {
  * for MP3 or WAV format.
  */
 
+/*
+ * Given two integral types eT2 and eT1, where eT2 is always signedt,
+ * convert to eT1 such that the range of the values in `target` is
+ * [0, numeric_limits<eT>::max()] for unsigned eT1, and
+ * [numeric_limits<eT>::min(), numeric_limits<eT>::max()] for signed eT1.
+ */
+template<typename eT1, typename eT2>
+inline void MapLoadedAudio(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
+{
+  // If the target type is smaller than the loaded type, then we need to shrink
+  // the range before the conversion.
+  if constexpr (sizeof(eT1) < sizeof(eT2))
+  {
+    src /= std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1)));
+  }
+
+  // If the target type is unsigned, then we have to reinterpret the samples and
+  // apply a shift, because Armadillo's `conv_to` will truncate negative values
+  // to 0.
+  if constexpr (!std::is_signed_v<eT1>)
+  {
+    typedef std::make_unsigned_t<eT2> ueT2;
+    arma::Mat<ueT2> reinterpretedSrc((ueT2*) src.memptr(), src.n_rows,
+        src.n_cols, false);
+    reinterpretedSrc += std::pow(2, 8 * sizeof(ueT2) - 1);
+
+    target = arma::conv_to<arma::Mat<eT1>>::from(std::move(reinterpretedSrc));
+  }
+  else
+  {
+    target = arma::conv_to<arma::Mat<eT1>>::from(src);
+  }
+
+  // If the target type is larger than the loaded type, then we need to expand
+  // the range after the conversion.
+  if constexpr (sizeof(eT1) > sizeof(eT2))
+  {
+    target *= std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2)));
+  }
+}
+
 template<typename eT>
 bool LoadAudio(const std::string file,
                arma::Mat<eT>& matrix,
@@ -109,7 +151,6 @@ bool LoadWAV(const std::string& file,
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
 
-  // Signed cases.
   if constexpr (std::is_floating_point_v<eT>)
   {
     arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
@@ -120,7 +161,7 @@ bool LoadWAV(const std::string& file,
     // 64 bits, 32 bits, 16 bits float.
     matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
   }
-  else if constexpr (std::is_integral_v<eT> && sizeof(eT) > 2)
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) >= 4)
   {
     arma::Mat<int32_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -128,29 +169,9 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-    // int64_t
-    if constexpr (sizeof(eT) > 4)
-    {
-      arma::Mat<int64_t> samplesExpand =
-          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 4);
-      if constexpr (!std::is_signed_v<eT>)
-      {
-        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
-    }
-    // int32_t
-    else if constexpr (sizeof(eT) == 4)
-    {
-      if constexpr (!std::is_signed_v<eT>)
-      {
-        samples += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
-    }
+    MapLoadedAudio(matrix, samples);
   }
-  else if constexpr (std::is_integral_v<eT> && sizeof(eT) <= 2)
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) < 4)
   {
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -158,15 +179,7 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-    if (sizeof(eT) != 2)
-    {
-      samples /= std::pow(2, 16 - 8 * sizeof(eT));
-    }
-    if constexpr (!std::is_signed_v<eT>)
-    {
-      samples += std::pow(2, 16 - 8 * sizeof(eT) - 1);
-    }
-    matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
+    MapLoadedAudio(matrix, samples);
   }
 
   drwav_uninit(&wav);
@@ -203,8 +216,7 @@ bool LoadMP3(const std::string& file,
     return HandleError(oss.str(), opts);
   }
 
-  opts.TotalFrames() =
-      static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
+  opts.TotalFrames() = static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
   opts.SampleRate() = mp3.sampleRate;
 
@@ -226,55 +238,13 @@ bool LoadMP3(const std::string& file,
   }
   else if constexpr (std::is_integral_v<eT>)
   {
-    arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
-        1);
+    arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(), 1);
 
     framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
         &mp3, opts.TotalFrames(), samples.memptr()));
 
-    // int64_t
-    if constexpr (sizeof(eT) > 4)
-    {
-      arma::Mat<int64_t> samplesExpand =
-          arma::conv_to<arma::Mat<int64_t>>::from(std::move(samples));
-      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 16);
-      if (!std::is_signed_v<eT>)
-      {
-        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samplesExpand));
-    }
-    // int32_t
-    else if constexpr (sizeof(eT) == 4)
-    {
-      arma::Mat<int32_t> samplesExpand =
-          arma::conv_to<arma::Mat<int32_t>>::from(std::move(samples));
-      samplesExpand *= std::pow(2, 8 * sizeof(eT) - 16);
-      if (!std::is_signed_v<eT>)
-      {
-        samplesExpand += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
-    }
-    else if constexpr (sizeof(eT) == 2)
-    {
-      if (!std::is_signed_v<eT>)
-      {
-        samples += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
-    }
-    else if constexpr (sizeof(eT) == 1)
-    {
-      samples /= std::pow(2, 16 - 8 * sizeof(eT));
-      if (!std::is_signed_v<eT>)
-      {
-        samples += std::pow(2, 8 * sizeof(eT) - 1);
-      }
-      matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
-    }
+    MapLoadedAudio(matrix, samples);
   }
-
 
   drmp3_uninit(&mp3);
 

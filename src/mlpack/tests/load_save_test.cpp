@@ -3794,7 +3794,7 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
   REQUIRE(opts.SampleRate() == 48000);
 }
 
-TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_t,
+TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_t,
     uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
 {
   typedef TestType eT;
@@ -3804,9 +3804,9 @@ TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_t,
   AudioOptions optsWAV = Fatal + WAV;
   AudioOptions optsMP3 = Fatal + MP3;
 
-  REQUIRE(Load("voice.wav", mat8Int,  optsWAV) == true);
+  REQUIRE(Load("voice.wav", mat,  optsWAV) == true);
 
-  REQUIRE(Load("voice.mp3", mat8IntMP3,  optsMP3) == true);
+  REQUIRE(Load("voice.mp3", matMP3,  optsMP3) == true);
 
   REQUIRE(mat.n_cols == 1);
   REQUIRE(mat.n_rows == 237568);
