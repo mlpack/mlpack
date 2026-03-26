@@ -724,9 +724,9 @@ TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
 inline arma::Mat<int8_t> ReberTransitionMatrix()
 {
   return arma::Mat<int8_t>({{ 'T', 'P', '1', '2' },
-                          { 'X', 'S', '3', '1' },
-                          { 'V', 'T', '4', '2' },
-                          { 'X', 'S', '2', '5' },
+  { 'X', 'S', '3', '1' },
+  { 'V', 'T', '4', '2' },
+  { 'X', 'S', '2', '5' },
                           { 'P', 'V', '3', '5' },
                           { 'E', 'E', '0', '0' }});
 }
