@@ -3690,7 +3690,7 @@ Train a linear regression model.
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
 | `training` | [`matrix`](#doc_matrix) | Matrix containing training set X (regressors). | 
-| `training_responses` | [`vector`](#doc_vector) | Vector containing y (responses). | 
+| `training_responses` | [`vector`](#doc_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | 
 
 #### Returns: 
 
