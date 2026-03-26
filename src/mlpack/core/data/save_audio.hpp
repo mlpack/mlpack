@@ -125,7 +125,7 @@ bool SaveAudio(const std::string& file,
   if (framesWritten != opts.TotalFrames())
   {
     std::stringstream oss;
-    oss << "SaveWav(): Frames count mismatches: expected to write "
+    oss << "SaveAudio(): Frame count mismatch: expected to write "
         << opts.TotalFrames() << " frames but only wrote "
         << framesWritten << " frames.";
     return HandleError(oss, opts);
