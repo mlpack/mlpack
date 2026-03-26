@@ -98,8 +98,10 @@ bool LoadWAV(const std::string& file,
 
   if (!drwav_init_file(&wav, file.c_str(), nullptr))
   {
-    return HandleError("LoadWAV(): Failed to read wav file. Probably a "
-        "corrupted file.", opts);
+    std::ostringstream oss;
+    oss << "LoadWAV(): failed to read WAV file '" << file << "'; file is "
+        << "corrupted or could not be opened.";
+    return HandleError(oss.str(), opts);
   }
 
   opts.TotalFrames() = static_cast<size_t>(wav.totalPCMFrameCount);
@@ -195,8 +197,10 @@ bool LoadMP3(const std::string& file,
 
   if (!drmp3_init_file(&mp3, file.c_str(), nullptr))
   {
-    return HandleError("LoadMP3(): Failed to read wav file. Probably a "
-        "corrupted file.", opts);
+    std::ostringstream oss;
+    oss << "LoadMP3(): failed to read MP3 file '" << file << "'; file is "
+        << "corrupted or could not be opened.";
+    return HandleError(oss.str(), opts);
   }
 
   opts.TotalFrames() =

@@ -84,8 +84,8 @@ bool SaveAudio(const std::string& file,
   drwav wav;
   if (!drwav_init_file_write(&wav, file.c_str(), &dataFormat, nullptr))
   {
-    return HandleError("SaveAudio(): Failed to open WAV file for writing."
-        " Please check the file path and permissions.", opts);
+    return HandleError("SaveAudio(): failed to open WAV file '"
+        << file << "'; please check the file path and permissions.", opts);
   }
 
   if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
