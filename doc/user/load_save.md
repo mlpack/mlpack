@@ -1214,34 +1214,36 @@ populated with the metadata of the audio file.
  * Supported audio loading formats are WAV and MP3; see
    [the table of formats](#formats) for more details.
 
- * Loading a WAV file with an floating matrix is possible using the following types:
-   - float produces normalized samples in the range [-1.0, +1.0]
-   - double produces normalized samples in the range [-1.0, +1.0]
+ * When loading an audio file into a matrix with a floating-point type (e.g.
+   `arma::fmat`, `arma::mat`, etc.), regardless of the underlying sample format
+   of the audio file, the loaded values will be in the range `[-1.0, 1.0]`.
 
- * Loading a WAV file with an integral matrix is possible using the following types:
-   -  int8\_t  produces samples in the range [-128, 127].
-   -  int16\_t produces samples in the range [-32768, 32767].
-   -  int32\_t produces samples in the range [-2147483648, +2147483647].
-   -  int64\_t produces samples in the range [-9223372036854775808, -9223372036854775807]
+ * When loading an audio file into a matrix with an integer type (e.g.
+   `arma::imat`, `arma::umat`, `arma::Mat<short>`, etc., regardless of the
+   underlying sample format of the audio file:
+   - If the integer type is unsigned, then the loaded values will be between 0
+     and the maximum representable value (e.g. `[0, 65535]` for `unsigned short`).
 
- * Loading a WAV file with an unsinged integral matrix is possible using the following types:
-   -  uint8\_t  produces samples in the range [0, 255].
-   -  uint16\_t produces samples in the range [0, 65535].
-   -  uint32\_t produces samples in the range [0, 4294967295].
-   -  uint64\_t produces samples in the range [0, 18446744073709551615].
-
- * Loading an MP3 file is possible using the following types:
-  - floating matrix type produces normalized samples in the range [-1.0, +1.0].
-  - int16\_t integral matrix type produces samples in the range [-32768, 32767].
+   - If the integer type is signed, then the loaded values will be between the
+     most negative and most positive representable values (e.g.
+     `[-32768, 32767]` for `short`).
 
  * Supported audio saving formats is WAV only.
 
- * When saving to a WAV file, the output format depends on the element type
-   of the matrix and the requested bit depth:
-     - Floating-point matrix + 32-bit: IEEE float format, data in [-1, +1].
-     - All other combinations: PCM format, storing samples as signed
-       integers whose width matches the supported bit depth (16 or 32).
+ * When saving to a WAV file, the value of `opts.BitsPerSample()` must be set to
+   either `16` or `32` to define the format used for each sample in the file:
 
+   - If `opts.BitsPerSample()` is `16`, then regardless of the format of the
+     given matrix to be saved, the data will be stored as 16-bit PCM format
+     signed integers.
+
+   - If `opts.BitsPerSample()` is `32` and the given matrix has integral
+     elements (e.g. `arma::imat`, `arma::umat`, etc.), the data will be stored
+     as 32-bit PCM format signed integers.
+
+   - If `opts.BitsPerSample()` is `32` and the given matrix has floating-point
+     elements (e.g. `arma::mat`, `arma::fmat`, etc.), the data will be stored as
+     32-bit IEEE floating point numbers.
 
 ### Audio data load/save examples
 
