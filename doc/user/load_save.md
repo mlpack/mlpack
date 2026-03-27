@@ -1230,7 +1230,12 @@ populated with the metadata of the audio file.
  * Supported audio saving formats is WAV only.
 
  * When saving to a WAV file, the value of `opts.BitsPerSample()` must be set to
-   either `16` or `32` to define the format used for each sample in the file:
+   either `8`, `16`, `32` or `64` to define the format used for each sample in
+   the file:
+
+   - If `opts.BitsPerSample()` is `8`, then regardless of the format of the
+     given matrix to be saved, the data will be stored as 8-bit PCM format
+     unsigned integers.
 
    - If `opts.BitsPerSample()` is `16`, then regardless of the format of the
      given matrix to be saved, the data will be stored as 16-bit PCM format
@@ -1239,6 +1244,10 @@ populated with the metadata of the audio file.
    - If `opts.BitsPerSample()` is `32` and the given matrix has integral
      elements (e.g. `arma::imat`, `arma::umat`, etc.), the data will be stored
      as 32-bit PCM format signed integers.
+
+   - If `opts.BitsPerSample()` is `64` and the given matrix has integral
+     elements (e.g. `arma::imat`, `arma::umat`, etc.), the data will be stored
+     as 64-bit PCM format signed integers.
 
    - If `opts.BitsPerSample()` is `32` and the given matrix has floating-point
      elements (e.g. `arma::mat`, `arma::fmat`, etc.), the data will be stored as
