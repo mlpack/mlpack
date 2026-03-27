@@ -37,7 +37,8 @@ BINDING_SHORT_DESC(
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE("");
+BINDING_EXAMPLE(
+    CALL_METHOD("lars_model", "predict", "test", "X_test"));
 
 // See also...
 BINDING_SEE_ALSO("@lars_train", "#lars_train");

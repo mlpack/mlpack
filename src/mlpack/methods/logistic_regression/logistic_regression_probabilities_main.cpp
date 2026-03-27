@@ -37,7 +37,8 @@ BINDING_SHORT_DESC(
 BINDING_LONG_DESC("");
 
 // Example.
-BINDING_EXAMPLE("");
+BINDING_EXAMPLE(
+    CALL_METHOD("model", "probabilities", "test", "X_test"));
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression_train", "#logistic_regression_train");
