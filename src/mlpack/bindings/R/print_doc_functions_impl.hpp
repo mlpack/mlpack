@@ -226,7 +226,7 @@ std::string PrintOutputOptions(util::Params& p,
 inline std::string GetOnlyOutputOptionName(util::Params&) { return ""; }
 
 /**
- * Return an output name, called only in the case where we know onlu
+ * Return an output name, called only in the case where we know only
  * one is available so we return early at first (and only) match.
  */
 template<typename T, typename... Args>
@@ -278,7 +278,8 @@ std::string ProgramCall(const bool markdown,
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
   ossOutput << PrintOutputOptions(p, markdown, args...);
-  if (ossOutput.str() != "") {
+  if (ossOutput.str() != "")
+  {
     if (numOutputParams == 1)
       oss << GetOnlyOutputOptionName(p, args...) << " <- ";
     else
@@ -293,17 +294,18 @@ std::string ProgramCall(const bool markdown,
   std::string call = oss.str();
   oss.str(""); // Reset it.
 
-  // Now process each output option (if there is more than one).
+  // Add lines to process output parameters, if there are more than one.
+  // This generates lines like:
+  //   predictions <- output$predictions
   if (numOutputParams > 1)
-  {
     oss << PrintOutputOptions(p, markdown, args...);
-    if (markdown)
-    {
-      if (oss.str() == "")
-        return util::HyphenateString(call, 2);
-      else
-        return util::HyphenateString(call, 2) + "\n" + oss.str();
-    }
+
+  if (markdown)
+  {
+    if (oss.str() == "")
+      return util::HyphenateString(call, 2);
+    else
+      return util::HyphenateString(call, 2) + "\n" + oss.str();
   }
 
   if (oss.str() == "")
