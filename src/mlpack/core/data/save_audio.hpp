@@ -59,6 +59,12 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
+  if (opts.BitsPerSample() != 8 && opts.BitsPerSample() != 16 &&
+      opts.BitsPerSample() != 32 && opts.BitsPerSample() != 64)
+  {
+    opts.BitsPerSample() = 8 * sizeof(eT);
+  }
+
   opts.TotalFrames() = matrix.n_elem / opts.Channels();
 
   drwav_data_format dataFormat;
@@ -69,7 +75,7 @@ bool SaveAudio(const std::string& file,
 
   if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
-  if (opts.BitsPerSample() == 64 && std::is_floating_point_v<eT>)
+  else if (opts.BitsPerSample() == 64 && std::is_floating_point_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   else if (opts.BitsPerSample() == 64 && std::is_integral_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_PCM;
@@ -90,21 +96,38 @@ bool SaveAudio(const std::string& file,
   }
 
   // Cover double and float
-  if (std::is_floating_point_v<eT>)
+  if constexpr (std::is_floating_point_v<eT>)
   {
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), matrix.memptr()));
-  }
-  else if (opts.BitsPerSample() == 16 && std::is_floating_point_v<eT>)
-  {
-    // We assume that the original values are in range of [-1, +1]
-    arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-    pcm32.clamp(-1.0f, 1.0f);
-    pcm32 *= 32767.0f;
+    if (opts.BitsPerSample() == 8)
+    {
+      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+      pcm32.clamp(-1.0f, 1.0f);
+      pcm32 = (pcm32 + 1.0f) * 127.5f;
 
-    arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
-    framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-          opts.TotalFrames(), pcm16.memptr()));
+      // DO THE CONVERSION HERE and above
+      arma::Mat<uint8_t> pcm8 = arma::conv_to<arma::Mat<uint8_t>>::from(pcm32);
+      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), pcm8.memptr()));
+    }
+    else if (opts.BitsPerSample() == 16)
+    {
+      // We assume that the original values are in range of [-1, +1]
+      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+      pcm32.clamp(-1.0f, 1.0f);
+      pcm32 *= 32767.0f;
+
+      arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
+      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), pcm16.memptr()));
+    }
+    else if (opts.BitsPerSample() == 32 || opts.BitsPerSample() == 64)
+    {
+      // Assuming matrix is double or float
+      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
+      pcm32.clamp(-1.0f, 1.0f);
+      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+        opts.TotalFrames(), pcm32.memptr()));
+    }
   }
   else if constexpr (std::is_integral_v<eT>)
   {
@@ -115,17 +138,12 @@ bool SaveAudio(const std::string& file,
     if (opts.BitsPerSample() != 8 * sizeof(eT))
     {
       // We must convert int8_t to uint8_t to match the WAV standard.
-      if (opts.BitsPerSample() == 8 && std::is_same_v<eT, int8_t>)
+      if (opts.BitsPerSample() == 8)
       {
         arma::Mat<uint8_t> pcm;
         MapSignedIntegralTypes(pcm, tmpMatrix);
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm.memptr()));
-      }
-      else if (opts.BitsPerSample() == 8 && std::is_same_v<eT, uint8_t>)
-      {
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), tmpMatrix.memptr()));
       }
       else if (opts.BitsPerSample() == 16)
       {
@@ -163,7 +181,8 @@ bool SaveAudio(const std::string& file,
       {
         // Handles:
         // uint8_t, int16_t, uint16_t, int32_t, uint32_t,  int64_t, uint64_t
-        arma::Mat<eT> pcm;
+        typedef std::make_signed_t<eT> seT;
+        arma::Mat<seT> pcm;
         MapUnsignedIntegralTypes(pcm, tmpMatrix);
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm.memptr()));
