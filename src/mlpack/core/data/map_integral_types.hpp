@@ -18,13 +18,13 @@
 namespace mlpack {
 
 /*
- * Given two integral types eT2 and eT1, where eT2 is always signedt,
+ * Given two integral types eT2 and eT1, where eT2 is always signed,
  * convert to eT1 such that the range of the values in `target` is
  * [0, numeric_limits<eT>::max()] for unsigned eT1, and
  * [numeric_limits<eT>::min(), numeric_limits<eT>::max()] for signed eT1.
  */
 template<typename eT1, typename eT2>
-inline void MapIntegralTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
+inline void MapSignedIntegralTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
 {
   // If the target type is smaller than the loaded type, then we need to shrink
   // the range before the conversion.
@@ -59,13 +59,15 @@ inline void MapIntegralTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
 }
 
 /*
- * Given two integral types with the same size and different types. Where src
- * eT2 can be signed or not signed. Convert to eT1 such that the values in
- * `target` is [numeric_limits<eT1>::min(), numeric_limits<eT1>::max()]
+ * Given two integral types eT2 and eT1, where eT2 can be signed or unsigned,
+ * convert to eT1 such that the range of the values in `target` is
+ * [numeric_limits<eT>::min(), numeric_limits<eT>::max()].
  */
 template<typename eT1, typename eT2>
-inline void MapSignedTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
+inline void MapUnsignedIntegralTypes(arma::Mat<eT1>& target,
+                                     arma::Mat<eT2>& src)
 {
+  // If the source is unsigned, shift it to the signed range first.
   if constexpr (!std::is_signed_v<eT2>)
   {
     typedef std::make_signed_t<eT2> seT2;
@@ -73,12 +75,35 @@ inline void MapSignedTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
         src.n_cols, false);
     signedSrc -= static_cast<seT2>(std::pow(2, 8 * sizeof(eT2) - 1));
 
+    if constexpr (sizeof(eT1) < sizeof(seT2))
+    {
+      signedSrc /= static_cast<seT2>(
+          std::pow(2, 8 * (sizeof(seT2) - sizeof(eT1))));
+    }
+
     target = arma::conv_to<arma::Mat<eT1>>::from(signedSrc);
+
+    if constexpr (sizeof(eT1) > sizeof(seT2))
+    {
+      target *= static_cast<eT1>(
+          std::pow(2, 8 * (sizeof(eT1) - sizeof(seT2))));
+    }
   }
-  // I think this condition can be removed safely.
   else
   {
+    if constexpr (sizeof(eT1) < sizeof(eT2))
+    {
+      src /= static_cast<eT2>(
+          std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1))));
+    }
+
     target = arma::conv_to<arma::Mat<eT1>>::from(src);
+
+    if constexpr (sizeof(eT1) > sizeof(eT2))
+    {
+      target *= static_cast<eT1>(
+          std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2))));
+    }
   }
 }
 
