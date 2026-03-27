@@ -154,8 +154,6 @@ bool LoadWAV(const std::string& file,
 
   opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalFrames() * opts.Channels();
-  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
-      * opts.Channels();
 
   return true;
 }
@@ -218,8 +216,6 @@ bool LoadMP3(const std::string& file,
 
   opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
   opts.TotalSamples() = opts.TotalFrames() * opts.Channels();
-  opts.FileBitRate() = opts.BitsPerSample() * opts.TotalSamples()
-      * opts.Channels();
 
   return true;
 }

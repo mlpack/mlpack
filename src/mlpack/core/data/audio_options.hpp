@@ -26,16 +26,14 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
                std::optional<size_t> bitsPerSample = std::nullopt,
                std::optional<size_t> audioDuration = std::nullopt,
                std::optional<size_t> totalFrames = std::nullopt,
-               std::optional<size_t> totalSamples = std::nullopt,
-               std::optional<size_t> fileBitRate = std::nullopt) :
+               std::optional<size_t> totalSamples = std::nullopt):
     DataOptionsBase<AudioOptions>(),
     channels(channels),
     sampleRate(sampleRate),
     bitPerSample(bitsPerSample),
     audioDuration(audioDuration),
     totalFrames(totalFrames),
-    totalSamples(totalSamples),
-    fileBitRate(fileBitRate)
+    totalSamples(totalSamples)
   {
     // Do nothing.
   }
@@ -70,7 +68,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration = other.audioDuration;
     bitPerSample  = other.bitPerSample;
     channels      = other.channels;
-    fileBitRate   = other.fileBitRate;
     sampleRate    = other.sampleRate;
     totalFrames   = other.totalFrames;
     totalSamples  = other.totalSamples;
@@ -91,7 +88,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration = std::move(other.audioDuration);
     bitPerSample  = std::move(other.bitPerSample);
     channels      = std::move(other.channels);
-    fileBitRate   = std::move(other.fileBitRate);
     sampleRate    = std::move(other.sampleRate);
     totalFrames   = std::move(other.totalFrames);
     totalSamples  = std::move(other.totalSamples);
@@ -171,19 +167,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       }
     }
 
-    if (!fileBitRate.has_value() && other.fileBitRate.has_value())
-    {
-      fileBitRate = other.fileBitRate;
-    }
-    else if (fileBitRate.has_value() && other.fileBitRate.has_value())
-    {
-      if (fileBitRate.value() != other.fileBitRate.value())
-      {
-        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
-            "fileBitRate with different values!");
-      }
-    }
-
     if (!sampleRate.has_value() && other.sampleRate.has_value())
     {
       sampleRate = other.sampleRate;
@@ -232,8 +215,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       this->WarnOptionConversion("bitPerSample", dataDescription);
     if (channels.has_value() && channels != defaultChannels)
       this->WarnOptionConversion("channels", dataDescription);
-    if (fileBitRate.has_value() && fileBitRate != defaultFileBitRate)
-      this->WarnOptionConversion("fileBitRate", dataDescription);
     if (sampleRate.has_value() && sampleRate != defaultSampleRate)
       this->WarnOptionConversion("sampleRate", dataDescription);
     if (totalFrames.has_value() && totalFrames != defaultTotalFrames)
@@ -249,7 +230,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     audioDuration.reset();
     bitPerSample.reset();
     channels.reset();
-    fileBitRate.reset();
     sampleRate.reset();
     totalFrames.reset();
     totalSamples.reset();
@@ -283,16 +263,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   size_t& Channels()
   {
     return this->ModifyMember(channels, defaultChannels);
-  }
-
-  size_t FileBitRate() const
-  {
-    return this->AccessMember(fileBitRate, defaultFileBitRate);
-  }
-
-  size_t& FileBitRate()
-  {
-    return this->ModifyMember(fileBitRate, defaultFileBitRate);
   }
 
   size_t SampleRate() const
@@ -332,12 +302,10 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   std::optional<double> audioDuration;
   std::optional<size_t> totalFrames;
   std::optional<size_t> totalSamples;
-  std::optional<size_t> fileBitRate;
 
   constexpr static const double defaultAudioDuration    = 0.0;
   constexpr static const size_t defaultBitPerSample     = 0;
   constexpr static const size_t defaultChannels         = 0;
-  constexpr static const size_t defaultFileBitRate      = 0;
   constexpr static const size_t defaultSampleRate       = 0;
   constexpr static const size_t defaultTotalFramesRead  = 0;
   constexpr static const size_t defaultTotalFrames      = 0;
