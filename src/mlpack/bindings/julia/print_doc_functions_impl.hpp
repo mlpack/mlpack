@@ -553,6 +553,63 @@ inline std::string ParamString(const std::string& paramName)
   return "`" + paramName + "`";
 }
 
+inline std::string ImportExtLib()
+{
+  return ">>> import pandas as pd";
+}     
+
+inline std::string ImportSplit()
+{
+  return ">>> from mlpack import preprocess_split";
+}
+
+inline std::string ImportThis(const std::string& /* groupName */)
+{
+  return ">>> from mlpack import TODO";
+}
+
+inline std::string SplitTrainTest(const std::string& /* datasetName */,
+                                  const std::string& /* labelName */,
+                                  const std::string& /* trainDataset */,
+                                  const std::string& /* trainLabels */,
+                                  const std::string& /* testDataset */,
+                                  const std::string& /* testLabels */,
+                                  const std::string& /* splitRatio */)
+{
+  return "";
+}
+
+inline std::string GetDataset(const std::string& /* datasetName */,
+                              const std::string& /* url */)
+{
+  return "";
+}
+
+template<typename... Args>
+std::string CreateObject(const std::string& /* bindingName */,
+                         const std::string& /* objectName */,
+                         const std::string& /* groupName */,
+                         Args... /* args */)
+{
+  return "";
+}
+
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */)
+{
+  return "";
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& /* bindingName */,
+                       const std::string& /* objectName */,
+                       const std::string& /* methodName */,
+                       Args... /* args */)
+{
+  return "";
+}
+
 /**
  * Given the parameter name and an argument, return what should be written as
  * documentation when referencing that argument.
