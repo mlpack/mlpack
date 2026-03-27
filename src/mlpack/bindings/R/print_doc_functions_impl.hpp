@@ -220,6 +220,38 @@ std::string PrintOutputOptions(util::Params& p,
   return result;
 }
 
+/**
+ * Recursion base case.
+ */
+inline std::string GetOnlyOutputOptionName(util::Params&) { return ""; }
+
+/**
+ * Return an output name, called only in the case where we know onlu
+ * one is available so we return early at first (and only) match.
+ */
+template<typename T, typename... Args>
+std::string GetOnlyOutputOptionName(util::Params& p,
+                                    const std::string& paramName,
+                                    const T& value,
+                                    Args... args)
+{
+  // Make sure the parameter exists.
+  if (p.Parameters().count(paramName) > 0)
+  {
+    util::ParamData& d = p.Parameters()[paramName];
+    if (!d.input)
+    {
+      // Since we already know we only have one output parameter,
+      // we can just print this one and return entirely.
+      std::ostringstream oss;
+      oss << value;
+      return oss.str();
+    }
+  }
+
+  return GetOnlyOutputOptionName(p, args...);
+}
+
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
@@ -235,11 +267,23 @@ std::string ProgramCall(const bool markdown,
   if (markdown)
     oss << "R> ";
 
+  size_t numOutputParams = 0;
+  auto parameters = p.Parameters();
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    if (!it->second.input)
+      ++numOutputParams;
+  }
+
   // Find out if we have any output options first.
   std::ostringstream ossOutput;
   ossOutput << PrintOutputOptions(p, markdown, args...);
-  if (ossOutput.str() != "")
-    oss << "output <- ";
+  if (ossOutput.str() != "") {
+    if (numOutputParams == 1)
+      oss << GetOnlyOutputOptionName(p, args...) << " <- ";
+    else
+      oss << "output <- ";
+  }
   oss << programName << "(";
 
   // Now process each input option.
@@ -249,14 +293,17 @@ std::string ProgramCall(const bool markdown,
   std::string call = oss.str();
   oss.str(""); // Reset it.
 
-  // Now process each output option.
-  oss << PrintOutputOptions(p, markdown, args...);
-  if (markdown)
+  // Now process each output option (if there is more than one).
+  if (numOutputParams > 1)
   {
-    if (oss.str() == "")
-      return util::HyphenateString(call, 2);
-    else
-      return util::HyphenateString(call, 2) + "\n" + oss.str();
+    oss << PrintOutputOptions(p, markdown, args...);
+    if (markdown)
+    {
+      if (oss.str() == "")
+        return util::HyphenateString(call, 2);
+      else
+        return util::HyphenateString(call, 2) + "\n" + oss.str();
+    }
   }
 
   if (oss.str() == "")
