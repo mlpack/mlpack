@@ -30,32 +30,17 @@ void PrintR(util::Params& params,
             const std::string& bindingName);
 
 /**
- * Split the last part of a method.
+ * Split the last part of a method name.
  *
- * This assumes '_' as the delimiter.
+ * This defaults to '_' as the delimiter.
  *
  * @param bindingname Binding name as e.g. 'linear_regression_train'.
+ * @param delim Delimiter string, defaults to "_".
  */
-inline std::string SplitBindingName(const std::string& s)
+inline std::string SplitBindingName(const std::string& s,
+                                    const std::string& delim = "_")
 {
-  std::vector<std::string> tokens;
-  std::string token;
-  std::stringstream ss(s);
-  const char delimiter = '_';
-
-  while (std::getline(ss, token, delimiter)) {
-    tokens.push_back(token);
-  }
-
-  std::string out = "";
-  size_t n = tokens.size();
-  for (size_t i = 0; i < n - 1; i++) {
-    out += tokens[i];
-    if (i < n - 2)
-      out += delimiter;
-  }
-
-  return out;
+  return s.substr(0, s.rfind(delim));
 }
 
 } // namespace r
