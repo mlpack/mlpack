@@ -3014,7 +3014,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset `'
 
 ```bash
 $ mlpack_preprocess_one_hot_encoding --input_file X.arff --output_file
-  X_ouput.csv --dimensions 1 --dimensions 3
+  X_output.csv --dimensions 1 --dimensions 3
 ```
 
 ### See also

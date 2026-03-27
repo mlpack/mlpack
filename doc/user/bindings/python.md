@@ -3120,7 +3120,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset `'
 ```python
 >>> output = preprocess_one_hot_encoding(input_=X, dimensions=1,
   dimensions=3)
->>> X_ouput = output['output']
+>>> X_output = output['output']
 ```
 
 ### See also
