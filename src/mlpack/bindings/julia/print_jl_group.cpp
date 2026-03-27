@@ -55,7 +55,7 @@ void PrintJLGroup(const string& /* category */,
   // Import the modules that actually contain each binding.
   for (size_t i = 0; i < methods.size(); ++i)
   {
-    cout << "import ." << methods[i] << endl;
+    cout << "import ." << groupName << "_" << methods[i] << endl;
   }
   cout << endl;
 
@@ -82,7 +82,7 @@ void PrintJLGroup(const string& /* category */,
 
   // Now we need the user-facing constructor, which can accept constructors as
   // keyword arguments.
-  cout << "  " << modelType << "( ;" << endl;
+  cout << "  " << modelName << "( ;" << endl;
   for (size_t i = 0; i < hyperparams.size(); ++i)
   {
     // This will print definitions like:
@@ -101,7 +101,7 @@ void PrintJLGroup(const string& /* category */,
     else
       cout << ") =" << endl;
   }
-  cout << "    new(" << endl;
+  cout << "    new(";
   for (size_t i = 0; i < hyperparams.size(); ++i)
     cout << hyperparams[i]->name << ", ";
 
