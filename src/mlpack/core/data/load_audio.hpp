@@ -109,7 +109,7 @@ bool LoadWAV(const std::string& file,
   opts.TotalFrames() = static_cast<size_t>(wav.totalPCMFrameCount);
   opts.Channels() = wav.channels;
   opts.SampleRate() = wav.sampleRate;
-  opts.BitsPerSample() = wav.bitsPerSample;
+  opts.BitsPerSample() = 8 * sizeof(eT);
 
   if constexpr (std::is_floating_point_v<eT>)
   {
@@ -177,13 +177,7 @@ bool LoadMP3(const std::string& file,
   opts.TotalFrames() = static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
   opts.SampleRate() = mp3.sampleRate;
-
-  // MP3 is compressed by default, so it is up to the user to specify the
-  // BitsPerSample(). If nothing specified, we should assign float by default.
-  if (opts.BitsPerSample() != 32 && opts.BitsPerSample() !=16)
-  {
-    opts.BitsPerSample() = 32;
-  }
+  opts.BitsPerSample() = 8 * sizeof(eT);
 
   if constexpr (std::is_floating_point_v<eT>)
   {

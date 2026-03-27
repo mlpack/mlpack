@@ -59,14 +59,6 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  if (opts.BitsPerSample() != 16 && opts.BitsPerSample() != 32)
-  {
-    std::stringstream oss;
-    oss << "SaveAudio(): Unsupported BitsPerSample value: "
-        << opts.BitsPerSample() << ". Only 16 and 32 are supported.";
-    return HandleError(oss, opts);
-  }
-
   opts.TotalFrames() = matrix.n_elem / opts.Channels();
 
   drwav_data_format dataFormat;
@@ -75,7 +67,9 @@ bool SaveAudio(const std::string& file,
   dataFormat.sampleRate    = opts.SampleRate();
   dataFormat.bitsPerSample = opts.BitsPerSample();
 
-  if (opts.BitsPerSample() == 32)
+  if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
+    dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
+  if (opts.BitsPerSample() == 64 && std::is_floating_point_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   else if (opts.BitsPerSample() == 64 && std::is_integral_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_PCM;
@@ -95,13 +89,11 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  if (opts.BitsPerSample() == 32 && std::is_floating_point_v<eT>)
+  // Cover double and float
+  if (std::is_floating_point_v<eT>)
   {
-    arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-    pcm32.clamp(-1.0f, 1.0f);
-
     framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), pcm32.memptr()));
+        opts.TotalFrames(), matrix.memptr()));
   }
   else if (opts.BitsPerSample() == 16 && std::is_floating_point_v<eT>)
   {

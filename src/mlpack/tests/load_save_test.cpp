@@ -3789,13 +3789,13 @@ TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
-  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 1);
   REQUIRE(opts.SampleRate() == 48000);
 }
 
-TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_t,
-    uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
+TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t,
+    uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
 {
   typedef TestType eT;
 
@@ -3833,7 +3833,7 @@ TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 88200);
   REQUIRE(opts.AudioDuration() == 1);
-  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
 }
@@ -3846,7 +3846,7 @@ TEST_CASE("SaveWAVFileOptions", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
-  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 1);
   REQUIRE(opts.SampleRate() == 48000);
 
@@ -3870,7 +3870,7 @@ TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
-  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 1);
   REQUIRE(opts.SampleRate() == 48000);
 
@@ -3883,7 +3883,7 @@ TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
   REQUIRE(matrix.n_rows == matrix2.n_rows);
   REQUIRE(matrix.n_cols == matrix2.n_cols);
   REQUIRE(opts2.AudioDuration() == opts.AudioDuration());
-  REQUIRE(opts2.BitsPerSample() == opts.BitsPerSample());
+  REQUIRE(opts2.BitsPerSample() != opts.BitsPerSample());
   REQUIRE(opts2.Channels() == opts.Channels());
   REQUIRE(opts2.SampleRate() == opts.SampleRate());
 
@@ -3930,7 +3930,7 @@ TEST_CASE("LoadMP3FileOptions", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 237568);
   REQUIRE(opts.AudioDuration() == 4);
-  REQUIRE(opts.BitsPerSample() == 32);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 1);
   REQUIRE(opts.SampleRate() == 48000);
 }
@@ -3939,12 +3939,11 @@ TEST_CASE("LoadMP3FileOptionsStereoPCM16", "[LoadSaveTest]")
 {
   arma::mat matrix;
   AudioOptions opts = Fatal + MP3;
-  opts.BitsPerSample() = 16;
   REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 88200);
   REQUIRE(opts.AudioDuration() == 1);
-  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
 }
@@ -3957,7 +3956,7 @@ TEST_CASE("LoadMP3FileOptionsStereo", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 88200);
   REQUIRE(opts.AudioDuration() == 1);
-  REQUIRE(opts.BitsPerSample() == 32);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
 }
@@ -3970,7 +3969,7 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
   REQUIRE(matrix.n_cols == 1);
   REQUIRE(matrix.n_rows == 88200);
   REQUIRE(opts.AudioDuration() == 1);
-  REQUIRE(opts.BitsPerSample() == 32);
+  REQUIRE(opts.BitsPerSample() == 64);
   REQUIRE(opts.Channels() == 2);
   REQUIRE(opts.SampleRate() == 44100);
 
