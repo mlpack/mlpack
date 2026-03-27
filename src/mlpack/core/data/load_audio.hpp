@@ -16,6 +16,7 @@
 #define MLPACK_CORE_DATA_LOAD_AUDIO_HPP
 
 #include "audio_options.hpp"
+#include "map_integral_types.hpp"
 
 namespace mlpack {
 
@@ -66,47 +67,6 @@ namespace mlpack {
  * In real life, most of digital audio data, is 2 channels (L,R) whether this
  * for MP3 or WAV format.
  */
-
-/*
- * Given two integral types eT2 and eT1, where eT2 is always signedt,
- * convert to eT1 such that the range of the values in `target` is
- * [0, numeric_limits<eT>::max()] for unsigned eT1, and
- * [numeric_limits<eT>::min(), numeric_limits<eT>::max()] for signed eT1.
- */
-template<typename eT1, typename eT2>
-inline void MapLoadedAudio(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
-{
-  // If the target type is smaller than the loaded type, then we need to shrink
-  // the range before the conversion.
-  if constexpr (sizeof(eT1) < sizeof(eT2))
-  {
-    src /= std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1)));
-  }
-
-  // If the target type is unsigned, then we have to reinterpret the samples and
-  // apply a shift, because Armadillo's `conv_to` will truncate negative values
-  // to 0.
-  if constexpr (!std::is_signed_v<eT1>)
-  {
-    typedef std::make_unsigned_t<eT2> ueT2;
-    arma::Mat<ueT2> reinterpretedSrc((ueT2*) src.memptr(), src.n_rows,
-        src.n_cols, false);
-    reinterpretedSrc += std::pow(2, 8 * sizeof(ueT2) - 1);
-
-    target = arma::conv_to<arma::Mat<eT1>>::from(std::move(reinterpretedSrc));
-  }
-  else
-  {
-    target = arma::conv_to<arma::Mat<eT1>>::from(src);
-  }
-
-  // If the target type is larger than the loaded type, then we need to expand
-  // the range after the conversion.
-  if constexpr (sizeof(eT1) > sizeof(eT2))
-  {
-    target *= std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2)));
-  }
-}
 
 template<typename eT>
 bool LoadAudio(const std::string file,
@@ -169,7 +129,7 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s32(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-    MapLoadedAudio(matrix, samples);
+    MapSignedIntegralTypes(matrix, samples);
   }
   else if constexpr (std::is_integral_v<eT> && sizeof(eT) < 4)
   {
@@ -179,7 +139,7 @@ bool LoadWAV(const std::string& file,
     framesRead = static_cast<size_t>(drwav_read_pcm_frames_s16(
         &wav, opts.TotalFrames(), samples.memptr()));
 
-    MapLoadedAudio(matrix, samples);
+    MapSignedIntegralTypes(matrix, samples);
   }
 
   drwav_uninit(&wav);
@@ -243,7 +203,7 @@ bool LoadMP3(const std::string& file,
     framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
         &mp3, opts.TotalFrames(), samples.memptr()));
 
-    MapLoadedAudio(matrix, samples);
+    MapSignedIntegralTypes(matrix, samples);
   }
 
   drmp3_uninit(&mp3);
