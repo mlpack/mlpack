@@ -5254,7 +5254,7 @@ DRWAV_PRIVATE drwav_result drwav_wfopen(FILE** ppFile, const wchar_t* pFilePath,
 /* End fopen */
 
 
-DRWAV_PRIVATE size_t drwav__on_read_stdio(void* pUserData, void* pBufferOut, size_t bytesToRead)
+inline size_t drwav__on_read_stdio(void* pUserData, void* pBufferOut, size_t bytesToRead)
 {
     return fread(pBufferOut, 1, bytesToRead, (FILE*)pUserData);
 }
@@ -5264,7 +5264,7 @@ DRWAV_PRIVATE size_t drwav__on_write_stdio(void* pUserData, const void* pData, s
     return fwrite(pData, 1, bytesToWrite, (FILE*)pUserData);
 }
 
-DRWAV_PRIVATE drwav_bool32 drwav__on_seek_stdio(void* pUserData, int offset, drwav_seek_origin origin)
+inline drwav_bool32 drwav__on_seek_stdio(void* pUserData, int offset, drwav_seek_origin origin)
 {
     int whence = SEEK_SET;
     if (origin == DRWAV_SEEK_CUR) {
@@ -5276,7 +5276,7 @@ DRWAV_PRIVATE drwav_bool32 drwav__on_seek_stdio(void* pUserData, int offset, drw
     return fseek((FILE*)pUserData, offset, whence) == 0;
 }
 
-DRWAV_PRIVATE drwav_bool32 drwav__on_tell_stdio(void* pUserData, drwav_int64* pCursor)
+inline drwav_bool32 drwav__on_tell_stdio(void* pUserData, drwav_int64* pCursor)
 {
     FILE* pFileStdio = (FILE*)pUserData;
     drwav_int64 result;
