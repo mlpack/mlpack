@@ -3799,7 +3799,7 @@ TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_
 {
   typedef TestType eT;
 
-  arma::Mat<eT>  mat,  matMP3;
+  arma::Mat<eT>  mat,  matMP3, mat2;
 
   AudioOptions optsWAV = Fatal + WAV;
   AudioOptions optsMP3 = Fatal + MP3;
@@ -3814,6 +3814,15 @@ TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t, uint16_
   // MP3
   REQUIRE(matMP3.n_cols == 1);
   REQUIRE(matMP3.n_rows == 237568);
+
+  REQUIRE(Save("voice2.wav", mat,  optsWAV) == true);
+
+  REQUIRE(Load("voice2.wav", mat2,  optsWAV) == true);
+
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
+
+  remove("voice2.wav");
 }
 
 TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
