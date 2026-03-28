@@ -120,13 +120,10 @@ bool SaveAudio(const std::string& file,
       framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm16.memptr()));
     }
-    else if (opts.BitsPerSample() == 32 || opts.BitsPerSample() == 64)
+    else
     {
-      // Assuming matrix is double or float
-      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-      pcm32.clamp(-1.0f, 1.0f);
       framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), pcm32.memptr()));
+        opts.TotalFrames(), matrix.memptr()));
     }
   }
   else if constexpr (std::is_integral_v<eT>)
