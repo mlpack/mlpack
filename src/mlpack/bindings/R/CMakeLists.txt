@@ -198,6 +198,7 @@ if (BUILD_R_BINDINGS)
   set(R_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/matrix_utils.R"
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/package.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/generics.R"
   )
 
   set(BINDINGS_SOURCES
@@ -279,10 +280,6 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
           ${R_TESTS_SOURCES}
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
-  # This file will take care of multiple definition of functions in .cpp files.
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E touch
-          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/model.txt")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
@@ -296,13 +293,6 @@ if (BUILD_R_BINDINGS)
 
   # Do the actual build.
   add_custom_target(r_build ALL)
-
-  # "model.txt" is no longer useful, after generating src/.cpp files.
-  # Remove this file.
-  add_custom_command(TARGET r_build POST_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E remove -f "model.txt"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mlpack"
-  )
 
   # Build RcppExports.cpp/.R, NAMESPACE and man/ files.
   add_custom_command(TARGET r_build POST_BUILD
@@ -336,9 +326,8 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-macro (add_r_binding directory name)
+macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
-
   # Append content to the list of models.
   set_property(GLOBAL APPEND PROPERTY R_MODELS
       ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
@@ -347,15 +336,15 @@ if (BUILD_R_BINDINGS)
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
+          -DPROGRAM_MODEL_PTR_IMPL=${model_ptr_impl}
+          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
+              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake)
 
   # 2. Generate ${name}.R.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp

@@ -94,4 +94,13 @@ using Option = mlpack::bindings::r::ROption<T>;
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 
+// TODO: Fill these in
+#define IMPORT_EXT_LIB(...) std::string(" ")
+#define IMPORT_SPLIT(...) std::string(" ")
+#define IMPORT_THIS(...) std::string("#' library(mlpack)")
+#define GET_DATASET(...) std::string(" ")
+#define SPLIT_TRAIN_TEST(...) std::string(" ")
+#define CREATE_OBJECT(...) std::string(" ")
+#define CALL_METHOD(...) std::string(" ")
+
 #endif
