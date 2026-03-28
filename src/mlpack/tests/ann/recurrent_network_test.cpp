@@ -721,12 +721,12 @@ TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
 // associated with each transition is encoded in the first two columns; the
 // numeric values of the corresponding states are in the second two columns.
 // next path).
-inline arma::Mat<char> ReberTransitionMatrix()
+inline arma::Mat<int8_t> ReberTransitionMatrix()
 {
-  return arma::Mat<char>({{ 'T', 'P', '1', '2' },
-                          { 'X', 'S', '3', '1' },
-                          { 'V', 'T', '4', '2' },
-                          { 'X', 'S', '2', '5' },
+  return arma::Mat<int8_t>({{ 'T', 'P', '1', '2' },
+  { 'X', 'S', '3', '1' },
+  { 'V', 'T', '4', '2' },
+  { 'X', 'S', '2', '5' },
                           { 'P', 'V', '3', '5' },
                           { 'E', 'E', '0', '0' }});
 }
@@ -764,7 +764,7 @@ std::unordered_map<size_t, char> DimToReberMap()
 // Generate a string from the Reber grammar.
 inline std::string GenerateReberString(const bool embedded = false)
 {
-  const arma::Mat<char> transitions = ReberTransitionMatrix();
+  const arma::Mat<int8_t> transitions = ReberTransitionMatrix();
 
   std::string result = "B";
   size_t state = 0;
@@ -793,7 +793,7 @@ inline bool IsReberResponse(const std::string& input,
                             const std::string& response,
                             const bool embedded = false)
 {
-  const arma::Mat<char> transitions = ReberTransitionMatrix();
+  const arma::Mat<int8_t> transitions = ReberTransitionMatrix();
 
   // If we are embedded, we have to check the first and last characters
   // separately.

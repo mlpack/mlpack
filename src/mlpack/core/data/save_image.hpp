@@ -61,8 +61,8 @@ bool SaveImage(const std::vector<std::string>& files,
     return HandleError(oss, opts);
   }
   // Unfortunately we cannot move because matrix is const.
-  arma::Mat<unsigned char> tempMatrix =
-      arma::conv_to<arma::Mat<unsigned char>>::from(matrix);
+  arma::Mat<uint8_t> tempMatrix =
+      arma::conv_to<arma::Mat<uint8_t>>::from(matrix);
   bool success = false;
   for (size_t i = 0; i < files.size() ; ++i)
   {
