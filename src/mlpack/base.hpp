@@ -89,11 +89,11 @@
 // We override Armadillo definition for unsigned and signed 8 bits integer to
 // use uint8_t / int8_t respectively.
 #ifndef ARMA_U8_TYPE
-  #define ARMA_U8_TYPE uint8_t
+  #define ARMA_U8_TYPE std::uint8_t
 #endif
 
 #ifndef ARMA_S8_TYPE
-  #define ARMA_S8_TYPE  int8_t
+  #define ARMA_S8_TYPE std::int8_t
 #endif
 
 // Now include Armadillo and traits that we use for it.
