@@ -1249,9 +1249,10 @@ populated with the metadata of the audio file.
      elements (e.g. `arma::imat`, `arma::umat`, etc.), the data will be stored
      as 64-bit PCM format signed integers.
 
-   - If `opts.BitsPerSample()` is `32` and the given matrix has floating-point
-     elements (e.g. `arma::mat`, `arma::fmat`, etc.), the data will be stored as
-     32-bit IEEE floating point numbers.
+   - If `opts.BitsPerSample()` is either `32` or `64` and the given matrix has
+     floating-point elements (e.g. `arma::fmat`, `arma::mat`, etc.), the data
+     will be stored as either 32-bit or 64-bit IEEE floating point numbers
+     respectively.
 
 ### Audio data load/save examples
 
