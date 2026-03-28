@@ -21,6 +21,8 @@
 #include "print_output_processing.hpp"
 #include "print_doc.hpp"
 #include "print_model_type_import.hpp"
+#include "print_member_defn.hpp"
+#include "is_serializable.hpp"
 #include "default_param.hpp"
 
 namespace mlpack {
@@ -83,6 +85,10 @@ class JuliaOption
     IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
     IO::AddFunction(data.tname, "PrintModelTypeImport",
         &PrintModelTypeImport<T>);
+
+    // These are used by the jl group generator.
+    IO::AddFunction(data.tname, "PrintMemberDefn", &PrintMemberDefn<T>);
+    IO::AddFunction(data.tname, "IsSerializable", &IsSerializable<T>);
 
     // This is needed for the Markdown binding output.
     IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);

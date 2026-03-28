@@ -27,6 +27,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const bool /* useRawPointers */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
@@ -66,6 +67,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const bool /* useRawPointers */,
     const std::enable_if_t<arma::is_arma_type<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>*)
@@ -125,6 +127,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const bool useRawPointers,
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<HasSerialize<T>::value>*,
     const std::enable_if_t<!std::is_same_v<T,
@@ -148,14 +151,15 @@ void PrintInputProcessing(
     extraIndent = 2;
   }
 
+  std::string juliaType = useRawPointers ? "Ptr{Nothing}" :
+      GetJuliaType<std::remove_pointer_t<T>>(d);
+
   std::string indent(extraIndent + 2, ' ');
   std::string type = util::StripType(d.cppType);
-  std::cout << indent << "push!(modelPtrs, convert("
-      << GetJuliaType<std::remove_pointer_t<T>>(d) << ", " << juliaName
-      << ").ptr)" << std::endl;
+  std::cout << indent << "push!(modelPtrs, convert(" << juliaType
+      << ", " << juliaName << ").ptr)" << std::endl;
   std::cout << indent << functionName << "_internal.SetParam" << type
-      << "(p, \"" << d.name << "\", convert("
-      << GetJuliaType<std::remove_pointer_t<T>>(d) << ", " << juliaName
+      << "(p, \"" << d.name << "\", convert(" << juliaType << ", " << juliaName
       << "))" << std::endl;
 
   if (!d.required)
@@ -172,6 +176,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& /* functionName */,
+    const bool /* useRawPointers */,
     const std::enable_if_t<std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>*)
 {

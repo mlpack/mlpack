@@ -1,5 +1,5 @@
 /**
- * @file julia/generate_jl.cpp.in
+ * @file julia/generate_jl_group.cpp.in
  * @author Ryan Curtin
  *
  * This is a template file to call the PrintJL() function for a given binding.
@@ -22,10 +22,8 @@
 #endif
 
 #include <mlpack/core.hpp>
-#include <mlpack/bindings/julia/print_jl.hpp>
-
-// This will include the ParamData options that are part of the program.
-#include <${PROGRAM_MAIN_FILE}>
+#include <mlpack/bindings/julia/print_jl_group.hpp>
+#include "${GROUP_NAME}_main_includes.hpp"
 
 using namespace mlpack;
 using namespace mlpack::bindings;
@@ -36,6 +34,5 @@ using namespace mlpack::util;
 int main(int /* argc */, char** /* argv */)
 {
   // All the parameters are registered under the name BINDING_NAME.
-  PrintJL(STRINGIFY(BINDING_NAME), "${NAME}", "${MLPACK_JL_LIB_SUFFIX}",
-      ${IS_GROUP_BINDING});
+  PrintJLGroup("${CATEGORY}", "${GROUP_NAME}", "${GROUP_VALID_METHODS}");
 }
