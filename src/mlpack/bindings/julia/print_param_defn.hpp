@@ -26,6 +26,7 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& /* d */,
     const std::string& /* programName */,
+    const bool /* useRawPointer */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
@@ -39,6 +40,7 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& /* d */,
     const std::string& /* programName */,
+    const bool /* useRawPointer */,
     const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   // Do nothing.
@@ -51,115 +53,160 @@ template<typename T>
 void PrintParamDefn(
     util::ParamData& d,
     const std::string& programName,
+    const bool useRawPointer,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
-  // We need to print something of the form below:
-  //
-  // import ...<Type>
-  //
-  // function GetParam<Type>(params::Ptr{Nothing},
-  //                         paramName::String,
-  //                         modelPtrs::Set{Ptr{Nothing}})
-  //   ptr = ccall((:GetParam<Type>Ptr, <programName>Library),
-  //       Ptr{Nothing}, (Ptr{Nothing}, Cstring,), params, paramName)
-  //   return <Type>(ptr; finalize=!(ptr in modelPtrs))
-  // end
-  //
-  // function SetParam<Type>(params::Ptr{Nothing},
-  //                         paramName::String,
-  //                         model::<Type>)
-  //   ccall((:SetParam<Type>Ptr, <programName>Library), Nothing,
-  //       (Ptr{Nothing}, Cstring, Ptr{Nothing}), params, paramName, model.ptr)
-  // end
-  //
-  // function Delete<Type>(ptr::Ptr{Nothing})
-  //   ccall((:Delete<Type>Ptr, <programName>Library), Nothing,
-  //       (Ptr{Nothing},), ptr)
-  // end
-  //
-  // function serialize<Type>(stream::IO, model::<Type>)
-  //   buf_len = UInt[0]
-  //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
-  //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
-  //       pointer(buf_len))
-  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)
-  //   write(stream, buf_len[1])
-  //   write(stream, buf)
-  // end
-  //
-  // function deserialize<Type>(stream::IO)::<Type>
-  //   buf_len = read(stream, UInt)
-  //   buffer = read(stream, buf_len)
-  //   GC.@preserve buffer <Type>(ccall((:Deserialize<Type>Ptr,
-  //       <programName>Library), Ptr{Nothing}, (Vector{UInt8}, UInt), buffer,
-  //       length(buffer)))
-  // end
+  const std::string type = util::StripType(d.cppType);
+  std::cout << "# type: " << type << "; useRawPointer " << (useRawPointer ? "use" : "no!") << "\n";
 
-  std::string type = util::StripType(d.cppType);
+  if (!useRawPointer)
+  {
+    // We need to print something of the form below:
+    //
+    // import ...<Type>
+    //
+    // function GetParam<Type>(params::Ptr{Nothing},
+    //                         paramName::String,
+    //                         modelPtrs::Set{Ptr{Nothing}})
+    //   ptr = ccall((:GetParam<Type>Ptr, <programName>Library),
+    //       Ptr{Nothing}, (Ptr{Nothing}, Cstring,), params, paramName)
+    //   return <Type>(ptr; finalize=!(ptr in modelPtrs))
+    // end
+    //
+    // function SetParam<Type>(params::Ptr{Nothing},
+    //                         paramName::String,
+    //                         model::<Type>)
+    //   ccall((:SetParam<Type>Ptr, <programName>Library), Nothing,
+    //       (Ptr{Nothing}, Cstring, Ptr{Nothing}), params, paramName,
+    //        model.ptr)
+    // end
+    //
+    // function Delete<Type>(ptr::Ptr{Nothing})
+    //   ccall((:Delete<Type>Ptr, <programName>Library), Nothing,
+    //       (Ptr{Nothing},), ptr)
+    // end
+    //
+    // function serialize<Type>(stream::IO, model::<Type>)
+    //   buf_len = UInt[0]
+    //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
+    //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
+    //       pointer(buf_len))
+    //   buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)
+    //   write(stream, buf_len[1])
+    //   write(stream, buf)
+    // end
+    //
+    // function deserialize<Type>(stream::IO)::<Type>
+    //   buf_len = read(stream, UInt)
+    //   buffer = read(stream, buf_len)
+    //   GC.@preserve buffer <Type>(ccall((:Deserialize<Type>Ptr,
+    //       <programName>Library), Ptr{Nothing}, (Vector{UInt8}, UInt), buffer,
+    //       length(buffer)))
+    // end
 
-  // First, print the import of the struct.
-  std::cout << "import ..." << type << std::endl;
-  std::cout << std::endl;
+    // First, print the import of the struct.
+    std::cout << "import ..." << type << std::endl;
+    std::cout << std::endl;
 
-  // Now, GetParam<Type>().
-  std::cout << "# Get the value of a model pointer parameter of type " << type
-      << "." << std::endl;
-  std::cout << "function GetParam" << type << "(params::Ptr{Nothing}, "
-      << "paramName::String, modelPtrs::Set{Ptr{Nothing}})::" << type
-      << std::endl;
-  std::cout << "  ptr = ccall((:GetParam" << type
-      << "Ptr, " << programName << "Library), Ptr{Nothing}, (Ptr{Nothing}, "
-      << "Cstring,), params, paramName)" << std::endl;
-  std::cout << "  return " << type << "(ptr; finalize=!(ptr in modelPtrs))"
-      << std::endl;
-  std::cout << "end" << std::endl;
-  std::cout << std::endl;
+    // Now, GetParam<Type>().
+    std::cout << "# Get the value of a model pointer parameter of type " << type
+        << "." << std::endl;
+    std::cout << "function GetParam" << type << "(params::Ptr{Nothing}, "
+        << "paramName::String, modelPtrs::Set{Ptr{Nothing}})::" << type
+        << std::endl;
+    std::cout << "  ptr = ccall((:GetParam" << type
+        << "Ptr, " << programName << "Library), Ptr{Nothing}, (Ptr{Nothing}, "
+        << "Cstring,), params, paramName)" << std::endl;
+    std::cout << "  return " << type << "(ptr; finalize=!(ptr in modelPtrs))"
+        << std::endl;
+    std::cout << "end" << std::endl;
+    std::cout << std::endl;
 
-  // Next, IOSetParam<Type>().
-  std::cout << "# Set the value of a model pointer parameter of type " << type
-      << "." << std::endl;
-  std::cout << "function SetParam" << type << "(params::Ptr{Nothing}, "
-      << "paramName::String, model::" << type << ")" << std::endl;
-  std::cout << "  ccall((:SetParam" << type << "Ptr, "
-      << programName << "Library), Nothing, (Ptr{Nothing}, Cstring, "
-      << "Ptr{Nothing}), params, paramName, model.ptr)" << std::endl;
-  std::cout << "end" << std::endl;
-  std::cout << std::endl;
+    // Next, SetParam<Type>().
+    std::cout << "# Set the value of a model pointer parameter of type " << type
+        << "." << std::endl;
+    std::cout << "function SetParam" << type << "(params::Ptr{Nothing}, "
+        << "paramName::String, model::" << type << ")" << std::endl;
+    std::cout << "  ccall((:SetParam" << type << "Ptr, "
+        << programName << "Library), Nothing, (Ptr{Nothing}, Cstring, "
+        << "Ptr{Nothing}), params, paramName, model.ptr)" << std::endl;
+    std::cout << "end" << std::endl;
+    std::cout << std::endl;
 
-  // Next, Delete<Type>().
-  std::cout << "# Delete an instantiated model pointer." << std::endl;
-  std::cout << "function Delete" << type << "(ptr::Ptr{Nothing})"
-      << std::endl;
-  std::cout << "  ccall((:Delete" << type << "Ptr, " << programName
-      << "Library), Nothing, (Ptr{Nothing},), ptr)" << std::endl;
-  std::cout << "end" << std::endl;
-  std::cout << std::endl;
+    // Next, Delete<Type>().
+    std::cout << "# Delete an instantiated model pointer." << std::endl;
+    std::cout << "function Delete" << type << "(ptr::Ptr{Nothing})"
+        << std::endl;
+    std::cout << "  ccall((:Delete" << type << "Ptr, " << programName
+        << "Library), Nothing, (Ptr{Nothing},), ptr)" << std::endl;
+    std::cout << "end" << std::endl;
+    std::cout << std::endl;
 
-  // Now the serialization functionality.
-  std::cout << "# Serialize a model to the given stream." << std::endl;
-  std::cout << "function serialize" << type << "(stream::IO, model::" << type
-      << ")" << std::endl;
-  std::cout << "  buf_len = UInt[0]" << std::endl;
-  std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, " << programName
-      << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ptr{UInt}), model.ptr, "
-      << "pointer(buf_len))" << std::endl;
-  std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
-      << "own=true)" << std::endl;
-  std::cout << "  write(stream, buf_len[1])" << std::endl;
-  std::cout << "  write(stream, buf)" << std::endl;
-  std::cout << "end" << std::endl;
+    // Now the serialization functionality.
+    std::cout << "# Serialize a model to the given stream." << std::endl;
+    std::cout << "function serialize" << type << "(stream::IO, model::" << type
+        << ")" << std::endl;
+    std::cout << "  buf_len = UInt[0]" << std::endl;
+    std::cout << "  buf_ptr = ccall((:Serialize" << type << "Ptr, "
+        << programName << "Library), Ptr{UInt8}, (Ptr{Nothing}, Ptr{UInt}), "
+        << "model.ptr, pointer(buf_len))" << std::endl;
+    std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
+        << "own=true)" << std::endl;
+    std::cout << "  write(stream, buf_len[1])" << std::endl;
+    std::cout << "  write(stream, buf)" << std::endl;
+    std::cout << "end" << std::endl;
 
-  // And the deserialization functionality.
-  std::cout << "# Deserialize a model from the given stream." << std::endl;
-  std::cout << "function deserialize" << type << "(stream::IO)::" << type
-      << std::endl;
-  std::cout << "  buf_len = read(stream, UInt)" << std::endl;
-  std::cout << "  buffer = read(stream, buf_len)" << std::endl;
-  std::cout << "  GC.@preserve buffer " << type << "(ccall((:Deserialize"
-      << type << "Ptr, " << programName << "Library), Ptr{Nothing}, "
-      << "(Ptr{UInt8}, UInt), pointer(buffer), length(buffer)))" << std::endl;
-  std::cout << "end" << std::endl;
+    // And the deserialization functionality.
+    std::cout << "# Deserialize a model from the given stream." << std::endl;
+    std::cout << "function deserialize" << type << "(stream::IO)::" << type
+        << std::endl;
+    std::cout << "  buf_len = read(stream, UInt)" << std::endl;
+    std::cout << "  buffer = read(stream, buf_len)" << std::endl;
+    std::cout << "  GC.@preserve buffer " << type << "(ccall((:Deserialize"
+        << type << "Ptr, " << programName << "Library), Ptr{Nothing}, "
+        << "(Ptr{UInt8}, UInt), pointer(buffer), length(buffer)))" << std::endl;
+    std::cout << "end" << std::endl;
+  }
+  else
+  {
+    // If we are returning raw pointers instead of model objects, then we will
+    // use the same code as above, but we will return Ptr{Nothing}s.  Example
+    // adaptation:
+    //
+    // function GetParam<Type>(params::Ptr{Nothing},
+    //                         paramName::String,
+    //                         modelPtrs::Set{Ptr{Nothing}})::Ptr{Nothing}
+    //   return ccall((:GetParam<Type>Ptr, <programName>Library),
+    //       Ptr{Nothing}, (Ptr{Nothing}, Cstring,), params, paramName)
+    // end
+    //
+    // We also do not need any serialization or delete functionality in this
+    // case---that will be handled by the higher-level group binding.
+
+    // GetParam<Type>().
+    std::cout << "# Get the value of a model pointer parameter of type " << type
+        << "." << std::endl;
+    std::cout << "function GetParam" << type << "(params::Ptr{Nothing}, "
+        << "paramName::String, modelPtrs::Set{Ptr{Nothing}})::Ptr{Nothing}"
+        << std::endl;
+    std::cout << "  return ccall((:GetParam" << type
+        << "Ptr, " << programName << "Library), Ptr{Nothing}, (Ptr{Nothing}, "
+        << "Cstring,), params, paramName)" << std::endl;
+    std::cout << "end" << std::endl;
+    std::cout << std::endl;
+
+    // Next, SetParam<Type>().
+    std::cout << "# Set the value of a model pointer parameter of type " << type
+        << "." << std::endl;
+    std::cout << "function SetParam" << type << "(params::Ptr{Nothing}, "
+        << "paramName::String, model::Ptr{Nothing})" << std::endl;
+    std::cout << "  ccall((:SetParam" << type << "Ptr, "
+        << programName << "Library), Nothing, (Ptr{Nothing}, Cstring, "
+        << "Ptr{Nothing}), params, paramName, ptr)" << std::endl;
+    std::cout << "end" << std::endl;
+    std::cout << std::endl;
+  }
 }
 
 /**
@@ -171,7 +218,11 @@ void PrintParamDefn(util::ParamData& d,
                     const void* input,
                     void* /* output */)
 {
-  PrintParamDefn<std::remove_pointer_t<T>>(d, *(std::string*) input);
+  const std::string& programName =
+      ((std::pair<std::string, bool>*) input)->first;
+  const bool useRawPointers = ((std::pair<std::string, bool>*) input)->second;
+
+  PrintParamDefn<std::remove_pointer_t<T>>(d, programName, useRawPointers);
 }
 
 } // namespace julia

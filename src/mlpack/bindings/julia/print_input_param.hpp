@@ -25,8 +25,8 @@ namespace julia {
  */
 template<typename T>
 void PrintInputParam(util::ParamData& d,
-                     const void* /* input */,
-                     void* /* output */)
+                     const bool /* useRawPointers */,
+                     const std::enable_if_t<!HasSerialize<T>::value>* = 0)
 {
   // "type" is a reserved keyword or function.
   const std::string juliaName = (d.name == "type") ? "type_" : d.name;
@@ -39,18 +39,67 @@ void PrintInputParam(util::ParamData& d,
     // If it's required, then we need the type.
     if (d.required)
     {
-      std::cout << GetJuliaType<std::remove_pointer_t<T>>(d);
+      std::cout << GetJuliaType<T>(d);
     }
     else
     {
-      std::cout << "Union{" << GetJuliaType<std::remove_pointer_t<T>>(d)
-          << ", Missing} = missing";
+      std::cout << "Union{" << GetJuliaType<T>(d) << ", Missing} = missing";
     }
   }
   else if (!d.required)
   {
     std::cout << " = missing";
   }
+}
+
+/**
+ * Print the declaration of an input parameter as part of a line in a Julia
+ * function definition.  This doesn't include any commas or anything.
+ */
+template<typename T>
+void PrintInputParam(util::ParamData& d,
+                     const bool useRawPointers,
+                     const std::enable_if_t<HasSerialize<T>::value>* = 0)
+{
+  // "type" is a reserved keyword or function.
+  const std::string juliaName = (d.name == "type") ? "type_" : d.name;
+  const std::string juliaType = (useRawPointers ? "Ptr{Nothing}" :
+      GetJuliaType<T>(d));
+
+  std::cout << juliaName;
+
+  if (!arma::is_arma_type<T>::value)
+  {
+    std::cout << "::";
+    // If it's required, then we need the type.
+    if (d.required)
+    {
+      std::cout << juliaType;
+    }
+    else
+    {
+      std::cout << "Union{" << juliaType << ", Missing} = missing";
+    }
+  }
+  else if (!d.required)
+  {
+    std::cout << " = missing";
+  }
+  std::cout << " # useRawPointers " << (useRawPointers ? "yes" : "no!") << "\n";
+}
+
+/**
+ * Print the declaration of an input parameter as part of a line in a Julia
+ * function definition.  This doesn't include any commas or anything.
+ */
+template<typename T>
+void PrintInputParam(util::ParamData& d,
+                     const void* input,
+                     void* /* output */)
+{
+  const bool useRawPointers = *((bool*) input);
+
+  PrintInputParam<std::remove_pointer_t<T>>(d, useRawPointers);
 }
 
 } // namespace julia

@@ -157,7 +157,7 @@ endif ()
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendType.cmake")
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendSerialization.cmake")
 
-macro (add_julia_binding directory name)
+macro (add_julia_binding directory name is_group_binding)
 if (BUILD_JULIA_BINDINGS)
   # Temporary shim: if an extra argument is given, it will be the indication
   # that we shouldn't add serialization imports or types.
@@ -217,6 +217,7 @@ if (BUILD_JULIA_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
+          -DIS_GROUP_BINDING=${is_group_binding}
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
@@ -281,7 +282,7 @@ macro(add_julia_class directory group_name)
   # but don't append any serialization functions or model pointer type
   # information.
   foreach (method ${${group_name}_VALID_METHODS})
-    add_julia_binding(${directory} "${group_name}_${method}" "skip")
+    add_julia_binding(${directory} "${group_name}_${method}" "true" "skip")
   endforeach()
 
   # Generate a file of includes so that we can include all of the _main.cpp
