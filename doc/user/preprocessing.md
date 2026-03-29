@@ -24,3 +24,7 @@ documented yet.*
 
  * [Imputation](core/imputation.md): replace missing values in a dataset with
    imputed values using a variety of imputation strategies.
+
+ * [Signal processing](core/transforms/signal_processing.md): 
+   functions to extract features from dataset by applying signal processing
+   techniques, such as EMD, MFE, and MFCC.
