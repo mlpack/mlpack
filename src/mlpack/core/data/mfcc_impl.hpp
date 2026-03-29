@@ -109,7 +109,9 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 size_t nFFT,
                 float lowFreq,
                 float highFreq,
-                float preEmphCoeff)
+                float preEmphCoeff,
+                const typename std::enable_if_t<
+                    std::is_floating_point<eT>::value>*)
 {
   if (highFreq == 0.0f)
     highFreq = sampleRate / 2.0f;
@@ -153,6 +155,27 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   mfe = results[0];
   for (size_t i = 1; i < inputSignal.n_cols; ++i)
     mfe = arma::join_horiz(mfe, results[i]);
+}
+
+template<typename eT>
+inline void MFE(const arma::Mat<eT>& inputSignal,
+                arma::Mat<eT>& mfe,
+                size_t sampleRate,
+                size_t numMelFilters,
+                float windowLength,
+                float windowStep,
+                size_t nFFT,
+                float lowFreq,
+                float highFreq,
+                float preEmphCoeff,
+                const typename std::enable_if_t<
+                    !std::is_floating_point<eT>::value>*)
+{
+  static_assert(std::is_floating_point<eT>::value,
+      "MFE(): input matrix must have a floating-point element type "
+      "(float or double). Integer matrices are not supported because "
+      "FFT, log, and other operations require floating-point "
+      "arithmetic.");
 }
 
 inline size_t NextPowerOf2(size_t n)

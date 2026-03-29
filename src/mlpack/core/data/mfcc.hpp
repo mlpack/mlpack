@@ -141,7 +141,27 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 size_t nFFT = 0,
                 float lowFreq = 0.0f,
                 float highFreq = 0.0f,
-                float preEmphCoeff = 0.97f);
+                float preEmphCoeff = 0.97f,
+                const typename std::enable_if_t<
+                    std::is_floating_point<eT>::value>* = 0);
+
+/**
+ * Another overload to prevent using integral types with MFE.
+ * This will throw a compile time error.
+ */
+template<typename eT>
+inline void MFE(const arma::Mat<eT>& inputSignal,
+                arma::Mat<eT>& mfe,
+                size_t sampleRate,
+                size_t numMelFilters = 40,
+                float windowLength = 25.0f,
+                float windowStep = 10.0f,
+                size_t nFFT = 0,
+                float lowFreq = 0.0f,
+                float highFreq = 0.0f,
+                float preEmphCoeff = 0.97f,
+                const typename std::enable_if_t<
+                    !std::is_floating_point<eT>::value>* = 0);
 
 /**
  * It would be faster for FFT to use a window size that is pair and dividable
