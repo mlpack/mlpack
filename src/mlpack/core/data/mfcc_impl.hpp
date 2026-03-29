@@ -13,6 +13,8 @@
 #ifndef MLPACK_CORE_DATA_MFCC_IMPL_HPP
 #define MLPACK_CORE_DATA_MFCC_IMPL_HPP
 
+#include "mfcc.hpp"
+
 namespace mlpack {
 
 template<typename eT>
@@ -73,6 +75,8 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
 
   // Build overlapping triangular filters.
   arma::Mat<eT> melFilterbank(numFilters, numBins);
+
+  arma::Col<eT> XI = arma::linspace<arma::Col<eT>>(0, numBins - 1, numBins);
 
   for (size_t m = 0; m < numFilters; ++m)
   {
@@ -148,7 +152,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
 
   mfe = results[0];
   for (size_t i = 1; i < inputSignal.n_cols; ++i)
-    mfe = arma::join_horiz(output, results[i]);
+    mfe = arma::join_horiz(mfe, results[i]);
 }
 
 inline size_t NextPowerOf2(size_t n)

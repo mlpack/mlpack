@@ -141,7 +141,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 size_t nFFT = 0,
                 float lowFreq = 0.0f,
                 float highFreq = 0.0f,
-                float preEmphCoeff = 0.97f)
+                float preEmphCoeff = 0.97f);
 
 /**
  * It would be faster for FFT to use a window size that is pair and dividable
@@ -192,5 +192,7 @@ inline void SlidingWindow(const arma::Col<eT>& signal,
                           size_t windowLength,
                           size_t windowStep);
 } // namespace mlpack
+
+#include "mfcc_impl.hpp"
 
 #endif
