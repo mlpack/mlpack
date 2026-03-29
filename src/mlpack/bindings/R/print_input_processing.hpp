@@ -33,6 +33,7 @@ void PrintInputProcessing(
 {
   if (!d.required)
   {
+    if (d.wasPassed) return;
     /**
      * This gives us code like:
      *

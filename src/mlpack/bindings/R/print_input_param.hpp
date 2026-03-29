@@ -44,7 +44,8 @@ void PrintInputParam(util::ParamData& d,
   }
   else if (!d.required)
   {
-    MLPACK_COUT_STREAM << "=NA";
+    MLPACK_COUT_STREAM << " = " << std::any_cast<T>(d.value);
+    d.wasPassed = true;
   }
 }
 
