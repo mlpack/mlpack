@@ -1,6 +1,10 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_julia_binding directory name)
+  macro (add_julia_binding directory name is_group_binding)
+    # Do nothing.
+  endmacro ()
+
+  macro (add_julia_class directory group_name)
     # Do nothing.
   endmacro ()
 
@@ -277,7 +281,7 @@ if (BUILD_JULIA_BINDINGS)
 endif ()
 endmacro ()
 
-macro(add_julia_class directory group_name)
+macro (add_julia_class directory group_name)
   # First add the binding definitions for each member function of the class,
   # but don't append any serialization functions or model pointer type
   # information.
