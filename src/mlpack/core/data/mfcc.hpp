@@ -26,9 +26,6 @@ namespace mlpack {
 *
 * 1. Take an audio signal.
 * 
-* 1.1 Improve the signal by applying an Finit Impulse high pass filter, not
-* obligatory.
-* 
 * 2. Cut this signal into a set of overlapped subsignals using a sliding window
 * function.
 * 
@@ -51,20 +48,6 @@ namespace mlpack {
 *  https://www.youtube.com/watch?v=hF72sY70_IQ
 *  https://www.youtube.com/watch?v=SJo7vPgRlBQ&t=223s&pp=ygULTUZDQyBmaWx0ZXI%3D
 */
-
-/**
- * Apply a Finit Impulse Response filter to a signal column.
- *
- *     y[n] = x[n] - coeff * x[n-1]
- *
- * The filter boosts high frequencies to compensate for the natural spectral,
- * it also eliminates any possible noise generated during the sampling step. 
- *
- * @param signal arma column signal, usually one audio file.
- * @param coeff Set to 0 to disable.
- */
-template<typename eT>
-inline void FinitImpulseResponseFilter(arma::Col<eT>& signal, float coeff);
 
 /**
  * Compute a Hamming window of the given length.
@@ -129,7 +112,6 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
  * @param nFFT          Numbero of FFT points.
  * @param lowFreq       Low frequency bound in Hz.
  * @param highFreq      High frequency bound in Hz.
- * @param preEmphCoeff  Pre-emphasis coefficient; 0 disables (default 0.97).
  */
 template<typename eT>
 inline void MFE(const arma::Mat<eT>& inputSignal,
@@ -141,7 +123,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 size_t nFFT = 0,
                 float lowFreq = 0.0f,
                 float highFreq = 0.0f,
-                float preEmphCoeff = 0.97f,
                 const typename std::enable_if_t<
                     std::is_floating_point<eT>::value>* = 0);
 
@@ -159,7 +140,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 size_t nFFT = 0,
                 float lowFreq = 0.0f,
                 float highFreq = 0.0f,
-                float preEmphCoeff = 0.97f,
                 const typename std::enable_if_t<
                     !std::is_floating_point<eT>::value>* = 0);
 
