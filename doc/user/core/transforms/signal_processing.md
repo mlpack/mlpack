@@ -52,7 +52,7 @@ coefficients.
    * Extract MFCC with different number coefficients dependings on the user specified
      parameters.
 
-<!-- #rcurtin the table is a proposal I followed the same concept in
+<!-- @rcurtin the table is a proposal I followed the same concept in
 decision_tree.md, I think it is easier to use when we have several parameters,
 please let me know what you think -->
 
@@ -85,9 +85,10 @@ a floating point.
 Apply MFE filter with default parameters on voice signals:
 
 ```c++
+// See https://datasets.mlpack.org/sine.wav
 arma::mat signal;
 mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
-mlpack::Load("voice.wav", signal, opts);
+mlpack::Load("sine.wav", signal, opts);
 
 arma::mat mfe;
 mlpack::MFE(signal, opts.SampleRate(), mfe);
@@ -99,9 +100,10 @@ std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols << std::endl;
 Specifying a custom number of mel filters and frequency range:
 
 ```c++
+// See https://datasets.mlpack.org/sine.wav
 arma::fmat signal;
 mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
-mlpack::Load("voice.wav", signal, opts);
+mlpack::Load("sine.wav", signal, opts);
 
 arma::fmat mfe;
 // 80 mel filters, default window size, frequency range 300–8000 Hz.
@@ -113,9 +115,10 @@ mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
 Extract 13 MFCCs from a WAV file.
 
 ```c++
+// See https://datasets.mlpack.org/sine.wav
 arma::mat signal;
-mlpack::AudioOptions opts = mlpack::WAV;
-mlpack::Load("voice.wav", signal, opts);
+mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
+mlpack::Load("sine.wav", signal, opts);
 
 arma::mat mfcc;
 mlpack::MFCC(signal, opts.SampleRate(), mfcc);
@@ -128,9 +131,10 @@ std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
 Extract 20 MFCCs with 80 mel filters from an MP3 file:
 
 ```c++
+// See https://datasets.mlpack.org/fifths.mp3
 arma::fmat signal;
-mlpack::AudioOptions opts = mlpack::MP3;
-mlpack::Load("voice.mp3", signal, opts);
+mlpack::AudioOptions opts = mlpack::Fatal + mlpack::MP3;
+mlpack::Load("fifths.mp3", signal, opts);
 
 arma::fmat mfcc;
 mlpack::MFCC(signal, opts.SampleRate(), mfcc, 20, 80);
@@ -139,10 +143,12 @@ mlpack::MFCC(signal, opts.SampleRate(), mfcc, 20, 80);
 MFCC with custom parameters:
 
 ```c++
+// See https://datasets.mlpack.org/sine.wav
 arma::fmat signal;
-mlpack::AudioOptions opts = mlpack::WAV;
-mlpack::Load("voice.wav", signal, opts);
+mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
+mlpack::Load("sine.wav", signal, opts);
 
 arma::fmat mfcc;
-mlpack::MFCC(signal, opts.SampleRate(), mfcc, 13, 26, 25.0, 10.0, 512, 300.0, 3400.0);
+mlpack::MFCC(signal, opts.SampleRate(), mfcc, 13, 26, 25.0, 10.0, 512, 300.0,
+    3400.0);
 ```

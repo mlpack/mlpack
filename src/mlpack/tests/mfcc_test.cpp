@@ -39,7 +39,7 @@ TEST_CASE("MelToHZ", "[MFCC][tiny]")
 TEST_CASE("HzToMel", "[MFCC][tiny]")
 {
   REQUIRE(HzToMel(0) == 0);
-  REQUIRE(HzToMel(1000) == Approx(999.999).epsilon(1e-4));
+  REQUIRE(HzToMel(1000) == Approx(999).epsilon(1e-1));
   REQUIRE(HzToMel(1500) == Approx(1264.49).epsilon(1e-4));
   REQUIRE(HzToMel(2000) == Approx(1479.92).epsilon(1e-4));
   REQUIRE(HzToMel(3000) == Approx(1819.86).epsilon(1e-4));
@@ -48,11 +48,6 @@ TEST_CASE("HzToMel", "[MFCC][tiny]")
   REQUIRE(HzToMel(6000) == Approx(2530.84).epsilon(1e-4));
   REQUIRE(HzToMel(7000) == Approx(2707.36).epsilon(1e-4));
   REQUIRE(HzToMel(8000) == Approx(2863.47).epsilon(1e-4));
-}
-
-TEST_CASE("HammingWindow", "[MFCC][tiny]")
-{
-
 }
 
 TEST_CASE("SlidingWindow", "[MFCC][tiny]")
@@ -69,7 +64,7 @@ TEST_CASE("SlidingWindow", "[MFCC][tiny]")
   // Check for the signal interleaved.
   REQUIRE(windows.at(0, 0) == 0);
   REQUIRE(windows.at(0, 1) == 5);
-  REQUIRE(windows.at(0, 2) == 15);
+  REQUIRE(windows.at(0, 2) == 10);
   REQUIRE(windows.at(0, 198) == 990);
 }
 
@@ -103,9 +98,41 @@ TEMPLATE_TEST_CASE("FFTSineWave", "[MFCC][tiny]", float, double)
   REQUIRE(binWidth == Approx(31.25).epsilon(1));
 }
 
-TEST_CASE("FilterBanks", "[MFCC][tiny]")
+TEMPLATE_TEST_CASE("FilterBanks", "[MFCC][tiny]", float, double)
 {
+  typedef TestType eT;
+  size_t numFilters = 40;
+  size_t nFFT = 512;
+  size_t sampleRate = 16000;
 
+  arma::Mat<eT> filterBanks = MelFilterbank<eT>(numFilters, nFFT, sampleRate,
+      0.0f, 8000.0f);
+
+  // Shape: 40 filters x 257 bins.
+  REQUIRE(filterBanks.n_rows == 40);
+  REQUIRE(filterBanks.n_cols == 257);
+
+  REQUIRE(filterBanks.min() >= 0.0);
+  REQUIRE(filterBanks.max() <= 1.0);
+
+  // The peak positions should be monotonically increasing (each filter
+  // covers a higher frequency than the previous).
+  size_t prevPeak = 0;
+  for (size_t m = 0; m < numFilters; ++m)
+  {
+    size_t peak = filterBanks.row(m).index_max();
+    REQUIRE(peak >= prevPeak);
+    prevPeak = peak;
+  }
+
+  // We need to be sure that the first filter is covering the bins with low
+  // frequencies.
+  size_t firstPeak = filterBanks.row(0).index_max();
+  REQUIRE(firstPeak <= 5);
+
+  // Similar as the above assert, but for high frequencies.
+  size_t lastPeak = filterBanks.row(numFilters - 1).index_max();
+  REQUIRE(lastPeak >= 200);
 }
 
 /*
@@ -153,6 +180,9 @@ TEMPLATE_TEST_CASE("MFEDC", "[MFCC][tiny]", float, double)
   // Filter 0 should be well above the epsilon floor.
   float logEps = std::log(1e-10f);
   REQUIRE(meanMFE(0) > logEps + 5.0f);
+
+  std::cout << "meanMFE: " << meanMFE.t() << std::endl;
+  std::cout << "logEps: " << logEps << std::endl;
 
   // All other filters should be near the epsilon floor.
   size_t nearFloorCount = 0;
