@@ -73,8 +73,9 @@ TEST_CASE("SlidingWindow", "[MFCC][tiny]")
   REQUIRE(windows.at(0, 198) == 990);
 }
 
-TEST_CASE("FFTSineWav", "[MFCC][tiny]")
+TEMPLATE_TEST_CASE("FFTSineWave", "[MFCC][tiny]", float, double)
 {
+  typedef TestType eT;
   // We basically generate a sine wave and try to get the power of the highest
   // bin, we should be able to see that the frequency of this bin is close to
   // 440 Hz
@@ -83,12 +84,11 @@ TEST_CASE("FFTSineWav", "[MFCC][tiny]")
   float duration = 0.032f;
   size_t nSamples = static_cast<size_t>(sampleRate * duration);
   size_t nFFT = 512;
-  size_t numBins = nFFT / 2 + 1;
 
-  arma::fvec t = arma::linspace<arma::fvec>(0, duration, nSamples);
-  arma::fvec signal = arma::sin(2.0f * M_PI * frequency * t);
+  arma::Col<eT> t = arma::linspace<arma::Col<eT>>(0, duration, nSamples);
+  arma::Col<eT> signal = arma::sin(2.0f * M_PI * frequency * t);
 
-  arma::fmat power;
+  arma::Mat<eT> power;
 
   PowerSpectrum(signal, power, nFFT);
 
@@ -108,7 +108,96 @@ TEST_CASE("FilterBanks", "[MFCC][tiny]")
 
 }
 
-TEST_CASE("MFE", "[MFCC][tiny]")
+/*
+ * Signal all zeros is basically silence.
+ * FFT is also going to be equal to zeros. no energy.
+ */
+TEMPLATE_TEST_CASE("MFESilence", "[MFCC][tiny]", float, double)
 {
+  typedef TestType eT;
+  size_t sampleRate = 16000;
+  arma::Mat<eT> input(sampleRate, 1);
 
+  arma::Mat<eT> mfe;
+  MFE(input, mfe, sampleRate);
+
+  REQUIRE(mfe.n_rows == 40);
+  REQUIRE(mfe.n_cols == 98);
+
+  // All values should be approximately log(1e-10) ≈ -23.03.
+  float logEps = std::log(1e-10f);
+  REQUIRE(mfe.min() == Approx(logEps).margin(0.1));
+  REQUIRE(mfe.max() == Approx(logEps).margin(0.1));
+}
+
+TEMPLATE_TEST_CASE("MFEDC", "[MFCC][tiny]", float, double)
+{
+  typedef TestType eT;
+
+  size_t sampleRate = 16000;
+  arma::Mat<eT> input(sampleRate, 1);
+  input.fill(0.5f);
+
+  arma::Mat<eT> mfe;
+  MFE(input, mfe, sampleRate);
+
+  REQUIRE(mfe.n_rows == 40);
+  REQUIRE(mfe.n_cols == 98);
+
+  arma::Col<eT> meanMFE = arma::mean(mfe, 1);
+
+  // Filter 0 should have the highest energy (DC is at 0 Hz).
+  size_t peakBin = meanMFE.index_max();
+  REQUIRE(peakBin == 0);
+
+  // Filter 0 should be well above the epsilon floor.
+  float logEps = std::log(1e-10f);
+  REQUIRE(meanMFE(0) > logEps + 5.0f);
+
+  // All other filters should be near the epsilon floor.
+  size_t nearFloorCount = 0;
+  for (size_t i = 1; i < meanMFE.n_elem; ++i)
+  {
+    if (std::abs(meanMFE(i) - logEps) < 2.0f)
+      ++nearFloorCount;
+  }
+  REQUIRE(nearFloorCount >= 35);
+
+  // All frames should be nearly identical (stationary signal).
+  float meanFrameVar = arma::mean(arma::var(mfe, 0, 1));
+  REQUIRE(meanFrameVar < 1.0f);
+}
+
+TEMPLATE_TEST_CASE("MFEPureSine440", "[MFCC][tiny]", float, double)
+{
+  typedef TestType eT;
+
+  size_t sampleRate = 16000;
+  arma::Col<eT> t = arma::linspace<arma::Col<eT>>(0, 1.0f, sampleRate);
+  arma::Mat<eT> input = arma::sin(2.0f * (float) M_PI * 440.0f * t);
+
+  arma::Mat<eT> mfe;
+  MFE(input, mfe, sampleRate);
+
+  REQUIRE(mfe.n_rows == 40);
+  REQUIRE(mfe.n_cols == 98);
+
+  arma::Col<eT> meanMFE = arma::mean(mfe, 1);
+
+  // The peak mel bin should be in the low range (440 Hz),
+  // which maps to roughly filter 5–6 out of 40).
+  size_t peakBin = meanMFE.index_max();
+  REQUIRE(peakBin <= 10);
+
+  // Since we have a pure Sine 440 Hz signal, most of the other bins are close
+  // to zero. (Check FFT sine wave test). Therefore, the log should be very
+  // small (-23)
+  float delta = std::log(1e-10f);
+  size_t nearFloorCount = 0;
+  for (size_t i = 0; i < meanMFE.n_elem; ++i)
+  {
+    if (std::abs(meanMFE[i] - delta) < 1.0f)
+      ++nearFloorCount;
+  }
+  REQUIRE(nearFloorCount >= 30);
 }
