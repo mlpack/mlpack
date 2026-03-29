@@ -40,7 +40,7 @@ coefficients.
    * Extract log-mel filterbank energies from `signal` using default parameters.
 
  - `MFE(signal, sampleRate, output, numMelFilters, windowLength, windowStep,
-   nFFT, lowFreq, highFreq, preEmphCoeff)`
+   nFFT, lowFreq, highFreq)`
    * Extract log-mel filterbank energies depending on the user specified
      parameters .
 
@@ -48,7 +48,7 @@ coefficients.
    * Extract 13 MFCC coefficients from `signal` with default parameters.
 
  - `MFCC(signal, sampleRate, output, numCoeffs, numMelFilters, windowLength,
-   windowStep, nFFT, lowFreq, highFreq, preEmphCoeff)`
+   windowStep, nFFT, lowFreq, highFreq)`
    * Extract MFCC with different number coefficients dependings on the user specified
      parameters.
 
@@ -74,7 +74,6 @@ especially if they do not have any background in audio processing. -->
 | `nFFT`           | `size_t`    | `0`     | FFT size; `0` means the number of points fed to FFT is chosen automatically using the next power of 2 >= of the window length. |
 | `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in Hz.       |
 | `highFreq`       | `float`     | `0.0`   | High frequency bound in Hz; `0` means `sampleRate / 2`. |
-| `preEmphCoeff`   | `float`     | `0.97`  | Finit impulse response filter coefficient; `0` disables the filter. |
 
 ***Note:*** Different types can be used for `signal` (e.g., `arma::fmat`, `arma::imat`).
 However the signal needs to be represented in floating points. Therefore, if
@@ -145,5 +144,5 @@ mlpack::AudioOptions opts = mlpack::WAV;
 mlpack::Load("voice.wav", signal, opts);
 
 arma::fmat mfcc;
-mlpack::MFCC(signal, opts.SampleRate(), mfcc, 13, 26, 25.0, 10.0, 512, 300.0, 3400.0, 0.97);
+mlpack::MFCC(signal, opts.SampleRate(), mfcc, 13, 26, 25.0, 10.0, 512, 300.0, 3400.0);
 ```
