@@ -85,7 +85,7 @@ void PrintJLGroup(const string& /* category */,
 
   // Now we need the user-facing constructor, which can accept constructors as
   // keyword arguments.
-  cout << "  " << modelName << "( ;" << endl;
+  cout << "  function " << modelName << "( ;" << endl;
   for (size_t i = 0; i < hyperparams.size(); ++i)
   {
     // This will print definitions like:
@@ -102,14 +102,21 @@ void PrintJLGroup(const string& /* category */,
     if (i != hyperparams.size() - 1)
       cout << "," << endl;
     else
-      cout << ") =" << endl;
+      cout << ")" << endl;
   }
-  cout << "    new(";
+  cout << "    res = new(";
   for (size_t i = 0; i < hyperparams.size(); ++i)
     cout << hyperparams[i]->name << ", ";
 
   // We have to set ptr as the last element.
   cout << "Ptr{Nothing}())" << endl;
+  // Set the finalizer.
+  cout << "    # Set the finalizer so that memory is freed when the object "
+      << "is deleted." << endl;
+  cout << "    finalizer(x -> _Internal." << groupName << "_" << trainMethod
+      << "_internal.Delete" << modelName << "(x.ptr), res)" << endl;
+  cout << "    return res" << endl;
+  cout << "  end" << endl;
 
   // Close the struct definition.
   cout << "end" << endl << endl;
@@ -199,7 +206,6 @@ void PrintJLGroup(const string& /* category */,
 
       cout << "  in_model.ptr = _Internal." << groupName << "_" << methods[i]
           << "(";
-      cout << endl;
     }
     else
     {
@@ -242,16 +248,6 @@ void PrintJLGroup(const string& /* category */,
       }
     }
     cout << ")" << endl;
-
-    // For the training binding, set the finalizer.
-    if (methods[i] == "train")
-    {
-      cout << "  # Set the finalizer so that memory is freed when the object "
-          << "is deleted." << endl;
-      cout << "  finalizer(x -> _Internal." << groupName << "_" << methods[i]
-          << "_internal.Delete" << modelName << "(x.ptr), in_model)" << endl;
-    }
-
     cout << "end" << endl << endl;
   }
 
