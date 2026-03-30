@@ -51,10 +51,9 @@ add_category(logistic_regression "Classification")
 group_bindings(logistic_regression logistic_regression
   "train;classify;probabilities")
 add_python_wrapper(logistic_regression logistic_regression)
+add_julia_class(logistic_regression logistic_regression)
 add_cli_executable(logistic_regression logistic_regression)
-add_julia_binding(logistic_regression logistic_regression "false")
 add_go_binding(logistic_regression logistic_regression)
-add_r_binding(logistic_regression logistic_regression)
 add_markdown_docs(logistic_regression logistic_regression
   "cli;python;julia;go;r" "python")
 
@@ -85,9 +84,9 @@ add_all_bindings(sparse_coding sparse_coding "Transformations")
 add_category(adaboost "Classification")
 group_bindings(adaboost adaboost "train;classify;probabilities")
 add_python_wrapper(adaboost adaboost)
+add_julia_class(adaboost adaboost)
 
 add_cli_executable(adaboost adaboost)
-add_julia_binding(adaboost adaboost "false")
 add_go_binding(adaboost adaboost)
 add_r_binding(adaboost adaboost)
 add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
@@ -99,9 +98,9 @@ add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
 add_category(linear_regression "Regression")
 group_bindings(linear_regression linear_regression "train;predict")
 add_python_wrapper(linear_regression linear_regression)
+add_julia_class(linear_regression linear_regression)
 
 add_cli_executable(linear_regression linear_regression)
-add_julia_binding(linear_regression linear_regression "false")
 add_go_binding(linear_regression linear_regression)
 add_r_binding(linear_regression linear_regression)
 add_markdown_docs(linear_regression linear_regression "cli;python;julia;go;r"
