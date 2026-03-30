@@ -47,17 +47,14 @@ void PrintInputParam(util::ParamData& d,
     if (std::is_same_v<T, std::string>)
     {
       MLPACK_COUT_STREAM << " = \"" << std::any_cast<std::string>(d.value) << "\"";
-      d.wasPassed = true;
     }
     else if (std::is_same_v<T, double>)
     {
       MLPACK_COUT_STREAM << " = " << std::any_cast<double>(d.value);
-      d.wasPassed = true;
     }
     else if (std::is_same_v<T, int>)
     {
       MLPACK_COUT_STREAM << " = " << std::any_cast<int>(d.value);
-      d.wasPassed = true;
     }
     else
     {
