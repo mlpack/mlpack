@@ -15,9 +15,22 @@ macro (post_julia_setup)
   # If we are building Julia bindings, we have to end the 'module' declaration in
   # mlpack.jl.
   if (BUILD_JULIA_BINDINGS)
+    # All of the grouped bindings must be outside the module _Internal
+    # definition.
     file(APPEND
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-        "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
+        "\nend\n\n# Add grouped bindings.\n")
+
+    message(STATUS "julia group bindings: ${JULIA_GROUP_BINDINGS}")
+    foreach (group_binding ${JULIA_GROUP_BINDINGS})
+      file(APPEND
+          "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+          "include(\"${group_binding}.jl\")\n")
+    endforeach ()
+
+    file(APPEND
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+        "\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\n\nend\n")
   endif ()
 endmacro ()
 
@@ -116,8 +129,6 @@ if (BUILD_JULIA_BINDINGS)
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
       "# This file imports all serialization and deserialization functions\n"
       "# from internal modules.\n"
-      "import Serialization\n"
-      "\n"
       "\"\"\"\n"
       "    serialize_bin(stream::IO, model)\n"
       "\n"
@@ -356,6 +367,10 @@ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${g
   # Add the generate_jl_${group_name} target to the list of targets that are
   # built when 'make julia' is typed.
   add_dependencies(julia generate_jl_group_${group_name})
+
+  # Add to the list of Julia group bindings.  These will all be appended to
+  # mlpack.jl in post_julia_setup().
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name} PARENT_SCOPE)
 endmacro()
 
 if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)

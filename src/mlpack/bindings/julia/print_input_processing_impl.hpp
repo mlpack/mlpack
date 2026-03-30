@@ -157,7 +157,11 @@ void PrintInputProcessing(
   std::string indent(extraIndent + 2, ' ');
   std::string type = util::StripType(d.cppType);
   std::cout << indent << "push!(modelPtrs, convert(" << juliaType
-      << ", " << juliaName << ").ptr)" << std::endl;
+      << ", " << juliaName << ")";
+  if (useRawPointers)
+    std::cout << ")" << std::endl;
+  else
+    std::cout << ".ptr)" << std::endl;
   std::cout << indent << functionName << "_internal.SetParam" << type
       << "(p, \"" << d.name << "\", convert(" << juliaType << ", " << juliaName
       << "))" << std::endl;

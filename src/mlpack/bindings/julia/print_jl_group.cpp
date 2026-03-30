@@ -62,13 +62,6 @@ void PrintJLGroup(const string& /* category */,
 
   const string modelName = StripType(modelType->cppType);
 
-  // Import the modules that actually contain each binding.
-  for (size_t i = 0; i < methods.size(); ++i)
-  {
-    cout << "import ." << groupName << "_" << methods[i] << endl;
-  }
-  cout << endl;
-
   // Define the struct that holds the model.
   cout << "mutable struct " << modelName << endl;
   cout << "  # Hyperparameters for controlling model training behavior."
@@ -138,8 +131,8 @@ void PrintJLGroup(const string& /* category */,
     else if (useName == "probabilities")
       useName = "predict_proba";
 
-    string indent(useName.size() + 1, ' ');
-    cout << useName << "(in_model::" << modelName;
+    string indent(useName.size() + 10, ' ');
+    cout << "function " << useName << "(in_model::" << modelName;
 
     // Print required input parameters.  (We already validated them earlier.)
     Params& ps = const_cast<Params&>(params.at(methods[i]));
@@ -148,52 +141,91 @@ void PrintJLGroup(const string& /* category */,
       ParamData& d = it.second;
       if (d.required && d.input)
       {
+        bool serializable;
+        ps.functionMap[d.tname]["IsSerializable"](d, NULL,
+            (void*) &serializable);
+        if (serializable)
+          continue; // Don't print serializable parameters---we already did.
+
         cout << "," << endl << indent;
         ps.functionMap[d.tname]["PrintMemberDefn"]((ParamData&) d, NULL, NULL);
       }
     }
 
-    // Now print non-required input parameters.
+    // Now print non-required input parameters, but only for non-training
+    // bindings.
     bool anyNonRequiredPrinted = false;
-    for (auto& it : ps.Parameters())
+    if (methods[i] != "train")
     {
-      ParamData& d = it.second;
-      if (!d.required && d.input)
+      for (auto& it : ps.Parameters())
       {
-        if (!anyNonRequiredPrinted)
+        ParamData& d = it.second;
+        if (!d.required && d.input)
         {
-          // To split between required (non-keyword) and non-required (keyword)
-          // arguments, we split the list with a ;.
-          cout << ";" << endl << indent;
-          anyNonRequiredPrinted = true;
-        }
-        else
-        {
-          cout << "," << endl << indent;
-        }
+          if (!anyNonRequiredPrinted)
+          {
+            // To split between required (non-keyword) and non-required
+            // (keyword) arguments, we split the list with a ;.
+            cout << ";" << endl << indent;
+            anyNonRequiredPrinted = true;
+          }
+          else
+          {
+            cout << "," << endl << indent;
+          }
 
-        ps.functionMap[d.tname]["PrintMemberDefn"]((ParamData&) d,
-            NULL, NULL);
-        cout << "=";
-        std::string defaultParam;
-        ps.functionMap[d.tname]["DefaultParam"]((ParamData&) d,
-            NULL, (void*) &defaultParam);
-        cout << defaultParam;
+          ps.functionMap[d.tname]["PrintMemberDefn"]((ParamData&) d,
+              NULL, NULL);
+          cout << " = ";
+          std::string defaultParam;
+          ps.functionMap[d.tname]["DefaultParam"]((ParamData&) d,
+              NULL, (void*) &defaultParam);
+          cout << defaultParam;
+        }
       }
     }
 
     cout << ")" << endl;
 
     // Print the function call.
-    cout << "  return " << groupName << "_" << methods[i] << "." << groupName
-        << "_" << methods[i] << "(in_model.ptr";
+    if (methods[i] == "train")
+    {
+      cout << "  # Delete an existing model." << endl;
+      cout << "  if in_model.ptr != C_NULL" << endl;
+      cout << "    _Internal." << groupName << "_" << methods[i]
+          << "_internal.Delete" << modelName << "(in_model.ptr)" << endl;
+      cout << "  end" << endl;
+      cout << endl;
+
+      cout << "  in_model.ptr = _Internal." << groupName << "_" << methods[i]
+          << "(";
+      cout << endl;
+    }
+    else
+    {
+      cout << "  return _Internal." << groupName << "_" << methods[i] << "(";
+    }
 
     // Print required input parameters.
+    bool printedAny = false;
     for (auto& it : ps.Parameters())
     {
       ParamData& d = it.second;
       if (d.required && d.input)
-        cout << ", " << d.name;
+      {
+        if (printedAny)
+          cout << ", ";
+
+        bool serializable;
+        ps.functionMap[d.tname]["IsSerializable"](d, NULL,
+            (void*) &serializable);
+        if (serializable)
+          cout << "in_model.ptr";
+        else
+          cout << d.name;
+
+        printedAny = true;
+      }
     }
 
     // Print non-required input parameters.
@@ -201,12 +233,84 @@ void PrintJLGroup(const string& /* category */,
     {
       ParamData& d = it.second;
       if (!d.required && d.input)
+      {
+        // Don't print any hyperparameters.
+        if (methods[i] == "train")
+          continue;
+
         cout << ", " << d.name << "=" << d.name;
+      }
+    }
+    cout << ")" << endl;
+
+    // For the training binding, set the finalizer.
+    if (methods[i] == "train")
+    {
+      cout << "  # Set the finalizer so that memory is freed when the object "
+          << "is deleted." << endl;
+      cout << "  finalizer(x -> _Internal." << groupName << "_" << methods[i]
+          << "_internal.Delete" << modelName << "(x.ptr), in_model)" << endl;
     }
 
-    cout << ")" << endl;
     cout << "end" << endl << endl;
   }
+
+  // Now print serialization shims, like:
+  //
+  // function Serialization.serialize(s::Serialization.AbstractSerializer,
+  //                                  model::LARS)
+  //   Serialization.writetag(s.io, Serialization.OBJECT_TAG)
+  //   Serialization.serialize(s, LARS)
+  //   write(s.io, model.lambda1)
+  //   ...
+  //   _Internal.lars_train_internal.serializeLARS(s.io, model.ptr)
+  // end
+  cout << "function Serialization.serialize("
+      << "s::Serialization.AbstractSerializer, model::" << modelName << ")"
+      << endl;
+  cout << "  Serialization.writetag(s.io, Serialization.OBJECT_TAG)" << endl;
+  cout << "  Serialization.serialize(s, " << modelName << ")" << endl;
+  for (ParamData* p : hyperparams)
+    cout << "  write(s.io, model." << p->name << ")" << endl;
+
+  cout << "  hasModel = (model.ptr != C_NULL)" << endl;
+  cout << "  write(s.io, hasModel)" << endl;
+  cout << "  if hasModel == true" << endl;
+  cout << "    _Internal." << groupName << "_" << trainMethod << "_internal."
+      << "serialize" << modelName << "(s.io, model.ptr)" << endl;
+  cout << "  end" << endl;
+  cout << "end" << endl << endl;
+
+  // function Serialization.deserialize(s::Serialization.AbstractSerializer,
+  //                                    ::Type{LARS})
+  //   model = LARS()
+  //   model.lambda1 = read(s.io, Float64)
+  //   ...
+  //   model.ptr = _Internal.lars_train_internal.deserializeLARS(s.io)
+  //   return model
+  // end
+  cout << "function Serialization.deserialize("
+      << "s::Serialization.AbstractSerializer, ::Type{" << modelName << "})"
+      << endl;
+  cout << "  model = " << modelName << "()" << endl;
+  for (ParamData* p : hyperparams)
+  {
+    string juliaType;
+    params.at(trainMethod).functionMap[p->tname]["GetPrintableType"](*p,
+        NULL, (void*) &juliaType);
+    cout << "  model." << p->name << " = read(s.io, " << juliaType << ")"
+        << endl;
+  }
+
+  cout << "  hasModel = read(s.io, Bool)" << endl;
+  cout << "  if hasModel == true" << endl;
+  cout << "    model.ptr = _Internal." << groupName << "_" << trainMethod
+      << "_internal.deserialize" << modelName << "(s.io)" << endl;
+  cout << "  else" << endl;
+  cout << "    model.ptr = Ptr{Nothing}(0)" << endl;
+  cout << "  end" << endl;
+  cout << "  return model" << endl;
+  cout << "end" << endl;
 }
 
 } // namespace julia

@@ -15,6 +15,7 @@
 #include <mlpack/core/util/param_data.hpp>
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
+#include "get_printable_type.hpp"
 #include "print_param_defn.hpp"
 #include "print_input_param.hpp"
 #include "print_input_processing.hpp"
@@ -74,6 +75,7 @@ class JuliaOption
     // GetPrintableParam, and GetRawParam.)
     IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
     IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableType", &GetPrintableType<T>);
 
     // These are used by the jl generator.
     IO::AddFunction(data.tname, "PrintParamDefn", &PrintParamDefn<T>);
