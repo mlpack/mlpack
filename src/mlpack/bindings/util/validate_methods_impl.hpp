@@ -100,7 +100,8 @@ inline void ValidateMethods(
         std::ostringstream oss;
         oss << callerName << ": binding required input parameter '" << it.first
             << "' has type '" << it.second->cppType << "', but required input "
-            << "parameters must have type arma::mat or "
+            << "parameters must have type arma::mat, arma::rowvec, "
+            << "arma::Row<size_t>, or "
             << "std::tuple<mlpack::DatasetInfo, arma::mat>!";
         throw std::runtime_error(oss.str());
       }
@@ -138,12 +139,14 @@ inline void ValidateMethods(
       // Prediction bindings should have a matrix type output parameter.
       mlpack::util::ParamData* p = outputParams.begin()->second;
       if (p->cppType != "arma::mat" &&
+          p->cppType != "arma::rowvec" &&
+          p->cppType != "arma::Row<size_t>" &&
           p->cppType != "std::tuple<mlpack::DatasetInfo, arma::mat>")
       {
         std::ostringstream oss;
-        oss << callerName << ": binding required input parameter '" << p->name
-            << "' has type '" << p->cppType << "', but required input "
-            << "parameters must have type arma::mat or "
+        oss << callerName << ": binding output parameter '" << p->name
+            << "' has type '" << p->cppType << "', but output parameters must "
+            << "have type arma::mat, arma::rowvec, arma::Row<size_t>, or "
             << "std::tuple<mlpack::DatasetInfo, arma::mat>!";
         throw std::runtime_error(oss.str());
       }
