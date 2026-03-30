@@ -149,7 +149,8 @@ std::string PrintTypeDoc(
     const std::enable_if_t<!arma::is_arma_type<T>::value>*,
     const std::enable_if_t<HasSerialize<T>::value>*)
 {
-  return "An mlpack model pointer.  `<Model>` refers to the type of model that "
+  return "An mlpack model pointer, with an S3 class attribute. "
+      " `<Model>` refers to the type of model that "
       "is being stored, so, e.g., for `cf()`, the type will be `CFModel`. "
       "This type holds a pointer to C++ memory containing the mlpack model.  "
       "Note that this means the mlpack model itself cannot be easily inspected "
