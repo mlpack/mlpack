@@ -35,18 +35,19 @@ void PrintInputParam(util::ParamData& d,
     {
       // Make sure that we use the global verbose option for the mlpack package
       // as the default.
-      MLPACK_COUT_STREAM << "=getOption(\"mlpack.verbose\", FALSE)";
+      MLPACK_COUT_STREAM << " = getOption(\"mlpack.verbose\", FALSE)";
     }
     else
     {
-      MLPACK_COUT_STREAM << "=FALSE";
+      MLPACK_COUT_STREAM << " = FALSE";
     }
   }
   else if (!d.required)
   {
     if (std::is_same_v<T, std::string>)
     {
-      MLPACK_COUT_STREAM << " = \"" << std::any_cast<std::string>(d.value) << "\"";
+      MLPACK_COUT_STREAM << " = \"" << std::any_cast<std::string>(d.value)
+                         << "\"";
     }
     else if (std::is_same_v<T, double>)
     {
