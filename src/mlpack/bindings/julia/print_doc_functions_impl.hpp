@@ -556,7 +556,7 @@ inline std::string ParamString(const std::string& paramName)
 inline std::string ImportExtLib()
 {
   return ">>> import pandas as pd";
-}     
+}
 
 inline std::string ImportSplit()
 {

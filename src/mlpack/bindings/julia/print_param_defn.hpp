@@ -58,7 +58,6 @@ void PrintParamDefn(
     const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   const std::string type = util::StripType(d.cppType);
-  std::cout << "# type: " << type << "; useRawPointer " << (useRawPointer ? "use" : "no!") << "\n";
 
   if (!useRawPointer)
   {

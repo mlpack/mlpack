@@ -45,7 +45,7 @@ inline void PopulateMethodMaps(
     std::map<std::string, bool>& isHyperparam,
     std::map<std::string, bool>& isBool);
 
-} // namespace util;
+} // namespace util
 } // namespace bindings
 } // namespace mlpack
 
