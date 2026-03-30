@@ -248,6 +248,12 @@ void PrintJLGroup(const string& /* category */,
       }
     }
     cout << ")" << endl;
+    // Make sure the function doesn't return anything if it's fit!().
+    if (methods[i] == "train")
+    {
+      cout << endl << "  nothing" << endl;
+    }
+
     cout << "end" << endl << endl;
   }
 
