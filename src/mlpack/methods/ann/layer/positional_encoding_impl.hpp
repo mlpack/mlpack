@@ -1,15 +1,15 @@
 /**
  * @file methods/ann/layer/positional_encoding_impl.hpp
- * @author Mrityunjay Tripathi
+ * @author Kumar Utkarsh
  *
- * Implementation of the Positional Encoding.
+ * Definition of the Positional Encoding.
+
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-
 #ifndef MLPACK_METHODS_ANN_LAYER_POSITIONAL_ENCODING_IMPL_HPP
 #define MLPACK_METHODS_ANN_LAYER_POSITIONAL_ENCODING_IMPL_HPP
 
@@ -18,26 +18,90 @@
 
 namespace mlpack {
 
-template<typename InputType, typename OutputType>
-PositionalEncodingType<InputType, OutputType>::PositionalEncodingType() :
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>::PositionalEncoding() :
+    Layer<MatType>(),
     embedDim(0),
     maxSequenceLength(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputType, typename OutputType>
-PositionalEncodingType<InputType, OutputType>::PositionalEncodingType(
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
     const size_t embedDim,
-    const size_t maxSequenceLength) :
-    embedDim(embedDim),
-    maxSequenceLength(maxSequenceLength)
+    const size_t maxSequenceLength,
+    RegularizerType regularizer) :
+    Layer<MatType>(),
+    embedDim(embedDim), // This will be set by ComputeOutputDimensions().
+    maxSequenceLength(maxSequenceLength),
+    regularizer(regularizer)
 {
-  InitPositionalEncoding();
+  // Nothing to do.
+}
+
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
+    const PositionalEncoding& layer) :
+    Layer<MatType>(layer),
+    embedDim(layer.embedDim),
+    maxSequenceLength(layer.maxSequenceLength),
+    regularizer(layer.regularizer)
+{
+  // Nothing to do here.
+}
+
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
+    PositionalEncoding&& layer) :
+    Layer<MatType>(std::move(layer)),
+    embedDim(std::move(layer.embedDim)),
+    maxSequenceLength(std::move(layer.maxSequenceLength)),
+    regularizer(std::move(layer.regularizer))
+{
+  // Reset parameters of other layer.
+  layer.embedDim = 0;
+  layer.maxSequenceLength = 0;
+}
+
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>&
+PositionalEncoding<MatType, RegularizerType>::operator=(
+    const PositionalEncoding& layer)
+{
+  if (this != &layer)
+  {
+    Layer<MatType>::operator=(layer);
+    embedDim = layer.embedDim;
+    maxSequenceLength = layer.maxSequenceLength;
+    regularizer = layer.regularizer;
+  }
+
+  return *this;
+}
+
+template<typename MatType, typename RegularizerType>
+PositionalEncoding<MatType, RegularizerType>&
+PositionalEncoding<MatType, RegularizerType>::operator=(
+    PositionalEncoding&& layer)
+{
+  if (this != &layer)
+  {
+    Layer<MatType>::operator=(std::move(layer));
+    embedDim = std::move(layer.embedDim);
+    maxSequenceLength = std::move(layer.maxSequenceLength);
+    regularizer = std::move(layer.regularizer);
+
+    // Reset parameters of other layer.
+    layer.embedDim = 0;
+    layer.maxSequenceLength = 0;
+  }
+
+  return *this;
 }
 
 template<typename InputType, typename OutputType>
-void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
+void PositionalEncoding<InputType, OutputType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
   const InputType position = arma::regspace(0, 1, maxSequenceLength - 1);
@@ -52,9 +116,16 @@ void PositionalEncodingType<InputType, OutputType>::InitPositionalEncoding()
   positionalEncoding = vectorise(positionalEncoding.t());
 }
 
-template<typename InputType, typename OutputType>
-void PositionalEncodingType<InputType, OutputType>::Forward(
-    const InputType& input, OutputType& output)
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::SetWeights(
+    const MatType& weights)
+{
+  MakeAlias(positionalEncoding, weights, maxSequenceLength, embedDim);
+}
+
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::Forward(
+    const MatType& input, MatType& output)
 {
   if (input.n_rows != embedDim * maxSequenceLength)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
@@ -62,25 +133,41 @@ void PositionalEncodingType<InputType, OutputType>::Forward(
   output = input.each_col() + positionalEncoding;
 }
 
-template<typename InputType, typename OutputType>
-void PositionalEncodingType<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::Backward(
+    const MatType& /* input */,
+    const MatType& /* output */,
+    const MatType& gy,
+    MatType& g)
 {
   g = gy;
 }
 
-template<typename InputType, typename OutputType>
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::Gradient(
+    const MatType& input,
+    const MatType& error,
+    MatType& gradient)
+{
+  // Nothing to do here.
+}
+
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::ComputeOutputDimensions()
+{
+  this->outputDimensions = this->inputDimensions;
+}
+
+template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void PositionalEncodingType<InputType, OutputType>::serialize(
+void PositionalEncoding<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+  ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(embedDim));
   ar(CEREAL_NVP(maxSequenceLength));
-
-  if (cereal::is_loading<Archive>())
-    InitPositionalEncoding();
+  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace mlpack

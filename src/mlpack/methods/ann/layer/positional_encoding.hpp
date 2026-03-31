@@ -1,7 +1,6 @@
-// Temporarily drop.
 /**
  * @file methods/ann/layer/positional_encoding.hpp
- * @author Mrityunjay Tripathi
+ * @author Kumar Utkarsh
  *
  * Definition of the Positional Encoding.
  *
@@ -14,6 +13,9 @@
 #define MLPACK_METHODS_ANN_LAYER_POSITIONAL_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
+
+#include "layer.hpp"
 
 namespace mlpack {
 
@@ -30,17 +32,18 @@ namespace mlpack {
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <
-    typename InputType = arma::mat,
-    typename OutputType = arma::mat
+template<
+    typename MatType = arma::mat,
+    typename RegularizerType = NoRegularizer
 >
-class PositionalEncodingType : public Layer<InputType, OutputType>
+class PositionalEncoding : public Layer<MatType>
 {
  public:
-  /**
-   * Create PositionalEncodingType object.
-   */
-  PositionalEncodingType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the PositionalEncoding object.
+  PositionalEncoding();
 
   /**
    * Create the PositionalEncoding layer object using the specified parameters.
@@ -48,15 +51,30 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
    * @param embedDim The length of the embedding vector.
    * @param maxSequenceLength Number of tokens in each sequence.
    */
-  PositionalEncodingType(const size_t embedDim,
-                         const size_t maxSequenceLength);
+  PositionalEncoding(const size_t embedDim,
+                    const size_t maxSequenceLength,
+                   RegularizerType regularizer = RegularizerType());
 
-  //! Clone the PositionalEncodingType object. This handles polymorphism
-  //! correctly.
-  PositionalEncodingType* Clone() const
-  {
-    return new PositionalEncodingType(*this);
-  }
+  //! Clone the PositionalEncoding object. This handles polymorphism correctly.
+  PositionalEncoding* Clone() const { return new PositionalEncoding(*this); }
+
+  //! Reset the layer parameter.
+  void SetWeights(const MatType& weightsIn);
+
+  //! Copy constructor.
+  PositionalEncoding(const PositionalEncoding& layer);
+
+  //! Move constructor.
+  PositionalEncoding(PositionalEncoding&&);
+
+  //! Copy assignment operator.
+  PositionalEncoding& operator=(const PositionalEncoding& layer);
+
+  //! Move assignment operator.
+  PositionalEncoding& operator=(PositionalEncoding&& layer);
+
+  //! Virtual destructor.
+  virtual ~PositionalEncoding() { }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -65,32 +83,46 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const InputType& input, OutputType& output);
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param * (input) The propagated input activation.
+   * @param input The input data (x) given to the forward pass.
+   * @param output The propagated data (f(x)) resulting from Forward()
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  void Backward(const InputType& /* input */,
-                const OutputType& gy,
-                OutputType& g);
-
-  //! Get the positional encoding vector.
-  InputType const& Encoding() const { return positionalEncoding; }
-
-  size_t InputShape() const
-  {
-    return embedDim * maxSequenceLength;
-  }
+  void Backward(const MatType& /* input */,
+                const MatType& /* output */,
+                const MatType& gy,
+                MatType& g);
 
   /**
-   * Serialize the layer
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param input The input parameter used for calculating the gradient.
+   * @param error The calculated error.
+   * @param gradient The calculated gradient.
    */
+  void Gradient(const MatType& input,
+                const MatType& error,
+                MatType& gradient);
+
+  //! Get the parameters.
+  const MatType& Parameters() const { return positionalEncoding; }
+  //! Modify the parameters.
+  MatType& Parameters() { return positionalEncoding; }
+
+  //! Get the number of weights in the layer.
+  size_t WeightSize() const { return embedDim * maxSequenceLength; }
+
+  //! Compute the output dimensions of the layer using `InputDimensions()`.
+  void ComputeOutputDimensions();
+
+  //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -99,7 +131,7 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
    * Initialize positional encodings for further use.
    */
   void InitPositionalEncoding();
-
+  
   //! Locally-stored embedding dimension.
   size_t embedDim;
 
@@ -107,11 +139,11 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
   size_t maxSequenceLength;
 
   //! Locally-stored positional encodings.
-  InputType positionalEncoding;
-}; // class PositionalEncodingTest
+  MatType positionalEncoding;
 
-// Standard PositionalEncoding layer.
-using PositionalEncoding = PositionalEncodingType<arma::mat, arma::mat>;
+  //! Locally-stored regularizer object.
+  RegularizerType regularizer;
+}; // class PositionalEncoding
 
 } // namespace mlpack
 
