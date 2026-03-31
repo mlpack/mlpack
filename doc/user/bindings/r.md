@@ -32,7 +32,7 @@ mlpack bindings for R take and return a restricted set of types, for simplicity.
  - `numeric vector`{: #doc_numeric_vector }: A 1-d matrix-like containing `numeric` data (could be an `matrix` or a `data.frame` with one dimension of size 1).
  - `integer vector`{: #doc_integer_vector }: A 1-d matrix-like containing `integer` data (could be an `matrix` or a `data.frame` with one dimension of size 1).
  - `categorical matrix/data.frame`{: #doc_categorical_matrix_data_frame }: A 2-d array containing `numeric` data.  Like the regular 2-d matrices, this can be a `matrix`, or a `data.frame`. However, this type can also accept a `data.frame` that has columns of type `character`, `logical` or `factor`.  These values will be converted to `numeric` indices before being passed to mlpack, and then inside mlpack they will be properly treated as categorical variables, so there is no need to do one-hot encoding for this matrix type.
- - `<Model> (mlpack model)`{: #doc_model }: An mlpack model pointer.  `<Model>` refers to the type of model that is being stored, so, e.g., for `cf()`, the type will be `CFModel`. This type holds a pointer to C++ memory containing the mlpack model.  Note that this means the mlpack model itself cannot be easily inspected in R.  However, the pointer can be passed to subsequent calls to mlpack functions, and can be serialized and deserialized via either the `Serialize()` and `Unserialize()` functions.
+ - `<Model> (mlpack model)`{: #doc_model }: An mlpack model pointer, with an S3 class attribute.  `<Model>` refers to the type of model that is being stored, so, e.g., for `cf()`, the type will be `CFModel`. This type holds a pointer to C++ memory containing the mlpack model.  Note that this means the mlpack model itself cannot be easily inspected in R.  However, the pointer can be passed to subsequent calls to mlpack functions, and can be serialized and deserialized via either the `Serialize()` and `Unserialize()` functions.
 </div>
 
 
@@ -615,8 +615,7 @@ The `leaf_size` parameter controls the leaf size of the kd-tree that is used to 
 For example, the minimum spanning tree of the input dataset `"data"` can be calculated with a leaf size of 20 and stored as `"spanning_tree"` using the following command:
 
 ```R
-R> output <- emst(input=data, leaf_size=20)
-R> spanning_tree <- output$output
+R> spanning_tree <- emst(input=data, leaf_size=20)
 ```
 
 The output matrix is a three-dimensional matrix, where each row indicates an edge.  The first dimension corresponds to the lesser index of the edge; the second dimension corresponds to the greater index of the edge; and the third column corresponds to the distance between the two points.
@@ -769,15 +768,13 @@ The `no_force_positive` parameter, if set, will avoid the checks after each iter
 As an example, to train a 6-Gaussian GMM on the data in `"data"` with a maximum of 100 iterations of EM and 3 trials, saving the trained GMM to `"gmm"`, the following command can be used:
 
 ```R
-R> output <- gmm_train(input=data, gaussians=6, trials=3)
-R> gmm <- output$output_model
+R> gmm <- gmm_train(input=data, gaussians=6, trials=3)
 ```
 
 To re-train that GMM on another set of data `"data2"`, the following command may be used: 
 
 ```R
-R> output <- gmm_train(input_model=gmm, input=data2, gaussians=6)
-R> new_gmm <- output$output_model
+R> new_gmm <- gmm_train(input_model=gmm, input=data2, gaussians=6)
 ```
 
 ### See also
@@ -831,8 +828,7 @@ This program is able to generate samples from a pre-trained GMM (use gmm_train t
 The following command can be used to generate 100 samples from the pre-trained GMM `"gmm"` and store those generated samples in `"samples"`:
 
 ```R
-R> output <- gmm_generate(input_model=gmm, samples=100)
-R> samples <- output$output
+R> samples <- gmm_generate(input_model=gmm, samples=100)
 ```
 
 ### See also
@@ -885,8 +881,7 @@ This program calculates the probability that given points came from a given GMM 
 So, for example, to calculate the probabilities of each point in `"points"` coming from the pre-trained GMM `"gmm"`, while storing those probabilities in `"probs"`, the following command could be used:
 
 ```R
-R> output <- gmm_probability(input_model=gmm, input=points)
-R> probs <- output$output
+R> probs <- gmm_probability(input_model=gmm, input=points)
 ```
 
 ### See also
@@ -1116,8 +1111,7 @@ This utility takes an already-trained HMM, specified as `input_model`, and evalu
 For example, to predict the state sequence of the observations `"obs"` using the HMM `"hmm"`, storing the predicted state sequence to `"states"`, the following command could be used:
 
 ```R
-R> output <- hmm_viterbi(input=obs, input_model=hmm)
-R> states <- output$output
+R> states <- hmm_viterbi(input=obs, input_model=hmm)
 ```
 
 ### See also
@@ -1270,8 +1264,7 @@ You can also provide a dataset and save them as images using `dataset` and `save
  An example to load an image : 
 
 ```R
-R> output <- image_converter(input=X, height=256, width=256, channels=3)
-R> Y <- output$output
+R> Y <- image_converter(input=X, height=256, width=256, channels=3)
 ```
 
  An example to save an image is :
@@ -1460,8 +1453,7 @@ Optionally, the Nystroem method ("Using the Nystroem method to speed up kernel m
 For example, the following command will perform KPCA on the dataset `"input"` using the Gaussian kernel, and saving the transformed data to `"transformed"`: 
 
 ```R
-R> output <- kernel_pca(input=input, kernel="gaussian")
-R> transformed <- output$output
+R> transformed <- kernel_pca(input=input, kernel="gaussian")
 ```
 
 ### See also
@@ -2612,9 +2604,8 @@ Multiple different decomposition techniques can be used.  The method to use can 
 For example, to reduce the dimensionality of the matrix `"data"` to 5 dimensions using randomized SVD for the decomposition, storing the output matrix to `"data_mod"`, the following command can be used:
 
 ```R
-R> output <- pca(input=data, new_dimensionality=5,
+R> data_mod <- pca(input=data, new_dimensionality=5,
   decomposition_method="randomized")
-R> data_mod <- output$output
 ```
 
 ### See also
@@ -2836,15 +2827,13 @@ The binarized matrix may be saved with the `output` output parameter.
 For example, if we want to set all variables greater than 5 in the dataset `"X"` to 1 and variables less than or equal to 5.0 to 0, and save the result to `"Y"`, we could run
 
 ```R
-R> output <- preprocess_binarize(input=X, threshold=5)
-R> Y <- output$output
+R> Y <- preprocess_binarize(input=X, threshold=5)
 ```
 
 But if we want to apply this to only the first (0th) dimension of `"X"`,  we could instead run
 
 ```R
-R> output <- preprocess_binarize(input=X, threshold=5, dimension=0)
-R> Y <- output$output
+R> Y <- preprocess_binarize(input=X, threshold=5, dimension=0)
 ```
 
 ### See also
@@ -3046,8 +3035,8 @@ The output matrix with encoded features may be saved with the `output` parameter
 So, a simple example where we want to encode 1st and 3rd feature from dataset `"X"` into `"X_output"` would be
 
 ```R
-R> output <- preprocess_one_hot_encoding(input=X, dimensions=1, dimensions=3)
-R> X_ouput <- output$output
+R> X_output <- preprocess_one_hot_encoding(input=X, dimensions=1,
+  dimensions=3)
 ```
 
 ### See also

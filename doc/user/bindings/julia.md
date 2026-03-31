@@ -3045,7 +3045,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset ``
 ```julia
 julia> using CSV
 julia> X = CSV.read("X.csv")
-julia> X_ouput = preprocess_one_hot_encoding(X; dimensions=1)
+julia> X_output = preprocess_one_hot_encoding(X; dimensions=1)
 ```
 
 ### See also
