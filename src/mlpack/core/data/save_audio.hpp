@@ -62,6 +62,14 @@ bool SaveAudio(const std::string& file,
   if (opts.BitsPerSample() != 8 && opts.BitsPerSample() != 16 &&
       opts.BitsPerSample() != 32 && opts.BitsPerSample() != 64)
   {
+    if (opts.BitsPerSample() != 0 && opts.Fatal())
+      Log::Fatal << "SaveAudio(): invalid BitsPerSample() value: "
+          << opts.BitsPerSample() << "; must be 8/16/32/64!"
+    else
+      Log::Warn << "SaveAudio(): invalid BitsPerSample() value: "
+          << opts.BitsPerSample() << "; using size of given data instead ("
+          << (8 * sizeof(eT)) << ")."
+
     opts.BitsPerSample() = 8 * sizeof(eT);
   }
 
@@ -104,7 +112,6 @@ bool SaveAudio(const std::string& file,
       pcm32.clamp(-1.0f, 1.0f);
       pcm32 = (pcm32 + 1.0f) * 127.5f;
 
-      // DO THE CONVERSION HERE and above
       arma::Mat<uint8_t> pcm8 = arma::conv_to<arma::Mat<uint8_t>>::from(pcm32);
       framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm8.memptr()));
@@ -120,10 +127,17 @@ bool SaveAudio(const std::string& file,
       framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm16.memptr()));
     }
-    else
+    else if (opts.BitsPerSample() == 32)
     {
+      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
       framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), matrix.memptr()));
+        opts.TotalFrames(), pcm32.memptr()));
+    }
+    else if (opts.BitsPerSample() == 64)
+    {
+      arma::mat pcm64 = arma::conv_to<arma::mat>::from(matrix);
+      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+        opts.TotalFrames(), pcm64.memptr()));
     }
   }
   else if constexpr (std::is_integral_v<eT>)
@@ -138,7 +152,16 @@ bool SaveAudio(const std::string& file,
       if (opts.BitsPerSample() == 8)
       {
         arma::Mat<uint8_t> pcm;
-        MapSignedIntegralTypes(pcm, tmpMatrix);
+        if (std::is_signed_v(eT))
+        {
+          MapSignedIntegralTypes(pcm, tmpMatrix);
+        }
+        else (!std::is_signed_v(eT))
+        {
+          arma::Mat<int8_t> pcmInt8;
+          MapUnsignedIntegralTypes(pcmInt8, tmpMatrix);
+          MapSignedIntegralTypes(pcm, pcmInt8);
+        }
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm.memptr()));
       }
