@@ -149,6 +149,7 @@ bool SaveAudio(const std::string& file,
     if (opts.BitsPerSample() != 8 * sizeof(eT))
     {
       // We must convert int8_t to uint8_t to match the WAV standard.
+      // Handles int8_t, uint8_t
       if (opts.BitsPerSample() == 8)
       {
         arma::Mat<uint8_t> pcm;
@@ -165,29 +166,39 @@ bool SaveAudio(const std::string& file,
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm.memptr()));
       }
-      else if (opts.BitsPerSample() == 16)
+      // Handles int16, int32, int64
+      else if constexpr (std::is_signed_v<eT> && !std::is_same_v<eT, int8_t>)
       {
-        arma::Mat<int16_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
+              opts.TotalFrames(), tmpMatrix.memptr()));
       }
-      else if (opts.BitsPerSample() == 32)
+      // Handles uint16, uint32, uint64
+      else if constexpr (!std::is_signed_v<eT> && !std::is_same_v<eT, uint8_t>)
       {
-        arma::Mat<int32_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
-      }
-      else if (opts.BitsPerSample() == 64)
-      {
-        arma::Mat<int64_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
+        if (opts.BitsPerSample() == 16)
+        {
+          arma::Mat<int16_t> pcm;
+          MapUnsignedIntegralTypes(pcm, tmpMatrix);
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+                opts.TotalFrames(), pcm.memptr()));
+        }
+        else if (opts.BitsPerSample() == 32)
+        {
+          arma::Mat<int32_t> pcm;
+          MapUnsignedIntegralTypes(pcm, tmpMatrix);
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+                opts.TotalFrames(), pcm.memptr()));
+        }
+        else if (opts.BitsPerSample() == 64)
+        {
+          arma::Mat<int64_t> pcm;
+          MapUnsignedIntegralTypes(pcm, tmpMatrix);
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+                opts.TotalFrames(), pcm.memptr()));
+        }
       }
     }
-    else
+    else // bitsPerSample == sizeof(eT), or user did not specify bitPerSample
     {
       // We must convert int8_t to uint8_t to match the WAV standard.
       if (std::is_same_v<eT, int8_t>)
@@ -199,13 +210,21 @@ bool SaveAudio(const std::string& file,
       }
       else
       {
-        // Handles:
-        // uint8_t, int16_t, uint16_t, int32_t, uint32_t,  int64_t, uint64_t
-        typedef std::make_signed_t<eT> seT;
-        arma::Mat<seT> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm.memptr()));
+        // Handles: int16_t, int32_t, int64_t
+        if constexpr (std::is_signed_v<eT>)
+        {
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), tmpMatrix.memptr()));
+        }
+        // Handles: uint8_t, uint16_t, uint32_t, uint64_t
+        else if constexpr (!std::is_signed_v<eT>)
+        {
+          typedef std::make_signed_t<eT> seT;
+          arma::Mat<seT> pcm;
+          MapUnsignedIntegralTypes(pcm, tmpMatrix);
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+              opts.TotalFrames(), pcm.memptr()));
+        }
       }
     }
   }
