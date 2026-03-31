@@ -64,11 +64,11 @@ bool SaveAudio(const std::string& file,
   {
     if (opts.BitsPerSample() != 0 && opts.Fatal())
       Log::Fatal << "SaveAudio(): invalid BitsPerSample() value: "
-          << opts.BitsPerSample() << "; must be 8/16/32/64!"
+          << opts.BitsPerSample() << "; must be 8/16/32/64!";
     else
       Log::Warn << "SaveAudio(): invalid BitsPerSample() value: "
           << opts.BitsPerSample() << "; using size of given data instead ("
-          << (8 * sizeof(eT)) << ")."
+          << (8 * sizeof(eT)) << ").";
 
     opts.BitsPerSample() = 8 * sizeof(eT);
   }
@@ -152,11 +152,11 @@ bool SaveAudio(const std::string& file,
       if (opts.BitsPerSample() == 8)
       {
         arma::Mat<uint8_t> pcm;
-        if (std::is_signed_v(eT))
+        if constexpr (std::is_signed_v<eT>)
         {
           MapSignedIntegralTypes(pcm, tmpMatrix);
         }
-        else (!std::is_signed_v(eT))
+        else if constexpr (!std::is_signed_v<eT>)
         {
           arma::Mat<int8_t> pcmInt8;
           MapUnsignedIntegralTypes(pcmInt8, tmpMatrix);
