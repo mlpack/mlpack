@@ -26,10 +26,12 @@ inline std::vector<std::string> GetMethods(const std::string& validMethods);
  * their parameters individually to populate each of these maps:
  *
  *  - methodParams: maps a method to its Params object
- *  - isSerializable: contains whether a parameter is a serializable model type
- *  - isHyperparam: contains whether a parameter is a hyperparameter (e.g. is a
- *      non-required scalar parameter to the _train binding)
- *  - isBool: contains whether a parameter is a boolean
+ *  - trainBindingName: the name of the binding that represents the train()
+ *      function
+ *  - modelType: the ParamData that represents the serializable model type
+ *      (there should be only one)
+ *  - hyperparams: a list of ParamData objects representing hyperparameters to
+ *      the training binding
  */
 inline void ExtractGroupData(
     const std::string& groupName,
@@ -38,12 +40,6 @@ inline void ExtractGroupData(
     std::string& trainBindingName,
     mlpack::util::ParamData*& modelType,
     std::vector<mlpack::util::ParamData*>& hyperparams);
-inline void PopulateMethodMaps(
-    const std::vector<std::string>& methods,
-    std::map<std::string, mlpack::util::Params>& methodParams,
-    std::map<std::string, bool>& isSerializable,
-    std::map<std::string, bool>& isHyperparam,
-    std::map<std::string, bool>& isBool);
 
 } // namespace util
 } // namespace bindings

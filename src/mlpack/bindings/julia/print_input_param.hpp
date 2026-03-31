@@ -85,7 +85,6 @@ void PrintInputParam(util::ParamData& d,
   {
     std::cout << " = missing";
   }
-  std::cout << " # useRawPointers " << (useRawPointers ? "yes" : "no!") << "\n";
 }
 
 /**

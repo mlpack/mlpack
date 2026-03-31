@@ -453,13 +453,15 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Input training data.
-  SetInputParam("training", std::move(inputData));
-  SetInputParam("labels", std::move(labels));
+  SetInputParam("training", inputData);
+  SetInputParam("labels", labels);
 
   RUN_BINDING();
 
   // Setting warm_start flag.
-  SetInputParam("warm_start", false);
+  SetInputParam("training", std::move(inputData));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("warm_start", true);
 
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }

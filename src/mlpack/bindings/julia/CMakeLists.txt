@@ -21,7 +21,6 @@ macro (post_julia_setup)
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
         "\nend\n\n# Add grouped bindings.\n")
 
-    message(STATUS "julia group bindings: ${JULIA_GROUP_BINDINGS}")
     foreach (group_binding ${JULIA_GROUP_BINDINGS})
       file(APPEND
           "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"

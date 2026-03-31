@@ -89,50 +89,6 @@ inline void ExtractGroupData(
   }
 }
 
-inline void PopulateMethodMaps(
-    const std::string& groupName,
-    const std::vector<std::string>& methods,
-    std::map<std::string, mlpack::util::Params>& methodParams,
-    std::map<std::pair<std::string, std::string>, bool>& isSerializable,
-    std::map<std::pair<std::string, std::string>, bool>& isHyperparam,
-    std::map<std::pair<std::string, std::string>, bool>& isBool)
-{
-  for (const std::string& m : methods)
-  {
-    methodParams[m] = IO::Parameters(groupName + "_" + m);
-
-    for (const auto& it : methodParams[m].Parameters())
-    {
-      const mlpack::util::ParamData& d = it.second;
-      const std::pair<std::string, std::string> key = std::make_pair(m, d.name);
-
-      // Extract whether the parameter is a serializable model type.
-      bool s;
-      methodParams[m].functionMap[d.tname]["IsSerializable"](
-          (mlpack::util::ParamData&) d, NULL, (void*) &s);
-      isSerializable[key] = s;
-
-      // Extract whether the parameter is a boolean parameter.
-      isBool[key] = (d.cppType == "bool");
-
-      // If this is the training binding, then if the parameter is non-Armadillo
-      // and non-serializable, then it is a hyperparameter.
-      if (m.substr(m.size() - 6) == "_train")
-      {
-        const size_t foundArma = d.cppType.find("arma");
-        if (foundArma == std::string::npos && !isSerializable[key])
-          isHyperparam[key] = true;
-        else
-          isHyperparam[key] = false;
-      }
-      else
-      {
-        isHyperparam[std::make_pair(m, d.name)] = false;
-      }
-    }
-  }
-}
-
 } // namespace util
 } // namespace bindings
 } // namespace mlpack
