@@ -242,7 +242,7 @@ download_http_artifacts()
       sed 's/^.*\(http[^ ]*\).*$/\1/' |\
       sort |\
       uniq |\
-      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz' |\
+      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz\|mp3\|wav' |\
       sed 's/\.$//'`;
   cd $output_dir;
   for a in $artifacts;
