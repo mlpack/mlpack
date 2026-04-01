@@ -85,3 +85,56 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   UNSCOPED_INFO("Template reconstruction relErr=" << relErr);
   REQUIRE(relErr < 1e-3);
 }
+
+TEST_CASE("EEMD", "[EMD]")
+{
+  arma::arma_rng::set_seed(67);
+
+  const arma::uword N = 5000;
+  const double T = 1.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0.0, T, N);
+  arma::vec signal =
+      arma::sin(2.0 * arma::datum::pi * 50.0 * t) +
+      0.6 * arma::sin(2.0 * arma::datum::pi * 12.0 * t) +
+      0.3 * arma::sin(2.0 * arma::datum::pi * 3.0 * t);
+
+  arma::mat imfs;
+  arma::vec residue;
+
+  mlpack::EEMD(signal, imfs, residue);
+
+  REQUIRE(imfs.n_cols >= 3);
+
+  arma::vec recon = arma::sum(imfs, 1) + residue;
+  const double relErr = arma::norm(recon - signal, 2) / arma::norm(signal, 2);
+  UNSCOPED_INFO("Reconstruction relErr = " << relErr);
+  REQUIRE(relErr < 1e-2);
+
+  // want to check that eemd outputs are reasonable
+  const double freqs[3] = {50.0, 12.0, 3.0};
+  const double dt = t(1) - t(0);
+  const double fs = 1.0 / dt;
+  const size_t numToScan = std::min<size_t>(5, imfs.n_cols);
+  arma::vec foundPeaks(numToScan);
+  for (size_t k = 0; k < numToScan; ++k)
+  {
+    arma::cx_vec spectrum = arma::fft(imfs.col(k));
+    arma::vec mag = arma::abs(spectrum.rows(0, spectrum.n_elem / 2));
+    size_t idx = mag.index_max();
+    double peakHz = double(idx) * fs / double(spectrum.n_elem);
+
+    foundPeaks(k) = peakHz;
+    UNSCOPED_INFO("IMF " << k << " peak = " << peakHz << " Hz");
+  }
+
+  // see if first few imfs have the expected peak freqs
+  for (size_t j = 0; j < 3; ++j)
+  {
+    arma::vec err = arma::abs(foundPeaks - freqs[j]);
+    double bestErr = err.min();
+
+    UNSCOPED_INFO("Expected " << freqs[j] << " Hz, error = " << bestErr);
+    REQUIRE(bestErr < 2.0);
+  }
+}

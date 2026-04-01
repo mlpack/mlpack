@@ -6,7 +6,10 @@ in nonlinear and nonstationary problems.
 
 * `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
  Functions (IMFs) plus a residue.
-<!-- TODO: add EEMD and CEEMDAN -->
+
+* `EEMD()`: ensemble EMD, to decompose a 1D signal into a robust set of IMFs
+  plus a residue. 
+<!-- TODO: add CEEMDAN -->
 
 ## EMD 
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
@@ -91,6 +94,30 @@ for (size_t k = 0; k < numToShow; ++k)
   std::cout << "IMF " << k << " peak freq: " << peakHz << " Hz" << std::endl;
 }
 ```
+## EEMD 
+The `EEMD()` function wraps `EMD()` to output more robust IMFs by using an
+ensemble approach:
+
+#### `EEMD()` Parameters
+
+- `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
+
+   * `ensSize` (of type `size_t`) is the number of members in the ensemble
+    (that is the number of `EMD()` runs to be averaged).
+
+   * `noiseStrength` (of type `double`) is the signifcance of added noise used
+     in each `EMD()` run.
+
+   * `signal`, `imfs`,  `residue`, `maxImfs`, `maxSiftIter`, and `tol` are
+     defined in the classical `EMD()` implementation. 
+
+   ***NOTES:***
+
+   * The original signal **cannot** be reconstructed as the sum of the imfs and
+      residue, as in `EMD()`.  
+
+   * Number of extracted IMFs will be the minimum number of IMFs extracted by
+     by `EMD()` across all `ensSize` runs. (<=`maxImfs`).
 
 #### See also:
 
