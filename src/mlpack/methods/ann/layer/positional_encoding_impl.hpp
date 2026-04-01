@@ -120,7 +120,7 @@ template<typename MatType, typename RegularizerType>
 void PositionalEncoding<MatType, RegularizerType>::SetWeights(
     const MatType& weights)
 {
-  MakeAlias(positionalEncoding, weights, maxSequenceLength*embedDim, 1);
+  if (positionalEncoding.n_elem == 0) InitPositionalEncoding();
 }
 
 template<typename MatType, typename RegularizerType>
