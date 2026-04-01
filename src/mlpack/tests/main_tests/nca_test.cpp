@@ -330,11 +330,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
 
-  // Set parameters using the same input but set linear_scan flag to false.
+  // Set parameters using the same input but rely on linear_scan flag
+  // default value false.
   SetInputParam("input", std::move(y));
   SetInputParam("labels", labels2);
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("linear_scan", false);
 
   RUN_BINDING();
 
