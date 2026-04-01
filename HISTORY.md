@@ -14,6 +14,8 @@ _????-??-??_
 
  * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
 
+ * Add `EMD` signal preprocessing utility (#4044).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
