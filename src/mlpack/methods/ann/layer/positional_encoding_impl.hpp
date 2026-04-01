@@ -100,14 +100,14 @@ PositionalEncoding<MatType, RegularizerType>::operator=(
   return *this;
 }
 
-template<typename InputType, typename OutputType>
-void PositionalEncoding<InputType, OutputType>::InitPositionalEncoding()
+template<typename MatType, typename RegularizerType>
+void PositionalEncoding<MatType, RegularizerType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
-  const InputType position = arma::regspace(0, 1, maxSequenceLength - 1);
-  const InputType divTerm = exp(arma::regspace(0, 2, embedDim - 1)
+  const MatType position = arma::regspace(0, 1, maxSequenceLength - 1);
+  const MatType divTerm = exp(arma::regspace(0, 2, embedDim - 1)
       * (- std::log(10000.0) / embedDim));
-  const InputType theta = position * divTerm.t();
+  const MatType theta = position * divTerm.t();
   for (size_t i = 0; i < theta.n_cols; ++i)
   {
     positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
@@ -120,7 +120,7 @@ template<typename MatType, typename RegularizerType>
 void PositionalEncoding<MatType, RegularizerType>::SetWeights(
     const MatType& weights)
 {
-  MakeAlias(positionalEncoding, weights, maxSequenceLength, embedDim);
+  MakeAlias(positionalEncoding, weights, maxSequenceLength*embedDim, 1);
 }
 
 template<typename MatType, typename RegularizerType>
