@@ -117,16 +117,11 @@ void PositionalEncoding<MatType, RegularizerType>::InitPositionalEncoding()
 }
 
 template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::SetWeights(
-    const MatType& weights)
-{
-  if (positionalEncoding.n_elem == 0) InitPositionalEncoding();
-}
-
-template<typename MatType, typename RegularizerType>
 void PositionalEncoding<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
+  if (positionalEncoding.n_elem == 0) InitPositionalEncoding();
+
   if (input.n_rows != embedDim * maxSequenceLength)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
 
