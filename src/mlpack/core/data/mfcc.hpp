@@ -93,8 +93,8 @@ template<typename eT>
 inline arma::Mat<eT> MelFilterbank(size_t numFilters,
                                    size_t nFFT,
                                    size_t sampleRate,
-                                   float lowFreq,
-                                   float highFreq);
+                                   double lowFreq,
+                                   double highFreq);
 
 /**
  * Extract log-mel filterbank energies (MFE) from one or more audio signals.
@@ -118,11 +118,11 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 arma::Mat<eT>& mfe,
                 size_t sampleRate,
                 size_t numMelFilters = 40,
-                float windowLength = 25.0f,
-                float windowStep = 10.0f,
+                double windowLength = 25.0f,
+                double windowStep = 10.0f,
                 size_t nFFT = 0,
-                float lowFreq = 0.0f,
-                float highFreq = 0.0f,
+                double lowFreq = 0.0f,
+                double highFreq = 0.0f,
                 const typename std::enable_if_t<
                     std::is_floating_point<eT>::value>* = 0);
 
@@ -135,11 +135,11 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 arma::Mat<eT>& mfe,
                 size_t sampleRate,
                 size_t numMelFilters = 40,
-                float windowLength = 25.0f,
-                float windowStep = 10.0f,
+                double windowLength = 25.0f,
+                double windowStep = 10.0f,
                 size_t nFFT = 0,
-                float lowFreq = 0.0f,
-                float highFreq = 0.0f,
+                double lowFreq = 0.0f,
+                double highFreq = 0.0f,
                 const typename std::enable_if_t<
                     !std::is_floating_point<eT>::value>* = 0);
 

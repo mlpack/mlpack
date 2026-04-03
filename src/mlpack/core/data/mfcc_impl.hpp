@@ -40,8 +40,8 @@ template<typename eT>
 inline arma::Mat<eT> MelFilterbank(size_t numFilters,
                                    size_t nFFT,
                                    size_t sampleRate,
-                                   float lowFreq,
-                                   float highFreq)
+                                   double lowFreq,
+                                   double highFreq)
 {
   size_t numBins = nFFT / 2 + 1;
   eT melLow = HzToMel(lowFreq);
@@ -101,11 +101,11 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 arma::Mat<eT>& mfe,
                 size_t sampleRate,
                 size_t numMelFilters,
-                float windowLength,
-                float windowStep,
+                double windowLength,
+                double windowStep,
                 size_t nFFT,
-                float lowFreq,
-                float highFreq,
+                double lowFreq,
+                double highFreq,
                 const typename std::enable_if_t<
                     std::is_floating_point<eT>::value>*)
 {
@@ -156,11 +156,11 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 arma::Mat<eT>& mfe,
                 size_t sampleRate,
                 size_t numMelFilters,
-                float windowLength,
-                float windowStep,
+                double windowLength,
+                double windowStep,
                 size_t nFFT,
-                float lowFreq,
-                float highFreq,
+                double lowFreq,
+                double highFreq,
                 const typename std::enable_if_t<
                     !std::is_floating_point<eT>::value>*)
 {
