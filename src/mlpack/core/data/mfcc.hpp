@@ -58,7 +58,7 @@ namespace mlpack {
  *
  * The artificial window cuts the edges of each signal window to be close to
  * zero while keeping the center close to 1.0. This reduces spectral leakage,
- * which means energy that apprears into neighbours frequency bin that does
+ * which means energy that appears into neighbours frequency bin that does
  * not originally exist in time domain.
  *
  * @param len Window length in samples.
