@@ -131,7 +131,7 @@ bool LoadWAV(const std::string& file,
 
     MapSignedIntegralTypes(matrix, samples);
   }
-  else if constexpr (std::is_integral_v<eT> && sizeof(eT) < 4)
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) == 2)
   {
     arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(),
         1);
@@ -140,6 +140,25 @@ bool LoadWAV(const std::string& file,
         &wav, opts.TotalFrames(), samples.memptr()));
 
     MapSignedIntegralTypes(matrix, samples);
+  }
+  // Loading uint8_t is failing when using s16 function. (Not supported by
+  // dr_wav) It is better to load as f32 and then map the results back to
+  // uint8_t.
+  else if constexpr (std::is_integral_v<eT> && sizeof(eT) == 1)
+  {
+    arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
+    framesRead = static_cast<size_t>(drwav_read_pcm_frames_f32(
+        &wav, opts.TotalFrames(), samples.memptr()));
+
+    if constexpr (std::is_same_v<eT, uint8_t>)
+    {
+      matrix = arma::conv_to<arma::Mat<uint8_t>>::from(
+        (samples + 1.0f) * 127.5f);
+    }
+    else
+    {
+      matrix = arma::conv_to<arma::Mat<int8_t>>::from(samples * 127.0f);
+    }
   }
 
   drwav_uninit(&wav);

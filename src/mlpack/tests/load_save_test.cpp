@@ -3981,3 +3981,94 @@ TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
 
   remove("collectathon2_1_sec.wav");
 }
+
+TEMPLATE_TEST_CASE("SaveWavCheck", "[LoadSaveTest]", float, double, int16_t,
+    int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t)
+{
+  typedef TestType eT;
+
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<eT> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    signal = arma::conv_to<arma::Mat<eT>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double halfMax = std::numeric_limits<eT>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<eT>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<eT>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<eT>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = 8 * sizeof(eT);
+  REQUIRE(Save("test_range.wav", signal, saveOpts) == true);
+
+  arma::Mat<eT> matrix;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_range.wav", matrix, loadOpts) == true);
+  REQUIRE(matrix.n_elem == sampleRate);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    eT minVal = matrix.min();
+    eT maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= -0.52);
+    REQUIRE(maxVal <= 0.52);
+    REQUIRE(maxVal >= 0.475);
+    REQUIRE(minVal <= -0.475);
+    REQUIRE(std::abs(meanVal) < 0.02);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double halfRange = typeMax * 0.5;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(maxVal <= halfRange * 1.05);
+    REQUIRE(minVal >= -halfRange * 1.05);
+    REQUIRE(maxVal >= halfRange * 0.95);
+    REQUIRE(minVal <= -halfRange * 0.95);
+    REQUIRE(std::abs(meanVal) < typeMax * 0.02);
+  }
+  else
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double mid = typeMax / 2.0;
+    double quarter = mid / 2.0;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= (mid - quarter) * 0.90);
+    REQUIRE(maxVal <= (mid + quarter) * 1.10);
+    REQUIRE(maxVal >= (mid + quarter * 0.95));
+    REQUIRE(minVal <= (mid - quarter * 0.95));
+    REQUIRE(std::abs(meanVal - mid) < typeMax * 0.02);
+  }
+
+  remove("test_range.wav");
+}

@@ -156,15 +156,15 @@ bool SaveAudio(const std::string& file,
         if constexpr (std::is_signed_v<eT>)
         {
           MapSignedIntegralTypes(pcm, tmpMatrix);
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), pcm.memptr()));
         }
         else if constexpr (!std::is_signed_v<eT>)
         {
-          arma::Mat<int8_t> pcmInt8;
-          MapUnsignedIntegralTypes(pcmInt8, tmpMatrix);
-          MapSignedIntegralTypes(pcm, pcmInt8);
+          tmpMatrix /= std::pow(2, 8 * (sizeof(eT) - 1));
+          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), tmpMatrix.memptr()));
         }
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm.memptr()));
       }
       // Handles int16, int32, int64
       else if constexpr (std::is_signed_v<eT> && !std::is_same_v<eT, int8_t>)
@@ -208,6 +208,11 @@ bool SaveAudio(const std::string& file,
         framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), pcm.memptr()));
       }
+      else if constexpr (std::is_same_v<eT, uint8_t>)
+      {
+        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
+            opts.TotalFrames(), tmpMatrix.memptr()));
+      }
       else
       {
         // Handles: int16_t, int32_t, int64_t
@@ -216,7 +221,7 @@ bool SaveAudio(const std::string& file,
           framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
             opts.TotalFrames(), tmpMatrix.memptr()));
         }
-        // Handles: uint8_t, uint16_t, uint32_t, uint64_t
+        // Handles: uint16_t, uint32_t, uint64_t
         else if constexpr (!std::is_signed_v<eT>)
         {
           typedef std::make_signed_t<eT> seT;
