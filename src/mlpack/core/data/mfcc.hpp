@@ -109,7 +109,7 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
  * @param numMelFilters Number of mel bands.
  * @param windowLength  Window length in milliseconds.
  * @param windowStep    Window hop in milliseconds.
- * @param nFFT          Numbero of FFT points.
+ * @param nFFT          Number of FFT points.
  * @param lowFreq       Low frequency bound in Hz.
  * @param highFreq      High frequency bound in Hz.
  */
