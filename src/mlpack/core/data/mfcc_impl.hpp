@@ -192,7 +192,7 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
     // @rcurtin, is there any more efficient way to avoid the copy ? (without
     // using std::move? This zero padding is required by FFT to keep it fast,
     // since the window size might be arbitrary (depending on the sampling frequency).
-    arma::Col<eT> padded(nFFT);
+    arma::Col<eT> padded(nFFT, arma::fill::zeros);
     padded.subvec(0, windows.n_rows - 1) = windows.col(i);
 
     arma::Col<std::complex<eT>> spectrum = arma::fft(padded);
