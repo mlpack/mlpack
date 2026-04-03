@@ -24,7 +24,7 @@ inline arma::Col<eT> HammingWindow(size_t len)
      arma::linspace<arma::Col<eT>>(0, len - 1, len) / (len - 1))));
 }
 
-  template<typename eT>
+template<typename eT>
 inline eT HzToMel(eT hz)
 {
   return 2595 * std::log10(1.0 + hz / 700.0);
