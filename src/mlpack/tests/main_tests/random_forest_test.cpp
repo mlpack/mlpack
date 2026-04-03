@@ -438,8 +438,9 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
 }
 
 /**
- * Make sure that training and input_model are both passed when warm_start is
- * false.
+ * Make sure that training and labels are both passed when warm_start is
+ * false (the default value). If warm_start is passed (as true) and but
+ * a model is not passed, error.
  */
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
                  "[RandomForestMainTest][BindingTests]")
@@ -455,14 +456,12 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
-
   RUN_BINDING();
 
-  // Setting warm_start flag.
+  // Testing a warm_start
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
   SetInputParam("warm_start", true);
-
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
