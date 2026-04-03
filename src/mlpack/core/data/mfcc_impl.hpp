@@ -174,7 +174,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
 inline size_t NextPowerOf2(size_t n)
 {
   size_t p = 1;
-  while (p < n)
+  while (p < n && p < (SIZE_MAX / 2))
     p <<= 1;
   return p;
 }
