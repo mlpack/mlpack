@@ -78,7 +78,7 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
       melFilterbank.row(i).zeros();
       continue;
     }
-    // Triangle vertices: these are basically coordinates for the trainagles
+    // Triangle vertices: these are basically coordinates for the triangles
     // that rises from 0 at left to 1 at center, falls to 0
     // at right.  Bins outside [left, right] extrapolate to 0
     arma::Col<eT> X = { left, center, right };
