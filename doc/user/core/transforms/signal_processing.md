@@ -75,10 +75,9 @@ especially if they do not have any background in audio processing. -->
 | `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in Hz.       |
 | `highFreq`       | `float`     | `0.0`   | High frequency bound in Hz; `0` means `sampleRate / 2`. |
 
-***Note:*** Different types can be used for `signal` (e.g., `arma::fmat`, `arma::imat`).
-However the signal needs to be represented in floating points. Therefore, if
-MFE / MFCC filter is intended to be used, it is prefered to load the signal as
-a floating point.
+***Note:*** if the audio signal was loaded as an integral type, you can either
+change the loading code to load directly into a floating-point type matrix, or
+use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
 
 ---
 
