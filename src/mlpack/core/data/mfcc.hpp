@@ -100,7 +100,7 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
  * Extract log-mel filterbank energies (MFE) from one or more audio signals.
  *
  * The input matrix is column-major: each column is a separate audio signal
- * (e.g. loaded from a different file).  Each signal is processed separetly
+ * (e.g. loaded from a different file).  Each signal is processed separately
  * through mel filterbanks.
  *
  * @param inputSignal   Matrix where each column is a raw PCM signal.
