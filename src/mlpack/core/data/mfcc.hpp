@@ -74,7 +74,7 @@ template<typename eT>
 inline eT HzToMel(eT hz);
 
 /*
- * Convet Mel scale into Hz.
+ * Convert Mel scale into Hz.
  */
 template<typename eT>
 inline eT MelToHz(eT mel);
