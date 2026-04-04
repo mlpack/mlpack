@@ -36,14 +36,29 @@ inline void MapSignedIntegralTypes(arma::Mat<eT1>& target, arma::Mat<eT2>& src)
   // If the target type is unsigned, then we have to reinterpret the samples and
   // apply a shift, because Armadillo's `conv_to` will truncate negative values
   // to 0.
-  if constexpr (!std::is_signed_v<eT1>)
+   if constexpr (!std::is_signed_v<eT1>)
   {
-    typedef std::make_unsigned_t<eT2> ueT2;
-    arma::Mat<ueT2> reinterpretedSrc((ueT2*) src.memptr(), src.n_rows,
-        src.n_cols, false);
-    reinterpretedSrc += std::pow(2, 8 * sizeof(ueT2) - 1);
-
-    target = arma::conv_to<arma::Mat<eT1>>::from(std::move(reinterpretedSrc));
+    if constexpr (sizeof(eT1) < sizeof(eT2))
+    {
+      // After the shrink above, values fit in the target's signed range.
+      // Convert to the target's signed type first, then reinterpret and
+      // shift at the target's scale.
+      typedef std::make_signed_t<eT1> seT1;
+      arma::Mat<seT1> shrunk = arma::conv_to<arma::Mat<seT1>>::from(src);
+      arma::Mat<eT1> reinterpreted((eT1*) shrunk.memptr(), shrunk.n_rows,
+          shrunk.n_cols, false);
+      reinterpreted += static_cast<eT1>(std::pow(2, 8 * sizeof(eT1) - 1));
+      target = arma::conv_to<arma::Mat<eT1>>::from(reinterpreted);
+    }
+    else
+    {
+      typedef std::make_unsigned_t<eT2> ueT2;
+      arma::Mat<ueT2> reinterpretedSrc((ueT2*) src.memptr(), src.n_rows,
+          src.n_cols, false);
+      reinterpretedSrc += std::pow(2, 8 * sizeof(ueT2) - 1);
+      target = arma::conv_to<arma::Mat<eT1>>::from(
+          std::move(reinterpretedSrc));
+    }
   }
   else
   {
