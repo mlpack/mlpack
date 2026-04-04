@@ -58,9 +58,6 @@ class PositionalEncoding : public Layer<MatType>
   //! Clone the PositionalEncoding object. This handles polymorphism correctly.
   PositionalEncoding* Clone() const { return new PositionalEncoding(*this); }
 
-  //! Reset the layer parameter.
-  void SetWeights(const MatType& weightsIn);
-
   //! Copy constructor.
   PositionalEncoding(const PositionalEncoding& layer);
 

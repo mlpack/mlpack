@@ -1,51 +1,58 @@
-// /**
-//  * @file tests/ann/layer/positional_encoding.cpp
-//  * @author Kumar Utkarsh
-//  *
-//  * Tests the Positional Encoding layer.
-//  *
-//  * mlpack is free software; you may redistribute it and/or modify it under the
-//  * terms of the 3-clause BSD license.  You should have received a copy of the
-//  * 3-clause BSD license along with mlpack.  If not, see
-//  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
-//  */
-// #include <mlpack/core.hpp>
-// #include <mlpack/methods/ann.hpp>
+/**
+ * @file tests/ann/layer/positional_encoding.cpp
+ * @author Kumar Utkarsh
+ *
+ * Tests the Positional Encoding layer.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#include <mlpack/core.hpp>
+#include <mlpack/methods/ann.hpp>
 
-// #include "../../test_catch_tools.hpp"
-// #include "../../catch.hpp"
-// #include "../../serialization.hpp"
-// #include "../ann_test_tools.hpp"
+#include "../../test_catch_tools.hpp"
+#include "../../catch.hpp"
+#include "../../serialization.hpp"
+#include "../ann_test_tools.hpp"
 
-// using namespace mlpack;
+using namespace mlpack;
 
-// /**
-//  * Simple embedding module test.
-//  */
-// TEST_CASE("SimplePositionalEncodingLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t embeddingSize = 10;
-//   const size_t seqLength = 3;
-//   const size_t batchSize = 4;
+/**
+ * Simple embedding module test.
+ */
+TEST_CASE("SimplePositionalEncodingLayerTest", "[ANNLayerTest]")
+{
+  const size_t embeddingSize = 2;
+  const size_t seqLength = 3;
+  const size_t batchSize = 4;
 
-//   arma::mat output, input;
+  arma::mat output, input;
 
-//   Embedding<> module(embeddingSize, seqLength);
-//   module.InputDimensions() = std::vector<size_t>({ seqLength, embeddingSize });
-//   module.ComputeOutputDimensions();
+  PositionalEncoding<> module(embeddingSize, seqLength);
+  module.InputDimensions() = std::vector<size_t>({ seqLength, embeddingSize });
+  module.ComputeOutputDimensions();
 
-//   // Test the Forward function.
-//   input = arma::zeros(embeddingSize * seqLength, batchSize);
-//   output.set_size(embeddingSize * seqLength, batchSize);
-//   module.Forward(input, output);
-//   for (size_t i = 0; i < batchSize; ++i)
-//   {
-//     REQUIRE(approx_equal(output.col(i), repmat(weights.col(0), seqLength, 1),
-//         "absdiff", 1e-5));
-//   }
+  // actual embedding
+  arma::mat positionalEncoding = {{ 0., 1.},
+    { 0.841470984807897,  0.54030230586814 },
+    { 0.909297426825682, -0.416146836547142}
+  };
+  positionalEncoding = vectorise(positionalEncoding.t());
+  
+  // Test the sinosuidal encoding values function.
+  input = arma::zeros(embeddingSize * seqLength, batchSize);
+  output.set_size(embeddingSize * seqLength, batchSize);
+  module.Forward(input, output);
+  for (size_t i = 0; i < batchSize; ++i)
+  {
+    REQUIRE(approx_equal(output.col(i), positionalEncoding,
+        "absdiff", 1e-5));
+  }
 
-//   // No need for a backward pass test.
-// }
+  // No need for a backward pass test.
+}
 
 // /**
 //  * Test that we can embed individual elements with manually crafted weights.
