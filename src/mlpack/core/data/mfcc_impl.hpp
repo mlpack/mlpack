@@ -18,6 +18,19 @@
 namespace mlpack {
 
 template<typename eT>
+inline arma::Mat<eT> DCTMatrix(size_t numCoeffs, size_t numFilters)
+{
+  // n = [0, 1, ..., numCoeffs-1] as a column.
+  arma::Col<eT> n = arma::linspace<arma::Col<eT>>(0, numCoeffs - 1,
+      numCoeffs);
+  // k + 0.5 = [0.5, 1.5, ..., numFilters-0.5] as a row.
+  arma::Row<eT> kHalf = arma::linspace<arma::Row<eT>>(0.5, numFilters - 0.5,
+      numFilters);
+
+  return arma::cos((M_PI / numFilters) * n * kHalf);
+}
+
+template<typename eT>
 inline arma::Col<eT> HammingWindow(size_t len)
 {
   return (0.54 - (0.46 * arma::cos(2.0 * M_PI *
@@ -92,8 +105,49 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
     // Otherwise I need to assign it to .col and then transpose .t()
     melFilterbank.row(i) = YI.t();
   }
-
   return melFilterbank;
+}
+
+template<typename eT>
+inline void MFCC(const arma::Mat<eT>& inputSignal,
+                 arma::Mat<eT>& mfcc,
+                 size_t sampleRate,
+                 size_t numCoeffs,
+                 size_t numMelFilters,
+                 double windowLength,
+                 double windowStep,
+                 size_t nFFT,
+                 double lowFreq,
+                 double highFreq,
+                 const typename std::enable_if_t<
+                    std::is_floating_point<eT>::value>*)
+{
+  arma::Mat<eT> mfe;
+  MFE(inputSignal, mfe, sampleRate, numMelFilters, windowLength, windowStep,
+      nFFT, lowFreq, highFreq);
+
+  mfcc = DCTMatrix<eT>(numCoeffs, numMelFilters) * mfe;
+}
+
+template<typename eT>
+inline void MFCC(const arma::Mat<eT>& inputSignal,
+                 arma::Mat<eT>& mfcc,
+                 size_t sampleRate,
+                 size_t numCoeffs,
+                 size_t numMelFilters,
+                 double windowLength,
+                 double windowStep,
+                 size_t nFFT,
+                 double lowFreq,
+                 double highFreq,
+                 const typename std::enable_if_t<
+                    !std::is_floating_point<eT>::value>*)
+{
+  static_assert(std::is_floating_point<eT>::value,
+      "MFCC(): input matrix must have a floating-point element type "
+      "(float or double). Integer matrices are not supported because "
+      "FFT, log, and other operations require floating-point "
+      "arithmetic.");
 }
 
 template<typename eT>
