@@ -13,29 +13,22 @@
 #define MLPACK_METHODS_ANN_LAYER_POSITIONAL_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
-
 #include "layer.hpp"
 
 namespace mlpack {
 
 /**
- * Positional Encoding injects some information about the relative or absolute
+ * Implementation of the Positional Encoding layer. Positional Encoding injects some information about the relative or absolute
  * position of the tokens in the sequence.
  *
  * The input and the output have the same shape:
  * `(embedDim * maxSequenceLength, batchSize)`. The embeddings are stored
  * consequently.
  *
- * @tparam InputType Type of the input data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
- *         arma::sp_mat or arma::cube).
+ * @tparam MatType Matrix representation to accept as input and use for
+ *    computation.
  */
-template<
-    typename MatType = arma::mat,
-    typename RegularizerType = NoRegularizer
->
+template<typename MatType = arma::mat>
 class PositionalEncoding : public Layer<MatType>
 {
  public:
@@ -52,8 +45,7 @@ class PositionalEncoding : public Layer<MatType>
    * @param maxSequenceLength Number of tokens in each sequence.
    */
   PositionalEncoding(const size_t embedDim,
-                    const size_t maxSequenceLength,
-                   RegularizerType regularizer = RegularizerType());
+                    const size_t maxSequenceLength);
 
   //! Clone the PositionalEncoding object. This handles polymorphism correctly.
   PositionalEncoding* Clone() const { return new PositionalEncoding(*this); }
@@ -137,9 +129,6 @@ class PositionalEncoding : public Layer<MatType>
 
   //! Locally-stored positional encodings.
   MatType positionalEncoding;
-
-  //! Locally-stored regularizer object.
-  RegularizerType regularizer;
 }; // class PositionalEncoding
 
 } // namespace mlpack

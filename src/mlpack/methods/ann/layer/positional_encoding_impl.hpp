@@ -3,7 +3,6 @@
  * @author Kumar Utkarsh
  *
  * Definition of the Positional Encoding.
-
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -18,8 +17,8 @@
 
 namespace mlpack {
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>::PositionalEncoding() :
+template<typename MatType>
+PositionalEncoding<MatType>::PositionalEncoding() :
     Layer<MatType>(),
     embedDim(0),
     maxSequenceLength(0)
@@ -27,46 +26,42 @@ PositionalEncoding<MatType, RegularizerType>::PositionalEncoding() :
   // Nothing to do here.
 }
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
+template<typename MatType>
+PositionalEncoding<MatType>::PositionalEncoding(
     const size_t embedDim,
-    const size_t maxSequenceLength,
-    RegularizerType regularizer) :
+    const size_t maxSequenceLength) :
     Layer<MatType>(),
     embedDim(embedDim), // This will be set by ComputeOutputDimensions().
-    maxSequenceLength(maxSequenceLength),
-    regularizer(regularizer)
+    maxSequenceLength(maxSequenceLength)
 {
   // Nothing to do.
 }
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
+template<typename MatType>
+PositionalEncoding<MatType>::PositionalEncoding(
     const PositionalEncoding& layer) :
     Layer<MatType>(layer),
     embedDim(layer.embedDim),
-    maxSequenceLength(layer.maxSequenceLength),
-    regularizer(layer.regularizer)
+    maxSequenceLength(layer.maxSequenceLength)
 {
   // Nothing to do here.
 }
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>::PositionalEncoding(
+template<typename MatType>
+PositionalEncoding<MatType>::PositionalEncoding(
     PositionalEncoding&& layer) :
     Layer<MatType>(std::move(layer)),
     embedDim(std::move(layer.embedDim)),
-    maxSequenceLength(std::move(layer.maxSequenceLength)),
-    regularizer(std::move(layer.regularizer))
+    maxSequenceLength(std::move(layer.maxSequenceLength))
 {
   // Reset parameters of other layer.
   layer.embedDim = 0;
   layer.maxSequenceLength = 0;
 }
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>&
-PositionalEncoding<MatType, RegularizerType>::operator=(
+template<typename MatType>
+PositionalEncoding<MatType>&
+PositionalEncoding<MatType>::operator=(
     const PositionalEncoding& layer)
 {
   if (this != &layer)
@@ -74,15 +69,14 @@ PositionalEncoding<MatType, RegularizerType>::operator=(
     Layer<MatType>::operator=(layer);
     embedDim = layer.embedDim;
     maxSequenceLength = layer.maxSequenceLength;
-    regularizer = layer.regularizer;
   }
 
   return *this;
 }
 
-template<typename MatType, typename RegularizerType>
-PositionalEncoding<MatType, RegularizerType>&
-PositionalEncoding<MatType, RegularizerType>::operator=(
+template<typename MatType>
+PositionalEncoding<MatType>&
+PositionalEncoding<MatType>::operator=(
     PositionalEncoding&& layer)
 {
   if (this != &layer)
@@ -90,7 +84,6 @@ PositionalEncoding<MatType, RegularizerType>::operator=(
     Layer<MatType>::operator=(std::move(layer));
     embedDim = std::move(layer.embedDim);
     maxSequenceLength = std::move(layer.maxSequenceLength);
-    regularizer = std::move(layer.regularizer);
 
     // Reset parameters of other layer.
     layer.embedDim = 0;
@@ -100,8 +93,8 @@ PositionalEncoding<MatType, RegularizerType>::operator=(
   return *this;
 }
 
-template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::InitPositionalEncoding()
+template<typename MatType>
+void PositionalEncoding<MatType>::InitPositionalEncoding()
 {
   positionalEncoding.set_size(maxSequenceLength, embedDim);
   const MatType position = arma::regspace(0, 1, maxSequenceLength - 1);
@@ -116,8 +109,8 @@ void PositionalEncoding<MatType, RegularizerType>::InitPositionalEncoding()
   positionalEncoding = vectorise(positionalEncoding.t());
 }
 
-template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::Forward(
+template<typename MatType>
+void PositionalEncoding<MatType>::Forward(
     const MatType& input, MatType& output)
 {
   if (positionalEncoding.n_elem == 0) InitPositionalEncoding();
@@ -128,8 +121,8 @@ void PositionalEncoding<MatType, RegularizerType>::Forward(
   output = input.each_col() + positionalEncoding;
 }
 
-template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::Backward(
+template<typename MatType>
+void PositionalEncoding<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
@@ -138,31 +131,21 @@ void PositionalEncoding<MatType, RegularizerType>::Backward(
   g = gy;
 }
 
-template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::Gradient(
-    const MatType& input,
-    const MatType& error,
-    MatType& gradient)
-{
-  // Nothing to do here.
-}
-
-template<typename MatType, typename RegularizerType>
-void PositionalEncoding<MatType, RegularizerType>::ComputeOutputDimensions()
+template<typename MatType>
+void PositionalEncoding<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 }
 
-template<typename MatType, typename RegularizerType>
+template<typename MatType>
 template<typename Archive>
-void PositionalEncoding<MatType, RegularizerType>::serialize(
+void PositionalEncoding<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));
 
   ar(CEREAL_NVP(embedDim));
   ar(CEREAL_NVP(maxSequenceLength));
-  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace mlpack
