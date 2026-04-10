@@ -27,14 +27,9 @@ coefficients.
  * [Mel-frequency cepstrum](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
  * [MFCC tutorial (Practical Cryptography)](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/)
  * [The cepstrum, mel-cepstrum, and MFCCs (Aalto University)](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)
+ * [Mel-Spectrogram and MFCCs | Lecture 72 (Part 1) | Applied Deep Learning](https://github.com/maziarraissi/Applied-Deep-Learning/blob/main/06%20-%20Speech%20%26%20Music/01%20-%20Recognition.pdf)
 
-<!-- 
-    @rcurtin, I have the links for a couple of very good youtube videos that
-    helped explaining all the steps for the algorithm, if you would like, we
-    can add them here as well.
--->
-
-## `MFE()` and `MFCC()`
+## `MFE()`
 
  - `MFE(signal, sampleRate, output)`
    * Extract log-mel filterbank energies from `signal` using default parameters.
@@ -42,42 +37,32 @@ coefficients.
  - `MFE(signal, sampleRate, output, numMelFilters, windowLength, windowStep,
    nFFT, lowFreq, highFreq)`
    * Extract log-mel filterbank energies depending on the user specified
-     parameters .
-
- - `MFCC(signal, sampleRate, output)`
-   * Extract 13 MFCC coefficients from `signal` with default parameters.
-
- - `MFCC(signal, sampleRate, output, numCoeffs, numMelFilters, windowLength,
-   windowStep, nFFT, lowFreq, highFreq)`
-   * Extract MFCC with different number coefficients dependings on the user specified
      parameters.
-
-<!-- @rcurtin the table is a proposal I followed the same concept in
-decision_tree.md, I think it is easier to use when we have several parameters,
-please let me know what you think -->
 
 ### Functions Parameters:
 
-<!-- @rcurtin, I was thinking of adding another column which is the value
-ranges, I think most users will use the default values, but if someone would
-like to change them they need to know that the highFreq cannot be 100 KHz
-especially if they do not have any background in audio processing. -->
-
-|     **name**     |  **type**   |   **default**  | **description**                                  |
-|------------------|-------------|----------------|--------------------------------------------------|
-| `signal`         | `arma::mat` | _(N/A)_ | Raw PCM audio samples.                                  |
-| `sampleRate`     | `size_t`    | _(N/A)_ | Sample rate of the audio in Hz (e.g. `16000`, `44100`). |
-| `output`         | `arma::mat` | _(N/A)_ | Output matrix of shape `(numMelFilters x numWindows)`.  |
-| `numMelFilters`  | `size_t`    | `40`    | Number of mel-spaced triangular filters.                |
-| `windowLength`   | `float`     | `25.0`  | Window length in milliseconds.                          |
-| `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds.                      | 
-| `nFFT`           | `size_t`    | `0`     | FFT size; `0` means the number of points fed to FFT is chosen automatically using the next power of 2 >= of the window length. |
-| `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in Hz.       |
-| `highFreq`       | `float`     | `0.0`   | High frequency bound in Hz; `0` means `sampleRate / 2`. |
+|     **name**     |  **type**   |   **default**  | **description**                                         |
+|------------------|-------------|----------------|---------------------------------------------------------|
+| `signal`         | `arma::mat` | _(n/a)_ | raw pcm audio samples.                                         |
+| `output`         | `arma::mat` | _(n/a)_ | output matrix of shape `(nummelfilters x numwindows)`.         |
+| `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`).        |
+| `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters. Typical range (`20` to `100`) |
+| `windowLength`   | `float`     | `25.0`  | window length in milliseconds.  Typical range (`20` to `40`)           |
+| `windowStep`     | `float`     | `10.0`  | window hop (step) in milliseconds. Typical range (`5` to `20`)         |
+| `nFFT`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
+| `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`) |
+| `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
 
 ***Note:*** if the audio signal was loaded as an integral type, you can either
 change the loading code to load directly into a floating-point type matrix, or
 use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+
+***Note:*** If the audio signal has multiple channels, the channels must be
+de-interleaved before calling `MFE()` with each column representing a separate
+channel.  This preserves spatial information (e.g., which sounds come from the
+left vs. right).  If spatial information is not needed, the channels can be
+mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
+Both cases are demonstrated in the examples below.
 
 ---
 
@@ -109,6 +94,47 @@ arma::fmat mfe;
 mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
     8000.0);
 ```
+---
+
+## `MFCC()`
+
+ - `MFCC(signal, sampleRate, output)`
+   * Extract 13 MFCC coefficients from `signal` with default parameters.
+
+ - `MFCC(signal, output, sampleRate, numCoeffs, numMelFilters, windowLength,
+   windowStep, nFFT, lowFreq, highFreq)`
+   * Extract MFCC with different number coefficients dependings on the user specified
+     parameters.
+
+|     **name**     |  **type**   |   **default**  | **description**                                  |
+|------------------|-------------|----------------|--------------------------------------------------|
+| `signal`         | `arma::mat` | _(n/a)_ | raw pcm audio samples.                                  |
+| `output`         | `arma::mat` | _(n/a)_ | output matrix of shape `(nummelfilters x numwindows)`.  |
+| `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`). |
+| `numCoeff`       | `size_t`    | _(n/a)_ | Number of cepstral coefficients.                        |
+| `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters.  Typical range (`20` to `100`)    |
+| `windowLength`   | `float`     | `25.0`  | window length in milliseconds. Typical range (`20` to `40`)                |
+| `windowStep`     | `float`     | `10.0`  | window hop (step) in milliseconds.  Typical range (`5` to `20`)            |
+| `nFft`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
+| `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`)      |
+| `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
+
+***Note:*** if the audio signal was loaded as an integral type, you can either
+change the loading code to load directly into a floating-point type matrix, or
+use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+
+***Note:*** If the audio signal has multiple channels, the channels must be
+de-interleaved before calling `MFCC()` with each column representing a separate
+channel.  This preserves spatial information (e.g., which sounds come from the
+left vs. right).  If spatial information is not needed, the channels can be
+mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
+Both cases are demonstrated in the examples below.
+
+**Note:*** `numCoeffs` must be less than or equal to `numMelFilters`.  The
+DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
+coefficients — it cannot produce more coefficients than there are input
+values.
+
 ---
 
 Extract 13 MFCCs from a WAV file.
