@@ -184,9 +184,8 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   {
     arma::Mat<eT> slidingWindows;
     arma::Mat<eT> power;
-    arma::Col<eT> audioSignal = inputSignal.col(i);
 
-    SlidingWindow(audioSignal, slidingWindows, lengthInSamples,
+    SlidingWindow(inputSignal.col(i), slidingWindows, lengthInSamples,
         stepsInSamples);
 
     // Probably it is more efficient to compute HammingWindow once before the
@@ -253,8 +252,8 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
 
     // Get the power by doing element wise multiplication, note that the
     // spectrum is mirrored so we must getting the first part only.
-    arma::Col<std::complex<eT>> firstPart = spectrum.subvec(0, numBins - 1);
-    power.col(i) = arma::real(firstPart % arma::conj(firstPart));
+    power.col(i) = arma::real(spectrum.subvec(0, numBins - 1) %
+        arma::conj(spectrum.subvec(0, numBins - 1)));
   }
 }
 
