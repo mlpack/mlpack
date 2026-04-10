@@ -45,20 +45,6 @@ inline std::string GetValidName(const std::string& paramName)
   return correctParamName;
 }
 
-inline std::vector<std::string> GetMethods(const std::string& validMethods)
-{
-  std::vector<std::string> methods;
-  std::stringstream methodStream(validMethods);
-  std::string temp;
-
-  while (std::getline(methodStream, temp, ' '))
-  {
-    methods.push_back(temp);
-  }
-
-  return methods;
-}
-
 inline std::string GetMappedName(const std::string& methodName)
 {
   std::map<std::string, std::string> nameMap;
