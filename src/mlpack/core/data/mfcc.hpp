@@ -258,8 +258,8 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
  * @param windowLength Number of samples per window.
  * @param windowStep Number of samples between the start of consecutive windows.
  */
-template<typename eT>
-inline void SlidingWindow(const arma::Col<eT>& signal,
+template<typename MatType, typename eT>
+inline void SlidingWindow(const MatType& signal,
                           arma::Mat<eT>& windows,
                           size_t windowLength,
                           size_t windowStep);
