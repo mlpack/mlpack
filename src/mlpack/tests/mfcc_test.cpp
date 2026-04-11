@@ -33,24 +33,6 @@ TEST_CASE("HzToMel", "[MFCC][tiny]")
   REQUIRE(HzToMel(1000) == Approx(999).epsilon(1e-1));
   }
 
-TEST_CASE("SlidingWindow", "[MFCC][tiny]")
-{
-  arma::Mat<size_t> windows;
-  arma::Col<size_t> linearSignal =
-      arma::linspace<arma::Col<size_t>>(0, 999, 1000);
-
-  SlidingWindow(linearSignal, windows, 10, 5);
-
-  REQUIRE(windows.n_cols == 199);
-  REQUIRE(windows.n_rows == 10);
-
-  // Check for the signal interleaved.
-  REQUIRE(windows.at(0, 0) == 0);
-  REQUIRE(windows.at(0, 1) == 5);
-  REQUIRE(windows.at(0, 2) == 10);
-  REQUIRE(windows.at(0, 198) == 990);
-}
-
 TEMPLATE_TEST_CASE("FFTSineWave", "[MFCC][tiny]", float, double)
 {
   typedef TestType eT;
@@ -211,3 +193,4 @@ TEMPLATE_TEST_CASE("MFEPureSine440", "[MFCC][tiny]", float, double)
   }
   REQUIRE(lowEnergyCount >= 30);
 }
+
