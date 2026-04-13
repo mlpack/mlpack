@@ -1,4 +1,4 @@
-"""Tests for scripts/style_lint.py.
+"""Tests for scripts/lint/style_lint.py.
 
 `classify(text)` should return a mask string the same length as `text`:
   'c' = code, 's' = string or char literal, '/' = comment.
@@ -566,6 +566,32 @@ class TestEdgeCases(unittest.TestCase):
             msg=f"long line with `<` was incorrectly suppressed; diags={diags}",
         )
 
+    def test_long_line_not_suppressed_by_template_in_comment(self):
+        # A comment containing the word `template` must not suppress
+        # long-line on its own line. The word must be in code to count.
+        long_line = "// template " + ("x" * 90)
+        self.assertGreater(len(long_line), 80)
+        _, diags = sl.lint_text(long_line + "\n", fix=False)
+        self.assertTrue(
+            any(d.code == "long-line" for d in diags),
+            msg="comment with 'template' wrongly suppressed long-line",
+        )
+
+    def test_kw_paren_fix_keeps_mask_aligned_for_later_rules(self):
+        # Rewriting `if(` to `if (` lengthens the line by one character.
+        # Subsequent rules (template-depth scan, long-line check, brace
+        # placement) must still see a line_mask that matches the rewritten
+        # line. This exercises the parallel `mask_pieces` path in the
+        # kw-paren fix. If the mask drifts, the `<` inside the string below
+        # would be counted as a template open, potentially suppressing the
+        # long-line diagnostic on this same line.
+        long_suffix = " + " + "very_long_name_abcdefgh" * 4
+        text = 'if(x) "<<<<<" a' + long_suffix + ";\n"
+        new_text, diags = sl.lint_text(text, fix=True)
+        self.assertIn("if (", new_text)
+        self.assertTrue(any(d.code == "long-line" for d in diags))
+
+
     def test_template_identifier_not_false_positive(self):
         # `myTemplateCount` is an identifier that contains the substring
         # 'template'. The old substring check would skip the brace fix on
@@ -584,6 +610,29 @@ class TestEdgeCases(unittest.TestCase):
         new_text, diags = sl.lint_text(text, fix=True)
         self.assertIn("if (myTemplateCount < 10)\n{", new_text)
         self.assertTrue(any(d.code == "brace-same-line" for d in diags))
+
+
+class TestIterSourcesFiltersExplicitFiles(unittest.TestCase):
+    def test_explicit_excluded_file_is_filtered(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = os.path.join(td, "catch.hpp")
+            with open(p, "w") as f:
+                f.write("int x;\n")
+            self.assertEqual(list(sl.iter_sources([p])), [])
+
+    def test_explicit_non_source_extension_is_filtered(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = os.path.join(td, "note.txt")
+            with open(p, "w") as f:
+                f.write("not C++\n")
+            self.assertEqual(list(sl.iter_sources([p])), [])
+
+    def test_explicit_source_file_is_yielded(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = os.path.join(td, "foo.hpp")
+            with open(p, "w") as f:
+                f.write("int x;\n")
+            self.assertEqual(list(sl.iter_sources([p])), [p])
 
 
 if __name__ == "__main__":

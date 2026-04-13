@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   style-lint:
-    name: style-lint (report mode)
+    name: style-lint (check mode)
     runs-on: ubuntu-latest
 
     steps:

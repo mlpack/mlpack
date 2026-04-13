@@ -12,7 +12,7 @@ Auto-fixes only touch code regions. Strings, character literals, raw
 strings, and comments are excluded via a single-pass C++ tokenizer.
 
 Usage:
-    scripts/style_lint.py [--fix | --check] PATH [PATH ...]
+    scripts/lint/style_lint.py [--fix | --check] PATH [PATH ...]
 """
 
 from __future__ import annotations
@@ -355,15 +355,25 @@ def lint_text(text: str, fix: bool) -> "tuple[str, list[Diag]]":
                 )
             )
         if fix and kw_hits:
+            # Rebuild `line` AND `line_mask` together so subsequent rules
+            # (template depth, long-line, brace fix) still see an aligned
+            # mask. Without this, positional mask lookups after the rewrite
+            # point drift by the number of inserted spaces.
             pieces: list[str] = []
+            mask_pieces: list[str] = []
             last = 0
             for m_kw in kw_hits:
                 s, e = m_kw.start(), m_kw.end()
+                replacement = m_kw.group(1) + " ("
                 pieces.append(line[last:s])
-                pieces.append(m_kw.group(1) + " (")
+                mask_pieces.append(line_mask[last:s])
+                pieces.append(replacement)
+                mask_pieces.append("c" * len(replacement))
                 last = e
             pieces.append(line[last:])
+            mask_pieces.append(line_mask[last:])
             line = "".join(pieces)
+            line_mask = "".join(mask_pieces)
 
         max_depth_during = template_depth
         if "<" in line or ">" in line:
@@ -407,10 +417,19 @@ def lint_text(text: str, fix: bool) -> "tuple[str, list[Diag]]":
         # Only treat max_depth_during as evidence of template context when
         # the line looks like an opener of a multi-line parameter list,
         # i.e. it ends in a continuation token.
+        template_word_match = _TEMPLATE_WORD.search(line)
+        template_word_in_code = (
+            template_word_match is not None
+            and _is_code_span(
+                line_mask,
+                template_word_match.start(),
+                template_word_match.end(),
+            )
+        )
         in_template_context = (
             start_template_depth > 0
             or (max_depth_during > 0 and ends_with_continuation)
-            or _TEMPLATE_WORD.search(line) is not None
+            or template_word_in_code
         )
         if stripped_end and not ends_with_continuation:
             template_depth = 0
@@ -561,7 +580,10 @@ def process_file(path: str, fix: bool) -> "list[Diag]":
 def iter_sources(paths: Iterable[str]) -> Iterable[str]:
     for p in paths:
         if os.path.isfile(p):
-            yield p
+            if os.path.basename(p) in EXCLUDE_FILES:
+                continue
+            if p.endswith(SOURCE_EXTS):
+                yield p
         elif os.path.isdir(p):
             for root, dirs, files in os.walk(p):
                 dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]

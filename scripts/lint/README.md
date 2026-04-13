@@ -185,11 +185,11 @@ Pure stdlib unittest. No pytest, no third-party dependencies.
 python3 scripts/lint/test_style_lint.py
 ```
 
-67 tests covering the tokenizer (string, comment, and raw-string edge
-cases), every auto-fix rule, template-context long-line suppression,
-comparison operator non-poisoning, exclusion rules, encoding
-detection, atomic writes, and the `--check` exit code contract. Runs
-in under 100 ms.
+The test suite covers the tokenizer (string, comment, and raw-string
+edge cases), every auto-fix rule, template-context long-line
+suppression, comparison operator non-poisoning, exclusion rules,
+encoding detection, atomic writes, and the `--check` exit code
+contract. The full suite runs in under 100 ms.
 
 Required: every new rule ships with tests. The review rule is simple.
 If you did not watch a failing test for your rule, it did not exist
