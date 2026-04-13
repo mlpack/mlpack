@@ -13,9 +13,256 @@
 #define MLPACK_CORE_DATA_SAVE_AUDIO_HPP
 
 #include "audio_options.hpp"
-#include "map_integral_types.hpp"
 
 namespace mlpack {
+
+// WAV saving helper utilities:
+//
+// These handle actually calling dr_wav saving functions, after potentially
+// mapping the input matrix to the desired save format, with the minimum number
+// of copies.
+
+/**
+ * Save a matrix of floating-point data into a WAV file using the target format
+ * of eT1 for each element.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalFP(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix)
+{
+  // No matter what, we have to clamp to the range [-1, 1] for safety, so a
+  // temporary is needed.
+  arma::Mat<eT1> tmp = arma::clamp(arma::conv_to<arma::Mat<eT1>>::from(matrix),
+      (eT1) -1, (eT1) 1);
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file, using the exact same format as the matrix is
+ * already storing.  This expects eT1/eT2 to be an integral type.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<std::is_same_v<eT1, eT2>>* = 0)
+{
+  // The type is the same, so we can write directly.
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, matrix.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called for saving signed data, when the input type is
+ * a floating-point type.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<std::is_signed_v<eT1>>* = 0)
+{
+  // We need to convert our floating-point numbers (which are expected to be in
+  // the range [-1, 1]) to the full range of eT1s.
+  arma::Mat<eT1> tmp = arma::conv_to<arma::Mat<eT1>>::from(
+      arma::clamp(matrix, (eT2) -1, (eT2) 1) * std::numeric_limits<eT1>::max());
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called for saving unsigned data, when the input type
+ * is a floating-point type.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<!std::is_signed_v<eT1>>* = 0)
+{
+  // We need to convert our floating-point numbers (which are expected to be in
+  // the range [-1, 1]) to the full range of eT1s.  Since eT1 is unsigned, we do
+  // this by shifting to [0, 2] and then multiplying by half the representable
+  // range of eT1.
+  arma::Mat<eT1> tmp = arma::conv_to<arma::Mat<eT1>>::from(
+      (arma::clamp(matrix, (eT2) -1, (eT2) 1) + (eT2) 1) *
+      (std::numeric_limits<eT1>::max() / 2));
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called for saving as a format whose signedness is
+ * different than the given matrix's data (e.g. eT2 is uint16_t but eT1 is
+ * int16_t).
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<!std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<!std::is_same_v<eT1, eT2>>* = 0,
+    const typename std::enable_if_t<sizeof(eT1) == sizeof(eT2)>* = 0)
+{
+  // In this case we need to shift for the signedness change, but there's no
+  // conversion.  Since the input is const, we unfortunately need a temporary
+  // for this.
+  arma::Mat<eT2> tmp(matrix);
+
+  // Reinterpret the copy as unsigned data, if needed, and perform the shift.
+  if (std::is_signed_v<eT2>)
+  {
+    // The output type is unsigned, so make an alias, shift, and save.
+    arma::Mat<eT1> outAlias((eT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols, false,
+      true);
+    outAlias += std::pow(2, 8 * sizeof(eT1) - 1);
+    return (size_t) drwav_write_pcm_frames(&wav, totalFrames,
+        outAlias.memptr());
+  }
+  else
+  {
+    // The input type is unsigned, so perform the shift, then make an alias and
+    // save.
+    tmp += std::pow(2, 8 * sizeof(eT2) - 1);
+    arma::Mat<eT1> outAlias((eT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols, false,
+      true);
+    return (size_t) drwav_write_pcm_frames(&wav, totalFrames,
+        outAlias.memptr());
+  }
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called when the signedness of eT1 and eT2 are the
+ * same, but eT1 is larger, so the data needs to be expanded to fill the range.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<!std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<(sizeof(eT1) > sizeof(eT2))>* = 0,
+    const typename std::enable_if_t<
+        (std::is_signed_v<eT1> == std::is_signed_v<eT2>)>* = 0)
+{
+  // Widen the input samples, but don't perform a shift for a sign change.
+  arma::Mat<eT1> tmp = arma::conv_to<arma::Mat<eT1>>::from(matrix) *
+      std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2)));
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called when the signedness of eT1 and eT2 are
+ * different, *and* eT1 is larger.  So the data needs to be shifted *and*
+ * expanded to fill the range.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<!std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<(sizeof(eT1) > sizeof(eT2))>* = 0,
+    const typename std::enable_if_t<
+        (std::is_signed_v<eT1> != std::is_signed_v<eT2>)>* = 0)
+{
+  // Perform the expansion during the conversion operation.
+  arma::Mat<eT1> tmp = arma::conv_to<arma::Mat<eT1>>::from(matrix) *
+      std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2)));
+
+  // The sign change must be performed on the unsigned type, so create an alias
+  // if needed.
+  if (std::is_signed_v<eT1>)
+  {
+    typedef typename std::make_unsigned_t<eT1> ueT1;
+    arma::Mat<ueT1> tmpAlias((ueT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols,
+        false, true);
+    tmp -= std::pow(2, 8 * sizeof(ueT1) - 1);
+  }
+  else
+  {
+    tmp += std::pow(2, 8 * sizeof(eT1) - 1);
+  }
+
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called when the signedness of eT1 and eT2 are the
+ * same, but eT1 is smaller, so the data needs to be shrunk to not overflow the
+ * range.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<!std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<(sizeof(eT1) < sizeof(eT2))>* = 0,
+    const typename std::enable_if_t<
+        (std::is_signed_v<eT1> == std::is_signed_v<eT2>)>* = 0)
+{
+  // Shrink the input samples, but don't perform a sign change shift.
+  arma::Mat<eT1> tmp = arma::conv_to<arma::Mat<eT1>>::from(
+      matrix / std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1))));
+  return (size_t) drwav_write_pcm_frames(&wav, totalFrames, tmp.memptr());
+}
+
+/**
+ * Save a matrix to a WAV file using eT1 as the format to be stored in the WAV
+ * file.  This overload is called when the signedness of eT1 and eT2 are
+ * different, *and* eT1 is smaller.  So the data needs to be shifted *and*
+ * shrunk to not overflow the range.
+ */
+template<typename eT1, typename eT2>
+inline size_t SaveWAVInternalInt(
+    drwav& wav,
+    const size_t totalFrames,
+    const arma::Mat<eT2>& matrix,
+    const typename std::enable_if_t<!std::is_floating_point_v<eT2>>* = 0,
+    const typename std::enable_if_t<(sizeof(eT1) < sizeof(eT2))>* = 0,
+    const typename std::enable_if_t<
+        (std::is_signed_v<eT1> != std::is_signed_v<eT2>)>* = 0)
+{
+  if (std::is_signed_v<eT2>)
+  {
+    // If eT2 is signed, then we need to use conv_to to output into a signed
+    // type of the right width and then shift.  Then, we will make an unsigned
+    // alias (of type eT1) and save.
+    typedef typename std::make_signed_t<eT1> seT1;
+    arma::Mat<seT1> tmp = arma::conv_to<arma::Mat<seT1>>::from(
+        matrix / std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1))));
+    arma::Mat<eT1> tmpAlias((eT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols, false,
+        true);
+    tmpAlias += std::pow(2, 8 * sizeof(eT1) - 1);
+
+    return (size_t) drwav_write_pcm_frames(&wav, totalFrames,
+        tmpAlias.memptr());
+  }
+  else
+  {
+    // If eT2 is unsigned, then we need to reinterpret the input matrix as an
+    // unsigned type before conversion.  Then we can shift and save.
+    typedef typename std::make_unsigned_t<eT1> ueT1;
+    arma::Mat<ueT1> tmp = arma::conv_to<arma::Mat<ueT1>>::from(
+        matrix / std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1)))) +
+        std::pow(2, 8 * sizeof(eT1) - 1);
+
+    arma::Mat<eT1> tmpAlias((eT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols, false,
+        true);
+    return (size_t) drwav_write_pcm_frames(&wav, totalFrames,
+        tmpAlias.memptr());
+  }
+}
 
 /**
  * Save audio matrix data to a WAV file.
@@ -41,8 +288,6 @@ bool SaveAudio(const std::string& file,
                const arma::Mat<eT>& matrix,
                AudioOptions& opts)
 {
-  size_t framesWritten = 0;
-
   if (opts.Format() != FileType::WAV)
   {
     return HandleError("SaveAudio(): Only WAV format is supported."
@@ -64,7 +309,7 @@ bool SaveAudio(const std::string& file,
   {
     if (opts.BitsPerSample() != 0 && opts.Fatal())
       Log::Fatal << "SaveAudio(): invalid BitsPerSample() value: "
-          << opts.BitsPerSample() << "; must be 8/16/32/64!";
+          << opts.BitsPerSample() << "; must be 8/12/16/24/32/64!";
     else
       Log::Warn << "SaveAudio(): invalid BitsPerSample() value: "
           << opts.BitsPerSample() << "; using size of given data instead ("
@@ -85,13 +330,7 @@ bool SaveAudio(const std::string& file,
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   else if (opts.BitsPerSample() == 64 && std::is_floating_point_v<eT>)
     dataFormat.format = DR_WAVE_FORMAT_IEEE_FLOAT;
-  else if (opts.BitsPerSample() == 64 && std::is_integral_v<eT>)
-    dataFormat.format = DR_WAVE_FORMAT_PCM;
-  else if (opts.BitsPerSample() == 32 && std::is_integral_v<eT>)
-    dataFormat.format = DR_WAVE_FORMAT_PCM;
-  else if (opts.BitsPerSample() == 16)
-    dataFormat.format = DR_WAVE_FORMAT_PCM;
-  else if (opts.BitsPerSample() == 8)
+  else
     dataFormat.format = DR_WAVE_FORMAT_PCM;
 
   drwav wav;
@@ -103,130 +342,41 @@ bool SaveAudio(const std::string& file,
     return HandleError(oss, opts);
   }
 
-  // Cover double and float
-  if constexpr (std::is_floating_point_v<eT>)
+  size_t framesWritten = 0;
+  if (dataFormat.format == DR_WAVE_FORMAT_IEEE_FLOAT)
   {
+    if (opts.BitsPerSample() == 32)
+    {
+      framesWritten = SaveWAVInternalFP<float>(wav, opts.TotalFrames(), matrix);
+    }
+    else
+    {
+      framesWritten = SaveWAVInternalFP<double>(wav, opts.TotalFrames(),
+          matrix);
+    }
+  }
+  else
+  {
+    // Saving as PCM; the input is either integer or float.
     if (opts.BitsPerSample() == 8)
     {
-      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-      pcm32.clamp(-1.0f, 1.0f);
-      pcm32 = (pcm32 + 1.0f) * 127.5f;
-
-      arma::Mat<uint8_t> pcm8 = arma::conv_to<arma::Mat<uint8_t>>::from(pcm32);
-      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm8.memptr()));
+      framesWritten = SaveWAVInternalInt<uint8_t>(wav, opts.TotalFrames(),
+          matrix);
     }
     else if (opts.BitsPerSample() == 16)
     {
-      // We assume that the original values are in range of [-1, +1]
-      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-      pcm32.clamp(-1.0f, 1.0f);
-      pcm32 *= 32767.0f;
-
-      arma::Mat<int16_t> pcm16 = arma::conv_to<arma::Mat<int16_t>>::from(pcm32);
-      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm16.memptr()));
+      framesWritten = SaveWAVInternalInt<int16_t>(wav, opts.TotalFrames(),
+          matrix);
     }
     else if (opts.BitsPerSample() == 32)
     {
-      arma::fmat pcm32 = arma::conv_to<arma::fmat>::from(matrix);
-      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), pcm32.memptr()));
+      framesWritten = SaveWAVInternalInt<int32_t>(wav, opts.TotalFrames(),
+          matrix);
     }
     else if (opts.BitsPerSample() == 64)
     {
-      arma::mat pcm64 = arma::conv_to<arma::mat>::from(matrix);
-      framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-        opts.TotalFrames(), pcm64.memptr()));
-    }
-  }
-  else if constexpr (std::is_integral_v<eT>)
-  {
-    // Create a copy as we need to modify it
-    arma::Mat<eT> tmpMatrix = matrix;
-
-    // User might have different tmpMatrix type compared to bit per sample.
-    if (opts.BitsPerSample() != 8 * sizeof(eT))
-    {
-      // We must convert int8_t to uint8_t to match the WAV standard.
-      // Handles all input cases if the user asked for 8 bits per sample
-      // output
-      if (opts.BitsPerSample() == 8)
-      {
-        arma::Mat<uint8_t> pcm;
-        if constexpr (std::is_signed_v<eT>)
-        {
-          MapSignedIntegralTypes(pcm, tmpMatrix);
-          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm.memptr()));
-        }
-        else if constexpr (!std::is_signed_v<eT>)
-        {
-          tmpMatrix /= std::pow(2, 8 * (sizeof(eT) - 1));
-          pcm = arma::conv_to<arma::Mat<uint8_t>>::from(tmpMatrix);
-          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm.memptr()));
-        }
-      }
-      else if (opts.BitsPerSample() == 16)
-      {
-        // Convert whatever the user input signed or unsigned to int16_t
-        arma::Mat<int16_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
-      }
-      else if (opts.BitsPerSample() == 32)
-      {
-        // Convert whatever the user input signed or unsigned to int32_t
-        arma::Mat<int32_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
-      }
-      else if (opts.BitsPerSample() == 64)
-      {
-        // Convert whatever the user input signed or unsigned to int32_t
-        arma::Mat<int64_t> pcm;
-        MapUnsignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
-      }
-    }
-    else // BitsPerSample() == sizeof(eT).
-         // or user didn't specify BitsPerSample()
-    {
-      // We must convert int8_t to uint8_t to match the WAV standard.
-      if (std::is_same_v<eT, int8_t>)
-      {
-        arma::Mat<uint8_t> pcm;
-        MapSignedIntegralTypes(pcm, tmpMatrix);
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), pcm.memptr()));
-      }
-      else if constexpr (std::is_same_v<eT, uint8_t>)
-      {
-        framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), tmpMatrix.memptr()));
-      }
-      else
-      {
-        // Handles: int16_t, int32_t, int64_t
-        if constexpr (std::is_signed_v<eT>)
-        {
-          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-            opts.TotalFrames(), tmpMatrix.memptr()));
-        }
-        // Handles: uint16_t, uint32_t, uint64_t
-        else if constexpr (!std::is_signed_v<eT>)
-        {
-          typedef std::make_signed_t<eT> seT;
-          arma::Mat<seT> pcm;
-          MapUnsignedIntegralTypes(pcm, tmpMatrix);
-          framesWritten = static_cast<size_t>(drwav_write_pcm_frames(&wav,
-              opts.TotalFrames(), pcm.memptr()));
-        }
-      }
+      framesWritten = SaveWAVInternalInt<int64_t>(wav, opts.TotalFrames(),
+          matrix);
     }
   }
 
