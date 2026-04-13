@@ -76,8 +76,8 @@ class MedianImputation
       // Compute the median on the extracted elements.
       if (tmp.is_empty())
       {
-        throw std::invalid_argument("MedianImputation::Impute(): no non-missing "
-            "elements; cannot compute median!");
+        throw std::invalid_argument("MedianImputation::Impute(): no non-missing"
+            " elements; cannot compute median!");
       }
       medianValue = median(vectorise(tmp));
     #else

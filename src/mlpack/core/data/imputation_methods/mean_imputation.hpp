@@ -161,7 +161,7 @@ class MeanImputation
                      const size_t dimension,
                      const bool columnMajor = true)
   {
-    static_assert(!IsSparse<MatType>::value, "MedianImputation::Impute(): "
+    static_assert(!IsSparse<MatType>::value, "MeanImputation::Impute(): "
         "sparse matrix imputation is not supported; use a dense matrix "
         "instead!");
 
