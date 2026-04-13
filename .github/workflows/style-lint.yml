@@ -1,0 +1,36 @@
+name: style-lint
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  style-lint:
+    name: style-lint (report mode)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run the linter's own test suite
+        run: python3 -m unittest discover -s scripts/lint -t scripts/lint
+
+      - name: Run the linter in check mode on the full tree
+        # --check fails only on auto-fixable issues. Baseline long-line
+        # diagnostics (which require human judgment) are printed for
+        # visibility but do not fail CI.
+        run: python3 scripts/lint/style_lint.py --check .
