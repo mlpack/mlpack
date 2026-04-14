@@ -596,15 +596,15 @@ class TestEdgeCases(unittest.TestCase):
         # `myTemplateCount` is an identifier that contains the substring
         # 'template'. The old substring check would skip the brace fix on
         # this line; the word-boundary regex must let it through.
-        self.assertFalse(
-            sl._is_template_context_line("int myTemplateCount = 0;")
-        )
-        self.assertFalse(
-            sl._is_template_context_line("void templateRegistration();")
-        )
-        self.assertTrue(
-            sl._is_template_context_line("template<typename T> void foo();")
-        )
+        def ctx(line: str) -> bool:
+            return sl._is_template_context_line(line, sl.classify(line))
+
+        self.assertFalse(ctx("int myTemplateCount = 0;"))
+        self.assertFalse(ctx("void templateRegistration();"))
+        self.assertTrue(ctx("template<typename T> void foo();"))
+        # `template` appearing only inside a trailing comment must not
+        # suppress brace fixes.
+        self.assertFalse(ctx("if (x) { // template specialization"))
 
         text = "if (myTemplateCount < 10) {\n  y;\n}\n"
         new_text, diags = sl.lint_text(text, fix=True)

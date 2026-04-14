@@ -64,9 +64,21 @@ TRAILING_BRACE = re.compile(
 BRACE_ELSE_SAMELINE = re.compile(r"^\s*\}\s*else\b")
 
 
-def _is_template_context_line(line: str) -> bool:
-    """Used to veto brace-placement fixes in template heavy lines."""
-    return bool(_TEMPLATE_WORD.search(line)) or (">::" in line)
+def _is_template_context_line(line: str, line_mask: str) -> bool:
+    """Used to veto brace-placement fixes in template heavy lines.
+
+    Only matches when `template` or `>::` occurs in code spans; mentions in
+    trailing comments or string literals do not suppress brace fixes.
+    """
+    m = _TEMPLATE_WORD.search(line)
+    if m and _is_code_span(line_mask, m.start(), m.end()):
+        return True
+    idx = line.find(">::")
+    while idx != -1:
+        if _is_code_span(line_mask, idx, idx + 3):
+            return True
+        idx = line.find(">::", idx + 3)
+    return False
 
 
 @dataclass
@@ -305,26 +317,29 @@ def lint_text(text: str, fix: bool) -> "tuple[str, list[Diag]]":
         start_template_depth = template_depth
 
         if "\t" in line:
-            col = line.find("\t")
-            if col < len(line_mask) and line_mask[col] == "c":
+            code_tab_cols = [
+                k for k, ch in enumerate(line)
+                if ch == "\t" and k < len(line_mask) and line_mask[k] == "c"
+            ]
+            for col in code_tab_cols:
                 diags.append(Diag(i, col + 1, "tab", "tab character", True))
-                if fix:
-                    new_chars: list[str] = []
-                    new_mask_chars: list[str] = []
-                    visual = 0
-                    for k, ch in enumerate(line):
-                        mch = line_mask[k] if k < len(line_mask) else "c"
-                        if ch == "\t" and mch == "c":
-                            pad = 2 - (visual % 2)
-                            new_chars.append(" " * pad)
-                            new_mask_chars.append("c" * pad)
-                            visual += pad
-                        else:
-                            new_chars.append(ch)
-                            new_mask_chars.append(mch)
-                            visual += 1
-                    line = "".join(new_chars)
-                    line_mask = "".join(new_mask_chars)
+            if fix and code_tab_cols:
+                new_chars: list[str] = []
+                new_mask_chars: list[str] = []
+                visual = 0
+                for k, ch in enumerate(line):
+                    mch = line_mask[k] if k < len(line_mask) else "c"
+                    if ch == "\t" and mch == "c":
+                        pad = 2 - (visual % 2)
+                        new_chars.append(" " * pad)
+                        new_mask_chars.append("c" * pad)
+                        visual += pad
+                    else:
+                        new_chars.append(ch)
+                        new_mask_chars.append(mch)
+                        visual += 1
+                line = "".join(new_chars)
+                line_mask = "".join(new_mask_chars)
 
         stripped = line.rstrip(" \t")
         if stripped != line:
@@ -449,7 +464,7 @@ def lint_text(text: str, fix: bool) -> "tuple[str, list[Diag]]":
                 )
 
         fixed_lines: "list[str] | None" = None
-        if not _is_template_context_line(line):
+        if not _is_template_context_line(line, line_mask):
             for rgx, code, msg, split in _BRACE_FIX_RULES:
                 match = rgx.match(line)
                 if match:
@@ -550,13 +565,18 @@ def read_source(path: str) -> "tuple[str, str]":
     return raw.decode("utf-8"), "utf-8"
 
 
-def process_file(path: str, fix: bool) -> "list[Diag]":
-    """Read, lint, and (in fix mode) rewrite a single file."""
+def process_file(path: str, fix: bool) -> "list[Diag] | None":
+    """Read, lint, and (in fix mode) rewrite a single file.
+
+    Returns None if the file could not be read/decoded; callers must treat
+    that as a hard error (counted separately from lint diagnostics so it
+    surfaces in every mode's exit code).
+    """
     try:
         text, encoding = read_source(path)
     except (OSError, UnicodeDecodeError) as e:
         print(f"{path}: skipped ({e})", file=sys.stderr)
-        return []
+        return None
 
     diags: list[Diag] = []
     if encoding != "utf-8":
@@ -612,8 +632,12 @@ def main() -> int:
 
     fixable_total = 0
     other_total = 0
+    read_errors = 0
     for path in iter_sources(args.paths):
         diags = process_file(path, fix=args.fix)
+        if diags is None:
+            read_errors += 1
+            continue
         for d in diags:
             if args.fix and d.fixable:
                 continue
@@ -622,10 +646,10 @@ def main() -> int:
         other_total += sum(1 for d in diags if not d.fixable)
 
     if args.fix:
-        return 1 if other_total else 0
+        return 1 if (other_total or read_errors) else 0
     if args.check:
-        return 1 if fixable_total else 0
-    return 1 if (fixable_total + other_total) else 0
+        return 1 if (fixable_total or read_errors) else 0
+    return 1 if (fixable_total + other_total + read_errors) else 0
 
 
 if __name__ == "__main__":
