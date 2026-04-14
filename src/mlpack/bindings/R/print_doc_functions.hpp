@@ -117,6 +117,12 @@ inline std::string PrintDataset(const std::string& datasetName);
  */
 inline std::string ParamString(const std::string& paramName);
 
+inline std::string ImportExtLib();
+
+inline std::string ImportSplit();
+
+inline std::string ImportThis(const std::string& groupName);
+
 /**
  * Print whether or not we should ignore a check on the given parameter.
  */

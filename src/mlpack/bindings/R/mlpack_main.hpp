@@ -52,6 +52,24 @@
 #define PRINT_MODEL mlpack::bindings::r::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::r::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ * For R, this is part of the 'mlpack' package.
+ */
+#define IMPORT_SPLIT mlpack::bindings::r::ImportSplit
+
+/**
+ * IMPORT_THIS() returns a string that imports the current method.
+ * For R, all functions in the package are already accessible.
+ */
+#define IMPORT_THIS mlpack::bindings::r::ImportThis
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of
@@ -95,9 +113,9 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 
 // TODO: Fill these in
-#define IMPORT_EXT_LIB(...) std::string(" ")
-#define IMPORT_SPLIT(...) std::string(" ")
-#define IMPORT_THIS(...) std::string("#' library(mlpack)")
+//#define IMPORT_EXT_LIB(...) std::string(" ")
+//#define IMPORT_SPLIT(...) std::string(" ")
+//#define IMPORT_THIS(...) std::string(" ")
 #define GET_DATASET(...) std::string(" ")
 #define SPLIT_TRAIN_TEST(...) std::string(" ")
 #define CREATE_OBJECT(...) std::string(" ")

@@ -430,6 +430,27 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
+inline std::string ImportExtLib()
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we do no need anything here as no external libraries are loaded.
+  return "# no external library needed";
+}
+
+inline std::string ImportSplit()
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we do no need anything here as no additional library are loaded.
+  return "# no additional library needed";
+}
+
+inline std::string ImportThis(const std::string& groupName)
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we do no need anything here as the function should be accessible.
+  return "# Example for " + groupName;
+}
+
 inline bool IgnoreCheck(const std::string& bindingName,
                         const std::string& paramName)
 {
