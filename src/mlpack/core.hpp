@@ -66,9 +66,4 @@
 #include <mlpack/core/cv/cv.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
 
-// Use OpenMP if available.
-#ifdef MLPACK_USE_OPENMP
-  #include <omp.h>
-#endif
-
 #endif
