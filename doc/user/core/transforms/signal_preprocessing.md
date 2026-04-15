@@ -119,6 +119,10 @@ ensemble approach:
    * Number of extracted IMFs will be the minimum number of IMFs extracted by
      by `EMD()` across all `ensSize` runs. (<=`maxImfs`).
 
+   * EEMD may produce low-energy leading IMFs due to injected noise and ensemble
+   averaging. Depending on the application, users may want to discard negligible
+   IMFs in post-processing (e.g., using an energy-fraction threshold).
+
 #### See also:
 
  * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
