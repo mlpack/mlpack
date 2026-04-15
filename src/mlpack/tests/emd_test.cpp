@@ -88,10 +88,9 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 
 TEST_CASE("EEMD", "[EMD]")
 {
-
   const arma::uword N = 3000;
 
-  // signal used in docs (emd.md) 
+  // signal used in docs (emd.md)
   arma::vec t = arma::linspace<arma::vec>(0.0, 2 * arma::datum::pi, N);
   arma::vec signal =
       arma::sin((20 * t) % (1 + 0.2 * t)) +
