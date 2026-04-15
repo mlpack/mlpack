@@ -70,7 +70,12 @@ inline void EEMD(const ColType& signal,
   // Add white noise, then average IMFs over each pass
   MatType accumulatedImfs(N, maxImfs, arma::fill::zeros);
   size_t numImfs = maxImfs;
+
+#ifdef _OPENMP
   const size_t threadCount = static_cast<size_t>(omp_get_max_threads());
+#else
+  const size_t threadCount = 1;
+#endif
 
   std::vector<MatType> partialImfs(threadCount);
   for (MatType& partial : partialImfs)
@@ -81,7 +86,11 @@ inline void EEMD(const ColType& signal,
   // and minImfs to avoid race conditions, if multiple threads exist.
   #pragma omp parallel
   {
+#ifdef _OPENMP
     const size_t threadId = static_cast<size_t>(omp_get_thread_num());
+#else
+    const size_t threadId = 0;
+#endif
 
     MatType& localAccum = partialImfs[threadId];
     size_t localMin = maxImfs;
