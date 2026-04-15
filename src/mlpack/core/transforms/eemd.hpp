@@ -12,6 +12,10 @@
 #ifndef MLPACK_CORE_TRANSFORMS_EEMD_HPP
 #define MLPACK_CORE_TRANSFORMS_EEMD_HPP
 
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
+
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/transforms/spline_envelope.hpp>
 #include <mlpack/core/transforms/emd.hpp>
@@ -61,34 +65,47 @@ inline void EEMD(const ColType& signal,
   if (N == 0)
     return;
 
+  const double noiseScale = noiseStrength * stddev(signal);
+
   // Add white noise, then average IMFs over each pass
   MatType accumulatedImfs(N, maxImfs, arma::fill::zeros);
   size_t numImfs = maxImfs;
+  const size_t threadCount = static_cast<size_t>(omp_get_max_threads());
 
+  std::vector<MatType> partialImfs(threadCount);
+  for (MatType& partial : partialImfs)
+    partial.zeros(N, maxImfs);
+
+  std::vector<size_t> partialMinImfs(threadCount, maxImfs);
+  // Parallelize over threads, so each thread accumulates its own imfs
+  // and minImfs to avoid race conditions, if multiple threads exist.
   #pragma omp parallel
   {
-  MatType localAccum(N, maxImfs, arma::fill::zeros);
-  size_t localMin = maxImfs;
+    const size_t threadId = static_cast<size_t>(omp_get_thread_num());
 
-  #pragma omp for
-  for (size_t i = 0; i < ensembleSize; ++i)
-  {
-      ColType noisySignal = signal +
-          noiseStrength * stddev(signal) * randn<ColType>(N);
+    MatType& localAccum = partialImfs[threadId];
+    size_t localMin = maxImfs;
+
+    #pragma omp for
+    for (size_t i = 0; i < ensembleSize; ++i)
+    {
+      ColType noisySignal = signal + noiseScale * randn<ColType>(N);
       MatType imfsNoisy;
       ColType residueNoisy;
-      // residue input here is useless / wastes space. new EMD impl?
       EMD(noisySignal, imfsNoisy, residueNoisy, maxImfs, maxSiftIter, tol);
 
       localMin = std::min(localMin, (size_t) imfsNoisy.n_cols);
-      localAccum.cols(0, imfsNoisy.n_cols - 1) += imfsNoisy;
+      if (imfsNoisy.n_cols > 0)
+        localAccum.cols(0, imfsNoisy.n_cols - 1) += imfsNoisy;
+    }
+
+    partialMinImfs[threadId] = localMin;
   }
 
-  #pragma omp critical
+  for (size_t thread = 0; thread < threadCount; ++thread)
   {
-      accumulatedImfs += localAccum;
-      numImfs = std::min(numImfs, localMin);
-  }
+    accumulatedImfs += partialImfs[thread];
+    numImfs = std::min(numImfs, partialMinImfs[thread]);
   }
 
   imfs = accumulatedImfs.cols(0, numImfs - 1) / ensembleSize;
