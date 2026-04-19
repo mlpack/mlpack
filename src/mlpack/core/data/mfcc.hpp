@@ -85,12 +85,6 @@ inline arma::Col<eT> HammingWindow(size_t len);
 template<typename eT>
 inline eT HzToMel(eT hz);
 
-/*
- * Convert Mel scale into Hz.
- */
-template<typename eT>
-inline eT MelToHz(eT mel);
-
 /**
  * Build a mel-scaled triangular filterbank matrix.
  *
