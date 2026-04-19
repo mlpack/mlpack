@@ -150,13 +150,10 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   size_t stepsInSamples = static_cast<size_t>(windowStep * sampleRate
       / 1000.0f);
 
-  // This is slowing the performance of FFT by 4 seconds.
-  //if (nFFT == 0)
-  //  nFFT = NextPowerOf2(lengthInSamples);
-  //lengthInSamples = nFFT //(Deduced from NextPowerOf2)
-
-  // 2 seconds speed up. Elapsed: 34402 ms 
-  nFFT = lengthInSamples;
+  // This is slowing the performance of FFT by 3 ~ 4 seconds.
+  // Confirmed again when tested for the second time
+  if (nFFT == 0)
+    nFFT = NextPowerOf2(lengthInSamples);
 
   size_t numBins = nFFT / 2 + 1;
 
@@ -254,8 +251,6 @@ inline void SlidingWindow(const MatType& signal,
                           size_t windowLength,
                           size_t windowStep)
 {
-  //typedef typename MatType::elem_type eT;
-
   // Elapsed: 32770 ms Best so far
   arma::Col<eT> hWindow = HammingWindow<eT>(windowLength);
 
