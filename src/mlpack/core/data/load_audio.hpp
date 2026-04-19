@@ -253,18 +253,20 @@ inline size_t LoadWAVInternalInt(
 {
   const size_t framesRead = (size_t) drwav_read_pcm_frames(&wav,
       wav.totalPCMFrameCount, (eT1*) matrix.memptr());
-  if (std::is_signed_v<eT2>)
+  if (!std::is_signed_v<eT2>)
   {
-    // We loaded into a signed type, but need to shift it to unsigned.
-    // However, because signed overflow is not guaranteed by the C++ standard,
-    // we have to do the shifting on the unsigned version.
+    // eT1 is signed, so we loaded signed bytes, but eT2 is unsigned so we need
+    // to shift the values to the unsigned range.  However, because signed
+    // overflow is not guaranteed by the C++ standard, we have to do the
+    // shifting on the eT2 (unsigned) version.
     matrix += std::pow(2, 8 * sizeof(eT1) - 1);
   }
   else
   {
-    // We loaded into an unsigned type, but need to shift it to signed.
-    // In this case, so that we are depending on unsigned overflow behavior, we
-    // have to make an alias of the matrix as an unsigned matrix.
+    // eT1 is unsigned, so we loaded unsigned bytes, but eT2 is signed so we
+    // need to shift the values to the signef range.  In this case, so that we
+    // are depending on unsigned overflow behavior, we have to make an alias of
+    // the matrix as an unsigned matrix.
     arma::Mat<eT1> alias((eT1*) matrix.memptr(), matrix.n_rows, matrix.n_cols,
         false, true);
     alias -= std::pow(2, 8 * sizeof(eT1) - 1);
