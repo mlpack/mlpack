@@ -185,7 +185,7 @@ inline size_t SaveWAVInternalInt(
     typedef typename std::make_unsigned_t<eT1> ueT1;
     arma::Mat<ueT1> tmpAlias((ueT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols,
         false, true);
-    tmp -= std::pow(2, 8 * sizeof(ueT1) - 1);
+    tmpAlias -= std::pow(2, 8 * sizeof(ueT1) - 1);
   }
   else
   {
@@ -257,10 +257,8 @@ inline size_t SaveWAVInternalInt(
         matrix / std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1)))) +
         std::pow(2, 8 * sizeof(eT1) - 1);
 
-    arma::Mat<eT1> tmpAlias((eT1*) tmp.memptr(), tmp.n_rows, tmp.n_cols, false,
-        true);
     return (size_t) drwav_write_pcm_frames(&wav, totalFrames,
-        tmpAlias.memptr());
+        (eT1*) tmp.memptr());
   }
 }
 
