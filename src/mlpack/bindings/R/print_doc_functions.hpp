@@ -123,6 +123,33 @@ inline std::string ImportSplit();
 
 inline std::string ImportThis(const std::string& groupName);
 
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio);
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args);
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName);
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args);
+
 /**
  * Print whether or not we should ignore a check on the given parameter.
  */
