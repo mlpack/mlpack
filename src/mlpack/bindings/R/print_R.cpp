@@ -143,8 +143,8 @@ void PrintR(util::Params& params,
       if (splitpos == std::string::npos || splitpos > str.length())
       {
         splitpos = str.length();
-        cout << util::HyphenateString(str.substr(pos, (splitpos - pos)),
-            "#' # ");
+        cout << "#' # " <<
+          util::HyphenateString(str.substr(pos, (splitpos - pos)), "#' # ");
         break;
       }
       if (splitpos != 0 && pos == 0)

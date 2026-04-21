@@ -434,22 +434,69 @@ inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no external libraries are loaded.
-  return "# no external library needed";
+  return "no external library needed";
 }
 
 inline std::string ImportSplit()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no additional library are loaded.
-  return "# no additional library needed";
+  return "no additional library needed";
 }
 
 inline std::string ImportThis(const std::string& groupName)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as the function should be accessible.
-  return "# Example for " + groupName;
+  return "Example for " + groupName;
 }
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  return "Getting " + datasetName + " from " + url;
+}
+
+inline std::string SplitTrainTest(const std::string& /* datasetName */,
+                                  const std::string& /* labelName */,
+                                  const std::string& /* trainDataset */,
+                                  const std::string& /* trainLabels */,
+                                  const std::string& /* testDataset */,
+                                  const std::string& /* testLabels */,
+                                  const std::string& /* splitRatio */)
+{
+  return "Splitting data....";
+}
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args)
+{
+  return "CreatingA " + bindingName + " " + objectName +
+    " " + groupName;
+}
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName)
+{
+  return "CreatingB " + bindingName + " " + objectName +
+    " " + groupName;
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... /* args */)
+{
+  return "CallMethod " + bindingName + " " + objectName +
+    " " + methodName;
+}
+
+
 
 inline bool IgnoreCheck(const std::string& bindingName,
                         const std::string& paramName)
