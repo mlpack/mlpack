@@ -7,13 +7,14 @@ in nonlinear and nonstationary problems.
 * `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
  Functions (IMFs) plus a residue.
 
-* `EEMD()`: ensemble EMD, to decompose a 1D signal into a robust set of IMFs
+* [`EEMD()`](#eemd): ensemble EMD, to decompose a 1D signal into a robust set of IMFs
   plus a residue. 
 <!-- TODO: add CEEMDAN -->
 
-## EMD 
+## EMD
+
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
-from a uniformly sampled periodic signal:
+from a uniformly sampled periodic signal.
 
 #### `EMD()` Parameters
 
@@ -101,8 +102,9 @@ for (size_t k = 0; k < numToShow; ++k)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
 
 
-## EEMD 
-The `EEMD()` function wraps `EMD()` to output more robust IMFs by using an
+## EEMD
+
+The `EEMD()` function wraps [`EMD()`](#emd) to output more robust IMFs by using an
 ensemble approach:
 
 #### `EEMD()` Parameters
@@ -144,7 +146,7 @@ const double tMax = arma::datum::pi;
 arma::vec time = arma::linspace(tMin, tMax, N);
 
 // signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
-// see figure above 
+// see figure above in the EMD documentation
 arma::vec signal =
     arma::sin( 20.0 * time % (1.0 + 0.2 * time) ) +
     arma::square(time) + arma::sin(13.0 * time);
@@ -155,3 +157,8 @@ arma::vec residue;
 // Use 100 ensemble members, 0.15 noise strength, 10 IMFs, 50 sifts per IMF, tol = 1e-2
 mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 ```
+
+#### See also:
+
+ * [Ensemble Empirical Mode Decomposition: a Noise-Assisted Data Analysis Method](https://www.researchgate.net/publication/220531146_Ensemble_Empirical_Mode_Decomposition_a_Noise-Assisted_Data_Analysis_Method) (original EEMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)

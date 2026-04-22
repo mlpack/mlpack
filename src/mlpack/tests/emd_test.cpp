@@ -88,7 +88,6 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 
 TEST_CASE("EEMDOutput", "[EMD]")
 {
-  mlpack::RandomSeed(786);
   const arma::uword N = 3000;
 
   // signal used in docs (emd.md)
