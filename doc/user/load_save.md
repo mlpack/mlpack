@@ -1199,6 +1199,7 @@ vector in the loaded data matrix, in order of frames.  So, for a stereo audio
 file, the rows of the column vector are in the ordering `[l0, r0, l1, r1, ..., ln, rn]`
 where `l0` and `r0` are the left and right samples in frame 0.
 
+```
  Visual representation for Stereo:
  Time ──────────────────────────────►
 
@@ -1206,6 +1207,7 @@ where `l0` and `r0` are the left and right samples in frame 0.
   ┌──────┬──────┐  ┌──────┬──────┐  ┌──────┬──────┐
   │  L₀  │  R₀  │  │  L₁  │  R₁  │  │  L₂  │  R₂  │
   └──────┴──────┘  └──────┴──────┘  └──────┴──────┘
+```
 
 If an [`AudioOptions`](#audiooptions) is passed to `Load()`, it will be
 populated with the metadata of the audio file.

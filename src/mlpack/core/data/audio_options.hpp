@@ -307,7 +307,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   constexpr static const size_t defaultBitsPerSample    = 0;
   constexpr static const size_t defaultChannels         = 0;
   constexpr static const size_t defaultSampleRate       = 0;
-  constexpr static const size_t defaultTotalFramesRead  = 0;
   constexpr static const size_t defaultTotalFrames      = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
 };
