@@ -86,7 +86,7 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   REQUIRE(relErr < 1e-3);
 }
 
-TEST_CASE("EEMD", "[EMD]")
+TEST_CASE("EEMDOutput", "[EMD]")
 {
   const arma::uword N = 3000;
 
@@ -175,4 +175,33 @@ TEST_CASE("EEMD", "[EMD]")
 
   REQUIRE(foundChirpImf);
   REQUIRE(foundStationaryImf);
+}
+
+TEST_CASE("EEMDvsEMD", "[EMD]") 
+{
+  const arma::uword N = 3000;
+
+  // signal used in docs (emd.md)
+  arma::vec t = arma::linspace<arma::vec>(0.0, 2 * arma::datum::pi, N);
+  arma::vec signal =
+      arma::sin((20 * t) % (1 + 0.2 * t)) +
+      arma::square(t) +
+      arma::sin(13 * t);
+
+  arma::mat imfsEMD;
+  arma::vec residueEMD;
+  mlpack::EMD(signal, imfsEMD, residueEMD, 5, 10, 1e-3);
+
+  arma::mat imfsEEMD;
+  arma::vec residueEEMD;
+  mlpack::EEMD(signal, imfsEEMD, residueEEMD, 1, 0.001, 5, 10, 1e-3);
+
+  // Compare through their reconstructions
+  arma::vec reconEMD = arma::sum(imfsEMD, 1) + residueEMD;
+  arma::vec reconEEMD = arma::sum(imfsEEMD, 1) + residueEEMD;
+
+  const double relReconDiff =
+      arma::norm(reconEMD - reconEEMD, 2) / arma::norm(reconEMD, 2);
+  UNSCOPED_INFO("Relative reconstruction difference"<< relReconDiff);
+  REQUIRE(relReconDiff < 0.001);
 }

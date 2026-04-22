@@ -12,10 +12,6 @@
 #ifndef MLPACK_CORE_TRANSFORMS_EEMD_HPP
 #define MLPACK_CORE_TRANSFORMS_EEMD_HPP
 
-#ifdef _OPENMP
-  #include <omp.h>
-#endif
-
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/transforms/spline_envelope.hpp>
 #include <mlpack/core/transforms/emd.hpp>
@@ -57,6 +53,8 @@ inline void EEMD(const ColType& signal,
 {
   if (signal.n_cols > 1)
     throw std::runtime_error("EEMD(): given signal must have only one column!");
+  if (ensembleSize == 0)
+    throw std::runtime_error("EEMD(): ensemble size must be > 0!");
 
   const size_t N = signal.n_elem;
   imfs.reset();
@@ -71,7 +69,7 @@ inline void EEMD(const ColType& signal,
   MatType accumulatedImfs(N, maxImfs, arma::fill::zeros);
   size_t numImfs = maxImfs;
 
-#ifdef _OPENMP
+#ifdef MLPACK_USE_OPENMP
   const size_t threadCount = static_cast<size_t>(omp_get_max_threads());
 #else
   const size_t threadCount = 1;
@@ -84,9 +82,10 @@ inline void EEMD(const ColType& signal,
   std::vector<size_t> partialMinImfs(threadCount, maxImfs);
   // Parallelize over threads, so each thread accumulates its own imfs
   // and minImfs to avoid race conditions, if multiple threads exist.
-  #pragma omp parallel
+  #pragma omp parallel for 
+  for (size_t i = 0; i < ensembleSize; ++i)
   {
-#ifdef _OPENMP
+#ifdef MLPACK_USE_OPENMP
     const size_t threadId = static_cast<size_t>(omp_get_thread_num());
 #else
     const size_t threadId = 0;
@@ -94,20 +93,16 @@ inline void EEMD(const ColType& signal,
 
     MatType& localAccum = partialImfs[threadId];
     size_t localMin = maxImfs;
+    
+    ColType noisySignal = signal + noiseScale * randn<ColType>(N);
+    MatType imfsNoisy;
+    ColType residueNoisy;
+    EMD(noisySignal, imfsNoisy, residueNoisy, maxImfs, maxSiftIter, tol);
 
-    #pragma omp for
-    for (size_t i = 0; i < ensembleSize; ++i)
-    {
-      ColType noisySignal = signal + noiseScale * randn<ColType>(N);
-      MatType imfsNoisy;
-      ColType residueNoisy;
-      EMD(noisySignal, imfsNoisy, residueNoisy, maxImfs, maxSiftIter, tol);
-
-      localMin = std::min(localMin, (size_t) imfsNoisy.n_cols);
-      if (imfsNoisy.n_cols > 0)
-        localAccum.cols(0, imfsNoisy.n_cols - 1) += imfsNoisy;
-    }
-
+    localMin = std::min(localMin, (size_t) imfsNoisy.n_cols);
+    if (imfsNoisy.n_cols > 0)
+      localAccum.cols(0, imfsNoisy.n_cols - 1) += imfsNoisy;
+    
     partialMinImfs[threadId] = localMin;
   }
 

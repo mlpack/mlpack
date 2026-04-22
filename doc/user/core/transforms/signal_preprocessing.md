@@ -94,6 +94,13 @@ for (size_t k = 0; k < numToShow; ++k)
   std::cout << "IMF " << k << " peak freq: " << peakHz << " Hz" << std::endl;
 }
 ```
+
+#### See also:
+
+ * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
+
 ## EEMD 
 The `EEMD()` function wraps `EMD()` to output more robust IMFs by using an
 ensemble approach:
@@ -105,16 +112,17 @@ ensemble approach:
    * `ensSize` (of type `size_t`) is the number of members in the ensemble
     (that is the number of `EMD()` runs to be averaged).
 
-   * `noiseStrength` (of type `double`) is the signifcance of added noise used
-     in each `EMD()` run.
+   * `noiseStrength` (of type `double`) is the fraction of the signal standard
+   deviation used as the standard deviation of the added white noise in each
+    `EMD()` run (i.e. 0.1 means 10% of signal standard deviation).
 
    * `signal`, `imfs`,  `residue`, `maxImfs`, `maxSiftIter`, and `tol` are
-     defined in the classical `EMD()` implementation. 
+     defined in the classical `EMD()` implementation.
 
    ***NOTES:***
 
    * The original signal **cannot** be reconstructed as the sum of the imfs and
-      residue, as in `EMD()`.  
+      residue, as in `EMD()`.
 
    * Number of extracted IMFs will be the minimum number of IMFs extracted by
      by `EMD()` across all `ensSize` runs. (<=`maxImfs`).
@@ -123,7 +131,27 @@ ensemble approach:
    averaging. Depending on the application, users may want to discard negligible
    IMFs in post-processing (e.g., using an energy-fraction threshold).
 
-#### See also:
+   * The number of returned IMFs is bounded between 0 and `maxImfs`.
+     The algorithm returns only as many IMFs as can actually be extracted from
+     the input signal.
 
- * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+Example using `EEMD` on a time-varying signal `S` (shown in Figure above).
+
+```c++
+const arma::uword N = 3000;
+const double tMin = 0.0;
+const double tMax = arma::datum::pi;
+arma::vec time = arma::linspace(tMin, tMax, N);
+
+// signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
+// see figure above 
+arma::vec signal =
+    arma::sin( 20.0 * time % (1.0 + 0.2 * time) ) +
+    arma::square(time) + arma::sin(13.0 * time);
+
+arma::mat imfs;
+arma::vec residue;
+
+// Use 100 ensemble members, 0.15 noise strength, 10 IMFs, 50 sifts per IMF, tol = 1e-2
+mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
+```
