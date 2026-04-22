@@ -511,8 +511,7 @@ is set.
 | _(n/a)_                   | `opts.BitsPerSample()`                | [Audio data](#audio-data)  | Returns a `size_t` representing the bit depth per sample. Set after loading.  This must be set to either `16` or `32` when saving. |
 | _(n/a)_                   | `opts.Channels()`                     | [Audio data](#audio-data)  | Returns a `size_t` representing the number of audio channels (e.g. 1 for mono, 2 for stereo). Set after loading, or before saving. |
 | _(n/a)_                   | `opts.SampleRate()`                   | [Audio data](#audio-data)  | Returns a `size_t` representing the sample rate in Hz (e.g. 44100, 48000). Set after loading, or before saving. |
-| _(n/a)_                   | `opts.TotalFrames()`                  | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of PCM frames reported by the file header. |
-| _(n/a)_                   | `opts.TotalSamples()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of samples loaded (TotalFrames() * Channels()). |
+| _(n/a)_                   | `opts.TotalSamples()`                 | [Audio data](#audio-data)  | Returns a `size_t` representing the total number of samples loaded (totalFrames * Channels()). |
 |---------------------------|---------------------------------------|----------------------------|-------------------|
 
 ## Formats

@@ -25,14 +25,12 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
                std::optional<size_t> sampleRate = std::nullopt,
                std::optional<size_t> bitsPerSample = std::nullopt,
                std::optional<size_t> audioDuration = std::nullopt,
-               std::optional<size_t> totalFrames = std::nullopt,
                std::optional<size_t> totalSamples = std::nullopt):
     DataOptionsBase<AudioOptions>(),
     channels(channels),
     sampleRate(sampleRate),
     bitsPerSample(bitsPerSample),
     audioDuration(audioDuration),
-    totalFrames(totalFrames),
     totalSamples(totalSamples)
   {
     // Do nothing.
@@ -69,7 +67,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     bitsPerSample = other.bitsPerSample;
     channels      = other.channels;
     sampleRate    = other.sampleRate;
-    totalFrames   = other.totalFrames;
     totalSamples  = other.totalSamples;
 
     // Copy base members.
@@ -89,7 +86,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     bitsPerSample = std::move(other.bitsPerSample);
     channels      = std::move(other.channels);
     sampleRate    = std::move(other.sampleRate);
-    totalFrames   = std::move(other.totalFrames);
     totalSamples  = std::move(other.totalSamples);
 
     // Move base members.
@@ -180,19 +176,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       }
     }
 
-    if (!totalFrames.has_value() && other.totalFrames.has_value())
-    {
-      totalFrames = other.totalFrames;
-    }
-    else if (totalFrames.has_value() && other.totalFrames.has_value())
-    {
-      if (totalFrames.value() != other.totalFrames.value())
-      {
-        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
-            "totalFrames with different values!");
-      }
-    }
-
     if (!totalSamples.has_value() && other.totalSamples.has_value())
     {
       totalSamples = other.totalSamples;
@@ -217,8 +200,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
       this->WarnOptionConversion("channels", dataDescription);
     if (sampleRate.has_value() && sampleRate != defaultSampleRate)
       this->WarnOptionConversion("sampleRate", dataDescription);
-    if (totalFrames.has_value() && totalFrames != defaultTotalFrames)
-      this->WarnOptionConversion("totalFrames", dataDescription);
     if (totalSamples.has_value() && totalSamples != defaultTotalSamples)
       this->WarnOptionConversion("totalSamples", dataDescription);
   }
@@ -231,7 +212,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     bitsPerSample.reset();
     channels.reset();
     sampleRate.reset();
-    totalFrames.reset();
     totalSamples.reset();
   }
 
@@ -275,16 +255,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(sampleRate, defaultSampleRate);
   }
 
-  size_t TotalFrames() const
-  {
-    return this->AccessMember(totalFrames, defaultTotalFrames);
-  }
-
-  size_t& TotalFrames()
-  {
-    return this->ModifyMember(totalFrames, defaultTotalFrames);
-  }
-
   size_t TotalSamples() const
   {
     return this->AccessMember(totalSamples, defaultTotalSamples);
@@ -300,14 +270,12 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   std::optional<size_t> sampleRate;
   std::optional<size_t> bitsPerSample;
   std::optional<double> audioDuration;
-  std::optional<size_t> totalFrames;
   std::optional<size_t> totalSamples;
 
   constexpr static const double defaultAudioDuration    = 0.0;
   constexpr static const size_t defaultBitsPerSample    = 0;
   constexpr static const size_t defaultChannels         = 0;
   constexpr static const size_t defaultSampleRate       = 0;
-  constexpr static const size_t defaultTotalFrames      = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
 };
 

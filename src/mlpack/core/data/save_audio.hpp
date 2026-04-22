@@ -316,7 +316,7 @@ bool SaveAudio(const std::string& file,
     opts.BitsPerSample() = 8 * sizeof(eT);
   }
 
-  opts.TotalFrames() = matrix.n_elem / opts.Channels();
+  size_t totalFrames = matrix.n_elem / opts.Channels();
 
   drwav_data_format dataFormat;
   dataFormat.container     = drwav_container_riff;
@@ -345,11 +345,11 @@ bool SaveAudio(const std::string& file,
   {
     if (opts.BitsPerSample() == 32)
     {
-      framesWritten = SaveWAVInternalFP<float>(wav, opts.TotalFrames(), matrix);
+      framesWritten = SaveWAVInternalFP<float>(wav, totalFrames, matrix);
     }
     else
     {
-      framesWritten = SaveWAVInternalFP<double>(wav, opts.TotalFrames(),
+      framesWritten = SaveWAVInternalFP<double>(wav, totalFrames,
           matrix);
     }
   }
@@ -358,39 +358,39 @@ bool SaveAudio(const std::string& file,
     // Saving as PCM; the input is either integer or float.
     if (opts.BitsPerSample() == 8)
     {
-      framesWritten = SaveWAVInternalInt<uint8_t>(wav, opts.TotalFrames(),
+      framesWritten = SaveWAVInternalInt<uint8_t>(wav, totalFrames,
           matrix);
     }
     else if (opts.BitsPerSample() == 16)
     {
-      framesWritten = SaveWAVInternalInt<int16_t>(wav, opts.TotalFrames(),
+      framesWritten = SaveWAVInternalInt<int16_t>(wav, totalFrames,
           matrix);
     }
     else if (opts.BitsPerSample() == 32)
     {
-      framesWritten = SaveWAVInternalInt<int32_t>(wav, opts.TotalFrames(),
+      framesWritten = SaveWAVInternalInt<int32_t>(wav, totalFrames,
           matrix);
     }
     else if (opts.BitsPerSample() == 64)
     {
-      framesWritten = SaveWAVInternalInt<int64_t>(wav, opts.TotalFrames(),
+      framesWritten = SaveWAVInternalInt<int64_t>(wav, totalFrames,
           matrix);
     }
   }
 
   drwav_uninit(&wav);
 
-  if (framesWritten != opts.TotalFrames())
+  if (framesWritten != totalFrames)
   {
     std::stringstream oss;
     oss << "SaveAudio(): Frame count mismatch: expected to write "
-        << opts.TotalFrames() << " frames but only wrote "
+        << totalFrames << " frames but only wrote "
         << framesWritten << " frames.";
     return HandleError(oss, opts);
   }
 
   opts.TotalSamples() = matrix.n_elem;
-  opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
+  opts.AudioDuration() = totalFrames / opts.SampleRate();
 
   return true;
 }

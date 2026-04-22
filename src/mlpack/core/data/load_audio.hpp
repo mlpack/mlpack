@@ -368,12 +368,12 @@ bool LoadWAV(const std::string& file,
     return HandleError(oss.str(), opts);
   }
 
-  opts.TotalFrames() = static_cast<size_t>(wav.totalPCMFrameCount);
+  size_t totalFrames = static_cast<size_t>(wav.totalPCMFrameCount);
   opts.Channels() = wav.channels;
   opts.SampleRate() = wav.sampleRate;
   opts.BitsPerSample() = wav.bitsPerSample;
 
-  matrix.set_size(opts.TotalFrames() * opts.Channels(), 1);
+  matrix.set_size(totalFrames * opts.Channels(), 1);
 
   /**
    * Depending on the type we want to load into, and the type that we detected,
@@ -416,16 +416,16 @@ bool LoadWAV(const std::string& file,
 
   drwav_uninit(&wav);
 
-  if (framesRead != opts.TotalFrames())
+  if (framesRead != totalFrames)
   {
     std::stringstream oss;
-    oss << "LoadWAV(): Frame count mismatch: " << opts.TotalFrames()
+    oss << "LoadWAV(): Frame count mismatch: " << totalFrames
         << "(queried) != " << framesRead <<" (read)";
     return HandleError(oss, opts);
   }
 
-  opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
-  opts.TotalSamples() = opts.TotalFrames() * opts.Channels();
+  opts.AudioDuration() = totalFrames / opts.SampleRate();
+  opts.TotalSamples() = totalFrames * opts.Channels();
 
   return true;
 }
@@ -446,25 +446,25 @@ bool LoadMP3(const std::string& file,
     return HandleError(oss.str(), opts);
   }
 
-  opts.TotalFrames() = static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
+  size_t totalFrames = static_cast<size_t>(drmp3_get_pcm_frame_count(&mp3));
   opts.Channels() = mp3.channels;
   opts.SampleRate() = mp3.sampleRate;
   opts.BitsPerSample() = 8 * sizeof(eT);
 
-  matrix.set_size(opts.TotalFrames() * opts.Channels(), 1);
+  matrix.set_size(totalFrames * opts.Channels(), 1);
 
   if constexpr (std::is_floating_point_v<eT>)
   {
     if (std::is_same_v<eT, float>)
     {
       framesRead = static_cast<size_t>(drmp3_read_pcm_frames_f32(
-          &mp3, opts.TotalFrames(), (float*) matrix.memptr()));
+          &mp3, totalFrames, (float*) matrix.memptr()));
     }
     else
     {
-      arma::fmat samples(opts.TotalFrames() * opts.Channels(), 1);
+      arma::fmat samples(totalFrames * opts.Channels(), 1);
       framesRead = static_cast<size_t>(drmp3_read_pcm_frames_f32(
-          &mp3, opts.TotalFrames(), samples.memptr()));
+          &mp3, totalFrames, samples.memptr()));
       matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(samples));
     }
   }
@@ -473,29 +473,29 @@ bool LoadMP3(const std::string& file,
     if (std::is_same_v<eT, int16_t>)
     {
       framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
-          &mp3, opts.TotalFrames(), (int16_t*) matrix.memptr()));
+          &mp3, totalFrames, (int16_t*) matrix.memptr()));
     }
     else
     {
-      arma::Mat<int16_t> samples(opts.TotalFrames() * opts.Channels(), 1);
+      arma::Mat<int16_t> samples(totalFrames * opts.Channels(), 1);
       framesRead = static_cast<size_t>(drmp3_read_pcm_frames_s16(
-          &mp3, opts.TotalFrames(), samples.memptr()));
+          &mp3, totalFrames, samples.memptr()));
       ConvertType(matrix, samples);
     }
   }
 
   drmp3_uninit(&mp3);
 
-  if (framesRead != opts.TotalFrames())
+  if (framesRead != totalFrames)
   {
     std::stringstream oss;
-    oss << "LoadMP3(): Frame count mismatch: " << opts.TotalFrames()
+    oss << "LoadMP3(): Frame count mismatch: " << totalFrames
         << "(queried) != " << framesRead <<" (read)";
     return HandleError(oss, opts);
   }
 
-  opts.AudioDuration() = opts.TotalFrames() / opts.SampleRate();
-  opts.TotalSamples() = opts.TotalFrames() * opts.Channels();
+  opts.AudioDuration() = totalFrames / opts.SampleRate();
+  opts.TotalSamples() = totalFrames * opts.Channels();
 
   return true;
 }
