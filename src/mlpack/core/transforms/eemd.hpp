@@ -82,7 +82,7 @@ inline void EEMD(const ColType& signal,
   std::vector<size_t> partialMinImfs(threadCount, maxImfs);
   // Parallelize over threads, so each thread accumulates its own imfs
   // and minImfs to avoid race conditions, if multiple threads exist.
-  #pragma omp parallel for 
+  #pragma omp parallel for
   for (size_t i = 0; i < ensembleSize; ++i)
   {
 #ifdef MLPACK_USE_OPENMP
@@ -93,7 +93,7 @@ inline void EEMD(const ColType& signal,
 
     MatType& localAccum = partialImfs[threadId];
     size_t localMin = maxImfs;
-    
+
     ColType noisySignal = signal + noiseScale * randn<ColType>(N);
     MatType imfsNoisy;
     ColType residueNoisy;
@@ -102,7 +102,7 @@ inline void EEMD(const ColType& signal,
     localMin = std::min(localMin, (size_t) imfsNoisy.n_cols);
     if (imfsNoisy.n_cols > 0)
       localAccum.cols(0, imfsNoisy.n_cols - 1) += imfsNoisy;
-    
+
     partialMinImfs[threadId] = localMin;
   }
 

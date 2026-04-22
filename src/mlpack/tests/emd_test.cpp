@@ -177,7 +177,7 @@ TEST_CASE("EEMDOutput", "[EMD]")
   REQUIRE(foundStationaryImf);
 }
 
-TEST_CASE("EEMDvsEMD", "[EMD]") 
+TEST_CASE("EEMDvsEMD", "[EMD]")
 {
   const arma::uword N = 3000;
 
