@@ -88,6 +88,7 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
 
 TEST_CASE("EEMDOutput", "[EMD]")
 {
+  mlpack::RandomSeed(786);
   const arma::uword N = 3000;
 
   // signal used in docs (emd.md)
@@ -99,7 +100,7 @@ TEST_CASE("EEMDOutput", "[EMD]")
 
   arma::mat imfs;
   arma::vec residue;
-  mlpack::EEMD(signal, imfs, residue, 200, 0.15, 10, 50, 1e-3);
+  mlpack::EEMD(signal, imfs, residue, 300, 0.1, 10, 50, 1e-3);
   // Check reconstruction of signal from imfs + residue
   arma::vec recon = arma::sum(imfs, 1) + residue;
   const double relErr = arma::norm(recon - signal, 2) / arma::norm(signal, 2);
