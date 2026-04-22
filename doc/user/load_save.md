@@ -1272,6 +1272,7 @@ mlpack::Load("sine.wav", audio, mlpack::WAV);
 std::cout << "The audio file in 'file.wav' contains " << audio.n_rows
     << " samples." << std::endl;
 ```
+---
 
 Load and save a single audio file:
 
