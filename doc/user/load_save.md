@@ -1226,8 +1226,10 @@ populated with the metadata of the audio file.
    - If the integer type is signed, then the loaded values will be between the
      most negative and most positive representable values (e.g.
      `[-32768, 32767]` for `short`).
+     
+---
 
- * Supported audio saving formats is WAV only.
+ * The only supported audio saving format is `WAV`.
 
  * When saving to a WAV file, the value of `opts.BitsPerSample()` must be set to
    either `8`, `16`, `32` or `64` to define the format used for each sample in
