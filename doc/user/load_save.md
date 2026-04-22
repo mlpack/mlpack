@@ -1183,7 +1183,7 @@ mlpack::Save(outImages, matrix, opts);
 
 ## Audio data
 
-mlpack only loads WAV and MP3 audio data using the
+mlpack loads WAV and MP3 audio data using the
 [`dr_libs`](https://github.com/mackron/dr_libs) library. `dr_libs` is a
 header-only library that decodes WAV, MP3 and FLAC files. mlpack bundles WAV
 and MP3; but, it is also possible to use a version of `dr_libs` 
