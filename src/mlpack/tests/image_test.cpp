@@ -24,7 +24,7 @@ using namespace std;
  */
 TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   ImageOptions opts;
   opts.Fatal() = true;
 
@@ -37,7 +37,7 @@ TEST_CASE("LoadInvalidExtensionFile", "[ImageLoadTest]")
  */
 TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
 
   ImageOptions opts;
 
@@ -51,11 +51,30 @@ TEST_CASE("LoadImageNewAPITest", "[ImageLoadTest]")
 }
 
 /**
+ * Test that the image is loaded correctly into the matrix.
+ */
+TEST_CASE("LoadImageOptionsITest", "[ImageLoadTest]")
+{
+  arma::Mat<uint8_t> matrix;
+
+  ImageOptions opts = Fatal + PNG;
+
+  REQUIRE(Load("test_image.png", matrix, opts) == true);
+  // width * height * channels.
+  REQUIRE(matrix.n_rows == 50 * 50 * 3);
+  REQUIRE(opts.Height() == 50);
+  REQUIRE(opts.Width() == 50);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(matrix.n_cols == 1);
+}
+
+
+/**
  * Test that the image is loaded correctly when specifying the type.
  */
 TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   ImageOptions opts;
   opts.Format() = FileType::PNG;
 
@@ -74,7 +93,7 @@ TEST_CASE("LoadImageSpecifyTypeTest", "[ImageLoadTest]")
  */
 TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   REQUIRE(Load("test_image.png", matrix, PNG + Fatal) == true);
 }
 
@@ -84,7 +103,7 @@ TEST_CASE("LoadPNGImageTest", "[ImageLoadTest]")
  */
 TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   REQUIRE(Load("test_image.png", matrix, Fatal) == true);
 }
 
@@ -93,7 +112,7 @@ TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
  */
 TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   TextOptions opts;
   REQUIRE(Load("test_image.png", matrix, opts) == true);
 }
@@ -105,13 +124,13 @@ TEST_CASE("SaveImageNewAPITest", "[ImageLoadTest]")
 {
   ImageInfo opts(5, 5, 3, 90);
 
-  arma::Mat<unsigned char> im1;
+  arma::Mat<uint8_t> im1;
   size_t dimension = opts.Width() * opts.Height() * opts.Channels();
-  im1 = arma::randi<arma::Mat<unsigned char>>(dimension, 1);
+  im1 = arma::randi<arma::Mat<uint8_t>>(dimension, 1);
 
   REQUIRE(Save("APITest.bmp", im1, opts) == true);
 
-  arma::Mat<unsigned char> im2;
+  arma::Mat<uint8_t> im2;
   REQUIRE(Load("APITest.bmp", im2, opts) == true);
 
   REQUIRE(im1.n_cols == im2.n_cols);
@@ -129,8 +148,8 @@ TEST_CASE("SaveImageWrongOptions", "[ImageLoadTest]")
 {
   ImageOptions opts(5, 5, 3, 90);
   opts.Fatal() = true;
-  arma::Mat<unsigned char> im1;
-  im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
+  arma::Mat<uint8_t> im1;
+  im1 = arma::randi<arma::Mat<uint8_t>>(24 * 25 * 7, 1);
   REQUIRE_THROWS_AS(Save("APITest.bmp", im1, opts),
       std::runtime_error);
 }
@@ -143,8 +162,8 @@ TEST_CASE("LoadImageWrongOptions", "[ImageLoadTest]")
 {
   ImageOptions opts(5, 5, 3, 90);
   opts.Fatal() = true;
-  arma::Mat<unsigned char> im1;
-  im1 = arma::randi<arma::Mat<unsigned char>>(24 * 25 * 7, 1);
+  arma::Mat<uint8_t> im1;
+  im1 = arma::randi<arma::Mat<uint8_t>>(24 * 25 * 7, 1);
   REQUIRE_THROWS_AS(Load("APITest.bmp", im1, opts),
       std::runtime_error);
 }
@@ -159,7 +178,7 @@ TEST_CASE("LoadSetOfImagesNoOptions", "[ImageLoadTest]")
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
-  arma::Mat<unsigned char> im1;
+  arma::Mat<uint8_t> im1;
   REQUIRE_THROWS_AS(Load(files, im1, JPG + Fatal),
       std::runtime_error);
 }
@@ -173,7 +192,7 @@ TEST_CASE("LoadSetOfImagesWrongOptions", "[ImageLoadTest]")
        "sheep_5.jpg", "sheep_6.jpg", "sheep_7.jpg", "sheep_8.jpg",
        "sheep_9.jpg"};
 
-  arma::Mat<unsigned char> im1;
+  arma::Mat<uint8_t> im1;
   REQUIRE_THROWS_AS(Load(files, im1, opts),
       std::runtime_error);
 }
@@ -184,7 +203,7 @@ TEST_CASE("LoadSetOfImagesWrongOptions", "[ImageLoadTest]")
  */
 TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
 {
-  arma::Mat<unsigned char> matrix;
+  arma::Mat<uint8_t> matrix;
   ImageOptions opts;
   std::vector<std::string> files = {"test_image.png", "test_image.png"};
   REQUIRE(Load(files, matrix, opts) == true);
@@ -200,7 +219,7 @@ TEST_CASE("LoadVectorImageAPITest", "[ImageLoadTest]")
  * Test resize the image if this is done correctly.  Try it with a few different
  * types.
  */
-TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
+TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", uint8_t, size_t,
     float, double)
 {
   typedef TestType eT;
@@ -261,7 +280,7 @@ TEMPLATE_TEST_CASE("ImagesResizeTest", "[ImageTest]", unsigned char, size_t,
  * Test resize the image if this is done correctly.  Try it with a few different
  * types.
  */
-TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
+TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", uint8_t,
     size_t, float, double)
 {
   typedef TestType eT;
@@ -322,7 +341,7 @@ TEMPLATE_TEST_CASE("ImagesResizeCropTest", "[ImageTest]", unsigned char,
  * Test if we resize to the same original dimension we will get the same pixels
  * and no modification to the image.  Try it with a few different types.
  */
-TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
+TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", uint8_t, size_t,
     float, double)
 {
   typedef TestType eT;
@@ -356,7 +375,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeTest", "[ImageTest]", unsigned char, size_t,
  * Test if we resize to the same original dimension we will get the same pixels
  * and no modification to the image.  Try it with a few different types.
  */
-TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
+TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", uint8_t,
     size_t, float, double)
 {
   typedef TestType eT;
@@ -388,7 +407,7 @@ TEMPLATE_TEST_CASE("IdenticalResizeCropTest", "[ImageTest]", unsigned char,
 /**
  * Test that if we resize an image, we get the pixels that we expect.
  */
-TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
+TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", uint8_t,
     size_t, float, double)
 {
   typedef TestType eT;
@@ -433,7 +452,7 @@ TEMPLATE_TEST_CASE("ResizeCropPixelTest", "[ImageTest][tiny]", unsigned char,
 /**
  * Test that images can be upscaled if desired.
  */
-TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", unsigned char,
+TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", uint8_t,
     size_t, float, double)
 {
   typedef TestType eT;

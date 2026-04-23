@@ -101,6 +101,8 @@ bool Load(const std::string& src,
     Timer::Stop("loading_data");
     return false;
   }
+  const bool isAudioFormat = opts.Format() == FileType::WAV ||
+      opts.Format() == FileType::MP3;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -113,8 +115,16 @@ bool Load(const std::string& src,
     {
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot load image data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, tmp, imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
       }
       else
       {
@@ -124,6 +134,27 @@ bool Load(const std::string& src,
         success = LoadImage(files, dest, imgOpts);
         if (copyBack)
           opts = std::move(imgOpts);
+      }
+    }
+    else if (isAudioFormat)
+    {
+      if constexpr (isSparseMatrixType)
+      {
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(src, tmp, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
+      }
+      else
+      {
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(src, dest, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
       }
     }
     else
@@ -181,6 +212,7 @@ bool Load(const std::vector<std::string>& files,
   }
 
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||

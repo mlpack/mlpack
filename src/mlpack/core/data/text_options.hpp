@@ -107,14 +107,19 @@ class TextOptions : public MatrixOptionsBase<TextOptions>
   // Handling for copy and move operations on other DataOptionsBase types.
   //
 
-  // Conversions must be explicit.
   template<typename Derived2>
-  explicit TextOptions(const DataOptionsBase<Derived2>& other) :
-      MatrixOptionsBase<TextOptions>(other) { }
+  TextOptions(const DataOptionsBase<Derived2>& other) :
+      MatrixOptionsBase<TextOptions>()
+  {
+    MatrixOptionsBase<TextOptions>::operator=(other);
+  }
 
   template<typename Derived2>
-  explicit TextOptions(DataOptionsBase<Derived2>&& other) :
-      MatrixOptionsBase<TextOptions>(std::move(other)) { }
+  TextOptions(DataOptionsBase<Derived2>&& other) :
+      MatrixOptionsBase<TextOptions>()
+  {
+    MatrixOptionsBase<TextOptions>::operator=(std::move(other));
+  }
 
   template<typename Derived2>
   TextOptions& operator=(const DataOptionsBase<Derived2>& other)
