@@ -160,5 +160,5 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
 #### See also:
 
- * [Ensemble Empirical Mode Decomposition: a Noise-Assisted Data Analysis Method](https://www.worldscientific.com/doi/abs/10.1142/S1793536909000047) (original EEMD paper)
+ * [Ensemble Empirical Mode Decomposition: a Noise-Assisted Data Analysis Method](https://doi.org/10.1142/S1793536909000047) (original EEMD paper)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
