@@ -31,7 +31,11 @@ void PrintInputProcessing(
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
-  if (!d.required)
+  if (!d.required &&
+      !(std::is_same_v<T, std::string> ||
+        std::is_same_v<T, bool> ||
+        std::is_same_v<T, double> ||
+        std::is_same_v<T, int>))
   {
     /**
      * This gives us code like:

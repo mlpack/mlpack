@@ -20,10 +20,13 @@ namespace julia {
 
 /**
  * Print the code for a .jl binding for an mlpack program to stdout.
+ *
+ * If isGroupBinding is true, then raw pointers are used for return model types.
  */
 void PrintJL(const std::string& bindingName,
              const std::string& functionName,
-             const std::string& mlpackJuliaLibSuffix);
+             const std::string& mlpackJuliaLibSuffix,
+             const bool isGroupBinding);
 
 } // namespace julia
 } // namespace bindings

@@ -1,6 +1,10 @@
 macro (not_found_return message)
   message(STATUS "${message}")
-  macro (add_julia_binding directory name)
+  macro (add_julia_binding directory name is_group_binding)
+    # Do nothing.
+  endmacro ()
+
+  macro (add_julia_class directory group_name)
     # Do nothing.
   endmacro ()
 
@@ -11,9 +15,21 @@ macro (post_julia_setup)
   # If we are building Julia bindings, we have to end the 'module' declaration in
   # mlpack.jl.
   if (BUILD_JULIA_BINDINGS)
+    # All of the grouped bindings must be outside the module _Internal
+    # definition.
     file(APPEND
         "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
-        "\nend\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\nend\n")
+        "\nend\n\n# Add grouped bindings.\n")
+
+    foreach (group_binding ${JULIA_GROUP_BINDINGS})
+      file(APPEND
+          "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+          "include(\"${group_binding}.jl\")\n")
+    endforeach ()
+
+    file(APPEND
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/mlpack.jl"
+        "\ninclude(\"functions.jl\")\ninclude(\"serialization.jl\")\n\nend\n")
   endif ()
 endmacro ()
 
@@ -112,8 +128,6 @@ if (BUILD_JULIA_BINDINGS)
       "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
       "# This file imports all serialization and deserialization functions\n"
       "# from internal modules.\n"
-      "import Serialization\n"
-      "\n"
       "\"\"\"\n"
       "    serialize_bin(stream::IO, model)\n"
       "\n"
@@ -157,8 +171,12 @@ endif ()
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendType.cmake")
 include("${CMAKE_SOURCE_DIR}/CMake/julia/AppendSerialization.cmake")
 
-macro (add_julia_binding directory name)
+macro (add_julia_binding directory name is_group_binding)
 if (BUILD_JULIA_BINDINGS)
+  # Temporary shim: if an extra argument is given, it will be the indication
+  # that we shouldn't add serialization imports or types.
+  set(EXTRA_ARGS ${ARGN})
+
   # We have to take multiple steps.
 
   # 1. Generate julia_${name}.h and julia_${name}.cpp.
@@ -180,14 +198,16 @@ if (BUILD_JULIA_BINDINGS)
 
   # 2. Append any types to the list of types and serialization imports (this is
   # done immediately, not as a separate target).
-  append_type(
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
-      "${name}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
-  append_serialization(
-      "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
-      "${name}"
-      "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
+  if (NOT EXTRA_ARGS STREQUAL "skip")
+    append_type(
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/types.jl"
+        "${name}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
+    append_serialization(
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/serialization.jl"
+        "${name}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp")
+  endif ()
 
   # 3. Build libmlpack_julia_${name}.so.
   add_library(mlpack_julia_${name}
@@ -211,6 +231,7 @@ if (BUILD_JULIA_BINDINGS)
           -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_${name}.cpp
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
+          -DIS_GROUP_BINDING=${is_group_binding}
           -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl.cpp.in
               ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
@@ -235,6 +256,7 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_member_defn.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
   if (BUILD_SHARED_LIBS)
@@ -268,6 +290,87 @@ if (BUILD_JULIA_BINDINGS)
       "${name} = _Internal.${name}\n")
 endif ()
 endmacro ()
+
+macro (add_julia_class directory group_name)
+  # First add the binding definitions for each member function of the class,
+  # but don't append any serialization functions or model pointer type
+  # information.
+  foreach (method ${${group_name}_VALID_METHODS})
+    add_julia_binding(${directory} "${group_name}_${method}" "true" "skip")
+  endforeach()
+
+  # Generate a file of includes so that we can include all of the _main.cpp
+  # files for each binding that is a part of the group.
+  if(EXISTS ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/${group_name}_main_includes.hpp)
+    file(REMOVE ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/${group_name}_main_includes.hpp)
+  endif()
+  foreach(loc ${${group_name}_METHOD_MAIN_FILES})
+    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/${group_name}_main_includes.hpp
+        "#include <${loc}>\n")
+  endforeach()
+
+  # Next, generate ${group_name}.jl, which is a program that will print all of
+  # the class definition necessary for the grouped binding.
+  add_custom_command(OUTPUT
+${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${group_name}.cpp
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl_group.cpp.in
+          -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${group_name}.cpp
+          -DGROUP_NAME=${group_name}
+          -DGROUP_VALID_METHODS="${${group_name}_VALID_METHODS}"
+          -DCATEGORY="${${group_name}_CATEGORY}"
+          -DMLPACK_JL_LIB_SUFFIX=${CMAKE_SHARED_LIBRARY_SUFFIX}
+          -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/generate_jl_group.cpp.in
+              ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
+
+  # Finally, compile the program that will print the group binding.
+  add_executable(generate_jl_group_${group_name}
+      ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${group_name}.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_jl_group.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_jl_group.cpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_julia_type.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/get_printable_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/julia_option.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/mlpack_main.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_doc_functions_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_processing.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_input_processing_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_output_processing_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_param_defn.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_type_doc_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_member_defn.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/is_serializable.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
+  if (BUILD_SHARED_LIBS)
+    target_link_libraries(generate_jl_group_${group_name} ${MLPACK_LIBRARIES})
+  else ()
+    target_link_libraries(generate_jl_group_${group_name} -static ${MLPACK_LIBRARIES})
+  endif ()
+  set_target_properties(generate_jl_group_${group_name} PROPERTIES
+      COMPILE_FLAGS "-DBINDING_TYPE=BINDING_TYPE_JL"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/")
+  add_custom_command(TARGET generate_jl_group_${group_name} POST_BUILD
+      COMMAND ${CMAKE_COMMAND}
+          -DGENERATE_BINDING_PROGRAM=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/bin/generate_jl_group_${group_name}
+          -DBINDING_OUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/src/${group_name}.jl
+          -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
+
+  # Add the generate_jl_${group_name} target to the list of targets that are
+  # built when 'make julia' is typed.
+  add_dependencies(julia generate_jl_group_${group_name})
+
+  # Add to the list of Julia group bindings.  These will all be appended to
+  # mlpack.jl in post_julia_setup().
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name} PARENT_SCOPE)
+endmacro()
 
 if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)
   add_subdirectory(tests)

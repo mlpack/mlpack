@@ -106,14 +106,19 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
   // Handling for copy and move operations on other DataOptionsBase types.
   //
 
-  // Conversions must be explicit.
   template<typename Derived2>
-  explicit ImageOptions(const DataOptionsBase<Derived2>& other) :
-      DataOptionsBase<ImageOptions>(other) { }
+  ImageOptions(const DataOptionsBase<Derived2>& other) :
+      DataOptionsBase<ImageOptions>()
+  {
+    DataOptionsBase<ImageOptions>::operator=(other);
+  }
 
   template<typename Derived2>
-  explicit ImageOptions(DataOptionsBase<Derived2>&& other) :
-      DataOptionsBase<ImageOptions>(std::move(other)) { }
+  ImageOptions(DataOptionsBase<Derived2>&& other) :
+      DataOptionsBase<ImageOptions>()
+  {
+    DataOptionsBase<ImageOptions>::operator=(std::move(other));
+  }
 
   template<typename Derived2>
   ImageOptions& operator=(const DataOptionsBase<Derived2>& other)
@@ -137,9 +142,9 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (width.has_value() && other.width.has_value())
     {
-      if (width.has_value() != other.width.has_value())
+      if (width.value() != other.width.value())
       {
-        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+        throw std::invalid_argument("ImageOptions::operator+(): cannot combine"
             "width with different values!");
       }
     }
@@ -150,9 +155,9 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (height.has_value() && other.height.has_value())
     {
-      if (height.has_value() != other.height.has_value())
+      if (height.value() != other.height.value())
       {
-        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+        throw std::invalid_argument("ImageOptions::operator+(): cannot combine"
             "height with different values!");
       }
     }
@@ -163,9 +168,9 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (channels.has_value() && other.channels.has_value())
     {
-      if (channels.has_value() != other.channels.has_value())
+      if (channels.value() != other.channels.value())
       {
-        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+        throw std::invalid_argument("ImageOptions::operator+(): cannot combine"
             "channels with different values!");
       }
     }
@@ -176,9 +181,9 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     }
     else if (quality.has_value() && other.quality.has_value())
     {
-      if (quality.has_value() != other.quality.has_value())
+      if (quality.value() != other.quality.value())
       {
-        throw std::invalid_argument("ImageOptions: operator+(): cannot combine"
+        throw std::invalid_argument("ImageOptions::operator+(): cannot combine"
             "quality with different values!");
       }
     }
