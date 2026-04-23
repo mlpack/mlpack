@@ -4,7 +4,7 @@ mlpack provides Empirical Mode Decomposition (`EMD`) to preprocess signals
 for training and testing.  This can be used for signal monitoring pipelines
 in nonlinear and nonstationary problems.
 
-* `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
+* [`EMD()`](#emd): adaptively decomposes a 1D signal into a set of Intrinsic Mode
  Functions (IMFs) plus a residue.
 
 * [`EEMD()`](#eemd): ensemble EMD, to decompose a 1D signal into a robust set of IMFs
@@ -19,10 +19,10 @@ from a uniformly sampled periodic signal.
 #### `EMD()` Parameters
 
 - `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
-   * `signal` is a [column vector](../../matrices.md) containing the 1D signal
+   * `signal` is a [column vector](../../matrices.md#representing-data-in-mlpack) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
-   * `imfs` is a [matrix](../../matrices.md) that will be modified to contain
+   * `imfs` is a [matrix](../../matrices.md#representing-data-in-mlpack) that will be modified to contain
      the extracted IMFs. It will have shape `N x K`, where `N` is the length
      of `signal` and `K` is the number of extracted IMFs.
 
@@ -127,7 +127,7 @@ ensemble approach:
       residue, as in `EMD()`.
 
    * Number of extracted IMFs will be the minimum number of IMFs extracted by
-     by `EMD()` across all `ensSize` runs. (<=`maxImfs`).
+     by `EMD()` across all `ensSize` runs (<=`maxImfs`).
 
    * EEMD may produce low-energy leading IMFs due to injected noise and ensemble
    averaging. Depending on the application, users may want to discard negligible
@@ -137,7 +137,7 @@ ensemble approach:
      The algorithm returns only as many IMFs as can actually be extracted from
      the input signal.
 
-Example using `EEMD` on a time-varying signal `S` (shown in Figure above).
+Example using `EEMD` on a time-varying signal `S` (shown in above EMD figure).
 
 ```c++
 const arma::uword N = 3000;
@@ -160,5 +160,5 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
 #### See also:
 
- * [Ensemble Empirical Mode Decomposition: a Noise-Assisted Data Analysis Method](https://www.researchgate.net/publication/220531146_Ensemble_Empirical_Mode_Decomposition_a_Noise-Assisted_Data_Analysis_Method) (original EEMD paper)
+ * [Ensemble Empirical Mode Decomposition: a Noise-Assisted Data Analysis Method](https://www.worldscientific.com/doi/abs/10.1142/S1793536909000047) (original EEMD paper)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
