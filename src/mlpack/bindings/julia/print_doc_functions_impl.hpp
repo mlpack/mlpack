@@ -553,6 +553,71 @@ inline std::string ParamString(const std::string& paramName)
   return "`" + paramName + "`";
 }
 
+inline std::string ImportExtLib()
+{
+  // TODO: implement
+  return "";
+}
+
+inline std::string ImportSplit()
+{
+  // TODO: implement
+  return "";
+}
+
+inline std::string ImportThis(const std::string& /* groupName */)
+{
+  // TODO: implement
+  return "";
+}
+
+inline std::string SplitTrainTest(const std::string& /* datasetName */,
+                                  const std::string& /* labelName */,
+                                  const std::string& /* trainDataset */,
+                                  const std::string& /* trainLabels */,
+                                  const std::string& /* testDataset */,
+                                  const std::string& /* testLabels */,
+                                  const std::string& /* splitRatio */)
+{
+  // TODO: implement
+  return "";
+}
+
+inline std::string GetDataset(const std::string& /* datasetName */,
+                              const std::string& /* url */)
+{
+  // TODO: implement
+  return "";
+}
+
+template<typename... Args>
+std::string CreateObject(const std::string& /* bindingName */,
+                         const std::string& /* objectName */,
+                         const std::string& /* groupName */,
+                         Args... /* args */)
+{
+  // TODO: implement
+  return "";
+}
+
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */)
+{
+  // TODO: implement
+  return "";
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& /* bindingName */,
+                       const std::string& /* objectName */,
+                       const std::string& /* methodName */,
+                       Args... /* args */)
+{
+  // TODO: implement
+  return "";
+}
+
 /**
  * Given the parameter name and an argument, return what should be written as
  * documentation when referencing that argument.

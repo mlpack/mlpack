@@ -25,19 +25,13 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
                std::optional<size_t> sampleRate = std::nullopt,
                std::optional<size_t> bitsPerSample = std::nullopt,
                std::optional<size_t> audioDuration = std::nullopt,
-               std::optional<size_t> totalPCMFramesCount = std::nullopt,
-               std::optional<size_t> totalFramesRead = std::nullopt,
-               std::optional<size_t> totalSamples = std::nullopt,
-               std::optional<size_t> fileBitRate = std::nullopt) :
+               std::optional<size_t> totalSamples = std::nullopt):
     DataOptionsBase<AudioOptions>(),
     channels(channels),
     sampleRate(sampleRate),
-    bitPerSample(bitsPerSample),
+    bitsPerSample(bitsPerSample),
     audioDuration(audioDuration),
-    totalPCMFramesCount(totalPCMFramesCount),
-    totalFramesRead(totalFramesRead),
-    totalSamples(totalSamples),
-    fileBitRate(fileBitRate)
+    totalSamples(totalSamples)
   {
     // Do nothing.
   }
@@ -69,14 +63,11 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     if (&other == this)
       return *this;
 
-    audioDuration       = other.audioDuration;
-    bitPerSample        = other.bitPerSample;
-    channels            = other.channels;
-    fileBitRate         = other.fileBitRate;
-    sampleRate          = other.sampleRate;
-    totalFramesRead     = other.totalFramesRead;
-    totalPCMFramesCount = other.totalPCMFramesCount;
-    totalSamples        = other.totalSamples;
+    audioDuration = other.audioDuration;
+    bitsPerSample = other.bitsPerSample;
+    channels      = other.channels;
+    sampleRate    = other.sampleRate;
+    totalSamples  = other.totalSamples;
 
     // Copy base members.
     DataOptionsBase<AudioOptions>::operator=(other);
@@ -91,14 +82,11 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     if (&other == this)
       return *this;
 
-    audioDuration       = std::move(other.audioDuration);
-    bitPerSample        = std::move(other.bitPerSample);
-    channels            = std::move(other.channels);
-    fileBitRate         = std::move(other.fileBitRate);
-    sampleRate          = std::move(other.sampleRate);
-    totalFramesRead     = std::move(other.totalFramesRead);
-    totalPCMFramesCount = std::move(other.totalPCMFramesCount);
-    totalSamples        = std::move(other.totalSamples);
+    audioDuration = std::move(other.audioDuration);
+    bitsPerSample = std::move(other.bitsPerSample);
+    channels      = std::move(other.channels);
+    sampleRate    = std::move(other.sampleRate);
+    totalSamples  = std::move(other.totalSamples);
 
     // Move base members.
     DataOptionsBase<AudioOptions>::operator=(std::move(other));
@@ -106,14 +94,19 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return *this;
   }
 
-  // Conversions must be explicit.
   template<typename Derived2>
-  explicit AudioOptions(const DataOptionsBase<Derived2>& other) :
-      DataOptionsBase<AudioOptions>(other) { }
+  AudioOptions(const DataOptionsBase<Derived2>& other) :
+      DataOptionsBase<AudioOptions>()
+  {
+    DataOptionsBase<AudioOptions>::operator=(other);
+  }
 
   template<typename Derived2>
-  explicit AudioOptions(DataOptionsBase<Derived2>&& other) :
-      DataOptionsBase<AudioOptions>(std::move(other)) { }
+  AudioOptions(DataOptionsBase<Derived2>&& other) :
+      DataOptionsBase<AudioOptions>()
+  {
+    DataOptionsBase<AudioOptions>::operator=(std::move(other));
+  }
 
   template<typename Derived2>
   AudioOptions& operator=(const DataOptionsBase<Derived2>& other)
@@ -139,21 +132,21 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (audioDuration.value() != other.audioDuration.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "audioDuration with different values!");
       }
     }
 
-    if (!bitPerSample.has_value() && other.bitPerSample.has_value())
+    if (!bitsPerSample.has_value() && other.bitsPerSample.has_value())
     {
-      bitPerSample = other.bitPerSample;
+      bitsPerSample = other.bitsPerSample;
     }
-    else if (bitPerSample.has_value() && other.bitPerSample.has_value())
+    else if (bitsPerSample.has_value() && other.bitsPerSample.has_value())
     {
-      if (bitPerSample.value() != other.bitPerSample.value())
+      if (bitsPerSample.value() != other.bitsPerSample.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "bitPerSample with different values!");
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
+            "bitsPerSample with different values!");
       }
     }
 
@@ -165,21 +158,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (channels.value() != other.channels.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "channels with different values!");
-      }
-    }
-
-    if (!fileBitRate.has_value() && other.fileBitRate.has_value())
-    {
-      fileBitRate = other.fileBitRate;
-    }
-    else if (fileBitRate.has_value() && other.fileBitRate.has_value())
-    {
-      if (fileBitRate.value() != other.fileBitRate.value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "fileBitRate with different values!");
       }
     }
 
@@ -191,37 +171,8 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (sampleRate.value() != other.sampleRate.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "sampleRate with different values!");
-      }
-    }
-
-    if (!totalFramesRead.has_value() && other.totalFramesRead.has_value())
-    {
-      totalFramesRead = other.totalFramesRead;
-    }
-    else if (totalFramesRead.has_value() && other.totalFramesRead.has_value())
-    {
-      if (totalFramesRead.value() != other.totalFramesRead.value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "totalFramesRead with different values!");
-      }
-    }
-
-    if (!totalPCMFramesCount.has_value() &&
-        other.totalPCMFramesCount.has_value())
-    {
-      totalPCMFramesCount = other.totalPCMFramesCount;
-    }
-    else if (totalPCMFramesCount.has_value() &&
-        other.totalPCMFramesCount.has_value())
-    {
-      if (totalPCMFramesCount.value() !=
-          other.totalPCMFramesCount.value())
-      {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
-            "totalPCMFramesCount with different values!");
       }
     }
 
@@ -233,7 +184,7 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     {
       if (totalSamples.value() != other.totalSamples.value())
       {
-        throw std::invalid_argument("AudioOptions: operator+(): cannot combine"
+        throw std::invalid_argument("AudioOptions::operator+(): cannot combine"
             "totalSamples with different values!");
       }
     }
@@ -243,20 +194,12 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   {
     if (audioDuration.has_value() && audioDuration != defaultAudioDuration)
       this->WarnOptionConversion("audioDuration", dataDescription);
-    if (bitPerSample.has_value() && bitPerSample != defaultBitPerSample)
-      this->WarnOptionConversion("bitPerSample", dataDescription);
+    if (bitsPerSample.has_value() && bitsPerSample != defaultBitsPerSample)
+      this->WarnOptionConversion("bitsPerSample", dataDescription);
     if (channels.has_value() && channels != defaultChannels)
       this->WarnOptionConversion("channels", dataDescription);
-    if (fileBitRate.has_value() && fileBitRate != defaultFileBitRate)
-      this->WarnOptionConversion("fileBitRate", dataDescription);
     if (sampleRate.has_value() && sampleRate != defaultSampleRate)
       this->WarnOptionConversion("sampleRate", dataDescription);
-    if (totalFramesRead.has_value() &&
-        totalFramesRead != defaultTotalFramesRead)
-      this->WarnOptionConversion("totalFramesRead", dataDescription);
-    if (totalPCMFramesCount.has_value() &&
-        totalPCMFramesCount != defaultTotalPCMFramesCount)
-      this->WarnOptionConversion("totalPCMFramesCount", dataDescription);
     if (totalSamples.has_value() && totalSamples != defaultTotalSamples)
       this->WarnOptionConversion("totalSamples", dataDescription);
   }
@@ -266,33 +209,30 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   void Reset()
   {
     audioDuration.reset();
-    bitPerSample.reset();
+    bitsPerSample.reset();
     channels.reset();
-    fileBitRate.reset();
     sampleRate.reset();
-    totalFramesRead.reset();
-    totalPCMFramesCount.reset();
     totalSamples.reset();
   }
 
-  size_t AudioDuration() const
+  double AudioDuration() const
   {
     return this->AccessMember(audioDuration, defaultAudioDuration);
   }
 
-  size_t& AudioDuration()
+  double& AudioDuration()
   {
     return this->ModifyMember(audioDuration, defaultAudioDuration);
   }
 
   size_t BitsPerSample() const
   {
-    return this->AccessMember(bitPerSample, defaultBitPerSample);
+    return this->AccessMember(bitsPerSample, defaultBitsPerSample);
   }
 
   size_t& BitsPerSample()
   {
-    return this->ModifyMember(bitPerSample, defaultBitPerSample);
+    return this->ModifyMember(bitsPerSample, defaultBitsPerSample);
   }
 
   size_t Channels() const
@@ -305,16 +245,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
     return this->ModifyMember(channels, defaultChannels);
   }
 
-  size_t FileBitRate() const
-  {
-    return this->AccessMember(fileBitRate, defaultFileBitRate);
-  }
-
-  size_t& FileBitRate()
-  {
-    return this->ModifyMember(fileBitRate, defaultFileBitRate);
-  }
-
   size_t SampleRate() const
   {
     return this->AccessMember(sampleRate, defaultSampleRate);
@@ -323,28 +253,6 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
   size_t& SampleRate()
   {
     return this->ModifyMember(sampleRate, defaultSampleRate);
-  }
-
-  size_t TotalFramesRead() const
-  {
-    return this->AccessMember(totalFramesRead, defaultTotalFramesRead);
-  }
-
-  size_t& TotalFramesRead()
-  {
-    return this->ModifyMember(totalFramesRead, defaultTotalFramesRead);
-  }
-
-  size_t TotalPCMFramesCount() const
-  {
-    return this->AccessMember(totalPCMFramesCount,
-        defaultTotalPCMFramesCount);
-  }
-
-  size_t& TotalPCMFramesCount()
-  {
-    return this->ModifyMember(totalPCMFramesCount,
-        defaultTotalPCMFramesCount);
   }
 
   size_t TotalSamples() const
@@ -360,20 +268,14 @@ class AudioOptions : public DataOptionsBase<AudioOptions>
  private:
   std::optional<size_t> channels;
   std::optional<size_t> sampleRate;
-  std::optional<size_t> bitPerSample;
-  std::optional<size_t> audioDuration;
-  std::optional<size_t> totalPCMFramesCount;
-  std::optional<size_t> totalFramesRead;
+  std::optional<size_t> bitsPerSample;
+  std::optional<double> audioDuration;
   std::optional<size_t> totalSamples;
-  std::optional<size_t> fileBitRate;
 
-  constexpr static const size_t defaultAudioDuration    = 0;
-  constexpr static const size_t defaultBitPerSample     = 0;
+  constexpr static const double defaultAudioDuration    = 0.0;
+  constexpr static const size_t defaultBitsPerSample    = 0;
   constexpr static const size_t defaultChannels         = 0;
-  constexpr static const size_t defaultFileBitRate      = 0;
   constexpr static const size_t defaultSampleRate       = 0;
-  constexpr static const size_t defaultTotalFramesRead  = 0;
-  constexpr static const size_t defaultTotalPCMFramesCount = 0;
   constexpr static const size_t defaultTotalSamples     = 0;
 };
 

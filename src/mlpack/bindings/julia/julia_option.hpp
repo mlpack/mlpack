@@ -15,12 +15,15 @@
 #include <mlpack/core/util/param_data.hpp>
 #include "get_param.hpp"
 #include "get_printable_param.hpp"
+#include "get_printable_type.hpp"
 #include "print_param_defn.hpp"
 #include "print_input_param.hpp"
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "print_doc.hpp"
 #include "print_model_type_import.hpp"
+#include "print_member_defn.hpp"
+#include "is_serializable.hpp"
 #include "default_param.hpp"
 
 namespace mlpack {
@@ -72,6 +75,7 @@ class JuliaOption
     // GetPrintableParam, and GetRawParam.)
     IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
     IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableType", &GetPrintableType<T>);
 
     // These are used by the jl generator.
     IO::AddFunction(data.tname, "PrintParamDefn", &PrintParamDefn<T>);
@@ -83,6 +87,10 @@ class JuliaOption
     IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
     IO::AddFunction(data.tname, "PrintModelTypeImport",
         &PrintModelTypeImport<T>);
+
+    // These are used by the jl group generator.
+    IO::AddFunction(data.tname, "PrintMemberDefn", &PrintMemberDefn<T>);
+    IO::AddFunction(data.tname, "IsSerializable", &IsSerializable<T>);
 
     // This is needed for the Markdown binding output.
     IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);

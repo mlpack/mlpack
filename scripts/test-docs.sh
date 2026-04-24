@@ -110,8 +110,20 @@ extract_code_blocks()
 
         if [ $has_main -eq 0 -a $class_decl -eq 0 ];
         then
+
+          # NOTE: this is a hack to add serialization for neural networks where needed.
+          if [ "$input_file" == "doc/user/methods/yolov3.md" ];
+          then
+            echo "#define MLPACK_ENABLE_ANN_SERIALIZATION" > $output_prefix$output_file_display.cpp;
+            echo "#define MLPACK_ENABLE_ANN_SERIALIZATION_FMAT" >> $output_prefix$output_file_display.cpp;
+            echo "" >> $output_prefix$output_file_display.cpp;
+
+            echo "#include <mlpack.hpp>" >> $output_prefix$output_file_display.cpp;
+          else
+            echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
+          fi
+
           # Create main() function to wrap the code in.
-          echo "#include <mlpack.hpp>" > $output_prefix$output_file_display.cpp;
           echo "" >> $output_prefix$output_file_display.cpp;
 
           # Insert any class definitions.
@@ -242,7 +254,7 @@ download_http_artifacts()
       sed 's/^.*\(http[^ ]*\).*$/\1/' |\
       sort |\
       uniq |\
-      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz' |\
+      grep 'csv\|arff\|bin\|png\|jpg\|bz2\|gz\|mp3\|wav' |\
       sed 's/\.$//'`;
   cd $output_dir;
   for a in $artifacts;

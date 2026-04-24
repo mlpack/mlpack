@@ -360,7 +360,7 @@ julia> recommendations, _ = cf(input_model=model, query=users,
 
 ```julia
 julia> using mlpack: dbscan
-julia> assignments, centroids = dbscan(input; epsilon=1, min_size=5,
+julia> assignments, centroids = dbscan(input; epsilon=1.0, min_size=5,
           naive=false, selection_type="ordered", single_mode=false,
           tree_type="kd", verbose=false)
 ```
@@ -374,7 +374,7 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `epsilon` | [`Float64`](#doc_Float64) | Radius of each range search. | `1` |
+| `epsilon` | [`Float64`](#doc_Float64) | Radius of each range search. | `1.0` |
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input dataset to cluster. | `**--**` |
 | `min_size` | [`Int`](#doc_Int) | Minimum number of points for a cluster. | `5` |
 | `naive` | [`Bool`](#doc_Bool) | If set, brute-force range search (not tree-based) will be used. | `false` |
@@ -636,10 +636,10 @@ The output matrix is a three-dimensional matrix, where each row indicates an edg
 
 ```julia
 julia> using mlpack: fastmks
-julia> indices, kernels, output_model = fastmks( ; bandwidth=1,
-          base=2, degree=2, input_model=nothing, k=0, kernel="linear",
-          naive=false, offset=0, query=zeros(0, 0), reference=zeros(0, 0),
-          scale=1, single=false, verbose=false)
+julia> indices, kernels, output_model = fastmks( ; bandwidth=1.0,
+          base=2.0, degree=2.0, input_model=nothing, k=0, kernel="linear",
+          naive=false, offset=0.0, query=zeros(0, 0), reference=zeros(0, 0),
+          scale=1.0, single=false, verbose=false)
 ```
 
 An implementation of the single-tree and dual-tree fast max-kernel search (FastMKS) algorithm.  Given a set of reference points and a set of query points, this can find the reference point with maximum kernel value for each query point; trained models can be reused for future queries. [Detailed documentation](#fastmks_detailed-documentation).
@@ -650,18 +650,18 @@ An implementation of the single-tree and dual-tree fast max-kernel search (FastM
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
-| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth (for Gaussian, Epanechnikov, and triangular kernels). | `1` |
-| `base` | [`Float64`](#doc_Float64) | Base to use during cover tree construction. | `2` |
+| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth (for Gaussian, Epanechnikov, and triangular kernels). | `1.0` |
+| `base` | [`Float64`](#doc_Float64) | Base to use during cover tree construction. | `2.0` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `degree` | [`Float64`](#doc_Float64) | Degree of polynomial kernel. | `2` |
+| `degree` | [`Float64`](#doc_Float64) | Degree of polynomial kernel. | `2.0` |
 | `input_model` | [`FastMKSModel`](#doc_model) | Input FastMKS model to use. | `nothing` |
 | `k` | [`Int`](#doc_Int) | Number of maximum kernels to find. | `0` |
 | `kernel` | [`String`](#doc_String) | Kernel type to use: 'linear', 'polynomial', 'cosine', 'gaussian', 'epanechnikov', 'triangular', 'hyptan'. | `"linear"` |
 | `naive` | [`Bool`](#doc_Bool) | If true, O(n^2) naive mode is used for computation. | `false` |
-| `offset` | [`Float64`](#doc_Float64) | Offset of kernel (for polynomial and hyptan kernels). | `0` |
+| `offset` | [`Float64`](#doc_Float64) | Offset of kernel (for polynomial and hyptan kernels). | `0.0` |
 | `query` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The query dataset. | `zeros(0, 0)` |
 | `reference` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The reference dataset. | `zeros(0, 0)` |
-| `scale` | [`Float64`](#doc_Float64) | Scale of kernel (for hyptan kernel). | `1` |
+| `scale` | [`Float64`](#doc_Float64) | Scale of kernel (for hyptan kernel). | `1.0` |
 | `single` | [`Bool`](#doc_Bool) | If true, single-tree search is used (as opposed to dual-tree search. | `false` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
@@ -713,7 +713,7 @@ julia> output_model = gmm_train(gaussians,
                                 input; diagonal_covariance=false,
                                 input_model=nothing, kmeans_max_iterations=1000,
                                 max_iterations=250, no_force_positive=false,
-                                noise=0, percentage=0.02, refined_start=false,
+                                noise=0.0, percentage=0.02, refined_start=false,
                                 samplings=100, seed=0, tolerance=1e-10,
                                 trials=1, verbose=false)
 ```
@@ -734,7 +734,7 @@ An implementation of the EM algorithm for training Gaussian mixture models (GMMs
 | `kmeans_max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations for the k-means algorithm (used to initialize EM). | `1000` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations of EM algorithm (passing 0 will run until convergence). | `250` |
 | `no_force_positive` | [`Bool`](#doc_Bool) | Do not force the covariance matrices to be positive definite. | `false` |
-| `noise` | [`Float64`](#doc_Float64) | Variance of zero-mean Gaussian noise to add to data. | `0` |
+| `noise` | [`Float64`](#doc_Float64) | Variance of zero-mean Gaussian noise to add to data. | `0.0` |
 | `percentage` | [`Float64`](#doc_Float64) | If using --refined_start, specify the percentage of the dataset used for each sampling (should be between 0.0 and 1.0). | `0.02` |
 | `refined_start` | [`Bool`](#doc_Bool) | During the initialization, use refined initial positions for k-means clustering (Bradley and Fayyad, 1998). | `false` |
 | `samplings` | [`Int`](#doc_Int) | If using --refined_start, specify the number of samplings used for initial points. | `100` |
@@ -1293,10 +1293,10 @@ julia> _ = image_converter(X; channels=3, dataset=Y, height=256,
 
 ```julia
 julia> using mlpack: kde
-julia> output_model, predictions = kde( ; abs_error=0,
-          algorithm="dual-tree", bandwidth=1, initial_sample_size=100,
+julia> output_model, predictions = kde( ; abs_error=0.0,
+          algorithm="dual-tree", bandwidth=1.0, initial_sample_size=100,
           input_model=nothing, kernel="gaussian", mc_break_coef=0.4,
-          mc_entry_coef=3, mc_probability=0.95, monte_carlo=false,
+          mc_entry_coef=3.0, mc_probability=0.95, monte_carlo=false,
           query=zeros(0, 0), reference=zeros(0, 0), rel_error=0.05,
           tree="kd-tree", verbose=false)
 ```
@@ -1309,15 +1309,15 @@ An implementation of kernel density estimation with dual-tree algorithms. Given 
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
-| `abs_error` | [`Float64`](#doc_Float64) | Relative error tolerance for the prediction. | `0` |
+| `abs_error` | [`Float64`](#doc_Float64) | Relative error tolerance for the prediction. | `0.0` |
 | `algorithm` | [`String`](#doc_String) | Algorithm to use for the prediction.('dual-tree', 'single-tree'). | `"dual-tree"` |
-| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth of the kernel. | `1` |
+| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth of the kernel. | `1.0` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `initial_sample_size` | [`Int`](#doc_Int) | Initial sample size for Monte Carlo estimations. | `100` |
 | `input_model` | [`KDEModel`](#doc_model) | Contains pre-trained KDE model. | `nothing` |
 | `kernel` | [`String`](#doc_String) | Kernel to use for the prediction.('gaussian', 'epanechnikov', 'laplacian', 'spherical', 'triangular'). | `"gaussian"` |
 | `mc_break_coef` | [`Float64`](#doc_Float64) | Controls what fraction of the amount of node's descendants is the limit for the sample size before it recurses. | `0.4` |
-| `mc_entry_coef` | [`Float64`](#doc_Float64) | Controls how much larger does the amount of node descendants has to be compared to the initial sample size in order to be a candidate for Monte Carlo estimations. | `3` |
+| `mc_entry_coef` | [`Float64`](#doc_Float64) | Controls how much larger does the amount of node descendants has to be compared to the initial sample size in order to be a candidate for Monte Carlo estimations. | `3.0` |
 | `mc_probability` | [`Float64`](#doc_Float64) | Probability of the estimation being bounded by relative error when using Monte Carlo estimations. | `0.95` |
 | `monte_carlo` | [`Bool`](#doc_Bool) | Whether to use Monte Carlo estimations when possible. | `false` |
 | `query` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Query dataset to KDE on. | `zeros(0, 0)` |
@@ -1388,9 +1388,10 @@ julia> _, out_data = kde(bandwidth=0.2, initial_sample_size=200,
 ```julia
 julia> using mlpack: kernel_pca
 julia> output = kernel_pca(input, kernel;
-                           bandwidth=1, center=false, degree=1, kernel_scale=1,
-                           new_dimensionality=0, nystroem_method=false,
-                           offset=0, sampling="kmeans", verbose=false)
+                           bandwidth=1.0, center=false, degree=1.0,
+                           kernel_scale=1.0, new_dimensionality=0,
+                           nystroem_method=false, offset=0.0, sampling="kmeans",
+                           verbose=false)
 ```
 
 An implementation of Kernel Principal Components Analysis (KPCA).  This can be used to perform nonlinear dimensionality reduction or preprocessing on a given dataset. [Detailed documentation](#kernel_pca_detailed-documentation).
@@ -1401,16 +1402,16 @@ An implementation of Kernel Principal Components Analysis (KPCA).  This can be u
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
-| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth, for 'gaussian' and 'laplacian' kernels. | `1` |
+| `bandwidth` | [`Float64`](#doc_Float64) | Bandwidth, for 'gaussian' and 'laplacian' kernels. | `1.0` |
 | `center` | [`Bool`](#doc_Bool) | If set, the transformed data will be centered about the origin. | `false` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `degree` | [`Float64`](#doc_Float64) | Degree of polynomial, for 'polynomial' kernel. | `1` |
+| `degree` | [`Float64`](#doc_Float64) | Degree of polynomial, for 'polynomial' kernel. | `1.0` |
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input dataset to perform KPCA on. | `**--**` |
 | `kernel` | [`String`](#doc_String) | The kernel to use; see the above documentation for the list of usable kernels. | `**--**` |
-| `kernel_scale` | [`Float64`](#doc_Float64) | Scale, for 'hyptan' kernel. | `1` |
+| `kernel_scale` | [`Float64`](#doc_Float64) | Scale, for 'hyptan' kernel. | `1.0` |
 | `new_dimensionality` | [`Int`](#doc_Int) | If not 0, reduce the dimensionality of the output dataset by ignoring the dimensions with the smallest eigenvalues. | `0` |
 | `nystroem_method` | [`Bool`](#doc_Bool) | If set, the Nystroem method will be used. | `false` |
-| `offset` | [`Float64`](#doc_Float64) | Offset, for 'hyptan' and 'polynomial' kernels. | `0` |
+| `offset` | [`Float64`](#doc_Float64) | Offset, for 'hyptan' and 'polynomial' kernels. | `0.0` |
 | `sampling` | [`String`](#doc_String) | Sampling scheme to use for the Nystroem method: 'kmeans', 'random', 'ordered' | `"kmeans"` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
@@ -1575,7 +1576,7 @@ julia> final, _ = kmeans(10, data; initial_centroids=initial,
 ```julia
 julia> using mlpack: lars
 julia> output_model, output_predictions = lars( ; input=zeros(0, 0),
-          input_model=nothing, lambda1=0, lambda2=0, no_intercept=false,
+          input_model=nothing, lambda1=0.0, lambda2=0.0, no_intercept=false,
           no_normalize=false, responses=zeros(0, 0), test=zeros(0, 0),
           use_cholesky=false, verbose=false)
 ```
@@ -1591,8 +1592,8 @@ An implementation of Least Angle Regression (Stagewise/laSso), also known as LAR
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix of covariates (X). | `zeros(0, 0)` |
 | `input_model` | [`LARS`](#doc_model) | Trained LARS model to use. | `nothing` |
-| `lambda1` | [`Float64`](#doc_Float64) | Regularization parameter for l1-norm penalty. | `0` |
-| `lambda2` | [`Float64`](#doc_Float64) | Regularization parameter for l2-norm penalty. | `0` |
+| `lambda1` | [`Float64`](#doc_Float64) | Regularization parameter for l1-norm penalty. | `0.0` |
+| `lambda2` | [`Float64`](#doc_Float64) | Regularization parameter for l2-norm penalty. | `0.0` |
 | `no_intercept` | [`Bool`](#doc_Bool) | Do not fit an intercept in the model. | `false` |
 | `no_normalize` | [`Bool`](#doc_Bool) | Do not normalize data to unit variance before modeling. | `false` |
 | `responses` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix of responses/observations (y). | `zeros(0, 0)` |
@@ -1669,10 +1670,10 @@ julia> _, test_predictions = lars(input_model=lasso_model,
 ```julia
 julia> using mlpack: linear_svm
 julia> output_model, predictions, probabilities = linear_svm( ;
-          delta=1, epochs=50, input_model=nothing, labels=Int[], lambda=0.0001,
-          max_iterations=10000, no_intercept=false, num_classes=0,
-          optimizer="lbfgs", seed=0, shuffle=false, step_size=0.01,
-          test=zeros(0, 0), test_labels=Int[], tolerance=1e-10,
+          delta=1.0, epochs=50, input_model=nothing, labels=Int[],
+          lambda=0.0001, max_iterations=10000, no_intercept=false,
+          num_classes=0, optimizer="lbfgs", seed=0, shuffle=false,
+          step_size=0.01, test=zeros(0, 0), test_labels=Int[], tolerance=1e-10,
           training=zeros(0, 0), verbose=false)
 ```
 
@@ -1685,7 +1686,7 @@ An implementation of linear SVM for multiclass classification. Given labeled dat
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `delta` | [`Float64`](#doc_Float64) | Margin of difference between correct class and other classes. | `1` |
+| `delta` | [`Float64`](#doc_Float64) | Margin of difference between correct class and other classes. | `1.0` |
 | `epochs` | [`Int`](#doc_Int) | Maximum number of full epochs over dataset for psgd | `50` |
 | `input_model` | [`LinearSVMModel`](#doc_model) | Existing model (parameters). | `nothing` |
 | `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). | `Int[]` |
@@ -1868,8 +1869,8 @@ julia> _, output, _ = lmnn(letter_recognition; k=5,
 julia> using mlpack: local_coordinate_coding
 julia> codes, dictionary, output_model = local_coordinate_coding( ;
           atoms=0, initial_dictionary=zeros(0, 0), input_model=nothing,
-          lambda=0, max_iterations=0, normalize=false, seed=0, test=zeros(0, 0),
-          tolerance=0.01, training=zeros(0, 0), verbose=false)
+          lambda=0.0, max_iterations=0, normalize=false, seed=0, test=zeros(0,
+          0), tolerance=0.01, training=zeros(0, 0), verbose=false)
 ```
 
 An implementation of Local Coordinate Coding (LCC), a data transformation technique.  Given input data, this transforms each point to be expressed as a linear combination of a few points in the dataset; once an LCC model is trained, it can be used to transform points later also. [Detailed documentation](#local_coordinate_coding_detailed-documentation).
@@ -1884,7 +1885,7 @@ An implementation of Local Coordinate Coding (LCC), a data transformation techni
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `initial_dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Optional initial dictionary. | `zeros(0, 0)` |
 | `input_model` | [`LocalCoordinateCoding`](#doc_model) | Input LCC model. | `nothing` |
-| `lambda` | [`Float64`](#doc_Float64) | Weighted l1-norm regularization parameter. | `0` |
+| `lambda` | [`Float64`](#doc_Float64) | Weighted l1-norm regularization parameter. | `0.0` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations for LCC (0 indicates no limit). | `0` |
 | `normalize` | [`Bool`](#doc_Bool) | If set, the input data matrix will be normalized before coding. | `false` |
 | `seed` | [`Int`](#doc_Int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
@@ -1951,7 +1952,7 @@ julia> new_codes, _, _ =
 julia> using mlpack: logistic_regression
 julia> output_model, predictions, probabilities = logistic_regression(
           ; batch_size=64, decision_boundary=0.5, input_model=nothing,
-          labels=Int[], lambda=0, max_iterations=10000, optimizer="lbfgs",
+          labels=Int[], lambda=0.0, max_iterations=10000, optimizer="lbfgs",
           print_training_accuracy=false, step_size=0.01, test=zeros(0, 0),
           tolerance=1e-10, training=zeros(0, 0), verbose=false)
 ```
@@ -1969,7 +1970,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 | `decision_boundary` | [`Float64`](#doc_Float64) | Decision boundary for prediction; if the logistic function for a point is less than the boundary, the class is taken to be 0; otherwise, the class is 1. | `0.5` |
 | `input_model` | [`LogisticRegression`](#doc_model) | Existing model (parameters). | `nothing` |
 | `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). | `Int[]` |
-| `lambda` | [`Float64`](#doc_Float64) | L2-regularization parameter for training. | `0` |
+| `lambda` | [`Float64`](#doc_Float64) | L2-regularization parameter for training. | `0.0` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
 | `optimizer` | [`String`](#doc_String) | Optimizer to use for training ('lbfgs' or 'sgd'). | `"lbfgs"` |
 | `print_training_accuracy` | [`Bool`](#doc_Bool) | If set, then the accuracy of the model on the training set will be printed (verbose must also be specified). | `false` |
@@ -2046,9 +2047,10 @@ julia> _, predictions, _ = logistic_regression(input_model=lr_model,
 ```julia
 julia> using mlpack: lsh
 julia> distances, neighbors, output_model = lsh( ; bucket_size=500,
-          hash_width=0, input_model=nothing, k=0, num_probes=0, projections=10,
-          query=zeros(0, 0), reference=zeros(0, 0), second_hash_size=99901,
-          seed=0, tables=30, true_neighbors=zeros(Int, 0, 0), verbose=false)
+          hash_width=0.0, input_model=nothing, k=0, num_probes=0,
+          projections=10, query=zeros(0, 0), reference=zeros(0, 0),
+          second_hash_size=99901, seed=0, tables=30, true_neighbors=zeros(Int,
+          0, 0), verbose=false)
 ```
 
 An implementation of approximate k-nearest-neighbor search with locality-sensitive hashing (LSH).  Given a set of reference points and a set of query points, this will compute the k approximate nearest neighbors of each query point in the reference set; models can be saved for future use. [Detailed documentation](#lsh_detailed-documentation).
@@ -2061,7 +2063,7 @@ An implementation of approximate k-nearest-neighbor search with locality-sensiti
 |------------|------------|-------------------|---------------|
 | `bucket_size` | [`Int`](#doc_Int) | The size of a bucket in the second level hash. | `500` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `hash_width` | [`Float64`](#doc_Float64) | The hash width for the first-level hashing in the LSH preprocessing. By default, the LSH class automatically estimates a hash width for its use. | `0` |
+| `hash_width` | [`Float64`](#doc_Float64) | The hash width for the first-level hashing in the LSH preprocessing. By default, the LSH class automatically estimates a hash width for its use. | `0.0` |
 | `input_model` | [`LSHSearch`](#doc_model) | Input LSH model. | `nothing` |
 | `k` | [`Int`](#doc_Int) | Number of nearest neighbors to find. | `0` |
 | `num_probes` | [`Int`](#doc_Int) | Number of additional probes for multiprobe LSH; if 0, traditional LSH is used. | `0` |
@@ -2121,7 +2123,7 @@ This program also has many other parameters to control its functionality; see th
 ```julia
 julia> using mlpack: mean_shift
 julia> centroid, output = mean_shift(input; force_convergence=false,
-          in_place=false, labels_only=false, max_iterations=1000, radius=0,
+          in_place=false, labels_only=false, max_iterations=1000, radius=0.0,
           verbose=false)
 ```
 
@@ -2139,7 +2141,7 @@ A fast implementation of mean-shift clustering using dual-tree range search.  Gi
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input dataset to perform clustering on. | `**--**` |
 | `labels_only` | [`Bool`](#doc_Bool) | If specified, only the output labels will be written to the file specified by --output_file. | `false` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations before mean shift terminates. | `1000` |
-| `radius` | [`Float64`](#doc_Float64) | If the distance between two centroids is less than the given radius, one will be removed.  A radius of 0 or less means an estimate will be calculated and used for the radius. | `0` |
+| `radius` | [`Float64`](#doc_Float64) | If the distance between two centroids is less than the given radius, one will be removed.  A radius of 0 or less means an estimate will be calculated and used for the radius. | `0.0` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -2268,7 +2270,7 @@ julia> using mlpack: nca
 julia> output = nca(input; armijo_constant=0.0001,
                     batch_size=50, labels=Int[], linear_scan=false,
                     max_iterations=500000, max_line_search_trials=50,
-                    max_step=1e+20, min_step=1e-20, normalize=false,
+                    max_step=1e+20.0, min_step=1e-20, normalize=false,
                     num_basis=5, optimizer="sgd", seed=0, step_size=0.01,
                     tolerance=1e-07, verbose=false, wolfe=0.9)
 ```
@@ -2289,7 +2291,7 @@ An implementation of neighborhood components analysis, a distance learning techn
 | `linear_scan` | [`Bool`](#doc_Bool) | Don't shuffle the order in which data points are visited for SGD or mini-batch SGD. | `false` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations for SGD or L-BFGS (0 indicates no limit). | `500000` |
 | `max_line_search_trials` | [`Int`](#doc_Int) | Maximum number of line search trials for L-BFGS. | `50` |
-| `max_step` | [`Float64`](#doc_Float64) | Maximum step of line search for L-BFGS. | `1e+20` |
+| `max_step` | [`Float64`](#doc_Float64) | Maximum step of line search for L-BFGS. | `1e+20.0` |
 | `min_step` | [`Float64`](#doc_Float64) | Minimum step of line search for L-BFGS. | `1e-20` |
 | `normalize` | [`Bool`](#doc_Bool) | Use a normalized starting point for optimization. This is useful for when points are far apart, or when SGD is returning NaN. | `false` |
 | `num_basis` | [`Int`](#doc_Int) | Number of memory points to be stored for L-BFGS. | `5` |
@@ -2339,9 +2341,9 @@ By default, the SGD optimizer is used.
 ```julia
 julia> using mlpack: knn
 julia> distances, neighbors, output_model = knn( ;
-          algorithm="dual_tree", epsilon=0, input_model=nothing, k=0,
+          algorithm="dual_tree", epsilon=0.0, input_model=nothing, k=0,
           leaf_size=20, query=zeros(0, 0), random_basis=false,
-          reference=zeros(0, 0), rho=0.7, seed=0, tau=0, tree_type="kd",
+          reference=zeros(0, 0), rho=0.7, seed=0, tau=0.0, tree_type="kd",
           true_distances=zeros(0, 0), true_neighbors=zeros(Int, 0, 0),
           verbose=false)
 ```
@@ -2356,7 +2358,7 @@ An implementation of k-nearest-neighbor search using single-tree and dual-tree a
 |------------|------------|-------------------|---------------|
 | `algorithm` | [`String`](#doc_String) | Type of neighbor search: 'naive', 'single_tree', 'dual_tree', 'greedy'. | `"dual_tree"` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `epsilon` | [`Float64`](#doc_Float64) | If specified, will do approximate nearest neighbor search with given relative error. | `0` |
+| `epsilon` | [`Float64`](#doc_Float64) | If specified, will do approximate nearest neighbor search with given relative error. | `0.0` |
 | `input_model` | [`KNNModel`](#doc_model) | Pre-trained kNN model. | `nothing` |
 | `k` | [`Int`](#doc_Int) | Number of nearest neighbors to find. | `0` |
 | `leaf_size` | [`Int`](#doc_Int) | Leaf size for tree building (used for kd-trees, vp trees, random projection trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, spill trees, and octrees). | `20` |
@@ -2365,7 +2367,7 @@ An implementation of k-nearest-neighbor search using single-tree and dual-tree a
 | `reference` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing the reference dataset. | `zeros(0, 0)` |
 | `rho` | [`Float64`](#doc_Float64) | Balance threshold (only valid for spill trees). | `0.7` |
 | `seed` | [`Int`](#doc_Int) | Random seed (if 0, std::time(NULL) is used). | `0` |
-| `tau` | [`Float64`](#doc_Float64) | Overlapping size (only valid for spill trees). | `0` |
+| `tau` | [`Float64`](#doc_Float64) | Overlapping size (only valid for spill trees). | `0.0` |
 | `tree_type` | [`String`](#doc_String) | Type of tree to use: 'kd', 'vp', 'rp', 'max-rp', 'ub', 'cover', 'r', 'r-star', 'x', 'ball', 'hilbert-r', 'r-plus', 'r-plus-plus', 'spill', 'oct'. | `"kd"` |
 | `true_distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix of true distances to compute the effective error (average relative error) (it is printed when -v is specified). | `zeros(0, 0)` |
 | `true_neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix of true neighbors to compute the recall (it is printed when -v is specified). | `zeros(Int, 0, 0)` |
@@ -2414,8 +2416,8 @@ The output is organized such that row i and column j in the neighbors output mat
 ```julia
 julia> using mlpack: kfn
 julia> distances, neighbors, output_model = kfn( ;
-          algorithm="dual_tree", epsilon=0, input_model=nothing, k=0,
-          leaf_size=20, percentage=1, query=zeros(0, 0), random_basis=false,
+          algorithm="dual_tree", epsilon=0.0, input_model=nothing, k=0,
+          leaf_size=20, percentage=1.0, query=zeros(0, 0), random_basis=false,
           reference=zeros(0, 0), seed=0, tree_type="kd", true_distances=zeros(0,
           0), true_neighbors=zeros(Int, 0, 0), verbose=false)
 ```
@@ -2430,11 +2432,11 @@ An implementation of k-furthest-neighbor search using single-tree and dual-tree 
 |------------|------------|-------------------|---------------|
 | `algorithm` | [`String`](#doc_String) | Type of neighbor search: 'naive', 'single_tree', 'dual_tree', 'greedy'. | `"dual_tree"` |
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `epsilon` | [`Float64`](#doc_Float64) | If specified, will do approximate furthest neighbor search with given relative error. Must be in the range [0,1). | `0` |
+| `epsilon` | [`Float64`](#doc_Float64) | If specified, will do approximate furthest neighbor search with given relative error. Must be in the range [0,1). | `0.0` |
 | `input_model` | [`KFNModel`](#doc_model) | Pre-trained kFN model. | `nothing` |
 | `k` | [`Int`](#doc_Int) | Number of furthest neighbors to find. | `0` |
 | `leaf_size` | [`Int`](#doc_Int) | Leaf size for tree building (used for kd-trees, vp trees, random projection trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
-| `percentage` | [`Float64`](#doc_Float64) | If specified, will do approximate furthest neighbor search. Must be in the range (0,1] (decimal form). Resultant neighbors will be at least (p*100) % of the distance as the true furthest neighbor. | `1` |
+| `percentage` | [`Float64`](#doc_Float64) | If specified, will do approximate furthest neighbor search. Must be in the range (0,1] (decimal form). Resultant neighbors will be at least (p*100) % of the distance as the true furthest neighbor. | `1.0` |
 | `query` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing query points (optional). | `zeros(0, 0)` |
 | `random_basis` | [`Bool`](#doc_Bool) | Before tree-building, project the data onto a random orthogonal basis. | `false` |
 | `reference` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing the reference dataset. | `zeros(0, 0)` |
@@ -2562,7 +2564,7 @@ julia> H, W = nmf(V, 10; update_rules="multdist")
 ```julia
 julia> using mlpack: pca
 julia> output = pca(input; decomposition_method="exact",
-                    new_dimensionality=0, scale=false, var_to_retain=0,
+                    new_dimensionality=0, scale=false, var_to_retain=0.0,
                     verbose=false)
 ```
 
@@ -2579,7 +2581,7 @@ An implementation of several strategies for principal components analysis (PCA),
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input dataset to perform PCA on. | `**--**` |
 | `new_dimensionality` | [`Int`](#doc_Int) | Desired dimensionality of output dataset. If 0, no dimensionality reduction is performed. | `0` |
 | `scale` | [`Bool`](#doc_Bool) | If set, the data will be scaled before running PCA, such that the variance of each feature is 1. | `false` |
-| `var_to_retain` | [`Float64`](#doc_Float64) | Amount of variance to retain; should be between 0 and 1.  If 1, all variance is retained.  Overrides -d. | `0` |
+| `var_to_retain` | [`Float64`](#doc_Float64) | Amount of variance to retain; should be between 0 and 1.  If 1, all variance is retained.  Overrides -d. | `0.0` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -2790,7 +2792,7 @@ julia> X_test, _, X_train, _ = preprocess_split(X; stratify_data=1,
 
 ```julia
 julia> using mlpack: preprocess_binarize
-julia> output = preprocess_binarize(input; dimension=0, threshold=0,
+julia> output = preprocess_binarize(input; dimension=0, threshold=0.0,
           verbose=false)
 ```
 
@@ -2805,7 +2807,7 @@ A utility to binarize a dataset.  Given a dataset, this utility converts each va
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `dimension` | [`Int`](#doc_Int) | Dimension to apply the binarization. If not set, the program will binarize every dimension by default. | `0` |
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input data matrix. | `**--**` |
-| `threshold` | [`Float64`](#doc_Float64) | Threshold to be applied for binarization. If not set, the threshold defaults to 0.0. | `0` |
+| `threshold` | [`Float64`](#doc_Float64) | Threshold to be applied for binarization. If not set, the threshold defaults to 0.0. | `0.0` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -3045,7 +3047,7 @@ So, a simple example where we want to encode 1st and 3rd feature from dataset ``
 ```julia
 julia> using CSV
 julia> X = CSV.read("X.csv")
-julia> X_ouput = preprocess_one_hot_encoding(X; dimensions=1)
+julia> X_output = preprocess_one_hot_encoding(X; dimensions=1)
 ```
 
 ### See also
@@ -3126,7 +3128,7 @@ julia> ic, _ = radical(X; replicates=40)
 julia> using mlpack: random_forest
 julia> output_model, predictions, probabilities = random_forest( ;
           input_model=nothing, labels=Int[], maximum_depth=0,
-          minimum_gain_split=0, minimum_leaf_size=1, num_trees=10,
+          minimum_gain_split=0.0, minimum_leaf_size=1, num_trees=10,
           print_training_accuracy=false, seed=0, subspace_dim=0, test=zeros(0,
           0), test_labels=Int[], training=zeros(0, 0), verbose=false,
           warm_start=false)
@@ -3144,7 +3146,7 @@ An implementation of the standard random forest algorithm by Leo Breiman for cla
 | `input_model` | [`RandomForestModel`](#doc_model) | Pre-trained random forest to use for classification. | `nothing` |
 | `labels` | [`Int vector-like`](#doc_Int_vector_like) | Labels for training dataset. | `Int[]` |
 | `maximum_depth` | [`Int`](#doc_Int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `minimum_gain_split` | [`Float64`](#doc_Float64) | Minimum gain needed to make a split when building a tree. | `0` |
+| `minimum_gain_split` | [`Float64`](#doc_Float64) | Minimum gain needed to make a split when building a tree. | `0.0` |
 | `minimum_leaf_size` | [`Int`](#doc_Int) | Minimum number of points in each leaf node. | `1` |
 | `num_trees` | [`Int`](#doc_Int) | Number of trees in the random forest. | `10` |
 | `print_training_accuracy` | [`Bool`](#doc_Bool) | If set, then the accuracy of the model on the training set will be predicted (verbose must also be specified). | `false` |
@@ -3220,7 +3222,7 @@ julia> distances, neighbors, output_model = krann( ; alpha=0.95,
           first_leaf_exact=false, input_model=nothing, k=0, leaf_size=20,
           naive=false, query=zeros(0, 0), random_basis=false, reference=zeros(0,
           0), sample_at_leaves=false, seed=0, single_mode=false,
-          single_sample_limit=20, tau=5, tree_type="kd", verbose=false)
+          single_sample_limit=20, tau=5.0, tree_type="kd", verbose=false)
 ```
 
 An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
@@ -3245,7 +3247,7 @@ An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using s
 | `seed` | [`Int`](#doc_Int) | Random seed (if 0, std::time(NULL) is used). | `0` |
 | `single_mode` | [`Bool`](#doc_Bool) | If true, single-tree search is used (as opposed to dual-tree search. | `false` |
 | `single_sample_limit` | [`Int`](#doc_Int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
-| `tau` | [`Float64`](#doc_Float64) | The allowed rank-error in terms of the percentile of the data. | `5` |
+| `tau` | [`Float64`](#doc_Float64) | The allowed rank-error in terms of the percentile of the data. | `5.0` |
 | `tree_type` | [`String`](#doc_String) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `"kd"` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
@@ -3377,10 +3379,10 @@ julia> _, predictions, _ = softmax_regression(input_model=sr_model,
 ```julia
 julia> using mlpack: sparse_coding
 julia> codes, dictionary, output_model = sparse_coding( ; atoms=15,
-          initial_dictionary=zeros(0, 0), input_model=nothing, lambda1=0,
-          lambda2=0, max_iterations=0, newton_tolerance=1e-06, normalize=false,
-          objective_tolerance=0.01, seed=0, test=zeros(0, 0), training=zeros(0,
-          0), verbose=false)
+          initial_dictionary=zeros(0, 0), input_model=nothing, lambda1=0.0,
+          lambda2=0.0, max_iterations=0, newton_tolerance=1e-06,
+          normalize=false, objective_tolerance=0.01, seed=0, test=zeros(0, 0),
+          training=zeros(0, 0), verbose=false)
 ```
 
 An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
@@ -3395,8 +3397,8 @@ An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, t
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `initial_dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Optional initial dictionary matrix. | `zeros(0, 0)` |
 | `input_model` | [`SparseCoding`](#doc_model) | File containing input sparse coding model. | `nothing` |
-| `lambda1` | [`Float64`](#doc_Float64) | Sparse coding l1-norm regularization parameter. | `0` |
-| `lambda2` | [`Float64`](#doc_Float64) | Sparse coding l2-norm regularization parameter. | `0` |
+| `lambda1` | [`Float64`](#doc_Float64) | Sparse coding l1-norm regularization parameter. | `0.0` |
+| `lambda2` | [`Float64`](#doc_Float64) | Sparse coding l2-norm regularization parameter. | `0.0` |
 | `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
 | `newton_tolerance` | [`Float64`](#doc_Float64) | Tolerance for convergence of Newton method. | `1e-06` |
 | `normalize` | [`Bool`](#doc_Bool) | If set, the input data matrix will be normalized before coding. | `false` |
@@ -3546,8 +3548,8 @@ julia> _, predictions, _ = adaboost(input_model=model,
 ```julia
 julia> using mlpack: linear_regression
 julia> output_model, output_predictions = linear_regression( ;
-          input_model=nothing, lambda=0, test=zeros(0, 0), training=zeros(0, 0),
-          training_responses=Float64[], verbose=false)
+          input_model=nothing, lambda=0.0, test=zeros(0, 0), training=zeros(0,
+          0), training_responses=Float64[], verbose=false)
 ```
 
 An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
@@ -3560,7 +3562,7 @@ An implementation of simple linear regression and ridge regression using ordinar
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
 | `input_model` | [`LinearRegression`](#doc_model) | Existing LinearRegression model to use. | `nothing` |
-| `lambda` | [`Float64`](#doc_Float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `lambda` | [`Float64`](#doc_Float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0.0` |
 | `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing X' (test regressors). | `zeros(0, 0)` |
 | `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing training set X (regressors). | `zeros(0, 0)` |
 | `training_responses` | [`Float64 vector-like`](#doc_Float64_vector_like) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `Float64[]` |

@@ -1,10 +1,11 @@
-# ConfigureRCPP.cmake: generate an mlpack .cpp file for a R binding given
+# ConfigureRcpp.cmake: generate an mlpack .cpp file for a R binding given
 # input arguments.
 #
 # This file depends on the following variables being set:
 #
-#  * PROGRAM_NAME: name of the binding
+#  * PROGRAM_NAME: name of the binding.
 #  * PROGRAM_MAIN_FILE: the file containing the mlpackMain() function.
+#  * PROGRAM_MODEL_PTR_IMPL: do not include model ptr implementation.
 #  * R_CPP_IN: path of the r_method.cpp.in file.
 #  * R_CPP_OUT: name of the output .cpp file.
 include("${SOURCE_DIR}/CMake/StripType.cmake")
@@ -12,18 +13,16 @@ strip_type("${PROGRAM_MAIN_FILE}")
 
 # Extract the required part from *main.cpp.
 # Example: mlpack/methods/adaboost/adaboost_main.cpp
-string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE 
+string(REGEX REPLACE "${SOURCE_DIR}\\/src\\/" "" INCLUDE_FILE
     "${PROGRAM_MAIN_FILE}")
 
-file(READ "${MODEL_FILE}" MODEL_FILE_TYPE)
-if (NOT (MODEL_FILE_TYPE MATCHES "\"${MODEL_SAFE_TYPES}\""))
-  file(APPEND "${MODEL_FILE}" "\"${MODEL_SAFE_TYPES}\"\n")
-  # Now, generate the implementation of the functions we need.
-  set(MODEL_PTR_IMPLS "")
-  list(LENGTH MODEL_TYPES NUM_MODEL_TYPES)
-  # Append content to the list.
-  if (${NUM_MODEL_TYPES} GREATER 0)
-    math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
+# Now, generate the implementation of the functions we need.
+set(MODEL_PTR_IMPLS "")
+list(LENGTH MODEL_TYPES NUM_MODEL_TYPES)
+# Append content to the list.
+if (${NUM_MODEL_TYPES} GREATER 0)
+  math(EXPR LOOP_MAX "${NUM_MODEL_TYPES}-1")
+  if (NOT PROGRAM_MODEL_PTR_IMPL STREQUAL "skip")
     foreach (INDEX RANGE ${LOOP_MAX})
       list(GET MODEL_TYPES ${INDEX} MODEL_TYPE)
       list(GET MODEL_SAFE_TYPES ${INDEX} MODEL_SAFE_TYPE)

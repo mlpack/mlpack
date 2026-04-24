@@ -108,17 +108,26 @@ void PrintR(util::Params& params,
   }
   cout << "#'" << endl;
 
-  // Next print the long description as @details.
-  cout << "#' @details" << endl;
-  cout << "#' ";
-  cout << util::HyphenateString(doc.longDescription(), "#' ") << endl;
-  cout << "#'" << endl;
+  const bool isMainMethodCall =
+    (functionName.find("_predict") == std::string::npos &&
+     functionName.find("_classify") == std::string::npos &&
+     functionName.find("_probabilities") == std::string::npos);
+  // Next print the long description as @details. But only if
+  // we are not a '_predict' or '_classify' or '_probabilities' function
+  if (isMainMethodCall)
+  {
+    cout << "#' @details" << endl;
+    cout << "#' ";
+    cout << util::HyphenateString(doc.longDescription(), "#' ") << endl;
+    cout << "#'" << endl;
+  }
   cout << "#' @author" << endl;
   cout << "#' mlpack developers" << endl;
   cout << "#'" << endl;
 
-  // Next print the example as @examples.
+  // Deal with roxygen2 export of the Rcpp-generated class
   cout << "#' @export" << endl;
+  // Next print the example as @examples.
   if (doc.example.size() != 0)
     cout << "#' @examples" << endl;
   for (size_t j = 0; j < doc.example.size(); ++j)
@@ -219,7 +228,7 @@ void PrintR(util::Params& params,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     if (i == 0)
-       cout << indentStr;
+      cout << indentStr;
     util::ParamData& d = parameters.at(outputOptions[i]);
     params.functionMap[d.tname]["PrintOutputProcessing"](d, NULL, NULL);
     // Print newlines if we are returning multiple output options.
@@ -228,10 +237,22 @@ void PrintR(util::Params& params,
   }
   cout << endl << "  )" << endl << endl;
 
-  // Add binding name as class to the output.
-  cout << "  # Add binding name as class to the output." << endl;
-  cout << "  class(out) <- c(\"mlpack_" << bindingName
-       << "\", \"mlpack_model_binding\", \"list\")" << endl;
+  // If it is a list of one, collapse it
+  if (outputOptions.size() == 1)
+  {
+    cout << "  # If output list is single element, flatten it." << endl;
+    cout << "  out <- out[[1]]" << endl << endl;
+  }
+
+  // If it is a trained / fitted object, class it.
+  if (isMainMethodCall &&
+      functionName.find("preprocess_") == std::string::npos)
+  {
+    // Add binding name as class to the output.
+    cout << "  # Add binding name as class to the output." << endl;
+    cout << "  class(out) <- c(\"mlpack_" << SplitBindingName(bindingName)
+         << "\", \"mlpack_model_binding\", \"list\")" << endl;
+  }
 
   cout << endl;
   cout << "  return(out)" << endl << "}" << endl;

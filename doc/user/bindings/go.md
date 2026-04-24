@@ -3737,7 +3737,7 @@ param := mlpack.PreprocessOneHotEncodingOptions()
 param.Dimensions = 1
 param.Dimensions = 3
 
-X_ouput := mlpack.PreprocessOneHotEncoding(X, param)
+X_output := mlpack.PreprocessOneHotEncoding(X, param)
 ```
 
 ### See also
