@@ -60,6 +60,8 @@
 #include <mlpack/core/metrics/metrics.hpp>
 #include <mlpack/core/tree/tree.hpp>
 #include <mlpack/core/transforms/emd.hpp>
+#include <mlpack/core/transforms/mfe.hpp>
+#include <mlpack/core/transforms/mfcc.hpp>
 
 // Include cross-validation and hyperparameter tuning framework.
 #include <mlpack/core/cv/cv.hpp>
