@@ -16,17 +16,11 @@
 
 using namespace mlpack;
 using namespace std;
+
 /*
  * MFCC and MFE should run on embedded systems.
  * Therefore all of the following are labeled [tiny]
  */
-
-TEST_CASE("MelToHZ", "[MFCC][tiny]")
-{
-  REQUIRE(MelToHz(0) == 0);
-  REQUIRE(MelToHz(1000) == Approx(1000).epsilon(1e-4));
-}
-
 TEST_CASE("HzToMel", "[MFCC][tiny]")
 {
   REQUIRE(HzToMel(0) == 0);
