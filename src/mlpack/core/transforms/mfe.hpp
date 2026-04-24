@@ -14,8 +14,6 @@
 
 #include <mlpack/prereqs.hpp>
 
-namespace mlpack {
-
 /**
 * ========================================
 *          Theoretical Concept.
