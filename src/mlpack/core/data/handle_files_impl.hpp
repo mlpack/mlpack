@@ -177,11 +177,11 @@ inline void AutoDetectFile(std::fstream& stream,
   }
   else if (extension == "wav" || extension == "wave")
   {
-    detectedLoadType = FileType::WAV;
+    opts.Format() = FileType::WAV;
   }
   else if (extension == "mp3")
   {
-    detectedLoadType = FileType::MP3;
+    opts.Format() = FileType::MP3;
   }
 
   else // Unknown extension...
