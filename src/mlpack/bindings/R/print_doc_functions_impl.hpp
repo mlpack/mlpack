@@ -14,7 +14,7 @@
 #define MLPACK_BINDINGS_R_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "wrapper_functions.hpp"
+// #include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -489,15 +489,17 @@ inline std::string CreateObject(const std::string& bindingName,
 
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
-                       const std::string& /* objectName */,
-                       const std::string& /* methodName */,
+                       const std::string& objectName,
+                       const std::string& methodName,
                        Args... args)
 {
+  std::cout << "#' ## bindingName: " << bindingName << " objectName: " << objectName << " methodName: " << methodName << std::endl;
   util::Params params = IO::Parameters(bindingName);
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
 
   // find out if there are any output options.
+  /*
   for (auto it = parameters.begin(); it != parameters.end(); it++)
   {
     if (it->second.input)
@@ -506,9 +508,25 @@ std::string CallMethod(const std::string& bindingName,
   }
   if (callMethod != "")
     callMethod = callMethod.substr(0, callMethod.size()-2);
+  */
+  if (methodName == "train")
+  {
+    callMethod += objectName;
+    callMethod += " <- " + bindingName + "(";
+  }
+  else if (methodName == "classify" ||
+           methodName == "predict" ||
+           methodName == "probabilities")
+  {
+    callMethod += (methodName != "probabilities" ? "pred" : "prob");
+    callMethod += " <- " +
+      (methodName == "train" ? bindingName : "predict") +
+      "(" + objectName + ", ";
+  }
   // no need for R;  " " + GetMappedName(methodName) +
-  callMethod += " <- " + bindingName + "(";
   callMethod += PrintInputOptions(params, args...);
+  if (methodName == "probabilities")
+    callMethod += ", type=\"probabilities\"";
   callMethod += ")";
   return util::HyphenateString(callMethod, 2);
 }
