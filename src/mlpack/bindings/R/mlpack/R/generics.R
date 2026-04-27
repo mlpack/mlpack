@@ -9,14 +9,6 @@ print.mlpack_model_binding <- function(x, ...) {
 #' @param newdata A test data set
 #' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
-#' @examples
-#' data(iris)
-#' pp <- preprocess_split(input=iris[,1:4], input_label=as.matrix(as.integer(iris[,5])))
-#' trn <- adaboost_train(training = pp$training, labels = pp$training_labels)
-#' trn
-#' tst <- predict(trn, pp$test)
-#' table(tst)
-#' table(levels(iris[,5])[tst])
 #' @export
 predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
@@ -37,15 +29,6 @@ predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "prob
 #' @param newdata A test data set
 #' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
-#' @examples
-#' data(iris)
-#' pp <- preprocess_split(input=iris[,1:4], input_label=as.matrix(as.integer(iris[,5])))
-#' trn <- logistic_regression_train(training = pp$training,
-#'                                  labels = as.matrix(as.integer(pp$training_labels == 2) + 1))
-#' trn
-#' tst <- predict(trn, pp$test)
-#' table(tst)
-#' table(levels(iris[,5])[tst])
 #' @export
 predict.mlpack_logistic_regression <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
@@ -65,13 +48,6 @@ predict.mlpack_logistic_regression <- function(object, newdata, type=c("predicti
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param ... Additional optional arguments affecting the prediction
-#' @examples
-#' data(mtcars)
-#' pp <- preprocess_split(input=mtcars[,-1], input_label=as.matrix(as.integer(mtcars[,1])))
-#' trn <- linear_regression_train(training = pp$training, training_responses = pp$training_labels)
-#' trn
-#' tst <- predict(trn, pp$test)
-#' tst
 #' @export
 predict.mlpack_linear_regression <- function(object, newdata, ...) {
     if (missing(newdata)) {
@@ -85,13 +61,6 @@ predict.mlpack_linear_regression <- function(object, newdata, ...) {
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param ... Additional optional arguments affecting the prediction
-#' @examples
-#' data(mtcars)
-#' pp <- preprocess_split(input=mtcars[,-1], input_label=as.matrix(as.integer(mtcars[,1])))
-#' trn <- lars_train(input = pp$training, responses = pp$training_labels)
-#' trn
-#' tst <- predict(trn, t(pp$test))
-#' tst
 #' @export
 predict.mlpack_lars <- function(object, newdata, ...) {
     if (missing(newdata)) {

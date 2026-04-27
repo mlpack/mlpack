@@ -471,13 +471,13 @@ inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& splitRatio)
 {
   return std::string("pp <- preprocess_split(input=") + datasetName +
-    ", input_label=as.matrix(" + labelName + "[[1]])" +
+    ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
     ", test_ratio=" + splitRatio + ")\n" +
-    "X_train <- pp$training\n" +
-    "X_test <- pp$test\n" +
+    "X_train <- pp[[\"training\"]]\n" +
+    "X_test <- pp[[\"test\"]]\n" +
     "# labels are indices to operate on both factors or numeric data\n" +
-    "y_train <- " + labelName + "[as.integer(pp$training_label), 1]\n" +
-    "y_test <- " + labelName + "[as.integer(pp$test_label), 1]";
+    "y_train <- " + labelName + "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
+    "y_test <- " + labelName + "[as.integer(pp[[\"test_labels\"]]), 1]";
 }
 
 template<typename... Args>
