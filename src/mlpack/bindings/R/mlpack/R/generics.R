@@ -4,7 +4,7 @@ print.mlpack_model_binding <- function(x, ...) {
     cat("<mlpack object of class '", class(x)[1], "'>\n", sep="")
 }
 
-#' @rdname adaboost_train
+#' @rdname adaboost_classify
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param type A character value selection predictions or probabilities
@@ -24,7 +24,7 @@ predict.mlpack_adaboost <- function(object, newdata, type=c("predictions", "prob
     }
 }
 
-#' @rdname logistic_regression_train
+#' @rdname logistic_regression_classify
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param type A character value selection predictions or probabilities
@@ -44,7 +44,7 @@ predict.mlpack_logistic_regression <- function(object, newdata, type=c("predicti
     }
 }
 
-#' @rdname linear_regression_train
+#' @rdname linear_regression_predict
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param ... Additional optional arguments affecting the prediction
@@ -57,7 +57,7 @@ predict.mlpack_linear_regression <- function(object, newdata, ...) {
     res
 }
 
-#' @rdname lars_train
+#' @rdname lars_predict
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
 #' @param ... Additional optional arguments affecting the prediction
