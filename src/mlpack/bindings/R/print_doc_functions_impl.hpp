@@ -438,7 +438,7 @@ inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no external libraries are loaded.
-  return std::string("suppressMessages(library(mlpack)) "
+  return std::string("\\dontrun{\nsuppressMessages(library(mlpack)) "
     " # in case 'mlpack' it is not yet loaded");
 }
 
@@ -515,6 +515,7 @@ std::string CallMethod(const std::string& bindingName,
            methodName == "predict" ||
            methodName == "probabilities")
   {
+    callMethod += "\\dontrun{ ";
     callMethod += (methodName != "probabilities" ? "pred" : "prob");
     callMethod += " <- " +
       (methodName == "train" ? bindingName : "predict") +
@@ -524,6 +525,11 @@ std::string CallMethod(const std::string& bindingName,
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
   callMethod += ")";
+  if (methodName == "train")
+    callMethod += "\n";
+  else
+    callMethod += " ";
+  callMethod += "}";
   return util::HyphenateString(callMethod, 2);
 }
 
