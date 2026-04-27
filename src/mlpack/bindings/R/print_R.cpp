@@ -143,15 +143,15 @@ void PrintR(util::Params& params,
       if (splitpos == std::string::npos || splitpos > str.length())
       {
         splitpos = str.length();
-        cout << "#' # " <<
-          util::HyphenateString(str.substr(pos, (splitpos - pos)), "#' # ");
+        cout << "#' " <<
+          util::HyphenateString(str.substr(pos, (splitpos - pos)), "#' ");
         break;
       }
       if (splitpos != 0 && pos == 0)
         cout << "#' # ";
       // Print comments in the "example", if there is available.
       cout << util::HyphenateString(str.substr(pos, (splitpos - pos)),
-              "#' # ", true);
+              "#' ", true);
       // Find where example ends.
       pos = str.find("\n}", pos) + 3;
       // Here length of example might be less 80, we must handle this carefully.

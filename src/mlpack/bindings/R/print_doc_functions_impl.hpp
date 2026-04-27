@@ -1,6 +1,7 @@
 /**
  * @file bindings/R/print_doc_functions_impl.hpp
  * @author Yashwant Singh Parihar
+ * @author Dirk Eddelbuettel
  *
  * This file contains functions useful for printing documentation strings
  * related to R bindings.
@@ -14,7 +15,6 @@
 #define MLPACK_BINDINGS_R_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
-// #include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -128,7 +128,10 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Recursion base case.
  */
-std::string PrintInputOptions(util::Params& /* p */) { return ""; }
+std::string PrintInputOptions(util::Params& /* p */)
+{
+  return "";
+}
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -435,56 +438,62 @@ inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no external libraries are loaded.
-  return "no external library needed";
+  return std::string("suppressMessages(library(mlpack)) "
+    " # in case 'mlpack' it is not yet loaded");
 }
 
 inline std::string ImportSplit()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no additional library are loaded.
-  return "no additional library needed";
+  return "";
 }
 
-inline std::string ImportThis(const std::string& groupName)
+inline std::string ImportThis(const std::string& /* groupName */)
 {
   // This function has to exist to satisfy the cross-language macro.
-  // For R, we do no need anything here as the function should be accessible.
-  return "Example for " + groupName;
+  // For R, we use it to load data.table for its fread() function
+  return std::string("suppressMessages(library(data.table)) # for fread()");
 }
 
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url)
 {
-  return "Getting " + datasetName + " from " + url;
+  return datasetName + " <- fread(\"" + url + "\", showProgress=FALSE)";
 }
 
-inline std::string SplitTrainTest(const std::string& /* datasetName */,
-                                  const std::string& /* labelName */,
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
                                   const std::string& /* trainDataset */,
                                   const std::string& /* trainLabels */,
                                   const std::string& /* testDataset */,
                                   const std::string& /* testLabels */,
-                                  const std::string& /* splitRatio */)
+                                  const std::string& splitRatio)
 {
-  return "Splitting data....";
+  return std::string("pp <- preprocess_split(input=") + datasetName +
+    ", input_label=as.matrix(" + labelName + "[[1]])" +
+    ", test_ratio=" + splitRatio + ")\n" +
+    "X_train <- pp$training\n" +
+    "X_test <- pp$test\n" +
+    "# labels are indices to operate on both factors or numeric data\n" +
+    "y_train <- " + labelName + "[as.integer(pp$training_label), 1]\n" +
+    "y_test <- " + labelName + "[as.integer(pp$test_label), 1]";
 }
 
 template<typename... Args>
-std::string CreateObject(const std::string& bindingName,
-                         const std::string& objectName,
-                         const std::string& groupName,
-                         Args... args)
+std::string CreateObject(const std::string& /* bindingName */,
+                         const std::string& /* objectName */,
+                         const std::string& /* groupName */,
+                         Args... /* args */)
 {
-  return "CreatingA " + bindingName + " " + objectName +
-    " " + groupName;
+  return "";
 }
 
-inline std::string CreateObject(const std::string& bindingName,
-                                const std::string& objectName,
-                                const std::string& groupName)
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */ )
 {
-  return "CreatingB " + bindingName + " " + objectName +
-    " " + groupName;
+  return "";
 }
 
 template<typename... Args>
@@ -493,22 +502,10 @@ std::string CallMethod(const std::string& bindingName,
                        const std::string& methodName,
                        Args... args)
 {
-  std::cout << "#' ## bindingName: " << bindingName << " objectName: " << objectName << " methodName: " << methodName << std::endl;
   util::Params params = IO::Parameters(bindingName);
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
 
-  // find out if there are any output options.
-  /*
-  for (auto it = parameters.begin(); it != parameters.end(); it++)
-  {
-    if (it->second.input)
-      continue;
-    callMethod += it->first + ", ";
-  }
-  if (callMethod != "")
-    callMethod = callMethod.substr(0, callMethod.size()-2);
-  */
   if (methodName == "train")
   {
     callMethod += objectName;
@@ -523,7 +520,6 @@ std::string CallMethod(const std::string& bindingName,
       (methodName == "train" ? bindingName : "predict") +
       "(" + objectName + ", ";
   }
-  // no need for R;  " " + GetMappedName(methodName) +
   callMethod += PrintInputOptions(params, args...);
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
