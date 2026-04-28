@@ -49,7 +49,7 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
       (arma::pow(10.0 * arma::ones<arma::Col<eT>>(numPoints),
       melPoints / 2595.0) - 1.0);
 #else
-  arma::Col<eT> tens(numPoints, fill::value(10));
+  arma::Col<eT> tens(numPoints, arma::fill::value(10));
   arma::Col<eT> hzPoints = 700.0 * (arma::pow(tens, (melPoints / 2595.0)) - 1.0);
 #endif
 
