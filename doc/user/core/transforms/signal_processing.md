@@ -1,10 +1,8 @@
 # Signal processing
 
 mlpack provides several signal processing techniques that allows to extract
-features from non stationary non linear variable frequency signals and from
-stationary linear signals convering the following techniques:
+features from stationary and non-stationary signals:
 
-* Transformation: provided with `arma::fft()` and `mlpack::DCT()`.
 * Decomposition: provided with `mlpack::EMD()`.
 * Feature Extraction: provided with `mlpack::MFE()` and `mlpack::MFCC()`.
 
@@ -107,21 +105,15 @@ for (size_t k = 0; k < numToShow; ++k)
 }
 ```
 
-## Audio Feature Extraction
+## MFE
 
-mlpack provides the `MFE()` and `MFCC()` functions to extract standard audio
+mlpack provides the `MFE()` functions to extract standard audio
 features from raw PCM data loaded with [`Load()`](#load).  These features are
 used as input to machine learning models for speech recognition, speaker identification,
-keyword spotting, and other audio related piplines.
+keyword spotting
 
  - **MFE** (Mel-Frequency Energy): log-scaled energies from a bank of
    triangular filters spaced on the mel scale.
- - **MFCC** (Mel-Frequency Cepstral Coefficients): a compact representation
-   obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
-
-MFCC is a superset of MFE, the MFE pipeline produces the first step as an
-intermidiate representation, and a single additional DCT step to generate MFCC
-coefficients.
 
 #### See also:
 
@@ -133,20 +125,33 @@ coefficients.
 
 ## `MFE()`
 
- - `MFE(signal, sampleRate, output)`
-   * Extract log-mel filterbank energies from `signal` using default parameters.
+ - `MFE(signals, output, sampleRate, numMelFilters=40, windowLength=25,
+   windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
+   * Extract log-mel filterbank energies.
 
- - `MFE(signal, sampleRate, output, numMelFilters, windowLength, windowStep,
-   nFFT, lowFreq, highFreq)`
-   * Extract log-mel filterbank energies depending on the user specified
-     parameters.
+   * `signals` input matrix contains a columm wise represented signals.
+   
+   * `mfe` output matrix of shape `(numMelFilters x numWindows)`
+
+   * `sampleRate` provided by `AudioOptions` after loading audio data.
+
+   * If the audio signal was loaded as an integral type, you can either
+     change the loading code to load directly into a floating-point type matrix, or
+     use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+
+   * If the audio signal has multiple channels, the channels must be
+     de-interleaved before calling `MFE()` with each column representing a separate
+     channel.  This preserves spatial information (e.g., which sounds come from the
+     left vs. right).  If spatial information is not needed, the channels can be
+     mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
+     Both cases are demonstrated in the examples below.
 
 ### Functions Parameters:
 
 |     **name**     |  **type**   |   **default**  | **description**                                         |
 |------------------|-------------|----------------|---------------------------------------------------------|
-| `signal`         | `arma::mat` | _(n/a)_ | raw pcm audio samples.                                         |
-| `output`         | `arma::mat` | _(n/a)_ | output matrix of shape `(nummelfilters x numwindows)`.         |
+| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | raw pcm audio samples.                                         |
+| `mfe`            | `arma::mat` or other floating point matrix | _(n/a)_ | output matrix of shape `(numMelFilters x numWindows)`.         |
 | `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`).        |
 | `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters. Typical range (`20` to `100`) |
 | `windowLength`   | `float`     | `25.0`  | window length in milliseconds.  Typical range (`20` to `40`)           |
@@ -154,17 +159,6 @@ coefficients.
 | `nFFT`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
 | `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`) |
 | `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
-
-***Note:*** if the audio signal was loaded as an integral type, you can either
-change the loading code to load directly into a floating-point type matrix, or
-use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
-
-***Note:*** If the audio signal has multiple channels, the channels must be
-de-interleaved before calling `MFE()` with each column representing a separate
-channel.  This preserves spatial information (e.g., which sounds come from the
-left vs. right).  If spatial information is not needed, the channels can be
-mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
-Both cases are demonstrated in the examples below.
 
 ---
 
@@ -200,18 +194,53 @@ mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
 
 ## `MFCC()`
 
- - `MFCC(signal, sampleRate, output)`
-   * Extract 13 MFCC coefficients from `signal` with default parameters.
+mlpack provides the `MFCC()` functions to extract standard audio
+features from raw PCM data loaded with [`Load()`](#load).  Similar to MFE, MFCC
+output can be used as input to machine learning models. Note that, since MFCC
+coefficient are decorrelated, it can be combined with several distance-based 
+machine learning algorithms (e.g., KNN, KMeans) or probabilitic algorithms
+(e.g., GMM, HMM).
 
- - `MFCC(signal, output, sampleRate, numCoeffs, numMelFilters, windowLength,
+ - **MFCC** (Mel-Frequency Cepstral Coefficients): a compact representation
+   obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
+
+MFCC is a superset of MFE, the MFE pipeline produces the first step as an
+intermidiate representation, and a single additional DCT step to generate MFCC
+coefficients.
+
+ - `MFCC(signals, output, sampleRate, numCoeffs, numMelFilters, windowLength,
    windowStep, nFFT, lowFreq, highFreq)`
    * Extract MFCC with different number coefficients dependings on the user specified
-     parameters.
+ 
+   * `signals` input matrix contains a columm wise represented signals.
+   
+   * `mfcc` output matrix of shape `(numCoeffs x numWindows)`
+
+   * `sampleRate` provided by `AudioOptions` after loading audio data.
+    parameters.
+
+   * if the audio signal was loaded as an integral type, you can either
+     change the loading code to load directly into a floating-point type matrix, or
+     use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+
+   * If the audio signal has multiple channels, the channels must be
+     de-interleaved before calling `MFCC()` with each column representing a separate
+     channel.  This preserves spatial information (e.g., which sounds come from the
+     left vs. right).  If spatial information is not needed, the channels can be
+     mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
+     Both cases are demonstrated in the examples below.
+
+   * `numCoeffs` must be less than or equal to `numMelFilters`.  The
+     DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
+     coefficients — it cannot produce more coefficients than there are input
+     values.
+
+### Functions Parameters:
 
 |     **name**     |  **type**   |   **default**  | **description**                                  |
 |------------------|-------------|----------------|--------------------------------------------------|
-| `signal`         | `arma::mat` | _(n/a)_ | raw pcm audio samples.                                  |
-| `output`         | `arma::mat` | _(n/a)_ | output matrix of shape `(nummelfilters x numwindows)`.  |
+| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | raw pcm audio samples.                                  |
+| `mfcc`           | `arma::mat` or other floating point matrix | _(n/a)_ | output matrix of shape `(numMelFilters x numWindows)`.  |
 | `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`). |
 | `numCoeff`       | `size_t`    | _(n/a)_ | Number of cepstral coefficients.                        |
 | `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters.  Typical range (`20` to `100`)    |
@@ -220,22 +249,6 @@ mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
 | `nFft`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
 | `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`)      |
 | `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
-
-***Note:*** if the audio signal was loaded as an integral type, you can either
-change the loading code to load directly into a floating-point type matrix, or
-use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
-
-***Note:*** If the audio signal has multiple channels, the channels must be
-de-interleaved before calling `MFCC()` with each column representing a separate
-channel.  This preserves spatial information (e.g., which sounds come from the
-left vs. right).  If spatial information is not needed, the channels can be
-mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
-Both cases are demonstrated in the examples below.
-
-**Note:*** `numCoeffs` must be less than or equal to `numMelFilters`.  The
-DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
-coefficients — it cannot produce more coefficients than there are input
-values.
 
 ---
 
