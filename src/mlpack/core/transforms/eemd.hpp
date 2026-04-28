@@ -90,9 +90,17 @@ inline void EEMD(const ColType& signal,
 #else
     const size_t threadId = 0;
 #endif
+    // Workaround for older Armadillo versions without per-thread random seed.
+    // Copied from random_forest_impl.hpp
+    #if (ARMA_VERSION_MAJOR * 100000 + ARMA_VERSION_MINOR * 100 + \
+            ARMA_VERSION_PATCH < 1200602) // 12.6.2
+      #ifndef MLPACK_DONT_OVERWRITE_ARMA_RNG_SEEDS
+      arma::arma_rng::set_seed(RandGen()());
+      #endif
+    #endif
 
     MatType& localAccum = partialImfs[threadId];
-    size_t localMin = maxImfs;
+    size_t localMin = partialMinImfs[threadId];
 
     ColType noisySignal = signal + noiseScale * randn<ColType>(N);
     MatType imfsNoisy;
