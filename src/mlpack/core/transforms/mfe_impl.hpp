@@ -44,9 +44,14 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
   arma::Col<eT> melPoints = arma::linspace<arma::Col<eT>>(melLow, melHigh,
       numPoints);
 
+#if ARMA_VERSION_MAJOR >= 14
   arma::Col<eT> hzPoints = 700.0 *
       (arma::pow(10.0 * arma::ones<arma::Col<eT>>(numPoints),
       melPoints / 2595.0) - 1.0);
+#else
+  arma::Col<eT> tens(numPoints, fill::value(10));
+  arma::Col<eT> hzPoints = 700.0 * (arma::pow(tens, (melPoints / 2595.0)) - 1.0);
+#endif
 
   arma::Col<eT> binFreqHz = arma::regspace<arma::Col<eT>>(0, numBins - 1)
       * sampleRate / nFFT;
@@ -115,17 +120,20 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
         / stepsInSamples + 1;
   }
 
+  arma::Col<eT> hWindow = HammingWindow<eT>(windowLength);
+
   mfe.set_size(numMelFilters, totalWindows);
 
   size_t colOffset = 0;
+
   // Benchmarking on one signal for now.
   for (size_t i = 0; i < inputSignal.n_cols; ++i)
   {
     arma::Mat<eT> slidingWindows;
     arma::Mat<eT> power;
 
-    SlidingWindow(inputSignal.col(i), slidingWindows, lengthInSamples,
-        stepsInSamples);
+    SlidingWindow(inputSignal.col(i), slidingWindows, hWindow,
+        lengthInSamples, stepsInSamples);
 
     t2 = std::chrono::high_resolution_clock::now();
     PowerSpectrum(slidingWindows, power, nFFT);
@@ -193,12 +201,10 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
 template<typename MatType, typename eT>
 inline void SlidingWindow(const MatType& signal,
                           arma::Mat<eT>& windows,
+                          arma::Col<eT>& hWindow,
                           size_t windowLength,
                           size_t windowStep)
 {
-  // Elapsed: 32770 ms Best so far
-  arma::Col<eT> hWindow = HammingWindow<eT>(windowLength);
-
   if (signal.n_elem < windowLength)
   {
     windows.set_size(windowLength, 1);
