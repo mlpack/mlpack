@@ -25,8 +25,7 @@ namespace mlpack {
  *     D[n][k] = cos(π · n · (k + 0.5) / M)
  *
  * Multiplying this matrix by a column of log-mel energies yields the
- * cepstral coefficients.  Constructed using vectorised outer-product-style
- * operations.
+ * cepstral coefficients.
  */
 template<typename eT>
 inline arma::Mat<eT> DCTMatrix(size_t numCoeffs, size_t numFilters);
@@ -52,7 +51,7 @@ inline arma::Mat<eT> DCTMatrix(size_t numCoeffs, size_t numFilters);
  * @param mfcc          Result matrix of shape (numCoeffs x totalWindows).
  * @param sampleRate    Sample rate in Hz.
  * @param numCoeffs     Number of cepstral coefficients.
- * @param numMelFilters Number of mel bands (must be > than numCoeffs).
+ * @param numMelFilters Number of mel bands (must be >= than numCoeffs).
  * @param windowLength  Window length in milliseconds.
  * @param windowStep    Window hop in milliseconds.
  * @param nFFT          Number of FFT points.
