@@ -52,12 +52,6 @@ class ImageOptions : public DataOptionsBase<ImageOptions>
     // Do nothing.
   }
 
-  ImageOptions(const DataOptions& opts) :
-      DataOptionsBase<ImageOptions>(opts)
-  {
-    // Do nothing.
-  }
-
   ImageOptions(const DataOptionsBase<ImageOptions>& opts) :
       DataOptionsBase<ImageOptions>()
   {
