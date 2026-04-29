@@ -30,6 +30,12 @@ inline eT HzToMel(eT hz)
 }
 
 template<typename eT>
+inline eT MelToHz(eT hz)
+{
+  return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0); 
+}
+
+template<typename eT>
 inline arma::Mat<eT> MelFilterbank(size_t numFilters,
                                    size_t nFFT,
                                    size_t sampleRate,
@@ -44,14 +50,18 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
   arma::Col<eT> melPoints = arma::linspace<arma::Col<eT>>(melLow, melHigh,
       numPoints);
 
-#if ARMA_VERSION_MAJOR >= 14
+#if ARMA_VERSION_MAJOR > 12
   arma::Col<eT> hzPoints = 700.0 *
       (arma::pow(10.0 * arma::ones<arma::Col<eT>>(numPoints),
       melPoints / 2595.0) - 1.0);
 #else
-  arma::Col<eT> tens(numPoints, arma::fill::value(10));
-  arma::Col<eT> exponents = melPoints / 2595.0;
-  arma::Col<eT> hzPoints = 700.0 * (arma::pow(tens, exponents) - 1.0);
+  // Armadillo does not have a pow(vec, vec) function before v12, the only
+  // function available is pow(vec, scalar)
+  // Since the numPoints is usually low, the cost of iterations is
+  // insignificant.
+  arma::Col<eT> hzPoints(numPoints);
+  for (size_t i = 0; i < numPoints; ++i)
+    hzPoints(i) = MelToHz(melPoints(i));
 #endif
 
   arma::Col<eT> binFreqHz = arma::regspace<arma::Col<eT>>(0, numBins - 1)
@@ -106,6 +116,10 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   if (nFFT == 0)
     nFFT = NextPowerOf2(lengthInSamples);
 
+  if (nFFT < lengthInSamples)
+    Log::Fatal << "MFE(): nFFT cannott be lower than window length in samples.\n"
+               << "nFFT needs to be >= windowLength x sampleRate." << std::endl;
+
   size_t numBins = nFFT / 2 + 1;
 
   t0 = std::chrono::high_resolution_clock::now();
@@ -133,8 +147,8 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     arma::Mat<eT> slidingWindows;
     arma::Mat<eT> power;
 
-    SlidingWindow(inputSignal.col(i), slidingWindows, hWindow,
-        lengthInSamples, stepsInSamples);
+    SlidingWindow(inputSignal.col(i), slidingWindows, hWindow, nFFT,
+        stepsInSamples);
 
     t2 = std::chrono::high_resolution_clock::now();
     PowerSpectrum(slidingWindows, power, nFFT);
