@@ -16,7 +16,7 @@ in nonlinear and nonstationary problems.
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
 from a uniformly sampled periodic signal.
 
-- `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
+- `EMD(signal, imfs, residue, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
    * `signal` is a [column vector](../../matrices.md#representing-data-in-mlpack) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
