@@ -30,7 +30,7 @@ inline eT HzToMel(eT hz)
 }
 
 template<typename eT>
-inline eT MelToHz(eT hz)
+inline eT MelToHz(eT mel)
 {
   return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0); 
 }
@@ -135,7 +135,8 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
         / stepsInSamples + 1;
   }
 
-  arma::Col<eT> hWindow = HammingWindow<eT>(windowLength);
+  // Needs to be matching windows length in SlidingWindow
+  arma::Col<eT> hWindow = HammingWindow<eT>(nFFT);
 
   mfe.set_size(numMelFilters, totalWindows);
 

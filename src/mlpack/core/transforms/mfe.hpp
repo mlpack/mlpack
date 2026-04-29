@@ -76,7 +76,7 @@ inline eT HzToMel(eT hz);
  * Convert Mel scale into HZ frequencies.
  */
 template<typename eT>
-inline eT MelToHz(eT hz);
+inline eT MelToHz(eT mel);
 
 /**
  * Build a mel-scaled triangular filterbank matrix.
