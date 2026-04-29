@@ -16,8 +16,6 @@ in nonlinear and nonstationary problems.
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
 from a uniformly sampled periodic signal.
 
-#### `EMD()` Parameters
-
 - `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
    * `signal` is a [column vector](../../matrices.md#representing-data-in-mlpack) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
@@ -43,7 +41,7 @@ from a uniformly sampled periodic signal.
 
    * Sifting will terminate when zero-crossings and extrema are equal or
      differing by at most one. Specifically, the S-number is set to S=1.
-    
+ 
    * A smaller tolerance sets a stricter stopping criterion. The algorithm will
      terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
      whichever occurs first.
@@ -107,8 +105,6 @@ for (size_t k = 0; k < numToShow; ++k)
 The `EEMD()` function wraps [`EMD()`](#emd) to output more robust IMFs by using an
 ensemble approach.
 
-#### `EEMD()` Parameters
-
 - `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
 
    * `ensSize` (of type `size_t`) is the number of members in the ensemble
@@ -162,3 +158,4 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
  * [Ensemble Empirical Mode Decomposition](https://www.worldscientific.com/doi/abs/10.1142/S1793536909000047) (original EEMD paper)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
