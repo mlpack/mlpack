@@ -129,7 +129,7 @@ ensemble approach.
    averaging. Depending on the application, users may want to discard negligible
    IMFs in post-processing (e.g., using an energy-fraction threshold).
 
-   * The number of returned IMFs is bounded between 0 and `maxImfs`.
+   * The number of returned IMFs is bounded between `0` and `maxImfs`.
      The algorithm returns only as many IMFs as can actually be extracted from
      the input signal.
 
@@ -156,6 +156,6 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
 #### See also:
 
- * [Ensemble Empirical Mode Decomposition](https://www.worldscientific.com/doi/abs/10.1142/S1793536909000047) (original EEMD paper)
+ * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
 
