@@ -105,11 +105,11 @@ for (size_t k = 0; k < numToShow; ++k)
 ## EEMD
 
 The `EEMD()` function wraps [`EMD()`](#emd) to output more robust IMFs by using an
-ensemble approach:
+ensemble approach.
 
 #### `EEMD()` Parameters
 
-- `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
+- `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
 
    * `ensSize` (of type `size_t`) is the number of members in the ensemble
     (that is the number of `EMD()` runs to be averaged).
@@ -127,7 +127,7 @@ ensemble approach:
       residue, as in `EMD()`.
 
    * Number of extracted IMFs will be the minimum number of IMFs extracted by
-     by `EMD()` across all `ensSize` runs (<=`maxImfs`).
+     by `EMD()` across all `ensSize` runs (`<=maxImfs`).
 
    * EEMD may produce low-energy leading IMFs due to injected noise and ensemble
    averaging. Depending on the application, users may want to discard negligible
@@ -160,5 +160,5 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
 #### See also:
 
- * Wu, Z., Huang, N. E. (2009). Ensemble empirical mode decomposition: a noise-assisted data analysis method. Adv. Adapt. Data Anal., 1(1), 1–41. (original EEMD paper)
+ * [Ensemble Empirical Mode Decomposition](https://www.worldscientific.com/doi/abs/10.1142/S1793536909000047) (original EEMD paper)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
