@@ -13,7 +13,6 @@
 #define MLPACK_CORE_TRANSFORMS_EEMD_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/transforms/spline_envelope.hpp>
 #include <mlpack/core/transforms/emd.hpp>
 
 namespace mlpack {
