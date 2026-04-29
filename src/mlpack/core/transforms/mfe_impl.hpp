@@ -50,7 +50,8 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
       melPoints / 2595.0) - 1.0);
 #else
   arma::Col<eT> tens(numPoints, arma::fill::value(10));
-  arma::Col<eT> hzPoints = 700.0 * (arma::pow(tens, (melPoints / 2595.0)) - 1.0);
+  arma::Col<eT> exponents = melPoints / 2595.0;
+  arma::Col<eT> hzPoints = 700.0 * (arma::pow(tens, exponents) - 1.0);
 #endif
 
   arma::Col<eT> binFreqHz = arma::regspace<arma::Col<eT>>(0, numBins - 1)
