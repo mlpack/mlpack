@@ -1,6 +1,7 @@
 /**
  * @file bindings/R/print_doc_functions.hpp
  * @author Yashwant Singh Parihar
+ * @author Dirk Eddelbuettel
  *
  * This file contains functions useful for printing documentation strings
  * related to R bindings.
@@ -142,7 +143,7 @@ std::string CreateObject(const std::string& /* bindingName */,
 
 inline std::string CreateObject(const std::string& /* bindingName */,
                                 const std::string& /* objectName */,
-                                const std::string& /* groupName */ );
+                                const std::string& /* groupName */);
 
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
