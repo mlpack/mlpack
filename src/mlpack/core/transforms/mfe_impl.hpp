@@ -87,7 +87,6 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
   return melFilterbank;
 }
 
-
 template<typename eT>
 inline void MFE(const arma::Mat<eT>& inputSignal,
                 arma::Mat<eT>& mfe,
@@ -101,8 +100,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
                 const typename std::enable_if_t<
                     std::is_floating_point<eT>::value>*)
 {
-  std::chrono::time_point<std::chrono::high_resolution_clock> t0, t1, t2, t3, t4;
-
   if (highFreq == 0.0f)
     highFreq = sampleRate / 2.0f;
 
@@ -117,17 +114,14 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     nFFT = NextPowerOf2(lengthInSamples);
 
   if (nFFT < lengthInSamples)
-    Log::Fatal << "MFE(): nFFT cannott be lower than window length in samples.\n"
+    Log::Fatal << "MFE(): nFFT cannot be lower than window length in samples.\n"
                << "nFFT needs to be >= windowLength x sampleRate." << std::endl;
 
   size_t numBins = nFFT / 2 + 1;
 
-  t0 = std::chrono::high_resolution_clock::now();
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numMelFilters, nFFT, sampleRate,
       lowFreq, highFreq);
   
-  t1 = std::chrono::high_resolution_clock::now();
-
   size_t totalWindows = 0;
   for (size_t i = 0; i < inputSignal.n_cols; ++i)
   {
@@ -151,10 +145,8 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     SlidingWindow(inputSignal.col(i), slidingWindows, hWindow, nFFT,
         stepsInSamples);
 
-    t2 = std::chrono::high_resolution_clock::now();
     PowerSpectrum(slidingWindows, power, nFFT);
 
-    t3 = std::chrono::high_resolution_clock::now();
     // Adding a small value 1e-10 so we do not take the log of 0, in case the
     // multiplication results in zero.
     mfe.cols(colOffset, colOffset + power.n_cols - 1) =
@@ -162,13 +154,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
 
     colOffset += power.n_cols;
 
-    t4 = std::chrono::high_resolution_clock::now();
   }
-
-  std::cout << "MelFilterBanks: " << std::chrono::duration<double, std::milli>(t1-t0).count() << std::endl;
-  std::cout << "SlidingWindow: "  << std::chrono::duration<double, std::milli>(t2-t1).count() << std::endl;
-  std::cout << "FFT:           "  << std::chrono::duration<double, std::milli>(t3-t2).count() << std::endl;
-  std::cout << "Log:           "  << std::chrono::duration<double, std::milli>(t4-t3).count() << std::endl;
 }
 
 template<typename eT>
