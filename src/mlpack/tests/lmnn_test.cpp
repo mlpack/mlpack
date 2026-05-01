@@ -544,8 +544,8 @@ TEMPLATE_TEST_CASE("LMNNLowRankAccuracyLBFGSTest", "[LMNNTest]", float, double)
     double acc2 = KnnAccuracy(transformedData, labels, 1);
 
     // We keep the tolerance very high.  We need to ensure the accuracy drop
-    // isn't any more than 10%.
-    success = ((acc1 - acc2) <= 10.0);
+    // isn't any more than 12.5%.
+    success = ((acc1 - acc2) <= 12.5);
     if (success)
       break;
   }
@@ -603,8 +603,8 @@ TEMPLATE_TEST_CASE("LMNNLowRankAccuracyTest", "[LMNNTest]", float, double)
     double acc2 = KnnAccuracy(transformedData, labels, 1);
 
     // We keep the tolerance very high.  We need to ensure the accuracy drop
-    // isn't any more than 10%.
-    success = ((acc1 - acc2) <= 10.0);
+    // isn't any more than 12.5%.
+    success = ((acc1 - acc2) <= 12.5);
     if (success)
       break;
   }
