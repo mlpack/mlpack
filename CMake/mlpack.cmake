@@ -288,7 +288,7 @@ macro(find_armadillo)
 
     if (EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
-      # Read and parse armdillo version header file for version number
+      # Read and parse Armadillo version header file for version number
       file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _ARMA_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
       string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_ARMA_HEADER_CONTENTS}")
       string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_ARMA_HEADER_CONTENTS}")
@@ -323,10 +323,9 @@ macro(find_armadillo)
         "$ENV{ProgramFiles}/Armadillo/lib"
         "$ENV{ProgramFiles}/Armadillo/lib64"
         "$ENV{ProgramFiles}/Armadillo"
+      REQUIRED
       )
     set(_ARMA_REQUIRED_VARS ARMADILLO_LIBRARY)
-  else()
-    set(ARMADILLO_LIBRARY "")
   endif()
 
   # Transitive linking with the wrapper does not work with MSVC,
@@ -351,6 +350,10 @@ macro(find_armadillo)
   if (ARMADILLO_FOUND)
     set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
     set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+
+    find_package_handle_standard_args(armadillo
+        REQUIRED_VARS ARMADILLO_INCLUDE_DIR ARMADILLO_LIBRARIES
+        VERSION_VAR ARMADILLO_VERSION_STRING)
   endif()
   # Clean up internal variables
   unset(_ARMA_REQUIRED_VARS)
