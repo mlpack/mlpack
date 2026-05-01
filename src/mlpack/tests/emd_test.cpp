@@ -85,3 +85,123 @@ TEMPLATE_TEST_CASE("EMDTemplateReconstruction", "[EMD]", float, double)
   UNSCOPED_INFO("Template reconstruction relErr=" << relErr);
   REQUIRE(relErr < 1e-3);
 }
+
+TEST_CASE("EEMDOutput", "[EMD]")
+{
+  const arma::uword N = 3000;
+
+  // signal used in docs (emd.md)
+  arma::vec t = arma::linspace<arma::vec>(0.0, 2 * arma::datum::pi, N);
+  arma::vec signal =
+      arma::sin((20 * t) % (1 + 0.2 * t)) +
+      arma::square(t) +
+      arma::sin(13 * t);
+
+  arma::mat imfs;
+  arma::vec residue;
+  mlpack::EEMD(signal, imfs, residue, 300, 0.1, 10, 50, 1e-3);
+  // Check reconstruction of signal from imfs + residue
+  arma::vec recon = arma::sum(imfs, 1) + residue;
+  const double relErr = arma::norm(recon - signal, 2) / arma::norm(signal, 2);
+  UNSCOPED_INFO("Reconstruction relErr = " << relErr);
+  REQUIRE(relErr < 1e-2);
+
+  // Check that eemd outputs are close to expected freqs.
+  // Chirp portion of signal causes frequency to increase linearly over time
+  // first IMF frequency defined by (20 + 8 T) / 2pi
+  // checks below use the evaluated value at the midpoint of each segment
+  // second IMF is due to stationary term defined by 13/2pi ~ 2Hz
+  // inspect quarter segments of imf(0)
+  const double dt = t(1) - t(0);
+  auto ZeroCrossFreq = [&](const arma::vec& seg)
+  {
+    arma::vec x = seg - arma::mean(seg);
+
+    if (x.n_elem < 2)
+      return 0.0;
+
+    const arma::vec left = x.subvec(0, x.n_elem - 2);
+    const arma::vec right = x.subvec(1, x.n_elem - 1);
+
+    const arma::uvec crossings =
+        ((left >= 0.0) % (right < 0.0)) +
+        ((left < 0.0) % (right >= 0.0));
+
+    const size_t zc = arma::accu(crossings);
+    const double duration = (x.n_elem - 1) * dt;
+    return 0.5 * static_cast<double>(zc) / duration;
+  };
+
+  bool foundChirpImf = false;
+  bool foundStationaryImf = false;
+  const double err = 0.5;
+
+  for (size_t i = 0; i < imfs.n_cols; ++i)
+  {
+    arma::vec firstQuart  = imfs.col(i).rows(0, N / 4);
+    arma::vec secQuart    = imfs.col(i).rows(N / 4, N / 2);
+    arma::vec thirdQuart  = imfs.col(i).rows(N / 2, 3 * N / 4);
+    arma::vec fourthQuart = imfs.col(i).rows(3 * N / 4, N - 1);
+
+    double avgFreq1 = ZeroCrossFreq(firstQuart);
+    double avgFreq2 = ZeroCrossFreq(secQuart);
+    double avgFreq3 = ZeroCrossFreq(thirdQuart);
+    double avgFreq4 = ZeroCrossFreq(fourthQuart);
+
+    bool isChirpImf =
+        (std::abs(avgFreq1 - 4.2) < err) &&
+        (std::abs(avgFreq2 - 6.2) < err) &&
+        (std::abs(avgFreq3 - 8.2) < err) &&
+        (std::abs(avgFreq4 - 10.2) < err);
+
+    if (!foundChirpImf && isChirpImf)
+    {
+      foundChirpImf = true;
+
+      for (size_t j = i + 1; j < imfs.n_cols; ++j)
+      {
+        arma::vec stationaryIMF = imfs.col(j).rows(0, N - 1);
+        double stationaryFreq = ZeroCrossFreq(stationaryIMF);
+
+        if (std::abs(stationaryFreq - 2.0) < err)
+        {
+          foundStationaryImf = true;
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  REQUIRE(foundChirpImf);
+  REQUIRE(foundStationaryImf);
+}
+
+TEST_CASE("EEMDvsEMD", "[EMD]")
+{
+  const arma::uword N = 3000;
+
+  // signal used in docs (emd.md)
+  arma::vec t = arma::linspace<arma::vec>(0.0, 2 * arma::datum::pi, N);
+  arma::vec signal =
+      arma::sin((20 * t) % (1 + 0.2 * t)) +
+      arma::square(t) +
+      arma::sin(13 * t);
+
+  arma::mat imfsEMD;
+  arma::vec residueEMD;
+  mlpack::EMD(signal, imfsEMD, residueEMD, 5, 10, 1e-3);
+
+  arma::mat imfsEEMD;
+  arma::vec residueEEMD;
+  mlpack::EEMD(signal, imfsEEMD, residueEEMD, 1, 0.001, 5, 10, 1e-3);
+
+  // Compare through their reconstructions
+  arma::vec reconEMD = arma::sum(imfsEMD, 1) + residueEMD;
+  arma::vec reconEEMD = arma::sum(imfsEEMD, 1) + residueEEMD;
+
+  const double relReconDiff =
+      arma::norm(reconEMD - reconEEMD, 2) / arma::norm(reconEMD, 2);
+  UNSCOPED_INFO("Relative reconstruction difference"<< relReconDiff);
+  REQUIRE(relReconDiff < 0.001);
+}

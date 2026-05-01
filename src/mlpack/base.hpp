@@ -113,6 +113,7 @@
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
   #undef MLPACK_USE_OPENMP
   #define MLPACK_USE_OPENMP
+  #include <omp.h>
 #elif defined(_OPENMP)
   #ifdef _MSC_VER
     #error "mlpack requires OpenMP 3.1+; compile without /OPENMP"

@@ -74,7 +74,8 @@ inline size_t CountZeroCrossings(const ColType& h)
     return 0;
 
   // Zero crossing when adjacent samples have opposite sign
-  return accu((h.subvec(0, N - 2) % h.subvec(1, N - 1)) < eT(0));
+  return accu(((h.subvec(0, N - 2) <= eT(0)) % (h.subvec(1, N - 1) > eT(0))) +
+            ((h.subvec(0, N - 2) > eT(0)) % (h.subvec(1, N - 1) <= eT(0))));
 }
 
 // sifting step extracts mean envelope and produces next h
@@ -137,7 +138,7 @@ inline bool NextImf(const ColType& signal,
     const size_t zc  = CountZeroCrossings(imf);
     const bool imfShapeOk = (std::max(ext, zc) - std::min(ext, zc) <= 1);
 
-    if (imfShapeOk && (meanRatio < tolMean))
+    if (imfShapeOk || (meanRatio < tolMean))
       break;
   }
   imfNormOut = norm(imf, 2);
