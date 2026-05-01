@@ -52,6 +52,48 @@
 #define PRINT_MODEL mlpack::bindings::r::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::r::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ * For R, this is part of the 'mlpack' package.
+ */
+#define IMPORT_SPLIT mlpack::bindings::r::ImportSplit
+
+/**
+ * IMPORT_THIS() returns a string that imports the current method.
+ * For R, all functions in the package are already accessible.
+ */
+#define IMPORT_THIS mlpack::bindings::r::ImportThis
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET mlpack::bindings::r::GetDataset
+
+/**
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
+ */
+#define SPLIT_TRAIN_TEST mlpack::bindings::r::SplitTrainTest
+
+/**
+ * CREATE_OBJECT() returns a string that creates an instance of the
+ * class.
+ */
+#define CREATE_OBJECT(...) mlpack::bindings::r::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
+ * CALL_METHOD() returns a string that calls a method of an instance.
+ */
+#define CALL_METHOD(...) mlpack::bindings::r::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of
@@ -93,14 +135,5 @@ using Option = mlpack::bindings::r::ROption<T>;
 // Add default parameters that are included in every program.
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
-
-// TODO: Fill these in
-#define IMPORT_EXT_LIB(...) std::string(" ")
-#define IMPORT_SPLIT(...) std::string(" ")
-#define IMPORT_THIS(...) std::string("#' library(mlpack)")
-#define GET_DATASET(...) std::string(" ")
-#define SPLIT_TRAIN_TEST(...) std::string(" ")
-#define CREATE_OBJECT(...) std::string(" ")
-#define CALL_METHOD(...) std::string(" ")
 
 #endif
