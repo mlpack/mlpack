@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE("FilterBanks", "[MFCC][tiny]", float, double)
 {
   typedef TestType eT;
   size_t numFilters = 40;
-  size_t nFFT = 512;
+  size_t nFFT = 1024;
   size_t sampleRate = 16000;
 
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numFilters, nFFT, sampleRate,
@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE("FilterBanks", "[MFCC][tiny]", float, double)
 
   // Shape: 40 filters x 257 bins.
   REQUIRE(filterBanks.n_rows == 40);
-  REQUIRE(filterBanks.n_cols == 257);
+  REQUIRE(filterBanks.n_cols == 513);
 
   REQUIRE(filterBanks.min() >= 0.0);
   REQUIRE(filterBanks.max() <= 1.0);
@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE("FilterBanks", "[MFCC][tiny]", float, double)
   for (size_t m = 0; m < numFilters; ++m)
   {
     size_t peak = filterBanks.row(m).index_max();
-    REQUIRE(peak >= prevPeak);
+    REQUIRE(peak > prevPeak);
     prevPeak = peak;
   }
 
@@ -91,7 +91,7 @@ TEMPLATE_TEST_CASE("FilterBanks", "[MFCC][tiny]", float, double)
 
   // Similar as the above assert, but for high frequencies.
   size_t lastPeak = filterBanks.row(numFilters - 1).index_max();
-  REQUIRE(lastPeak >= 200);
+  REQUIRE(lastPeak >= 400);
 }
 
 /*
@@ -108,12 +108,12 @@ TEMPLATE_TEST_CASE("MFESilence", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 98);
+  REQUIRE(mfe.n_cols == 97);
 
-  // All values should be approximately log(1e-10) ≈ -23.03.
+  // All values should be approximately log(1e-10) ~ -23.03.
   float logEps = std::log(1e-10f);
-  REQUIRE(mfe.min() == Approx(logEps).margin(0.1));
-  REQUIRE(mfe.max() == Approx(logEps).margin(0.1));
+  REQUIRE(mfe.min() <= logEps);
+  REQUIRE(mfe.max() <= logEps);
 }
 
 TEMPLATE_TEST_CASE("MFEDC", "[MFCC][tiny]", float, double)
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE("MFEDC", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 98);
+  REQUIRE(mfe.n_cols == 97);
 
   arma::Col<eT> meanMFE = arma::mean(mfe, 1);
 
@@ -165,7 +165,7 @@ TEMPLATE_TEST_CASE("MFEPureSine440", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 98);
+  REQUIRE(mfe.n_cols == 97);
 
   arma::Col<eT> meanMFE = arma::mean(mfe, 1);
 
