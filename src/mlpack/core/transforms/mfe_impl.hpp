@@ -125,7 +125,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   size_t totalWindows = 0;
   for (size_t i = 0; i < inputSignal.n_cols; ++i)
   {
-    totalWindows += (inputSignal.n_rows - lengthInSamples)
+    totalWindows += (inputSignal.n_rows - nFFT)
         / stepsInSamples + 1;
   }
 
@@ -153,7 +153,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
         arma::log((filterBanks * power) + 1e-10);
 
     colOffset += power.n_cols;
-
   }
 }
 
