@@ -108,7 +108,7 @@ for (size_t k = 0; k < numToShow; ++k)
 ## MFE
 
 mlpack provides the `MFE()` functions to extract standard audio
-features from raw PCM data loaded with [`Load()`](#load).  These features are
+features from raw PCM data loaded with [`Load()`](../../load_save.md).  These features are
 used as input to machine learning models for speech recognition, speaker identification,
 keyword spotting
 
@@ -117,7 +117,7 @@ keyword spotting
 
 #### See also:
 
- * [Audio data loading and saving](#audio-data)
+ * [Audio data loading and saving](../../load_save.md#audio-data)
  * [Mel-frequency cepstrum](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
  * [MFCC tutorial (Practical Cryptography)](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/)
  * [The cepstrum, mel-cepstrum, and MFCCs (Aalto University)](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)
@@ -195,7 +195,7 @@ mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
 ## `MFCC()`
 
 mlpack provides the `MFCC()` functions to extract standard audio
-features from raw PCM data loaded with [`Load()`](#load).  Similar to MFE, MFCC
+features from raw PCM data loaded with [`Load()`](../../load_save.md).  Similar to MFE, MFCC
 output can be used as input to machine learning models. Note that, since MFCC
 coefficient are decorrelated, it can be combined with several distance-based 
 machine learning algorithms (e.g., KNN, KMeans) or probabilitic algorithms
