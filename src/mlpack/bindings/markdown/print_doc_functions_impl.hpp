@@ -799,6 +799,10 @@ inline std::string ImportThis(const std::string& groupName)
   {
     s = python::ImportThis(groupName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportThis(groupName);
+  }
   else
   {
     throw std::invalid_argument("ImportThis(): unknown "
@@ -822,6 +826,11 @@ inline std::string SplitTrainTest(const std::string& datasetName,
     s = python::SplitTrainTest(datasetName, labelName,
         trainDataset, trainLabels, testDataset, testLabels, splitRatio);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::SplitTrainTest(datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
   else
   {
     throw std::invalid_argument("SplitTrainTest(): unknown "
@@ -838,6 +847,10 @@ inline std::string GetDataset(const std::string& datasetName,
   if (BindingInfo::Language() == "python")
   {
     s = python::GetDataset(datasetName, url);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::GetDataset(datasetName, url);
   }
   else
   {
@@ -860,6 +873,11 @@ std::string CreateObject(const std::string& bindingName,
     s = python::CreateObject(bindingName, objectName,
         groupName, args...);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName,
+        groupName, args...);
+  }
   else
   {
     throw std::invalid_argument("CreateObject(): unknown "
@@ -877,6 +895,10 @@ inline std::string CreateObject(const std::string& bindingName,
   if (BindingInfo::Language() == "python")
   {
     s = python::CreateObject(bindingName, objectName, groupName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName, groupName);
   }
   else
   {
@@ -897,6 +919,11 @@ std::string CallMethod(const std::string& bindingName,
   if (BindingInfo::Language() == "python")
   {
     s = python::CallMethod(bindingName, objectName,
+        methodName, args...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CallMethod(bindingName, objectName,
         methodName, args...);
   }
   else
