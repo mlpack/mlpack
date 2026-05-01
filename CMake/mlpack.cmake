@@ -59,8 +59,6 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
-#   MLPACK_USE_SYSTEM_STB: if set, STB will be searched for on the system,
-#       instead of using the version bundled with mlpack.
 #
 # After all libraries are downloaded and set up, the macro will set the
 # following variables:
@@ -211,6 +209,8 @@ if (NOT MLPACK_DISABLE_OPENMP)
   set(MLPACK_DISABLE_OPENMP OFF)
 endif ()
 
+include(FindPackageHandleStandardArgs)
+
 ##===================================================
 ##  MLPACK AUTODOWNLOADER DEPENDENCIES FUNCTIONS
 ##===================================================
@@ -220,10 +220,10 @@ macro(get_deps LINK DEPS_NAME PACKAGE)
   if (NOT EXISTS "${CMAKE_BINARY_DIR}/deps/${PACKAGE}")
     file(DOWNLOAD ${LINK}
            "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
-            STATUS DOWNLOAD_STATUS_LIST LOG DOWNLOAD_LOG
-            SHOW_PROGRESS)
+            STATUS DOWNLOAD_STATUS_LIST LOG DOWNLOAD_LOG)
     list(GET DOWNLOAD_STATUS_LIST 0 DOWNLOAD_STATUS)
     if (DOWNLOAD_STATUS EQUAL 0)
+      message(STATUS "Downloaded ${DEPS_NAME} from ${LINK}.")
       execute_process(COMMAND ${CMAKE_COMMAND} -E
           tar xf "${CMAKE_BINARY_DIR}/deps/${PACKAGE}"
           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/deps/")
@@ -288,7 +288,7 @@ macro(find_armadillo)
 
     if (EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
-      # Read and parse armdillo version header file for version number
+      # Read and parse Armadillo version header file for version number
       file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp" _ARMA_HEADER_CONTENTS REGEX "#define ARMA_VERSION_[A-Z]+ ")
       string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_ARMA_HEADER_CONTENTS}")
       string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_ARMA_HEADER_CONTENTS}")
@@ -323,10 +323,9 @@ macro(find_armadillo)
         "$ENV{ProgramFiles}/Armadillo/lib"
         "$ENV{ProgramFiles}/Armadillo/lib64"
         "$ENV{ProgramFiles}/Armadillo"
+      REQUIRED
       )
     set(_ARMA_REQUIRED_VARS ARMADILLO_LIBRARY)
-  else()
-    set(ARMADILLO_LIBRARY "")
   endif()
 
   # Transitive linking with the wrapper does not work with MSVC,
@@ -351,6 +350,10 @@ macro(find_armadillo)
   if (ARMADILLO_FOUND)
     set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
     set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+
+    find_package_handle_standard_args(armadillo
+        REQUIRED_VARS ARMADILLO_INCLUDE_DIR ARMADILLO_LIBRARIES
+        VERSION_VAR ARMADILLO_VERSION_STRING)
   endif()
   # Clean up internal variables
   unset(_ARMA_REQUIRED_VARS)
@@ -414,16 +417,22 @@ macro(find_cereal)
       set(CEREAL_VERSION_PATCH 2)
     elseif (EXISTS "${CEREAL_INCLUDE_DIR}/cereal/cereal.hpp")
 
-    set(CEREAL_VERSION_MAJOR 1)
-    set(CEREAL_VERSION_MINOR 1)
-    set(CEREAL_VERSION_PATCH 1)
-  else()
-
-    set(CEREAL_FOUND NO)
+      set(CEREAL_VERSION_MAJOR 1)
+      set(CEREAL_VERSION_MINOR 1)
+      set(CEREAL_VERSION_PATCH 1)
+    else()
+      set(CEREAL_FOUND NO)
     endif()
-    set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
-  endif ()
 
+    set(CEREAL_VERSION_STRING "${CEREAL_VERSION_MAJOR}.${CEREAL_VERSION_MINOR}.${CEREAL_VERSION_PATCH}")
+
+    # Print information indicating we found cereal (if we did).
+    if (CEREAL_FOUND)
+      find_package_handle_standard_args(cereal
+          REQUIRED_VARS CEREAL_INCLUDE_DIR
+          VERSION_VAR CEREAL_VERSION_STRING)
+    endif ()
+  endif ()
 endmacro()
 
 macro(find_ensmallen)
@@ -474,7 +483,13 @@ macro(find_ensmallen)
     endif()
 
     set(ENSMALLEN_VERSION_STRING "${ENSMALLEN_VERSION_MAJOR}.${ENSMALLEN_VERSION_MINOR}.${ENSMALLEN_VERSION_PATCH}")
+
+    # Print information indicating that we found ensmallen.
+    find_package_handle_standard_args(ensmallen
+        REQUIRED_VARS ENSMALLEN_INCLUDE_DIR
+        VERSION_VAR ENSMALLEN_VERSION_STRING)
   endif ()
+
 endmacro()
 
 macro(find_stb)
@@ -511,6 +526,9 @@ macro(find_stb)
       string(REGEX REPLACE ".*stb[/]?$" "" STB_IMAGE_INCLUDE_DIR
           "${STB_IMAGE_INCLUDE_DIR}")
     endif ()
+
+    find_package_handle_standard_args(stb_image
+        REQUIRED_VARS STB_IMAGE_INCLUDE_DIR)
   endif ()
 
 endmacro()
@@ -589,13 +607,11 @@ macro(find_mlpack_internal)
     endif()
 
     set(MLPACK_VERSION_STRING "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
+
+    find_package_handle_standard_args(mlpack
+        REQUIRED_VARS MLPACK_INCLUDE_DIR
+        VERSION_VAR MLPACK_VERSION_STRING)
   endif()
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(mlpack
-    REQUIRED_VARS MLPACK_INCLUDE_DIR
-    VERSION_VAR MLPACK_VERSION_STRING)
-
 endmacro()
 
 macro(compile_OpenBLAS)
@@ -677,7 +693,19 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     endif()
   endif()
 
+  # For each header-only dependency, we first check the download directory, in
+  # case it was previously downloaded.  If that fails, before downloading the
+  # dependency, we check the system for an already-installed version.  (Passing
+  # no parameter to the find_*() call will search the system.)
+  #
+  # For Armadillo, which depends on OpenBLAS, we *must* use downloaded Armadillo
+  # if we compiled OpenBLAS by hand.
+
   find_armadillo(${CMAKE_BINARY_DIR})
+  if (NOT ARMADILLO_FOUND AND NOT COMPILE_OPENBLAS)
+    find_armadillo()
+  endif ()
+
   if (NOT ARMADILLO_FOUND)
     if (NOT CMAKE_CROSSCOMPILING)
       find_package(BLAS QUIET)
@@ -687,6 +715,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     set(ARMADILLO_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_armadillo(${CMAKE_BINARY_DIR})
   endif()
+
   if (ARMADILLO_FOUND)
     # Include directories for the previous dependencies.
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
@@ -695,31 +724,46 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
 
   find_ensmallen(${CMAKE_BINARY_DIR})
   if (NOT ENSMALLEN_FOUND)
+    find_ensmallen()
+  endif ()
+
+  if (NOT ENSMALLEN_FOUND)
     get_deps(https://www.ensmallen.org/files/ensmallen-${ENSMALLEN_FETCH_VERSION}.tar.gz ensmallen ensmallen-${ENSMALLEN_FETCH_VERSION}.tar.gz)
     set(ENSMALLEN_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_ensmallen(${CMAKE_BINARY_DIR})
   endif()
+
   if (ENSMALLEN_FOUND)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ENSMALLEN_INCLUDE_DIR})
   endif()
 
   find_cereal(${CMAKE_BINARY_DIR})
   if (NOT CEREAL_FOUND)
+    find_cereal()
+  endif ()
+
+  if (NOT CEREAL_FOUND)
     get_deps(https://github.com/USCiLab/cereal/archive/refs/tags/v${CEREAL_FETCH_VERSION}.tar.gz cereal cereal-${CEREAL_FETCH_VERSION}.tar.gz)
     set(CEREAL_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
     find_cereal(${CMAKE_BINARY_DIR})
   endif()
+
   if (CEREAL_FOUND)
     set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${CEREAL_INCLUDE_DIR})
   endif()
 
   if (NOT MLPACK_DONT_FIND_MLPACK)
-    find_mlpack_internal(${CMAKE_BINARY_DIR})
+    find_mlpack_internal()
+    if (NOT MLPACK_FOUND)
+      find_mlpack_internal(${CMAKE_BINARY_DIR})
+    endif ()
+
     if (NOT MLPACK_FOUND)
       get_deps(https://www.mlpack.org/files/mlpack-${MLPACK_FETCH_VERSION}.tar.gz mlpack mlpack-${MLPACK_FETCH_VERSION}.tar.gz)
       set(MLPACK_INCLUDE_DIR ${GENERIC_INCLUDE_DIR})
       find_mlpack_internal(${CMAKE_BINARY_DIR})
     endif()
+
     if (MLPACK_FOUND)
       set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${MLPACK_INCLUDE_DIR})
     endif()
