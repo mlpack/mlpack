@@ -3,19 +3,23 @@
 mlpack provides several signal processing techniques that allows to extract
 features from stationary and non-stationary signals:
 
-* Decomposition: provided with `mlpack::EMD()`.
-* Feature Extraction: provided with `mlpack::MFE()` and `mlpack::MFCC()`.
+* _Decomposition_:
+    - `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
+ Functions (IMFs) plus a residue.
+    - `EEMD():` wraps `EMD()` to output more robust IMFs by using ensemble
+      approach.
+
+* _Feature Extraction_: 
+    - `MFE()`: (Mel-Frequency Energy): log-scaled energies from a bank of
+   triangular filters spaced on the mel scale
+    - `MFCC()`: (Mel-Frequency Cepstral Coefficients): a compact representation
+   obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
 
 ## EMD 
 
 mlpack provides Empirical Mode Decomposition (`EMD`) to process signals
 for training and testing.  This can be used for signal monitoring pipelines
 in nonlinear and nonstationary problems.
-
-* `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
- Functions (IMFs) plus a residue.
-
-<!-- TODO: add EEMD and CEEMDAN -->
 
 #### See also:
 
@@ -105,15 +109,75 @@ for (size_t k = 0; k < numToShow; ++k)
 }
 ```
 
+## EEMD
+
+The `EEMD()` function wraps [`EMD()`](#emd) to produce more robust IMFs
+by running EMD many times on the signal with independent white noise added
+to each trial, then averaging the results. The added noise reduces mode mixing
+and cancels out in the average
+
+#### See also:
+
+ * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
+## `EEMD()`
+
+- `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
+
+   * `ensSize` (of type `size_t`) is the number of members in the ensemble
+    (that is the number of `EMD()` runs to be averaged).
+
+   * `noiseStrength` (of type `double`) is the fraction of the signal standard
+   deviation used as the standard deviation of the added white noise in each
+    `EMD()` run (i.e. 0.1 means 10% of signal standard deviation).
+
+   * `signal`, `imfs`,  `residue`, `maxImfs`, `maxSiftIter`, and `tol` are
+     defined in the classical `EMD()` implementation.
+
+   ***NOTES:***
+
+   * The original signal **cannot** be reconstructed as the sum of the imfs and
+      residue, as in `EMD()`.
+
+   * Number of extracted IMFs will be the minimum number of IMFs extracted by
+     by `EMD()` across all `ensSize` runs (`<=maxImfs`).
+
+   * EEMD may produce low-energy leading IMFs due to injected noise and ensemble
+   averaging. Depending on the application, users may want to discard negligible
+   IMFs in post-processing (e.g., using an energy-fraction threshold).
+
+   * The number of returned IMFs is bounded between `0` and `maxImfs`.
+     The algorithm returns only as many IMFs as can actually be extracted from
+     the input signal.
+
+Example using `EEMD` on a time-varying signal `S` (shown in above EMD figure).
+
+```c++
+const arma::uword N = 3000;
+const double tMin = 0.0;
+const double tMax = arma::datum::pi;
+arma::vec time = arma::linspace(tMin, tMax, N);
+
+// signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
+// see figure above in the EMD documentation
+arma::vec signal =
+    arma::sin( 20.0 * time % (1.0 + 0.2 * time) ) +
+    arma::square(time) + arma::sin(13.0 * time);
+
+arma::mat imfs;
+arma::vec residue;
+
+// Use 100 ensemble members, 0.15 noise strength, 10 IMFs, 50 sifts per IMF, tol = 1e-2
+mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
+```
+
 ## MFE
 
 mlpack provides the `MFE()` functions to extract standard audio
 features from raw PCM data loaded with [`Load()`](../../load_save.md).  These features are
 used as input to machine learning models for speech recognition, speaker identification,
 keyword spotting
-
- - **MFE** (Mel-Frequency Energy): log-scaled energies from a bank of
-   triangular filters spaced on the mel scale.
 
 #### See also:
 
@@ -192,7 +256,7 @@ mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
 ```
 ---
 
-## `MFCC()`
+## MFCC
 
 mlpack provides the `MFCC()` functions to extract standard audio
 features from raw PCM data loaded with [`Load()`](../../load_save.md).  Similar to MFE, MFCC
@@ -201,12 +265,11 @@ coefficient are decorrelated, it can be combined with several distance-based
 machine learning algorithms (e.g., KNN, KMeans) or probabilitic algorithms
 (e.g., GMM, HMM).
 
- - **MFCC** (Mel-Frequency Cepstral Coefficients): a compact representation
-   obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
-
 MFCC is a superset of MFE, the MFE pipeline produces the first step as an
 intermidiate representation, and a single additional DCT step to generate MFCC
 coefficients.
+
+## `MFCC()`
 
  - `MFCC(signals, output, sampleRate, numCoeffs, numMelFilters, windowLength,
    windowStep, nFFT, lowFreq, highFreq)`

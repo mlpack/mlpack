@@ -114,11 +114,11 @@ run_kramdown()
   then
     sed -i "s|\]([./]*README.md)|](${link_root}README.html)|g" $input_file.tmp;
     sed -i "s|\]([./]*README.md#[0-9]-\([^ ]*\))|](${link_root}README.html#\1)|g" $input_file.tmp;
-    sed -i 's/\](\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
-    sed -i 's/\](\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
+    sed -i 's/\](\([^ ]*\)\.md)/](\1.html)/g' $input_file.tmp;
+    sed -i 's/\](\([^ ]*\)\.md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
   else
-    sed -i 's/\](doc\/\([^ ]*\).md)/](\1.html)/g' $input_file.tmp;
-    sed -i 's/\](doc\/\([^ ]*\).md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
+    sed -i 's/\](doc\/\([^ ]*\)\.md)/](\1.html)/g' $input_file.tmp;
+    sed -i 's/\](doc\/\([^ ]*\)\.md#\([^ ]*\))/](\1.html#\2)/g' $input_file.tmp;
 
     # The README specifically has a link to GOVERNANCE.md, but we want to
     # preserve that.  We're not building that file into Markdown.

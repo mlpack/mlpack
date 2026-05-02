@@ -14,7 +14,7 @@ _????-??-??_
 
  * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
 
- * Add `EMD` signal preprocessing utility (#4044).
+ * Add `EMD` and `EEMD` signal preprocessing utilities (#4044, #4146).
 
  * Efficiency improvements for `MeanImputation` and `MedianImputation` with
    newer Armadillo versions (#4149).
