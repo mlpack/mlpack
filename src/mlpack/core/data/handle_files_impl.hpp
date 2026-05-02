@@ -175,6 +175,7 @@ inline void AutoDetectFile(std::fstream& stream,
   {
     opts.Format() = FileType::MP3;
   }
+
   else // Unknown extension...
   {
     opts.Format() = FileType::FileTypeUnknown;
