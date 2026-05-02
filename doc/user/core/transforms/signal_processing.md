@@ -235,7 +235,7 @@ mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
 mlpack::Load("sine.wav", signal, opts);
 
 arma::mat mfe;
-mlpack::MFE(signal, opts.SampleRate(), mfe);
+mlpack::MFE(signal, mfe, opts.SampleRate());
 
 std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols << std::endl;
 
@@ -251,7 +251,7 @@ mlpack::Load("sine.wav", signal, opts);
 
 arma::fmat mfe;
 // 80 mel filters, default window size, frequency range 300–8000 Hz.
-mlpack::MFE(signal, opts.SampleRate(), mfe, 80, 25.0, 10.0, 0, 300.0,
+mlpack::MFE(signal, mfe, opts.SampleRate(), 80, 25.0, 10.0, 0, 300.0,
     8000.0);
 ```
 ---
@@ -324,7 +324,7 @@ mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
 mlpack::Load("sine.wav", signal, opts);
 
 arma::mat mfcc;
-mlpack::MFCC(signal, opts.SampleRate(), mfcc);
+mlpack::MFCC(signal, mfcc, opts.SampleRate());
 
 // mfcc has a shape of 13 x numWindows.
 std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
@@ -340,7 +340,7 @@ mlpack::AudioOptions opts = mlpack::Fatal + mlpack::MP3;
 mlpack::Load("fifths.mp3", signal, opts);
 
 arma::fmat mfcc;
-mlpack::MFCC(signal, opts.SampleRate(), mfcc, 20, 80);
+mlpack::MFCC(signal, mfcc, opts.SampleRate(), 20, 80);
 ```
 
 MFCC with custom parameters:
@@ -352,6 +352,6 @@ mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
 mlpack::Load("sine.wav", signal, opts);
 
 arma::fmat mfcc;
-mlpack::MFCC(signal, opts.SampleRate(), mfcc, 13, 26, 25.0, 10.0, 512, 300.0,
+mlpack::MFCC(signal, mfcc, opts.SampleRate(), 13, 26, 25.0, 10.0, 512, 300.0,
     3400.0);
 ```
