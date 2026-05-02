@@ -254,6 +254,57 @@ arma::fmat mfe;
 mlpack::MFE(signal, mfe, opts.SampleRate(), 80, 25.0, 10.0, 0, 300.0,
     8000.0);
 ```
+
+A detailed example showing the average extracted energy per frequency bin:
+
+```c++
+  arma::mat signal;
+  AudioOptions opts = Fatal + WAV;
+  Load("sine.wav", signal, opts);
+  signal.brief_print("loaded signal");
+  std::cout << "Sample Rate(): " << opts.SampleRate() << std::endl;
+
+  arma::mat mfe;
+  MFE(signal, mfe, opts.SampleRate());
+
+  std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
+            << " (filters x windows)" << std::endl;
+
+  arma::vec meanMFE = arma::mean(mfe, 1);
+
+  size_t peakFilter = meanMFE.index_max();
+  float peakVal = meanMFE.max();
+
+  size_t nFFT = 512;
+  float highFreq = opts.SampleRate() / 2.0f;
+  float melLow = HzToMel(0.0f);
+  float melHigh = HzToMel(highFreq);
+  arma::vec melPoints = arma::linspace<arma::vec>(melLow, melHigh, 42);
+  arma::vec hzPoints(42);
+  for (size_t i = 0; i < 42; ++i)
+   hzPoints(i) = MelToHz(melPoints(i));
+
+  std::cout << std::endl;
+  std::cout << "Filter   Freq range (Hz)       Avg energy" << std::endl;
+  std::cout << "------   -------------------   ----------" << std::endl;
+
+  for (size_t i = 0; i < 40; ++i)
+  {
+    std::cout << "  " << std::setw(2) << i << "     "
+              << std::setw(5) << std::fixed << std::setprecision(0)
+              << hzPoints(i) << " – "
+              << std::setw(5) << hzPoints(i + 2) << "       "
+              << std::setw(8) << std::setprecision(2) << meanMFE(i);
+
+    if (i == peakFilter)
+      std::cout << "   <<< peak";
+    else if (i == peakFilter - 1 || i == peakFilter + 1)
+      std::cout << "   <<< adjacent";
+
+    std::cout << std::endl;
+  }
+```
+
 ---
 
 ## MFCC
@@ -354,4 +405,52 @@ mlpack::Load("sine.wav", signal, opts);
 arma::fmat mfcc;
 mlpack::MFCC(signal, mfcc, opts.SampleRate(), 13, 26, 25.0, 10.0, 512, 300.0,
     3400.0);
+```
+
+Analyse the 13 MFCC coefficients extracted from loading a sine wav signal and
+what each one captures:
+
+```c++
+  arma::mat signal;
+  AudioOptions opts = Fatal + WAV;
+  Load("sine.wav", signal, opts);
+
+  std::cout << "Loaded: " << signal.n_rows << " samples, "
+      << opts.SampleRate() << " Hz, "
+      << opts.Channels() << " channel(s)" << std::endl;
+
+  arma::mat mfcc;
+  MFCC(signal, mfcc, opts.SampleRate());
+
+  std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
+      << " (coefficients x windows)" << std::endl;
+
+  arma::vec meanMFCC = arma::mean(mfcc, 1);
+
+  std::cout << std::endl;
+  std::cout << "Coeff   Avg value    What it captures" << std::endl;
+  std::cout << "-----   ---------    ----------------" << std::endl;
+
+  const char* descriptions[] = {
+    "Overall energy (loudness)",
+    "Spectral tilt (low vs high freq balance)",
+    "Spectral curvature (middle vs edges)",
+    "Two-bump structure (formant separation)",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Fine spectral detail",
+    "Finest spectral detail"
+  };
+
+  for (size_t i = 0; i < mfcc.n_rows; ++i)
+  {
+    std::cout << "  c[" << std::setw(2) << i << "]  "
+        << std::setw(10) << std::fixed << std::setprecision(2) << meanMFCC(i)
+        << "    " << descriptions[i] << std::endl;
+  }
 ```
