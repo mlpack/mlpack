@@ -32,7 +32,7 @@ inline eT HzToMel(eT hz)
 template<typename eT>
 inline eT MelToHz(eT mel)
 {
-  return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0); 
+  return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
 }
 
 template<typename eT>
@@ -108,8 +108,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   size_t stepsInSamples = static_cast<size_t>(windowStep * sampleRate
       / 1000.0f);
 
-  // This is slowing the performance of FFT by 3 ~ 4 seconds.
-  // Confirmed again when tested for the second time
   if (nFFT == 0)
     nFFT = NextPowerOf2(lengthInSamples);
 
@@ -121,7 +119,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
 
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numMelFilters, nFFT, sampleRate,
       lowFreq, highFreq);
-  
+
   size_t totalWindows = 0;
   for (size_t i = 0; i < inputSignal.n_cols; ++i)
   {
@@ -136,7 +134,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
 
   size_t colOffset = 0;
 
-  // Benchmarking on one signal for now.
   for (size_t i = 0; i < inputSignal.n_cols; ++i)
   {
     arma::Mat<eT> slidingWindows;
@@ -189,13 +186,9 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
     size_t nFFT)
 {
   size_t numBins = nFFT / 2 + 1;
-  // Removing the loop allows to gain 7 seconds speed up in execution time 
-  // when running FFT on an 1 hour signal.
   // spectrum is (nFFT x numWindows).
   arma::Mat<std::complex<eT>> spectrum = arma::fft(windows, nFFT);
 
-  // Keep only the first part of the spectrum since it is mirrored.
-  // Using this expression, provides 2 seconds speed up as well.
   power = square(abs(spectrum.rows(0, numBins - 1)));
 }
 
