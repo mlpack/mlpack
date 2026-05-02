@@ -9,8 +9,8 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_CORE_DATA_MFCC_IMPL_HPP
-#define MLPACK_CORE_DATA_MFCC_IMPL_HPP
+#ifndef MLPACK_CORE_DATA_MFE_IMPL_HPP
+#define MLPACK_CORE_DATA_MFE_IMPL_HPP
 
 #include "mfcc.hpp"
 
