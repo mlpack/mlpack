@@ -30,6 +30,14 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Given the name of a internal mlpack method, print its R name.
+ */
+inline std::string GetMappedName(const std::string& methodName)
+{
+  return methodName; // TODO
+}
+
+/**
  * Print any import information for the R binding.
  */
 inline std::string PrintImport()
@@ -438,8 +446,8 @@ inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no external libraries are loaded.
-  return std::string("\\dontrun{\nsuppressMessages(library(data.table)) "
-    "# for fread()");
+  return ""; //std::string("\\dontrun{\nsuppressMessages(library(data.table)) "
+  //"# for fread()");
 }
 
 inline std::string ImportSplit()
@@ -453,8 +461,9 @@ inline std::string ImportThis(const std::string& /* groupName */)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we use it to load data.table for its fread() function
-  return std::string("suppressMessages(library(mlpack)) "
-    " # in case 'mlpack' is not yet loaded");
+  return std::string("\\dontrun{\nsuppressMessages(library(mlpack)) "
+    " # in case 'mlpack' is not yet loaded\n"
+    "suppressMessages(library(data.table)) # for fread()");
 }
 
 inline std::string GetDataset(const std::string& datasetName,

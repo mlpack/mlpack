@@ -72,6 +72,10 @@ inline std::string GetWrapperName(const std::string& bindingName)
   {
     return "class " + python::GetClassName(bindingName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return "class " + bindingName;
+  }
   else
   {
     throw std::invalid_argument("GetWrapperName(): unknown "
@@ -767,6 +771,10 @@ inline std::string ImportExtLib()
   {
     s = python::ImportExtLib();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
+  }
   else
   {
     throw std::invalid_argument("ImportExtLib(): unknown "
@@ -782,6 +790,10 @@ inline std::string ImportSplit()
   if (BindingInfo::Language() == "python")
   {
     s = python::ImportSplit();
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
   }
   else
   {
@@ -971,6 +983,10 @@ inline std::string GetMappedName(const std::string& methodName)
   {
     return python::GetMappedName(methodName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::GetMappedName(methodName);
+  }
   else
   {
     throw std::invalid_argument("GetMappedName(): unknown "
@@ -983,6 +999,10 @@ inline std::string GetWrapperLink(const std::string& bindingName)
   if (BindingInfo::Language() == "python")
   {
     return "class-" + bindingName;
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    return "class " + bindingName;
   }
   else
   {

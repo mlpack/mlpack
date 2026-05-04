@@ -107,7 +107,7 @@ macro (add_markdown_docs directory name languages wrappers)
         "${WRAPPER_PUSH_BACK_CODE}\n  addWrapperDocs.push_back(${val});")
   endforeach()
 
-  if(NOT ${WRAPPERS} EQUAL "")
+  if(NOT "${WRAPPERS}" EQUAL "")
     foreach(method ${${name}_VALID_METHODS})
       set(VALID_METHODS_PUSH_BACK_CODE
           "${VALID_METHODS_PUSH_BACK_CODE}\n  validMethods.push_back(\"${method}\");")

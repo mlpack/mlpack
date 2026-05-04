@@ -26,6 +26,11 @@ namespace r {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
+ * Given the name of a internal mlpack method, print its R name.
+ */
+inline std::string GetMappedName(const std::string& methodName);
+
+/**
  * Print any import information for the R binding.
  */
 inline std::string PrintImport();

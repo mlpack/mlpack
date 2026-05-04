@@ -47,7 +47,7 @@ add_go_binding(lars lars)
 add_r_binding(lars lars "include")
 add_r_binding(lars lars_train "skip")
 add_r_binding(lars lars_predict "skip")
-add_markdown_docs(lars lars "cli;python;julia;go;r" "python")
+add_markdown_docs(lars lars "cli;python;julia;go;r" "python;r")
 
 add_all_bindings(linear_svm linear_svm "Classification")
 add_all_bindings(lmnn lmnn "Transformations")
@@ -66,7 +66,7 @@ add_r_binding(logistic_regression logistic_regression_train "skip")
 add_r_binding(logistic_regression logistic_regression_classify "skip")
 add_r_binding(logistic_regression logistic_regression_probabilities "skip")
 add_markdown_docs(logistic_regression logistic_regression
-  "cli;python;julia;go;r" "python")
+  "cli;python;julia;go;r" "python;r")
 
 add_all_bindings(lsh lsh "Geometry")
 add_all_bindings(mean_shift mean_shift "Clustering")
@@ -103,7 +103,7 @@ add_r_binding(adaboost adaboost "include")
 add_r_binding(adaboost adaboost_train "skip")
 add_r_binding(adaboost adaboost_classify "skip")
 add_r_binding(adaboost adaboost_probabilities "skip")
-add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python")
+add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python;r")
 
 
 
@@ -120,7 +120,7 @@ add_r_binding(linear_regression linear_regression "include")
 add_r_binding(linear_regression linear_regression_train "skip")
 add_r_binding(linear_regression linear_regression_predict "skip")
 add_markdown_docs(linear_regression linear_regression "cli;python;julia;go;r"
-    "python")
+    "python;r")
 
 # The imputer is only defined for CLI bindings right now.
 add_category(preprocess_imputer "Preprocessing")
