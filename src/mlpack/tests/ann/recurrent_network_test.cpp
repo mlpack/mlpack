@@ -569,6 +569,9 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
   // specified number of iterations using random weights. If this works 1 of 5
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
+  //
+  // (Note: in the strong majority of cases, this passes on the first trial.
+  // Over tons of different trials, though, sometimes it can take a few!)
   size_t successes = 0;
   const size_t rho = 10;
 
@@ -586,7 +589,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
     model.Add<Linear>(2);
     model.Add<LogSoftMax>();
 
-    StandardSGD opt(0.005, 16, 15 * input.n_cols, -100);
+    StandardSGD opt(0.0075, 16, 25 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::cube predictions;
