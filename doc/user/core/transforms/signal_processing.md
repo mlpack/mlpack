@@ -4,15 +4,15 @@ mlpack provides several signal processing techniques that allows to extract
 features from stationary and non-stationary signals:
 
 * _Decomposition_:
-    - `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
+    - [`EMD()`](#emd) (Empirical Mode Decomposition): adaptively decomposes a 1D signal into a set of Intrinsic Mode
  Functions (IMFs) plus a residue.
-    - `EEMD():` wraps `EMD()` to output more robust IMFs by using ensemble
+    - [`EEMD():`](#eemd) (Ensemble EMD): wraps `EMD()` to output more robust IMFs by using ensemble
       approach.
 
 * _Feature Extraction_: 
-    - `MFE()`: (Mel-Frequency Energy): log-scaled energies from a bank of
+    - [`MFE()`](#mfe) (Mel-Frequency Energy): log-scaled energies from a bank of
    triangular filters spaced on the mel scale
-    - `MFCC()`: (Mel-Frequency Cepstral Coefficients): a compact representation
+    - [`MFCC()`](#mfcc) (Mel-Frequency Cepstral Coefficients): a compact representation
    obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
 
 ## EMD 
