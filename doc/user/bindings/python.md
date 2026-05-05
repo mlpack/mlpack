@@ -1644,7 +1644,7 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
   lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
   verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
->>> predictions = lars_model.predict(test=X_test)
+>>> predictions = model.predict(test=X_test)
 ```
 
 ### Methods
@@ -3668,9 +3668,9 @@ An implementation of simple linear regression and simple ridge regression using 
 >>> y_train = d['training_labels']
 >>> X_test = d['test']
 >>> y_test = d['test_labels']
->>> lr = LinearRegression(check_input_matrices=False, copy_all_inputs=False,
-  lambda_=0, verbose=False)
->>> output_model = lr.fit(training=X_train, training_responses=y_train)
+>>> model = LinearRegression(check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0, verbose=False)
+>>> output_model = model.fit(training=X_train, training_responses=y_train)
 >>> output_predictions = model.predict(test=X_test)
 ```
 

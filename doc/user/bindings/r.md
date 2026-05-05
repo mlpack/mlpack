@@ -1614,7 +1614,7 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 model <- lars_train(input=X_train, responses=y_train, lambda1=1e-05,
   lambda2=1e-06)
   }
-\dontrun{ pred <- predict(lars_model, test=X_test) }
+\dontrun{ pred <- predict(model, test=X_test) }
 ```
 
 ### Methods
@@ -3615,8 +3615,8 @@ X_test <- pp[["test"]]
 y_train <- y[as.integer(pp[["training_labels"]]), 1]
 y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
-lr <- linear_regression_train(training=X_train, training_responses=y_train)
-}
+model <- linear_regression_train(training=X_train, training_responses=y_train)
+  }
 \dontrun{ pred <- predict(model, test=X_test) }
 ```
 
