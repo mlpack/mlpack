@@ -43,8 +43,8 @@ PARAM_MODEL_IN_REQ(LinearRegression<>, "input_model", "Existing "
 PARAM_MATRIX_IN_REQ("test", "Matrix containing X' (test regressors).", "T");
 
 // This is the future name of the parameter.
-PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
-    "matrix is where the predicted responses will be saved.", "o");
+PARAM_ROW_OUT("output_predictions", "Matrix containing predicted responses.",
+              "o");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {

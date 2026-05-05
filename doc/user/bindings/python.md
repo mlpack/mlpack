@@ -3712,5 +3712,5 @@ Predictions from model.
 
 | **type** | **description** |
 |----------|-----------------|
-| [`vector`](#doc_vector) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+| [`vector`](#doc_vector) | Matrix containing predicted responses. | 
 

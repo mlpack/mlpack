@@ -446,8 +446,7 @@ inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we do no need anything here as no external libraries are loaded.
-  return ""; //std::string("\\dontrun{\nsuppressMessages(library(data.table)) "
-  //"# for fread()");
+  return "";
 }
 
 inline std::string ImportSplit()

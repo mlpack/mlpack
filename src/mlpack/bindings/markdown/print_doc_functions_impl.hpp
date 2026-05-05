@@ -1000,10 +1000,6 @@ inline std::string GetWrapperLink(const std::string& bindingName)
   {
     return "class-" + bindingName;
   }
-  else if (BindingInfo::Language() == "r")
-  {
-    return "class " + bindingName;
-  }
   else
   {
     throw std::invalid_argument("GetWrapperLink(): unknown "
