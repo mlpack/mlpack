@@ -427,7 +427,7 @@ what each one captures:
   arma::vec meanMFCC = arma::mean(mfcc, 1);
 
   std::cout << std::endl;
-  std::cout << "Coeff   Avg value    What it captures" << std::endl;
+  std::cout << "Coeff   Avg value    What it captures (roughly)" << std::endl;
   std::cout << "-----   ---------    ----------------" << std::endl;
 
   const char* descriptions[] = {
