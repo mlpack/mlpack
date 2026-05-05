@@ -127,7 +127,8 @@ inline std::string ImportExtLib();
 
 inline std::string ImportSplit();
 
-inline std::string ImportThis(const std::string& /* groupName */);
+inline std::string ImportThis(const std::string& /* groupName */,
+                              const bool dontrun);
 
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url);
@@ -154,6 +155,13 @@ template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
+                       Args... args);
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       const bool dontrun,
                        Args... args);
 
 /**

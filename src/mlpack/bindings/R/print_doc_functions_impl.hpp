@@ -456,13 +456,16 @@ inline std::string ImportSplit()
   return "";
 }
 
-inline std::string ImportThis(const std::string& /* groupName */)
+inline std::string ImportThis(const std::string& /* groupName */,
+                              const bool dontrun = true)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we use it to load data.table for its fread() function
-  return std::string("\\dontrun{\nsuppressMessages(library(mlpack)) "
+  std::string s = (dontrun ? "\\dontrun{\n" : "");
+  s += "suppressMessages(library(mlpack)) "
     " # in case 'mlpack' is not yet loaded\n"
-    "suppressMessages(library(data.table)) # for fread()");
+    "suppressMessages(library(data.table)) # for fread()";
+  return s;
 }
 
 inline std::string GetDataset(const std::string& datasetName,
@@ -505,10 +508,26 @@ inline std::string CreateObject(const std::string& /* bindingName */,
   return "";
 }
 
+/*
+ * Default case for CallMethod passes bindingName, objectName, methodName
+ * and args... on along with 'dontrun' set to 'true' covering the 'R' call
+ * where \dontrun{} is added.  The 'markdown' call overrides with an explicit
+ * choice of 'false'.
+ */
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
+                       Args... args)
+{
+  return CallMethod(bindingName, objectName, methodName, true, args...);
+}
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       const bool dontrun,
                        Args... args)
 {
   util::Params params = IO::Parameters(bindingName);
@@ -524,7 +543,7 @@ std::string CallMethod(const std::string& bindingName,
            methodName == "predict" ||
            methodName == "probabilities")
   {
-    callMethod += "\\dontrun{ ";
+    callMethod += (dontrun ? "\\dontrun{ " : "");
     callMethod += (methodName != "probabilities" ? "pred" : "prob");
     callMethod += " <- " +
       (methodName == "train" ? bindingName : "predict") +
@@ -534,11 +553,8 @@ std::string CallMethod(const std::string& bindingName,
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
   callMethod += ")";
-  if (methodName == "train")
-    callMethod += "\n";
-  else
-    callMethod += " ";
-  callMethod += "}";
+  callMethod += (methodName == "train" ? "\n" : " ");
+  callMethod += (dontrun ? "}" : "");
   return util::HyphenateString(callMethod, 2);
 }
 

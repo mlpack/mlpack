@@ -813,7 +813,7 @@ inline std::string ImportThis(const std::string& groupName)
   }
   else if (BindingInfo::Language() == "r")
   {
-    s = r::ImportThis(groupName);
+    s = r::ImportThis(groupName, false);
   }
   else
   {
@@ -936,7 +936,7 @@ std::string CallMethod(const std::string& bindingName,
   else if (BindingInfo::Language() == "r")
   {
     s = r::CallMethod(bindingName, objectName,
-        methodName, args...);
+        methodName, false, args...);
   }
   else
   {
