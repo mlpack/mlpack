@@ -1599,7 +1599,6 @@ To train a LARS/LASSO/Elastic Net model, the `input` and `responses` parameters 
 ```r
 
 
-\dontrun{
 suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
 suppressMessages(library(data.table)) # for fread()
 X <- fread("http://datasets.mlpack.org/admission_predict.csv", showProgress=FALSE)
@@ -1613,8 +1612,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- lars_train(input=X_train, responses=y_train, lambda1=1e-05,
   lambda2=1e-06)
-  }
-\dontrun{ pred <- predict(model, test=X_test) }
+  
+pred <- predict(model, test=X_test) 
 ```
 
 ### Methods
@@ -1980,7 +1979,6 @@ This implementation of logistic regression does not support the general multi-cl
 ```r
 
 
-\dontrun{
 suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
 suppressMessages(library(data.table)) # for fread()
 X <- fread("http://datasets.mlpack.org/iris.csv", showProgress=FALSE)
@@ -1994,9 +1992,9 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- logistic_regression_train(training=X_train, labels=y_train,
   lambda=0.1)
-  }
-\dontrun{ pred <- predict(model, test=X_test) }
-\dontrun{ prob <- predict(model, test=X_test, type="probabilities") }
+  
+pred <- predict(model, test=X_test) 
+prob <- predict(model, test=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3505,7 +3503,6 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 ```r
 
 
-\dontrun{
 suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
 suppressMessages(library(data.table)) # for fread()
 X <- fread("https://example.com", showProgress=FALSE)
@@ -3518,9 +3515,9 @@ y_train <- y[as.integer(pp[["training_labels"]]), 1]
 y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- adaboost_train(training=X_train, labels=y_train)
-}
-\dontrun{ pred <- predict(model, test=X_test) }
-\dontrun{ prob <- predict(model, test=X_test, type="probabilities") }
+
+pred <- predict(model, test=X_test) 
+prob <- predict(model, test=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3603,7 +3600,6 @@ An implementation of simple linear regression and simple ridge regression using 
 ```r
 
 
-\dontrun{
 suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
 suppressMessages(library(data.table)) # for fread()
 X <- fread("https://example.com", showProgress=FALSE)
@@ -3616,8 +3612,8 @@ y_train <- y[as.integer(pp[["training_labels"]]), 1]
 y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- linear_regression_train(training=X_train, training_responses=y_train)
-  }
-\dontrun{ pred <- predict(model, test=X_test) }
+  
+pred <- predict(model, test=X_test) 
 ```
 
 ### Methods
