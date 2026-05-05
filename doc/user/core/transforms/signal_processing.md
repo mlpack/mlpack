@@ -185,9 +185,8 @@ keyword spotting
  * [Mel-frequency cepstrum](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
  * [MFCC tutorial (Practical Cryptography)](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/)
  * [The cepstrum, mel-cepstrum, and MFCCs (Aalto University)](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)
- * [Mel-Spectrogram and MFCCs | Lecture 72 (Part 1) | Applied Deep Learning](https://github.com/maziarraissi/Applied-Deep-Learning/blob/main/06%20-%20Speech%20%26%20Music/01%20-%20Recognition.pdf)
+ * [Mel-Spectrogram and MFCCs, Lecture 72 (Part 1), Applied Deep Learning](https://github.com/maziarraissi/Applied-Deep-Learning/blob/main/06%20-%20Speech%20%26%20Music/01%20-%20Recognition.pdf)
 
-## `MFE()`
 
  - `MFE(signals, output, sampleRate, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
    * Extract log-mel filterbank energies.
@@ -209,19 +208,19 @@ keyword spotting
      mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
      Both cases are demonstrated in the examples below.
 
-### Functions Parameters:
+#### Function Parameters:
 
 |     **name**     |  **type**   |   **default**  | **description**                                         |
 |------------------|-------------|----------------|---------------------------------------------------------|
-| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | raw pcm audio samples.                                         |
-| `mfe`            | `arma::mat` or other floating point matrix | _(n/a)_ | output matrix of shape `(numMelFilters x numWindows)`.         |
-| `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`).        |
-| `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters. Typical range (`20` to `100`) |
-| `windowLength`   | `float`     | `25.0`  | window length in milliseconds.  Typical range (`20` to `40`)           |
-| `windowStep`     | `float`     | `10.0`  | window hop (step) in milliseconds. Typical range (`5` to `20`)         |
-| `nFFT`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
-| `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`) |
-| `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
+| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | Raw pcm audio samples.                                 |
+| `mfe`            | `arma::mat` or other floating point matrix | _(n/a)_ | Output matrix of shape `(numMelFilters x numWindows)`. |
+| `sampleRate`     | `size_t`    | _(n/a)_ | Sample rate of the audio in hz (e.g. `16000`, `44100`).        |
+| `numMelFilters`  | `size_t`    | `40`    | Number of mel-spaced triangular filters. Typical range (`20` to `100`) |
+| `windowLength`   | `float`     | `25.0`  | Window length in milliseconds.  Typical range (`20` to `40`)           |
+| `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds. Typical range (`5` to `20`)         |
+| `nFFT`           | `size_t`    | `0`     | FFT size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
+| `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`) |
+| `highFreq`       | `float`     | `0.0`   | High frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
 
 ---
 
@@ -251,56 +250,61 @@ arma::fmat mfe;
 // 80 mel filters, default window size, frequency range 300–8000 Hz.
 mlpack::MFE(signal, mfe, opts.SampleRate(), 80, 25.0, 10.0, 0, 300.0,
     8000.0);
+
+std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
+        << " (filters x windows)" << std::endl;
 ```
 
 A detailed example showing the average extracted energy per frequency bin:
 
 ```c++
-  arma::mat signal;
-  AudioOptions opts = Fatal + WAV;
-  Load("sine.wav", signal, opts);
-  signal.brief_print("loaded signal");
-  std::cout << "Sample Rate(): " << opts.SampleRate() << std::endl;
+arma::mat signal;
+AudioOptions opts = Fatal + WAV;
+Load("sine.wav", signal, opts);
 
-  arma::mat mfe;
-  MFE(signal, mfe, opts.SampleRate());
+std::cout << "Loaded: " << signal.n_rows << " samples, "
+  << opts.SampleRate() << " Hz, "
+  << opts.Channels() << " channel(s)" << std::endl;
 
-  std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
-            << " (filters x windows)" << std::endl;
+arma::mat mfe;
+MFE(signal, mfe, opts.SampleRate());
 
-  arma::vec meanMFE = arma::mean(mfe, 1);
+std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
+        << " (filters x windows)" << std::endl;
 
-  size_t peakFilter = meanMFE.index_max();
-  float peakVal = meanMFE.max();
+arma::vec meanMFE = arma::mean(mfe, 1);
 
-  size_t nFFT = 512;
-  float highFreq = opts.SampleRate() / 2.0f;
-  float melLow = HzToMel(0.0f);
-  float melHigh = HzToMel(highFreq);
-  arma::vec melPoints = arma::linspace<arma::vec>(melLow, melHigh, 42);
-  arma::vec hzPoints(42);
-  for (size_t i = 0; i < 42; ++i)
-   hzPoints(i) = MelToHz(melPoints(i));
+size_t peakFilter = meanMFE.index_max();
+float peakVal = meanMFE.max();
 
-  std::cout << std::endl;
-  std::cout << "Filter   Freq range (Hz)       Avg energy" << std::endl;
-  std::cout << "------   -------------------   ----------" << std::endl;
+size_t nFFT = 512;
+float highFreq = opts.SampleRate() / 2.0f;
+float melLow = HzToMel(0.0f);
+float melHigh = HzToMel(highFreq);
+arma::vec melPoints = arma::linspace<arma::vec>(melLow, melHigh, 42);
+arma::vec hzPoints(42);
+for (size_t i = 0; i < 42; ++i)
+hzPoints(i) = MelToHz(melPoints(i));
 
-  for (size_t i = 0; i < 40; ++i)
-  {
-    std::cout << "  " << std::setw(2) << i << "     "
-              << std::setw(5) << std::fixed << std::setprecision(0)
-              << hzPoints(i) << " – "
-              << std::setw(5) << hzPoints(i + 2) << "       "
-              << std::setw(8) << std::setprecision(2) << meanMFE(i);
+std::cout << std::endl;
+std::cout << "Filter   Freq range (Hz)       Avg energy" << std::endl;
+std::cout << "------   -------------------   ----------" << std::endl;
 
-    if (i == peakFilter)
-      std::cout << "   <<< peak";
-    else if (i == peakFilter - 1 || i == peakFilter + 1)
-      std::cout << "   <<< adjacent";
+for (size_t i = 0; i < 40; ++i)
+{
+std::cout << "  " << std::setw(2) << i << "     "
+          << std::setw(5) << std::fixed << std::setprecision(0)
+          << hzPoints(i) << " – "
+          << std::setw(5) << hzPoints(i + 2) << "       "
+          << std::setw(8) << std::setprecision(2) << meanMFE(i);
 
-    std::cout << std::endl;
-  }
+if (i == peakFilter)
+  std::cout << "   <<< peak";
+else if (i == peakFilter - 1 || i == peakFilter + 1)
+  std::cout << "   <<< adjacent";
+
+std::cout << std::endl;
+}
 ```
 
 ---
@@ -311,14 +315,12 @@ mlpack provides the `MFCC()` functions to extract standard audio
 features from raw PCM data loaded with [`Load()`](../../load_save.md).  Similar to MFE, MFCC
 output can be used as input to machine learning models. Note that, since MFCC
 coefficient are decorrelated, it can be combined with several distance-based 
-machine learning algorithms (e.g., KNN, KMeans) or probabilitic algorithms
-(e.g., GMM, HMM).
+machine learning algorithms (e.g., [KNN](../../methods/knn.md),
+[KMeans](/src/mlpack/methods/kmeans/kmeans.hpp)) or probabilitic algorithms
+(e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp), [HMM](/src/mlpack/methods/hmm/hmm.hpp)).
 
-MFCC is a superset of MFE, the MFE pipeline produces the first step as an
-intermidiate representation, and a single additional DCT step to generate MFCC
-coefficients.
-
-## `MFCC()`
+Computing MFCCs is done by first computing Mel-filterbank energies with
+[`MFE()`](#mfe), and then performing a discrete cosine transform (DCT) on the result.
 
  - `MFCC(signals, output, sampleRate, numCoeffs, numMelFilters, windowLength,
    windowStep, nFFT, lowFreq, highFreq)`
@@ -331,7 +333,7 @@ coefficients.
    * `sampleRate` provided by `AudioOptions` after loading audio data.
     parameters.
 
-   * if the audio signal was loaded as an integral type, you can either
+   * If the audio signal was loaded as an integral type, you can either
      change the loading code to load directly into a floating-point type matrix, or
      use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
 
@@ -344,23 +346,23 @@ coefficients.
 
    * `numCoeffs` must be less than or equal to `numMelFilters`.  The
      DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
-     coefficients — it cannot produce more coefficients than there are input
+     coefficients, it cannot produce more coefficients than there are input
      values.
 
-### Functions Parameters:
+#### Function Parameters:
 
 |     **name**     |  **type**   |   **default**  | **description**                                  |
 |------------------|-------------|----------------|--------------------------------------------------|
-| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | raw pcm audio samples.                                  |
-| `mfcc`           | `arma::mat` or other floating point matrix | _(n/a)_ | output matrix of shape `(numMelFilters x numWindows)`.  |
-| `sampleRate`     | `size_t`    | _(n/a)_ | sample rate of the audio in hz (e.g. `16000`, `44100`). |
+| `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | Raw pcm audio samples.                                  |
+| `mfcc`           | `arma::mat` or other floating point matrix | _(n/a)_ | Output matrix of shape `(numMelFilters x numWindows)`.  |
+| `sampleRate`     | `size_t`    | _(n/a)_ | Sample rate of the audio in hz (e.g. `16000`, `44100`). |
 | `numCoeff`       | `size_t`    | _(n/a)_ | Number of cepstral coefficients.                        |
-| `numMelFilters`  | `size_t`    | `40`    | number of mel-spaced triangular filters.  Typical range (`20` to `100`)    |
-| `windowLength`   | `float`     | `25.0`  | window length in milliseconds. Typical range (`20` to `40`)                |
-| `windowStep`     | `float`     | `10.0`  | window hop (step) in milliseconds.  Typical range (`5` to `20`)            |
-| `nFft`           | `size_t`    | `0`     | fft size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
-| `lowFreq`        | `float`     | `0.0`   | low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`)      |
-| `highFreq`       | `float`     | `0.0`   | high frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
+| `numMelFilters`  | `size_t`    | `40`    | Number of mel-spaced triangular filters.  Typical range (`20` to `100`)    |
+| `windowLength`   | `float`     | `25.0`  | Window length in milliseconds. Typical range (`20` to `40`)                |
+| `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds.  Typical range (`5` to `20`)            |
+| `nFFT`           | `size_t`    | `0`     | FFT size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
+| `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`)      |
+| `highFreq`       | `float`     | `0.0`   | High frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
 
 ---
 
@@ -409,46 +411,46 @@ Analyse the 13 MFCC coefficients extracted from loading a sine wav signal and
 what each one captures:
 
 ```c++
-  arma::mat signal;
-  AudioOptions opts = Fatal + WAV;
-  Load("sine.wav", signal, opts);
+arma::mat signal;
+AudioOptions opts = Fatal + WAV;
+Load("sine.wav", signal, opts);
 
-  std::cout << "Loaded: " << signal.n_rows << " samples, "
-      << opts.SampleRate() << " Hz, "
-      << opts.Channels() << " channel(s)" << std::endl;
+std::cout << "Loaded: " << signal.n_rows << " samples, "
+  << opts.SampleRate() << " Hz, "
+  << opts.Channels() << " channel(s)" << std::endl;
 
-  arma::mat mfcc;
-  MFCC(signal, mfcc, opts.SampleRate());
+arma::mat mfcc;
+MFCC(signal, mfcc, opts.SampleRate());
 
-  std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
-      << " (coefficients x windows)" << std::endl;
+std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
+  << " (coefficients x windows)" << std::endl;
 
-  arma::vec meanMFCC = arma::mean(mfcc, 1);
+arma::vec meanMFCC = arma::mean(mfcc, 1);
 
-  std::cout << std::endl;
-  std::cout << "Coeff   Avg value    What it captures (roughly)" << std::endl;
-  std::cout << "-----   ---------    ----------------" << std::endl;
+std::cout << std::endl;
+std::cout << "Coeff   Avg value    What it captures (roughly)" << std::endl;
+std::cout << "-----   ---------    ----------------" << std::endl;
 
-  const char* descriptions[] = {
-    "Overall energy (loudness)",
-    "Spectral tilt (low vs high freq balance)",
-    "Spectral curvature (middle vs edges)",
-    "Two-bump structure (formant separation)",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Finer spectral shape",
-    "Fine spectral detail",
-    "Finest spectral detail"
-  };
+const char* descriptions[] = {
+"Overall energy (loudness)",
+"Spectral tilt (low vs high freq balance)",
+"Spectral curvature (middle vs edges)",
+"Two-bump structure (formant separation)",
+"Finer spectral shape",
+"Finer spectral shape",
+"Finer spectral shape",
+"Finer spectral shape",
+"Finer spectral shape",
+"Finer spectral shape",
+"Finer spectral shape",
+"Fine spectral detail",
+"Finest spectral detail"
+};
 
-  for (size_t i = 0; i < mfcc.n_rows; ++i)
-  {
-    std::cout << "  c[" << std::setw(2) << i << "]  "
-        << std::setw(10) << std::fixed << std::setprecision(2) << meanMFCC(i)
-        << "    " << descriptions[i] << std::endl;
-  }
+for (size_t i = 0; i < mfcc.n_rows; ++i)
+{
+std::cout << "  c[" << std::setw(2) << i << "]  "
+    << std::setw(10) << std::fixed << std::setprecision(2) << meanMFCC(i)
+    << "    " << descriptions[i] << std::endl;
+}
 ```
