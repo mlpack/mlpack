@@ -189,8 +189,7 @@ keyword spotting
 
 ## `MFE()`
 
- - `MFE(signals, output, sampleRate, numMelFilters=40, windowLength=25,
-   windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
+ - `MFE(signals, output, sampleRate, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
    * Extract log-mel filterbank energies.
 
    * `signals` input matrix contains a columm wise represented signals.
