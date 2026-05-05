@@ -237,7 +237,6 @@ arma::mat mfe;
 mlpack::MFE(signal, mfe, opts.SampleRate());
 
 std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols << std::endl;
-
 ```
 
 Specifying a custom number of mel filters and frequency range:
