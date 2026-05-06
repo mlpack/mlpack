@@ -1599,10 +1599,9 @@ To train a LARS/LASSO/Elastic Net model, the `input` and `responses` parameters 
 ```r
 
 
-suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
-suppressMessages(library(data.table)) # for fread()
-X <- fread("http://datasets.mlpack.org/admission_predict.csv", showProgress=FALSE)
-y <- fread("http://datasets.mlpack.org/admission_predict.responses.csv", showProgress=FALSE)
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.cv("http://datasets.mlpack.org/admission_predict.csv", header=FALSE))
+y <- as.matrix(read.cv("http://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -1979,10 +1978,9 @@ This implementation of logistic regression does not support the general multi-cl
 ```r
 
 
-suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
-suppressMessages(library(data.table)) # for fread()
-X <- fread("http://datasets.mlpack.org/iris.csv", showProgress=FALSE)
-y <- fread("http://datasets.mlpack.org/iris_labels.csv", showProgress=FALSE)
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.cv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.cv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -2002,8 +2000,8 @@ prob <- predict(model, newdata=X_test, type="probabilities")
 | **name** | **description** |
 |----------|-----------------|
 | train | An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points. |
-| classify | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
-| probabilities | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties. |
+| predict | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
+| probabilities | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities. |
 
 ### 1. train
 
@@ -2022,7 +2020,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 |----------|-----------------|
 | [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. | 
 
-### 2. classify
+### 2. predict
 
 An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points.
 
@@ -2040,7 +2038,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 ### 3. probabilities
 
-An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties.
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities.
 
 #### Input Parameters:
 
@@ -3503,10 +3501,9 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 ```r
 
 
-suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
-suppressMessages(library(data.table)) # for fread()
-X <- fread("http://datasets.mlpack.org/iris.csv", showProgress=FALSE)
-y <- fread("http://datasets.mlpack.org/iris_labels.csv", showProgress=FALSE)
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.cv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.cv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -3525,7 +3522,7 @@ prob <- predict(model, newdata=X_test, type="probabilities")
 | **name** | **description** |
 |----------|-----------------|
 | train | Training AdaBoost model. |
-| classify | Class predictions from model. |
+| predict | Class predictions from model. |
 | probabilities | Class probabilities from model. |
 
 ### 1. train
@@ -3545,7 +3542,7 @@ Training AdaBoost model.
 |----------|-----------------|
 | [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
 
-### 2. classify
+### 2. predict
 
 Class predictions from model.
 
@@ -3600,10 +3597,9 @@ An implementation of simple linear regression and simple ridge regression using 
 ```r
 
 
-suppressMessages(library(mlpack))  # in case 'mlpack' is not yet loaded
-suppressMessages(library(data.table)) # for fread()
-X <- fread("https://datasets.mlpack.org/admission_predict.csv", showProgress=FALSE)
-y <- fread("https://datasets.mlpack.org/admission_predict.responses.csv", showProgress=FALSE)
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.cv("https://datasets.mlpack.org/admission_predict.csv", header=FALSE))
+y <- as.matrix(read.cv("https://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]

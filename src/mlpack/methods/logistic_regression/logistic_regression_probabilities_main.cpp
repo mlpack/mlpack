@@ -31,7 +31,7 @@ BINDING_USER_NAME("L2-regularized Logistic Regression Probabilities");
 BINDING_SHORT_DESC(
     "An implementation of L2-regularized logistic regression for two-class "
     "classification.  Uses a trained model to classify new points and provide "
-    "classification probabilties.");
+    "classification probabilities.");
 
 // Long description. Taken from logistic_regression_train_main.cpp
 BINDING_LONG_DESC("");

@@ -2037,7 +2037,7 @@ This implementation of logistic regression does not support the general multi-cl
 |----------|-----------------|
 | fit | An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points. |
 | predict | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
-| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties. |
+| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities. |
 
 ### 1. fit
 
@@ -2074,7 +2074,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 ### 3. predict_proba
 
-An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties.
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities.
 
 #### Input Parameters:
 

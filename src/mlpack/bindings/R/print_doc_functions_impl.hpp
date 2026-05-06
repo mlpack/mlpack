@@ -34,7 +34,7 @@ inline std::string GetBindingName(const std::string& bindingName)
  */
 inline std::string GetMappedName(const std::string& methodName)
 {
-  return methodName; // TODO
+  return (methodName == "classify" ? "predict" : methodName);
 }
 
 /**
@@ -520,11 +520,10 @@ inline std::string ImportThis(const std::string& /* groupName */,
                               const bool dontrun = true)
 {
   // This function has to exist to satisfy the cross-language macro.
-  // For R, we use it to load data.table for its fread() function
+  // For R, we use it to load mlpack itself.
   std::string s = (dontrun ? "\\dontrun{\n" : "");
   s += "suppressMessages(library(mlpack)) "
-    " # in case 'mlpack' is not yet loaded\n"
-    "suppressMessages(library(data.table)) # for fread()";
+    "# in case 'mlpack' is not yet loaded";
   return s;
 }
 
@@ -534,7 +533,8 @@ inline std::string ImportThis(const std::string& /* groupName */,
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url)
 {
-  return datasetName + " <- fread(\"" + url + "\", showProgress=FALSE)";
+  return datasetName + " <- as.matrix(read.cv(\"" + url +
+    "\", header=FALSE))";
 }
 
 /**
