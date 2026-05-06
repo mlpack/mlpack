@@ -492,6 +492,9 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
+/**
+ * Import additional external library. For R this remains empty.
+ */
 inline std::string ImportExtLib()
 {
   // This function has to exist to satisfy the cross-language macro.
@@ -499,6 +502,9 @@ inline std::string ImportExtLib()
   return "";
 }
 
+/**
+ * Import additional external library. For R this remains empty.
+ */
 inline std::string ImportSplit()
 {
   // This function has to exist to satisfy the cross-language macro.
@@ -506,6 +512,10 @@ inline std::string ImportSplit()
   return "";
 }
 
+/**
+ * Import the package itself. For R, we honor an additional flag to wrap
+ * this in \dontrun{}.
+ */
 inline std::string ImportThis(const std::string& /* groupName */,
                               const bool dontrun = true)
 {
@@ -518,12 +528,19 @@ inline std::string ImportThis(const std::string& /* groupName */,
   return s;
 }
 
+/**
+ * Code to load a given dataset from a given URL.
+ */
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url)
 {
   return datasetName + " <- fread(\"" + url + "\", showProgress=FALSE)";
 }
 
+/**
+ * Code to split a given dataset into test and training set for both
+ * the predictor variables and the response variable.
+ */
 inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& /* trainDataset */,
@@ -542,18 +559,24 @@ inline std::string SplitTrainTest(const std::string& datasetName,
     "y_test <- " + labelName + "[as.integer(pp[[\"test_labels\"]]), 1]";
 }
 
+/**
+ * Recursion base case for object creation
+ */
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */ )
+{
+  return "";
+}
+
+/**
+ * Object creation, which for R remains empty.
+ */
 template<typename... Args>
 std::string CreateObject(const std::string& /* bindingName */,
                          const std::string& /* objectName */,
                          const std::string& /* groupName */,
                          Args... /* args */)
-{
-  return "";
-}
-
-inline std::string CreateObject(const std::string& /* bindingName */,
-                                const std::string& /* objectName */,
-                                const std::string& /* groupName */ )
 {
   return "";
 }
@@ -573,6 +596,11 @@ std::string CallMethod(const std::string& bindingName,
   return CallMethod(bindingName, objectName, methodName, true, args...);
 }
 
+/*
+ * Separate case for CallMethod passes bindingName, objectName, methodName
+ * and args... along with 'dontrun' argument permitting markdown to set it to
+ * 'false'.
+ */
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,

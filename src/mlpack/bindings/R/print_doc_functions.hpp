@@ -138,16 +138,33 @@ inline std::string PrintDataset(const std::string& datasetName);
  */
 inline std::string ParamString(const std::string& paramName);
 
+/**
+ * Import additional external library. For R this remains empty.
+ */
 inline std::string ImportExtLib();
 
+/**
+ * Import additional external library. For R this remains empty.
+ */
 inline std::string ImportSplit();
 
+/**
+ * Import the package itself. For R, we honor an additional flag to wrap
+ * this in \dontrun{}.
+ */
 inline std::string ImportThis(const std::string& /* groupName */,
                               const bool dontrun);
 
+/**
+ * Code to load a given dataset from a given URL.
+ */
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url);
 
+/**
+ * Code to split a given dataset into test and training set for both
+ * the predictor variables and the response variable.
+ */
 inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& /* trainDataset */,
@@ -156,22 +173,39 @@ inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& /* testLabels */,
                                   const std::string& splitRatio);
 
+/**
+ * Recursion base case for object creation
+ */
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */);
+
+/**
+ * Object creation, which for R remains empty.
+ */
 template<typename... Args>
 std::string CreateObject(const std::string& /* bindingName */,
                          const std::string& /* objectName */,
                          const std::string& /* groupName */,
                          Args... /* args */);
 
-inline std::string CreateObject(const std::string& /* bindingName */,
-                                const std::string& /* objectName */,
-                                const std::string& /* groupName */);
-
+/*
+ * Default case for CallMethod passes bindingName, objectName, methodName
+ * and args... on along with 'dontrun' set to 'true' covering the 'R' call
+ * where \dontrun{} is added.  The 'markdown' call overrides with an explicit
+ * choice of 'false'.
+ */
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
                        Args... args);
 
+/*
+ * Separate case for CallMethod passes bindingName, objectName, methodName
+ * and args... along with 'dontrun' argument permitting markdown to set it to
+ * 'false'.
+ */
 template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
