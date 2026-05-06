@@ -605,7 +605,7 @@ template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
-                       const bool dontrun,  /* do we wrap \dontrun{} around code ? */
+                       const bool dontrun,   // do we wrap \dontrun{} around?
                        Args... args)
 {
   util::Params params = IO::Parameters(bindingName);
