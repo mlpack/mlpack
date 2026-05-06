@@ -577,7 +577,7 @@ template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
-                       const bool dontrun,		/* wrap \dontrun{} ? */
+                       const bool dontrun,  /* do we wrap \dontrun{} around code ? */
                        Args... args)
 {
   util::Params params = IO::Parameters(bindingName);
@@ -588,17 +588,19 @@ std::string CallMethod(const std::string& bindingName,
 
   if (methodName == "train")
   {
-    callMethod += objectName;
-    callMethod += " <- " + bindingName + "(";
+    // If we are a 'train' method a possible \dontrun{} occurred earlier
+    callMethod += objectName + " <- " + bindingName + "(";
   }
   else if (nonFitMethod)
   {
+    // Other methods consider 'dontrun', adjust method and binding name use.
     callMethod += (dontrun ? "\\dontrun{ " : "");
     callMethod += (methodName != "probabilities" ? "pred" : "prob");
     callMethod += " <- " +
       (methodName == "train" ? bindingName : "predict") +
       "(" + objectName + ", ";
   }
+
   if (methodName == "train")
   {
     callMethod += PrintInputOptions(params, args...);
@@ -609,6 +611,7 @@ std::string CallMethod(const std::string& bindingName,
     // 'newdata=X_test' to satisfy the R generic
     callMethod += PrintInputOptionsPredict(params, args...);
   }
+
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
   callMethod += ")";
