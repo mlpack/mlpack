@@ -3564,8 +3564,8 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import Adaboost
->>> X = pd.read_csv('https://example.com')
->>> y = pd.read_csv('https://example.com')
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']
@@ -3661,8 +3661,8 @@ An implementation of simple linear regression and simple ridge regression using 
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import LinearRegression
->>> X = pd.read_csv('https://example.com')
->>> y = pd.read_csv('https://example.com')
+>>> X = pd.read_csv('https://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('https://datasets.mlpack.org/admission_predict.responses.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']

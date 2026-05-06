@@ -184,6 +184,56 @@ std::string PrintInputOptions(util::Params& p,
 }
 
 /**
+ * Recursion base case for Predict variant.
+ */
+std::string PrintInputOptionsPredict(util::Params& /* p */)
+{
+  return "";
+}
+
+/**
+ * Print an input option for the R predict() case.
+ * This will throw an exception if the parameter does not exist in IO.
+ */
+template<typename T, typename... Args>
+std::string PrintInputOptionsPredict(util::Params& p,
+                                     const std::string& paramName,
+                                     const T& value,
+                                     Args... args)
+{
+  // See if this is part of the program.
+  std::string result = "";
+  if (p.Parameters().count(paramName) > 0)
+  {
+    util::ParamData& d = p.Parameters()[paramName];
+    if (d.input)
+    {
+      // Print the input option.
+      std::ostringstream oss;
+      oss << (paramName == "test" ? "newdata" : paramName) << "=";
+      oss << PrintValue(value, d.tname == TYPENAME(std::string));
+      result = oss.str();
+    }
+  }
+  else
+  {
+    // Unknown parameter!
+    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
+        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
+        "declaration.");
+  }
+
+  // Continue recursion.
+  std::string rest = PrintInputOptions(p, args...);
+  if (rest != "" && result != "")
+    result += ", " + rest;
+  else if (result == "")
+    result = rest;
+
+  return result;
+}
+
+/**
  * Recursion base case.
  */
 inline std::string PrintOutputOptions(util::Params& /* p */,
@@ -527,21 +577,21 @@ template<typename... Args>
 std::string CallMethod(const std::string& bindingName,
                        const std::string& objectName,
                        const std::string& methodName,
-                       const bool dontrun,
+                       const bool dontrun,		/* wrap \dontrun{} ? */
                        Args... args)
 {
   util::Params params = IO::Parameters(bindingName);
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
+  bool nonFitMethod = methodName == "classify" || methodName == "predict" ||
+    methodName == "probabilities";
 
   if (methodName == "train")
   {
     callMethod += objectName;
     callMethod += " <- " + bindingName + "(";
   }
-  else if (methodName == "classify" ||
-           methodName == "predict" ||
-           methodName == "probabilities")
+  else if (nonFitMethod)
   {
     callMethod += (dontrun ? "\\dontrun{ " : "");
     callMethod += (methodName != "probabilities" ? "pred" : "prob");
@@ -549,7 +599,16 @@ std::string CallMethod(const std::string& bindingName,
       (methodName == "train" ? bindingName : "predict") +
       "(" + objectName + ", ";
   }
-  callMethod += PrintInputOptions(params, args...);
+  if (methodName == "train")
+  {
+    callMethod += PrintInputOptions(params, args...);
+  }
+  else if (nonFitMethod)
+  {
+    // We need a special case to turn 'test=X_test' into
+    // 'newdata=X_test' to satisfy the R generic
+    callMethod += PrintInputOptionsPredict(params, args...);
+  }
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
   callMethod += ")";

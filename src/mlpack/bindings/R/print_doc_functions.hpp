@@ -79,6 +79,21 @@ std::string PrintInputOptions(util::Params& p,
                               Args... args);
 
 /**
+ * Recursion base case for Predict variant.
+ */
+inline std::string PrintInputOptionsPredict(util::Params& /* p */);
+
+/**
+ * Print an input option for the R predict() case.
+ * This will throw an exception if the parameter does not exist in IO.
+ */
+template<typename T, typename... Args>
+std::string PrintInputOptionsPredict(util::Params& p,
+                                     const std::string& paramName,
+                                     const T& value,
+                                     Args... args);
+
+/**
  * Recursion base case.
  */
 inline std::string PrintOutputOptions(util::Params& /* p */,
