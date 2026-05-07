@@ -21,11 +21,6 @@ mlpack provides Empirical Mode Decomposition (`EMD`) to process signals
 for training and testing.  This can be used for signal monitoring pipelines
 in nonlinear and nonstationary problems.
 
-#### See also:
-
- * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
-
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
 from a uniformly sampled periodic signal:
 
@@ -109,17 +104,17 @@ for (size_t k = 0; k < numToShow; ++k)
 }
 ```
 
+#### See also:
+
+ * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
 ## EEMD
 
 The `EEMD()` function wraps [`EMD()`](#emd) to produce more robust IMFs
 by running EMD many times on the signal with independent white noise added
 to each trial, then averaging the results. The added noise reduces mode mixing
 and cancels out in the average
-
-#### See also:
-
- * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
 
 ## `EEMD()`
 
@@ -172,6 +167,11 @@ arma::vec residue;
 mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 ```
 
+#### See also:
+
+ * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
 ## MFE
 
 mlpack provides the `MFE()` functions to extract standard audio
@@ -179,27 +179,19 @@ features from raw PCM data loaded with [`Load()`](../../load_save.md).  These fe
 used as input to machine learning models for speech recognition, speaker identification,
 keyword spotting
 
-#### See also:
+ - `MFE(signals, mfe, sampleRate, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
 
- * [Audio data loading and saving](../../load_save.md#audio-data)
- * [Mel-frequency cepstrum](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
- * [MFCC tutorial (Practical Cryptography)](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/)
- * [The cepstrum, mel-cepstrum, and MFCCs (Aalto University)](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)
- * [Mel-Spectrogram and MFCCs, Lecture 72 (Part 1), Applied Deep Learning](https://github.com/maziarraissi/Applied-Deep-Learning/blob/main/06%20-%20Speech%20%26%20Music/01%20-%20Recognition.pdf)
+   * Extract log-Mel filterbank energies from windows of audio in `signals`, storing the result in `mfe`.
 
+   * `signals` should be a matrix with floating-point elements and shape `numSamples` x `numSignals`,
+      and `mfe` will be set to shape `numMelFilters` x `(numWindows * numSignals)`.
+     - To perform `MFE()` on non-floating point audio signals, first convert the data to a
+       floating-point matrix type (e.g. using [`arma::conv_to`](https://arma.sourceforge.net/docs.html#conv_to)).
 
- - `MFE(signals, output, sampleRate, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
-   * Extract log-mel filterbank energies.
+   * `sampleRate` can be set using the members of an [`AudioOptions`](../../load_save.md#audiooptions)
+      populated during a call to [`Load()`](../../load_save.md).
 
-   * `signals` input matrix contains a columm wise represented signals.
-   
-   * `mfe` output matrix of shape `(numMelFilters x numWindows)`
-
-   * `sampleRate` provided by `AudioOptions` after loading audio data.
-
-   * If the audio signal was loaded as an integral type, you can either
-     change the loading code to load directly into a floating-point type matrix, or
-     use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+   ***NOTES:***
 
    * If the audio signal has multiple channels, the channels must be
      de-interleaved before calling `MFE()` with each column representing a separate
@@ -207,6 +199,22 @@ keyword spotting
      left vs. right).  If spatial information is not needed, the channels can be
      mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
      Both cases are demonstrated in the examples below.
+
+mlpack's implementation of MFE algorithm is as follows:
+
+  - Apply Short Fast Fourier Transform (STFT) to the signals, this is done by:
+    1. Cuts the input signal into a set of overlapping windows (25 ms window, 10 ms hop). Figure (b)
+    2. Multiply each window by Hamming Window function so the edges of each window tends to 0. This is done primarly to prevent spectral leakage). Figure (b)
+    3. Fast Fourier Transorm (FFT) turns each frame from time domain into frequency domain. We take amplitutde per bin and the first part of the spectrum since it is mirrored. Figure (c)
+  - Multiply bins by MelFilter banks. The filters are triangle shaped, using mel scale and are dense at low frequency and sparse at high frequency. Figure (d)
+  - Take the log in order to compress the dynamic range of energies to match how humans perceive loudness. Figure (e)
+
+We shows in the following figure how the above steps are applied on a sine wave
+signal with 440 Hz frequency.
+
+<p align="center">
+  <img src="../../../img/mfe_pipeline.png" alt="MFE implementation">
+</p>
 
 #### Function Parameters:
 
@@ -259,15 +267,15 @@ A detailed example showing the average extracted energy per frequency bin:
 
 ```c++
 arma::mat signal;
-AudioOptions opts = Fatal + WAV;
-Load("sine.wav", signal, opts);
+mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
+mlpack::Load("sine.wav", signal, opts);
 
 std::cout << "Loaded: " << signal.n_rows << " samples, "
   << opts.SampleRate() << " Hz, "
   << opts.Channels() << " channel(s)" << std::endl;
 
 arma::mat mfe;
-MFE(signal, mfe, opts.SampleRate());
+mlpack::MFE(signal, mfe, opts.SampleRate());
 
 std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
         << " (filters x windows)" << std::endl;
@@ -279,12 +287,12 @@ float peakVal = meanMFE.max();
 
 size_t nFFT = 512;
 float highFreq = opts.SampleRate() / 2.0f;
-float melLow = HzToMel(0.0f);
-float melHigh = HzToMel(highFreq);
+float melLow = mlpack::HzToMel(0.0f);
+float melHigh = mlpack::HzToMel(highFreq);
 arma::vec melPoints = arma::linspace<arma::vec>(melLow, melHigh, 42);
 arma::vec hzPoints(42);
 for (size_t i = 0; i < 42; ++i)
-hzPoints(i) = MelToHz(melPoints(i));
+hzPoints(i) = mlpack::MelToHz(melPoints(i));
 
 std::cout << std::endl;
 std::cout << "Filter   Freq range (Hz)       Avg energy" << std::endl;
@@ -319,23 +327,22 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
 [KMeans](/src/mlpack/methods/kmeans/kmeans.hpp)) or probabilitic algorithms
 (e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp), [HMM](/src/mlpack/methods/hmm/hmm.hpp)).
 
-Computing MFCCs is done by first computing Mel-filterbank energies with
-[`MFE()`](#mfe), and then performing a discrete cosine transform (DCT) on the result.
 
- - `MFCC(signals, output, sampleRate, numCoeffs, numMelFilters, windowLength,
+ - `MFCC(signals, mfcc, sampleRate, numCoeffs, numMelFilters, windowLength,
    windowStep, nFFT, lowFreq, highFreq)`
-   * Extract MFCC with different number coefficients dependings on the user specified
- 
-   * `signals` input matrix contains a columm wise represented signals.
-   
-   * `mfcc` output matrix of shape `(numCoeffs x numWindows)`
 
-   * `sampleRate` provided by `AudioOptions` after loading audio data.
-    parameters.
+   * Extract Mel-Frequency Cepstral Coefficients from windows of audio in `signals`, 
+     storing the result in `mfcc`.
 
-   * If the audio signal was loaded as an integral type, you can either
-     change the loading code to load directly into a floating-point type matrix, or
-     use conv_to to convert to a floating-point type, then scale the range to [-1, 1]
+   * `signals` should be a matrix with floating-point elements and shape `numSamples` x `numSignals`,
+      and `mfcc` will be set to shape `numCoeffs` x `(numWindows * numSignals)`.
+     - To perform `MFE()` on non-floating point audio signals, first convert the data to a
+       floating-point matrix type (e.g. using [`arma::conv_to`](https://arma.sourceforge.net/docs.html#conv_to)).
+
+   * `sampleRate` can be set using the members of an [`AudioOptions`](../../load_save.md#audiooptions)
+      populated during a call to [`Load()`](../../load_save.md).
+
+   ***NOTES:***
 
    * If the audio signal has multiple channels, the channels must be
      de-interleaved before calling `MFCC()` with each column representing a separate
@@ -348,6 +355,24 @@ Computing MFCCs is done by first computing Mel-filterbank energies with
      DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
      coefficients, it cannot produce more coefficients than there are input
      values.
+
+mlpack's implementation of MFCC algorithm is as follows:
+
+  - Apply Short Fast Fourier Transform (STFT) to the signals, this is done by:
+    1. Cuts the input signal into a set of overlapping windows (25 ms window, 10 ms hop),
+    2. Multiply each window by Hamming Window function so the edges of each window tends to 0. This is done primarly to prevent spectral leakage).
+    3. Fast Fourier Transorm (FFT) turns each frame from time domain into frequency domain. We take amplitutde per bin and the first part of the spectrum since it is mirrored.
+  - Multiply bins by MelFilter banks. The filters are triangle shaped, using mel scale and are dense at low frequency and sparse at high frequency.
+  - Compute [`MFE()`](#mfe) by taking the log in order to compress the dynamic range of energies to
+  match how humans perceive loudness.
+  - Multiplying by a discrete cosine transform (DCT) matrix on top gives MFCC.
+
+We shows in the following figure how the above steps are applied on a sine wave
+signal with 440 Hz frequency.
+
+<p align="center">
+  <img src="../../../img/mfcc_pipeline.png" alt="MFCC implementation">
+</p>
 
 #### Function Parameters:
 
@@ -403,7 +428,7 @@ mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
 mlpack::Load("sine.wav", signal, opts);
 
 arma::fmat mfcc;
-mlpack::MFCC(signal, mfcc, opts.SampleRate(), 13, 26, 25.0, 10.0, 512, 300.0,
+mlpack::MFCC(signal, mfcc, opts.SampleRate(), 13, 26, 25.0, 10.0, 0, 300.0,
     3400.0);
 ```
 
@@ -412,15 +437,15 @@ what each one captures:
 
 ```c++
 arma::mat signal;
-AudioOptions opts = Fatal + WAV;
-Load("sine.wav", signal, opts);
+mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
+mlpack::Load("sine.wav", signal, opts);
 
 std::cout << "Loaded: " << signal.n_rows << " samples, "
   << opts.SampleRate() << " Hz, "
   << opts.Channels() << " channel(s)" << std::endl;
 
 arma::mat mfcc;
-MFCC(signal, mfcc, opts.SampleRate());
+mlpack::MFCC(signal, mfcc, opts.SampleRate());
 
 std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
   << " (coefficients x windows)" << std::endl;
@@ -454,3 +479,11 @@ std::cout << "  c[" << std::setw(2) << i << "]  "
     << "    " << descriptions[i] << std::endl;
 }
 ```
+
+#### See also:
+
+ * [Audio data loading and saving](../../load_save.md#audio-data)
+ * [Mel-frequency cepstrum](https://en.wikipedia.org/wiki/Mel-frequency_cepstrum)
+ * [MFCC tutorial (Practical Cryptography)](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/)
+ * [The cepstrum, mel-cepstrum, and MFCCs (Aalto University)](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)
+ * [Mel-Spectrogram and MFCCs, Lecture 72 (Part 1), Applied Deep Learning](https://github.com/maziarraissi/Applied-Deep-Learning/blob/main/06%20-%20Speech%20%26%20Music/01%20-%20Recognition.pdf)
