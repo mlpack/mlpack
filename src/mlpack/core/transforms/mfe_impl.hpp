@@ -50,19 +50,7 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
   arma::Col<eT> melPoints = arma::linspace<arma::Col<eT>>(melLow, melHigh,
       numPoints);
 
-#if ARMA_VERSION_MAJOR > 12
-  arma::Col<eT> hzPoints = 700.0 *
-      (arma::pow(10.0 * arma::ones<arma::Col<eT>>(numPoints),
-      melPoints / 2595.0) - 1.0);
-#else
-  // Armadillo does not have a pow(vec, vec) function before v12, the only
-  // function available is pow(vec, scalar)
-  // Since the numPoints is usually low, the cost of iterations is
-  // insignificant.
-  arma::Col<eT> hzPoints(numPoints);
-  for (size_t i = 0; i < numPoints; ++i)
-    hzPoints(i) = MelToHz(melPoints(i));
-#endif
+  arma::Col<eT> hzPoints = 700.0 * (arma::exp10(melPoints / 2595.0) - 1.0);
 
   arma::Col<eT> binFreqHz = arma::regspace<arma::Col<eT>>(0, numBins - 1)
       * sampleRate / nFFT;
@@ -201,7 +189,7 @@ inline void SlidingWindow(const MatType& signal,
 {
   if (signal.n_elem < windowLength)
   {
-    windows.set_size(windowLength, 1);
+    windows.zeros(windowLength, 1);
     windows.col(0).subvec(0, signal.n_elem - 1) = signal;
   }
   else
