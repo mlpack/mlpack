@@ -201,9 +201,7 @@ class CoverTree
             const ElemType parentDistance,
             arma::Col<size_t>& indices,
             arma::vec& distances,
-            size_t nearSetSize,
-            size_t& farSetSize,
-            size_t& usedSetSize,
+            std::vector<bool>& used,
             DistanceType& distance = NULL);
 
   /**
@@ -454,31 +452,31 @@ class CoverTree
   size_t& DistanceComps() { return distanceComps; }
 
  private:
-  //! Reference to the matrix which this tree is built on.
+  // Reference to the matrix which this tree is built on.
   const MatType* dataset;
-  //! Index of the point in the matrix which this node represents.
+  // Index of the point in the matrix which this node represents.
   size_t point;
-  //! The list of children; the first is the self-child.
+  // The list of children; the first is the self-child.
   std::vector<CoverTree*> children;
-  //! Scale level of the node.
+  // Scale level of the node.
   int scale;
-  //! The base used to construct the tree.
+  // The base used to construct the tree.
   ElemType base;
-  //! The instantiated statistic.
+  // The instantiated statistic.
   StatisticType stat;
-  //! The number of descendant points.
+  // The number of descendant points.
   size_t numDescendants;
-  //! The parent node (NULL if this is the root of the tree).
+  // The parent node (NULL if this is the root of the tree).
   CoverTree* parent;
-  //! Distance to the parent.
+  // Distance to the parent.
   ElemType parentDistance;
-  //! Distance to the furthest descendant.
+  // Distance to the furthest descendant.
   ElemType furthestDescendantDistance;
-  //! Whether or not we need to destroy the distance metric in the destructor.
+  // Whether or not we need to destroy the distance metric in the destructor.
   bool localDistance;
-  //! If true, we own the dataset and need to destroy it in the destructor.
+  // If true, we own the dataset and need to destroy it in the destructor.
   bool localDataset;
-  //! The distance metric used for this tree.
+  // The distance metric used for this tree.
   DistanceType* distance;
 
   /**
@@ -486,9 +484,7 @@ class CoverTree
    */
   void CreateChildren(arma::Col<size_t>& indices,
                       arma::vec& distances,
-                      size_t nearSetSize,
-                      size_t& farSetSize,
-                      size_t& usedSetSize);
+                      std::vector<bool>& used);
 
   /**
    * Fill the vector of distances with the distances between the point specified
@@ -503,65 +499,8 @@ class CoverTree
    */
   void ComputeDistances(const size_t pointIndex,
                         const arma::Col<size_t>& indices,
-                        arma::vec& distances,
-                        const size_t pointSetSize);
-  /**
-   * Split the given indices and distances into a near and a far set, returning
-   * the number of points in the near set.  The distances must already be
-   * initialized.  This will order the indices and distances such that the
-   * points in the near set make up the first part of the array and the far set
-   * makes up the rest:  [ nearSet | farSet ].
-   *
-   * @param indices List of indices; will be reordered.
-   * @param distances List of distances; will be reordered.
-   * @param bound If the distance is less than or equal to this bound, the point
-   *      is placed into the near set.
-   * @param pointSetSize Size of point set (because we may be sorting a smaller
-   *      list than the indices vector will hold).
-   */
-  size_t SplitNearFar(arma::Col<size_t>& indices,
-                      arma::vec& distances,
-                      const ElemType bound,
-                      const size_t pointSetSize);
-
-  /**
-   * Assuming that the list of indices and distances is sorted as
-   * [ childFarSet | childUsedSet | farSet | usedSet ],
-   * resort the sets so the organization is
-   * [ childFarSet | farSet | childUsedSet | usedSet ].
-   *
-   * The size_t parameters specify the sizes of each set in the array.  Only the
-   * ordering of the indices and distances arrays will be modified (not their
-   * actual contents).
-   *
-   * The size of any of the four sets can be zero and this method will handle
-   * that case accordingly.
-   *
-   * @param indices List of indices to sort.
-   * @param distances List of distances to sort.
-   * @param childFarSetSize Number of points in child far set (childFarSet).
-   * @param childUsedSetSize Number of points in child used set (childUsedSet).
-   * @param farSetSize Number of points in far set (farSet).
-   */
-  size_t SortPointSet(arma::Col<size_t>& indices,
-                      arma::vec& distances,
-                      const size_t childFarSetSize,
-                      const size_t childUsedSetSize,
-                      const size_t farSetSize);
-
-  void MoveToUsedSet(arma::Col<size_t>& indices,
-                     arma::vec& distances,
-                     size_t& nearSetSize,
-                     size_t& farSetSize,
-                     size_t& usedSetSize,
-                     arma::Col<size_t>& childIndices,
-                     const size_t childFarSetSize,
-                     const size_t childUsedSetSize);
-  size_t PruneFarSet(arma::Col<size_t>& indices,
-                     arma::vec& distances,
-                     const ElemType bound,
-                     const size_t nearSetSize,
-                     const size_t pointSetSize);
+                        const std::vector<bool>& used,
+                        arma::vec& distances);
 
   /**
    * Take a look at the last child (the most recently created one) and remove
