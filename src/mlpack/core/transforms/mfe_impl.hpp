@@ -108,7 +108,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numMelFilters, nFFT, sampleRate,
       lowFreq, highFreq);
 
-  size_t totalWindows = 0;
   const size_t totalWindows = inputSignal.n_cols * ((inputSignal.n_rows
       - nFFT) / stepsInSamples + 1);
   
