@@ -200,17 +200,13 @@ keyword spotting
      mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
      Both cases are demonstrated in the examples below.
 
-mlpack's implementation of MFE algorithm is as follows:
+MFE is computed using the following steps.  The figure below shows the application of MFE to a 440 Hz sine wave signal.
 
-  - Apply Short Fast Fourier Transform (STFT) to the signals, this is done by:
-    1. Cuts the input signal into a set of overlapping windows (25 ms window, 10 ms hop). Figure (b)
-    2. Multiply each window by Hamming Window function so the edges of each window tends to 0. This is done primarly to prevent spectral leakage). Figure (b)
-    3. Fast Fourier Transorm (FFT) turns each frame from time domain into frequency domain. We take amplitutde per bin and the first part of the spectrum since it is mirrored. Figure (c)
-  - Multiply bins by MelFilter banks. The filters are triangle shaped, using mel scale and are dense at low frequency and sparse at high frequency. Figure (d)
-  - Take the log in order to compress the dynamic range of energies to match how humans perceive loudness. Figure (e)
-
-We shows in the following figure how the above steps are applied on a sine wave
-signal with 440 Hz frequency.
+ - *(a)* Each individual input signal should have amplitude in the range `[-1.0, 1.0]`.
+ - *(b)* Cut the signal into overlapping frames tapered by a Hamming window to prevent spectral leakage.
+ - *(c)* Apply the Short-Time Fourier Transform (STFT) to each data window to produce a short-term spectrum.
+ - *(d)* Multiply each STFT frame with the Mel filterbank, which consists of log-spaced triangular filters.
+ - *(e)* Take the log of the filter bins to produce the Mel filter energies.
 
 <p align="center">
   <img src="../../../img/mfe_pipeline.png" alt="MFE implementation">
@@ -328,8 +324,7 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
 (e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp), [HMM](/src/mlpack/methods/hmm/hmm.hpp)).
 
 
- - `MFCC(signals, mfcc, sampleRate, numCoeffs, numMelFilters, windowLength,
-   windowStep, nFFT, lowFreq, highFreq)`
+ - `MFCC(signals, mfcc, sampleRate, numCoeffs, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`
 
    * Extract Mel-Frequency Cepstral Coefficients from windows of audio in `signals`, 
      storing the result in `mfcc`.
@@ -356,19 +351,14 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
      coefficients, it cannot produce more coefficients than there are input
      values.
 
-mlpack's implementation of MFCC algorithm is as follows:
+MFCC is computed using the following steps.  The figure below shows the application of MFE to a 440 Hz sine wave signal.
 
-  - Apply Short Fast Fourier Transform (STFT) to the signals, this is done by:
-    1. Cuts the input signal into a set of overlapping windows (25 ms window, 10 ms hop),
-    2. Multiply each window by Hamming Window function so the edges of each window tends to 0. This is done primarly to prevent spectral leakage).
-    3. Fast Fourier Transorm (FFT) turns each frame from time domain into frequency domain. We take amplitutde per bin and the first part of the spectrum since it is mirrored.
-  - Multiply bins by MelFilter banks. The filters are triangle shaped, using mel scale and are dense at low frequency and sparse at high frequency.
-  - Compute [`MFE()`](#mfe) by taking the log in order to compress the dynamic range of energies to
-  match how humans perceive loudness.
-  - Multiplying by a discrete cosine transform (DCT) matrix on top gives MFCC.
-
-We shows in the following figure how the above steps are applied on a sine wave
-signal with 440 Hz frequency.
+ - *(a)* Each individual input signal should have amplitude in the range `[-1.0, 1.0]`.
+ - *(b)* Cut the signal into overlapping frames tapered by a Hamming window to prevent spectral leakage.
+ - *(c)* Apply the Short-Time Fourier Transform (STFT) to each data window to produce a short-term spectrum.
+ - *(d)* Multiply each STFT frame with the Mel filterbank, which consists of log-spaced triangular filters.
+ - *(e)* Take the log of the filter bins to produce the Mel filter energies.
+ - *(f)* Multiplying by a discrete cosine transform (DCT) matrix on top gives MFCC.
 
 <p align="center">
   <img src="../../../img/mfcc_pipeline.png" alt="MFCC implementation">
