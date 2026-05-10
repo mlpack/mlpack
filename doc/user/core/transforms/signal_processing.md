@@ -272,7 +272,7 @@ mlpack::Load("sine.wav", signal, opts);
 
 std::cout << "Loaded: " << signal.n_rows << " samples, "
   << opts.SampleRate() << " Hz, "
-  << opts.Channels() << " channel(s)" << std::endl;
+  << opts.Channels() << " channel(s)." << std::endl;
 
 arma::mat mfe;
 mlpack::MFE(signal, mfe, opts.SampleRate());
