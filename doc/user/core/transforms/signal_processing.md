@@ -404,7 +404,7 @@ mlpack::MFCC(signal, mfcc, opts.SampleRate());
 
 // mfcc has a shape of 13 x numWindows.
 std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
-    << std::endl;
+    << "." << std::endl;
 ```
 
 Extract 20 MFCCs with 80 mel filters from an MP3 file:
