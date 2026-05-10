@@ -278,7 +278,7 @@ arma::mat mfe;
 mlpack::MFE(signal, mfe, opts.SampleRate());
 
 std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols
-        << " (filters x windows)" << std::endl;
+        << " (filters x windows)." << std::endl;
 
 arma::vec meanMFE = arma::mean(mfe, 1);
 
