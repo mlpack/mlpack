@@ -109,12 +109,9 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
       lowFreq, highFreq);
 
   size_t totalWindows = 0;
-  for (size_t i = 0; i < inputSignal.n_cols; ++i)
-  {
-    totalWindows += (inputSignal.n_rows - nFFT)
-        / stepsInSamples + 1;
-  }
-
+  const size_t totalWindows = inputSignal.n_cols * ((inputSignal.n_rows
+      - nFFT) / stepsInSamples + 1);
+  
   // Needs to be matching windows length in SlidingWindow
   arma::Col<eT> hWindow = HammingWindow<eT>(nFFT);
 
