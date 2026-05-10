@@ -474,9 +474,9 @@ const char* descriptions[] = {
 
 for (size_t i = 0; i < mfcc.n_rows; ++i)
 {
-std::cout << "  c[" << std::setw(2) << i << "]  "
-    << std::setw(10) << std::fixed << std::setprecision(2) << meanMFCC(i)
-    << "    " << descriptions[i] << std::endl;
+  std::cout << "c[" << std::setw(2) << i << "]  "
+      << std::setw(10) << std::fixed << std::setprecision(2) << meanMFCC(i)
+      << "    " << descriptions[i] << std::endl;
 }
 ```
 
