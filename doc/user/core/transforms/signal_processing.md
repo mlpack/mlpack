@@ -457,19 +457,19 @@ std::cout << "Coeff   Avg value    What it captures (roughly)" << std::endl;
 std::cout << "-----   ---------    ----------------" << std::endl;
 
 const char* descriptions[] = {
-"Overall energy (loudness)",
-"Spectral tilt (low vs high freq balance)",
-"Spectral curvature (middle vs edges)",
-"Two-bump structure (formant separation)",
-"Finer spectral shape",
-"Finer spectral shape",
-"Finer spectral shape",
-"Finer spectral shape",
-"Finer spectral shape",
-"Finer spectral shape",
-"Finer spectral shape",
-"Fine spectral detail",
-"Finest spectral detail"
+    "Overall energy (loudness)",
+    "Spectral tilt (low vs high freq balance)",
+    "Spectral curvature (middle vs edges)",
+    "Two-bump structure (formant separation)",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Finer spectral shape",
+    "Fine spectral detail",
+    "Finest spectral detail"
 };
 
 for (size_t i = 0; i < mfcc.n_rows; ++i)
