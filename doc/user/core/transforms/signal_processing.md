@@ -448,7 +448,7 @@ arma::mat mfcc;
 mlpack::MFCC(signal, mfcc, opts.SampleRate());
 
 std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
-  << " (coefficients x windows)" << std::endl;
+  << " (coefficients x windows)." << std::endl;
 
 arma::vec meanMFCC = arma::mean(mfcc, 1);
 
