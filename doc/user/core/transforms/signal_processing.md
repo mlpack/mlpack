@@ -246,7 +246,7 @@ mlpack::MFE(signal, mfe, opts.SampleRate());
 std::cout << "MFE shape: " << mfe.n_rows << " x " << mfe.n_cols << std::endl;
 ```
 
-Specifying a custom number of mel filters and frequency range:
+Specifying a custom number of Mel filters and frequency range:
 
 ```c++
 // See https://datasets.mlpack.org/sine.wav
