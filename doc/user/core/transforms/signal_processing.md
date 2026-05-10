@@ -224,11 +224,11 @@ signal with 440 Hz frequency.
 | `mfe`            | `arma::mat` or other floating point matrix | _(n/a)_ | Output matrix of shape `(numMelFilters x numWindows)`. |
 | `sampleRate`     | `size_t`    | _(n/a)_ | Sample rate of the audio in hz (e.g. `16000`, `44100`).        |
 | `numMelFilters`  | `size_t`    | `40`    | Number of mel-spaced triangular filters. Typical range (`20` to `100`) |
-| `windowLength`   | `float`     | `25.0`  | Window length in milliseconds.  Typical range (`20` to `40`)           |
-| `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds. Typical range (`5` to `20`)         |
-| `nFFT`           | `size_t`    | `0`     | FFT size; `0` means the number of points fed to fft is chosen automatically using the next power of 2 >= of the window length. Typical range (`256` to `4096`) |
-| `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the mel filterbank in hz. Typical range (`0` to `300`) |
-| `highFreq`       | `float`     | `0.0`   | High frequency bound in hz; `0` means `sampleRate / 2`. Typical range (`4000` to sampleRate / 2) |
+| `windowLength`   | `float`     | `25.0`  | Window length in milliseconds.  Typical range `20` to `40`.           |
+| `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds. Typical range `5` to `20`.         |
+| `nFFT`           | `size_t`    | `0`     | FFT size; `0` will use the next power of 2 greater than or equal to the window length.  Powers of 2 are more efficient.  Typical range `256` to `4096`. |
+| `lowFreq`        | `float`     | `0.0`   | Low frequency bound for the Mel filterbank in Hz. Typical range `0` to `300`. |
+| `highFreq`       | `float`     | `0.0`   | High frequency bound in Hz; `0` means `sampleRate / 2`. Typical range `4000` to `sampleRate / 2`. |
 
 ---
 
