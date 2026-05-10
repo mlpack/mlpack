@@ -300,18 +300,18 @@ std::cout << "------   -------------------   ----------" << std::endl;
 
 for (size_t i = 0; i < 40; ++i)
 {
-std::cout << "  " << std::setw(2) << i << "     "
-          << std::setw(5) << std::fixed << std::setprecision(0)
-          << hzPoints(i) << " – "
-          << std::setw(5) << hzPoints(i + 2) << "       "
-          << std::setw(8) << std::setprecision(2) << meanMFE(i);
+  std::cout << "  " << std::setw(2) << i << "     "
+            << std::setw(5) << std::fixed << std::setprecision(0)
+            << hzPoints(i) << " – "
+            << std::setw(5) << hzPoints(i + 2) << "       "
+            << std::setw(8) << std::setprecision(2) << meanMFE(i);
 
-if (i == peakFilter)
-  std::cout << "   <<< peak";
-else if (i == peakFilter - 1 || i == peakFilter + 1)
-  std::cout << "   <<< adjacent";
+  if (i == peakFilter)
+    std::cout << "   <<< peak";
+  else if (i == peakFilter - 1 || i == peakFilter + 1)
+    std::cout << "   <<< adjacent";
 
-std::cout << std::endl;
+  std::cout << std::endl;
 }
 ```
 
