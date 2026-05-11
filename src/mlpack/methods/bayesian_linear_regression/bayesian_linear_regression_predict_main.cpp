@@ -78,5 +78,4 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   params.Get<arma::mat>("predictions") = std::move(predictions);
   // Save the standard deviation of the test points (one per line).
   params.Get<arma::mat>("stds") = std::move(std);
-
 }
