@@ -792,31 +792,35 @@ TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
+TEMPLATE_TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]", float, double)
 {
-  arma::mat data;
+  typedef TestType eT;
+
+  arma::Mat<eT> data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> tree(data);
+      arma::Mat<eT>> tree(data);
 
-  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(std::move(tree), SINGLE_TREE);
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::Mat<eT>,
+      StandardCoverTree> coverTreeSearch(std::move(tree), SINGLE_TREE);
 
-  KNN naive(data, NAIVE);
+  arma::mat naiveData = arma::conv_to<arma::mat>::from(data);
+  KNN naive(naiveData, NAIVE);
 
   arma::Mat<size_t> coverTreeNeighbors;
-  arma::mat coverTreeDistances;
+  arma::Mat<eT> coverTreeDistances;
   coverTreeSearch.Search(15, coverTreeNeighbors, coverTreeDistances);
 
   arma::Mat<size_t> naiveNeighbors;
   arma::mat naiveDistances;
   naive.Search(15, naiveNeighbors, naiveDistances);
 
+  const eT eps = (std::is_same_v<eT, float> ? 1e-4 : 1e-7);
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
   {
     REQUIRE(coverTreeNeighbors[i] ==naiveNeighbors[i]);
-    REQUIRE(coverTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
+    REQUIRE(coverTreeDistances[i] == Approx(eT(naiveDistances[i])).epsilon(eps));
   }
 }
 
@@ -824,32 +828,35 @@ TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
  * Test the cover tree dual-tree nearest neighbors method against the naive
  * method.
  */
-TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
+TEMPLATE_TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]", float, double)
 {
-  arma::mat dataset;
+  typedef TestType eT;
+
+  arma::Mat<eT> dataset;
   if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
-  KNN tree(dataset);
+  KNNType<EuclideanDistance, KDTree, arma::Mat<eT>> tree(dataset);
 
   arma::Mat<size_t> kdNeighbors;
-  arma::mat kdDistances;
+  arma::Mat<eT> kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> referenceTree(dataset);
+      arma::Mat<eT>> referenceTree(dataset);
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::Mat<eT>,
       StandardCoverTree> coverTreeSearch(std::move(referenceTree));
 
   arma::Mat<size_t> coverNeighbors;
-  arma::mat coverDistances;
+  arma::Mat<eT> coverDistances;
   coverTreeSearch.Search(dataset, 5, coverNeighbors, coverDistances);
 
+  const eT eps = (std::is_same_v<eT, float> ? 1e-4 : 1e-7);
   for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
   {
-    REQUIRE(coverNeighbors(i) ==kdNeighbors(i));
-    REQUIRE(coverDistances(i) == Approx(kdDistances(i)).epsilon(1e-7));
+    REQUIRE(coverNeighbors(i) == kdNeighbors(i));
+    REQUIRE(coverDistances(i) == Approx(kdDistances(i)).epsilon(eps));
   }
 }
 
@@ -887,7 +894,7 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 
   for (size_t i = 0; i < ballTreeNeighbors.n_elem; ++i)
   {
-    REQUIRE(ballTreeNeighbors[i] ==naiveNeighbors[i]);
+    REQUIRE(ballTreeNeighbors[i] == naiveNeighbors[i]);
     REQUIRE(ballTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
   }
 }
