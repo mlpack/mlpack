@@ -819,8 +819,9 @@ TEMPLATE_TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]", float, double)
   const eT eps = (std::is_same_v<eT, float> ? 1e-4 : 1e-7);
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
   {
-    REQUIRE(coverTreeNeighbors[i] ==naiveNeighbors[i]);
-    REQUIRE(coverTreeDistances[i] == Approx(eT(naiveDistances[i])).epsilon(eps));
+    REQUIRE(coverTreeNeighbors[i] == naiveNeighbors[i]);
+    REQUIRE(coverTreeDistances[i] ==
+        Approx(eT(naiveDistances[i])).epsilon(eps));
   }
 }
 
