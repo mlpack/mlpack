@@ -61,16 +61,17 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("lars") + "\n" +
+    IMPORT_THIS("bayesian_linear_regression") + "\n" +
     GET_DATASET("X",
       "http://datasets.mlpack.org/admission_predict.csv") + "\n" +
     GET_DATASET("y",
       "http://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test",
       "y_test", "0.2") + "\n" +
-    CREATE_OBJECT("model", "lars") + "\n" +
+    CREATE_OBJECT("model", "bayesian_linear_regression") + "\n" +
     CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
-      "center", 1, "scale", 0, "output_model", "bayesian_linear_regression_model"));
+      "center", 1, "scale", 0, "output_model",
+      "bayesian_linear_regression_model"));
 
 // See also...
 BINDING_SEE_ALSO("Bayesian Interpolation",

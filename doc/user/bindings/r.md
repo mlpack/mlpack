@@ -135,93 +135,6 @@ R> neighbors <- output$neighbors
  - [QDAFN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/qdafn.hpp)
  - [DrusillaSelect class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/drusilla_select.hpp)
 
-## bayesian_linear_regression()
-{: #bayesian_linear_regression }
-
-#### BayesianLinearRegression
-{: #bayesian_linear_regression_descr }
-
-```R
-R> library(mlpack)
-R> d <- bayesian_linear_regression(center=FALSE, input=matrix(numeric(),
-        0, 0), input_model=NA, responses=matrix(numeric(), 0, 0), scale=FALSE,
-        test=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
-        FALSE))
-R> output_model <- d$output_model
-R> predictions <- d$predictions
-R> stds <- d$stds
-```
-
-An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `center` | [`logical`](#doc_logical) | Center the data and fit the intercept if enabled. | `FALSE` |
-| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). | `matrix(numeric(), 0, 0)` |
-| `input_model` | [`BayesianLinearRegression`](#doc_model) | Trained BayesianLinearRegression model to use. | `NA` |
-| `responses` | [`numeric vector`](#doc_numeric_vector) | Matrix of responses/observations (y). | `matrix(numeric(), 0, 0)` |
-| `scale` | [`logical`](#doc_logical) | Scale each feature by their standard deviations if enabled. | `FALSE` |
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-
-### Output options
-
-Results are returned in a R list.  The keys of the list are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
-| `predictions` | [`numeric matrix`](#doc_numeric_matrix) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-| `stds` | [`numeric matrix`](#doc_numeric_matrix) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
-
-### Detailed documentation
-{: #bayesian_linear_regression_detailed-documentation }
-
-An implementation of the bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
-
-This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
-
-To train a BayesianLinearRegression model, the `input` and `responses`parameters must be given. The `center`and `scale` parameters control the centering and the normalizing options. A trained model can be saved with the `output_model`. If no training is desired at all, a model can be passed via the `input_model` parameter.
-
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `test` parameter.  Predicted responses to the test points can be saved with the `predictions` output parameter. The corresponding standard deviation can be save by precising the `stds` parameter.
-
-### Example
-For example, the following command trains a model on the data `"data"` and responses `"responses"`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `"blr_model"`:
-
-```R
-R> output <- bayesian_linear_regression(input=data, responses=responses,
-  center=1, scale=0)
-R> blr_model <- output$output_model
-```
-
-The following command uses the `"blr_model"` to provide predicted  responses for the data `"test"` and save those  responses to `"test_predictions"`: 
-
-```R
-R> output <- bayesian_linear_regression(input_model=blr_model, test=test)
-R> test_predictions <- output$predictions
-```
-
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `stds` parameter allows one to save the prediction uncertainties: 
-
-```R
-R> output <- bayesian_linear_regression(input_model=blr_model, test=test)
-R> test_predictions <- output$predictions
-R> stds <- output$stds
-```
-
-### See also
-
- - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
-
 ## cf()
 {: #cf }
 
@@ -1554,6 +1467,93 @@ R> final <- output$centroid
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
+## class bayesian_linear_regression
+{: #bayesian_linear_regression }
+
+#### BayesianLinearRegression Training
+{: #bayesian_linear_regression_descr }
+
+
+An implementation of the bayesian linear regression.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+
+This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
+
+To train a BayesianLinearRegression model, the `input` and `responses`parameters must be given. The `center`and `scale` parameters control the centering and the normalizing options. A trained model is returned.
+
+
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `center` | [`logical`](#doc_logical) | Center the data and fit the intercept if enabled. | `FALSE` |
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `scale` | [`logical`](#doc_logical) | Scale each feature by their standard deviations if enabled. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Example
+
+```r
+
+
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.csv("http://datasets.mlpack.org/admission_predict.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
+pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+X_train <- pp[["training"]]
+X_test <- pp[["test"]]
+# labels are indices to operate on both factors or numeric data
+y_train <- y[as.integer(pp[["training_labels"]]), 1]
+y_test <- y[as.integer(pp[["test_labels"]]), 1]
+
+model <- bayesian_linear_regression_train(input=X_train, responses=y_train,
+  center=1, scale=0)
+  
+pred <- predict(model, newdata=X_test) 
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| train | An implementation of the Bayesian linear regression training. |
+| predict | An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions. |
+
+### 1. train
+
+An implementation of the Bayesian linear regression training.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). | 
+| `responses` | [`numeric vector`](#doc_numeric_vector) | Matrix of responses/observations (y). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
+
+### 2. predict
+
+An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`numeric matrix`](#doc_numeric_matrix) | Matrix of predicted responses. | 
+| [`numeric matrix`](#doc_numeric_matrix) | Matrix of standard deviations of the predictive distribution. | 
+
 ## class lars
 {: #lars }
 
@@ -1600,8 +1600,8 @@ To train a LARS/LASSO/Elastic Net model, the `input` and `responses` parameters 
 
 
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
-X <- as.matrix(read.cv("http://datasets.mlpack.org/admission_predict.csv", header=FALSE))
-y <- as.matrix(read.cv("http://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
+X <- as.matrix(read.csv("http://datasets.mlpack.org/admission_predict.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -1979,8 +1979,8 @@ This implementation of logistic regression does not support the general multi-cl
 
 
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
-X <- as.matrix(read.cv("http://datasets.mlpack.org/iris.csv", header=FALSE))
-y <- as.matrix(read.cv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -3502,8 +3502,8 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 
 
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
-X <- as.matrix(read.cv("http://datasets.mlpack.org/iris.csv", header=FALSE))
-y <- as.matrix(read.cv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
@@ -3598,8 +3598,8 @@ An implementation of simple linear regression and simple ridge regression using 
 
 
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
-X <- as.matrix(read.cv("https://datasets.mlpack.org/admission_predict.csv", header=FALSE))
-y <- as.matrix(read.cv("https://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
+X <- as.matrix(read.csv("https://datasets.mlpack.org/admission_predict.csv", header=FALSE))
+y <- as.matrix(read.csv("https://datasets.mlpack.org/admission_predict.responses.csv", header=FALSE))
 pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
