@@ -533,7 +533,7 @@ inline std::string ImportThis(const std::string& /* groupName */,
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url)
 {
-  return datasetName + " <- as.matrix(read.cv(\"" + url +
+  return datasetName + " <- as.matrix(read.csv(\"" + url +
     "\", header=FALSE))";
 }
 
