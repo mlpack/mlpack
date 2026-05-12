@@ -16,8 +16,6 @@ endmacro()
 
 # First, define all the "regular" bindings that exist for all languages.
 add_all_bindings(approx_kfn approx_kfn "Geometry")
-#add_all_bindings(bayesian_linear_regression bayesian_linear_regression
-#    "Regression")
 add_all_bindings(cf cf "Misc. / Other")
 add_all_bindings(dbscan dbscan "Clustering")
 add_all_bindings(decision_tree decision_tree "Classification")
@@ -37,8 +35,6 @@ add_all_bindings(kde kde "Misc. / Other")
 add_all_bindings(kernel_pca kernel_pca "Transformations")
 add_all_bindings(kmeans kmeans "Clustering")
 
-#add_all_bindings(bayesian_linear_regression bayesian_linear_regression
-#    "Regression")
 add_category(bayesian_linear_regression "Regression")
 group_bindings(bayesian_linear_regression bayesian_linear_regression
   "train;predict")
