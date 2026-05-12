@@ -158,6 +158,8 @@ add_executable(mlpack_test
   main_tests/adaboost_probabilities_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
+  main_tests/bayesian_linear_regression_train_test.cpp
+  main_tests/bayesian_linear_regression_predict_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
