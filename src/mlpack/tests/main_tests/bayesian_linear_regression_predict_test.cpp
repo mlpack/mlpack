@@ -49,5 +49,4 @@ TEST_CASE_METHOD(BRPredictTestFixture,
   REQUIRE(params.Get<arma::mat>("predictions").n_rows == 1);
   REQUIRE(params.Get<arma::mat>("stds").n_cols == n);
   REQUIRE(params.Get<arma::mat>("stds").n_rows == 1);
-
 }
