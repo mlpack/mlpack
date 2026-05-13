@@ -1505,13 +1505,13 @@ To run k-means on that same dataset with initial centroids specified in `'initia
 {: #bayesian_linear_regression_descr }
 
 
-An implementation of the bayesian linear regression.
+An implementation of the Bayesian linear regression.
 This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
 Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
 
-This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
+This program is able to train a Bayesian linear regression model, or use a trained model for output regression predictions given a test set.
 
-To train a BayesianLinearRegression model, the `input_` and `responses`parameters must be given. The `center`and `scale` parameters control the centering and the normalizing options. A trained model is returned.
+To train a BayesianLinearRegression model, the `input_` and `responses` parameters must be given. The `center` and `scale` parameters control the centering and the normalizing options. A trained model is returned.
 
 
 ### Parameters

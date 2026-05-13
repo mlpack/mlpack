@@ -48,7 +48,7 @@ add_r_binding(bayesian_linear_regression bayesian_linear_regression_train
 add_r_binding(bayesian_linear_regression bayesian_linear_regression_predict
   "skip")
 add_markdown_docs(bayesian_linear_regression bayesian_linear_regression
-  "cli;python;julia;go;r" "python;r;julia")
+  "cli;python;julia;go;r" "python;r")
 
 #add_all_bindings(lars lars "Regression")
 add_category(lars "Regression")
