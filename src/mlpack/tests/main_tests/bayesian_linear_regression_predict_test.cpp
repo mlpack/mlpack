@@ -25,8 +25,7 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(BRPredictTestFixture);
 
 /**
- * Check error thrown for missing input or response data, and model
- * returned on fit from complete inputs.
+ * Check for correct dimensions on prediction returns.
  */
 TEST_CASE_METHOD(BRPredictTestFixture,
                  "BRPredictResult",

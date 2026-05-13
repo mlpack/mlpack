@@ -33,7 +33,7 @@ BINDING_SHORT_DESC(
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of the bayesian linear regression."
+    "An implementation of the Bayesian linear regression."
     "\n"
     "This model is a probabilistic view and implementation of the linear "
     "regression. The final solution is obtained by computing a posterior "
@@ -46,14 +46,13 @@ BINDING_LONG_DESC(
     "This procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
-    "This program is able to train a Bayesian linear regression model or load "
-    "a model from file, output regression predictions for a test set, and save "
-    "the trained model to a file."
+    "This program is able to train a Bayesian linear regression model, or use "
+    "a trained model for output regression predictions given a test set."
     "\n\n"
     "To train a BayesianLinearRegression model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
-    "parameters must be given. The " + PRINT_PARAM_STRING("center") +
-    "and " + PRINT_PARAM_STRING("scale") + " parameters control the "
+    " parameters must be given. The " + PRINT_PARAM_STRING("center") +
+    " and " + PRINT_PARAM_STRING("scale") + " parameters control the "
     "centering and the normalizing options. A trained model is returned."
     "\n\n");
 
@@ -110,8 +109,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Load responses.  The responses should be a one-dimensional vector, and it
   // seems more likely that these will be stored with one response per line
   // (one per row). So we should not transpose upon loading.
-  arma::rowvec responses = std::move(
-      params.Get<arma::rowvec>("responses"));
+  arma::rowvec responses = std::move(params.Get<arma::rowvec>("responses"));
 
   if (responses.n_elem != matX.n_cols)
   {
