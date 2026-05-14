@@ -1523,6 +1523,7 @@ To train a BayesianLinearRegression model, the `input_` and `responses` paramete
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
 | `scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `False` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `stds` | [`bool`](#doc_bool) | Return standard deviations along with predictions enabled. | `False` |
 
 ### Example
 
@@ -1540,7 +1541,7 @@ To train a BayesianLinearRegression model, the `input_` and `responses` paramete
 >>> model = BayesianLinearRegression(center=False, check_input_matrices=False,
   copy_all_inputs=False, scale=False, verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
->>> predictions, stds = model.predict(test=X_test)
+>>> predictions = model.predict(test=X_test)
 ```
 
 ### Methods
@@ -1581,8 +1582,7 @@ An implementation of the Bayesian linear regression prediction: Given a pre-trai
 
 | **type** | **description** |
 |----------|-----------------|
-| [`matrix`](#doc_matrix) | Matrix of predicted responses. | 
-| [`matrix`](#doc_matrix) | Matrix of standard deviations of the predictive distribution. | 
+| [`matrix`](#doc_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. | 
 
 ## class Lars
 {: #lars }

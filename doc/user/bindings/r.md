@@ -1491,6 +1491,7 @@ To train a BayesianLinearRegression model, the `input` and `responses` parameter
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
 | `scale` | [`logical`](#doc_logical) | Scale each feature by their standard deviations if enabled. | `FALSE` |
 | `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+| `stds` | [`logical`](#doc_logical) | Return standard deviations along with predictions enabled. | `FALSE` |
 
 ### Example
 
@@ -1551,8 +1552,7 @@ An implementation of the Bayesian linear regression prediction: Given a pre-trai
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Matrix of predicted responses. | 
-| [`numeric matrix`](#doc_numeric_matrix) | Matrix of standard deviations of the predictive distribution. | 
+| [`numeric matrix`](#doc_numeric_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. | 
 
 ## class lars
 {: #lars }

@@ -25,7 +25,8 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(BRPredictTestFixture);
 
 /**
- * Check for correct dimensions on prediction returns.
+ * Check for correct dimensions on prediction returns, without 'stds'
+ * and with it set.
  */
 TEST_CASE_METHOD(BRPredictTestFixture,
                  "BRPredictResult",
@@ -40,12 +41,21 @@ TEST_CASE_METHOD(BRPredictTestFixture,
   model->Train(matX, y);
 
   SetInputParam("input_model", model);
-  SetInputParam("test", std::move(matX));
+  SetInputParam("test", matX);
 
   RUN_BINDING();
 
   REQUIRE(params.Get<arma::mat>("predictions").n_cols == n);
   REQUIRE(params.Get<arma::mat>("predictions").n_rows == 1);
-  REQUIRE(params.Get<arma::mat>("stds").n_cols == n);
-  REQUIRE(params.Get<arma::mat>("stds").n_rows == 1);
+
+  ResetSettings();
+
+  SetInputParam("input_model", model);
+  SetInputParam("test", std::move(matX));
+  SetInputParam("stds", true);
+
+  RUN_BINDING();
+
+  REQUIRE(params.Get<arma::mat>("predictions").n_cols == n);
+  REQUIRE(params.Get<arma::mat>("predictions").n_rows == 2);
 }

@@ -50,32 +50,46 @@ BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
     "@doc/user/methods/bayesian_linear_regression.md");
 
 PARAM_MODEL_IN_REQ(BayesianLinearRegression<>, "input_model", "Trained "
-                   "BayesianLinearRegression model to use.", "m");
+    "BayesianLinearRegression model to use.", "m");
 
 PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
-                    "points).", "t");
+    "points).", "t");
 
-PARAM_MATRIX_OUT("predictions", "Matrix of predicted responses.", "o");
+PARAM_FLAG("stds", "Return standard deviations along with predictions "
+           "enabled.", "s");
 
-PARAM_MATRIX_OUT("stds", "Matrix of standard deviations "
-    "of the predictive distribution.", "u");
+PARAM_MATRIX_OUT("predictions", "Matrix of predicted responses, with "
+    "associated standard deviations if option selected.", "o");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   BayesianLinearRegression<>* bayesLinReg;
   bayesLinReg = params.Get<BayesianLinearRegression<>*>("input_model");
+  bool stds = params.Get<bool>("stds");
 
   // Load test points.
   mat testPoints = std::move(params.Get<arma::mat>("test"));
-  arma::rowvec predictions;
-  arma::rowvec std;
 
-  timers.Start("bayesian_linear_regression_prediction");
-  bayesLinReg->Predict(testPoints, predictions, std);
-  timers.Stop("bayesian_linear_regression_prediction");
+  if (stds)
+  {
+    arma::rowvec predictions;
+    arma::rowvec std;
 
-  // Save test predictions (one per line).
-  params.Get<arma::mat>("predictions") = std::move(predictions);
-  // Save the standard deviation of the test points (one per line).
-  params.Get<arma::mat>("stds") = std::move(std);
+    timers.Start("bayesian_linear_regression_prediction");
+    bayesLinReg->Predict(testPoints, predictions, std);
+    timers.Stop("bayesian_linear_regression_prediction");
+
+    arma::mat res = arma::join_cols(predictions, std);
+    // Save test predictions and standard deviations (one per line).
+    params.Get<arma::mat>("predictions") = std::move(res);
+  }
+  else
+  {
+    arma::rowvec predictions;
+    timers.Start("bayesian_linear_regression_prediction");
+    bayesLinReg->Predict(testPoints, predictions);
+    timers.Stop("bayesian_linear_regression_prediction");
+    // Save test predictions and standard deviations (two lines).
+    params.Get<arma::mat>("predictions") = std::move(predictions);
+  }
 }

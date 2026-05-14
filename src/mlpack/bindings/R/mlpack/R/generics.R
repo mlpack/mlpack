@@ -84,12 +84,13 @@ predict.mlpack_bayesian_linear_regression <-
     }
     type <- match.arg(type)
 
-    res <- bayesian_linear_regression_predict(input_model=object, newdata, ...)
+    res <- bayesian_linear_regression_predict(input_model=object, newdata,
+                                              stds=type=="stddevs", ...)
     # For prediction return the first list element
     if (type == "predictions") {
-        res[[1]][,1,drop=TRUE]
-    # For stddev return the first second element
+        res[,1,drop=TRUE]
+    # For stddev return the second list element
     } else {
-        res[[2]][,1,drop=TRUE]
+        res[,2,drop=TRUE]
     }
 }
