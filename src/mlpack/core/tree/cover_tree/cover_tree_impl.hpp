@@ -1236,10 +1236,10 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   {
     // Find the furthest distance near set point.
     size_t newPointIndex = unusedNearSet.size();
-    double newPointDist = DBL_MAX;
+    double newPointDist = -1.0;
     for (const auto& p : unusedNearSet)
     {
-      if (p.second < newPointDist)
+      if (p.second > newPointDist)
       {
         newPointIndex = p.first;
         newPointDist = p.second;
