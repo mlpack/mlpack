@@ -1234,9 +1234,17 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   arma::vec allChildDistances(distances.n_elem, arma::fill::none);
   while (unusedNearSet.size() > 0)
   {
-    // TODO: experiment with point selection strategies
-    const size_t newPointIndex = unusedNearSet.begin()->first;
-    const double newPointDist = unusedNearSet.begin()->second;
+    // Find the furthest distance near set point.
+    size_t newPointIndex = unusedNearSet.size();
+    double newPointDist = DBL_MAX;
+    for (const std::pair<size_t, double>& p : unusedNearSet)
+    {
+      if (p.second < newPointDist)
+      {
+        newPointIndex = p.first;
+        newPointDist = p.second;
+      }
+    }
 
     // Will this be a new furthest child?
     if (newPointDist > furthestDescendantDistance)
@@ -1272,7 +1280,6 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
       used[newPointIndex] = true;
       unusedNearSet.erase(newPointIndex);
       ++numDescendants;
-      t8 += c2.toc();
       continue;
     }
 
