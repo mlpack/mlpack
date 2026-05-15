@@ -937,7 +937,8 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   // Every cover tree node will contain points up to base^(scale + 1) away.
   return std::max(distance->Evaluate(dataset->col(point),
       other.Dataset().col(other.Point())) -
-      furthestDescendantDistance - other.FurthestDescendantDistance(), 0.0);
+      furthestDescendantDistance - other.FurthestDescendantDistance(),
+      ElemType(0));
 }
 
 template<
@@ -953,7 +954,7 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 {
   // We already have the distance as evaluated by the metric.
   return std::max(distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance(), 0.0);
+      other.FurthestDescendantDistance(), ElemType(0));
 }
 
 template<
@@ -962,13 +963,15 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return std::max(distance->Evaluate(dataset->col(point), other) -
-      furthestDescendantDistance, 0.0);
+      furthestDescendantDistance, ElemType(0));
 }
 
 template<
@@ -977,12 +980,15 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& /* other */, const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
-  return std::max(distance - furthestDescendantDistance, 0.0);
+  return std::max(distance - furthestDescendantDistance, ElemType(0));
 }
 
 template<
@@ -1023,10 +1029,12 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return distance->Evaluate(dataset->col(point), other) +
       furthestDescendantDistance;
@@ -1038,10 +1046,13 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& /* other */, const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return distance + furthestDescendantDistance;
 }
@@ -1063,7 +1074,7 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 
   RangeType<ElemType> result;
   result.Lo() = std::max(dist - furthestDescendantDistance -
-      other.FurthestDescendantDistance(), 0.0);
+      other.FurthestDescendantDistance(), ElemType(0));
   result.Hi() = dist + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -1086,7 +1097,7 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 {
   RangeType<ElemType> result;
   result.Lo() = std::max(distance - furthestDescendantDistance -
-      other.FurthestDescendantDistance(), 0.0);
+      other.FurthestDescendantDistance(), ElemType(0));
   result.Hi() = distance + furthestDescendantDistance +
       other.FurthestDescendantDistance();
 
@@ -1100,15 +1111,17 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 RangeType<typename
     CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   const ElemType dist = distance->Evaluate(dataset->col(point), other);
 
   return RangeType<ElemType>(
-      std::max(dist - furthestDescendantDistance, 0.0),
+      std::max(dist - furthestDescendantDistance, ElemType(0)),
       dist + furthestDescendantDistance);
 }
 
@@ -1120,14 +1133,16 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 RangeType<typename
     CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& /* other */,
-                  const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return RangeType<ElemType>(
-      std::max(distance - furthestDescendantDistance, 0.0),
+      std::max(distance - furthestDescendantDistance, ElemType(0)),
       distance + furthestDescendantDistance);
 }
 
@@ -1402,8 +1417,8 @@ void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   distanceComps += pointSetSize;
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = distance->Evaluate(dataset->col(pointIndex),
-        dataset->col(indices[i]));
+    distances[i] = double(distance->Evaluate(dataset->col(pointIndex),
+        dataset->col(indices[i])));
   }
 }
 
@@ -1432,7 +1447,7 @@ size_t CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
     return (childFarSetSize + farSetSize);
 
   size_t* indicesBuffer = new size_t[bufferSize];
-  ElemType* distancesBuffer = new ElemType[bufferSize];
+  double* distancesBuffer = new double[bufferSize];
 
   // The start of the memory region to copy to the buffer.
   const size_t bufferFromLocation = ((bufferSize == farSetSize) ?
@@ -1451,19 +1466,19 @@ size_t CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   memcpy(indicesBuffer, indices.memptr() + bufferFromLocation,
       sizeof(size_t) * bufferSize);
   memcpy(distancesBuffer, distances.memptr() + bufferFromLocation,
-      sizeof(ElemType) * bufferSize);
+      sizeof(double) * bufferSize);
 
   // Now move the other memory.
   memmove(indices.memptr() + directToLocation,
       indices.memptr() + directFromLocation, sizeof(size_t) * bigCopySize);
   memmove(distances.memptr() + directToLocation,
-      distances.memptr() + directFromLocation, sizeof(ElemType) * bigCopySize);
+      distances.memptr() + directFromLocation, sizeof(double) * bigCopySize);
 
   // Now copy the temporary memory to the right place.
   memcpy(indices.memptr() + bufferToLocation, indicesBuffer,
       sizeof(size_t) * bufferSize);
   memcpy(distances.memptr() + bufferToLocation, distancesBuffer,
-      sizeof(ElemType) * bufferSize);
+      sizeof(double) * bufferSize);
 
   delete[] indicesBuffer;
   delete[] distancesBuffer;

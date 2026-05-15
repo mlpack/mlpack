@@ -19,6 +19,8 @@ _????-??-??_
  * Efficiency improvements for `MeanImputation` and `MedianImputation` with
    newer Armadillo versions (#4149).
 
+ * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
