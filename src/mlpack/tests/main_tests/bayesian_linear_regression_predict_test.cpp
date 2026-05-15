@@ -25,7 +25,7 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(BRPredictTestFixture);
 
 /**
- * Check for correct dimensions on prediction returns, without 'stds'
+ * Check for correct dimensions on prediction returns, without 'stddevs'
  * and with it set.
  */
 TEST_CASE_METHOD(BRPredictTestFixture,
@@ -52,7 +52,7 @@ TEST_CASE_METHOD(BRPredictTestFixture,
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(matX));
-  SetInputParam("stds", true);
+  SetInputParam("stddevs", true);
 
   RUN_BINDING();
 

@@ -46,9 +46,6 @@ BINDING_LONG_DESC(
     "This procedure includes the Ockham's razor that penalizes over complex "
     "solutions. "
     "\n\n"
-    "This program is able to train a Bayesian linear regression model, or use "
-    "a trained model for output regression predictions given a test set."
-    "\n\n"
     "To train a BayesianLinearRegression model, the " +
     PRINT_PARAM_STRING("input") + " and " + PRINT_PARAM_STRING("responses") +
     " parameters must be given. The " + PRINT_PARAM_STRING("center") +

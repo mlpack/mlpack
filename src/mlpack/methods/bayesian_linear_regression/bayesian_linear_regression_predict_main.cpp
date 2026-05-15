@@ -55,8 +55,7 @@ PARAM_MODEL_IN_REQ(BayesianLinearRegression<>, "input_model", "Trained "
 PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
     "points).", "t");
 
-PARAM_FLAG("stds", "Return standard deviations along with predictions "
-           "enabled.", "s");
+PARAM_FLAG("stddevs", "Return standard deviations along with predictions.", "s");
 
 PARAM_MATRIX_OUT("predictions", "Matrix of predicted responses, with "
     "associated standard deviations if option selected.", "o");
@@ -65,12 +64,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   BayesianLinearRegression<>* bayesLinReg;
   bayesLinReg = params.Get<BayesianLinearRegression<>*>("input_model");
-  bool stds = params.Get<bool>("stds");
+  bool stddevs = params.Get<bool>("stddevs");
 
   // Load test points.
   mat testPoints = std::move(params.Get<arma::mat>("test"));
 
-  if (stds)
+  if (stddevs)
   {
     arma::rowvec predictions;
     arma::rowvec std;
