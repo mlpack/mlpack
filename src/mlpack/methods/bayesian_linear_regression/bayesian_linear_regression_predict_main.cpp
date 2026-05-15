@@ -55,7 +55,8 @@ PARAM_MODEL_IN_REQ(BayesianLinearRegression<>, "input_model", "Trained "
 PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
     "points).", "t");
 
-PARAM_FLAG("stddevs", "Return standard deviations along with predictions.", "s");
+PARAM_FLAG("stddevs", "Return standard deviations along with predictions.",
+           "s");
 
 PARAM_MATRIX_OUT("predictions", "Matrix of predicted responses, with "
     "associated standard deviations if option selected.", "o");
