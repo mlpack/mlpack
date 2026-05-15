@@ -19,6 +19,9 @@ _????-??-??_
  * Efficiency improvements for `MeanImputation` and `MedianImputation` with
    newer Armadillo versions (#4149).
 
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
