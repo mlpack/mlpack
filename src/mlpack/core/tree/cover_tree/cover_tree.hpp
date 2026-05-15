@@ -369,11 +369,18 @@ class CoverTree
   ElemType MinDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the minimum distance to another point.
-  ElemType MinDistance(const arma::vec& other) const;
+  template<typename VecType>
+  ElemType MinDistance(
+      const VecType& other,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Return the minimum distance to another point given that the distance from
   //! the center to the point has already been calculated.
-  ElemType MinDistance(const arma::vec& other, const ElemType distance) const;
+  template<typename VecType>
+  ElemType MinDistance(
+      const VecType& other,
+      const ElemType distance,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Return the maximum distance to another node.
   ElemType MaxDistance(const CoverTree& other) const;
@@ -383,11 +390,18 @@ class CoverTree
   ElemType MaxDistance(const CoverTree& other, const ElemType distance) const;
 
   //! Return the maximum distance to another point.
-  ElemType MaxDistance(const arma::vec& other) const;
+  template<typename VecType>
+  ElemType MaxDistance(
+      const VecType& other,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Return the maximum distance to another point given that the distance from
   //! the center to the point has already been calculated.
-  ElemType MaxDistance(const arma::vec& other, const ElemType distance) const;
+  template<typename VecType>
+  ElemType MaxDistance(
+      const VecType& other,
+      const ElemType distance,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Return the minimum and maximum distance to another node.
   RangeType<ElemType> RangeDistance(const CoverTree& other) const;
@@ -395,15 +409,21 @@ class CoverTree
   //! Return the minimum and maximum distance to another node given that the
   //! point-to-point distance has already been calculated.
   RangeType<ElemType> RangeDistance(const CoverTree& other,
-                                          const ElemType distance) const;
+                                    const ElemType distance) const;
 
   //! Return the minimum and maximum distance to another point.
-  RangeType<ElemType> RangeDistance(const arma::vec& other) const;
+  template<typename VecType>
+  RangeType<ElemType> RangeDistance(
+      const VecType& other,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Return the minimum and maximum distance to another point given that the
   //! point-to-point distance has already been calculated.
-  RangeType<ElemType> RangeDistance(const arma::vec& other,
-                                          const ElemType distance) const;
+  template<typename VecType>
+  RangeType<ElemType> RangeDistance(
+      const VecType& other,
+      const ElemType distance,
+      const typename std::enable_if_t<IsVector<VecType>::value>* = 0) const;
 
   //! Get the parent node.
   CoverTree* Parent() const { return parent; }
@@ -430,9 +450,9 @@ class CoverTree
   ElemType MinimumBoundDistance() const { return furthestDescendantDistance; }
 
   //! Get the center of the node and store it in the given vector.
-  void Center(arma::vec& center) const
+  void Center(arma::Col<ElemType>& center) const
   {
-    center = arma::vec(dataset->col(point));
+    center = dataset->col(point);
   }
 
   //! Get the instantiated distance metric.

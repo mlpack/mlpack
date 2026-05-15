@@ -190,7 +190,7 @@ of the `BayesianLinearRegression` class.
 
 ---
 
-Train a Bayesian linear regression model in the constructor on weighted data,
+Train a Bayesian linear regression model in the constructor,
 compute the RMSE with `RMSE()`, and save the model.
 
 ```c++
@@ -201,10 +201,6 @@ mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
 // See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
 mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
-
-// Generate random instance weights for each point, in the range 0.5 to 1.5.
-arma::rowvec weights(data.n_cols, arma::fill::randu);
-weights += 0.5;
 
 // Train Bayesian linear regression model.  The data will be both centered and
 // scaled to have unit variance.

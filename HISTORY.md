@@ -19,6 +19,8 @@ _????-??-??_
  * Efficiency improvements for `MeanImputation` and `MedianImputation` with
    newer Armadillo versions (#4149).
 
+ * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
  * Significant efficiency improvements (5-10x) for `CoverTree` construction
    (#4164).
 

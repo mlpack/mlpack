@@ -945,10 +945,12 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return std::max(distance->Evaluate(dataset->col(point), other) -
       furthestDescendantDistance, ElemType(0));
@@ -960,10 +962,13 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MinDistance(const arma::vec& /* other */, const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MinDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return std::max(distance - furthestDescendantDistance, ElemType(0));
 }
@@ -1006,10 +1011,12 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return distance->Evaluate(dataset->col(point), other) +
       furthestDescendantDistance;
@@ -1021,10 +1028,13 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 typename CoverTree<DistanceType, StatisticType, MatType,
     RootPointPolicy>::ElemType
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    MaxDistance(const arma::vec& /* other */, const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::MaxDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   return distance + furthestDescendantDistance;
 }
@@ -1083,10 +1093,12 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 RangeType<typename
     CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& other) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const VecType& other,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
   const ElemType dist = distance->Evaluate(dataset->col(point), other);
 
@@ -1103,14 +1115,17 @@ template<
     typename MatType,
     typename RootPointPolicy
 >
+template<typename VecType>
 RangeType<typename
     CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::ElemType>
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-    RangeDistance(const arma::vec& /* other */,
-                  const ElemType distance) const
+CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::RangeDistance(
+    const VecType& /* other */,
+    const ElemType distance,
+    const typename std::enable_if_t<IsVector<VecType>::value>*) const
 {
-  return RangeType<ElemType>(std::max(distance - furthestDescendantDistance,
-      ElemType(0)), distance + furthestDescendantDistance);
+  return RangeType<ElemType>(
+      std::max(distance - furthestDescendantDistance, ElemType(0)),
+      distance + furthestDescendantDistance);
 }
 
 //! For a newly initialized node, create children using the near and far set.
@@ -1338,8 +1353,8 @@ void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
       continue;
     }
 
-    distances[i] = distance->Evaluate(dataset->col(pointIndex),
-        dataset->col(indices[i]));
+    distances[i] = double(distance->Evaluate(dataset->col(pointIndex),
+        dataset->col(indices[i])));
     ++distanceComps;
   }
 }
