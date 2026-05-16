@@ -72,6 +72,10 @@ inline std::string GetWrapperName(const std::string& bindingName)
   {
     return "class " + python::GetClassName(bindingName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return "class " + bindingName;
+  }
   else
   {
     throw std::invalid_argument("GetWrapperName(): unknown "
@@ -767,6 +771,10 @@ inline std::string ImportExtLib()
   {
     s = python::ImportExtLib();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
+  }
   else
   {
     throw std::invalid_argument("ImportExtLib(): unknown "
@@ -783,6 +791,10 @@ inline std::string ImportSplit()
   {
     s = python::ImportSplit();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
+  }
   else
   {
     throw std::invalid_argument("ImportSplit(): unknown "
@@ -798,6 +810,10 @@ inline std::string ImportThis(const std::string& groupName)
   if (BindingInfo::Language() == "python")
   {
     s = python::ImportThis(groupName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportThis(groupName, false);
   }
   else
   {
@@ -822,6 +838,11 @@ inline std::string SplitTrainTest(const std::string& datasetName,
     s = python::SplitTrainTest(datasetName, labelName,
         trainDataset, trainLabels, testDataset, testLabels, splitRatio);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::SplitTrainTest(datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
   else
   {
     throw std::invalid_argument("SplitTrainTest(): unknown "
@@ -838,6 +859,10 @@ inline std::string GetDataset(const std::string& datasetName,
   if (BindingInfo::Language() == "python")
   {
     s = python::GetDataset(datasetName, url);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::GetDataset(datasetName, url);
   }
   else
   {
@@ -860,6 +885,11 @@ std::string CreateObject(const std::string& bindingName,
     s = python::CreateObject(bindingName, objectName,
         groupName, args...);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName,
+        groupName, args...);
+  }
   else
   {
     throw std::invalid_argument("CreateObject(): unknown "
@@ -877,6 +907,10 @@ inline std::string CreateObject(const std::string& bindingName,
   if (BindingInfo::Language() == "python")
   {
     s = python::CreateObject(bindingName, objectName, groupName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName, groupName);
   }
   else
   {
@@ -898,6 +932,11 @@ std::string CallMethod(const std::string& bindingName,
   {
     s = python::CallMethod(bindingName, objectName,
         methodName, args...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CallMethod(bindingName, objectName,
+        methodName, false, args...);
   }
   else
   {
@@ -943,6 +982,10 @@ inline std::string GetMappedName(const std::string& methodName)
   if (BindingInfo::Language() == "python")
   {
     return python::GetMappedName(methodName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::GetMappedName(methodName);
   }
   else
   {

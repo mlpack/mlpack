@@ -3977,12 +3977,12 @@ static drmp3_result drmp3_wfopen(FILE** ppFile, const wchar_t* pFilePath, const 
 /* End fopen */
 
 
-static size_t drmp3__on_read_stdio(void* pUserData, void* pBufferOut, size_t bytesToRead)
+inline size_t drmp3__on_read_stdio(void* pUserData, void* pBufferOut, size_t bytesToRead)
 {
     return fread(pBufferOut, 1, bytesToRead, (FILE*)pUserData);
 }
 
-static drmp3_bool32 drmp3__on_seek_stdio(void* pUserData, int offset, drmp3_seek_origin origin)
+inline drmp3_bool32 drmp3__on_seek_stdio(void* pUserData, int offset, drmp3_seek_origin origin)
 {
     int whence = SEEK_SET;
     if (origin == DRMP3_SEEK_CUR) {
@@ -3994,7 +3994,7 @@ static drmp3_bool32 drmp3__on_seek_stdio(void* pUserData, int offset, drmp3_seek
     return fseek((FILE*)pUserData, offset, whence) == 0;
 }
 
-static drmp3_bool32 drmp3__on_tell_stdio(void* pUserData, drmp3_int64* pCursor)
+inline drmp3_bool32 drmp3__on_tell_stdio(void* pUserData, drmp3_int64* pCursor)
 {
     FILE* pFileStdio = (FILE*)pUserData;
     drmp3_int64 result;

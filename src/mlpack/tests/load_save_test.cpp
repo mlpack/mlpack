@@ -3750,3 +3750,809 @@ TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
 
   remove("test.csv");
 }
+
+//
+// The audio files below are published under the CC-0 license.
+// https://github.com/pdx-cs-sound/wavs
+// MP3 versions generated manually from the original wav using ffmpeg.
+//
+TEST_CASE("LoadWAVFileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.wav", matrix) == true);
+}
+
+TEST_CASE("LoadWAVFileSubOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
+}
+
+TEST_CASE("LoadWAVFileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
+  REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
+}
+
+TEST_CASE("LoadWAVNoFile", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE_THROWS_AS(Load("nofile.wav", matrix, WAV + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+}
+
+TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t,
+    uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT>  mat,  matMP3, mat2;
+
+  AudioOptions optsWAV = Fatal + WAV;
+  AudioOptions optsMP3 = Fatal + MP3;
+
+  REQUIRE(Load("voice.wav", mat,  optsWAV) == true);
+
+  REQUIRE(Load("voice.mp3", matMP3,  optsMP3) == true);
+
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
+
+  // MP3
+  REQUIRE(matMP3.n_cols == 1);
+  REQUIRE(matMP3.n_rows == 237568);
+
+  REQUIRE(Save("voice2.wav", mat,  optsWAV) == true);
+
+  REQUIRE(Load("voice2.wav", mat2,  optsWAV) == true);
+
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
+
+  remove("voice2.wav");
+}
+
+TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("collectathon_1_sec.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("SaveWAVFileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix, matrix2;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+
+  REQUIRE(Save("voice2.wav", matrix, opts) == true);
+
+  AudioOptions opts2 = Fatal + WAV;
+  REQUIRE(Load("voice2.wav", matrix2, opts2) == true);
+  REQUIRE(matrix.n_rows == matrix2.n_rows);
+  REQUIRE(matrix.n_cols == matrix2.n_cols);
+  REQUIRE(opts2.AudioDuration() == opts.AudioDuration());
+  REQUIRE(opts2.BitsPerSample() == opts.BitsPerSample());
+  REQUIRE(opts2.Channels() == opts.Channels());
+  REQUIRE(opts2.SampleRate() == opts.SampleRate());
+}
+
+TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
+{
+  arma::mat matrix, matrix2;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+
+  // Force saving the file as 32 bit
+  opts.BitsPerSample() = 32;
+  REQUIRE(Save("voice2.wav", matrix, opts) == true);
+
+  AudioOptions opts2 = Fatal + WAV;
+  REQUIRE(Load("voice2.wav", matrix2, opts2) == true);
+  REQUIRE(matrix.n_rows == matrix2.n_rows);
+  REQUIRE(matrix.n_cols == matrix2.n_cols);
+  REQUIRE(opts2.AudioDuration() == opts.AudioDuration());
+  REQUIRE(opts2.BitsPerSample() == 32);
+  REQUIRE(opts2.Channels() == opts.Channels());
+  REQUIRE(opts2.SampleRate() == opts.SampleRate());
+
+  remove("voice2.wav");
+}
+
+TEST_CASE("SaveWAVFileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE_THROWS_AS(Save("voice2.wav", matrix, opts), std::runtime_error);
+}
+
+TEST_CASE("LoadMP3FileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.mp3", matrix) == true);
+}
+
+TEST_CASE("LoadMP3FileSubOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
+}
+
+TEST_CASE("LoadMP3FileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
+  REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
+}
+
+TEST_CASE("LoadMP3NoFile", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE_THROWS_AS(Load("nofile.mp3", matrix, MP3 + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadMP3FileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("voice.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+}
+
+TEST_CASE("LoadMP3FileOptionsStereoPCM16", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("LoadMP3FileOptionsStereo", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+
+  AudioOptions opts2 = Fatal + WAV;
+  opts2.Channels() = opts.Channels();
+  opts2.BitsPerSample() = opts.BitsPerSample();
+  opts2.SampleRate() = opts.SampleRate();
+  REQUIRE(Save("collectathon2_1_sec.wav", matrix, opts2) == true);
+
+  remove("collectathon2_1_sec.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck", "[LoadSaveTest]", float, double, int16_t,
+    int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t)
+{
+  typedef TestType eT;
+
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<eT> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    signal = arma::conv_to<arma::Mat<eT>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double halfMax = std::numeric_limits<eT>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<eT>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<eT>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<eT>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = 8 * sizeof(eT);
+  REQUIRE(Save("test_range.wav", signal, saveOpts) == true);
+
+  arma::Mat<eT> matrix;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_range.wav", matrix, loadOpts) == true);
+  REQUIRE(matrix.n_elem == sampleRate);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    eT minVal = matrix.min();
+    eT maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= -0.52);
+    REQUIRE(maxVal <= 0.52);
+    REQUIRE(maxVal >= 0.475);
+    REQUIRE(minVal <= -0.475);
+    REQUIRE(std::abs(meanVal) < 0.02);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double halfRange = typeMax * 0.5;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(maxVal <= halfRange * 1.05);
+    REQUIRE(minVal >= -halfRange * 1.05);
+    REQUIRE(maxVal >= halfRange * 0.95);
+    REQUIRE(minVal <= -halfRange * 0.95);
+    REQUIRE(std::abs(meanVal) < typeMax * 0.02);
+  }
+  else
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double mid = typeMax / 2.0;
+    double quarter = mid / 2.0;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= (mid - quarter) * 0.90);
+    REQUIRE(maxVal <= (mid + quarter) * 1.10);
+    REQUIRE(maxVal >= (mid + quarter * 0.95));
+    REQUIRE(minVal <= (mid - quarter * 0.95));
+    REQUIRE(std::abs(meanVal - mid) < typeMax * 0.02);
+  }
+
+  remove("test_range.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck8bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 8;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.10;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck16bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 16;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck32bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 32;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 64;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}

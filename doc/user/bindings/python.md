@@ -1644,7 +1644,7 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
   lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
   verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
->>> predictions = lars_model.predict(test=X_test)
+>>> predictions = model.predict(test=X_test)
 ```
 
 ### Methods
@@ -2037,7 +2037,7 @@ This implementation of logistic regression does not support the general multi-cl
 |----------|-----------------|
 | fit | An implementation of L2-regularized logistic regression for two-class classification.  Given labeled data, a model is trained and saved for future use; or, a pre-trained model can be used to classify new points. |
 | predict | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points. |
-| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties. |
+| predict_proba | An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities. |
 
 ### 1. fit
 
@@ -2074,7 +2074,7 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 ### 3. predict_proba
 
-An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilties.
+An implementation of L2-regularized logistic regression for two-class classification.  Uses a trained model to classify new points and provide classification probabilities.
 
 #### Input Parameters:
 
@@ -3564,8 +3564,8 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import Adaboost
->>> X = pd.read_csv('https://example.com')
->>> y = pd.read_csv('https://example.com')
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']
@@ -3661,16 +3661,16 @@ An implementation of simple linear regression and simple ridge regression using 
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
 >>> from mlpack import LinearRegression
->>> X = pd.read_csv('https://example.com')
->>> y = pd.read_csv('https://example.com')
+>>> X = pd.read_csv('https://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('https://datasets.mlpack.org/admission_predict.responses.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
 >>> X_train = d['training']
 >>> y_train = d['training_labels']
 >>> X_test = d['test']
 >>> y_test = d['test_labels']
->>> lr = LinearRegression(check_input_matrices=False, copy_all_inputs=False,
-  lambda_=0, verbose=False)
->>> output_model = lr.fit(training=X_train, training_responses=y_train)
+>>> model = LinearRegression(check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0, verbose=False)
+>>> output_model = model.fit(training=X_train, training_responses=y_train)
 >>> output_predictions = model.predict(test=X_test)
 ```
 
@@ -3712,5 +3712,5 @@ Predictions from model.
 
 | **type** | **description** |
 |----------|-----------------|
-| [`vector`](#doc_vector) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+| [`vector`](#doc_vector) | Matrix containing predicted responses. | 
 

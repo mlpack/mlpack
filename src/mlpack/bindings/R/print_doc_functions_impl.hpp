@@ -1,6 +1,7 @@
 /**
  * @file bindings/R/print_doc_functions_impl.hpp
  * @author Yashwant Singh Parihar
+ * @author Dirk Eddelbuettel
  *
  * This file contains functions useful for printing documentation strings
  * related to R bindings.
@@ -26,6 +27,14 @@ inline std::string GetBindingName(const std::string& bindingName)
 {
   // No modification is needed to the name---we just use it as-is.
   return bindingName + "()";
+}
+
+/**
+ * Given the name of a internal mlpack method, print its R name.
+ */
+inline std::string GetMappedName(const std::string& methodName)
+{
+  return (methodName == "classify" ? "predict" : methodName);
 }
 
 /**
@@ -127,7 +136,10 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Recursion base case.
  */
-std::string PrintInputOptions(util::Params& /* p */) { return ""; }
+std::string PrintInputOptions(util::Params& /* p */)
+{
+  return "";
+}
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -149,6 +161,56 @@ std::string PrintInputOptions(util::Params& p,
       // Print the input option.
       std::ostringstream oss;
       oss << paramName << "=";
+      oss << PrintValue(value, d.tname == TYPENAME(std::string));
+      result = oss.str();
+    }
+  }
+  else
+  {
+    // Unknown parameter!
+    throw std::runtime_error("Unknown parameter '" + paramName + "' " +
+        "encountered while assembling documentation!  Check PROGRAM_INFO() " +
+        "declaration.");
+  }
+
+  // Continue recursion.
+  std::string rest = PrintInputOptions(p, args...);
+  if (rest != "" && result != "")
+    result += ", " + rest;
+  else if (result == "")
+    result = rest;
+
+  return result;
+}
+
+/**
+ * Recursion base case for Predict variant.
+ */
+std::string PrintInputOptionsPredict(util::Params& /* p */)
+{
+  return "";
+}
+
+/**
+ * Print an input option for the R predict() case.
+ * This will throw an exception if the parameter does not exist in IO.
+ */
+template<typename T, typename... Args>
+std::string PrintInputOptionsPredict(util::Params& p,
+                                     const std::string& paramName,
+                                     const T& value,
+                                     Args... args)
+{
+  // See if this is part of the program.
+  std::string result = "";
+  if (p.Parameters().count(paramName) > 0)
+  {
+    util::ParamData& d = p.Parameters()[paramName];
+    if (d.input)
+    {
+      // Print the input option.
+      std::ostringstream oss;
+      oss << (paramName == "test" ? "newdata" : paramName) << "=";
       oss << PrintValue(value, d.tname == TYPENAME(std::string));
       result = oss.str();
     }
@@ -429,6 +491,164 @@ inline std::string ParamString(const std::string& paramName, const T& value)
     oss << paramName << "=" << value;
   return oss.str();
 }
+
+/**
+ * Import additional external library. For R this remains empty.
+ */
+inline std::string ImportExtLib()
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we do no need anything here as no external libraries are loaded.
+  return "";
+}
+
+/**
+ * Import additional external library. For R this remains empty.
+ */
+inline std::string ImportSplit()
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we do no need anything here as no additional library are loaded.
+  return "";
+}
+
+/**
+ * Import the package itself. For R, we honor an additional flag to wrap
+ * this in \dontrun{}.
+ */
+inline std::string ImportThis(const std::string& /* groupName */,
+                              const bool dontrun = true)
+{
+  // This function has to exist to satisfy the cross-language macro.
+  // For R, we use it to load mlpack itself.
+  std::string s = (dontrun ? "\\dontrun{\n" : "");
+  s += "suppressMessages(library(mlpack)) "
+    "# in case 'mlpack' is not yet loaded";
+  return s;
+}
+
+/**
+ * Code to load a given dataset from a given URL.
+ */
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  return datasetName + " <- as.matrix(read.cv(\"" + url +
+    "\", header=FALSE))";
+}
+
+/**
+ * Code to split a given dataset into test and training set for both
+ * the predictor variables and the response variable.
+ */
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& /* trainDataset */,
+                                  const std::string& /* trainLabels */,
+                                  const std::string& /* testDataset */,
+                                  const std::string& /* testLabels */,
+                                  const std::string& splitRatio)
+{
+  return std::string("pp <- preprocess_split(input=") + datasetName +
+    ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
+    ", test_ratio=" + splitRatio + ")\n" +
+    "X_train <- pp[[\"training\"]]\n" +
+    "X_test <- pp[[\"test\"]]\n" +
+    "# labels are indices to operate on both factors or numeric data\n" +
+    "y_train <- " + labelName + "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
+    "y_test <- " + labelName + "[as.integer(pp[[\"test_labels\"]]), 1]";
+}
+
+/**
+ * Recursion base case for object creation
+ */
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */ )
+{
+  return "";
+}
+
+/**
+ * Object creation, which for R remains empty.
+ */
+template<typename... Args>
+std::string CreateObject(const std::string& /* bindingName */,
+                         const std::string& /* objectName */,
+                         const std::string& /* groupName */,
+                         Args... /* args */)
+{
+  return "";
+}
+
+/*
+ * Default case for CallMethod passes bindingName, objectName, methodName
+ * and args... on along with 'dontrun' set to 'true' covering the 'R' call
+ * where \dontrun{} is added.  The 'markdown' call overrides with an explicit
+ * choice of 'false'.
+ */
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args)
+{
+  return CallMethod(bindingName, objectName, methodName, true, args...);
+}
+
+/*
+ * Separate case for CallMethod passes bindingName, objectName, methodName
+ * and args... along with 'dontrun' argument permitting markdown to set it to
+ * 'false'.
+ */
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       const bool dontrun,   // do we wrap \dontrun{} around?
+                       Args... args)
+{
+  util::Params params = IO::Parameters(bindingName);
+  std::map<std::string, util::ParamData> parameters = params.Parameters();
+  std::string callMethod = "";
+  bool nonFitMethod = methodName == "classify" || methodName == "predict" ||
+    methodName == "probabilities";
+
+  if (methodName == "train")
+  {
+    // If we are a 'train' method a possible \dontrun{} occurred earlier
+    callMethod += objectName + " <- " + bindingName + "(";
+  }
+  else if (nonFitMethod)
+  {
+    // Other methods consider 'dontrun', adjust method and binding name use.
+    callMethod += (dontrun ? "\\dontrun{ " : "");
+    callMethod += (methodName != "probabilities" ? "pred" : "prob");
+    callMethod += " <- " +
+      (methodName == "train" ? bindingName : "predict") +
+      "(" + objectName + ", ";
+  }
+
+  if (methodName == "train")
+  {
+    callMethod += PrintInputOptions(params, args...);
+  }
+  else if (nonFitMethod)
+  {
+    // We need a special case to turn 'test=X_test' into
+    // 'newdata=X_test' to satisfy the R generic
+    callMethod += PrintInputOptionsPredict(params, args...);
+  }
+
+  if (methodName == "probabilities")
+    callMethod += ", type=\"probabilities\"";
+  callMethod += ")";
+  callMethod += (methodName == "train" ? "\n" : " ");
+  callMethod += (dontrun ? "}" : "");
+  return util::HyphenateString(callMethod, 2);
+}
+
+
 
 inline bool IgnoreCheck(const std::string& bindingName,
                         const std::string& paramName)

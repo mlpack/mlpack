@@ -24,6 +24,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const bool /* useRawPointers */,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
@@ -36,6 +37,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const bool /* useRawPointers */,
     const std::enable_if_t<arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>* = 0);
@@ -47,6 +49,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const bool useRawPointers,
     const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
     const std::enable_if_t<HasSerialize<T>::value>* = 0,
     const std::enable_if_t<!std::is_same_v<T,
@@ -60,6 +63,7 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const std::string& functionName,
+    const bool /* useRawPointers */,
     const std::enable_if_t<std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>* = 0);
 
@@ -71,8 +75,13 @@ void PrintInputProcessing(util::ParamData& d,
                           const void* input,
                           void* /* output */)
 {
+  const std::string& functionName =
+      ((std::pair<std::string, bool>*) input)->first;
+  const bool useRawPointers = ((std::pair<std::string, bool>*) input)->second;
+
   // Call out to the right overload.
-  PrintInputProcessing<std::remove_pointer_t<T>>(d, *((std::string*) input));
+  PrintInputProcessing<std::remove_pointer_t<T>>(d, functionName,
+      useRawPointers);
 }
 
 } // namespace julia

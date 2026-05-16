@@ -167,6 +167,14 @@ inline void AutoDetectFile(std::fstream& stream,
   {
     opts.Format() = FileType::BMP;
   }
+  else if (extension == "wav" || extension == "wave")
+  {
+    opts.Format() = FileType::WAV;
+  }
+  else if (extension == "mp3")
+  {
+    opts.Format() = FileType::MP3;
+  }
   else // Unknown extension...
   {
     opts.Format() = FileType::FileTypeUnknown;
@@ -265,6 +273,14 @@ void DetectFromExtension(const std::string& filename,
   else if (extension == "bmp")
   {
     opts.Format() = FileType::BMP;
+  }
+  else if (extension == "wav" || extension == "wave")
+  {
+    opts.Format() = FileType::WAV;
+  }
+  else if (extension == "mp3")
+  {
+    opts.Format() = FileType::MP3;
   }
   else
   {
