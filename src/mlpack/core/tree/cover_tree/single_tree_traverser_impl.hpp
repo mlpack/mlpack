@@ -138,13 +138,8 @@ SingleTreeTraverser<RuleType>::Traverse(
     // Get a reference to the current scale.
     std::vector<CoverTreeMapEntry>& scaleVector = hotScaleVectors[maxIndex];
 
-    std::vector<CoverTreeMapEntry> unprunedScaleVector;
-    unprunedScaleVector.reserve(scaleVector.size());
-
-    // TODO: can we be clever and iterate backwards, so that we can swap things
-    // to the back and then sort in-place?
-
     // Iterate over all the nodes at the current scale, pruning if we can.
+    size_t firstGoodIndex = 0;
     for (size_t i = 0; i < scaleVector.size(); ++i)
     {
       CoverTreeMapEntry& frame = scaleVector.at(i);
@@ -152,6 +147,11 @@ SingleTreeTraverser<RuleType>::Traverse(
       {
         ++numPrunes;
         frame.score = DBL_MAX;
+        if (i > firstGoodIndex)
+        {
+          std::swap(frame, scaleVector.at(firstGoodIndex));
+          ++firstGoodIndex;
+        }
         continue;
       }
 
@@ -159,6 +159,11 @@ SingleTreeTraverser<RuleType>::Traverse(
       if (frame.score == DBL_MAX)
       {
         ++numPrunes;
+        if (i > firstGoodIndex)
+        {
+          std::swap(frame, scaleVector.at(firstGoodIndex));
+          ++firstGoodIndex;
+        }
         continue;
       }
 
@@ -166,18 +171,16 @@ SingleTreeTraverser<RuleType>::Traverse(
       const size_t point = frame.node->Point();
       if (frame.node->Parent()->Point() != point)
         frame.baseCase = rule.BaseCase(queryIndex, point);
-
-      unprunedScaleVector.push_back(std::move(frame));
     }
 
     // For what remains, sort the vector so that we compute base cases with the
     // most likely good nodes first.
-    std::sort(unprunedScaleVector.begin(), unprunedScaleVector.end());
+    std::sort(scaleVector.begin() + firstGoodIndex, scaleVector.end());
 
     // In a second pass, add the children of nodes that weren't pruned.
-    for (size_t i = 0; i < unprunedScaleVector.size(); ++i)
+    for (size_t i = firstGoodIndex; i < scaleVector.size(); ++i)
     {
-      const CoverTreeMapEntry& frame = unprunedScaleVector.at(i);
+      const CoverTreeMapEntry& frame = scaleVector.at(i);
       // One more pruning attempt.
       if (frame.score == DBL_MAX ||
           rule.Rescore(queryIndex, *frame.node, frame.score) == DBL_MAX)
