@@ -51,8 +51,7 @@ class CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   size_t& NumPrunes() { return numPrunes; }
 
  private:
-  size_t ScaleIndex(const int scale, arma::ivec::fixed<8>& hotScaleVector)
-      const;
+  size_t ScaleIndex(const int scale);
 
   // Reference to the rules with which the tree will be traversed.
   RuleType& rule;

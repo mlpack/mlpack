@@ -44,21 +44,44 @@ template<
 template<typename RuleType>
 inline size_t
 CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-SingleTreeTraverser<RuleType>::ScaleIndex(
-    const int scale,
-    arma::ivec::fixed<8>& hotScales) const
+SingleTreeTraverser<RuleType>::ScaleIndex(const int scale)
 {
   // If it's a leaf, we have to put it in the leaf vector.
   if (scale == INT_MIN)
     return size_t(-1);
 
   // Loop through the hot scales.  Allocate one, if it's unallocated.
+  int minScale = INT_MAX;
   for (size_t i = 0; i < 8; ++i)
   {
-    if (hotScales[i] == INT_MIN)
-      hotScales[i] = scale;
-    if (hotScales[i] == scale)
+    if (hotScaleLevels[i] == INT_MIN)
+      hotScaleLevels[i] = scale;
+    if (hotScaleLevels[i] == scale)
       return i;
+    if (hotScaleLevels[i] < minScale)
+      minScale = hotScaleLevels[i];
+  }
+
+  if (scale > minScale)
+  {
+    // In this case, we are encountering a scale that *should* be in the hot
+    // scale set but isn't!  So, we need to evict an existing one.
+    size_t minScaleIndex = 8;
+    minScale = INT_MAX;
+    for (size_t i = 0; i < 8; ++i)
+    {
+      if (hotScaleLevels[i] < minScale)
+      {
+        minScaleIndex = i;
+        minScale = hotScaleLevels[i];
+      }
+    }
+
+    // Move the smallest-scale vector into the cold map and claim the hot
+    // vector for this scale.
+    mapQueue[minScale] = std::move(hotScaleVectors[minScaleIndex]);
+    hotScaleLevels[minScaleIndex] = scale;
+    return minScaleIndex;
   }
 
   // If there are no hot scales for this scale level, we will need to put it in
@@ -119,8 +142,7 @@ SingleTreeTraverser<RuleType>::Traverse(
       newFrame.baseCase = rootBaseCase;
 
       // Put it into the map.
-      const size_t scaleIndex = ScaleIndex(newFrame.node->Scale(),
-          hotScaleLevels);
+      const size_t scaleIndex = ScaleIndex(newFrame.node->Scale());
       if (scaleIndex < 8)
         hotScaleVectors[scaleIndex].push_back(std::move(newFrame));
       else if (scaleIndex == size_t(-1))
@@ -204,8 +226,7 @@ SingleTreeTraverser<RuleType>::Traverse(
         newFrame.baseCase = frame.baseCase;
 
         // Determine which vector to add the child to.
-        const size_t scaleIndex = ScaleIndex(newFrame.node->Scale(),
-            hotScaleLevels);
+        const size_t scaleIndex = ScaleIndex(newFrame.node->Scale());
         if (scaleIndex < 8)
           hotScaleVectors[scaleIndex].push_back(std::move(newFrame));
         else if (scaleIndex == size_t(-1))
