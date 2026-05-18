@@ -157,10 +157,7 @@ inline bool DownloadFile(const std::string& url,
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
-  if (readTimeout > 0)
-  {
-    cli.set_read_timeout(readTimeout);
-  }
+  cli.set_read_timeout(readTimeout);
   httplib::Result res = cli.Get(url);
   if (!res)
   {
