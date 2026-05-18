@@ -62,6 +62,18 @@ struct MostDerivedType<DataOptionsBase<MatrixOptionsBase<TextOptions>>>
   typedef TextOptions result;
 };
 
+template<>
+struct MostDerivedType<DataOptionsBase<ImageOptions>>
+{
+  typedef ImageOptions result;
+};
+
+template<>
+struct MostDerivedType<DataOptionsBase<AudioOptions>>
+{
+  typedef AudioOptions result;
+};
+
 // When both types are the same, we return that type.
 template<typename Derived>
 struct GetCombinedDataOptionsType<DataOptionsBase<Derived>,
@@ -70,31 +82,31 @@ struct GetCombinedDataOptionsType<DataOptionsBase<Derived>,
   typedef typename MostDerivedType<DataOptionsBase<Derived>>::result result;
 };
 
-// When both types are different, the result is hardcoded.
+// When both types are different, by default we take the LHS type and ignore the
+// RHS type.  However, there are some cases where we can take a hardcoded
+// result and override this behavior safely.
+
+template<typename Derived1, typename Derived2>
+struct GetCombinedDataOptionsType<DataOptionsBase<Derived1>,
+                                  DataOptionsBase<Derived2>>
+{
+  typedef typename MostDerivedType<DataOptionsBase<Derived1>>::result result;
+};
+
+// Specializations are only needed for cases where the RHS is more derived than
+// the LHS.
+
 template<>
-struct GetCombinedDataOptionsType<DataOptionsBase<PlainDataOptions>,
+struct GetCombinedDataOptionsType<
+    DataOptionsBase<PlainDataOptions>,
     DataOptionsBase<MatrixOptionsBase<PlainMatrixOptions>>>
 {
   typedef MatrixOptions result;
 };
 
 template<>
-struct GetCombinedDataOptionsType<DataOptionsBase<
-    MatrixOptionsBase<PlainMatrixOptions>>,
-    DataOptionsBase<PlainDataOptions>>
-{
-  typedef MatrixOptions result;
-};
-
-template<>
-struct GetCombinedDataOptionsType<DataOptionsBase<
-    MatrixOptionsBase<TextOptions>>, DataOptionsBase<PlainDataOptions>>
-{
-  typedef TextOptions result;
-};
-
-template<>
-struct GetCombinedDataOptionsType<DataOptionsBase<PlainDataOptions>,
+struct GetCombinedDataOptionsType<
+    DataOptionsBase<PlainDataOptions>,
     DataOptionsBase<MatrixOptionsBase<TextOptions>>>
 {
   typedef TextOptions result;
@@ -110,10 +122,18 @@ struct GetCombinedDataOptionsType<
 
 template<>
 struct GetCombinedDataOptionsType<
-    DataOptionsBase<MatrixOptionsBase<TextOptions>>,
-    DataOptionsBase<MatrixOptionsBase<PlainMatrixOptions>>>
+    DataOptionsBase<PlainDataOptions>,
+    DataOptionsBase<ImageOptions>>
 {
-  typedef TextOptions result;
+  typedef ImageOptions result;
+};
+
+template<>
+struct GetCombinedDataOptionsType<
+    DataOptionsBase<PlainDataOptions>,
+    DataOptionsBase<AudioOptions>>
+{
+  typedef AudioOptions result;
 };
 
 // Using the template metaprogram above, return a combined DataOptions.

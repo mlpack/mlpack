@@ -48,7 +48,7 @@ bool LoadImage(const std::vector<std::string>& files,
 
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
-  arma::Mat<unsigned char> images;
+  arma::Mat<uint8_t> images;
   unsigned char* imageBuf = nullptr;
   size_t i = 0;
 
@@ -83,7 +83,7 @@ bool LoadImage(const std::vector<std::string>& files,
           << " function iteratively." << std::endl;
       return HandleError(oss, opts);
     }
-    images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+    images.col(i) = arma::Mat<uint8_t>(imageBuf, dimension, 1,
         false, true);
     stbi_image_free(imageBuf);
     i++;

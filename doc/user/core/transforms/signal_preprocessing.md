@@ -4,21 +4,23 @@ mlpack provides Empirical Mode Decomposition (`EMD`) to preprocess signals
 for training and testing.  This can be used for signal monitoring pipelines
 in nonlinear and nonstationary problems.
 
-* `EMD()`: adaptively decomposes a 1D signal into a set of Intrinsic Mode
+* [`EMD()`](#emd): adaptively decomposes a 1D signal into a set of Intrinsic Mode
  Functions (IMFs) plus a residue.
-<!-- TODO: add EEMD and CEEMDAN -->
 
-## EMD 
+* [`EEMD()`](#eemd): ensemble EMD, to decompose a 1D signal into a robust set of IMFs
+  plus a residue. 
+<!-- TODO: add CEEMDAN -->
+
+## EMD
+
 The `EMD()` function can be used to extract Intrinsic Mode Functions (IMFs)
-from a uniformly sampled periodic signal:
+from a uniformly sampled periodic signal.
 
-#### `EMD()` Parameters
-
-- `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
-   * `signal` is a [column vector](../../matrices.md) containing the 1D signal
+- `EMD(signal, imfs, residue, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
+   * `signal` is a [column vector](../../matrices.md#representing-data-in-mlpack) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
-   * `imfs` is a [matrix](../../matrices.md) that will be modified to contain
+   * `imfs` is a [matrix](../../matrices.md#representing-data-in-mlpack) that will be modified to contain
      the extracted IMFs. It will have shape `N x K`, where `N` is the length
      of `signal` and `K` is the number of extracted IMFs.
 
@@ -39,7 +41,7 @@ from a uniformly sampled periodic signal:
 
    * Sifting will terminate when zero-crossings and extrema are equal or
      differing by at most one. Specifically, the S-number is set to S=1.
-    
+ 
    * A smaller tolerance sets a stricter stopping criterion. The algorithm will
      terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
      whichever occurs first.
@@ -96,3 +98,64 @@ for (size_t k = 0; k < numToShow; ++k)
 
  * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+
+
+## EEMD
+
+The `EEMD()` function wraps [`EMD()`](#emd) to output more robust IMFs by using an
+ensemble approach.
+
+- `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
+
+   * `ensSize` (of type `size_t`) is the number of members in the ensemble
+    (that is the number of `EMD()` runs to be averaged).
+
+   * `noiseStrength` (of type `double`) is the fraction of the signal standard
+   deviation used as the standard deviation of the added white noise in each
+    `EMD()` run (i.e. 0.1 means 10% of signal standard deviation).
+
+   * `signal`, `imfs`,  `residue`, `maxImfs`, `maxSiftIter`, and `tol` are
+     defined in the classical `EMD()` implementation.
+
+   ***NOTES:***
+
+   * The original signal **cannot** be reconstructed as the sum of the imfs and
+      residue, as in `EMD()`.
+
+   * Number of extracted IMFs will be the minimum number of IMFs extracted by
+     by `EMD()` across all `ensSize` runs (`<=maxImfs`).
+
+   * EEMD may produce low-energy leading IMFs due to injected noise and ensemble
+   averaging. Depending on the application, users may want to discard negligible
+   IMFs in post-processing (e.g., using an energy-fraction threshold).
+
+   * The number of returned IMFs is bounded between `0` and `maxImfs`.
+     The algorithm returns only as many IMFs as can actually be extracted from
+     the input signal.
+
+Example using `EEMD` on a time-varying signal `S` (shown in above EMD figure).
+
+```c++
+const arma::uword N = 3000;
+const double tMin = 0.0;
+const double tMax = arma::datum::pi;
+arma::vec time = arma::linspace(tMin, tMax, N);
+
+// signal = sin(20*T*(1 + 0.2*T)) + T**2 + sin(13*T)
+// see figure above in the EMD documentation
+arma::vec signal =
+    arma::sin( 20.0 * time % (1.0 + 0.2 * time) ) +
+    arma::square(time) + arma::sin(13.0 * time);
+
+arma::mat imfs;
+arma::vec residue;
+
+// Use 100 ensemble members, 0.15 noise strength, 10 IMFs, 50 sifts per IMF, tol = 1e-2
+mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
+```
+
+#### See also:
+
+ * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+

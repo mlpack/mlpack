@@ -1,6 +1,7 @@
 /**
  * @file bindings/R/print_doc_functions.hpp
  * @author Yashwant Singh Parihar
+ * @author Dirk Eddelbuettel
  *
  * This file contains functions useful for printing documentation strings
  * related to R bindings.
@@ -23,6 +24,11 @@ namespace r {
  * Given the name of a binding, print its R name.
  */
 inline std::string GetBindingName(const std::string& bindingName);
+
+/**
+ * Given the name of a internal mlpack method, print its R name.
+ */
+inline std::string GetMappedName(const std::string& methodName);
 
 /**
  * Print any import information for the R binding.
@@ -73,6 +79,21 @@ std::string PrintInputOptions(util::Params& p,
                               Args... args);
 
 /**
+ * Recursion base case for Predict variant.
+ */
+inline std::string PrintInputOptionsPredict(util::Params& /* p */);
+
+/**
+ * Print an input option for the R predict() case.
+ * This will throw an exception if the parameter does not exist in IO.
+ */
+template<typename T, typename... Args>
+std::string PrintInputOptionsPredict(util::Params& p,
+                                     const std::string& paramName,
+                                     const T& value,
+                                     Args... args);
+
+/**
  * Recursion base case.
  */
 inline std::string PrintOutputOptions(util::Params& /* p */,
@@ -116,6 +137,81 @@ inline std::string PrintDataset(const std::string& datasetName);
  * the command line.
  */
 inline std::string ParamString(const std::string& paramName);
+
+/**
+ * Import additional external library. For R this remains empty.
+ */
+inline std::string ImportExtLib();
+
+/**
+ * Import additional external library. For R this remains empty.
+ */
+inline std::string ImportSplit();
+
+/**
+ * Import the package itself. For R, we honor an additional flag to wrap
+ * this in \dontrun{}.
+ */
+inline std::string ImportThis(const std::string& /* groupName */,
+                              const bool dontrun);
+
+/**
+ * Code to load a given dataset from a given URL.
+ */
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+/**
+ * Code to split a given dataset into test and training set for both
+ * the predictor variables and the response variable.
+ */
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& /* trainDataset */,
+                                  const std::string& /* trainLabels */,
+                                  const std::string& /* testDataset */,
+                                  const std::string& /* testLabels */,
+                                  const std::string& splitRatio);
+
+/**
+ * Recursion base case for object creation
+ */
+inline std::string CreateObject(const std::string& /* bindingName */,
+                                const std::string& /* objectName */,
+                                const std::string& /* groupName */);
+
+/**
+ * Object creation, which for R remains empty.
+ */
+template<typename... Args>
+std::string CreateObject(const std::string& /* bindingName */,
+                         const std::string& /* objectName */,
+                         const std::string& /* groupName */,
+                         Args... /* args */);
+
+/*
+ * Default case for CallMethod passes bindingName, objectName, methodName
+ * and args... on along with 'dontrun' set to 'true' covering the 'R' call
+ * where \dontrun{} is added.  The 'markdown' call overrides with an explicit
+ * choice of 'false'.
+ */
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args);
+
+/*
+ * Separate case for CallMethod passes bindingName, objectName, methodName
+ * and args... along with 'dontrun' argument permitting markdown to set it to
+ * 'false'.
+ */
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       const bool dontrun,
+                       Args... args);
 
 /**
  * Print whether or not we should ignore a check on the given parameter.

@@ -232,6 +232,11 @@ inline bool CheckDifferentTrees(const TreeType& nodeA, const TreeType& nodeB)
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
                  "[RandomForestMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Train for minimum leaf size 20.
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
@@ -245,6 +250,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 20);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -262,6 +268,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 10);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -278,6 +285,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 1);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -295,6 +303,10 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   delete rf1;
   delete rf2;
   delete rf3;
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -304,6 +316,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
                  "[RandomForestMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Train for num_trees 1.
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
@@ -342,6 +359,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
   SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 5);
   SetInputParam("minimum_leaf_size", (int) 1);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -358,6 +376,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
   SetInputParam("labels", labels);
   SetInputParam("num_trees", (int) 10);
   SetInputParam("minimum_leaf_size", (int) 1);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -366,6 +385,10 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
 
   REQUIRE(numTrees1 != numTrees2);
   REQUIRE(numTrees2 != numTrees3);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -374,6 +397,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
 TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
                  "[RandomForestMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Train for minimum leaf size 20.
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
@@ -402,6 +430,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("maximum_depth", (int) 2);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -418,6 +447,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("maximum_depth", (int) 3);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -435,6 +465,10 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   delete rf1;
   delete rf2;
   delete rf3;
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**

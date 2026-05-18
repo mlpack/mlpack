@@ -569,6 +569,9 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
   // specified number of iterations using random weights. If this works 1 of 5
   // times, I'm fine with that. All I want to know is that the network is able
   // to escape from local minima and to solve the task.
+  //
+  // (Note: in the strong majority of cases, this passes on the first trial.
+  // Over tons of different trials, though, sometimes it can take a few!)
   size_t successes = 0;
   const size_t rho = 10;
 
@@ -586,7 +589,7 @@ TEST_CASE("SequenceClassificationTest", "[RecurrentNetworkTest]")
     model.Add<Linear>(2);
     model.Add<LogSoftMax>();
 
-    StandardSGD opt(0.005, 16, 15 * input.n_cols, -100);
+    StandardSGD opt(0.0075, 16, 25 * input.n_cols, -100);
     model.Train(input, labels, opt);
 
     arma::cube predictions;
@@ -721,12 +724,12 @@ TEST_CASE("RNNSerializationTest", "[RecurrentNetworkTest]")
 // associated with each transition is encoded in the first two columns; the
 // numeric values of the corresponding states are in the second two columns.
 // next path).
-inline arma::Mat<char> ReberTransitionMatrix()
+inline arma::Mat<int8_t> ReberTransitionMatrix()
 {
-  return arma::Mat<char>({{ 'T', 'P', '1', '2' },
-                          { 'X', 'S', '3', '1' },
-                          { 'V', 'T', '4', '2' },
-                          { 'X', 'S', '2', '5' },
+  return arma::Mat<int8_t>({{ 'T', 'P', '1', '2' },
+  { 'X', 'S', '3', '1' },
+  { 'V', 'T', '4', '2' },
+  { 'X', 'S', '2', '5' },
                           { 'P', 'V', '3', '5' },
                           { 'E', 'E', '0', '0' }});
 }
@@ -764,7 +767,7 @@ std::unordered_map<size_t, char> DimToReberMap()
 // Generate a string from the Reber grammar.
 inline std::string GenerateReberString(const bool embedded = false)
 {
-  const arma::Mat<char> transitions = ReberTransitionMatrix();
+  const arma::Mat<int8_t> transitions = ReberTransitionMatrix();
 
   std::string result = "B";
   size_t state = 0;
@@ -793,7 +796,7 @@ inline bool IsReberResponse(const std::string& input,
                             const std::string& response,
                             const bool embedded = false)
 {
-  const arma::Mat<char> transitions = ReberTransitionMatrix();
+  const arma::Mat<int8_t> transitions = ReberTransitionMatrix();
 
   // If we are embedded, we have to check the first and last characters
   // separately.

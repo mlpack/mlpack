@@ -153,7 +153,8 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
 
 
 /**
- * Checking that predictions are not same when --allow_empty_clusters or kill_empty_clusters are specified
+ * Checking that predictions are not same when --allow_empty_clusters or
+ * kill_empty_clusters are specified
  */
 TEST_CASE_METHOD(KmTestFixture, "KmClusteringEmptyClustersCheck",
                  "[KmeansMainTest][BindingTests][long]")

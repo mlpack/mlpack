@@ -293,6 +293,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNNumTargetsTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -306,6 +311,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
   SetInputParam("labels", labels);
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -321,6 +327,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
   SetInputParam("normalize", true);
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -328,6 +335,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -336,6 +347,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNormalizationTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -349,6 +365,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
   SetInputParam("labels", labels);
   SetInputParam("step_size", (double) 0.01);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -363,6 +380,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("step_size", (double) 20.5);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
@@ -371,6 +389,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -379,6 +401,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffStepSizeTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -391,6 +418,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
   SetInputParam("input", inputData);
   SetInputParam("tolerance", (double) 1e-6);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -404,6 +432,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
   SetInputParam("input", std::move(inputData));
   SetInputParam("tolerance", (double) 0.3);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -411,6 +440,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -419,6 +452,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffToleranceTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -432,6 +470,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
   SetInputParam("labels", labels);
   SetInputParam("batch_size", (int) 20);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -446,6 +485,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("batch_size", (int) 30);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -453,6 +493,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -462,6 +506,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffBatchSizeTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -475,6 +524,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
   SetInputParam("labels", labels);
   SetInputParam("k", 1);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -489,6 +539,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("k", 5);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -496,6 +547,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -505,6 +560,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffNumTargetsTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -518,6 +578,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("regularization", 1.0);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -532,6 +593,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("regularization", 0.1);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -539,6 +601,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -548,6 +614,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRegularizationTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -560,6 +631,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
   SetInputParam("input", inputData);
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -574,6 +646,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("update_interval", 100);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -581,6 +654,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -590,6 +667,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffRangeTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -605,6 +687,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
   SetInputParam("optimizer",  std::string("lbfgs"));
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 2);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -621,6 +704,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
   SetInputParam("optimizer",  std::string("lbfgs"));
   SetInputParam("k", 5);
   SetInputParam("max_iterations", (int) 500);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -628,6 +712,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -637,6 +725,11 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffMaxIterationTest",
 TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
                 "[LMNNMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("iris.csv", inputData))
     FAIL("Cannot load iris.csv!");
@@ -650,6 +743,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 2);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -664,6 +758,7 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
   SetInputParam("labels", labels);
   SetInputParam("linear_scan",  (bool) true);
   SetInputParam("passes", (int) 6);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -671,6 +766,10 @@ TEST_CASE_METHOD(LMNNTestFixture, "LMNNDiffPassesTest",
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
   REQUIRE(accu(params.Get<arma::mat>("transformed_data") !=
       transformedData) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
