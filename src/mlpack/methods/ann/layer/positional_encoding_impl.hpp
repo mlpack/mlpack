@@ -94,31 +94,28 @@ PositionalEncoding<MatType>::operator=(
 }
 
 template<typename MatType>
-void PositionalEncoding<MatType>::InitPositionalEncoding()
-{
-  positionalEncoding.set_size(maxSequenceLength, embedDim);
-  const MatType position = arma::regspace(0, 1, maxSequenceLength - 1);
-  const MatType divTerm = exp(arma::regspace(0, 2, embedDim - 1)
-      * (- std::log(10000.0) / embedDim));
-  const MatType theta = position * divTerm.t();
-  for (size_t i = 0; i < theta.n_cols; ++i)
-  {
-    positionalEncoding.col(2 * i) = arma::sin(theta.col(i));
-    positionalEncoding.col(2 * i + 1) = arma::cos(theta.col(i));
-  }
-  positionalEncoding = vectorise(positionalEncoding.t());
-}
-
-template<typename MatType>
 void PositionalEncoding<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  if (positionalEncoding.n_elem == 0) InitPositionalEncoding();
-
   if (input.n_rows != embedDim * maxSequenceLength)
     Log::Fatal << "Incorrect input dimensions!" << std::endl;
 
-  output = input.each_col() + positionalEncoding;
+   positionalEncoding.set_size(maxSequenceLength, embedDim);
+
+  const MatType theta =
+    arma::regspace<MatType>(0, maxSequenceLength - 1) *
+    arma::exp(
+        arma::regspace<MatType>(0, 2, embedDim - 1) *
+        (-std::log(10000.0) / embedDim)
+    ).t();
+
+  arma::uvec evenCols = arma::regspace<arma::uvec>(0, 2, embedDim - 2);
+  arma::uvec oddCols  = arma::regspace<arma::uvec>(1, 2, embedDim - 1);
+
+  positionalEncoding.cols(evenCols) = arma::sin(theta);
+  positionalEncoding.cols(oddCols)  = arma::cos(theta);
+
+  output = input.each_col() + arma::vectorise(positionalEncoding.t());
 }
 
 template<typename MatType>

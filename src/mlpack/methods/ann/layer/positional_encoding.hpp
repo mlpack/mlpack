@@ -89,17 +89,6 @@ class PositionalEncoding : public Layer<MatType>
                 const MatType& gy,
                 MatType& g);
 
-  /**
-   * Calculate the gradient using the output delta and the input activation.
-   *
-   * @param input The input parameter used for calculating the gradient.
-   * @param error The calculated error.
-   * @param gradient The calculated gradient.
-   */
-  void Gradient(const MatType& input,
-                const MatType& error,
-                MatType& gradient);
-
   //! Get the parameters.
   const MatType& Parameters() const { return positionalEncoding; }
   //! Modify the parameters.
@@ -116,10 +105,6 @@ class PositionalEncoding : public Layer<MatType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  /**
-   * Initialize positional encodings for further use.
-   */
-  void InitPositionalEncoding();
   
   //! Locally-stored embedding dimension.
   size_t embedDim;
