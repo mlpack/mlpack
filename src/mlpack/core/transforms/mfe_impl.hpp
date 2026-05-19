@@ -108,9 +108,9 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numMelFilters, nFFT, sampleRate,
       lowFreq, highFreq);
 
-  const size_t totalWindows = inputSignal.n_cols * ((inputSignal.n_rows
+  size_t totalWindows = inputSignal.n_cols * ((inputSignal.n_rows
       - nFFT) / stepsInSamples + 1);
-  
+
   // Needs to be matching windows length in SlidingWindow
   arma::Col<eT> hWindow = HammingWindow<eT>(nFFT);
 

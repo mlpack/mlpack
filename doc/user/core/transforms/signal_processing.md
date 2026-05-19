@@ -321,7 +321,8 @@ output can be used as input to machine learning models. Note that, since MFCC
 coefficient are decorrelated, it can be combined with several distance-based 
 machine learning algorithms (e.g., [KNN](../../methods/knn.md),
 [KMeans](/src/mlpack/methods/kmeans/kmeans.hpp)) or probabilitic algorithms
-(e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp), [HMM](/src/mlpack/methods/hmm/hmm.hpp)).
+(e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp),
+[HMM](/src/mlpack/methods/hmm/hmm.hpp)).
 
 
  - `MFCC(signals, mfcc, sampleRate, numCoeffs, numMelFilters=40, windowLength=25, windowStep=10, nFFT=0, lowFreq=0.0, highFreq=0.0)`

@@ -188,3 +188,57 @@ TEMPLATE_TEST_CASE("MFEPureSine440", "[MFCC][tiny]", float, double)
   REQUIRE(lowEnergyCount >= 30);
 }
 
+TEMPLATE_TEST_CASE("MFCCSine440", "[MFCC][tiny]", float, double)
+{
+  typedef TestType eT;
+  size_t sampleRate = 16000;
+  arma::Col<eT> t = arma::linspace<arma::Col<eT>>(0, 1.0f, sampleRate);
+  arma::Mat<eT> input = arma::sin(2.0f * (float) M_PI * 440.0f * t);
+
+  arma::Mat<eT> mfcc;
+  MFCC(input, mfcc, sampleRate);
+
+  REQUIRE(mfcc.n_rows == 13);
+  REQUIRE(mfcc.n_cols == 97);
+  REQUIRE(mfcc.is_finite());
+
+  /*
+   * C_0 is intentionally not checked in here since it sums all 40 mel
+   * bands so it accumulates the small per-frame spectrum leakage
+   * fluctuations
+   */
+  arma::Col<eT> framewiseStd = arma::stddev(mfcc, 0, 1);
+  for (size_t c = 4; c < mfcc.n_rows; ++c)
+    REQUIRE(framewiseStd(c) < 5.0f);
+}
+
+TEMPLATE_TEST_CASE("MFCCMultiChannel", "[MFCC][tiny]", float, double)
+{
+  typedef TestType eT;
+  size_t sampleRate = 16000;
+  arma::Col<eT> t = arma::linspace<arma::Col<eT>>(0, 1.0f, sampleRate);
+  arma::Col<eT> tone = arma::sin(2.0f * (float) M_PI * 440.0f * t);
+
+  size_t nChannels = 3;
+  arma::Mat<eT> input(sampleRate, nChannels);
+  for (size_t c = 0; c < nChannels; ++c)
+    input.col(c) = tone;
+
+  arma::Mat<eT> mfcc;
+  MFCC(input, mfcc, sampleRate);
+
+  size_t framesPerChannel = 97;
+  REQUIRE(mfcc.n_rows == 13);
+  REQUIRE(mfcc.n_cols == nChannels * framesPerChannel);
+
+  eT tol = std::is_same<eT, float>::value ? eT(1e-2) : eT(1e-10);
+
+  arma::Mat<eT> ref = mfcc.cols(0, framesPerChannel - 1);
+  for (size_t c = 1; c < nChannels; ++c)
+  {
+    arma::Mat<eT> slice = mfcc.cols(c * framesPerChannel,
+                                    (c + 1) * framesPerChannel - 1);
+    REQUIRE(arma::approx_equal(ref, slice, "absdiff", tol));
+  }
+}
+
