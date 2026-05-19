@@ -69,3 +69,25 @@ predict.mlpack_lars <- function(object, newdata, ...) {
     res <- lars_predict(input_model=object, newdata, ...)
     res
 }
+
+#' @rdname bayesian_linear_regression
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param stddevs A flag selecting standard deviation estimation returned along with
+#' point estimates
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_bayesian_linear_regression <-
+    function(object, newdata, stddevs=FALSE, ...) {
+
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    res <- bayesian_linear_regression_predict(input_model=object,
+                                              newdata, stddevs, ...)
+    # For prediction return the single column, otherwise return both
+    if (is.matrix(res) && ncol(res) == 1)
+        res <- res[,1,drop=TRUE]
+
+    res
+}

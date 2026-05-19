@@ -157,114 +157,6 @@ _, neighbors, _ := mlpack.ApproxKfn(param)
  - [QDAFN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/qdafn.hpp)
  - [DrusillaSelect class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/drusilla_select.hpp)
 
-## BayesianLinearRegression()
-{: #bayesian_linear_regression }
-
-#### BayesianLinearRegression
-{: #bayesian_linear_regression_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.Center = false
-param.Input = mat.NewDense(1, 1, nil)
-param.InputModel = nil
-param.Responses = mat.NewDense(1, 1, nil)
-param.Scale = false
-param.Test = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, stds := mlpack.BayesianLinearRegression(param)
-```
-
-An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `Center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `false` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Input` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of covariates (X). | `mat.NewDense(1, 1, nil)` |
-| `InputModel` | [`bayesianLinearRegression`](#doc_model) | Trained BayesianLinearRegression model to use. | `nil` |
-| `Responses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix of responses/observations (y). | `mat.NewDense(1, 1, nil)` |
-| `Scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `false` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing points to regress on (test points). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
-| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
-
-### Detailed documentation
-{: #bayesian_linear_regression_detailed-documentation }
-
-An implementation of the bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
-
-This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
-
-To train a BayesianLinearRegression model, the `Input` and `Responses`parameters must be given. The `Center`and `Scale` parameters control the centering and the normalizing options. A trained model can be saved with the `OutputModel`. If no training is desired at all, a model can be passed via the `InputModel` parameter.
-
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `Test` parameter.  Predicted responses to the test points can be saved with the `Predictions` output parameter. The corresponding standard deviation can be save by precising the `Stds` parameter.
-
-### Example
-For example, the following command trains a model on the data `data` and responses `responses`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `blr_model`:
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.Input = data
-param.Responses = responses
-param.Center = 1
-param.Scale = 0
-
-blr_model, _, _ := mlpack.BayesianLinearRegression(param)
-```
-
-The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`: 
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.InputModel = &blr_model
-param.Test = test
-
-_, test_predictions, _ := mlpack.BayesianLinearRegression(param)
-```
-
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties: 
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.InputModel = &blr_model
-param.Test = test
-
-_, test_predictions, stds := mlpack.BayesianLinearRegression(param)
-```
-
-### See also
-
- - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
-
 ## Cf()
 {: #cf }
 
@@ -1902,6 +1794,114 @@ final, _ := mlpack.Kmeans(data, 10, param)
  - [Accelerating exact k-means algorithms with geometric reasoning (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
+
+## BayesianLinearRegression()
+{: #bayesian_linear_regression }
+
+#### BayesianLinearRegression
+{: #bayesian_linear_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.Center = false
+param.Input = mat.NewDense(1, 1, nil)
+param.InputModel = nil
+param.Responses = mat.NewDense(1, 1, nil)
+param.Scale = false
+param.Test = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, stds := mlpack.BayesianLinearRegression(param)
+```
+
+An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `Center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `false` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Input` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of covariates (X). | `mat.NewDense(1, 1, nil)` |
+| `InputModel` | [`bayesianLinearRegression`](#doc_model) | Trained BayesianLinearRegression model to use. | `nil` |
+| `Responses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix of responses/observations (y). | `mat.NewDense(1, 1, nil)` |
+| `Scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `false` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing points to regress on (test points). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
+| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
+
+### Detailed documentation
+{: #bayesian_linear_regression_detailed-documentation }
+
+An implementation of the Bayesian linear regression.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+
+This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
+
+To train a BayesianLinearRegression model, the `Input` and `Responses`parameters must be given. The `Center`and `Scale` parameters control the centering and the normalizing options. A trained model can be saved with the `OutputModel`. If no training is desired at all, a model can be passed via the `InputModel` parameter.
+
+The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `Test` parameter.  Predicted responses to the test points can be saved with the `Predictions` output parameter. The corresponding standard deviation can be save by precising the `Stds` parameter.
+
+### Example
+For example, the following command trains a model on the data `data` and responses `responses`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `blr_model`:
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.Input = data
+param.Responses = responses
+param.Center = 1
+param.Scale = 0
+
+blr_model, _, _ := mlpack.BayesianLinearRegression(param)
+```
+
+The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`: 
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.InputModel = &blr_model
+param.Test = test
+
+_, test_predictions, _ := mlpack.BayesianLinearRegression(param)
+```
+
+Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties: 
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.InputModel = &blr_model
+param.Test = test
+
+_, test_predictions, stds := mlpack.BayesianLinearRegression(param)
+```
+
+### See also
+
+ - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## Lars()
 {: #lars }
