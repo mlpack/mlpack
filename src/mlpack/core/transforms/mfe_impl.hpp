@@ -63,8 +63,9 @@ inline arma::Mat<eT> MelFilterbank(size_t numFilters,
     eT center = hzPoints(i + 1);
     eT right  = hzPoints(i + 2);
 
-    if (center <= left || right <= center)
-      continue;
+    if (highFreq <= lowFreq)
+      Log::Fatal << "MFE(): highFreq must be strictly greater than lowFreq."
+                 << std::endl;
 
     arma::Col<eT> goUp = (binFreqHz - left) / (center - left);
     arma::Col<eT> goDown = (right - binFreqHz) / (right - center);
