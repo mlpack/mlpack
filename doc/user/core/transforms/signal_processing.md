@@ -15,7 +15,7 @@ features from stationary and non-stationary signals:
     - [`MFCC()`](#mfcc) (Mel-Frequency Cepstral Coefficients): a compact representation
    obtained by applying a Discrete Cosine Transform (DCT) to the MFE output.
 
-## EMD 
+## EMD
 
 mlpack provides Empirical Mode Decomposition (`EMD`) to process signals
 for training and testing.  This can be used for signal monitoring pipelines
@@ -26,11 +26,11 @@ from a uniformly sampled periodic signal:
 
 #### `EMD()` Parameters
 
-- `EMD(signal, imfs, residue, maxImfs = 10 , maxSiftIter = 50, tol = 1e-3)`
-   * `signal` is a [column vector](../../matrices.md) containing the 1D signal
+- `EMD(signal, imfs, residue, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
+   * `signal` is a [column vector](../../matrices.md#representing-data-in-mlpack) containing the 1D signal
      data (e.g. `arma::vec`); the sequence must be uniformly sampled.
 
-   * `imfs` is a [matrix](../../matrices.md) that will be modified to contain
+   * `imfs` is a [matrix](../../matrices.md#representing-data-in-mlpack) that will be modified to contain
      the extracted IMFs. It will have shape `N x K`, where `N` is the length
      of `signal` and `K` is the number of extracted IMFs.
 
@@ -51,7 +51,7 @@ from a uniformly sampled periodic signal:
 
    * Sifting will terminate when zero-crossings and extrema are equal or
      differing by at most one. Specifically, the S-number is set to S=1.
-    
+
    * A smaller tolerance sets a stricter stopping criterion. The algorithm will
      terminate when either `maxSiftIter` is reached or the `tol` is satisfied,
      whichever occurs first.
@@ -109,14 +109,13 @@ for (size_t k = 0; k < numToShow; ++k)
  * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
  * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
 
+
 ## EEMD
 
 The `EEMD()` function wraps [`EMD()`](#emd) to produce more robust IMFs
 by running EMD many times on the signal with independent white noise added
 to each trial, then averaging the results. The added noise reduces mode mixing
-and cancels out in the average
-
-## `EEMD()`
+and cancels out in the average.
 
 - `EEMD(signal, imfs, residue, ensSize = 100, noiseStrength = 0.2, maxImfs = 10, maxSiftIter = 50, tol = 1e-3)`
 
