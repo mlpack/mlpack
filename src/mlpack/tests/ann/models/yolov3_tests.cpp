@@ -18,6 +18,8 @@
 
 using namespace mlpack;
 
+// When precompiled headers are used, these types may already be registered.
+#ifndef MLPACK_ANN_MAT_LAYERS_REGISTERED
 CEREAL_REGISTER_TYPE(mlpack::Layer<arma::mat>)
 CEREAL_REGISTER_TYPE(mlpack::Identity<arma::mat>)
 CEREAL_REGISTER_TYPE(mlpack::MultiLayer<arma::mat>)
@@ -28,6 +30,7 @@ CEREAL_REGISTER_TYPE(mlpack::Padding<arma::mat>)
 CEREAL_REGISTER_TYPE(mlpack::MaxPooling<arma::mat>)
 CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<arma::mat>)
 CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<arma::mat>)
+#endif
 
 /*
  * Test different input image sizes. Other params are set to the default.
