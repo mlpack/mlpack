@@ -171,8 +171,11 @@ DualTreeTraverser<RuleType>::PruneMap(
     std::vector<MapEntryType>& childScaleVector =
         childRecursionSets.GetScaleVector(scale);
 
-    // Before traversing all the points in this scale, sort by score.
-    std::sort(scaleVector.begin(), scaleVector.end());
+    // Before traversing all the points in this scale, sort by score.  Don't
+    // bother sorting the leaf set, because getting that in the right order
+    // isn't likely to affect traversal time in any meaningful way.
+    if (scale != INT_MIN)
+      std::sort(scaleVector.begin(), scaleVector.end());
 
     childScaleVector.reserve(scaleVector.size());
 
