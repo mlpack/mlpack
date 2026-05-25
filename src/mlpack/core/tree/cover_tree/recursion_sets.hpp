@@ -53,11 +53,6 @@ class CoverTreeRecursionSets
     {
       if (begin)
       {
-        // Compute the order of the scales.  TODO: don't know if this is needed
-        arma::ivec hotScaleAlias(parent.hotScaleLevels.memptr(), HotVectorSize,
-            false, true);
-        hotScaleOrder = arma::sort_index(hotScaleAlias);
-
         // Move to first valid location.
         ++(*this);
       }
@@ -82,7 +77,7 @@ class CoverTreeRecursionSets
       {
         ++hotIndex;
         while (hotIndex < (HotVectorSize + 1) &&
-               parent.hotScaleLevels[hotScaleOrder[hotIndex - 1]] == INT_MIN)
+               parent.hotScaleLevels[hotIndex - 1] == INT_MIN)
           ++hotIndex; // Skip any empty scales.
 
         // Before settling on the leaf vector, make sure it's not empty.
@@ -103,7 +98,7 @@ class CoverTreeRecursionSets
     inline std::vector<CoverTreeMapEntry<TreeType, RuleType>>& Vector()
     {
       if (hotIndex <= HotVectorSize)
-        return parent.hotScaleVectors[hotScaleOrder[hotIndex - 1]];
+        return parent.hotScaleVectors[hotIndex - 1];
       else if (hotIndex == HotVectorSize + 1)
         return parent.leafVector;
       else
@@ -113,7 +108,7 @@ class CoverTreeRecursionSets
     inline int Scale() const
     {
       if (hotIndex <= HotVectorSize)
-        return parent.hotScaleLevels[hotScaleOrder[hotIndex - 1]];
+        return parent.hotScaleLevels[hotIndex - 1];
       else if (hotIndex == HotVectorSize + 1)
         return INT_MIN;
       else
@@ -125,7 +120,6 @@ class CoverTreeRecursionSets
     size_t hotIndex;
     typename std::map<int, std::vector<CoverTreeMapEntry<TreeType, RuleType>>,
         std::greater<int>>::iterator coldMapIter;
-    arma::uvec hotScaleOrder;
   };
 
   inline Iterator begin() { return Iterator(*this); }
