@@ -195,7 +195,7 @@ SingleTreeTraverser<RuleType>::Traverse(
         frame.baseCase = rule.BaseCase(queryIndex, point);
     }
 
-    // For what remains, sort the vector so that we compute base cases with the
+    // For what remains, sort the vector so that we only add children with the
     // most likely good nodes first.
     std::sort(scaleVector.begin() + firstGoodIndex, scaleVector.end());
 
