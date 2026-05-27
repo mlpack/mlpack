@@ -16,34 +16,12 @@
 #define BINDING_NAME random_forest_classify
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/random_forest/random_forest.hpp>
-//#include <mlpack/methods/random_forest/random_forest_model.hpp>
+#include "random_forest.hpp"
+#include "random_forest_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
 using namespace std;
-
-/**
- * This is the class that we will serialize.  It is a pretty simple wrapper
- * around DecisionTree<>.  In order to support categoricals, it will need to
- * also hold and serialize a DatasetInfo.
- */
-class RandomForestModel
-{
- public:
-  // The tree itself, left public for direct access by this program.
-  RandomForest<> rf;
-
-  // Create the model.
-  RandomForestModel() { /* Nothing to do. */ }
-
-  // Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(rf));
-  }
-};
 
 // Program Name.
 BINDING_USER_NAME("Random forests Prediction");
