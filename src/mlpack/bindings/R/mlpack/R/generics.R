@@ -91,3 +91,20 @@ predict.mlpack_bayesian_linear_regression <-
 
     res
 }
+
+#' @rdname random_forest
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param stddevs A flag selecting standard deviation estimation returned along with
+#' point estimates
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_random_forest <- function(object, newdata, stddevs=FALSE, ...) {
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    res <- random_forest_classify(input_model=object,
+                                  newdata, ...)
+    print(str(res))
+    res
+}
