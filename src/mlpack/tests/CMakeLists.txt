@@ -208,6 +208,7 @@ add_executable(mlpack_test
   main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/random_forest_train_test.cpp
   main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
