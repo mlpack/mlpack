@@ -805,21 +805,29 @@ TEMPLATE_TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]", float, double)
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::Mat<eT>,
       StandardCoverTree> coverTreeSearch(std::move(tree), SINGLE_TREE);
 
-  arma::mat naiveData = arma::conv_to<arma::mat>::from(data);
-  KNN naive(naiveData, NAIVE);
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::Mat<eT>>
+      naive(data, NAIVE);
 
   arma::Mat<size_t> coverTreeNeighbors;
   arma::Mat<eT> coverTreeDistances;
   coverTreeSearch.Search(15, coverTreeNeighbors, coverTreeDistances);
 
   arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
+  arma::Mat<eT> naiveDistances;
   naive.Search(15, naiveNeighbors, naiveDistances);
 
-  const eT eps = (std::is_same_v<eT, float> ? 1e-4 : 1e-7);
+  const eT eps = (std::is_same_v<eT, float> ? 1e-5 : 1e-7);
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
   {
-    REQUIRE(coverTreeNeighbors[i] == naiveNeighbors[i]);
+    // When using floats, the probability of two neighbors being out of order
+    // due to floating point imprecision is high.  That is, the error is a
+    // computed distance may cause its value (when represented as float) to be
+    // exactly equivalent to the next neighbor's distance.  In that situation,
+    // the neighbors may be returned out of order.  So, we only check the
+    // neighbor indices for double.
+    if (std::is_same_v<eT, double>)
+      REQUIRE(coverTreeNeighbors[i] == naiveNeighbors[i]);
+
     REQUIRE(coverTreeDistances[i] ==
         Approx(eT(naiveDistances[i])).epsilon(eps));
   }
