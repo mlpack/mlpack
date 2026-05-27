@@ -105,8 +105,7 @@ add_all_bindings(sparse_coding sparse_coding "Transformations")
 
 # random forest
 add_category(random_forest "Classification")
-#group_bindings(random_forest random_forest "train;classify;probabilities")
-group_bindings(random_forest random_forest "train;classify")
+group_bindings(random_forest random_forest "train;classify;probabilities")
 add_python_wrapper(random_forest random_forest)
 add_julia_class(random_forest random_forest)
 add_cli_executable(random_forest random_forest)
@@ -114,7 +113,7 @@ add_go_binding(random_forest random_forest)
 add_r_binding(random_forest random_forest "include")
 add_r_binding(random_forest random_forest_train "skip")
 add_r_binding(random_forest random_forest_classify "skip")
-#add_r_binding(random_forest random_forest_probabilities "skip")
+add_r_binding(random_forest random_forest_probabilities "skip")
 add_markdown_docs(random_forest random_forest "cli;python;julia;go;r" "python;r")
 
 

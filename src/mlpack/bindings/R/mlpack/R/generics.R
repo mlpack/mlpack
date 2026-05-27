@@ -99,12 +99,14 @@ predict.mlpack_bayesian_linear_regression <-
 #' point estimates
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
-predict.mlpack_random_forest <- function(object, newdata, stddevs=FALSE, ...) {
+predict.mlpack_random_forest <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
-    res <- random_forest_classify(input_model=object,
-                                  newdata, ...)
-    print(str(res))
-    res
+    type <- match.arg(type)
+    if (type == "predictions") {
+        res <- random_forest_classify(input_model=object, newdata, ...)
+    } else {
+        res <- random_forest_probabilities(input_model=object, newdata, ...)
+    }
 }

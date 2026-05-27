@@ -1,9 +1,10 @@
 /**
- * @file methods/random_forest/random_forest_classify_main.cpp
+ * @file methods/random_forest/random_forest_probabilities_main.cpp
  * @author Ryan Curtin
  * @author Dirk Eddelbuettel
  *
- * Given a trained random forest model, predict from model on new data.
+ * Given a trained random forest model, class probabilities from model on new
+ * data.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +14,7 @@
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME random_forest_classify
+#define BINDING_NAME random_forest_probabilities
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/random_forest/random_forest.hpp>
@@ -46,17 +47,17 @@ class RandomForestModel
 };
 
 // Program Name.
-BINDING_USER_NAME("Random forests Prediction");
+BINDING_USER_NAME("Random forests Probabilities");
 
 // Short description.
-BINDING_SHORT_DESC("Class predictions from random forest model.");
+BINDING_SHORT_DESC("Class probabilities from random forest model.");
 
 // Long description.
 BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-    CALL_METHOD("model", "classify", "test", "X_test"));
+    CALL_METHOD("model", "probabilities", "test", "X_test"));
 
 // See also...
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
@@ -76,8 +77,8 @@ PARAM_MATRIX_IN_REQ("test", "Test dataset to produce predictions for.", "T");
 PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is "
     "desired.", "L");
 
-PARAM_UROW_OUT("predictions", "Predicted classes for each point in the test "
-    "set.", "p");
+PARAM_MATRIX_OUT("probabilities", "Predicted class probabilities for each "
+    "point in the test set.", "P");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -86,9 +87,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::mat testData = std::move(params.Get<arma::mat>("test"));
   timers.Start("rf_prediction");
 
-  // Get predictions.
+  // Get predictions and probabilities.
   arma::Row<size_t> predictions;
-  rfModel->rf.Classify(testData, predictions);
+  arma::mat probabilities;
+  rfModel->rf.Classify(testData, predictions, probabilities);
 
   // Did we want to calculate test accuracy?
   if (params.Has("test_labels"))
@@ -105,5 +107,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Save the outputs.
-  params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
+  params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
