@@ -39,7 +39,7 @@ TEST_CASE_METHOD(RandomForestTrainTestFixture,
   RUN_BINDING();
 
   arma::Row<size_t> preds;
-  arma::mat::fixed<2,1> testX = { 0.123, 0.456 };
+  arma::mat::fixed<2, 1> testX = { 0.123, 0.456 };
   params.Get<RandomForestModel*>("output_model")->rf.Classify(testX, preds);
   REQUIRE(preds.n_elem == 1);
 }

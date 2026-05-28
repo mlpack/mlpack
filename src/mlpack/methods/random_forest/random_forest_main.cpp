@@ -136,8 +136,8 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("warm_start", "If true and passed along with `training` and "
     "`input_model` then trains more trees on top of existing model.", "w");
 
-PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
-    "use for classification.", "m");
+PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest "
+    "to use for classification.", "m");
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 

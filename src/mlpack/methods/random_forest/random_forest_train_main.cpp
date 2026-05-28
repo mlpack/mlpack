@@ -47,7 +47,8 @@ BINDING_LONG_DESC(
     "\n\n"
     "The " + PRINT_PARAM_STRING("minimum_leaf_size") +
     " parameter specifies the minimum number of training points that must fall "
-    "into each leaf for it to be split.  The " + PRINT_PARAM_STRING("num_trees") +
+    "into each leaf for it to be split.  The " +
+    PRINT_PARAM_STRING("num_trees") +
     " controls the number of trees in the random forest.  The " +
     PRINT_PARAM_STRING("minimum_gain_split") + " parameter controls the minimum"
     " required gain for a decision tree node to split.  Larger values will "

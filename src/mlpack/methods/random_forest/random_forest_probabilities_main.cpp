@@ -49,8 +49,8 @@ BINDING_SEE_ALSO("Random forests (pdf)", "https://www.eecis.udel.edu/~shatkay"
 BINDING_SEE_ALSO("RandomForest C++ class documentation",
     "@doc/user/methods/random_forest.md");
 
-PARAM_MODEL_IN_REQ(RandomForestModel, "input_model", "Pre-trained random forest to "
-    "use for classification.", "m");
+PARAM_MODEL_IN_REQ(RandomForestModel, "input_model", "Pre-trained random "
+    "forest to use for classification.", "m");
 
 PARAM_MATRIX_IN_REQ("test", "Test dataset to produce predictions for.", "T");
 PARAM_UROW_IN("test_labels", "Test dataset labels, if accuracy calculation is "
