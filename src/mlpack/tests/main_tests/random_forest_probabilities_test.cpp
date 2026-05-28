@@ -81,7 +81,7 @@ TEST_CASE_METHOD(RandomForestProbabilitiesTestFixture,
 }
 
 /**
- * Check that prediction size corresponds to test data size.
+ * Check that probilities size corresponds to test data size.
  */
 TEST_CASE_METHOD(RandomForestProbabilitiesTestFixture,
                  "RandomForestProbabilitiesPredictionSizeTest",

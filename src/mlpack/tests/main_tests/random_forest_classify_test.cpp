@@ -68,10 +68,6 @@ TEST_CASE_METHOD(RandomForestClassifyTestFixture,
                  "RandomForestClassifyNoDataTest",
                  "[RandomForestClassifyMainTest][BindingTests]")
 {
-  constexpr int N = 10;
-  constexpr int D = 2;
-  arma::mat trainX = arma::randu<arma::mat>(N, D);
-  arma::Row<size_t> trainY = arma::randu<arma::Row<size_t>>(N);
   // Initial model.
   RandomForestModel* model = new RandomForestModel;
   // Set as input.
