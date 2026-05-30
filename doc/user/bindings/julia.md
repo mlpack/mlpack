@@ -3369,7 +3369,7 @@ julia> codes, _, _ = sparse_coding(input_model=model,
 ## random_forest()
 {: #random_forest }
 
-#### Random forests
+#### Random Forests
 {: #random_forest_descr }
 
 ```julia

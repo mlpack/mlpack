@@ -24,7 +24,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Random forests Prediction");
+BINDING_USER_NAME("Random Forests Prediction");
 
 // Short description.
 BINDING_SHORT_DESC("Class predictions from random forest model.");

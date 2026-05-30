@@ -23,7 +23,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Random forests");
+BINDING_USER_NAME("Random Forests");
 
 // Short description.
 BINDING_SHORT_DESC(

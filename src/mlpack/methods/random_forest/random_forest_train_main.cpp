@@ -24,7 +24,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Random forests train");
+BINDING_USER_NAME("Random Forests train");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -130,9 +130,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<double>(params, "minimum_gain_split",
       [](double x) { return x >= 0.0; }, true,
       "minimum gain for splitting must be nonnegative");
-
-  ReportIgnoredParam(params, {{ "training", false }}, "num_trees");
-  ReportIgnoredParam(params, {{ "training", false }}, "minimum_leaf_size");
 
   RandomForestModel* rfModel = new RandomForestModel();
 

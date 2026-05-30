@@ -3333,7 +3333,7 @@ $ mlpack_sparse_coding --input_model_file model.bin --test_file otherdata.csv
 ## mlpack_random_forest
 {: #random_forest }
 
-#### Random forests
+#### Random Forests
 {: #random_forest_descr }
 
 ```bash

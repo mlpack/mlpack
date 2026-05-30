@@ -4136,7 +4136,7 @@ codes, _, _ := mlpack.SparseCoding(param)
 ## RandomForest()
 {: #random_forest }
 
-#### Random forests
+#### Random Forests
 {: #random_forest_descr }
 
 ```go

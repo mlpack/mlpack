@@ -3387,7 +3387,7 @@ R> codes <- output$codes
 ## class random_forest
 {: #random_forest }
 
-#### Random forests train
+#### Random Forests train
 {: #random_forest_descr }
 
 

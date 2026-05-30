@@ -25,7 +25,7 @@ namespace mlpack {
 class RandomForestModel
 {
  public:
-  // The tree itself, left public for direct access by this program.
+  // The tree itself, left public for direct access by this binding.
   RandomForest<> rf;
 
   // Create the model.

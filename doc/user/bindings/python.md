@@ -3445,7 +3445,7 @@ Then, this model could be used to encode a new matrix, `'otherdata'`, and save t
 ## class RandomForest
 {: #random_forest }
 
-#### Random forests train
+#### Random Forests train
 {: #random_forest_descr }
 
 
