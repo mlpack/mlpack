@@ -38,11 +38,6 @@ TEST_CASE_METHOD(RandomForestProbabilitiesTestFixture,
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
-#if 0
-// TODO: This throws correctly
-//   RandomForest::Probabilities(): no random forest trained!
-//   (from line 381 of methods/random_forest/random_forest_impl.hpp)
-//   but is not caught here leading to a test failure
 /**
  * Check that untrained model throws error.
  */
@@ -57,9 +52,8 @@ TEST_CASE_METHOD(RandomForestProbabilitiesTestFixture,
   RandomForestModel* model = new RandomForestModel;
   SetInputParam("input_model", std::move(model));
   // (Required) model is not trained. Should throw a runtime error.
-  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
 }
-#endif
 
 /**
  * Check that lack of data throws error.
