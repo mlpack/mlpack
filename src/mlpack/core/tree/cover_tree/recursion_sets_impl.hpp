@@ -4,6 +4,11 @@
  *
  * Implementation of the CoverTreeRecursionSet object, used during traversal of
  * cover trees.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_CORE_TREE_COVER_TREE_RECURSION_SETS_IMPL_HPP
 #define MLPACK_CORE_TREE_COVER_TREE_RECURSION_SETS_IMPL_HPP
@@ -12,16 +17,16 @@
 
 namespace mlpack {
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::
+template<typename MapEntryType, size_t HotVectorSize>
+inline CoverTreeRecursionSets<MapEntryType, HotVectorSize>::
 CoverTreeRecursionSets()
 {
   hotScaleLevels.fill(INT_MIN);
 }
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline std::vector<CoverTreeMapEntry<TreeType, RuleType>>&
-CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::GetScaleVector(
+template<typename MapEntryType, size_t HotVectorSize>
+inline std::vector<MapEntryType>&
+CoverTreeRecursionSets<MapEntryType, HotVectorSize>::GetScaleVector(
     const int scale)
 {
   if (scale == INT_MIN)
@@ -34,8 +39,8 @@ CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::GetScaleVector(
     return coldScaleMap[scale];
 }
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline bool CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::IsEmpty()
+template<typename MapEntryType, size_t HotVectorSize>
+inline bool CoverTreeRecursionSets<MapEntryType, HotVectorSize>::IsEmpty()
     const
 {
   if (coldScaleMap.size() != 0)
@@ -51,25 +56,17 @@ inline bool CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::IsEmpty()
   return true;
 }
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline int CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::MaxScale()
+template<typename MapEntryType, size_t HotVectorSize>
+inline int CoverTreeRecursionSets<MapEntryType, HotVectorSize>::MaxScale()
     const
 {
-  int maxScale = INT_MIN;
-  for (size_t i = 0; i < HotVectorSize; ++i)
-  {
-    if (hotScaleLevels[i] > maxScale)
-      maxScale = hotScaleLevels[i];
-  }
-
   // No need to check the cold map, since anything in the hot vectors will have
   // higher scale, and the cold map is emptied before the hot vectors.
-
-  return maxScale;
+  return hotScaleLevels.max();
 }
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline void CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::
+template<typename MapEntryType, size_t HotVectorSize>
+inline void CoverTreeRecursionSets<MapEntryType, HotVectorSize>::
 RemoveScale(const int scale)
 {
   if (scale == INT_MIN)
@@ -88,6 +85,7 @@ RemoveScale(const int scale)
       {
         hotScaleLevels[i] = coldScaleMap.begin()->first;
         hotScaleVectors[i] = std::move(coldScaleMap.begin()->second);
+        coldScaleMap.erase(coldScaleMap.begin()->first);
       }
       else
       {
@@ -99,20 +97,8 @@ RemoveScale(const int scale)
   }
 }
 
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline void CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::Clear()
-{
-  for (size_t i = 0; i < HotVectorSize; ++i)
-  {
-    hotScaleLevels[i] = INT_MIN;
-    hotScaleVectors[i].clear();
-  }
-  coldScaleMap.clear();
-  leafVector.clear();
-}
-
-template<typename TreeType, typename RuleType, size_t HotVectorSize>
-inline size_t CoverTreeRecursionSets<TreeType, RuleType, HotVectorSize>::
+template<typename MapEntryType, size_t HotVectorSize>
+inline size_t CoverTreeRecursionSets<MapEntryType, HotVectorSize>::
 GetScaleIndex(const int scale)
 {
   // Loop through the hot scales.  Allocate one, if it's unallocated.

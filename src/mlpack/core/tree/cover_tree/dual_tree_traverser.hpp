@@ -61,17 +61,17 @@ class CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   size_t numPrunes;
 
   // Struct used for traversal.
-  typedef CoverTreeMapEntry<CoverTree, RuleType> MapEntryType;
+  typedef DualCoverTreeMapEntry<CoverTree, RuleType> MapEntryType;
 
   // Prepare map for recursion.
   void PruneMap(
       CoverTree& queryNode,
-      CoverTreeRecursionSets<CoverTree, RuleType, 8>& recursionSets,
-      CoverTreeRecursionSets<CoverTree, RuleType, 8>& childRecursionSets);
+      CoverTreeRecursionSets<MapEntryType, 8>& recursionSets,
+      CoverTreeRecursionSets<MapEntryType, 8>& childRecursionSets);
 
   void ReferenceRecursion(
       CoverTree& queryNode,
-      CoverTreeRecursionSets<CoverTree, RuleType, 8>& recursionSets);
+      CoverTreeRecursionSets<MapEntryType, 8>& recursionSets);
 };
 
 } // namespace mlpack

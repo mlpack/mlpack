@@ -43,7 +43,7 @@ DualTreeTraverser<RuleType>::Traverse(CoverTree& queryRoot,
                                       CoverTree& referenceNode)
 {
   // Start by creating the recursion sets and adding the reference node to it.
-  typedef CoverTreeRecursionSets<CoverTree, RuleType, 8> RecursionSets;
+  typedef CoverTreeRecursionSets<MapEntryType, 8> RecursionSets;
   RecursionSets rootRecursionSets;
 
   MapEntryType rootRefEntry;
@@ -88,14 +88,13 @@ DualTreeTraverser<RuleType>::Traverse(CoverTree& queryRoot,
       // recursion's results are separate and independent.  I don't think this
       // is true in every case, and we may have to modify this section to
       // consider scores in the future.
-      RecursionSets childRecursionSets;
       for (size_t i = 0; i < queryNode->NumChildren(); ++i)
       {
         // We need a copy of the map for this child.
+        RecursionSets childRecursionSets;
         PruneMap(queryNode->Child(i), recursionSets, childRecursionSets);
         queryStack.push(std::make_pair(&queryNode->Child(i),
             std::move(childRecursionSets)));
-        childRecursionSets.Clear();
       }
       continue;
     }
@@ -153,17 +152,15 @@ template<typename RuleType>
 void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::PruneMap(
     CoverTree& queryNode,
-    CoverTreeRecursionSets<CoverTree, RuleType, 8>& recursionSets,
-    CoverTreeRecursionSets<CoverTree, RuleType, 8>& childRecursionSets)
+    CoverTreeRecursionSets<MapEntryType, 8>& recursionSets,
+    CoverTreeRecursionSets<MapEntryType, 8>& childRecursionSets)
 {
   if (recursionSets.IsEmpty())
     return; // Nothing to do.
 
-  typename CoverTreeRecursionSets<CoverTree, RuleType, 8>::Iterator it =
+  typename CoverTreeRecursionSets<MapEntryType, 8>::Iterator it =
       recursionSets.begin();
-  typename CoverTreeRecursionSets<CoverTree, RuleType, 8>::Iterator itEnd =
-      recursionSets.end();
-  while (it != itEnd)
+  while (!it.AtEnd())
   {
     // Get a reference to the vector representing the entries at this scale.
     std::vector<MapEntryType>& scaleVector = it.Vector();
@@ -228,7 +225,7 @@ template<typename RuleType>
 void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::ReferenceRecursion(
     CoverTree& queryNode,
-    CoverTreeRecursionSets<CoverTree, RuleType, 8>& recursionSets)
+    CoverTreeRecursionSets<MapEntryType, 8>& recursionSets)
 {
   // First, reduce the maximum scale in the reference map down to the scale of
   // the query node.
