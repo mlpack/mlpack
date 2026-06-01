@@ -215,7 +215,7 @@ MFE is computed using the following steps.  The figure below shows the applicati
 |------------------|-------------|----------------|---------------------------------------------------------|
 | `signals`        | `arma::mat` or other floating-point matrix | _(n/a)_ | Raw PCM audio samples.                                 |
 | `mfe`            | `arma::mat` or other floating point matrix | _(n/a)_ | Output matrix of shape `(numMelFilters x numWindows)`. |
-| `sampleRate`     | `size_t`    | _(n/a)_ | Sample rate of the audio in hz (e.g. `16000`, `44100`).        |
+| `sampleRate`     | `size_t`    | _(n/a)_ | Sample rate of the audio in Hz (e.g. `16000`, `44100`).        |
 | `numMelFilters`  | `size_t`    | `40`    | Number of mel-spaced triangular filters. Typical range (`20` to `100`) |
 | `windowLength`   | `float`     | `25.0`  | Window length in milliseconds.  Typical range `20` to `40`.           |
 | `windowStep`     | `float`     | `10.0`  | Window hop (step) in milliseconds. Typical range `5` to `20`.         |
