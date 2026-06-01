@@ -346,7 +346,7 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
 
    * `numCoeffs` must be less than or equal to `numMelFilters`.  The
      DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
-     coefficients, it cannot produce more coefficients than there are input
+     coefficients; it cannot produce more coefficients than there are input
      values.
 
 MFCC is computed using the following steps.  The figure below shows the application of MFCC to a 440 Hz sine wave signal.
