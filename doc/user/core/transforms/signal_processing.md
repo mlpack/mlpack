@@ -395,7 +395,7 @@ std::cout << "MFCC shape: " << mfcc.n_rows << " x " << mfcc.n_cols
     << "." << std::endl;
 ```
 
-Extract 20 MFCCs with 80 mel filters from an MP3 file:
+Extract 20 MFCCs with 80 Mel filters from an MP3 file:
 
 ```c++
 // See https://datasets.mlpack.org/fifths.mp3
