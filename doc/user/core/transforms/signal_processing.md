@@ -45,7 +45,7 @@ from a uniformly sampled periodic signal:
 
    ***NOTES:***
 
-   * The original signal can be reconstructed as the sum of the imfs and residue. 
+   * The original signal can be reconstructed as the sum of the IMFs and residue. 
 
    * The stopping criterion is based on the normalized mean envelope magnitude.
 
