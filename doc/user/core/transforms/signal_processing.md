@@ -317,7 +317,7 @@ features from raw PCM data loaded with [`Load()`](../../load_save.md).  Similar 
 output can be used as input to machine learning models. Note that, since MFCC
 coefficients are decorrelated, they can be used with distance-based 
 machine learning algorithms (e.g., [KNN](../../methods/knn.md),
-[KMeans](/src/mlpack/methods/kmeans/kmeans.hpp)) or probabilitic algorithms
+[KMeans](/src/mlpack/methods/kmeans/kmeans.hpp)) or probabilistic algorithms
 (e.g., [GMM](/src/mlpack/methods/gmm/gmm.hpp),
 [HMM](/src/mlpack/methods/hmm/hmm.hpp)).
 
