@@ -356,7 +356,7 @@ MFCC is computed using the following steps.  The figure below shows the applicat
  - *(c)* Apply the Short-Time Fourier Transform (STFT) to each data window to produce a short-term spectrum.
  - *(d)* Multiply each STFT frame with the Mel filterbank, which consists of log-spaced triangular filters.
  - *(e)* Take the log of the filter bins to produce the Mel filter energies.
- - *(f)* Multiplying by a discrete cosine transform (DCT) matrix on top gives MFCC.
+ - *(f)* Multiplying by a discrete cosine transform (DCT) matrix gives MFCC.
 
 <p align="center">
   <img src="../../../img/mfcc_pipeline.png" alt="MFCC implementation">
