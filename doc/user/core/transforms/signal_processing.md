@@ -173,7 +173,7 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 
 ## MFE
 
-mlpack provides the `MFE()` functions to extract standard audio
+mlpack provides the `MFE()` function to extract standard audio
 features from raw PCM data loaded with [`Load()`](../../load_save.md).  These features are
 used as input to machine learning models for speech recognition, speaker identification,
 keyword spotting
