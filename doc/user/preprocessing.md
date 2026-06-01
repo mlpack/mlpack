@@ -26,5 +26,5 @@ documented yet.*
    imputed values using a variety of imputation strategies.
 
  * [Signal processing](core/transforms/signal_processing.md): 
-   functions to extract features from dataset by applying signal processing
+   functions to extract features from data by applying signal processing
    techniques, such as EMD, MFE, and MFCC.
