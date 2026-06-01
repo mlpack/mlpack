@@ -129,7 +129,7 @@ and cancels out in the average.
 
    ***NOTES:***
 
-   * The original signal **cannot** be reconstructed as the sum of the imfs and
+   * The original signal **cannot** be reconstructed as the sum of the IMFs and
       residue, as in `EMD()`.
 
    * Number of extracted IMFs will be the minimum number of IMFs extracted by
