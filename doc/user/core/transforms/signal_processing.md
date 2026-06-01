@@ -349,7 +349,7 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
      coefficients, it cannot produce more coefficients than there are input
      values.
 
-MFCC is computed using the following steps.  The figure below shows the application of MFE to a 440 Hz sine wave signal.
+MFCC is computed using the following steps.  The figure below shows the application of MFCC to a 440 Hz sine wave signal.
 
  - *(a)* Each individual input signal should have amplitude in the range `[-1.0, 1.0]`.
  - *(b)* Cut the signal into overlapping frames tapered by a Hamming window to prevent spectral leakage.
