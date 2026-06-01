@@ -342,7 +342,6 @@ machine learning algorithms (e.g., [KNN](../../methods/knn.md),
      channel.  This preserves spatial information (e.g., which sounds come from the
      left vs. right).  If spatial information is not needed, the channels can be
      mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
-     Both cases are demonstrated in the examples below.
 
    * `numCoeffs` must be less than or equal to `numMelFilters`.  The
      DCT compresses `numMelFilters` log-mel energies down to `numCoeffs` cepstral
