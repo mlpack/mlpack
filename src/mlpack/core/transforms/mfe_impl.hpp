@@ -101,7 +101,7 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     nFFT = NextPowerOf2(lengthInSamples);
 
   if (nFFT < lengthInSamples)
-    Log::Fatal << "MFE(): nFFT cannot be lower than window length in samples.\n"
+    Log::Fatal << "MFE(): nFFT cannot be lower than window length in samples. "
                << "nFFT needs to be >= windowLength x sampleRate." << std::endl;
 
   size_t numBins = nFFT / 2 + 1;
