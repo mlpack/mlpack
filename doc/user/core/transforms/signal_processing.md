@@ -314,7 +314,7 @@ for (size_t i = 0; i < 40; ++i)
 
 ## MFCC
 
-mlpack provides the `MFCC()` functions to extract standard audio
+mlpack provides the `MFCC()` function to extract standard audio
 features from raw PCM data loaded with [`Load()`](../../load_save.md).  Similar to MFE, MFCC
 output can be used as input to machine learning models. Note that, since MFCC
 coefficient are decorrelated, it can be combined with several distance-based 
