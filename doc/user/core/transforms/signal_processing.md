@@ -195,7 +195,6 @@ keyword spotting, and other tasks.
      channel.  This preserves spatial information (e.g., which sounds come from the
      left vs. right).  If spatial information is not needed, the channels can be
      mixed down to mono before processing (e.g., `mono = (left + right) / 2`).
-     Both cases are demonstrated in the examples below.
 
 MFE is computed using the following steps.  The figure below shows the application of MFE to a 440 Hz sine wave signal.
 
