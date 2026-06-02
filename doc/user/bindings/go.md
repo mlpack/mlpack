@@ -495,11 +495,11 @@ _, predictions, _ := mlpack.DecisionTree(param)
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
-## DecisionTreeTrain()
-{: #decision_tree_train }
+## DecisionTreeClassify()
+{: #decision_tree_classify }
 
-#### Decision tree training
-{: #decision_tree_train_descr }
+#### Decision tree Prediction
+{: #decision_tree_classify_descr }
 
 ```go
 import (
@@ -507,20 +507,15 @@ import (
   "gonum.org/v1/gonum/mat"
 )
 
-// Initialize optional parameters for DecisionTreeTrain().
-param := mlpack.DecisionTreeTrainOptions()
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaximumDepth = 0
-param.MinimumGainSplit = 1e-07
-param.MinimumLeafSize = 20
-param.PrintTrainingAccuracy = false
+// Initialize optional parameters for DecisionTreeClassify().
+param := mlpack.DecisionTreeClassifyOptions()
+param.TestLabels = mat.NewDense(1, 1, nil)
 param.Verbose = false
-param.Weights = mat.NewDense(1, 1, nil)
 
-output_model := mlpack.DecisionTreeTrain(training, param)
+predictions := mlpack.DecisionTreeClassify(inputModel, test, param)
 ```
 
-Training ID3-style decision tree model. [Detailed documentation](#decision_tree_train_detailed-documentation).
+Class predictions from train decision tree model. [Detailed documentation](#decision_tree_classify_detailed-documentation).
 
 
 
@@ -530,14 +525,10 @@ There are two types of input options: required options, which are passed directl
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Training labels. | `mat.NewDense(1, 1, nil)` |
-| `MaximumDepth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
-| `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
-| `training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may contain categorical variables). | `**--**` |
+| `inputModel` | [`decisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `**--**` |
+| `test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may contain categorical variables). | `**--**` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `Weights` | [`*mat.Dense`](#doc_a__mat_Dense) | The weight of labels | `mat.NewDense(1, 1, nil)` |
 
 ### Output options
 
@@ -545,15 +536,11 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
 
 ### Detailed documentation
-{: #decision_tree_train_detailed-documentation }
+{: #decision_tree_classify_detailed-documentation }
 
-Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
 
-The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The trained model is returned, and can then be used for prediction. The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
 
 ### Example

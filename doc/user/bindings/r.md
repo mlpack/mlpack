@@ -411,23 +411,21 @@ R> predictions <- output$predictions
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
-## decision_tree_train()
-{: #decision_tree_train }
+## decision_tree_classify()
+{: #decision_tree_classify }
 
-#### Decision tree training
-{: #decision_tree_train_descr }
+#### Decision tree Prediction
+{: #decision_tree_classify_descr }
 
 ```R
 R> library(mlpack)
-R> d <- decision_tree_train(labels=matrix(integer(), 0, 0),
-        maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-        print_training_accuracy=FALSE, training=matrix(numeric(), 0, 0),
-        verbose=getOption("mlpack.verbose", FALSE), weights=matrix(numeric(), 0,
-        0))
-R> output_model <- d$output_model
+R> d <- decision_tree_classify(input_model=NA, test=matrix(numeric(), 0,
+        0), test_labels=matrix(integer(), 0, 0),
+        verbose=getOption("mlpack.verbose", FALSE))
+R> predictions <- d$predictions
 ```
 
-Training ID3-style decision tree model. [Detailed documentation](#decision_tree_train_detailed-documentation).
+Class predictions from train decision tree model. [Detailed documentation](#decision_tree_classify_detailed-documentation).
 
 
 
@@ -436,14 +434,10 @@ Training ID3-style decision tree model. [Detailed documentation](#decision_tree_
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `labels` | [`integer vector`](#doc_integer_vector) | Training labels. | `matrix(integer(), 0, 0)` |
-| `maximum_depth` | [`integer`](#doc_integer) | Maximum depth of the tree (0 means no limit). | `0` |
-| `minimum_gain_split` | [`numeric`](#doc_numeric) | Minimum gain for node splitting. | `1e-07` |
-| `minimum_leaf_size` | [`integer`](#doc_integer) | Minimum number of points in a leaf. | `20` |
-| `print_training_accuracy` | [`logical`](#doc_logical) | Print the training accuracy. | `FALSE` |
-| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may contain categorical variables). | `**--**` |
+| `input_model` | [`DecisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `**--**` |
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may contain categorical variables). | `**--**` |
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. | `matrix(integer(), 0, 0)` |
 | `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-| `weights` | [`numeric matrix`](#doc_numeric_matrix) | The weight of labels | `matrix(numeric(), 0, 0)` |
 
 ### Output options
 
@@ -451,33 +445,15 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DecisionTreeModel`](#doc_model) | Output for trained decision tree. | 
+| `predictions` | [`integer vector`](#doc_integer_vector) | Class predictions for each test point. | 
 
 ### Detailed documentation
-{: #decision_tree_train_detailed-documentation }
+{: #decision_tree_classify_detailed-documentation }
 
-Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
 
-The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The trained model is returned, and can then be used for prediction. The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
 
 ### Example
-
-
-suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
-X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
-y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
-X_train <- pp[["training"]]
-X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
-
-model <- decision_tree_train(training=X_train, labels=y_train,
-  minimum_leaf_size=20, minimum_gain_split=0.001)
-  
+pred <- predict(model, newdata=X_test) 
 
 ### See also
 

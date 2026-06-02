@@ -406,21 +406,19 @@ $ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
-## mlpack_decision_tree_train
-{: #decision_tree_train }
+## mlpack_decision_tree_classify
+{: #decision_tree_classify }
 
-#### Decision tree training
-{: #decision_tree_train_descr }
+#### Decision tree Prediction
+{: #decision_tree_classify_descr }
 
 ```bash
-$ mlpack_decision_tree_train [--help] [--info <string>] [--labels_file
-        <string>] [--maximum_depth 0] [--minimum_gain_split 1e-07]
-        [--minimum_leaf_size 20] [--print_training_accuracy] --training_file
-        <string> [--verbose] [--version] [--weights_file <string>]
-        [--output_model_file <string>]
+$ mlpack_decision_tree_classify [--help] [--info <string>]
+        --input_model_file <string> --test_file <string> [--test_labels_file
+        <string>] [--verbose] [--version] [--predictions_file <string>]
 ```
 
-Training ID3-style decision tree model. [Detailed documentation](#decision_tree_train_detailed-documentation).
+Class predictions from train decision tree model. [Detailed documentation](#decision_tree_classify_detailed-documentation).
 
 
 
@@ -431,30 +429,22 @@ Training ID3-style decision tree model. [Detailed documentation](#decision_tree_
 | `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Training labels. | `''` |
-| `--maximum_depth (-D)` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
-| `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
-| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may contain categorical variables). | `**--**` |
+| `--input_model_file (-m)` | [`DecisionTreeModel file`](#doc_model) | Pre-trained decision tree, to be used with test points. | `**--**` |
+| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may contain categorical variables). | `**--**` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--weights_file (-w)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The weight of labels | `''` |
 
 ### Output options
 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_model_file (-M)` | [`DecisionTreeModel file`](#doc_model) | Output for trained decision tree. | 
+| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Class predictions for each test point. | 
 
 ### Detailed documentation
-{: #decision_tree_train_detailed-documentation }
+{: #decision_tree_classify_detailed-documentation }
 
-Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
 
-The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The trained model is returned, and can then be used for prediction. The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
 
 ### Example

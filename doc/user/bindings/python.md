@@ -415,23 +415,21 @@ Then, to use that model to classify points in `'test_set'` and print the test er
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
-## decision_tree_train()
-{: #decision_tree_train }
+## decision_tree_classify()
+{: #decision_tree_classify }
 
-#### Decision tree training
-{: #decision_tree_train_descr }
+#### Decision tree Prediction
+{: #decision_tree_classify_descr }
 
 ```python
->>> from mlpack import decision_tree_train
->>> d = decision_tree_train(check_input_matrices=False,
-        copy_all_inputs=False, labels=np.empty([0], dtype=np.uint64),
-        maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-        print_training_accuracy=False, training=np.empty([0, 0]), verbose=False,
-        weights=np.empty([0, 0]))
->>> output_model = d['output_model']
+>>> from mlpack import decision_tree_classify
+>>> d = decision_tree_classify(check_input_matrices=False,
+        copy_all_inputs=False, input_model=None, test=np.empty([0, 0]),
+        test_labels=np.empty([0], dtype=np.uint64), verbose=False)
+>>> predictions = d['predictions']
 ```
 
-Training ID3-style decision tree model. [Detailed documentation](#decision_tree_train_detailed-documentation).
+Class predictions from train decision tree model. [Detailed documentation](#decision_tree_classify_detailed-documentation).
 
 
 
@@ -441,14 +439,10 @@ Training ID3-style decision tree model. [Detailed documentation](#decision_tree_
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `labels` | [`int vector`](#doc_int_vector) | Training labels. | `np.empty([0], dtype=np.uint64)` |
-| `maximum_depth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `minimum_gain_split` | [`float`](#doc_float) | Minimum gain for node splitting. | `1e-07` |
-| `minimum_leaf_size` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `print_training_accuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `False` |
-| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may contain categorical variables). | `**--**` |
+| `input_model` | [`DecisionTreeModelType`](#doc_model) | Pre-trained decision tree, to be used with test points. | `**--**` |
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may contain categorical variables). | `**--**` |
+| `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | `np.empty([0], dtype=np.uint64)` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-| `weights` | [`matrix`](#doc_matrix) | The weight of labels | `np.empty([0, 0])` |
 
 ### Output options
 
@@ -456,32 +450,15 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DecisionTreeModelType`](#doc_model) | Output for trained decision tree. | 
+| `predictions` | [`int vector`](#doc_int_vector) | Class predictions for each test point. | 
 
 ### Detailed documentation
-{: #decision_tree_train_detailed-documentation }
+{: #decision_tree_classify_detailed-documentation }
 
-Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
 
-The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The trained model is returned, and can then be used for prediction. The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
 
 ### Example
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import Adaboost
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
-  maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-  print_training_accuracy=False, verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
 
 ### See also
 
