@@ -87,14 +87,20 @@ jobs:
             os: 'macOS',
             name: 'CLI',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
-            cores: 3
+            # Up to 3 cores are supported but the amount of ram provided
+            # leads to severe swapping and massive slowdowns, using 2 is
+            # the best compromise between cores and ram given our C++ load
+            cores: 2
           },
           {
             runner: macOS-latest,
             os: 'macOS',
             name: 'Python',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_PYTHON_BINDINGS=ON -DENABLE_HTTPLIB=ON -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++',
-            cores: 3
+            # Up to 3 cores are supported but the amount of ram provided
+            # leads to severe swapping and massive slowdowns, using 2 is
+            # the best compromise between cores and ram given our C++ load
+            cores: 2
           }
         ]
 
