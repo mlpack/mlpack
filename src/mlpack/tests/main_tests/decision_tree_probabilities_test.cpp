@@ -33,7 +33,9 @@ TEST_CASE_METHOD(DecisionTreeProbabilitiesTestFixture,
   constexpr int N = 10;
   constexpr int D = 2;
   arma::mat test = arma::trans(arma::randu<arma::mat>(N, D));
-  SetInputParam("test", std::move(test));
+  TextOptions opts;
+  opts.Categorical() = true;
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), std::move(test)));
   // (Required) model is not provided. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
@@ -73,7 +75,9 @@ TEST_CASE_METHOD(DecisionTreeProbabilitiesTestFixture,
 
   arma::mat testX = { 0.123, 0.456 };
   testX = arma::trans(testX);
-  SetInputParam("test", std::move(testX));
+  TextOptions opts;
+  opts.Categorical() = true;
+  SetInputParam("test", std::make_tuple(opts.DatasetInfo(), std::move(testX)));
   RUN_BINDING();
 
   arma::mat probabilities = params.Get<arma::mat>("probabilities");
