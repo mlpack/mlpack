@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE("MFESilence", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 97);
+  REQUIRE(mfe.n_cols == 98);
 
   // All values should be approximately log(1e-10) ~ -23.03.
   float logEps = std::log(1e-10f);
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE("MFEDC", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 97);
+  REQUIRE(mfe.n_cols == 98);
 
   arma::Col<eT> meanMFE = arma::mean(mfe, 1);
 
@@ -165,7 +165,7 @@ TEMPLATE_TEST_CASE("MFEPureSine440", "[MFCC][tiny]", float, double)
   MFE(input, mfe, sampleRate);
 
   REQUIRE(mfe.n_rows == 40);
-  REQUIRE(mfe.n_cols == 97);
+  REQUIRE(mfe.n_cols == 98);
 
   arma::Col<eT> meanMFE = arma::mean(mfe, 1);
 
@@ -199,7 +199,7 @@ TEMPLATE_TEST_CASE("MFCCSine440", "[MFCC][tiny]", float, double)
   MFCC(input, mfcc, sampleRate);
 
   REQUIRE(mfcc.n_rows == 13);
-  REQUIRE(mfcc.n_cols == 97);
+  REQUIRE(mfcc.n_cols == 98);
   REQUIRE(mfcc.is_finite());
 
   /*
@@ -227,7 +227,7 @@ TEMPLATE_TEST_CASE("MFCCMultiChannel", "[MFCC][tiny]", float, double)
   arma::Mat<eT> mfcc;
   MFCC(input, mfcc, sampleRate);
 
-  size_t framesPerChannel = 97;
+  size_t framesPerChannel = 98;
   REQUIRE(mfcc.n_rows == 13);
   REQUIRE(mfcc.n_cols == nChannels * framesPerChannel);
 
