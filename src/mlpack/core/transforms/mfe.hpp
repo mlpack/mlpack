@@ -183,15 +183,18 @@ inline void PowerSpectrum(const arma::Mat<eT>& windows, arma::Mat<eT>& power,
  * @param signal Input audio samples as a column vectors
  * @param windows Output audio signal converted into a set of sliding windows.
  * @param hWindow Hamming Window computed outside the MFE loop for efficiency.
- * @param windowLength Number of samples per window.
+ * @param windowLength Number of real (data) samples per window.
  * @param windowStep Number of samples between the start of consecutive windows.
+ * @param nFFT Number of rows of each output window, the first windowLength rows
+ *     hold the Hamming-weighted data, the remaining rows are zero-padding.
  */
 template<typename MatType, typename eT>
 inline void SlidingWindow(const MatType& signal,
                           arma::Mat<eT>& windows,
                           arma::Col<eT>& hWindow,
                           size_t windowLength,
-                          size_t windowStep);
+                          size_t windowStep,
+                          size_t nFFT);
 
 } // namespace mlpack
 

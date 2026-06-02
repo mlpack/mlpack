@@ -110,10 +110,10 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
       lowFreq, highFreq);
 
   size_t totalWindows = inputSignal.n_cols * ((inputSignal.n_rows
-      - nFFT) / stepsInSamples + 1);
+      - lengthInSamples) / stepsInSamples + 1);
 
   // Needs to be matching windows length in SlidingWindow
-  arma::Col<eT> hWindow = HammingWindow<eT>(nFFT);
+  arma::Col<eT> hWindow = HammingWindow<eT>(lengthInSamples);
 
   mfe.set_size(numMelFilters, totalWindows);
 
@@ -124,8 +124,8 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     arma::Mat<eT> slidingWindows;
     arma::Mat<eT> power;
 
-    SlidingWindow(inputSignal.col(i), slidingWindows, hWindow, nFFT,
-        stepsInSamples);
+    SlidingWindow(inputSignal.col(i), slidingWindows, hWindow, lengthInSamples,
+        stepsInSamples, nFFT);
 
     PowerSpectrum(slidingWindows, power, nFFT);
 
@@ -182,22 +182,24 @@ inline void SlidingWindow(const MatType& signal,
                           arma::Mat<eT>& windows,
                           arma::Col<eT>& hWindow,
                           size_t windowLength,
-                          size_t windowStep)
+                          size_t windowStep,
+                          size_t nFFT)
 {
   if (signal.n_elem < windowLength)
   {
-    windows.zeros(windowLength, 1);
+    windows.zeros(nFFT, 1);
     windows.col(0).subvec(0, signal.n_elem - 1) = signal;
   }
   else
   {
     size_t numWindows = (signal.n_elem - windowLength) / windowStep + 1;
-    windows.set_size(windowLength, numWindows);
+    windows.zeros(nFFT, numWindows);
 
     for (size_t i = 0; i < numWindows; ++i)
     {
       size_t start = i * windowStep;
-      windows.col(i) = signal.subvec(start, start + windowLength - 1) % hWindow;
+      windows.col(i).subvec(0, windowLength - 1) =
+          signal.subvec(start, start + windowLength - 1) % hWindow;
     }
   }
 }
