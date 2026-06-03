@@ -73,9 +73,16 @@ LeakyReLU<MatType>::operator=(LeakyReLU&& other)
 template<typename MatType>
 void LeakyReLU<MatType>::Forward(const MatType& input, MatType& output)
 {
-  #pragma omp parallel for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-    output(i) = std::max(input(i), alpha * input(i));
+  if constexpr (IsArma<MatType>::value) {
+    #pragma omp parallel for
+    for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+      output(i) = std::max(input(i), alpha * input(i));
+  }
+  else
+  {
+    output = input;
+    output.elem(find(output < 0)) *= alpha;
+  }
 }
 
 template<typename MatType>
@@ -85,9 +92,16 @@ void LeakyReLU<MatType>::Backward(
     const MatType& gy,
     MatType& g)
 {
-  #pragma omp parallel for
-  for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-    g(i) = gy(i) * ((input(i) >= 0) ? 1 : alpha);
+  if constexpr (IsArma<MatType>::value) {
+    #pragma omp parallel for
+    for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+      g(i) = gy(i) * ((input(i) >= 0) ? 1 : alpha);
+  }
+  else
+  {
+    g = gy;
+    g.elem(find(g < 0)) *= alpha;
+  }
 }
 
 template<typename MatType>
