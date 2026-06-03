@@ -37,7 +37,8 @@ TEST_CASE_METHOD(DecisionTreeTrainTestFixture,
   arma::Row<size_t> trainY = arma::randu<arma::Row<size_t>>(N);
   TextOptions opts;
   opts.Categorical() = true;
-  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), std::move(trainX)));
+  SetInputParam("training",
+      std::make_tuple(opts.DatasetInfo(), std::move(trainX)));
   SetInputParam("labels", std::move(trainY));
   RUN_BINDING();
 
@@ -60,7 +61,8 @@ TEST_CASE_METHOD(DecisionTreeTrainTestFixture,
   arma::Row<size_t> trainY = arma::randu<arma::Row<size_t>>(N);
   TextOptions opts;
   opts.Categorical() = true;
-  SetInputParam("training", std::make_tuple(opts.DatasetInfo(), std::move(trainX)));
+  SetInputParam("training",
+      std::make_tuple(opts.DatasetInfo(), std::move(trainX)));
   SetInputParam("labels", std::move(trainY));
 
   SetInputParam("minimum_leaf_size", (int) -1);         // Invalid.
