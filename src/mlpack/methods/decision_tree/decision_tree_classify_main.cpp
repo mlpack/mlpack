@@ -56,8 +56,6 @@ PARAM_UROW_IN("test_labels", "Test point labels, if accuracy calculation "
     "is desired.", "L");
 
 // Output parameters.
-//PARAM_MATRIX_OUT("probabilities", "Class probabilities for each test point "
-//    "if probabilities has been selected.", "P");
 PARAM_UROW_OUT("predictions", "Class predictions for each test point.", "p");
 
 // Convenience typedef.
@@ -91,5 +89,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       << ")." << endl;
   }
 
-  params.Get<arma::Row<size_t>>("predictions") = predictions;
+  params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
 }

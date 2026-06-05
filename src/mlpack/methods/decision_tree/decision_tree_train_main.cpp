@@ -101,9 +101,6 @@ using TupleType = tuple<DatasetInfo, arma::mat>;
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Check parameters.
-  ReportIgnoredParam(params, {{ "training", false }},
-      "print_training_accuracy");
-
   RequireParamValue<int>(params, "minimum_leaf_size",
       [](int x) { return x > 0; }, true, "leaf size must be positive");
 

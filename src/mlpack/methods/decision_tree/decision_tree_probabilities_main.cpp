@@ -91,5 +91,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       << ")." << endl;
   }
 
-  params.Get<arma::mat>("probabilities") = probabilities;
+  params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }

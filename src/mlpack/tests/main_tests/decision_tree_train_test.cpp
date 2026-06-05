@@ -35,10 +35,33 @@ TEST_CASE_METHOD(DecisionTreeTrainTestFixture,
   constexpr int D = 2;
   arma::mat trainX = arma::trans(arma::randu<arma::mat>(N, D));
   arma::Row<size_t> trainY = arma::randu<arma::Row<size_t>>(N);
-  TextOptions opts;
-  opts.Categorical() = true;
-  SetInputParam("training",
-      std::make_tuple(opts.DatasetInfo(), std::move(trainX)));
+  DatasetInfo info(D);
+  SetInputParam("training", std::make_tuple(info, std::move(trainX)));
+  SetInputParam("labels", std::move(trainY));
+  RUN_BINDING();
+
+  arma::Row<size_t> preds;
+  arma::mat::fixed<2, 1> testX = { 0.123, 0.456 };
+  params.Get<DecisionTreeModel*>("output_model")->tree.Classify(testX, preds);
+  REQUIRE(preds.n_elem == 1);
+}
+
+/**
+ * Check that output dimension is correct when using categorical data.
+ */
+TEST_CASE_METHOD(DecisionTreeTrainTestFixture,
+                 "DecisionTreeTrainCategoricalTest",
+                 "[DecisionTreeTrainMainTest][BindingTests]")
+{
+  constexpr int N = 10;
+  constexpr int D = 2;
+  arma::mat trainX = arma::trans(arma::randu<arma::mat>(N, D));
+  arma::Row<size_t> trainY = arma::randu<arma::Row<size_t>>(N);
+  DatasetInfo info(D);
+  // Make last row categorical with 5 categories.
+  trainX.row(D - 1) = arma::randi<arma::rowvec>(N, arma::distr_param(0, 4));
+  info.Type(D - 1) = Datatype::categorical;
+  SetInputParam("training", std::make_tuple(info, std::move(trainX)));
   SetInputParam("labels", std::move(trainY));
   RUN_BINDING();
 
