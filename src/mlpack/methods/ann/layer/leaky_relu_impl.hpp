@@ -24,7 +24,7 @@ LeakyReLU<MatType>::LeakyReLU(const typename MatType::elem_type alpha) :
     Layer<MatType>(),
     alpha(alpha)
 {
-  // Nothing to do here.
+  Log::Assert(0 < alpha && alpha < 1, "Alpha must be in the range 0 to 1");
 }
 
 template<typename MatType>
@@ -32,7 +32,7 @@ LeakyReLU<MatType>::LeakyReLU(const LeakyReLU& other) :
     Layer<MatType>(other),
     alpha(other.alpha)
 {
-  // Nothing to do.
+  Log::Assert(0 < alpha && alpha < 1, "Alpha must be in the range 0 to 1");
 }
 
 template<typename MatType>
@@ -41,7 +41,7 @@ LeakyReLU<MatType>::LeakyReLU(
     Layer<MatType>(std::move(other)),
     alpha(std::move(other.alpha))
 {
-  // Nothing to do.
+  Log::Assert(0 < alpha && alpha < 1, "Alpha must be in the range 0 to 1");
 }
 
 template<typename MatType>
@@ -52,6 +52,7 @@ LeakyReLU<MatType>::operator=(const LeakyReLU& other)
   {
     Layer<MatType>::operator=(other);
     alpha = other.alpha;
+    Log::Assert(0 < alpha && alpha < 1, "Alpha must be in the range 0 to 1");
   }
 
   return *this;
@@ -65,6 +66,7 @@ LeakyReLU<MatType>::operator=(LeakyReLU&& other)
   {
     Layer<MatType>::operator=(std::move(other));
     alpha = std::move(other.alpha);
+    Log::Assert(0 < alpha && alpha < 1, "Alpha must be in the range 0 to 1");
   }
 
   return *this;
