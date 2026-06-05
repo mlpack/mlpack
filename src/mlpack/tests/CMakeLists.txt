@@ -7,8 +7,10 @@ add_executable(mlpack_test
   # Tests for neural network code (and reinforcement learning code).
   ann/activation_functions_test.cpp
   ann/ann_dist_test.cpp
-  # This includes all files in ann/layer/.
+  # This includes all files in ann/layer/ excluding serialization
   ann/layer_test.cpp
+  # This includes all files in ann/layer/ with serialization
+  ann/layer_test_serialization.cpp
   ann/ann_regularizer_test.cpp
   ann/ann_test_tools.hpp
   ann/convolutional_network_test.cpp
