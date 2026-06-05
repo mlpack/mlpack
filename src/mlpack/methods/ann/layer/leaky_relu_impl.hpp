@@ -83,8 +83,7 @@ void LeakyReLU<MatType>::Forward(const MatType& input, MatType& output)
   }
   else
   {
-    output = input;
-    output.elem(find(output < 0)) *= alpha;
+    output = max(input, alpha * input);
   }
 }
 
@@ -103,8 +102,7 @@ void LeakyReLU<MatType>::Backward(
   }
   else
   {
-    g = gy;
-    g.elem(find(g < 0)) *= alpha;
+    g = max(gy, alpha * gy);
   }
 }
 
