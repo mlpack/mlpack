@@ -193,7 +193,8 @@ inline void SlidingWindow(const MatType& signal,
   else
   {
     size_t numWindows = (signal.n_elem - windowLength) / windowStep + 1;
-    windows.zeros(nFFT, numWindows);
+    windows.set_size(nFFT, numWindows);
+    windows.rows(windowLength, nFFT - 1).zeros();
 
     for (size_t i = 0; i < numWindows; ++i)
     {
