@@ -122,7 +122,8 @@ void LeakyReLU<MatType>::Backward(
   }
   else
   {
-    g = max(gy, alpha * gy);
+    g = gy;
+    g.elem(find(input < 0)) *= alpha;
   }
 }
 
