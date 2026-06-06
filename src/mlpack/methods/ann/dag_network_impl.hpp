@@ -274,7 +274,14 @@ void DAGNetwork<
   std::vector<size_t>& childNodeParents = parentsList[childNodeId];
   for (size_t i = 0; i < childNodeParents.size(); i++)
   {
-    if (childNodeParents[i] == parentNodeId)
+    if (childNodeParents[i] == parentNodeId) {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+          << " is already connected to layer " << childNodeId;
+      throw std::logic_error(errMessage.str());
+    }
+
+    if (childNodeParents[i] == childNodeId)
     {
       std::ostringstream errMessage;
       errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
