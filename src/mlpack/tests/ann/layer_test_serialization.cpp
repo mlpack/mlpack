@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  *
  * This file includes the subset of tests in ann/layer/ involving serialization,
- * which is taxing on machine with limited memory such as those used for
+ * which is taxing on machines with limited memory such as those used for
  * continuous integration. See file 'layer_test.cpp' for general concerns
  * about compilation demands. While keeping the non-serializing tests in one file
  * reduces compilation time and memory usage, having the serialization tests here
