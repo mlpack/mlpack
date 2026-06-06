@@ -77,10 +77,20 @@ void LeakyReLU<MatType>::Forward(const MatType& input, MatType& output)
 {
   if constexpr (IsArma<MatType>::value)
   {
-    #pragma omp parallel for
-    for (size_t i = 0; i < (size_t) input.n_elem; ++i) {
-      const typename MatType::elem_type input_i = input[i];
-      output[i] = std::max(input_i, alpha * input_i);
+    if (input.n_elem >= 3504)
+    {
+      #pragma omp parallel for
+      for (size_t i = 0; i < (size_t) input.n_elem; ++i) {
+        const typename MatType::elem_type input_i = input[i];
+        output[i] = std::max(input_i, alpha * input_i);
+      }
+    }
+    else
+    {
+      for (size_t i = 0; i < (size_t) input.n_elem; ++i) {
+        const typename MatType::elem_type input_i = input[i];
+        output[i] = std::max(input_i, alpha * input_i);
+      }
     }
   }
   else
@@ -98,9 +108,17 @@ void LeakyReLU<MatType>::Backward(
 {
   if constexpr (IsArma<MatType>::value)
   {
-    #pragma omp parallel for
-    for (size_t i = 0; i < (size_t) input.n_elem; ++i)
-      g[i] = gy[i] * ((input[i] >= 0) ? 1 : alpha);
+    if (input.n_elem >= 3504)
+    {
+      #pragma omp parallel for
+      for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+        g[i] = gy[i] * ((input[i] >= 0) ? 1 : alpha);
+    }
+    else
+    {
+      for (size_t i = 0; i < (size_t) input.n_elem; ++i)
+        g[i] = gy[i] * ((input[i] >= 0) ? 1 : alpha);
+    }
   }
   else
   {
