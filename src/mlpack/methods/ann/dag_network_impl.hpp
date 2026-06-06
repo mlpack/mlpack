@@ -235,6 +235,13 @@ void DAGNetwork<
     throw std::logic_error(errMessage.str());
   }
 
+  if (connection > ConnectionTypes::ADDITION) {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetConnection(): Connection type "
+        << connection << " does not exist.";
+    throw std::logic_error(errMessage.str());
+  }
+
   layerConnections[layerId] = connection;
 
   validOutputDimensions = false;
