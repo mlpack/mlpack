@@ -18,8 +18,8 @@
 // with higher number than the most recent release, and the MLPACK_PRERELEASE
 // macro will be defined.
 #define MLPACK_VERSION_MAJOR 4
-#define MLPACK_VERSION_MINOR 7
-#define MLPACK_VERSION_PATCH 1
+#define MLPACK_VERSION_MINOR 8
+#define MLPACK_VERSION_PATCH 0
 //#define MLPACK_PRERELEASE
 
 // The name of the version (for use by --version).
