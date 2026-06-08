@@ -157,7 +157,7 @@ add_r_binding(hoeffding_trees hoeffding_tree "include")
 add_r_binding(hoeffding_trees hoeffding_tree_train "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_classify "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_probabilities "skip")
-#add_markdown_docs(hoeffding_trees hoeffding_tree "cli;python;julia;go;r" "python;r")
+#add_markdown_docs(hoeffding_trees hoeffding_trees "cli;python;julia;go;r" "python;r")
 
 
 # Linear Regression has a Python wrapper class that encapsulates its
