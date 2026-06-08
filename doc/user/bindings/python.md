@@ -3492,7 +3492,7 @@ The trained model is returned, and can then be used for prediction. The `minimum
 ```python
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
->>> from mlpack import Adaboost
+>>> from mlpack import DecisionTree
 >>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
 >>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
