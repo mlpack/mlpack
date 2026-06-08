@@ -29,7 +29,7 @@ add_all_bindings(hmm hmm_train "Misc. / Other")
 add_all_bindings(hmm hmm_generate "Misc. / Other" "skip")
 add_all_bindings(hmm hmm_loglik "Misc. / Other" "skip")
 add_all_bindings(hmm hmm_viterbi "Misc. / Other" "skip")
-add_all_bindings(hoeffding_trees hoeffding_tree "Classification")
+#add_all_bindings(hoeffding_trees hoeffding_tree "Classification")
 add_all_bindings(preprocess image_converter "Preprocessing")
 add_all_bindings(kde kde "Misc. / Other")
 add_all_bindings(kernel_pca kernel_pca "Transformations")
@@ -145,6 +145,19 @@ add_r_binding(adaboost adaboost_classify "skip")
 add_r_binding(adaboost adaboost_probabilities "skip")
 add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python;r")
 
+#add_all_bindings(hoeffding_trees hoeffding_tree "Classification")
+# random forest
+add_category(hoeffding_trees "Classification")
+group_bindings(hoeffding_trees hoeffding_tree "train;classify;probabilities")
+add_python_wrapper(hoeffding_trees hoeffding_tree)
+add_julia_class(hoeffding_trees hoeffding_tree)
+add_cli_executable(hoeffding_trees hoeffding_tree)
+add_go_binding(hoeffding_trees hoeffding_tree)
+add_r_binding(hoeffding_trees hoeffding_tree "include")
+add_r_binding(hoeffding_trees hoeffding_tree_train "skip")
+add_r_binding(hoeffding_trees hoeffding_tree_classify "skip")
+add_r_binding(hoeffding_trees hoeffding_tree_probabilities "skip")
+#add_markdown_docs(hoeffding_trees hoeffding_tree "cli;python;julia;go;r" "python;r")
 
 
 # Linear Regression has a Python wrapper class that encapsulates its
