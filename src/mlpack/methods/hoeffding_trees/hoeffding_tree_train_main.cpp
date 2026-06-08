@@ -65,7 +65,7 @@ BINDING_EXAMPLE(
     "0.2") + "\n" +
     CREATE_OBJECT("model", "hoeffding_trees") + "\n" +
     CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train"));
-   // FIXME: pick example params
+    // FIXME: pick example params
 
 // See also...
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
@@ -75,8 +75,8 @@ BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
 BINDING_SEE_ALSO("HoeffdingTree class documentation",
     "@doc/user/methods/hoeffding_tree.md");
 
-PARAM_MATRIX_AND_INFO_IN_REQ("training", "Training dataset (may be categorical).",
-    "t");
+PARAM_MATRIX_AND_INFO_IN_REQ("training",
+    "Training dataset (may be categorical).", "t");
 PARAM_UROW_IN("labels", "Labels for training dataset.", "l");
 
 PARAM_DOUBLE_IN("confidence", "Confidence before splitting (between 0 and 1).",
