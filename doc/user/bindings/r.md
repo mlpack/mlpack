@@ -3519,6 +3519,116 @@ Class probabilities from model.
 |----------|-----------------|
 | [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. | 
 
+## class hoeffding_tree
+{: #hoeffding_tree }
+
+#### Hoeffding trees training
+{: #hoeffding_tree_descr }
+
+
+Implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets, supporting both categorical and numeric data.  Given an input dataset, it is able to train the tree with numerous training options, and return the model.
+
+The training file and associated labels are specified with the `training` and `labels` parameters, respectively. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `batch_mode` option, but this may not be the best option for large datasets.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_mode` | [`logical`](#doc_logical) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `FALSE` |
+| `bins` | [`integer`](#doc_integer) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `confidence` | [`numeric`](#doc_numeric) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `info_gain` | [`logical`](#doc_logical) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `FALSE` |
+| `max_samples` | [`integer`](#doc_integer) | Maximum number of samples before splitting. | `5000` |
+| `min_samples` | [`integer`](#doc_integer) | Minimum number of samples before splitting. | `100` |
+| `numeric_split_strategy` | [`character`](#doc_character) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
+| `observations_before_binning` | [`integer`](#doc_integer) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `passes` | [`integer`](#doc_integer) | Number of passes to take over the dataset. | `1` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Example
+
+```r
+
+
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+X_train <- pp[["training"]]
+X_test <- pp[["test"]]
+# labels are indices to operate on both factors or numeric data
+y_train <- y[as.integer(pp[["training_labels"]]), 1]
+y_test <- y[as.integer(pp[["test_labels"]]), 1]
+
+model <- hoeffding_tree_train(training=X_train, labels=y_train)
+
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| train | An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points. |
+| predict | Class predictions from Hoeffding trees model. |
+| probabilities | Class probabilities from Hoeffding trees model. |
+
+### 1. train
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`integer vector`](#doc_integer_vector) | Labels for training dataset. | 
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
+| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may be categorical). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
+
+### 2. predict
+
+Class predictions from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`integer vector`](#doc_integer_vector) | Matrix to output label predictions for test data into. | 
+
+### 3. probabilities
+
+Class probabilities from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`numeric matrix`](#doc_numeric_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
 ## class linear_regression
 {: #linear_regression }
 

@@ -3575,6 +3575,119 @@ Class probabilities from model.
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
 
+## class HoeffdingTree
+{: #hoeffding_tree }
+
+#### Hoeffding trees training
+{: #hoeffding_tree_descr }
+
+
+Implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets, supporting both categorical and numeric data.  Given an input dataset, it is able to train the tree with numerous training options, and return the model.
+
+The training file and associated labels are specified with the `training` and `labels` parameters, respectively. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `batch_mode` option, but this may not be the best option for large datasets.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_mode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `False` |
+| `bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `confidence` | [`float`](#doc_float) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `info_gain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `False` |
+| `max_samples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `min_samples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `numeric_split_strategy` | [`str`](#doc_str) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
+| `observations_before_binning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import HoeffdingTrees
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = HoeffdingTrees(batch_mode=False, bins=10,
+  check_input_matrices=False, confidence=0.95, copy_all_inputs=False,
+  info_gain=False, max_samples=5000, min_samples=100,
+  numeric_split_strategy='binary', observations_before_binning=100, passes=1,
+  verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points. |
+| predict | Class predictions from Hoeffding trees model. |
+| predict_proba | Class probabilities from Hoeffding trees model. |
+
+### 1. fit
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | Labels for training dataset. | 
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may be categorical). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`HoeffdingTreeModelType`](#doc_model) | Output for trained Hoeffding tree model. | 
+
+### 2. predict
+
+Class predictions from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | Matrix to output label predictions for test data into. | 
+
+### 3. predict_proba
+
+Class probabilities from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
 ## class LinearRegression
 {: #linear_regression }
 

@@ -170,7 +170,7 @@ function (post_markdown_setup)
     set(MARKDOWN_HEADER_CODE ${header_code})
 
     # Add an option for this binding.
-    math(EXPR range_limit "${NUM_MARKDOWN_BINDINGS} - 1")
+    math(EXPR range_limit "${NUM_MARKDOWN_BINDINGS} - 2")
     foreach (j RANGE ${range_limit})
       list (GET MARKDOWN_NAME_CATEGORIES ${j} category)
       if (NOT category STREQUAL cat)
