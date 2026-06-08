@@ -111,8 +111,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       [](double x) { return (x > 0.0 && x < 1.0); }, true,
       "gain split must be a fraction in range [0,1]");
 
-  bool print_training_accuracy = params.Has("print_training_accuracy");
-
   // Load the model or build the tree.
   DecisionTreeModel* model = new DecisionTreeModel();
   model->info = std::move(std::get<0>(params.Get<TupleType>("training")));
@@ -159,7 +157,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   }
   else
   {
-    if (print_training_accuracy)
+    if (params.Has("print_training_accuracy"))
     {
       model->tree.Train(trainingSet, labels, numClasses, minLeafSize,
           minimumGainSplit, maxDepth);
@@ -172,7 +170,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   }
 
   // Do we need to print training error?
-  if (print_training_accuracy)
+  if (params.Has("print_training_accuracy"))
   {
     arma::Row<size_t> predictions;
     model->tree.Classify(trainingSet, predictions);
