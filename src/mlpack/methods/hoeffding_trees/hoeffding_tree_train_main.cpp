@@ -116,9 +116,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const string numericSplitStrategy =
       params.Get<string>("numeric_split_strategy");
 
-  ReportIgnoredParam(params, {{ "training", false }}, "batch_mode");
-  ReportIgnoredParam(params, {{ "training", false }}, "passes");
-
   RequireParamInSet<string>(params, "numeric_split_strategy", { "domingos",
       "binary" }, true, "unrecognized numeric split strategy");
 
