@@ -3449,6 +3449,96 @@ julia> _, predictions, _ = adaboost(input_model=model,
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
 
+## hoeffding_tree()
+{: #hoeffding_tree }
+
+#### Hoeffding trees
+{: #hoeffding_tree_descr }
+
+```julia
+julia> using mlpack: hoeffding_tree
+julia> output_model, predictions, probabilities = hoeffding_tree( ;
+          batch_mode=false, bins=10, confidence=0.95, info_gain=false,
+          input_model=nothing, labels=Int[], max_samples=5000, min_samples=100,
+          numeric_split_strategy="binary", observations_before_binning=100,
+          passes=1, test=zeros(0, 0), test_labels=Int[], training=zeros(0, 0),
+          verbose=false)
+```
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_mode` | [`Bool`](#doc_Bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `false` |
+| `bins` | [`Int`](#doc_Int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `confidence` | [`Float64`](#doc_Float64) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `info_gain` | [`Bool`](#doc_Bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `false` |
+| `input_model` | [`HoeffdingTreeModel`](#doc_model) | Input trained Hoeffding tree model. | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | Labels for training dataset. | `Int[]` |
+| `max_samples` | [`Int`](#doc_Int) | Maximum number of samples before splitting. | `5000` |
+| `min_samples` | [`Int`](#doc_Int) | Minimum number of samples before splitting. | `100` |
+| `numeric_split_strategy` | [`String`](#doc_String) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
+| `observations_before_binning` | [`Int`](#doc_Int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `passes` | [`Int`](#doc_Int) | Number of passes to take over the dataset. | `1` |
+| `test` | [`Tuple{Array{Bool, 1}, Array{Float64, 2}}`](#doc_Tuple_Array_Bool__1___Array_Float64__2__) | Testing dataset (may be categorical). | `zeros(0, 0)` |
+| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Labels of test data. | `Int[]` |
+| `training` | [`Tuple{Array{Bool, 1}, Array{Float64, 2}}`](#doc_Tuple_Array_Bool__1___Array_Float64__2__) | Training dataset (may be categorical). | `zeros(0, 0)` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to output label predictions for test data into. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+### Detailed documentation
+{: #hoeffding_tree_detailed-documentation }
+
+This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
+
+The training file and associated labels are specified with the `training` and `labels` parameters, respectively. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `batch_mode` option, but this may not be the best option for large datasets.
+
+When a model is trained, it may be saved via the `output_model` output parameter.  A model may be loaded from file for further training or testing with the `input_model` parameter.
+
+Test data may be specified with the `test` parameter, and if performance statistics are desired for that test set, labels may be specified with the `test_labels` parameter.  Predictions for each test point may be saved with the `predictions` output parameter, and class probabilities for each prediction may be saved with the `probabilities` output parameter.
+
+### Example
+For example, to train a Hoeffding tree with confidence 0.99 with data ``dataset``, saving the trained tree to ``tree``, the following command may be used:
+
+```julia
+julia> using CSV
+julia> dataset = CSV.read("dataset.csv")
+julia> tree, _, _ = hoeffding_tree(confidence=0.99,
+            training=dataset)
+```
+
+Then, this tree may be used to make predictions on the test set ``test_set``, saving the predictions into ``predictions`` and the class probabilities into ``class_probs`` with the following command: 
+
+```julia
+julia> using CSV
+julia> test_set = CSV.read("test_set.csv")
+julia> _, predictions, class_probs =
+            hoeffding_tree(input_model=tree, test=test_set)
+```
+
+### See also
+
+ - [decision_tree()](#decision_tree)
+ - [random_forest()](#random_forest)
+ - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
 ## linear_regression()
 {: #linear_regression }
 
