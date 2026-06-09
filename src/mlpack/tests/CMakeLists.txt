@@ -182,6 +182,8 @@ add_executable(mlpack_test
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
   main_tests/hoeffding_tree_train_test.cpp
+  main_tests/hoeffding_tree_classify_test.cpp
+  main_tests/hoeffding_tree_probabilities_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
