@@ -166,6 +166,9 @@ add_executable(mlpack_test
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
+  main_tests/decision_tree_train_test.cpp
+  main_tests/decision_tree_classify_test.cpp
+  main_tests/decision_tree_probabilities_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp

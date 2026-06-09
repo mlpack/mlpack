@@ -323,89 +323,6 @@ $ mlpack_dbscan --input_file input.csv --epsilon 0.5 --min_size 5
  - [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
  - [DBSCAN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/dbscan/dbscan.hpp)
 
-## mlpack_decision_tree
-{: #decision_tree }
-
-#### Decision tree
-{: #decision_tree_descr }
-
-```bash
-$ mlpack_decision_tree [--help] [--info <string>] [--input_model_file
-        <string>] [--labels_file <string>] [--maximum_depth 0]
-        [--minimum_gain_split 1e-07] [--minimum_leaf_size 20]
-        [--print_training_accuracy] [--test_file <string>] [--test_labels_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--weights_file <string>] [--output_model_file <string>]
-        [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`DecisionTreeModel file`](#doc_model) | Pre-trained decision tree, to be used with test points. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Training labels. | `''` |
-| `--maximum_depth (-D)` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
-| `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
-| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
-| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--weights_file (-w)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The weight of labels | `''` |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`DecisionTreeModel file`](#doc_model) | Output for trained decision tree. | 
-| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Class predictions for each test point. | 
-| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Class probabilities for each test point. | 
-
-### Detailed documentation
-{: #decision_tree_detailed-documentation }
-
-Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
-
-The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
-
-Test data may be specified with the `--test_file (-T)` parameter, and if performance numbers are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved via the `--predictions_file (-p)` output parameter.  Class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
-
-### Example
-For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `'data.csv'` with labels `'labels.csv'`, saving the output model to `'tree.bin'` and printing the training error, one could call
-
-```bash
-$ mlpack_decision_tree --training_file data.arff --labels_file labels.csv
-  --output_model_file tree.bin --minimum_leaf_size 20 --minimum_gain_split 0.001
-  --print_training_accuracy
-```
-
-Then, to use that model to classify points in `'test_set.csv'` and print the test error given the labels `'test_labels.csv'` using that model, while saving the predictions for each point to `'predictions.csv'`, one could call 
-
-```bash
-$ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
-  --test_labels_file test_labels.csv --predictions_file predictions.csv
-```
-
-### See also
-
- - [Random forest](#random_forest)
- - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
- - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
-
 ## mlpack_det
 {: #det }
 
@@ -3418,6 +3335,89 @@ $ mlpack_random_forest --input_model_file rf_model.bin --test_file
  - [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
  - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
+
+## mlpack_decision_tree
+{: #decision_tree }
+
+#### Decision tree
+{: #decision_tree_descr }
+
+```bash
+$ mlpack_decision_tree [--help] [--info <string>] [--input_model_file
+        <string>] [--labels_file <string>] [--maximum_depth 0]
+        [--minimum_gain_split 1e-07] [--minimum_leaf_size 20]
+        [--print_training_accuracy] [--test_file <string>] [--test_labels_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--weights_file <string>] [--output_model_file <string>]
+        [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`DecisionTreeModel file`](#doc_model) | Pre-trained decision tree, to be used with test points. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Training labels. | `''` |
+| `--maximum_depth (-D)` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
+| `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
+| `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
+| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
+| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
+| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--weights_file (-w)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The weight of labels | `''` |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`DecisionTreeModel file`](#doc_model) | Output for trained decision tree. | 
+| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Class predictions for each test point. | 
+| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Class probabilities for each test point. | 
+
+### Detailed documentation
+{: #decision_tree_detailed-documentation }
+
+Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
+
+The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
+
+Test data may be specified with the `--test_file (-T)` parameter, and if performance numbers are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved via the `--predictions_file (-p)` output parameter.  Class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
+
+### Example
+For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `'data.csv'` with labels `'labels.csv'`, saving the output model to `'tree.bin'` and printing the training error, one could call
+
+```bash
+$ mlpack_decision_tree --training_file data.arff --labels_file labels.csv
+  --output_model_file tree.bin --minimum_leaf_size 20 --minimum_gain_split 0.001
+  --print_training_accuracy
+```
+
+Then, to use that model to classify points in `'test_set.csv'` and print the test error given the labels `'test_labels.csv'` using that model, while saving the predictions for each point to `'predictions.csv'`, one could call 
+
+```bash
+$ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
+  --test_labels_file test_labels.csv --predictions_file predictions.csv
+```
+
+### See also
+
+ - [Random forest](#random_forest)
+ - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
+ - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## mlpack_adaboost
 {: #adaboost }

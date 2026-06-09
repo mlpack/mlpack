@@ -389,112 +389,6 @@ _, _ := mlpack.Dbscan(input, param)
  - [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
  - [DBSCAN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/dbscan/dbscan.hpp)
 
-## DecisionTree()
-{: #decision_tree }
-
-#### Decision tree
-{: #decision_tree_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaximumDepth = 0
-param.MinimumGainSplit = 1e-07
-param.MinimumLeafSize = 20
-param.PrintTrainingAccuracy = false
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-param.Weights = mat.NewDense(1, 1, nil)
-
-output_model, predictions, probabilities := mlpack.DecisionTree(param)
-```
-
-An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`decisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Training labels. | `mat.NewDense(1, 1, nil)` |
-| `MaximumDepth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
-| `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
-| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `Weights` | [`*mat.Dense`](#doc_a__mat_Dense) | The weight of labels | `mat.NewDense(1, 1, nil)` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. | 
-
-### Detailed documentation
-{: #decision_tree_detailed-documentation }
-
-Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
-
-The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
-
-Test data may be specified with the `Test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved via the `Predictions` output parameter.  Class probabilities for each prediction may be saved with the `Probabilities` output parameter.
-
-### Example
-For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `data` with labels `labels`, saving the output model to `tree` and printing the training error, one could call
-
-```go
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.Training = data
-param.Labels = labels
-param.MinimumLeafSize = 20
-param.MinimumGainSplit = 0.001
-param.PrintTrainingAccuracy = true
-
-tree, _, _ := mlpack.DecisionTree(param)
-```
-
-Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
-
-```go
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.InputModel = &tree
-param.Test = test_set
-param.TestLabels = test_labels
-
-_, predictions, _ := mlpack.DecisionTree(param)
-```
-
-### See also
-
- - [Random forest](#random_forest)
- - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
- - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
-
 ## Det()
 {: #det }
 
@@ -4246,6 +4140,112 @@ _, predictions, _ := mlpack.RandomForest(param)
  - [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
  - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
+
+## DecisionTree()
+{: #decision_tree }
+
+#### Decision tree
+{: #decision_tree_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.MaximumDepth = 0
+param.MinimumGainSplit = 1e-07
+param.MinimumLeafSize = 20
+param.PrintTrainingAccuracy = false
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+param.Weights = mat.NewDense(1, 1, nil)
+
+output_model, predictions, probabilities := mlpack.DecisionTree(param)
+```
+
+An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`decisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Training labels. | `mat.NewDense(1, 1, nil)` |
+| `MaximumDepth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
+| `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
+| `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
+| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
+| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `Weights` | [`*mat.Dense`](#doc_a__mat_Dense) | The weight of labels | `mat.NewDense(1, 1, nil)` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. | 
+
+### Detailed documentation
+{: #decision_tree_detailed-documentation }
+
+Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
+
+The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
+
+Test data may be specified with the `Test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved via the `Predictions` output parameter.  Class probabilities for each prediction may be saved with the `Probabilities` output parameter.
+
+### Example
+For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `data` with labels `labels`, saving the output model to `tree` and printing the training error, one could call
+
+```go
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.Training = data
+param.Labels = labels
+param.MinimumLeafSize = 20
+param.MinimumGainSplit = 0.001
+param.PrintTrainingAccuracy = true
+
+tree, _, _ := mlpack.DecisionTree(param)
+```
+
+Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
+
+```go
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.InputModel = &tree
+param.Test = test_set
+param.TestLabels = test_labels
+
+_, predictions, _ := mlpack.DecisionTree(param)
+```
+
+### See also
+
+ - [Random forest](#random_forest)
+ - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
+ - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## Adaboost()
 {: #adaboost }
