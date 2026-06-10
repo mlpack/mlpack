@@ -77,6 +77,10 @@ void LeakyReLU<MatType>::Forward(const MatType& input, MatType& output)
 {
   if constexpr (IsArma<MatType>::value)
   {
+    // Empirical simulations shows that the benefit of parallelization is
+    // greater than the overhead of spawning OpenMP threads at around 3500
+    // elements. The number 3504 was chosen because it is evenly divisible by
+    // common core counts (4, 6, 8, 12, 16).
     if (input.n_elem >= 3504)
     {
       #pragma omp parallel for
