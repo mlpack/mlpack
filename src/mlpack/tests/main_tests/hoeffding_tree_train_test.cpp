@@ -157,7 +157,7 @@ TEST_CASE_METHOD(HoeffdingTreeTrainTestFixture,
   SetInputParam("max_samples", 50000);
   SetInputParam("confidence", 0.95);
   RUN_BINDING();
-  auto nodes = (params.Get<HoeffdingTreeModel*>("output_model"))->NumNodes();
+  auto nodes = params.Get<HoeffdingTreeModel*>("output_model")->NumNodes();
 
   // Reset passed parameters.
   ResetSettings();
@@ -281,7 +281,7 @@ TEST_CASE_METHOD(HoeffdingTreeTrainTestFixture,
   RUN_BINDING();
 
   // Check that both models have different number of nodes.
-  CHECK(params.Get<HoeffdingTreeModel*>("output_model")->NumNodes() != nodes);
+  REQUIRE(params.Get<HoeffdingTreeModel*>("output_model")->NumNodes() != nodes);
 }
 
 
