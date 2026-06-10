@@ -157,3 +157,21 @@ predict.mlpack_perceptron <- function(object, newdata, ...) {
     }
     res <- perceptron_classify(input_model=object, newdata, ...)
 }
+
+#' @rdname linear_svm
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param type A character value selection predictions or probabilities
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_linear_svm <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    type <- match.arg(type)
+    if (type == "predictions") {
+        res <- linear_svm_classify(input_model=object, newdata, ...)
+    } else {
+        res <- linear_svm_probabilities(input_model=object, newdata, ...)
+    }
+}

@@ -17,6 +17,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_svm.hpp"
+#include "linear_svm_model.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -138,21 +139,6 @@ PARAM_INT_IN("epochs", "Maximum number of full epochs over dataset for "
     "psgd", "E", 50);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-class LinearSVMModel
-{
- public:
-  arma::Col<size_t> mappings;
-  LinearSVM<> svm;
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(mappings));
-    ar(CEREAL_NVP(svm));
-  }
-};
-
-
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
@@ -258,7 +244,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<double>(params, "delta", [](double x) { return x >= 0.0; },
       true, "delta must be non-negative");
 
-  // Delta must be positive.
+  // Epochs must be positive.
   RequireParamValue<int>(params, "epochs", [](int x) { return x > 0; }, true,
       "epochs must be non-negative");
 

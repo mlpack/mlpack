@@ -62,7 +62,7 @@ add_r_binding(lars lars_train "skip")
 add_r_binding(lars lars_predict "skip")
 add_markdown_docs(lars lars "cli;python;julia;go;r" "python;r")
 
-add_all_bindings(linear_svm linear_svm "Classification")
+#add_all_bindings(linear_svm linear_svm "Classification")
 add_all_bindings(lmnn lmnn "Transformations")
 add_all_bindings(local_coordinate_coding local_coordinate_coding
     "Transformations")
@@ -140,6 +140,19 @@ add_r_binding(perceptron perceptron "include")
 add_r_binding(perceptron perceptron_train "skip")
 add_r_binding(perceptron perceptron_classify "skip")
 add_markdown_docs(perceptron perceptron "cli;python;julia;go;r" "python;r")
+
+# linear svm
+add_category(linear_svm "Classification")
+group_bindings(linear_svm linear_svm "train;classify;probabilities")
+add_python_wrapper(linear_svm linear_svm)
+add_julia_class(linear_svm linear_svm)
+add_cli_executable(linear_svm linear_svm)
+add_go_binding(linear_svm linear_svm)
+add_r_binding(linear_svm linear_svm "include")
+add_r_binding(linear_svm linear_svm_train "skip")
+add_r_binding(linear_svm linear_svm_classify "skip")
+add_r_binding(linear_svm linear_svm_probabilities "skip")
+add_markdown_docs(linear_svm linear_svm "cli;python;julia;go;r" "python;r")
 
 # Adaboost has a Python wrapper class that encapsulates its functionality in a
 # few methods.

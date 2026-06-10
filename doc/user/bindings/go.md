@@ -89,9 +89,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save furthest neighbor distances to. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save neighbor indices to. | 
-| `OutputModel` | [`approxkfnModel`](#doc_model) | File to save output model to. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save furthest neighbor distances to. |
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save neighbor indices to. |
+| `OutputModel` | [`approxkfnModel`](#doc_model) | File to save output model to. |
 
 ### Detailed documentation
 {: #approx_kfn_detailed-documentation }
@@ -226,8 +226,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix that will store output recommendations. | 
-| `OutputModel` | [`cfModel`](#doc_model) | Output for trained CF model. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix that will store output recommendations. |
+| `OutputModel` | [`cfModel`](#doc_model) | Output for trained CF model. |
 
 ### Detailed documentation
 {: #cf_detailed-documentation }
@@ -277,7 +277,7 @@ The following ranking normalization algorithms can be specified via the `Normali
 A trained model may be saved to with the `OutputModel` output parameter.
 
 ### Example
-To train a CF model on a dataset `training_set` using NMF for decomposition and saving the trained model to `model`, one could call: 
+To train a CF model on a dataset `training_set` using NMF for decomposition and saving the trained model to `model`, one could call:
 
 ```go
 // Initialize optional parameters for Cf().
@@ -288,7 +288,7 @@ param.Algorithm = "NMF"
 _, model := mlpack.Cf(param)
 ```
 
-Then, to use this model to generate recommendations for the list of users in the query set `users`, storing 5 recommendations in `recommendations`, one could call 
+Then, to use this model to generate recommendations for the list of users in the query set `users`, storing 5 recommendations in `recommendations`, one could call
 
 ```go
 // Initialize optional parameters for Cf().
@@ -357,8 +357,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Assignments` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Output matrix for assignments of each point. | 
-| `Centroids` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save output centroids to. | 
+| `Assignments` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Output matrix for assignments of each point. |
+| `Centroids` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save output centroids to. |
 
 ### Detailed documentation
 {: #dbscan_detailed-documentation }
@@ -443,12 +443,12 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`dTree`](#doc_model) | Output to save trained density estimation tree to. | 
-| `TagCountersFile` | [`string`](#doc_string) | The file to output the number of points that went to each leaf. | 
-| `TagFile` | [`string`](#doc_string) | The file to output the tags (and possibly paths) for each sample in the test set. | 
-| `TestSetEstimates` | [`*mat.Dense`](#doc_a__mat_Dense) | The output estimates on the test set from the final optimally pruned tree. | 
-| `TrainingSetEstimates` | [`*mat.Dense`](#doc_a__mat_Dense) | The output density estimates on the training set from the final optimally pruned tree. | 
-| `Vi` | [`*mat.Dense`](#doc_a__mat_Dense) | The output variable importance values for each feature. | 
+| `OutputModel` | [`dTree`](#doc_model) | Output to save trained density estimation tree to. |
+| `TagCountersFile` | [`string`](#doc_string) | The file to output the number of points that went to each leaf. |
+| `TagFile` | [`string`](#doc_string) | The file to output the tags (and possibly paths) for each sample in the test set. |
+| `TestSetEstimates` | [`*mat.Dense`](#doc_a__mat_Dense) | The output estimates on the test set from the final optimally pruned tree. |
+| `TrainingSetEstimates` | [`*mat.Dense`](#doc_a__mat_Dense) | The output density estimates on the training set from the final optimally pruned tree. |
+| `Vi` | [`*mat.Dense`](#doc_a__mat_Dense) | The output variable importance values for each feature. |
 
 ### Detailed documentation
 {: #det_detailed-documentation }
@@ -509,7 +509,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output data.  Stored as an edge list. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output data.  Stored as an edge list. |
 
 ### Detailed documentation
 {: #emst_detailed-documentation }
@@ -600,9 +600,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Indices` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix of indices. | 
-| `Kernels` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix of kernels. | 
-| `OutputModel` | [`fastmksModel`](#doc_model) | Output for FastMKS model. | 
+| `Indices` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix of indices. |
+| `Kernels` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix of kernels. |
+| `OutputModel` | [`fastmksModel`](#doc_model) | Output for FastMKS model. |
 
 ### Detailed documentation
 {: #fastmks_detailed-documentation }
@@ -696,7 +696,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`gmm`](#doc_model) | Output for trained GMM model. | 
+| `OutputModel` | [`gmm`](#doc_model) | Output for trained GMM model. |
 
 ### Detailed documentation
 {: #gmm_train_detailed-documentation }
@@ -724,7 +724,7 @@ param.Trials = 3
 gmm := mlpack.GmmTrain(data, 6, param)
 ```
 
-To re-train that GMM on another set of data `data2`, the following command may be used: 
+To re-train that GMM on another set of data `data2`, the following command may be used:
 
 ```go
 // Initialize optional parameters for GmmTrain().
@@ -782,7 +782,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save output samples in. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save output samples in. |
 
 ### Detailed documentation
 {: #gmm_generate_detailed-documentation }
@@ -845,7 +845,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to store calculated probabilities in. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to store calculated probabilities in. |
 
 ### Detailed documentation
 {: #gmm_probability_detailed-documentation }
@@ -923,7 +923,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`hmmModel`](#doc_model) | Output for trained HMM. | 
+| `OutputModel` | [`hmmModel`](#doc_model) | Output for trained HMM. |
 
 ### Detailed documentation
 {: #hmm_train_detailed-documentation }
@@ -987,8 +987,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save observation sequence to. | 
-| `State` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save hidden state sequence to. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save observation sequence to. |
+| `State` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save hidden state sequence to. |
 
 ### Detailed documentation
 {: #hmm_generate_detailed-documentation }
@@ -998,7 +998,7 @@ This utility takes an already-trained HMM, specified as the `Model` parameter, a
 The state to start the sequence in may be specified with the `StartState` parameter.
 
 ### Example
-For example, to generate a sequence of length 150 from the HMM `hmm` and save the observation sequence to `observations` and the hidden state sequence to `states`, the following command may be used: 
+For example, to generate a sequence of length 150 from the HMM `hmm` and save the observation sequence to `observations` and the hidden state sequence to `states`, the following command may be used:
 
 ```go
 // Initialize optional parameters for HmmGenerate().
@@ -1054,7 +1054,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `LogLikelihood` | [`float64`](#doc_float64) | Log-likelihood of the sequence. | 
+| `LogLikelihood` | [`float64`](#doc_float64) | Log-likelihood of the sequence. |
 
 ### Detailed documentation
 {: #hmm_loglik_detailed-documentation }
@@ -1062,7 +1062,7 @@ Output options are returned via Go's support for multiple return values, in the 
 This utility takes an already-trained HMM, specified with the `InputModel` parameter, and evaluates the log-likelihood of a sequence of observations, given with the `Input` parameter.  The computed log-likelihood is given as output.
 
 ### Example
-For example, to compute the log-likelihood of the sequence `seq` with the pre-trained HMM `hmm`, the following command may be used: 
+For example, to compute the log-likelihood of the sequence `seq` with the pre-trained HMM `hmm`, the following command may be used:
 
 ```go
 // Initialize optional parameters for HmmLoglik().
@@ -1118,7 +1118,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | File to save predicted state sequence to. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | File to save predicted state sequence to. |
 
 ### Detailed documentation
 {: #hmm_viterbi_detailed-documentation }
@@ -1193,7 +1193,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. |
 
 ### Detailed documentation
 {: #image_converter_detailed-documentation }
@@ -1204,7 +1204,7 @@ There are other options too, that can be specified such as `Quality`.
 You can also provide a dataset and save them as images using `Dataset` and `Save` as an parameter.
 
 ### Example
- An example to load an image : 
+ An example to load an image :
 
 ```go
 // Initialize optional parameters for ImageConverter().
@@ -1300,8 +1300,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`kdeModel`](#doc_model) | If specified, the KDE model will be saved here. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Vector to store density predictions. | 
+| `OutputModel` | [`kdeModel`](#doc_model) | If specified, the KDE model will be saved here. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Vector to store density predictions. |
 
 ### Detailed documentation
 {: #kde_detailed-documentation }
@@ -1343,7 +1343,7 @@ param.Bandwidth = 0.2
 param.Kernel = "gaussian"
 param.Tree = "kd-tree"
 param.RelError = 0.05
-param.MonteCarlo = 
+param.MonteCarlo =
 param.McProbability = 0.95
 param.InitialSampleSize = 200
 param.McEntryCoef = 3.5
@@ -1415,7 +1415,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save modified dataset to. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save modified dataset to. |
 
 ### Detailed documentation
 {: #kernel_pca_detailed-documentation }
@@ -1452,7 +1452,7 @@ The parameters for each of the kernels should be specified with the options `Ban
 Optionally, the Nystroem method ("Using the Nystroem method to speed up kernel machines", 2001) can be used to calculate the kernel matrix by specifying the `NystroemMethod` parameter. This approach works by using a subset of the data as basis to reconstruct the kernel matrix; to specify the sampling scheme, the `Sampling` parameter is used.  The sampling scheme for the Nystroem method can be chosen from the following list: 'kmeans', 'random', 'ordered'.
 
 ### Example
-For example, the following command will perform KPCA on the dataset `input` using the Gaussian kernel, and saving the transformed data to `transformed`: 
+For example, the following command will perform KPCA on the dataset `input` using the Gaussian kernel, and saving the transformed data to `transformed`:
 
 ```go
 // Initialize optional parameters for KernelPca().
@@ -1530,8 +1530,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Centroid` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, the centroids of each cluster will  be written to the given file. | 
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to store output labels or labeled data to. | 
+| `Centroid` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, the centroids of each cluster will  be written to the given file. |
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to store output labels or labeled data to. |
 
 ### Detailed documentation
 {: #kmeans_detailed-documentation }
@@ -1626,16 +1626,16 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
-| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
+| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. |
+| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. |
+| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. |
 
 ### Detailed documentation
 {: #bayesian_linear_regression_detailed-documentation }
 
 An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution.
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions.
 
 This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
 
@@ -1657,7 +1657,7 @@ param.Scale = 0
 blr_model, _, _ := mlpack.BayesianLinearRegression(param)
 ```
 
-The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`: 
+The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`:
 
 ```go
 // Initialize optional parameters for BayesianLinearRegression().
@@ -1668,7 +1668,7 @@ param.Test = test
 _, test_predictions, _ := mlpack.BayesianLinearRegression(param)
 ```
 
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties: 
+Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties:
 
 ```go
 // Initialize optional parameters for BayesianLinearRegression().
@@ -1740,8 +1740,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`lars`](#doc_model) | Output LARS model. | 
-| `OutputPredictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| `OutputModel` | [`lars`](#doc_model) | Output LARS model. |
+| `OutputPredictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. |
 
 ### Detailed documentation
 {: #lars_detailed-documentation }
@@ -1782,7 +1782,7 @@ param.Lambda2 = 0
 lasso_model, _ := mlpack.Lars(param)
 ```
 
-The following command uses the `lasso_model` to provide predicted responses for the data `test` and save those responses to `test_predictions`: 
+The following command uses the `lasso_model` to provide predicted responses for the data `test` and save those responses to `test_predictions`:
 
 ```go
 // Initialize optional parameters for Lars().
@@ -1798,125 +1798,6 @@ _, test_predictions := mlpack.Lars(param)
  - [LinearRegression()](#linear_regression)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
-
-## LinearSvm()
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Delta = 1
-param.Epochs = 50
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Lambda = 0.0001
-param.MaxIterations = 10000
-param.NoIntercept = false
-param.NumClasses = 0
-param.Optimizer = "lbfgs"
-param.Seed = 0
-param.Shuffle = false
-param.StepSize = 0.01
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.LinearSvm(param)
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Delta` | [`float64`](#doc_float64) | Margin of difference between correct class and other classes. | `1` |
-| `Epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `InputModel` | [`linearsvmModel`](#doc_model) | Existing model (parameters). | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
-| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0.0001` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
-| `NumClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
-| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `Shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
-| `StepSize` | [`float64`](#doc_float64) | Step size for parallel SGD optimizer. | `0.01` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`linearsvmModel`](#doc_model) | Output for trained linear svm model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `InputModel` parameter) or training a linear SVM model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained linear SVM model may be saved using the `OutputModel` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lsvm_model`', the following command may be used:
-
-```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Training = data
-param.Labels = labels
-param.Lambda = 0.1
-param.Delta = 1
-param.NumClasses = 0
-
-lsvm_model, _, _ := mlpack.LinearSvm(param)
-```
-
-Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
-
-```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.InputModel = &lsvm_model
-param.Test = test
-
-_, predictions, _ := mlpack.LinearSvm(param)
-```
-
-### See also
-
- - [RandomForest()](#random_forest)
- - [LogisticRegression()](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## Lmnn()
 {: #lmnn }
@@ -1990,35 +1871,35 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `CenteredData` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for mean-centered dataset. | 
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for learned distance matrix. | 
-| `TransformedData` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for transformed dataset. | 
+| `CenteredData` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for mean-centered dataset. |
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for learned distance matrix. |
+| `TransformedData` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for transformed dataset. |
 
 ### Detailed documentation
 {: #lmnn_detailed-documentation }
 
 This program implements Large Margin Nearest Neighbors, a distance learning technique.  The method seeks to improve k-nearest-neighbor classification on a dataset.  The method employes the strategy of reducing distance between similar labeled data points (a.k.a target neighbors) and increasing distance between differently labeled points (a.k.a impostors) using standard optimization techniques over the gradient of the distance between data points.
 
-To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `Input`), or alternatively as a separate matrix (specified with `Labels`).  Additionally, a starting point for optimization (specified with `Distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `Rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
+To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `Input`), or alternatively as a separate matrix (specified with `Labels`).  Additionally, a starting point for optimization (specified with `Distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `Rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point).
 
 The program also requires number of targets neighbors to work with ( specified with `K`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `Regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `UpdateInterval`).
 
-Output can either be the learned distance matrix (specified with `Output`), or the transformed dataset  (specified with `TransformedData`), or both. Additionally mean-centered dataset (specified with `CenteredData`) can be accessed given mean-centering (specified with `Center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `PrintAccuracy`parameter. 
+Output can either be the learned distance matrix (specified with `Output`), or the transformed dataset  (specified with `TransformedData`), or both. Additionally mean-centered dataset (specified with `CenteredData`) can be accessed given mean-centering (specified with `Center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `PrintAccuracy`parameter.
 
-This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer. 
+This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer.
 
-AdaGrad, specified by the value 'adagrad' for the parameter `Optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), the maximum number of passes (specified with `Passes`). Inaddition, a normalized starting point can be used by specifying the `Normalize` parameter. 
+AdaGrad, specified by the value 'adagrad' for the parameter `Optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), the maximum number of passes (specified with `Passes`). Inaddition, a normalized starting point can be used by specifying the `Normalize` parameter.
 
-BigBatch_SGD, specified by the value 'bbsgd' for the parameter `Optimizer`, depends primarily on four parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), the maximum number of passes (specified with `Passes`).  In addition, a normalized starting point can be used by specifying the `Normalize` parameter. 
+BigBatch_SGD, specified by the value 'bbsgd' for the parameter `Optimizer`, depends primarily on four parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), the maximum number of passes (specified with `Passes`).  In addition, a normalized starting point can be used by specifying the `Normalize` parameter.
 
-Stochastic gradient descent, specified by the value 'sgd' for the parameter `Optimizer`, depends primarily on three parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), and the maximum number of passes (specified with `Passes`).  In addition, a normalized starting point can be used by specifying the `Normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `Center`parameter. 
+Stochastic gradient descent, specified by the value 'sgd' for the parameter `Optimizer`, depends primarily on three parameters: the step size (specified with `StepSize`), the batch size (specified with `BatchSize`), and the maximum number of passes (specified with `Passes`).  In addition, a normalized starting point can be used by specifying the `Normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `Center`parameter.
 
 The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter `Optimizer`, uses a back-tracking line search algorithm to minimize a function.  The following parameters are used by L-BFGS: `MaxIterations`, `Tolerance`(the optimization is terminated when the gradient norm is below this value).  For more details on the L-BFGS optimizer, consult either the mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published literature on L-BFGS.  In addition, a normalized starting point can be used by specifying the `Normalize` parameter.
 
 By default, the AMSGrad optimizer is used.
 
 ### Example
-Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like: 
+Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like:
 
 ```go
 // Initialize optional parameters for Lmnn().
@@ -2030,7 +1911,7 @@ param.Optimizer = "bbsgd"
 _, output, _ := mlpack.Lmnn(iris, param)
 ```
 
-Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as:
 
 ```go
 // Initialize optional parameters for Lmnn().
@@ -2106,9 +1987,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Output codes matrix. | 
-| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Output dictionary matrix. | 
-| `OutputModel` | [`localCoordinateCoding`](#doc_model) | Output for trained LCC model. | 
+| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Output codes matrix. |
+| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Output dictionary matrix. |
+| `OutputModel` | [`localCoordinateCoding`](#doc_model) | Output for trained LCC model. |
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -2215,9 +2096,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`logisticRegression`](#doc_model) | Output for trained logistic regression model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+| `OutputModel` | [`logisticRegression`](#doc_model) | Output for trained logistic regression model. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. |
 
 ### Detailed documentation
 {: #logistic_regression_detailed-documentation }
@@ -2254,7 +2135,7 @@ param.PrintTrainingAccuracy = true
 lr_model, _, _ := mlpack.LogisticRegression(param)
 ```
 
-Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
+Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used:
 
 ```go
 // Initialize optional parameters for LogisticRegression().
@@ -2333,14 +2214,14 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
-| `OutputModel` | [`lshSearch`](#doc_model) | Output for trained LSH model. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. |
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. |
+| `OutputModel` | [`lshSearch`](#doc_model) | Output for trained LSH model. |
 
 ### Detailed documentation
 {: #lsh_detailed-documentation }
 
-This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. 
+This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
 For example, the following will return 5 neighbors from the data for each point in `input` and store the distances in `distances` and the neighbors in `neighbors`:
@@ -2416,8 +2297,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Centroid` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, the centroids of each cluster will be written to the given matrix. | 
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to write output labels or labeled data to. | 
+| `Centroid` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, the centroids of each cluster will be written to the given matrix. |
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to write output labels or labeled data to. |
 
 ### Detailed documentation
 {: #mean_shift_detailed-documentation }
@@ -2429,7 +2310,7 @@ The input dataset should be specified with the `Input` parameter, and the radius
 The output labels may be saved with the `Output` output parameter and the centroids of each cluster may be saved with the `Centroid` output parameter.
 
 ### Example
-For example, to run mean shift clustering on the dataset `data` and store the centroids to `centroids`, the following command may be used: 
+For example, to run mean shift clustering on the dataset `data` and store the centroids to `centroids`, the following command may be used:
 
 ```go
 // Initialize optional parameters for MeanShift().
@@ -2514,7 +2395,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for learned distance matrix. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Output matrix for learned distance matrix. |
 
 ### Detailed documentation
 {: #nca_detailed-documentation }
@@ -2603,9 +2484,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
-| `OutputModel` | [`knnModel`](#doc_model) | If specified, the kNN model will be output here. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. |
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. |
+| `OutputModel` | [`knnModel`](#doc_model) | If specified, the kNN model will be output here. |
 
 ### Detailed documentation
 {: #knn_detailed-documentation }
@@ -2613,7 +2494,7 @@ Output options are returned via Go's support for multiple return values, in the 
 This program will calculate the k-nearest-neighbors of a set of points using kd-trees or cover trees (cover tree support is experimental and may be slow). You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following command will calculate the 5 nearest neighbors of each point in `input` and store the distances in `distances` and the neighbors in `neighbors`: 
+For example, the following command will calculate the 5 nearest neighbors of each point in `input` and store the distances in `distances` and the neighbors in `neighbors`:
 
 ```go
 // Initialize optional parameters for Knn().
@@ -2697,9 +2578,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
-| `OutputModel` | [`kfnModel`](#doc_model) | If specified, the kFN model will be output here. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. |
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. |
+| `OutputModel` | [`kfnModel`](#doc_model) | If specified, the kFN model will be output here. |
 
 ### Detailed documentation
 {: #kfn_detailed-documentation }
@@ -2707,7 +2588,7 @@ Output options are returned via Go's support for multiple return values, in the 
 This program will calculate the k-furthest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following will calculate the 5 furthest neighbors of eachpoint in `input` and store the distances in `distances` and the neighbors in `neighbors`: 
+For example, the following will calculate the 5 furthest neighbors of eachpoint in `input` and store the distances in `distances` and the neighbors in `neighbors`:
 
 ```go
 // Initialize optional parameters for Kfn().
@@ -2778,13 +2659,13 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `H` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the calculated H to. | 
-| `W` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the calculated W to. | 
+| `H` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the calculated H to. |
+| `W` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the calculated W to. |
 
 ### Detailed documentation
 {: #nmf_detailed-documentation }
 
-This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that 
+This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that
 
 V = W * H
 
@@ -2799,7 +2680,7 @@ Optionally, the desired update rules for each NMF iteration can be chosen from t
 The maximum number of iterations is specified with `MaxIterations`, and the minimum residue required for algorithm termination is specified with the `MinResidue` parameter.
 
 ### Example
-For example, to run NMF on the input matrix `V` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into `W` and `H`, the following command could be used: 
+For example, to run NMF on the input matrix `V` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into `W` and `H`, the following command could be used:
 
 ```go
 // Initialize optional parameters for Nmf().
@@ -2863,7 +2744,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save modified dataset to. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save modified dataset to. |
 
 ### Detailed documentation
 {: #pca_detailed-documentation }
@@ -2940,10 +2821,10 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save test data to. | 
-| `TestLabels` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save test labels to. | 
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save training data to. | 
-| `TrainingLabels` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save train labels to. | 
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save test data to. |
+| `TestLabels` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save test labels to. |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save training data to. |
+| `TrainingLabels` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save train labels to. |
 
 ### Detailed documentation
 {: #preprocess_split_detailed-documentation }
@@ -2955,7 +2836,7 @@ The output training and test matrices may be saved with the `Training` and `Test
 Optionally, labels can also be split along with the data by specifying the `InputLabels` parameter.  Splitting labels works the same way as splitting the data. The output training and test labels may be saved with the `TrainingLabels` and `TestLabels` output parameters, respectively.
 
 ### Example
-So, a simple example where we want to split the dataset `X` into `X_train` and `X_test` with 60% of the data in the training set and 40% of the dataset in the test set, we could run 
+So, a simple example where we want to split the dataset `X` into `X_train` and `X_test` with 60% of the data in the training set and 40% of the dataset in the test set, we could run
 
 ```go
 // Initialize optional parameters for PreprocessSplit().
@@ -3045,7 +2926,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix in which to save the output. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix in which to save the output. |
 
 ### Detailed documentation
 {: #preprocess_binarize_detailed-documentation }
@@ -3132,7 +3013,7 @@ This utility takes a dataset and prints out the descriptive statistics of the da
 Optionally, width and precision of the output can be adjusted by a user using the `Width` and `Precision` parameters. A user can also select a specific dimension to analyze if there are too many dimensions. The `Population` parameter can be specified when the dataset should be considered as a population.  Otherwise, the dataset will be considered as a sample.
 
 ### Example
-So, a simple example where we want to print out statistical facts about the dataset `X` using the default settings, we could run 
+So, a simple example where we want to print out statistical facts about the dataset `X` using the default settings, we could run
 
 ```go
 // Initialize optional parameters for PreprocessDescribe().
@@ -3211,8 +3092,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save scaled data to. | 
-| `OutputModel` | [`scalingModel`](#doc_model) | Output scaling model. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save scaled data to. |
+| `OutputModel` | [`scalingModel`](#doc_model) | Output scaling model. |
 
 ### Detailed documentation
 {: #preprocess_scale_detailed-documentation }
@@ -3224,7 +3105,7 @@ The output scaled feature matrix may be saved with the `Output` output parameter
 The model to scale features can be saved using `OutputModel` and later can be loaded back using`InputModel`.
 
 ### Example
-So, a simple example where we want to scale the dataset `X` into `X_scaled` with  standard_scaler as scaler_method, we could run 
+So, a simple example where we want to scale the dataset `X` into `X_scaled` with  standard_scaler as scaler_method, we could run
 
 ```go
 // Initialize optional parameters for PreprocessScale().
@@ -3234,7 +3115,7 @@ param.ScalerMethod = "standard_scaler"
 X_scaled, _ := mlpack.PreprocessScale(X, param)
 ```
 
-A simple example where we want to whiten the dataset `X` into `X_whitened` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run 
+A simple example where we want to whiten the dataset `X` into `X_whitened` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run
 
 ```go
 // Initialize optional parameters for PreprocessScale().
@@ -3256,7 +3137,7 @@ param.InputModel = &saved
 X, _ := mlpack.PreprocessScale(X_scaled, param)
 ```
 
-Another simple example where we want to scale the dataset `X` into `X_scaled` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run 
+Another simple example where we want to scale the dataset `X` into `X_scaled` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run
 
 ```go
 // Initialize optional parameters for PreprocessScale().
@@ -3313,7 +3194,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save one-hot encoded features data to. | 
+| `Output` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save one-hot encoded features data to. |
 
 ### Detailed documentation
 {: #preprocess_one_hot_encoding_detailed-documentation }
@@ -3392,8 +3273,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputIc` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save independent components to. | 
-| `OutputUnmixing` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save unmixing matrix to. | 
+| `OutputIc` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save independent components to. |
+| `OutputUnmixing` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save unmixing matrix to. |
 
 ### Detailed documentation
 {: #radical_detailed-documentation }
@@ -3403,7 +3284,7 @@ An implementation of RADICAL, a method for independent component analysis (ICA).
 The input matrix to perform ICA on should be specified with the `Input` parameter.  The output matrix Y may be saved with the `OutputIc` output parameter, and the output unmixing matrix W may be saved with the `OutputUnmixing` output parameter.
 
 ### Example
-For example, to perform ICA on the matrix `X` with 40 replicates, saving the independent components to `ic`, the following command may be used: 
+For example, to perform ICA on the matrix `X` with 40 replicates, saving the independent components to `ic`, the following command may be used:
 
 ```go
 // Initialize optional parameters for Radical().
@@ -3486,9 +3367,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
-| `OutputModel` | [`raModel`](#doc_model) | If specified, the kNN model will be output here. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. |
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. |
+| `OutputModel` | [`raModel`](#doc_model) | If specified, the kNN model will be output here. |
 
 ### Detailed documentation
 {: #krann_detailed-documentation }
@@ -3574,9 +3455,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`softmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to save predictions for test dataset into. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save class probabilities for test dataset into. | 
+| `OutputModel` | [`softmaxRegression`](#doc_model) | File to save trained softmax regression model to. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to save predictions for test dataset into. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save class probabilities for test dataset into. |
 
 ### Detailed documentation
 {: #softmax_regression_detailed-documentation }
@@ -3590,7 +3471,7 @@ The trained model can be saved with the `OutputModel` output parameter. If train
 The program is also able to evaluate a model on test data.  A test dataset can be specified with the `Test` parameter. Class predictions can be saved with the `Predictions` output parameter.  If labels are specified for the test data with the `TestLabels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
 
 ### Example
-For example, to train a softmax regression model on the data `dataset` with labels `labels` with a maximum of 1000 iterations for training, saving the trained model to `sr_model`, the following command can be used: 
+For example, to train a softmax regression model on the data `dataset` with labels `labels` with a maximum of 1000 iterations for training, saving the trained model to `sr_model`, the following command can be used:
 
 ```go
 // Initialize optional parameters for SoftmaxRegression().
@@ -3680,9 +3561,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
-| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output dictionary to. | 
-| `OutputModel` | [`sparseCoding`](#doc_model) | File to save trained sparse coding model to. | 
+| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output sparse codes of the test matrix (--test_file) to. |
+| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output dictionary to. |
+| `OutputModel` | [`sparseCoding`](#doc_model) | File to save trained sparse coding model to. |
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -3698,7 +3579,7 @@ Once a dictionary D is found, the sparse coding model may be used to encode othe
 To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `Training` option, along with the number of atoms in the dictionary (specified with the `Atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `InitialDictionary` parameter.  An input model may be specified with the `InputModel` parameter.
 
 ### Example
-As an example, to build a sparse coding model on the dataset `data` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `model`, use 
+As an example, to build a sparse coding model on the dataset `data` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `model`, use
 
 ```go
 // Initialize optional parameters for SparseCoding().
@@ -3710,7 +3591,7 @@ param.Lambda1 = 0.1
 _, _, model := mlpack.SparseCoding(param)
 ```
 
-Then, this model could be used to encode a new matrix, `otherdata`, and save the output codes to `codes`: 
+Then, this model could be used to encode a new matrix, `otherdata`, and save the output codes to `codes`:
 
 ```go
 // Initialize optional parameters for SparseCoding().
@@ -3792,9 +3673,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`randomForestModel`](#doc_model) | Model to save trained random forest to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted classes for each point in the test set. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
+| `OutputModel` | [`randomForestModel`](#doc_model) | Model to save trained random forest to. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted classes for each point in the test set. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. |
 
 ### Detailed documentation
 {: #random_forest_detailed-documentation }
@@ -3822,7 +3703,7 @@ param.PrintTrainingAccuracy = true
 rf_model, _, _ := mlpack.RandomForest(param)
 ```
 
-Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
+Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call
 
 ```go
 // Initialize optional parameters for RandomForest().
@@ -3900,9 +3781,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. | 
+| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. |
 
 ### Detailed documentation
 {: #decision_tree_detailed-documentation }
@@ -3930,7 +3811,7 @@ param.PrintTrainingAccuracy = true
 tree, _, _ := mlpack.DecisionTree(param)
 ```
 
-Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
+Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call
 
 ```go
 // Initialize optional parameters for DecisionTree().
@@ -3949,31 +3830,12 @@ _, predictions, _ := mlpack.DecisionTree(param)
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
-## Perceptron()
-{: #perceptron }
-
-#### Perceptron
-{: #perceptron_descr }
-
 ```go
 import (
   "mlpack.org/v1/mlpack"
   "gonum.org/v1/gonum/mat"
 )
 
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaxIterations = 1000
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions := mlpack.Perceptron(param)
-```
-
-An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
 
 
 
@@ -3983,11 +3845,6 @@ There are two types of input options: required options, which are passed directl
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`perceptronModel`](#doc_model) | Input perceptron model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `MaxIterations` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -3996,48 +3853,6 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`perceptronModel`](#doc_model) | Output for trained perceptron model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
-
-### Detailed documentation
-{: #perceptron_detailed-documentation }
-
-This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `MaxIterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-
-This program allows loading a perceptron from a model (via the `InputModel` parameter) or training a perceptron given training data (via the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `Test` parameter) and the classification results on the test set may be saved with the `Predictions` output parameter.  The perceptron model may be saved with the `OutputModel` output parameter.
-
-### Example
-The training data given with the `Training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
-
-All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `training_data` with labels `training_labels`, and saves the model to `perceptron_model`.
-
-```go
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
-param.Training = training_data
-param.Labels = training_labels
-
-perceptron_model, _ := mlpack.Perceptron(param)
-```
-
-Then, this model can be re-used for classification on the test data `test_data`.  The example below does precisely that, saving the predicted classes to `predictions`.
-
-```go
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
-param.InputModel = &perceptron_model
-param.Test = test_data
-
-_, predictions := mlpack.Perceptron(param)
-```
-
-Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `InputModel` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
-
-### See also
-
- - [Adaboost()](#adaboost)
- - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## Adaboost()
 {: #adaboost }
@@ -4090,9 +3905,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
+| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. |
 
 ### Detailed documentation
 {: #adaboost_detailed-documentation }
@@ -4106,7 +3921,7 @@ This program allows training of an AdaBoost model, and then application of that 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
 
 ### Example
-For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
+For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command:
 
 ```go
 // Initialize optional parameters for Adaboost().
@@ -4118,7 +3933,7 @@ param.WeakLearner = "perceptron"
 model, _, _ := mlpack.Adaboost(param)
 ```
 
-Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
+Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command:
 
 ```go
 // Initialize optional parameters for Adaboost().
@@ -4202,9 +4017,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. |
 
 ### Detailed documentation
 {: #hoeffding_tree_detailed-documentation }
@@ -4231,7 +4046,7 @@ param.Confidence = 0.99
 tree, _, _ := mlpack.HoeffdingTree(param)
 ```
 
-Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command: 
+Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command:
 
 ```go
 // Initialize optional parameters for HoeffdingTree().
@@ -4296,9 +4111,9 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
+| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. |
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. |
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. |
 
 ### Detailed documentation
 {: #nbc_detailed-documentation }
@@ -4392,8 +4207,8 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. | 
-| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. |
+| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. |
 
 ### Detailed documentation
 {: #linear_regression_detailed-documentation }
@@ -4438,4 +4253,3 @@ _, X_test_responses := mlpack.LinearRegression(param)
  - [Lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
  - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
-
