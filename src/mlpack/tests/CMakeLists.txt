@@ -7,8 +7,10 @@ add_executable(mlpack_test
   # Tests for neural network code (and reinforcement learning code).
   ann/activation_functions_test.cpp
   ann/ann_dist_test.cpp
-  # This includes all files in ann/layer/.
+  # This includes all files in ann/layer/ excluding serialization
   ann/layer_test.cpp
+  # This includes all files in ann/layer/ with serialization
+  ann/layer_test_serialization.cpp
   ann/ann_regularizer_test.cpp
   ann/ann_test_tools.hpp
   ann/convolutional_network_test.cpp
@@ -99,6 +101,7 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
+  mfcc_test.cpp
   mock_categorical_data.hpp
   nbc_test.cpp
   nca_test.cpp
@@ -163,6 +166,9 @@ add_executable(mlpack_test
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
+  main_tests/decision_tree_train_test.cpp
+  main_tests/decision_tree_classify_test.cpp
+  main_tests/decision_tree_probabilities_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp

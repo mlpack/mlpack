@@ -18,7 +18,7 @@ endmacro()
 add_all_bindings(approx_kfn approx_kfn "Geometry")
 add_all_bindings(cf cf "Misc. / Other")
 add_all_bindings(dbscan dbscan "Clustering")
-add_all_bindings(decision_tree decision_tree "Classification")
+#add_all_bindings(decision_tree decision_tree "Classification")
 add_all_bindings(det det "Misc. / Other")
 add_all_bindings(emst emst "Geometry")
 add_all_bindings(fastmks fastmks "Geometry")
@@ -115,6 +115,19 @@ add_r_binding(random_forest random_forest_train "skip")
 add_r_binding(random_forest random_forest_classify "skip")
 add_r_binding(random_forest random_forest_probabilities "skip")
 add_markdown_docs(random_forest random_forest "cli;python;julia;go;r" "python;r")
+
+# decision tree
+add_category(decision_tree "Classification")
+group_bindings(decision_tree decision_tree "train;classify;probabilities")
+add_python_wrapper(decision_tree decision_tree)
+add_julia_class(decision_tree decision_tree)
+add_cli_executable(decision_tree decision_tree)
+add_go_binding(decision_tree decision_tree)
+add_r_binding(decision_tree decision_tree "include")
+add_r_binding(decision_tree decision_tree_train "skip")
+add_r_binding(decision_tree decision_tree_classify "skip")
+add_r_binding(decision_tree decision_tree_probabilities "skip")
+add_markdown_docs(decision_tree decision_tree "cli;python;julia;go;r" "python;r")
 
 
 # Adaboost has a Python wrapper class that encapsulates its functionality in a
