@@ -59,7 +59,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::Row<size_t> rawLabels;
   arma::mat testSet;
   arma::Row<size_t> predictedLabels;
-  size_t numClasses;
 
   // Load the model.
   LinearSVMModel* model = params.Get<LinearSVMModel*>("input_model");
