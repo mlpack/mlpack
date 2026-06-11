@@ -1,8 +1,8 @@
 /**
- * @file tests/main_tests/linear_svm_classify_test.cpp
+ * @file tests/main_tests/linear_svm_probabilities_test.cpp
  * @author Dirk Eddelbuettel
  *
- * Test RUN_BINDING() of logistic_regression_classify_main.cpp
+ * Test RUN_BINDING() of logistic_regression_probabilities_main.cpp
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,7 +12,7 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/linear_svm/linear_svm_classify_main.cpp>
+#include <mlpack/methods/linear_svm/linear_svm_probabilities_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
@@ -22,14 +22,14 @@
 
 using namespace mlpack;
 
-BINDING_TEST_FIXTURE(LinearSVMClassifyTestFixture);
+BINDING_TEST_FIXTURE(LinearSVMProbabilitiesTestFixture);
 
 /**
   * Ensuring that absence of input model is checked.
  **/
-TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
-                 "LinearSVMClassifyNoModel",
-                 "[LinearSVMClassifyMainTest][BindingTests]")
+TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
+                 "LinearSVMProbabilitiesNoModel",
+                 "[LinearSVMProbabilitiesMainTest][BindingTests]")
 {
   constexpr int D = 3;
   constexpr int M = 15;
@@ -42,9 +42,9 @@ TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
 /**
   * Ensuring that absence of estimated model is checked.
  **/
-TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
-                 "LinearSVMClassifyEmptyModel",
-                 "[LinearSVMClassifyMainTest][BindingTests]")
+TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
+                 "LinearSVMProbabilitiesEmptyModel",
+                 "[LinearSVMProbabilitiesMainTest][BindingTests]")
 {
   constexpr int D = 3;
   constexpr int M = 15;
@@ -61,9 +61,9 @@ TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
 /**
   * Ensuring that absence of test data is checked.
  **/
-TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
-                 "LinearSVMClassifyNoData",
-                 "[LinearSVMClassifyMainTest][BindingTests]")
+TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
+                 "LinearSVMProbabilitiesNoData",
+                 "[LinearSVMProbabilitiesMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -80,9 +80,9 @@ TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
 /**
   * Ensuring that wrong size of test data is checked.
  **/
-TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
-                 "LinearSVMClassifyWrongSizeData",
-                 "[LinearSVMClassifyMainTest][BindingTests]")
+TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
+                 "LinearSVMProbabilitiesWrongSizeData",
+                 "[LinearSVMProbabilitiesMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -103,9 +103,9 @@ TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
 /**
   * Ensuring that predictions have right size
  **/
-TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
-                 "LinearSVMClassifyPredictionSize",
-                 "[LinearSVMClassifyMainTest][BindingTests]")
+TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
+                 "LinearSVMProbabilitiesPredictionSize",
+                 "[LinearSVMProbabilitiesMainTest][BindingTests]")
 {
   constexpr int N = 10;
   constexpr int D = 3;
@@ -122,8 +122,7 @@ TEST_CASE_METHOD(LinearSVMClassifyTestFixture,
   SetInputParam("test", std::move(testX));
   RUN_BINDING();
 
-  arma::Row<size_t> predictions = params.Get<arma::Row<size_t>>("predictions");
-  // Check that number of predicted labels is equal to the input test points.
-  REQUIRE(predictions.n_rows == 1);
-  REQUIRE(predictions.n_cols == M);
+  arma::mat probabilities = params.Get<arma::mat>("probabilities");
+  REQUIRE(probabilities.n_rows == 2);
+  REQUIRE(probabilities.n_cols == M);
 }
