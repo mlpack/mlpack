@@ -123,6 +123,7 @@ class CoverTreeRecursionSets
    public:
     Iterator(CoverTreeRecursionSets& parent, const bool begin = true) :
         parent(parent),
+        hotScaleOrder(arma::sort_index(parent.hotScaleLevels, "descend")),
         hotIndex(0),
         coldMapIter(parent.coldScaleMap.begin()),
         coldMapIterEnd(parent.coldScaleMap.end())
@@ -148,7 +149,7 @@ class CoverTreeRecursionSets
       {
         ++hotIndex;
         while (hotIndex < (HotVectorSize + 1) &&
-               parent.hotScaleLevels[hotIndex - 1] == INT_MIN)
+               parent.hotScaleLevels[hotScaleOrder[hotIndex - 1]] == INT_MIN)
           ++hotIndex; // Skip any empty scales.
 
         // Before settling on the leaf vector, make sure it's not empty.
@@ -170,7 +171,7 @@ class CoverTreeRecursionSets
     inline std::vector<MapEntryType>& Vector()
     {
       if (hotIndex <= HotVectorSize)
-        return parent.hotScaleVectors[hotIndex - 1];
+        return parent.hotScaleVectors[hotScaleOrder[hotIndex - 1]];
       else if (hotIndex == HotVectorSize + 1)
         return parent.leafVector;
       else
@@ -181,7 +182,7 @@ class CoverTreeRecursionSets
     inline int Scale() const
     {
       if (hotIndex <= HotVectorSize)
-        return parent.hotScaleLevels[hotIndex - 1];
+        return parent.hotScaleLevels[hotScaleOrder[hotIndex - 1]];
       else if (hotIndex == HotVectorSize + 1)
         return INT_MIN;
       else
@@ -191,6 +192,8 @@ class CoverTreeRecursionSets
    private:
     // Reference to the parent object (so we can access the level sets).
     CoverTreeRecursionSets& parent;
+    // Order of scales in hot set.
+    arma::uvec::fixed<HotVectorSize> hotScaleOrder;
     // Current index of 'hot' objects that we are looking at.
     size_t hotIndex;
     // Internally-held iterator for the cold map.
