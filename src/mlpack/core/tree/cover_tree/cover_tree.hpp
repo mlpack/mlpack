@@ -164,14 +164,6 @@ class CoverTree
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
    * used externally, but it could be used to insert another node into a tree.
-   * This procedure uses only one vector for the near set, the far set, and the
-   * used set (this is to prevent unnecessary memory allocation in recursive
-   * calls to this constructor).  Therefore, the size of the near set, far set,
-   * and used set must be passed in.  The near set will be entirely used up, and
-   * some of the far set may be used.  The value of usedSetSize will be set to
-   * the number of points used in the construction of this node, and the value
-   * of farSetSize will be modified to reflect the number of points in the far
-   * set _after_ the construction of this node.
    *
    * If you are calling this manually, be careful that the given scale is
    * as small as possible, or you may be creating an implicit node in your tree.
@@ -182,15 +174,12 @@ class CoverTree
    * @param scale Scale of this level in the tree.
    * @param parent Parent of this node (NULL indicates no parent).
    * @param parentDistance Distance to the parent node.
-   * @param indices Array of indices, ordered [ nearSet | farSet | usedSet ];
-   *     will be modified to [ farSet | usedSet ].
+   * @param indices Indices of points in `dataset` that can be used to construct
+   *     the node.
    * @param distances Array of distances, ordered the same way as the indices.
    *     These represent the distances between the point specified by pointIndex
    *     and each point in the indices array.
-   * @param nearSetSize Size of the near set; if 0, this will be a leaf.
-   * @param farSetSize Size of the far set; may be modified (if this node uses
-   *     any points in the far set).
-   * @param usedSetSize The number of points used will be added to this number.
+   * @param used Whether or not a point has been used in another tree node.
    * @param distance Distance metric to use (default NULL).
    */
   CoverTree(const MatType& dataset,
@@ -514,8 +503,9 @@ class CoverTree
    *
    * @param pointIndex Point to build the distances for.
    * @param indices List of indices to compute distances for.
+   * @param used Whether or not a point has already been used (and so the
+   *     distance does not need to be computed and will be set to -1.0).
    * @param distances Vector to store calculated distances in.
-   * @param pointSetSize Number of points in arrays to calculate distances for.
    */
   void ComputeDistances(const size_t pointIndex,
                         const arma::Col<size_t>& indices,
