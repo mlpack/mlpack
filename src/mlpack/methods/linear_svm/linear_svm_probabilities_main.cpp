@@ -49,11 +49,7 @@ PARAM_MODEL_IN_REQ(LinearSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
 // Testing.
 PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
-PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
-PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
-    "matrix is where the class probabilities for the test set will be saved.",
-    "p");
-PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
+PARAM_MATRIX_OUT("probabilities", "Requested probabilities.", "p");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -64,95 +60,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::mat testSet;
   arma::Row<size_t> predictedLabels;
   size_t numClasses;
-  const bool intercept = !params.Has("no_intercept");
 
   // Load the model.
   LinearSVMModel* model = params.Get<LinearSVMModel*>("input_model");
 
   timers.Start("linear_svm_probabilities");
 
-  // Cache the value of GetPrintableParam for the test matrix before we
-  // std::move() it.
-  std::ostringstream oss;
-  oss << params.GetPrintable<arma::mat>("test");
-  std::string testOutput = oss.str();
-
   // Get the test dataset, and get predictions.
   testSet = std::move(params.Get<arma::mat>("test"));
-  size_t trainingDimensionality;
 
-  // Set the dimensionality according to fitintercept.
-  if (intercept)
-    trainingDimensionality = model->svm.Parameters().n_rows - 1;
-  else
-    trainingDimensionality = model->svm.Parameters().n_rows;
-
-  // Checking the dimensionality of the test data.
-  if (testSet.n_rows != trainingDimensionality)
-  {
-    Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
-        << "be the same as the dimensionality of the training data ("
-        << trainingDimensionality << ")!" << endl;
-  }
-
-  // Save class probabilities
-  Log::Info << "Calculating class probabilities of points in " << testOutput
-      << "." << endl;
   arma::Row<size_t> predictions;
   arma::mat probabilities;
   model->svm.Classify(testSet, predictions, probabilities);
-  probabilities.print("probabilities (C++)");
   params.Get<arma::mat>("probabilities") = std::move(probabilities);
   model->svm.Classify(testSet, predictedLabels);
   RevertLabels(predictedLabels, model->mappings, predictions);
 
-  // Calculate accuracy, if desired.
-  if (params.Has("test_labels"))
-  {
-    arma::Row<size_t> testLabels;
-    arma::Row<size_t> testRawLabels =
-        std::move(params.Get<arma::Row<size_t>>("test_labels"));
-
-    NormalizeLabels(testRawLabels, testLabels, model->mappings);
-
-    if (testSet.n_cols != testLabels.n_elem)
-    {
-      Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
-          << " has " << testSet.n_cols << " points, but labels in "
-          << PRINT_PARAM_STRING("test_labels") << " have "
-          << testLabels.n_elem << " labels!" << endl;
-    }
-
-    numClasses = params.Get<int>("num_classes") == 0 ?
-        model->mappings.n_elem : params.Get<int>("num_classes");
-    arma::Col<size_t> correctClassCounts;
-    arma::Col<size_t> labelSize;
-    correctClassCounts.zeros(numClasses);
-    labelSize.zeros(numClasses);
-
-    for (arma::uword i = 0; i != predictions.n_elem; ++i)
-    {
-      if (predictions(i) == testLabels(i))
-      {
-        ++correctClassCounts[testLabels(i)];
-      }
-      ++labelSize[testLabels(i)];
-    }
-
-    size_t totalCorrectClass = 0;
-    for (size_t i = 0; i != correctClassCounts.size(); ++i)
-    {
-      Log::Info << "Accuracy for points with label " << i << " is "
-          << (correctClassCounts[i] / static_cast<double>(labelSize[i]))
-          << " (" << correctClassCounts[i] << " of " << labelSize[i] << ")."
-          << endl;
-      totalCorrectClass += correctClassCounts[i];
-    }
-
-    Log::Info << "Total accuracy for all points is "
-        << (totalCorrectClass) / static_cast<double>(predictions.n_elem)
-        << " (" << totalCorrectClass << " of " << predictions.n_elem << ")."
-        << endl;
-  }
   timers.Stop("linear_svm_probabilities");
 }

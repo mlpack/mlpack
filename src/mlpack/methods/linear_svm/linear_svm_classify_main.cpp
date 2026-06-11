@@ -52,10 +52,6 @@ PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 PARAM_UROW_OUT("predictions", "If test data is specified, this matrix is where "
     "the predictions for the test set will be saved.", "P");
-//PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
-//    "matrix is where the class probabilities for the test set will be saved.",
-//    "p");
-PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -66,39 +62,16 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::mat testSet;
   arma::Row<size_t> predictedLabels;
   size_t numClasses;
-  const bool intercept = !params.Has("no_intercept");
 
   // Load the model.
   LinearSVMModel* model = params.Get<LinearSVMModel*>("input_model");
 
   timers.Start("linear_svm_prediction");
 
-  // Cache the value of GetPrintableParam for the test matrix before we
-  // std::move() it.
-  std::ostringstream oss;
-  oss << params.GetPrintable<arma::mat>("test");
-  std::string testOutput = oss.str();
-
   // Get the test dataset, and get predictions.
   testSet = std::move(params.Get<arma::mat>("test"));
-  arma::Row<size_t> predictions;
-  size_t trainingDimensionality;
-
-  // Set the dimensionality according to fitintercept.
-  if (intercept)
-    trainingDimensionality = model->svm.Parameters().n_rows - 1;
-  else
-    trainingDimensionality = model->svm.Parameters().n_rows;
-
-  // Checking the dimensionality of the test data.
-  if (testSet.n_rows != trainingDimensionality)
-  {
-    Log::Fatal << "Test data dimensionality (" << testSet.n_rows << ") must "
-        << "be the same as the dimensionality of the training data ("
-        << trainingDimensionality << ")!" << endl;
-  }
-
   model->svm.Classify(testSet, predictedLabels);
+  arma::Row<size_t> predictions;
   RevertLabels(predictedLabels, model->mappings, predictions);
 
   // Calculate accuracy, if desired.
@@ -151,8 +124,5 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
   timers.Stop("linear_svm_prediction");
 
-  // Save predictions.
-  Log::Info << "Predicting classes of points in '" << testOutput << "'."
-      << endl;
   params.Get<arma::Row<size_t>>("predictions") = std::move(predictions);
 }
