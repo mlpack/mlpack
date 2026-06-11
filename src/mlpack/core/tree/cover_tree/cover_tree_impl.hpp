@@ -1186,8 +1186,8 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   // set.  For the self child, we need to recurse with only the near set.  For
   // other children, we must compute their distances and collect any points that
   // will be in either the near or far set.
-  arma::Col<size_t> childIndices(indices.n_elem);
-  arma::vec childDistances(indices.n_elem);
+  arma::Col<size_t> childIndices(indices.n_elem, arma::fill::none);
+  arma::vec childDistances(indices.n_elem, arma::fill::none);
   size_t childSetSize = 0;
   for (size_t i = 0; i < indices.size(); ++i)
   {
@@ -1240,7 +1240,7 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   }
   else
   {
-    for (size_t i = 0; i < childIndices.n_elem; ++i)
+    for (size_t i = 0; i < childSetSize; ++i)
       if (!used[childIndices[i]])
         unusedNearSet[childIndices[i]] = childDistances[i];
   }
@@ -1315,7 +1315,7 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
     distanceComps += children.back()->DistanceComps();
 
     // Now remove any points in the unused near set that we actually used.
-    for (size_t i = 0; i < childIndices.n_elem; ++i)
+    for (size_t i = 0; i < childSetSize; ++i)
     {
       if (used[childIndices[i]] && unusedNearSet.count(childIndices[i]) > 0)
         unusedNearSet.erase(childIndices[i]);
