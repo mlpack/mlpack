@@ -235,6 +235,14 @@ void DAGNetwork<
     throw std::logic_error(errMessage.str());
   }
 
+  if (connection > ConnectionTypes::ADDITION)
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetConnection(): Connection type "
+        << connection << " does not exist.";
+    throw std::logic_error(errMessage.str());
+  }
+
   layerConnections[layerId] = connection;
 
   validOutputDimensions = false;
@@ -275,6 +283,14 @@ void DAGNetwork<
   for (size_t i = 0; i < childNodeParents.size(); i++)
   {
     if (childNodeParents[i] == parentNodeId)
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
+          << " is already connected to layer " << childNodeId << "!";
+      throw std::logic_error(errMessage.str());
+    }
+
+    if (childNodeParents[i] == childNodeId)
     {
       std::ostringstream errMessage;
       errMessage << "DAGNetwork::Connect(): Layer " << parentNodeId
