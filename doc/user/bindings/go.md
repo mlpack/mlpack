@@ -1143,118 +1143,6 @@ states := mlpack.HmmViterbi(obs, &hmm, param)
  - [Hidden Mixture Models on Wikipedia](https://en.wikipedia.org/wiki/Hidden_Markov_model)
  - [HMM class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hmm/hmm.hpp)
 
-## HoeffdingTree()
-{: #hoeffding_tree }
-
-#### Hoeffding trees
-{: #hoeffding_tree_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.BatchMode = false
-param.Bins = 10
-param.Confidence = 0.95
-param.InfoGain = false
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaxSamples = 5000
-param.MinSamples = 100
-param.NumericSplitStrategy = "binary"
-param.ObservationsBeforeBinning = 100
-param.Passes = 1
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.HoeffdingTree(param)
-```
-
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `BatchMode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `false` |
-| `Bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Confidence` | [`float64`](#doc_float64) | Confidence before splitting (between 0 and 1). | `0.95` |
-| `InfoGain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `false` |
-| `InputModel` | [`hoeffdingTreeModel`](#doc_model) | Input trained Hoeffding tree model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for training dataset. | `mat.NewDense(1, 1, nil)` |
-| `MaxSamples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
-| `MinSamples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
-| `NumericSplitStrategy` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
-| `ObservationsBeforeBinning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
-| `Passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
-| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels of test data. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
-
-### Detailed documentation
-{: #hoeffding_tree_detailed-documentation }
-
-This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
-
-The training file and associated labels are specified with the `Training` and `Labels` parameters, respectively. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `BatchMode` option, but this may not be the best option for large datasets.
-
-When a model is trained, it may be saved via the `OutputModel` output parameter.  A model may be loaded from file for further training or testing with the `InputModel` parameter.
-
-Test data may be specified with the `Test` parameter, and if performance statistics are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved with the `Predictions` output parameter, and class probabilities for each prediction may be saved with the `Probabilities` output parameter.
-
-### Example
-For example, to train a Hoeffding tree with confidence 0.99 with data `dataset`, saving the trained tree to `tree`, the following command may be used:
-
-```go
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.Training = dataset
-param.Confidence = 0.99
-
-tree, _, _ := mlpack.HoeffdingTree(param)
-```
-
-Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command: 
-
-```go
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.InputModel = &tree
-param.Test = test_set
-
-_, predictions, class_probs := mlpack.HoeffdingTree(param)
-```
-
-### See also
-
- - [DecisionTree()](#decision_tree)
- - [RandomForest()](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
- - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
-
 ## ImageConverter()
 {: #image_converter }
 
@@ -4344,6 +4232,118 @@ _, predictions, _ := mlpack.Adaboost(param)
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
+## HoeffdingTree()
+{: #hoeffding_tree }
+
+#### Hoeffding trees
+{: #hoeffding_tree_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.BatchMode = false
+param.Bins = 10
+param.Confidence = 0.95
+param.InfoGain = false
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.MaxSamples = 5000
+param.MinSamples = 100
+param.NumericSplitStrategy = "binary"
+param.ObservationsBeforeBinning = 100
+param.Passes = 1
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.HoeffdingTree(param)
+```
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `BatchMode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `false` |
+| `Bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Confidence` | [`float64`](#doc_float64) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `InfoGain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `false` |
+| `InputModel` | [`hoeffdingTreeModel`](#doc_model) | Input trained Hoeffding tree model. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for training dataset. | `mat.NewDense(1, 1, nil)` |
+| `MaxSamples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `MinSamples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `NumericSplitStrategy` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
+| `ObservationsBeforeBinning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `Passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels of test data. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+### Detailed documentation
+{: #hoeffding_tree_detailed-documentation }
+
+This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
+
+The training file and associated labels are specified with the `Training` and `Labels` parameters, respectively. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `BatchMode` option, but this may not be the best option for large datasets.
+
+When a model is trained, it may be saved via the `OutputModel` output parameter.  A model may be loaded from file for further training or testing with the `InputModel` parameter.
+
+Test data may be specified with the `Test` parameter, and if performance statistics are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved with the `Predictions` output parameter, and class probabilities for each prediction may be saved with the `Probabilities` output parameter.
+
+### Example
+For example, to train a Hoeffding tree with confidence 0.99 with data `dataset`, saving the trained tree to `tree`, the following command may be used:
+
+```go
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.Training = dataset
+param.Confidence = 0.99
+
+tree, _, _ := mlpack.HoeffdingTree(param)
+```
+
+Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command: 
+
+```go
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.InputModel = &tree
+param.Test = test_set
+
+_, predictions, class_probs := mlpack.HoeffdingTree(param)
+```
+
+### See also
+
+ - [DecisionTree()](#decision_tree)
+ - [RandomForest()](#random_forest)
+ - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## LinearRegression()
 {: #linear_regression }

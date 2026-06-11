@@ -956,94 +956,6 @@ $ mlpack_hmm_viterbi --input_file obs.csv --input_model_file hmm.bin
  - [Hidden Mixture Models on Wikipedia](https://en.wikipedia.org/wiki/Hidden_Markov_model)
  - [HMM class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hmm/hmm.hpp)
 
-## mlpack_hoeffding_tree
-{: #hoeffding_tree }
-
-#### Hoeffding trees
-{: #hoeffding_tree_descr }
-
-```bash
-$ mlpack_hoeffding_tree [--batch_mode] [--bins 10] [--confidence 0.95]
-        [--help] [--info <string>] [--info_gain] [--input_model_file <string>]
-        [--labels_file <string>] [--max_samples 5000] [--min_samples 100]
-        [--numeric_split_strategy 'binary'] [--observations_before_binning 100]
-        [--passes 1] [--test_file <string>] [--test_labels_file <string>]
-        [--training_file <string>] [--verbose] [--version] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--batch_mode (-b)` | [`flag`](#doc_flag) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. |  |
-| `--bins (-B)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--confidence (-c)` | [`double`](#doc_double) | Confidence before splitting (between 0 and 1). | `0.95` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--info_gain (-i)` | [`flag`](#doc_flag) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. |  |
-| `--input_model_file (-m)` | [`HoeffdingTreeModel file`](#doc_model) | Input trained Hoeffding tree model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for training dataset. | `''` |
-| `--max_samples (-n)` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
-| `--min_samples (-I)` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
-| `--numeric_split_strategy (-N)` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
-| `--observations_before_binning (-o)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
-| `--passes (-s)` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
-| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels of test data. | `''` |
-| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`HoeffdingTreeModel file`](#doc_model) | Output for trained Hoeffding tree model. | 
-| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix to output label predictions for test data into. | 
-| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
-
-### Detailed documentation
-{: #hoeffding_tree_detailed-documentation }
-
-This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
-
-The training file and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `--batch_mode (-b)` option, but this may not be the best option for large datasets.
-
-When a model is trained, it may be saved via the `--output_model_file (-M)` output parameter.  A model may be loaded from file for further training or testing with the `--input_model_file (-m)` parameter.
-
-Test data may be specified with the `--test_file (-T)` parameter, and if performance statistics are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved with the `--predictions_file (-p)` output parameter, and class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
-
-### Example
-For example, to train a Hoeffding tree with confidence 0.99 with data `'dataset.csv'`, saving the trained tree to `'tree.bin'`, the following command may be used:
-
-```bash
-$ mlpack_hoeffding_tree --training_file dataset.arff --confidence 0.99
-  --output_model_file tree.bin
-```
-
-Then, this tree may be used to make predictions on the test set `'test_set.csv'`, saving the predictions into `'predictions.csv'` and the class probabilities into `'class_probs.csv'` with the following command: 
-
-```bash
-$ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
-  --predictions_file predictions.csv --probabilities_file class_probs.csv
-```
-
-### See also
-
- - [mlpack_decision_tree](#decision_tree)
- - [mlpack_random_forest](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
- - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
-
 ## mlpack_image_converter
 {: #image_converter }
 
@@ -3496,6 +3408,94 @@ $ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
  - [Perceptron](#perceptron)
  - [Decision Trees](#decision_tree)
  - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
+## mlpack_hoeffding_tree
+{: #hoeffding_tree }
+
+#### Hoeffding trees
+{: #hoeffding_tree_descr }
+
+```bash
+$ mlpack_hoeffding_tree [--batch_mode] [--bins 10] [--confidence 0.95]
+        [--help] [--info <string>] [--info_gain] [--input_model_file <string>]
+        [--labels_file <string>] [--max_samples 5000] [--min_samples 100]
+        [--numeric_split_strategy 'binary'] [--observations_before_binning 100]
+        [--passes 1] [--test_file <string>] [--test_labels_file <string>]
+        [--training_file <string>] [--verbose] [--version] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--batch_mode (-b)` | [`flag`](#doc_flag) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. |  |
+| `--bins (-B)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--confidence (-c)` | [`double`](#doc_double) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--info_gain (-i)` | [`flag`](#doc_flag) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. |  |
+| `--input_model_file (-m)` | [`HoeffdingTreeModel file`](#doc_model) | Input trained Hoeffding tree model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for training dataset. | `''` |
+| `--max_samples (-n)` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `--min_samples (-I)` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `--numeric_split_strategy (-N)` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
+| `--observations_before_binning (-o)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `--passes (-s)` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels of test data. | `''` |
+| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`HoeffdingTreeModel file`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix to output label predictions for test data into. | 
+| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+### Detailed documentation
+{: #hoeffding_tree_detailed-documentation }
+
+This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
+
+The training file and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `--batch_mode (-b)` option, but this may not be the best option for large datasets.
+
+When a model is trained, it may be saved via the `--output_model_file (-M)` output parameter.  A model may be loaded from file for further training or testing with the `--input_model_file (-m)` parameter.
+
+Test data may be specified with the `--test_file (-T)` parameter, and if performance statistics are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved with the `--predictions_file (-p)` output parameter, and class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
+
+### Example
+For example, to train a Hoeffding tree with confidence 0.99 with data `'dataset.csv'`, saving the trained tree to `'tree.bin'`, the following command may be used:
+
+```bash
+$ mlpack_hoeffding_tree --training_file dataset.arff --confidence 0.99
+  --output_model_file tree.bin
+```
+
+Then, this tree may be used to make predictions on the test set `'test_set.csv'`, saving the predictions into `'predictions.csv'` and the class probabilities into `'class_probs.csv'` with the following command: 
+
+```bash
+$ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
+  --predictions_file predictions.csv --probabilities_file class_probs.csv
+```
+
+### See also
+
+ - [mlpack_decision_tree](#decision_tree)
+ - [mlpack_random_forest](#random_forest)
+ - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## mlpack_linear_regression
 {: #linear_regression }
