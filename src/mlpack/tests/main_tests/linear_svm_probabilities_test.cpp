@@ -73,7 +73,7 @@ TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
   LinearSVMModel* model = new LinearSVMModel;
   model->svm.Train(trainX, trainY, 2);
   SetInputParam("input_model", std::move(model));
-  // Test data has the wrong dimensionality. Should throw a runtime error.
+  // Test data is absent. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
@@ -96,7 +96,7 @@ TEST_CASE_METHOD(LinearSVMProbabilitiesTestFixture,
   model->svm.Train(trainX, trainY, 2, 0.001);
   SetInputParam("input_model", std::move(model));
   SetInputParam("test", std::move(testX));
-  // Required input data is not provided. Should throw invalid argument error.
+  // Required input data is of wrong size. Should throw invalid argument error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::invalid_argument);
 }
 

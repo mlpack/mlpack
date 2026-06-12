@@ -91,8 +91,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << testLabels.n_elem << " labels!" << endl;
     }
 
-    numClasses = params.Get<int>("num_classes") == 0 ?
-        model->mappings.n_elem : params.Get<int>("num_classes");
+    numClasses = model->mappings.n_elem;
     arma::Col<size_t> correctClassCounts;
     arma::Col<size_t> labelSize;
     correctClassCounts.zeros(numClasses);

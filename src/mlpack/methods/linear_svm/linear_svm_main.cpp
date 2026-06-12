@@ -58,6 +58,7 @@ BINDING_LONG_DESC(
     "manually specified with the " + PRINT_PARAM_STRING("num_classes") +
     "and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
+    "\n\n"
     "Margin of difference between correct class and other classes can "
     "be specified with the " + PRINT_PARAM_STRING("delta") + " option."
     "The optimizer used to train the model can be specified with the " +

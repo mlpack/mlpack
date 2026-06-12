@@ -105,7 +105,6 @@ TEST_CASE_METHOD(LinearSVMTrainTestFixture,
   arma::mat testX({{4.0, 5.0}, {1.0, 6.0}});
 
   SetInputParam("training", std::move(trainData1));
-  //SetInputParam("test", testData);
 
   // The first solution.
   FixedRandomSeed();

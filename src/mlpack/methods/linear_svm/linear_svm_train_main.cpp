@@ -50,6 +50,7 @@ BINDING_LONG_DESC(
     "manually specified with the " + PRINT_PARAM_STRING("num_classes") +
     "and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
+    "\n\n"
     "Margin of difference between correct class and other classes can "
     "be specified with the " + PRINT_PARAM_STRING("delta") + " option."
     "The optimizer used to train the model can be specified with the " +
@@ -207,8 +208,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   arma::mat trainingSet;
   arma::Row<size_t> labels;
   arma::Row<size_t> rawLabels;
-  arma::mat testSet;
-  arma::Row<size_t> predictedLabels;
   size_t numClasses;
 
   // Load data matrix.

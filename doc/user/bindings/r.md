@@ -3223,6 +3223,27 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 | **type** | **description** |
 |----------|-----------------|
+<<<<<<< HEAD
+=======
+| [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
+
+### 3. probabilities
+
+Class probabilities from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. |
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. |
+
+#### Returns:
+
+| **type** | **description** |
+|----------|-----------------|
+| [`numeric matrix`](#doc_numeric_matrix) | Requested probabilities. |
+>>>>>>> 59dbfbc3de (Address review comments)
 
 ## class adaboost
 {: #adaboost }

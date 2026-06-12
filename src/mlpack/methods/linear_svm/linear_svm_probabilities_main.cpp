@@ -49,6 +49,7 @@ PARAM_MODEL_IN_REQ(LinearSVMModel, "input_model", "Existing model "
     "(parameters).", "m");
 // Testing.
 PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
+PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 PARAM_MATRIX_OUT("probabilities", "Requested probabilities.", "p");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
@@ -70,10 +71,57 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  model->svm.Classify(testSet, predictions, probabilities);
-  params.Get<arma::mat>("probabilities") = std::move(probabilities);
-  model->svm.Classify(testSet, predictedLabels);
+  model->svm.Classify(testSet, predictedLabels, probabilities);
   RevertLabels(predictedLabels, model->mappings, predictions);
 
+  // Calculate accuracy, if desired.
+  if (params.Has("test_labels"))
+  {
+    arma::Row<size_t> testLabels;
+    arma::Row<size_t> testRawLabels =
+        std::move(params.Get<arma::Row<size_t>>("test_labels"));
+
+    NormalizeLabels(testRawLabels, testLabels, model->mappings);
+
+    if (testSet.n_cols != testLabels.n_elem)
+    {
+      Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
+          << " has " << testSet.n_cols << " points, but labels in "
+          << PRINT_PARAM_STRING("test_labels") << " have "
+          << testLabels.n_elem << " labels!" << endl;
+    }
+
+    size_t numClasses = model->mappings.n_elem;
+    arma::Col<size_t> correctClassCounts;
+    arma::Col<size_t> labelSize;
+    correctClassCounts.zeros(numClasses);
+    labelSize.zeros(numClasses);
+
+    for (arma::uword i = 0; i != predictions.n_elem; ++i)
+    {
+      if (predictions(i) == testLabels(i))
+      {
+        ++correctClassCounts[testLabels(i)];
+      }
+      ++labelSize[testLabels(i)];
+    }
+
+    size_t totalCorrectClass = 0;
+    for (size_t i = 0; i != correctClassCounts.size(); ++i)
+    {
+      Log::Info << "Accuracy for points with label " << i << " is "
+          << (correctClassCounts[i] / static_cast<double>(labelSize[i]))
+          << " (" << correctClassCounts[i] << " of " << labelSize[i] << ")."
+          << endl;
+      totalCorrectClass += correctClassCounts[i];
+    }
+
+    Log::Info << "Total accuracy for all points is "
+        << (totalCorrectClass) / static_cast<double>(predictions.n_elem)
+        << " (" << totalCorrectClass << " of " << predictions.n_elem << ")."
+        << endl;
+  }
+
   timers.Stop("linear_svm_probabilities");
+  params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
