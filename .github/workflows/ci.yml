@@ -38,7 +38,9 @@ jobs:
             name: 'Debug',
             # Disable [DEBUG] output from the tests because it's WAY too verbose.
             cmakeVars: '-DCMAKE_BUILD_TYPE=Debug -DBUILD_CLI_EXECUTABLES=OFF -DCMAKE_CXX_FLAGS="-DMLPACK_NO_PRINT_DEBUG" -DENABLE_HTTPLIB=ON',
-            cores: 4
+            # Core count intentionally reduced to 2 as resource exhaustion
+            # seen when compiling with four cores given our C++ load
+            cores: 2
           },
           {
             runner: ubuntu-latest,
@@ -88,9 +90,9 @@ jobs:
             name: 'CLI',
             cmakeVars: '-DBUILD_CLI_EXECUTABLES=ON -DENABLE_HTTPLIB=ON',
             # Up to 3 cores are supported but the amount of ram provided
-            # leads to severe swapping and massive slowdowns, using 2 is
+            # leads to severe swapping and massive slowdowns, using 1 is
             # the best compromise between cores and ram given our C++ load
-            cores: 2
+            cores: 1
           },
           {
             runner: macOS-latest,
