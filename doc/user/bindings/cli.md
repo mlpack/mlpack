@@ -1985,85 +1985,6 @@ $ mlpack_mean_shift --input_file data.csv --centroid_file centroids.csv
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
-## mlpack_nbc
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```bash
-$ mlpack_nbc [--help] [--incremental_variance] [--info <string>]
-        [--input_model_file <string>] [--labels_file <string>] [--test_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_model_file <string>] [--predictions_file <string>]
-        [--probabilities_file <string>]
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--incremental_variance (-I)` | [`flag`](#doc_flag) | The variance of each class will be calculated incrementally. |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`NBCModel file`](#doc_model) | Input Naive Bayes model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A file containing labels for the training set. | `''` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`NBCModel file`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `--predictions_file (-a)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `--training_file (-t)` parameter.  Labels may be either the last row of the training set, or alternately the `--labels_file (-l)` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `--input_model_file (-m)` parameter.
-
-
-
-The `--incremental_variance (-I)` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `--test_file (-T)` parameter, and the classifications may be saved with the `--predictions_file (-a)`predictions  parameter.  If saving the trained model is desired, this may be done with the `--output_model_file (-M)` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `'data.csv'` with labels `'labels.csv'` and save the model to `'nbc_model.bin'`, the following command may be used:
-
-```bash
-$ mlpack_nbc --training_file data.csv --labels_file labels.csv
-  --output_model_file nbc_model.bin
-```
-
-Then, to use `'nbc_model.bin'` to predict the classes of the dataset `'test_set.csv'` and save the predicted classes to `'predictions.csv'`, the following command may be used:
-
-```bash
-$ mlpack_nbc --input_model_file nbc_model.bin --test_file test_set.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [mlpack_softmax_regression](#softmax_regression)
- - [mlpack_random_forest](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
-
 ## mlpack_nca
 {: #nca }
 
@@ -3496,6 +3417,85 @@ $ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
  - [mlpack_random_forest](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## mlpack_nbc
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier
+{: #nbc_descr }
+
+```bash
+$ mlpack_nbc [--help] [--incremental_variance] [--info <string>]
+        [--input_model_file <string>] [--labels_file <string>] [--test_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--output_model_file <string>] [--predictions_file <string>]
+        [--probabilities_file <string>]
+```
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--incremental_variance (-I)` | [`flag`](#doc_flag) | The variance of each class will be calculated incrementally. |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`NBCModel file`](#doc_model) | Input Naive Bayes model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A file containing labels for the training set. | `''` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`NBCModel file`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `--predictions_file (-a)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+### Detailed documentation
+{: #nbc_detailed-documentation }
+
+This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
+
+The training set is specified with the `--training_file (-t)` parameter.  Labels may be either the last row of the training set, or alternately the `--labels_file (-l)` parameter may be specified to pass a separate matrix of labels.
+
+If training is not desired, a pre-existing model may be loaded with the `--input_model_file (-m)` parameter.
+
+
+
+The `--incremental_variance (-I)` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+
+If classifying a test set is desired, the test set may be specified with the `--test_file (-T)` parameter, and the classifications may be saved with the `--predictions_file (-a)`predictions  parameter.  If saving the trained model is desired, this may be done with the `--output_model_file (-M)` output parameter.
+
+### Example
+For example, to train a Naive Bayes classifier on the dataset `'data.csv'` with labels `'labels.csv'` and save the model to `'nbc_model.bin'`, the following command may be used:
+
+```bash
+$ mlpack_nbc --training_file data.csv --labels_file labels.csv
+  --output_model_file nbc_model.bin
+```
+
+Then, to use `'nbc_model.bin'` to predict the classes of the dataset `'test_set.csv'` and save the predicted classes to `'predictions.csv'`, the following command may be used:
+
+```bash
+$ mlpack_nbc --input_model_file nbc_model.bin --test_file test_set.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [mlpack_softmax_regression](#softmax_regression)
+ - [mlpack_random_forest](#random_forest)
+ - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
 
 ## mlpack_linear_regression
 {: #linear_regression }

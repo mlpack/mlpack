@@ -2053,87 +2053,6 @@ For example, to run mean shift clustering on the dataset `'data'` and store the 
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
-## nbc()
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```python
->>> from mlpack import nbc
->>> d = nbc(check_input_matrices=False, copy_all_inputs=False,
-        incremental_variance=False, input_model=None, labels=np.empty([0],
-        dtype=np.uint64), test=np.empty([0, 0]), training=np.empty([0, 0]),
-        verbose=False)
->>> output_model = d['output_model']
->>> predictions = d['predictions']
->>> probabilities = d['probabilities']
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `incremental_variance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `False` |
-| `input_model` | [`NBCModelType`](#doc_model) | Input Naive Bayes model. | `None` |
-| `labels` | [`int vector`](#doc_int_vector) | A file containing labels for the training set. | `np.empty([0], dtype=np.uint64)` |
-| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | `np.empty([0, 0])` |
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`NBCModelType`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `predictions` | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
-| `probabilities` | [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `input_model` parameter.
-
-
-
-The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `'data'` with labels `'labels'` and save the model to `'nbc_model'`, the following command may be used:
-
-```python
->>> output = nbc(training=data, labels=labels)
->>> nbc_model = output['output_model']
-```
-
-Then, to use `'nbc_model'` to predict the classes of the dataset `'test_set'` and save the predicted classes to `'predictions'`, the following command may be used:
-
-```python
->>> output = nbc(input_model=nbc_model, test=test_set)
->>> predictions = output['predictions']
-```
-
-### See also
-
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
-
 ## nca()
 {: #nca }
 
@@ -3687,6 +3606,104 @@ Class probabilities from Hoeffding trees model.
 | **type** | **description** |
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+## class Nbc
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier training
+{: #nbc_descr }
+
+
+Implements the Naive Bayes classifier on the given labeled training set for us of that trained model to classify the points in a given test set.
+
+The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
+
+The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `incremental_variance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import NaiveBayes
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = NaiveBayesTrees(check_input_matrices=False, copy_all_inputs=False,
+  incremental_variance=False, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data. |
+| predict | Class predictions from a Naive Bayes Classifier model. |
+| predict_proba | Class probabilities from a Naive Bayes Classifier model. |
+
+### 1. fit
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A vector containing labels for the training set. | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`NBCModelType`](#doc_model) | File to save trained Naive Bayes model to. | 
+
+### 2. predict
+
+Class predictions from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
+
+### 3. predict_proba
+
+Class probabilities from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
 ## class LinearRegression
 {: #linear_regression }

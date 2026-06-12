@@ -2003,86 +2003,6 @@ julia> centroids, _ = mean_shift(data)
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
-## nbc()
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```julia
-julia> using mlpack: nbc
-julia> output_model, predictions, probabilities = nbc( ;
-          incremental_variance=false, input_model=nothing, labels=Int[],
-          test=zeros(0, 0), training=zeros(0, 0), verbose=false)
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `incremental_variance` | [`Bool`](#doc_Bool) | The variance of each class will be calculated incrementally. | `false` |
-| `input_model` | [`NBCModel`](#doc_model) | Input Naive Bayes model. | `nothing` |
-| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A file containing labels for the training set. | `Int[]` |
-| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the test set. | `zeros(0, 0)` |
-| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set. | `zeros(0, 0)` |
-| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `input_model` parameter.
-
-
-
-The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset ``data`` with labels ``labels`` and save the model to ``nbc_model``, the following command may be used:
-
-```julia
-julia> using CSV
-julia> data = CSV.read("data.csv")
-julia> labels = CSV.read("labels.csv"; type=Int)
-julia> nbc_model, _, _ = nbc(labels=labels, training=data)
-```
-
-Then, to use ``nbc_model`` to predict the classes of the dataset ``test_set`` and save the predicted classes to ``predictions``, the following command may be used:
-
-```julia
-julia> using CSV
-julia> test_set = CSV.read("test_set.csv")
-julia> _, predictions, _ = nbc(input_model=nbc_model,
-            test=test_set)
-```
-
-### See also
-
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
-
 ## nca()
 {: #nca }
 
@@ -3538,6 +3458,86 @@ julia> _, predictions, class_probs =
  - [random_forest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## nbc()
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier
+{: #nbc_descr }
+
+```julia
+julia> using mlpack: nbc
+julia> output_model, predictions, probabilities = nbc( ;
+          incremental_variance=false, input_model=nothing, labels=Int[],
+          test=zeros(0, 0), training=zeros(0, 0), verbose=false)
+```
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `incremental_variance` | [`Bool`](#doc_Bool) | The variance of each class will be calculated incrementally. | `false` |
+| `input_model` | [`NBCModel`](#doc_model) | Input Naive Bayes model. | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A file containing labels for the training set. | `Int[]` |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the test set. | `zeros(0, 0)` |
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set. | `zeros(0, 0)` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+### Detailed documentation
+{: #nbc_detailed-documentation }
+
+This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
+
+The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
+
+If training is not desired, a pre-existing model may be loaded with the `input_model` parameter.
+
+
+
+The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+
+If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
+
+### Example
+For example, to train a Naive Bayes classifier on the dataset ``data`` with labels ``labels`` and save the model to ``nbc_model``, the following command may be used:
+
+```julia
+julia> using CSV
+julia> data = CSV.read("data.csv")
+julia> labels = CSV.read("labels.csv"; type=Int)
+julia> nbc_model, _, _ = nbc(labels=labels, training=data)
+```
+
+Then, to use ``nbc_model`` to predict the classes of the dataset ``test_set`` and save the predicted classes to ``predictions``, the following command may be used:
+
+```julia
+julia> using CSV
+julia> test_set = CSV.read("test_set.csv")
+julia> _, predictions, _ = nbc(input_model=nbc_model,
+            test=test_set)
+```
+
+### See also
+
+ - [softmax_regression()](#softmax_regression)
+ - [random_forest()](#random_forest)
+ - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
 
 ## linear_regression()
 {: #linear_regression }

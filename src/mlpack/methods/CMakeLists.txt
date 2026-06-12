@@ -83,7 +83,7 @@ add_markdown_docs(logistic_regression logistic_regression
 
 add_all_bindings(lsh lsh "Geometry")
 add_all_bindings(mean_shift mean_shift "Clustering")
-add_all_bindings(naive_bayes nbc "Classification")
+#add_all_bindings(naive_bayes nbc "Classification")
 add_all_bindings(nca nca "Transformations")
 add_all_bindings(neighbor_search knn "Geometry")
 add_all_bindings(neighbor_search kfn "Geometry")
@@ -157,6 +157,19 @@ add_r_binding(hoeffding_trees hoeffding_tree_train "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_classify "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_probabilities "skip")
 add_markdown_docs(hoeffding_trees hoeffding_tree "cli;python;julia;go;r" "python;r")
+
+#add_all_bindings(naive_bayes nbc "Classification")
+add_category(nbc "Classification")
+group_bindings(naive_bayes nbc "train;classify;probabilities")
+add_python_wrapper(naive_bayes nbc)
+add_julia_class(naive_bayes nbc)
+add_cli_executable(naive_bayes nbc)
+add_go_binding(naive_bayes nbc)
+add_r_binding(naive_bayes nbc "include")
+add_r_binding(naive_bayes nbc_train "skip")
+add_r_binding(naive_bayes nbc_classify "skip")
+add_r_binding(naive_bayes nbc_probabilities "skip")
+add_markdown_docs(naive_bayes nbc "cli;python;julia;go;r" "python;r")
 
 
 # Linear Regression has a Python wrapper class that encapsulates its

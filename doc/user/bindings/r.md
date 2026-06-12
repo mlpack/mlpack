@@ -2020,86 +2020,6 @@ R> centroids <- output$centroid
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
-## nbc()
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```R
-R> library(mlpack)
-R> d <- nbc(incremental_variance=FALSE, input_model=NA,
-        labels=matrix(integer(), 0, 0), test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
-        FALSE))
-R> output_model <- d$output_model
-R> predictions <- d$predictions
-R> probabilities <- d$probabilities
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `incremental_variance` | [`logical`](#doc_logical) | The variance of each class will be calculated incrementally. | `FALSE` |
-| `input_model` | [`NBCModel`](#doc_model) | Input Naive Bayes model. | `NA` |
-| `labels` | [`integer vector`](#doc_integer_vector) | A file containing labels for the training set. | `matrix(integer(), 0, 0)` |
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | `matrix(numeric(), 0, 0)` |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-
-### Output options
-
-Results are returned in a R list.  The keys of the list are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `predictions` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
-| `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `input_model` parameter.
-
-
-
-The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `test` parameter, and the classifications may be saved with the `predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `output_model` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `"data"` with labels `"labels"` and save the model to `"nbc_model"`, the following command may be used:
-
-```R
-R> output <- nbc(training=data, labels=labels)
-R> nbc_model <- output$output_model
-```
-
-Then, to use `"nbc_model"` to predict the classes of the dataset `"test_set"` and save the predicted classes to `"predictions"`, the following command may be used:
-
-```R
-R> output <- nbc(input_model=nbc_model, test=test_set)
-R> predictions <- output$predictions
-```
-
-### See also
-
- - [softmax_regression()](#softmax_regression)
- - [random_forest()](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
-
 ## nca()
 {: #nca }
 
@@ -3628,6 +3548,104 @@ Class probabilities from Hoeffding trees model.
 | **type** | **description** |
 |----------|-----------------|
 | [`numeric matrix`](#doc_numeric_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+## class nbc
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier training
+{: #nbc_descr }
+
+
+Implements the Naive Bayes classifier on the given labeled training set for us of that trained model to classify the points in a given test set.
+
+The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
+
+The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `incremental_variance` | [`logical`](#doc_logical) | The variance of each class will be calculated incrementally. | `FALSE` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Example
+
+```r
+
+
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+X_train <- pp[["training"]]
+X_test <- pp[["test"]]
+# labels are indices to operate on both factors or numeric data
+y_train <- y[as.integer(pp[["training_labels"]]), 1]
+y_test <- y[as.integer(pp[["test_labels"]]), 1]
+
+model <- nbc_train(training=X_train, labels=y_train)
+
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| train | An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data. |
+| predict | Class predictions from a Naive Bayes Classifier model. |
+| probabilities | Class probabilities from a Naive Bayes Classifier model. |
+
+### 1. train
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`integer vector`](#doc_integer_vector) | A vector containing labels for the training set. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
+
+### 2. predict
+
+Class predictions from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
+
+### 3. probabilities
+
+Class probabilities from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
 ## class linear_regression
 {: #linear_regression }
