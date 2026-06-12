@@ -46,15 +46,11 @@ DualTreeTraverser<RuleType>::Traverse(CoverTree& queryRoot,
   typedef CoverTreeRecursionSets<MapEntryType, 8> RecursionSets;
   RecursionSets rootRecursionSets;
 
-  MapEntryType rootRefEntry;
-
-  rootRefEntry.node = &referenceNode;
-
   // Perform the evaluation between the roots of either tree.
-  rootRefEntry.score = rule.Score(queryRoot, referenceNode);
-  rootRefEntry.baseCase = rule.BaseCase(queryRoot.Point(),
-      referenceNode.Point());
-  rootRefEntry.traversalInfo = rule.TraversalInfo();
+  MapEntryType rootRefEntry(&referenceNode,
+      rule.Score(queryRoot, referenceNode),
+      rule.BaseCase(queryRoot.Point(), referenceNode.Point()),
+      rule.TraversalInfo());
 
   rootRecursionSets.GetScaleVector(referenceNode.Scale()).push_back(
       rootRefEntry);
@@ -200,11 +196,8 @@ DualTreeTraverser<RuleType>::PruneMap(
           refNode->Point());
 
       // Add to child map.
-      MapEntryType& newFrame = childScaleVector.emplace_back();
-      newFrame.node = frame.node;
-      newFrame.score = score;
-      newFrame.baseCase = baseCase;
-      newFrame.traversalInfo = rule.TraversalInfo();
+      MapEntryType& newFrame = childScaleVector.emplace_back(
+          frame.node, score, baseCase, rule.TraversalInfo());
     }
 
     // If we didn't add anything, then strike this vector from the map.
@@ -284,11 +277,10 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
 
         const int newScale = refNode->Child(j).Scale();
         MapEntryType& newFrame = recursionSets.GetScaleVector(
-            newScale).emplace_back();
-        newFrame.node = &refNode->Child(j);
-        newFrame.score = childScore; // Use the score of the parent.
-        newFrame.baseCase = baseCase;
-        newFrame.traversalInfo = rule.TraversalInfo();
+            newScale).emplace_back(&refNode->Child(j),
+                                   childScore, // Use the score of the parent.
+                                   baseCase,
+                                   rule.TraversalInfo());
       }
     }
 

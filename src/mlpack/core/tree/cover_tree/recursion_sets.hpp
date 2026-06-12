@@ -47,6 +47,17 @@ struct SingleCoverTreeMapEntry
 template<typename TreeType, typename RuleType>
 struct DualCoverTreeMapEntry
 {
+  // Construct the map entry.
+  DualCoverTreeMapEntry(TreeType* node,
+                        double score,
+                        double baseCase,
+                        typename RuleType::TraversalInfoType traversalInfo) :
+      node(node),
+      score(score),
+      baseCase(baseCase),
+      traversalInfo(std::move(traversalInfo))
+  { /* Nothing to do. */ }
+
   // Reference node that data is held for.
   TreeType* node;
   // Score of the node (note that this might be the score of the parent, if the
