@@ -4,6 +4,7 @@
 
 _????-??-??_
 
+ * Accelerated `LeakyReLU` ANN Layer (#4174)
 
 ## mlpack 4.8.0
 
