@@ -54,8 +54,6 @@ PARAM_MODEL_IN_REQ(NBCModel, "input_model", "Input Naive Bayes "
 PARAM_MATRIX_IN_REQ("test", "A matrix containing the test set.", "T");
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "a");
-//PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
-//    " probability of labels for the test set will be written.", "p");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {

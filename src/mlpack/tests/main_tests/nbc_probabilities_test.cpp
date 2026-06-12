@@ -115,7 +115,6 @@ TEST_CASE_METHOD(NBCProbabilitiesTestFixture,
   NBCModel* model = new NBCModel;
   model->mappings = { 0, 1 };
   model->nbc.Train(trainX, trainY, 2);
-  auto v = model->mappings;
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
   RUN_BINDING();
