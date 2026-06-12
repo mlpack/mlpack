@@ -52,14 +52,20 @@ SingleTreeTraverser<RuleType>::ScaleIndex(const int scale)
 
   // Loop through the hot scales.  Allocate one, if it's unallocated.
   int minScale = INT_MAX;
+  int firstMinScale = 8;
   for (size_t i = 0; i < 8; ++i)
   {
     if (hotScaleLevels[i] == INT_MIN)
-      hotScaleLevels[i] = scale;
+      firstMinScale = i; // We will allocate this vector.
     if (hotScaleLevels[i] == scale)
       return i;
     if (hotScaleLevels[i] < minScale)
       minScale = hotScaleLevels[i];
+  }
+  if (firstMinScale != 8)
+  {
+    hotScaleLevels[firstMinScale] = scale;
+    return firstMinScale;
   }
 
   if (scale > minScale)
