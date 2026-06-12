@@ -13,6 +13,7 @@
 #include <mlpack/methods/linear_svm.hpp>
 
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace mlpack;
 
@@ -910,23 +911,12 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest][tiny]",
 {
   using ElemType = TestType;
   using MatType = arma::Mat<ElemType>;
-  using VecType = arma::Col<ElemType>;
 
   const size_t points = 1000;
-  const size_t inputSize = 5;
-  const size_t numClasses = 5;
   const double lambda = 0.5;
 
-  // Generate five-Gaussian dataset.
-  MatType identity = arma::eye<MatType>(5, 5);
-  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  MatType data(inputSize, points);
-  arma::Row<size_t> labels(points);
+  MatType data;
+  arma::Row<size_t> labels;
 
   // This loop can be removed when ensmallen PR #136 is merged into a version
   // of ensmallen that is the minimum required ensmallen version for mlpack.
@@ -936,34 +926,11 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest][tiny]",
   bool success = false;
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    for (size_t i = 0; i < points / 5; ++i)
-    {
-      data.col(i) = g1.Random();
-      labels(i) = 0;
-    }
-    for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-    {
-      data.col(i) = g2.Random();
-      labels(i) = 1;
-    }
-    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-    {
-      data.col(i) = g3.Random();
-      labels(i) = 2;
-    }
-    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-    {
-      data.col(i) = g4.Random();
-      labels(i) = 3;
-    }
-    for (size_t i = (4 * points) / 5; i < points; ++i)
-    {
-      data.col(i) = g5.Random();
-      labels(i) = 4;
-    }
+    // Generate five-Gaussian dataset.
+    GenerateFiveGaussianDataset(data, labels, points);
 
     // Train linear svm object using L-BFGS optimizer.
-    LinearSVM<MatType> lsvm(data, labels, numClasses, lambda);
+    LinearSVM<MatType> lsvm(data, labels, 5, lambda);
 
     // Compare training accuracy to 1.
     const double acc = lsvm.ComputeAccuracy(data, labels);
@@ -971,31 +938,7 @@ TEMPLATE_TEST_CASE("LinearSVMLBFGSMultipleClasses", "[LinearSVMTest][tiny]",
       continue;
 
     // Create test dataset.
-    for (size_t i = 0; i < points / 5; ++i)
-    {
-      data.col(i) = ConvTo<VecType>::From(g1.Random());
-      labels(i) = 0;
-    }
-    for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-    {
-      data.col(i) = ConvTo<VecType>::From(g2.Random());
-      labels(i) = 1;
-    }
-    for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-    {
-      data.col(i) = ConvTo<VecType>::From(g3.Random());
-      labels(i) = 2;
-    }
-    for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-    {
-      data.col(i) = ConvTo<VecType>::From(g4.Random());
-      labels(i) = 3;
-    }
-    for (size_t i = (4 * points) / 5; i < points; ++i)
-    {
-      data.col(i) = ConvTo<VecType>::From(g5.Random());
-      labels(i) = 4;
-    }
+    GenerateFiveGaussianDataset(data, labels, points);
 
     // Compare test accuracy to 1.
     const double testAcc = lsvm.ComputeAccuracy(data, labels);
@@ -1020,76 +963,19 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
   using VecType = arma::Col<ElemType>;
 
   const size_t points = 500;
-  const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  MatType identity = arma::eye<MatType>(5, 5);
-  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  MatType data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  MatType data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train linear svm object.
   LinearSVM<MatType> lsvm(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   MatType scores;
   lsvm.Classify(data, labels, scores);
@@ -1115,76 +1001,18 @@ TEMPLATE_TEST_CASE("LinearSVMClassifySinglePointTest", "[LinearSVMTest]", float,
 TEST_CASE("SinglePointClassifyTest", "[LinearSVMTest]")
 {
   const size_t points = 500;
-  const size_t inputSize = 5;
-  const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  arma::mat data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train linear svm object.
-  LinearSVM<arma::mat> lsvm(data, labels, numClasses, lambda);
+  LinearSVM<arma::mat> lsvm(data, labels, 5, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   arma::Row<size_t> predictions;
   lsvm.Classify(data, predictions);
