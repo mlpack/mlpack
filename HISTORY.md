@@ -4,7 +4,10 @@
 
 _????-??-??_
 
- * Accelerated `LeakyReLU` ANN Layer (#4174)
+ * Accelerated `LeakyReLU` ANN Layer (#4174).
+
+ * Update `LinearSVM` documentation: `Classify()` returns class scores, not
+   class probabilities (#4187).
 
 ## mlpack 4.8.0
 
