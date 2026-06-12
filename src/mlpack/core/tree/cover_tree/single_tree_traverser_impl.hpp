@@ -260,9 +260,6 @@ SingleTreeTraverser<RuleType>::Traverse(
     maxIndex = hotScaleLevels.index_max();
   }
 
-  std::vector<CoverTreeMapEntry> unprunedLeafVector;
-  unprunedLeafVector.reserve(leafVector.size());
-
   for (size_t i = 0; i < leafVector.size(); ++i)
   {
     CoverTreeMapEntry& frame = leafVector.at(i);
