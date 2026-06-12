@@ -39,20 +39,37 @@ git archive --prefix=mlpack-$MAJOR.$MINOR.$PATCH/ $MAJOR.$MINOR.$PATCH |\
 wd=`pwd`;
 cd /tmp/mlpack.org/;
 
-# These may be specific to the old website.
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' index.md;
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' docs.md;
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' getstarted.md;
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' community.md;
-git add index.md docs.md getstarted.md community.md;
+# Get the release date.
+cd files/;
+tar -xvzpf mlpack-$MAJOR.$MINOR.$PATCH.tar.gz;
+cd mlpack-$MAJOR.$MINOR.$PATCH;
+full_release_date=`grep -m 1 '^_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_$' HISTORY.md | sed 's/_//g'`;
+rel_year=`echo $full_release_date | awk -F'-' '{ print $1 }'`;
+rel_mon=`echo $full_release_date | awk -F'-' '{ print $2 }'`;
+rel_day=`echo $full_release_date | awk -F'-' '{ print $3 }' | sed 's/^0//'`;
+rel_mon_txt=`date -d "$rel_mon/01" +%B`;
+cd ../;
+rm -r mlpack-$MAJOR.$MINOR.$PATCH/;
 
-# These may be specific to the new website.
-sed --in-place 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' html/index.html;
-sed --in-place 's/Version [0-9]\.[0-9]\.[0-9]/Version '$MAJOR'.'$MINOR'.'$PATCH'/g' html/index.html;
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' html/getstarted.html;
-sed --in-place 's/[0-9]\.[0-9]\.[0-9]/'$MAJOR'.'$MINOR'.'$PATCH'/g' html/config/install.md;
-git add html/index.html html/getstarted.html html/config/install.md;
+# Get the size.
+tar_size=`ls -lh mlpack-$MAJOR.$MINOR.$PATCH.tar.gz | awk -F' ' '{ print $5 }'`;
+cd ../;
 
+# Update URLs to downloadable files (tarball and MSI).
+sed -i 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' index.html;
+sed -i 's/mlpack-[0-9]\.[0-9]\.[0-9]/mlpack-'$MAJOR'.'$MINOR'.'$PATCH'/g' download.html;
+
+# Update listed version number.
+sed -i 's/Latest version: <b>[0-9]\.[0-9]\.[0-9]<\/b>/Latest version: <b>'$MAJOR'.'$MINOR'.'$PATCH'<\/b>/g' index.html;
+
+# Update release date.
+sed -i 's/Released [A-Za-z]* [0-9]\{1,2\}, [0-9][0-9][0-9][0-9]/Released '$rel_mon_txt' '$rel_day', '$rel_year'/' download.html;
+sed -i 's/released [A-Za-z]* [0-9]\{1,2\}, [0-9][0-9][0-9][0-9]/released '$rel_mon_txt' '$rel_day', '$rel_year'/' index.html;
+
+# Update release size.
+sed -i 's/<span id="file-size">[^<]*<\/span>/<span id="file-size">'$tar_size'B<\/span>/' index.html;
+
+git add index.html download.html;
 git commit -m "Update links to latest stable version.";
 
 git add files/mlpack-$MAJOR.$MINOR.$PATCH.tar.gz;
