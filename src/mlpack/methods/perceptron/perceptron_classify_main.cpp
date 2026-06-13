@@ -46,7 +46,8 @@ BINDING_SEE_ALSO("Perceptron C++ class documentation",
     "@doc/user/methods/perceptron.md");
 
 // Model loading.
-PARAM_MODEL_IN_REQ(PerceptronModel, "input_model", "Input perceptron model.", "m");
+PARAM_MODEL_IN_REQ(PerceptronModel, "input_model", "Input perceptron model.",
+    "m");
 
 // Testing/classification parameters.
 PARAM_MATRIX_IN_REQ("test", "A matrix containing the test set.", "T");
