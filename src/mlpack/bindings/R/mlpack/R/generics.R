@@ -95,8 +95,7 @@ predict.mlpack_bayesian_linear_regression <-
 #' @rdname random_forest
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
-#' @param stddevs A flag selecting standard deviation estimation returned along with
-#' point estimates
+#' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
 predict.mlpack_random_forest <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
@@ -114,8 +113,7 @@ predict.mlpack_random_forest <- function(object, newdata, type=c("predictions", 
 #' @rdname hoeffding_tree
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
-#' @param stddevs A flag selecting standard deviation estimation returned along with
-#' point estimates
+#' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
 predict.mlpack_hoeffding_tree <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
@@ -133,8 +131,7 @@ predict.mlpack_hoeffding_tree <- function(object, newdata, type=c("predictions",
 #' @rdname naive_bayes
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
-#' @param stddevs A flag selecting standard deviation estimation returned along with
-#' point estimates
+#' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
 predict.mlpack_nbc <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
@@ -147,4 +144,16 @@ predict.mlpack_nbc <- function(object, newdata, type=c("predictions", "probabili
     } else {
         res <- nbc_probabilities(input_model=object, newdata, ...)
     }
+}
+
+#' @rdname perceptron
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_perceptron <- function(object, newdata, ...) {
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    res <- perceptron_classify(input_model=object, newdata, ...)
 }

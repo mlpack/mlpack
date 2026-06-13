@@ -2386,79 +2386,6 @@ R> data_mod <- pca(input=data, new_dimensionality=5,
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
  - [PCA C++ class documentation](../../user/methods/pca.md)
 
-## perceptron()
-{: #perceptron }
-
-#### Perceptron
-{: #perceptron_descr }
-
-```R
-R> library(mlpack)
-R> d <- perceptron(input_model=NA, labels=matrix(integer(), 0, 0),
-        max_iterations=1000, test=matrix(numeric(), 0, 0),
-        training=matrix(numeric(), 0, 0), verbose=getOption("mlpack.verbose",
-        FALSE))
-R> output_model <- d$output_model
-R> predictions <- d$predictions
-```
-
-An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `input_model` | [`PerceptronModel`](#doc_model) | Input perceptron model. | `NA` |
-| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels for the training set. | `matrix(integer(), 0, 0)` |
-| `max_iterations` | [`integer`](#doc_integer) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | `matrix(numeric(), 0, 0)` |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | `matrix(numeric(), 0, 0)` |
-| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
-
-### Output options
-
-Results are returned in a R list.  The keys of the list are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
-| `predictions` | [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
-
-### Detailed documentation
-{: #perceptron_detailed-documentation }
-
-This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-
-This program allows loading a perceptron from a model (via the `input_model` parameter) or training a perceptron given training data (via the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `test` parameter) and the classification results on the test set may be saved with the `predictions` output parameter.  The perceptron model may be saved with the `output_model` output parameter.
-
-### Example
-The training data given with the `training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
-
-All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `"training_data"` with labels `"training_labels"`, and saves the model to `"perceptron_model"`.
-
-```R
-R> output <- perceptron(training=training_data, labels=training_labels)
-R> perceptron_model <- output$output_model
-```
-
-Then, this model can be re-used for classification on the test data `"test_data"`.  The example below does precisely that, saving the predicted classes to `"predictions"`.
-
-```R
-R> output <- perceptron(input_model=perceptron_model, test=test_data)
-R> predictions <- output$predictions
-```
-
-Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `input_model` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
-
-### See also
-
- - [adaboost()](#adaboost)
- - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
-
 ## preprocess_split()
 {: #preprocess_split }
 
@@ -3340,6 +3267,83 @@ Class predictions from train decision tree model.
 | **type** | **description** |
 |----------|-----------------|
 | [`numeric matrix`](#doc_numeric_matrix) | Class probabilities for each test point if probabilities has been selected. | 
+
+## class perceptron
+{: #perceptron }
+
+#### Perceptron training
+{: #perceptron_descr }
+
+
+Implementation of a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `max_iterations` | [`integer`](#doc_integer) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Example
+
+```r
+
+
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+X_train <- pp[["training"]]
+X_test <- pp[["test"]]
+# labels are indices to operate on both factors or numeric data
+y_train <- y[as.integer(pp[["training_labels"]]), 1]
+y_test <- y[as.integer(pp[["test_labels"]]), 1]
+
+model <- perceptron_train(training=X_train, labels=y_train,
+  max_iterations=100)
+  
+pred <- predict(model, newdata=X_test) 
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| train | An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points. |
+| predict | Class predictions from perceptron model. |
+
+### 1. train
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels for the training set. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
+
+### 2. predict
+
+Class predictions from perceptron model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
 
 ## class adaboost
 {: #adaboost }

@@ -89,7 +89,7 @@ add_all_bindings(neighbor_search knn "Geometry")
 add_all_bindings(neighbor_search kfn "Geometry")
 add_all_bindings(nmf nmf "Misc. / Other")
 add_all_bindings(pca pca "Transformations")
-add_all_bindings(perceptron perceptron "Classification")
+#add_all_bindings(perceptron perceptron "Classification")
 add_all_bindings(preprocess preprocess_split "Preprocessing")
 add_all_bindings(preprocess preprocess_binarize "Preprocessing")
 add_all_bindings(preprocess preprocess_describe "Preprocessing")
@@ -129,6 +129,17 @@ add_r_binding(decision_tree decision_tree_classify "skip")
 add_r_binding(decision_tree decision_tree_probabilities "skip")
 add_markdown_docs(decision_tree decision_tree "cli;python;julia;go;r" "python;r")
 
+# perceptron
+add_category(perceptron "Classification")
+group_bindings(perceptron perceptron "train;classify")
+add_python_wrapper(perceptron perceptron)
+add_julia_class(perceptron perceptron)
+add_cli_executable(perceptron perceptron)
+add_go_binding(perceptron perceptron)
+add_r_binding(perceptron perceptron "include")
+add_r_binding(perceptron perceptron_train "skip")
+add_r_binding(perceptron perceptron_classify "skip")
+add_markdown_docs(perceptron perceptron "cli;python;julia;go;r" "python;r")
 
 # Adaboost has a Python wrapper class that encapsulates its functionality in a
 # few methods.
