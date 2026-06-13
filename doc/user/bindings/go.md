@@ -2446,102 +2446,6 @@ centroids, _ := mlpack.MeanShift(data, param)
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
-## Nbc()
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.IncrementalVariance = false
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.Nbc(param)
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `IncrementalVariance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `false` |
-| `InputModel` | [`nbcModel`](#doc_model) | Input Naive Bayes model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A file containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `Training` parameter.  Labels may be either the last row of the training set, or alternately the `Labels` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `InputModel` parameter.
-
-
-
-The `IncrementalVariance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `Test` parameter, and the classifications may be saved with the `Predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `OutputModel` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `data` with labels `labels` and save the model to `nbc_model`, the following command may be used:
-
-```go
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.Training = data
-param.Labels = labels
-
-nbc_model, _, _ := mlpack.Nbc(param)
-```
-
-Then, to use `nbc_model` to predict the classes of the dataset `test_set` and save the predicted classes to `predictions`, the following command may be used:
-
-```go
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.InputModel = &nbc_model
-param.Test = test_set
-
-_, predictions, _ := mlpack.Nbc(param)
-```
-
-### See also
-
- - [SoftmaxRegression()](#softmax_regression)
- - [RandomForest()](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
-
 ## Nca()
 {: #nca }
 
@@ -4344,6 +4248,102 @@ _, predictions, class_probs := mlpack.HoeffdingTree(param)
  - [RandomForest()](#random_forest)
  - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
+## Nbc()
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier
+{: #nbc_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.IncrementalVariance = false
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Test = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.Nbc(param)
+```
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `IncrementalVariance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `false` |
+| `InputModel` | [`nbcModel`](#doc_model) | Input Naive Bayes model. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A file containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+### Detailed documentation
+{: #nbc_detailed-documentation }
+
+This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
+
+The training set is specified with the `Training` parameter.  Labels may be either the last row of the training set, or alternately the `Labels` parameter may be specified to pass a separate matrix of labels.
+
+If training is not desired, a pre-existing model may be loaded with the `InputModel` parameter.
+
+
+
+The `IncrementalVariance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+
+If classifying a test set is desired, the test set may be specified with the `Test` parameter, and the classifications may be saved with the `Predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `OutputModel` output parameter.
+
+### Example
+For example, to train a Naive Bayes classifier on the dataset `data` with labels `labels` and save the model to `nbc_model`, the following command may be used:
+
+```go
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.Training = data
+param.Labels = labels
+
+nbc_model, _, _ := mlpack.Nbc(param)
+```
+
+Then, to use `nbc_model` to predict the classes of the dataset `test_set` and save the predicted classes to `predictions`, the following command may be used:
+
+```go
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.InputModel = &nbc_model
+param.Test = test_set
+
+_, predictions, _ := mlpack.Nbc(param)
+```
+
+### See also
+
+ - [SoftmaxRegression()](#softmax_regression)
+ - [RandomForest()](#random_forest)
+ - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
 
 ## LinearRegression()
 {: #linear_regression }

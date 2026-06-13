@@ -129,3 +129,22 @@ predict.mlpack_hoeffding_tree <- function(object, newdata, type=c("predictions",
         res <- hoeffding_tree_probabilities(input_model=object, newdata, ...)
     }
 }
+
+#' @rdname naive_bayes
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param stddevs A flag selecting standard deviation estimation returned along with
+#' point estimates
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_nbc <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    type <- match.arg(type)
+    if (type == "predictions") {
+        res <- nbc_classify(input_model=object, newdata, ...)
+    } else {
+        res <- nbc_probabilities(input_model=object, newdata, ...)
+    }
+}
