@@ -38,6 +38,9 @@ _2026-06-07_
 
  * Fix `CoverTree` compilation errors with non-default element types (#4160).
 
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
+
 ## mlpack 4.7.0
 
 _2026-01-30_
