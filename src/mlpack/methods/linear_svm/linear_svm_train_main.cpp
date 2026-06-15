@@ -24,7 +24,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("Linear SVM Train an L2-regularized support vector machine.");
+BINDING_USER_NAME("Linear SVM Training");
 
 // Short description.
 BINDING_SHORT_DESC(
