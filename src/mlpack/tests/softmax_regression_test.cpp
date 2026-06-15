@@ -13,6 +13,7 @@
 #include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
+#include "test_function_tools.hpp"
 
 using namespace mlpack;
 
@@ -273,49 +274,15 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
     "[SoftmaxRegressionTest]", arma::fmat, arma::mat)
 {
   using MatType = TestType;
-  using VecType = typename GetColType<TestType>::type;
 
   const size_t points = 5000;
-  const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  MatType identity = arma::eye<MatType>(5, 5);
-  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  MatType data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  MatType data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train softmax regression object.
   SoftmaxRegression<MatType> sr(data, labels, numClasses, lambda);
@@ -325,31 +292,7 @@ TEMPLATE_TEST_CASE("SoftmaxRegressionMultipleClasses",
   REQUIRE(acc == Approx(100.0).epsilon(0.02));
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = ConvTo<MatType>::From(g1.Random());
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = ConvTo<MatType>::From(g2.Random());
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = ConvTo<MatType>::From(g3.Random());
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = ConvTo<MatType>::From(g4.Random());
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = ConvTo<MatType>::From(g5.Random());
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
@@ -425,76 +368,19 @@ TEST_CASE("SoftmaxRegressionClassifySinglePointTest",
           "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
-  const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  arma::mat data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train softmax regression object.
   SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   sr.Classify(data, labels);
 
@@ -508,76 +394,19 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesTest",
           "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
-  const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  arma::mat data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train softmax regression object.
   SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
@@ -608,76 +437,19 @@ TEST_CASE("SoftmaxRegressionComputeProbabilitiesAndLabelsTest",
           "[SoftmaxRegressionTest]")
 {
   const size_t points = 5000;
-  const size_t inputSize = 5;
   const size_t numClasses = 5;
   const double lambda = 0.5;
 
   // Generate five-Gaussian dataset.
-  arma::mat identity = arma::eye<arma::mat>(5, 5);
-  GaussianDistribution<> g1(arma::vec("1.0 9.0 1.0 2.0 2.0"), identity);
-  GaussianDistribution<> g2(arma::vec("4.0 3.0 4.0 2.0 2.0"), identity);
-  GaussianDistribution<> g3(arma::vec("3.0 2.0 7.0 0.0 5.0"), identity);
-  GaussianDistribution<> g4(arma::vec("4.0 1.0 1.0 2.0 7.0"), identity);
-  GaussianDistribution<> g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
-
-  arma::mat data(inputSize, points);
-  arma::Row<size_t> labels(points);
-
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  arma::mat data;
+  arma::Row<size_t> labels;
+  GenerateFiveGaussianDataset(data, labels, points);
 
   // Train softmax regression object.
   SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Create test dataset.
-  for (size_t i = 0; i < points / 5; ++i)
-  {
-    data.col(i) = g1.Random();
-    labels(i) = 0;
-  }
-  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
-  {
-    data.col(i) = g2.Random();
-    labels(i) = 1;
-  }
-  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
-  {
-    data.col(i) = g3.Random();
-    labels(i) = 2;
-  }
-  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
-  {
-    data.col(i) = g4.Random();
-    labels(i) = 3;
-  }
-  for (size_t i = (4 * points) / 5; i < points; ++i)
-  {
-    data.col(i) = g5.Random();
-    labels(i) = 4;
-  }
+  GenerateFiveGaussianDataset(data, labels, points);
 
   arma::mat probabilities;
   arma::Row<size_t> testLabels;
