@@ -32,7 +32,7 @@ BINDING_USER_NAME("Perceptron");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of a perceptron---a single level neural network--=for "
+    "An implementation of a perceptron---a single level neural network---for "
     "classification.  Given labeled data, a perceptron can be trained and saved"
     " for future use; or, a pre-trained perceptron can be used for "
     "classification on new points.");
