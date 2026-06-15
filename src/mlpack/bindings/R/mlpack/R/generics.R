@@ -164,7 +164,7 @@ predict.mlpack_perceptron <- function(object, newdata, ...) {
 #' @param type A character value selection predictions or probabilities
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
-predict.mlpack_linear_svm <- function(object, newdata, type=c("predictions", "probabilities"), ...) {
+predict.mlpack_linear_svm <- function(object, newdata, type=c("predictions", "scores"), ...) {
     if (missing(newdata)) {
         stop("Need 'newdata'")
     }
@@ -172,6 +172,6 @@ predict.mlpack_linear_svm <- function(object, newdata, type=c("predictions", "pr
     if (type == "predictions") {
         res <- linear_svm_classify(input_model=object, newdata, ...)
     } else {
-        res <- linear_svm_probabilities(input_model=object, newdata, ...)
+        res <- linear_svm_scores(input_model=object, newdata, ...)
     }
 }

@@ -1,9 +1,10 @@
 /**
- * @file methods/linear_svm/linear_svm_probabilities_main.cpp
+ * @file methods/linear_svm/linear_svm_scores_main.cpp
  * @author Yashwant Singh Parihar
  * @author Dirk Eddelbuettel
  *
- * Given a trained Linear SVM model, classify from model on new data.
+ * Given a trained Linear SVM model, return classification scores from model
+ * on new data. The scores are not probabilities (i.e. not bound to [0, 1]).
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -13,7 +14,7 @@
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME linear_svm_probabilities
+#define BINDING_NAME linear_svm_scores
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "linear_svm.hpp"
@@ -24,17 +25,17 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("Linear SVM Probabilities");
+BINDING_USER_NAME("Linear SVM Scores");
 
 // Short description.
-BINDING_SHORT_DESC("Class probabilities from Linear SVM model.");
+BINDING_SHORT_DESC("Class scores from Linear SVM model.");
 
 // Long description.
 BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-    CALL_METHOD("model", "probabilities", "test", "X_test"));
+    CALL_METHOD("model", "scores", "test", "X_test"));
 
 // See also...
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
@@ -50,7 +51,7 @@ PARAM_MODEL_IN_REQ(LinearSVMModel, "input_model", "Existing model "
 // Testing.
 PARAM_MATRIX_IN_REQ("test", "Matrix containing test dataset.", "T");
 PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
-PARAM_MATRIX_OUT("probabilities", "Requested probabilities.", "p");
+PARAM_MATRIX_OUT("scores", "Requested scores.", "p");
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -64,14 +65,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Load the model.
   LinearSVMModel* model = params.Get<LinearSVMModel*>("input_model");
 
-  timers.Start("linear_svm_probabilities");
+  timers.Start("linear_svm_scores");
 
   // Get the test dataset, and get predictions.
   testSet = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictions;
-  arma::mat probabilities;
-  model->svm.Classify(testSet, predictedLabels, probabilities);
+  arma::mat scores;
+  model->svm.Classify(testSet, predictedLabels, scores);
   RevertLabels(predictedLabels, model->mappings, predictions);
 
   // Calculate accuracy, if desired.
@@ -122,6 +123,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         << endl;
   }
 
-  timers.Stop("linear_svm_probabilities");
-  params.Get<arma::mat>("probabilities") = std::move(probabilities);
+  timers.Stop("linear_svm_scores");
+  params.Get<arma::mat>("scores") = std::move(scores);
 }

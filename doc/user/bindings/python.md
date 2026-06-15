@@ -3227,25 +3227,6 @@ Class predictions from train decision tree model.
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Class probabilities for each test point if probabilities has been selected. |
 
-<<<<<<< HEAD
-=======
-## class LinearSvm
-{: #linear_svm }
-
-#### Linear SVM Train an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This implementation allows training a linear SVM model given training data (specified with the `training` parameter).
-
-The training data may have class labels as its last dimension. Alternately, the `labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
-
-Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
->>>>>>> 59dbfbc3de (Address review comments)
 ### Parameters
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
