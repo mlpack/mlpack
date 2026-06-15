@@ -3223,8 +3223,6 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 | **type** | **description** |
 |----------|-----------------|
-<<<<<<< HEAD
-=======
 | [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
 
 ### 3. scores
@@ -3242,12 +3240,6 @@ Class scores from Linear SVM model.
 
 | **type** | **description** |
 |----------|-----------------|
-<<<<<<< HEAD
-| [`numeric matrix`](#doc_numeric_matrix) | Requested probabilities. |
->>>>>>> 59dbfbc3de (Address review comments)
-=======
-| [`numeric matrix`](#doc_numeric_matrix) | Requested scores. |
->>>>>>> 559c2cbdd6 (Linear SVM returns scores and not probabilities)
 
 ## class adaboost
 {: #adaboost }
