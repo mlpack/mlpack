@@ -80,9 +80,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save furthest neighbor distances to. |
-| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to save neighbor indices to. |
-| `output_model` | [`ApproxKFNModel`](#doc_model) | File to save output model to. |
+| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save furthest neighbor distances to. | 
+| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to save neighbor indices to. | 
+| `output_model` | [`ApproxKFNModel`](#doc_model) | File to save output model to. | 
 
 ### Detailed documentation
 {: #approx_kfn_detailed-documentation }
@@ -188,8 +188,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`integer matrix`](#doc_integer_matrix) | Matrix that will store output recommendations. |
-| `output_model` | [`CFModel`](#doc_model) | Output for trained CF model. |
+| `output` | [`integer matrix`](#doc_integer_matrix) | Matrix that will store output recommendations. | 
+| `output_model` | [`CFModel`](#doc_model) | Output for trained CF model. | 
 
 ### Detailed documentation
 {: #cf_detailed-documentation }
@@ -239,14 +239,14 @@ The following ranking normalization algorithms can be specified via the `normali
 A trained model may be saved to with the `output_model` output parameter.
 
 ### Example
-To train a CF model on a dataset `"training_set"` using NMF for decomposition and saving the trained model to `"model"`, one could call:
+To train a CF model on a dataset `"training_set"` using NMF for decomposition and saving the trained model to `"model"`, one could call: 
 
 ```R
 R> output <- cf(training=training_set, algorithm="NMF")
 R> model <- output$output_model
 ```
 
-Then, to use this model to generate recommendations for the list of users in the query set `"users"`, storing 5 recommendations in `"recommendations"`, one could call
+Then, to use this model to generate recommendations for the list of users in the query set `"users"`, storing 5 recommendations in `"recommendations"`, one could call 
 
 ```R
 R> output <- cf(input_model=model, query=users, recommendations=5)
@@ -299,8 +299,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `assignments` | [`integer vector`](#doc_integer_vector) | Output matrix for assignments of each point. |
-| `centroids` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save output centroids to. |
+| `assignments` | [`integer vector`](#doc_integer_vector) | Output matrix for assignments of each point. | 
+| `centroids` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save output centroids to. | 
 
 ### Detailed documentation
 {: #dbscan_detailed-documentation }
@@ -371,12 +371,12 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DTree`](#doc_model) | Output to save trained density estimation tree to. |
-| `tag_counters_file` | [`character`](#doc_character) | The file to output the number of points that went to each leaf. |
-| `tag_file` | [`character`](#doc_character) | The file to output the tags (and possibly paths) for each sample in the test set. |
-| `test_set_estimates` | [`numeric matrix`](#doc_numeric_matrix) | The output estimates on the test set from the final optimally pruned tree. |
-| `training_set_estimates` | [`numeric matrix`](#doc_numeric_matrix) | The output density estimates on the training set from the final optimally pruned tree. |
-| `vi` | [`numeric matrix`](#doc_numeric_matrix) | The output variable importance values for each feature. |
+| `output_model` | [`DTree`](#doc_model) | Output to save trained density estimation tree to. | 
+| `tag_counters_file` | [`character`](#doc_character) | The file to output the number of points that went to each leaf. | 
+| `tag_file` | [`character`](#doc_character) | The file to output the tags (and possibly paths) for each sample in the test set. | 
+| `test_set_estimates` | [`numeric matrix`](#doc_numeric_matrix) | The output estimates on the test set from the final optimally pruned tree. | 
+| `training_set_estimates` | [`numeric matrix`](#doc_numeric_matrix) | The output density estimates on the training set from the final optimally pruned tree. | 
+| `vi` | [`numeric matrix`](#doc_numeric_matrix) | The output variable importance values for each feature. | 
 
 ### Detailed documentation
 {: #det_detailed-documentation }
@@ -428,7 +428,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output data.  Stored as an edge list. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output data.  Stored as an edge list. | 
 
 ### Detailed documentation
 {: #emst_detailed-documentation }
@@ -500,9 +500,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `indices` | [`integer matrix`](#doc_integer_matrix) | Output matrix of indices. |
-| `kernels` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix of kernels. |
-| `output_model` | [`FastMKSModel`](#doc_model) | Output for FastMKS model. |
+| `indices` | [`integer matrix`](#doc_integer_matrix) | Output matrix of indices. | 
+| `kernels` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix of kernels. | 
+| `output_model` | [`FastMKSModel`](#doc_model) | Output for FastMKS model. | 
 
 ### Detailed documentation
 {: #fastmks_detailed-documentation }
@@ -575,7 +575,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`GMM`](#doc_model) | Output for trained GMM model. |
+| `output_model` | [`GMM`](#doc_model) | Output for trained GMM model. | 
 
 ### Detailed documentation
 {: #gmm_train_detailed-documentation }
@@ -599,7 +599,7 @@ As an example, to train a 6-Gaussian GMM on the data in `"data"` with a maximum 
 R> gmm <- gmm_train(input=data, gaussians=6, trials=3)
 ```
 
-To re-train that GMM on another set of data `"data2"`, the following command may be used:
+To re-train that GMM on another set of data `"data2"`, the following command may be used: 
 
 ```R
 R> new_gmm <- gmm_train(input_model=gmm, input=data2, gaussians=6)
@@ -645,7 +645,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save output samples in. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save output samples in. | 
 
 ### Detailed documentation
 {: #gmm_generate_detailed-documentation }
@@ -698,7 +698,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to store calculated probabilities in. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to store calculated probabilities in. | 
 
 ### Detailed documentation
 {: #gmm_probability_detailed-documentation }
@@ -759,7 +759,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`HMMModel`](#doc_model) | Output for trained HMM. |
+| `output_model` | [`HMMModel`](#doc_model) | Output for trained HMM. | 
 
 ### Detailed documentation
 {: #hmm_train_detailed-documentation }
@@ -815,8 +815,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save observation sequence to. |
-| `state` | [`integer matrix`](#doc_integer_matrix) | Matrix to save hidden state sequence to. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save observation sequence to. | 
+| `state` | [`integer matrix`](#doc_integer_matrix) | Matrix to save hidden state sequence to. | 
 
 ### Detailed documentation
 {: #hmm_generate_detailed-documentation }
@@ -826,7 +826,7 @@ This utility takes an already-trained HMM, specified as the `model` parameter, a
 The state to start the sequence in may be specified with the `start_state` parameter.
 
 ### Example
-For example, to generate a sequence of length 150 from the HMM `"hmm"` and save the observation sequence to `"observations"` and the hidden state sequence to `"states"`, the following command may be used:
+For example, to generate a sequence of length 150 from the HMM `"hmm"` and save the observation sequence to `"observations"` and the hidden state sequence to `"states"`, the following command may be used: 
 
 ```R
 R> output <- hmm_generate(model=hmm, length=150)
@@ -874,7 +874,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `log_likelihood` | [`numeric`](#doc_numeric) | Log-likelihood of the sequence. |
+| `log_likelihood` | [`numeric`](#doc_numeric) | Log-likelihood of the sequence. | 
 
 ### Detailed documentation
 {: #hmm_loglik_detailed-documentation }
@@ -882,7 +882,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 This utility takes an already-trained HMM, specified with the `input_model` parameter, and evaluates the log-likelihood of a sequence of observations, given with the `input` parameter.  The computed log-likelihood is given as output.
 
 ### Example
-For example, to compute the log-likelihood of the sequence `"seq"` with the pre-trained HMM `"hmm"`, the following command may be used:
+For example, to compute the log-likelihood of the sequence `"seq"` with the pre-trained HMM `"hmm"`, the following command may be used: 
 
 ```R
 R> hmm_loglik(input=seq, input_model=hmm)
@@ -928,7 +928,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`integer matrix`](#doc_integer_matrix) | File to save predicted state sequence to. |
+| `output` | [`integer matrix`](#doc_integer_matrix) | File to save predicted state sequence to. | 
 
 ### Detailed documentation
 {: #hmm_viterbi_detailed-documentation }
@@ -988,7 +988,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
 
 ### Detailed documentation
 {: #image_converter_detailed-documentation }
@@ -999,7 +999,7 @@ There are other options too, that can be specified such as `quality`.
 You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
 
 ### Example
- An example to load an image :
+ An example to load an image : 
 
 ```R
 R> Y <- image_converter(input=X, height=256, width=256, channels=3)
@@ -1066,8 +1066,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`KDEModel`](#doc_model) | If specified, the KDE model will be saved here. |
-| `predictions` | [`numeric vector`](#doc_numeric_vector) | Vector to store density predictions. |
+| `output_model` | [`KDEModel`](#doc_model) | If specified, the KDE model will be saved here. | 
+| `predictions` | [`numeric vector`](#doc_numeric_vector) | Vector to store density predictions. | 
 
 ### Detailed documentation
 {: #kde_detailed-documentation }
@@ -1151,7 +1151,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save modified dataset to. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save modified dataset to. | 
 
 ### Detailed documentation
 {: #kernel_pca_detailed-documentation }
@@ -1188,7 +1188,7 @@ The parameters for each of the kernels should be specified with the options `ban
 Optionally, the Nystroem method ("Using the Nystroem method to speed up kernel machines", 2001) can be used to calculate the kernel matrix by specifying the `nystroem_method` parameter. This approach works by using a subset of the data as basis to reconstruct the kernel matrix; to specify the sampling scheme, the `sampling` parameter is used.  The sampling scheme for the Nystroem method can be chosen from the following list: 'kmeans', 'random', 'ordered'.
 
 ### Example
-For example, the following command will perform KPCA on the dataset `"input"` using the Gaussian kernel, and saving the transformed data to `"transformed"`:
+For example, the following command will perform KPCA on the dataset `"input"` using the Gaussian kernel, and saving the transformed data to `"transformed"`: 
 
 ```R
 R> transformed <- kernel_pca(input=input, kernel="gaussian")
@@ -1249,8 +1249,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centroid` | [`numeric matrix`](#doc_numeric_matrix) | If specified, the centroids of each cluster will  be written to the given file. |
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to store output labels or labeled data to. |
+| `centroid` | [`numeric matrix`](#doc_numeric_matrix) | If specified, the centroids of each cluster will  be written to the given file. | 
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to store output labels or labeled data to. | 
 
 ### Detailed documentation
 {: #kmeans_detailed-documentation }
@@ -1300,8 +1300,8 @@ R> final <- output$centroid
 
 
 An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution.
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
 
 To train a BayesianLinearRegression model, the `input` and `responses` parameters must be given. The `center` and `scale` parameters control the centering and the normalizing options. A trained model is returned.
 
@@ -1333,8 +1333,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- bayesian_linear_regression_train(input=X_train, responses=y_train,
   center=1, scale=0)
-
-pred <- predict(model, newdata=X_test)
+  
+pred <- predict(model, newdata=X_test) 
 ```
 
 ### Methods
@@ -1352,14 +1352,14 @@ An implementation of the Bayesian linear regression training.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). |
-| `responses` | [`numeric vector`](#doc_numeric_vector) | Matrix of responses/observations (y). |
+| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). | 
+| `responses` | [`numeric vector`](#doc_numeric_vector) | Matrix of responses/observations (y). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. |
+| [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
 
 ### 2. predict
 
@@ -1369,13 +1369,13 @@ An implementation of the Bayesian linear regression prediction: Given a pre-trai
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. |
+| [`numeric matrix`](#doc_numeric_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. | 
 
 ## class lars
 {: #lars }
@@ -1434,8 +1434,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- lars_train(input=X_train, responses=y_train, lambda1=1e-05,
   lambda2=1e-06)
-
-pred <- predict(model, newdata=X_test)
+  
+pred <- predict(model, newdata=X_test) 
 ```
 
 ### Methods
@@ -1453,14 +1453,14 @@ An implementation of Least Angle Regression (stagewise/lasso), also known as LAR
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). |
-| `responses` | [`numeric vector`](#doc_numeric_vector) | Row vector of responses/observations (y). |
+| `input` | [`numeric matrix`](#doc_numeric_matrix) | Matrix of covariates (X). | 
+| `responses` | [`numeric vector`](#doc_numeric_vector) | Row vector of responses/observations (y). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LARS`](#doc_model) | Output LARS model. |
+| [`LARS`](#doc_model) | Output LARS model. | 
 
 ### 2. predict
 
@@ -1470,13 +1470,13 @@ An implementation of Least Angle Regression (stagewise/lasso), also known as LAR
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing points to regress on (test points). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Matrix containing predicted responses. |
+| [`numeric matrix`](#doc_numeric_matrix) | Matrix containing predicted responses. | 
 
 ## lmnn()
 {: #lmnn }
@@ -1532,42 +1532,42 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centered_data` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for mean-centered dataset. |
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for learned distance matrix. |
-| `transformed_data` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for transformed dataset. |
+| `centered_data` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for mean-centered dataset. | 
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for learned distance matrix. | 
+| `transformed_data` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for transformed dataset. | 
 
 ### Detailed documentation
 {: #lmnn_detailed-documentation }
 
 This program implements Large Margin Nearest Neighbors, a distance learning technique.  The method seeks to improve k-nearest-neighbor classification on a dataset.  The method employes the strategy of reducing distance between similar labeled data points (a.k.a target neighbors) and increasing distance between differently labeled points (a.k.a impostors) using standard optimization techniques over the gradient of the distance between data points.
 
-To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point).
+To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
 The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
-Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter.
+Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
-This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer.
+This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer. 
 
-AdaGrad, specified by the value 'adagrad' for the parameter `optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`). Inaddition, a normalized starting point can be used by specifying the `normalize` parameter.
+AdaGrad, specified by the value 'adagrad' for the parameter `optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`). Inaddition, a normalized starting point can be used by specifying the `normalize` parameter. 
 
-BigBatch_SGD, specified by the value 'bbsgd' for the parameter `optimizer`, depends primarily on four parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter.
+BigBatch_SGD, specified by the value 'bbsgd' for the parameter `optimizer`, depends primarily on four parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. 
 
-Stochastic gradient descent, specified by the value 'sgd' for the parameter `optimizer`, depends primarily on three parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), and the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `center`parameter.
+Stochastic gradient descent, specified by the value 'sgd' for the parameter `optimizer`, depends primarily on three parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), and the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `center`parameter. 
 
 The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter `optimizer`, uses a back-tracking line search algorithm to minimize a function.  The following parameters are used by L-BFGS: `max_iterations`, `tolerance`(the optimization is terminated when the gradient norm is below this value).  For more details on the L-BFGS optimizer, consult either the mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published literature on L-BFGS.  In addition, a normalized starting point can be used by specifying the `normalize` parameter.
 
 By default, the AMSGrad optimizer is used.
 
 ### Example
-Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like:
+Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like: 
 
 ```R
 R> output <- lmnn(input=iris, labels=iris_labels, k=3, optimizer="bbsgd")
 R> output <- output$output
 ```
 
-Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as:
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```R
 R> output <- lmnn(input=letter_recognition, k=5, update_interval=10,
@@ -1627,9 +1627,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `codes` | [`numeric matrix`](#doc_numeric_matrix) | Output codes matrix. |
-| `dictionary` | [`numeric matrix`](#doc_numeric_matrix) | Output dictionary matrix. |
-| `output_model` | [`LocalCoordinateCoding`](#doc_model) | Output for trained LCC model. |
+| `codes` | [`numeric matrix`](#doc_numeric_matrix) | Output codes matrix. | 
+| `dictionary` | [`numeric matrix`](#doc_numeric_matrix) | Output dictionary matrix. | 
+| `output_model` | [`LocalCoordinateCoding`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -1720,9 +1720,9 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- logistic_regression_train(training=X_train, labels=y_train,
   lambda=0.1)
-
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+  
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -1741,14 +1741,14 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). |
+| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. |
+| [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. | 
 
 ### 2. predict
 
@@ -1758,13 +1758,13 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
+| [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
 
 ### 3. probabilities
 
@@ -1774,13 +1774,13 @@ An implementation of L2-regularized logistic regression for two-class classifica
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. |
+| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. | 
 
 ## lsh()
 {: #lsh }
@@ -1829,14 +1829,14 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. |
-| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. |
-| `output_model` | [`LSHSearch`](#doc_model) | Output for trained LSH model. |
+| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. | 
+| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. | 
+| `output_model` | [`LSHSearch`](#doc_model) | Output for trained LSH model. | 
 
 ### Detailed documentation
 {: #lsh_detailed-documentation }
 
-This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
+This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. 
 
 ### Example
 For example, the following will return 5 neighbors from the data for each point in `"input"` and store the distances in `"distances"` and the neighbors in `"neighbors"`:
@@ -1899,8 +1899,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centroid` | [`numeric matrix`](#doc_numeric_matrix) | If specified, the centroids of each cluster will be written to the given matrix. |
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to write output labels or labeled data to. |
+| `centroid` | [`numeric matrix`](#doc_numeric_matrix) | If specified, the centroids of each cluster will be written to the given matrix. | 
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to write output labels or labeled data to. | 
 
 ### Detailed documentation
 {: #mean_shift_detailed-documentation }
@@ -1912,7 +1912,7 @@ The input dataset should be specified with the `input` parameter, and the radius
 The output labels may be saved with the `output` output parameter and the centroids of each cluster may be saved with the `centroid` output parameter.
 
 ### Example
-For example, to run mean shift clustering on the dataset `"data"` and store the centroids to `"centroids"`, the following command may be used:
+For example, to run mean shift clustering on the dataset `"data"` and store the centroids to `"centroids"`, the following command may be used: 
 
 ```R
 R> output <- mean_shift(input=data)
@@ -1977,7 +1977,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for learned distance matrix. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Output matrix for learned distance matrix. | 
 
 ### Detailed documentation
 {: #nca_detailed-documentation }
@@ -2051,9 +2051,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. |
-| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. |
-| `output_model` | [`KNNModel`](#doc_model) | If specified, the kNN model will be output here. |
+| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. | 
+| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. | 
+| `output_model` | [`KNNModel`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
 {: #knn_detailed-documentation }
@@ -2061,7 +2061,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 This program will calculate the k-nearest-neighbors of a set of points using kd-trees or cover trees (cover tree support is experimental and may be slow). You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following command will calculate the 5 nearest neighbors of each point in `"input"` and store the distances in `"distances"` and the neighbors in `"neighbors"`:
+For example, the following command will calculate the 5 nearest neighbors of each point in `"input"` and store the distances in `"distances"` and the neighbors in `"neighbors"`: 
 
 ```R
 R> output <- knn(k=5, reference=input)
@@ -2128,9 +2128,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. |
-| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. |
-| `output_model` | [`KFNModel`](#doc_model) | If specified, the kFN model will be output here. |
+| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. | 
+| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. | 
+| `output_model` | [`KFNModel`](#doc_model) | If specified, the kFN model will be output here. | 
 
 ### Detailed documentation
 {: #kfn_detailed-documentation }
@@ -2138,7 +2138,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 This program will calculate the k-furthest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following will calculate the 5 furthest neighbors of eachpoint in `"input"` and store the distances in `"distances"` and the neighbors in `"neighbors"`:
+For example, the following will calculate the 5 furthest neighbors of eachpoint in `"input"` and store the distances in `"distances"` and the neighbors in `"neighbors"`: 
 
 ```R
 R> output <- kfn(k=5, reference=input)
@@ -2196,13 +2196,13 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `h` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the calculated H to. |
-| `w` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the calculated W to. |
+| `h` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the calculated H to. | 
+| `w` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the calculated W to. | 
 
 ### Detailed documentation
 {: #nmf_detailed-documentation }
 
-This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that
+This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that 
 
 V = W * H
 
@@ -2217,7 +2217,7 @@ Optionally, the desired update rules for each NMF iteration can be chosen from t
 The maximum number of iterations is specified with `max_iterations`, and the minimum residue required for algorithm termination is specified with the `min_residue` parameter.
 
 ### Example
-For example, to run NMF on the input matrix `"V"` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into `"W"` and `"H"`, the following command could be used:
+For example, to run NMF on the input matrix `"V"` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into `"W"` and `"H"`, the following command could be used: 
 
 ```R
 R> output <- nmf(input=V, rank=10, update_rules="multdist")
@@ -2269,7 +2269,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save modified dataset to. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save modified dataset to. | 
 
 ### Detailed documentation
 {: #pca_detailed-documentation }
@@ -2334,10 +2334,10 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save test data to. |
-| `test_labels` | [`integer matrix`](#doc_integer_matrix) | Matrix to save test labels to. |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save training data to. |
-| `training_labels` | [`integer matrix`](#doc_integer_matrix) | Matrix to save train labels to. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save test data to. | 
+| `test_labels` | [`integer matrix`](#doc_integer_matrix) | Matrix to save test labels to. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save training data to. | 
+| `training_labels` | [`integer matrix`](#doc_integer_matrix) | Matrix to save train labels to. | 
 
 ### Detailed documentation
 {: #preprocess_split_detailed-documentation }
@@ -2349,7 +2349,7 @@ The output training and test matrices may be saved with the `training` and `test
 Optionally, labels can also be split along with the data by specifying the `input_labels` parameter.  Splitting labels works the same way as splitting the data. The output training and test labels may be saved with the `training_labels` and `test_labels` output parameters, respectively.
 
 ### Example
-So, a simple example where we want to split the dataset `"X"` into `"X_train"` and `"X_test"` with 60% of the data in the training set and 40% of the dataset in the test set, we could run
+So, a simple example where we want to split the dataset `"X"` into `"X_train"` and `"X_test"` with 60% of the data in the training set and 40% of the dataset in the test set, we could run 
 
 ```R
 R> output <- preprocess_split(input=X, test_ratio=0.4)
@@ -2421,7 +2421,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix in which to save the output. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix in which to save the output. | 
 
 ### Detailed documentation
 {: #preprocess_binarize_detailed-documentation }
@@ -2487,7 +2487,7 @@ This utility takes a dataset and prints out the descriptive statistics of the da
 Optionally, width and precision of the output can be adjusted by a user using the `width` and `precision` parameters. A user can also select a specific dimension to analyze if there are too many dimensions. The `population` parameter can be specified when the dataset should be considered as a population.  Otherwise, the dataset will be considered as a sample.
 
 ### Example
-So, a simple example where we want to print out statistical facts about the dataset `"X"` using the default settings, we could run
+So, a simple example where we want to print out statistical facts about the dataset `"X"` using the default settings, we could run 
 
 ```R
 R> preprocess_describe(input=X, verbose=TRUE)
@@ -2545,8 +2545,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save scaled data to. |
-| `output_model` | [`ScalingModel`](#doc_model) | Output scaling model. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save scaled data to. | 
+| `output_model` | [`ScalingModel`](#doc_model) | Output scaling model. | 
 
 ### Detailed documentation
 {: #preprocess_scale_detailed-documentation }
@@ -2558,14 +2558,14 @@ The output scaled feature matrix may be saved with the `output` output parameter
 The model to scale features can be saved using `output_model` and later can be loaded back using`input_model`.
 
 ### Example
-So, a simple example where we want to scale the dataset `"X"` into `"X_scaled"` with  standard_scaler as scaler_method, we could run
+So, a simple example where we want to scale the dataset `"X"` into `"X_scaled"` with  standard_scaler as scaler_method, we could run 
 
 ```R
 R> output <- preprocess_scale(input=X, scaler_method="standard_scaler")
 R> X_scaled <- output$output
 ```
 
-A simple example where we want to whiten the dataset `"X"` into `"X_whitened"` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run
+A simple example where we want to whiten the dataset `"X"` into `"X_whitened"` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run 
 
 ```R
 R> output <- preprocess_scale(input=X, scaler_method="pca_whitening",
@@ -2581,7 +2581,7 @@ R> output <- preprocess_scale(input=X_scaled, inverse_scaling=TRUE,
 R> X <- output$output
 ```
 
-Another simple example where we want to scale the dataset `"X"` into `"X_scaled"` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run
+Another simple example where we want to scale the dataset `"X"` into `"X_scaled"` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run 
 
 ```R
 R> output <- preprocess_scale(input=X, scaler_method="min_max_scaler",
@@ -2627,7 +2627,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save one-hot encoded features data to. |
+| `output` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save one-hot encoded features data to. | 
 
 ### Detailed documentation
 {: #preprocess_one_hot_encoding_detailed-documentation }
@@ -2691,8 +2691,8 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_ic` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save independent components to. |
-| `output_unmixing` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save unmixing matrix to. |
+| `output_ic` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save independent components to. | 
+| `output_unmixing` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save unmixing matrix to. | 
 
 ### Detailed documentation
 {: #radical_detailed-documentation }
@@ -2702,7 +2702,7 @@ An implementation of RADICAL, a method for independent component analysis (ICA).
 The input matrix to perform ICA on should be specified with the `input` parameter.  The output matrix Y may be saved with the `output_ic` output parameter, and the output unmixing matrix W may be saved with the `output_unmixing` output parameter.
 
 ### Example
-For example, to perform ICA on the matrix `"X"` with 40 replicates, saving the independent components to `"ic"`, the following command may be used:
+For example, to perform ICA on the matrix `"X"` with 40 replicates, saving the independent components to `"ic"`, the following command may be used: 
 
 ```R
 R> output <- radical(input=X, replicates=40)
@@ -2766,9 +2766,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. |
-| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. |
-| `output_model` | [`RAModel`](#doc_model) | If specified, the kNN model will be output here. |
+| `distances` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to output distances into. | 
+| `neighbors` | [`integer matrix`](#doc_integer_matrix) | Matrix to output neighbors into. | 
+| `output_model` | [`RAModel`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
 {: #krann_detailed-documentation }
@@ -2839,9 +2839,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. |
-| `predictions` | [`integer vector`](#doc_integer_vector) | Matrix to save predictions for test dataset into. |
-| `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save class probabilities for test dataset into. |
+| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
+| `predictions` | [`integer vector`](#doc_integer_vector) | Matrix to save predictions for test dataset into. | 
+| `probabilities` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save class probabilities for test dataset into. | 
 
 ### Detailed documentation
 {: #softmax_regression_detailed-documentation }
@@ -2855,7 +2855,7 @@ The trained model can be saved with the `output_model` output parameter. If trai
 The program is also able to evaluate a model on test data.  A test dataset can be specified with the `test` parameter. Class predictions can be saved with the `predictions` output parameter.  If labels are specified for the test data with the `test_labels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
 
 ### Example
-For example, to train a softmax regression model on the data `"dataset"` with labels `"labels"` with a maximum of 1000 iterations for training, saving the trained model to `"sr_model"`, the following command can be used:
+For example, to train a softmax regression model on the data `"dataset"` with labels `"labels"` with a maximum of 1000 iterations for training, saving the trained model to `"sr_model"`, the following command can be used: 
 
 ```R
 R> output <- softmax_regression(training=dataset, labels=labels)
@@ -2923,9 +2923,9 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `codes` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. |
-| `dictionary` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the output dictionary to. |
-| `output_model` | [`SparseCoding`](#doc_model) | File to save trained sparse coding model to. |
+| `codes` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
+| `dictionary` | [`numeric matrix`](#doc_numeric_matrix) | Matrix to save the output dictionary to. | 
+| `output_model` | [`SparseCoding`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -2941,14 +2941,14 @@ Once a dictionary D is found, the sparse coding model may be used to encode othe
 To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `training` option, along with the number of atoms in the dictionary (specified with the `atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `initial_dictionary` parameter.  An input model may be specified with the `input_model` parameter.
 
 ### Example
-As an example, to build a sparse coding model on the dataset `"data"` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `"model"`, use
+As an example, to build a sparse coding model on the dataset `"data"` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `"model"`, use 
 
 ```R
 R> output <- sparse_coding(training=data, atoms=200, lambda1=0.1)
 R> model <- output$output_model
 ```
 
-Then, this model could be used to encode a new matrix, `"otherdata"`, and save the output codes to `"codes"`:
+Then, this model could be used to encode a new matrix, `"otherdata"`, and save the output codes to `"codes"`: 
 
 ```R
 R> output <- sparse_coding(input_model=model, test=otherdata)
@@ -3006,9 +3006,9 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- random_forest_train(training=X_train, labels=y_train,
   minimum_leaf_size=20, num_trees=10, print_training_accuracy=TRUE)
-
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+  
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3027,14 +3027,14 @@ An implementation of the standard random forest algorithm by Leo Breiman for cla
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | Labels for training dataset. |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | Training dataset. |
+| `labels` | [`integer vector`](#doc_integer_vector) | Labels for training dataset. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | Training dataset. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`RandomForestModel`](#doc_model) | Model to save trained random forest to. |
+| [`RandomForestModel`](#doc_model) | Model to save trained random forest to. | 
 
 ### 2. predict
 
@@ -3044,14 +3044,14 @@ Class predictions from random forest model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset to produce predictions for. |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Test dataset labels, if accuracy calculation is desired. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset to produce predictions for. | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Test dataset labels, if accuracy calculation is desired. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | Predicted classes for each point in the test set. |
+| [`integer vector`](#doc_integer_vector) | Predicted classes for each point in the test set. | 
 
 ### 3. probabilities
 
@@ -3061,14 +3061,14 @@ Class probabilities from random forest model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset to produce predictions for. |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Test dataset labels, if accuracy calculation is desired. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset to produce predictions for. | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Test dataset labels, if accuracy calculation is desired. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. |
+| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. | 
 
 ## class decision_tree
 {: #decision_tree }
@@ -3110,9 +3110,9 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- decision_tree_train(training=X_train, labels=y_train,
   minimum_leaf_size=20, minimum_gain_split=0.001)
-
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+  
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3131,15 +3131,15 @@ Training ID3-style decision tree model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | Training labels. |
-| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may contain categorical variables). |
-| `weights` | [`numeric matrix`](#doc_numeric_matrix) | The weight of labels |
+| `labels` | [`integer vector`](#doc_integer_vector) | Training labels. | 
+| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may contain categorical variables). | 
+| `weights` | [`numeric matrix`](#doc_numeric_matrix) | The weight of labels | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`DecisionTreeModel`](#doc_model) | Output for trained decision tree. |
+| [`DecisionTreeModel`](#doc_model) | Output for trained decision tree. | 
 
 ### 2. predict
 
@@ -3149,14 +3149,14 @@ Class predictions from train decision tree model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may contain categorical variables). |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. |
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may contain categorical variables). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | Class predictions for each test point. |
+| [`integer vector`](#doc_integer_vector) | Class predictions for each test point. | 
 
 ### 3. probabilities
 
@@ -3166,20 +3166,29 @@ Class predictions from train decision tree model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may contain categorical variables). |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. |
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may contain categorical variables). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Test point labels, if accuracy calculation is desired. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Class probabilities for each test point if probabilities has been selected. |
+| [`numeric matrix`](#doc_numeric_matrix) | Class probabilities for each test point if probabilities has been selected. | 
 
+## class perceptron
+{: #perceptron }
+
+#### Perceptron training
+{: #perceptron_descr }
+
+
+Implementation of a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
 ### Parameters
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `max_iterations` | [`integer`](#doc_integer) | The maximum number of iterations the perceptron is to be run | `1000` |
 | `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
 
 ### Example
@@ -3197,33 +3206,149 @@ X_test <- pp[["test"]]
 y_train <- y[as.integer(pp[["training_labels"]]), 1]
 y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
+model <- perceptron_train(training=X_train, labels=y_train,
+  max_iterations=100)
+  
+pred <- predict(model, newdata=X_test) 
 ```
 
 ### Methods
 
 | **name** | **description** |
 |----------|-----------------|
+| train | An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points. |
+| predict | Class predictions from perceptron model. |
+
+### 1. train
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points.
 
 #### Input Parameters:
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
+| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels for the training set. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
+| [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
+
+### 2. predict
+
+Class predictions from perceptron model.
 
 #### Input Parameters:
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
+| [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
+
+## class linear_svm
+{: #linear_svm }
+
+#### Linear SVM Training
+{: #linear_svm_descr }
+
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This implementation allows training a linear SVM model given training data (specified with the `training` parameter).
+
+The training data may have class labels as its last dimension. Alternately, the `labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
+| `delta` | [`numeric`](#doc_numeric) | Margin of difference between correct class and other classes. | `1` |
+| `epochs` | [`integer`](#doc_integer) | Maximum number of full epochs over dataset for psgd | `50` |
+| `lambda` | [`numeric`](#doc_numeric) | L2-regularization parameter for training. | `0.0001` |
+| `max_iterations` | [`integer`](#doc_integer) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `no_intercept` | [`logical`](#doc_logical) | Do not add the intercept term to the model. | `FALSE` |
+| `num_classes` | [`integer`](#doc_integer) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `optimizer` | [`character`](#doc_character) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
+| `seed` | [`integer`](#doc_integer) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `shuffle` | [`logical`](#doc_logical) | Don't shuffle the order in which data points are visited for parallel SGD. | `FALSE` |
+| `step_size` | [`numeric`](#doc_numeric) | Step size for parallel SGD optimizer. | `0.01` |
+| `tolerance` | [`numeric`](#doc_numeric) | Convergence tolerance for optimizer. | `1e-10` |
+| `verbose` | [`logical`](#doc_logical) | Display informational messages and the full list of parameters and timers at the end of execution. | `getOption("mlpack.verbose", FALSE)` |
+
+### Example
+
+```r
+
+
+suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
+X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
+y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
+pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+X_train <- pp[["training"]]
+X_test <- pp[["test"]]
+# labels are indices to operate on both factors or numeric data
+y_train <- y[as.integer(pp[["training_labels"]]), 1]
+y_test <- y[as.integer(pp[["test_labels"]]), 1]
+
+model <- linear_svm_train(training=X_train, labels=y_train, lambda=0.1,
+  delta=1, num_classes=0)
+  
+pred <- predict(model, newdata=X_test) 
+) 
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| train | An implementation of linear SVM for multiclass classification. Given labeled data, a model is. |
+| predict | Class prediction from Linear SVM model. |
+| scores | Class scores from Linear SVM model. |
+
+### 1. train
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model is.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`integer vector`](#doc_integer_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LinearSVMModel`](#doc_model) | Output for trained linear svm model. | 
+
+### 2. predict
+
+Class prediction from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`integer vector`](#doc_integer_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
 
 ### 3. scores
 
@@ -3233,13 +3358,14 @@ Class scores from Linear SVM model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Matrix containing test labels. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
+| [`numeric matrix`](#doc_numeric_matrix) | Requested scores. | 
 
 ## class adaboost
 {: #adaboost }
@@ -3278,8 +3404,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- adaboost_train(training=X_train, labels=y_train)
 
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3298,14 +3424,14 @@ Training AdaBoost model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | Labels for the training set. |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | Dataset for training AdaBoost. |
+| `labels` | [`integer vector`](#doc_integer_vector) | Labels for the training set. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | Dataset for training AdaBoost. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. |
+| [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
 
 ### 2. predict
 
@@ -3315,13 +3441,13 @@ Class predictions from model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | Predicted labels for the test set. |
+| [`integer vector`](#doc_integer_vector) | Predicted labels for the test set. | 
 
 ### 3. probabilities
 
@@ -3331,13 +3457,13 @@ Class probabilities from model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Test dataset. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. |
+| [`numeric matrix`](#doc_numeric_matrix) | Predicted class probabilities for each point in the test set. | 
 
 ## class hoeffding_tree
 {: #hoeffding_tree }
@@ -3384,8 +3510,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- hoeffding_tree_train(training=X_train, labels=y_train)
 
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3404,16 +3530,16 @@ An implementation of Hoeffding trees, a form of streaming decision tree for clas
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | Labels for training dataset. |
-| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. |
-| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may be categorical). |
+| `labels` | [`integer vector`](#doc_integer_vector) | Labels for training dataset. | 
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
+| `training` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Training dataset (may be categorical). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. |
+| [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
 
 ### 2. predict
 
@@ -3423,14 +3549,14 @@ Class predictions from Hoeffding trees model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. |
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | Matrix to output label predictions for test data into. |
+| [`integer vector`](#doc_integer_vector) | Matrix to output label predictions for test data into. | 
 
 ### 3. probabilities
 
@@ -3440,14 +3566,14 @@ Class probabilities from Hoeffding trees model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). |
-| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. |
+| `test` | [`categorical matrix/data.frame`](#doc_categorical_matrix_data_frame) | Testing dataset (may be categorical). | 
+| `test_labels` | [`integer vector`](#doc_integer_vector) | Labels of test data. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. |
+| [`numeric matrix`](#doc_numeric_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
 
 ## class nbc
 {: #nbc }
@@ -3486,8 +3612,8 @@ y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- nbc_train(training=X_train, labels=y_train)
 
-pred <- predict(model, newdata=X_test)
-prob <- predict(model, newdata=X_test, type="probabilities")
+pred <- predict(model, newdata=X_test) 
+prob <- predict(model, newdata=X_test, type="probabilities") 
 ```
 
 ### Methods
@@ -3506,14 +3632,14 @@ An implementation of the Naive Bayes Classifier, used for classification. Given 
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `labels` | [`integer vector`](#doc_integer_vector) | A vector containing labels for the training set. |
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. |
+| `labels` | [`integer vector`](#doc_integer_vector) | A vector containing labels for the training set. | 
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the training set. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. |
+| [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
 
 ### 2. predict
 
@@ -3523,13 +3649,13 @@ Class predictions from a Naive Bayes Classifier model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. |
+| [`integer vector`](#doc_integer_vector) | The matrix in which the predicted labels for the test set will be written. | 
 
 ### 3. probabilities
 
@@ -3539,13 +3665,13 @@ Class probabilities from a Naive Bayes Classifier model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | A matrix containing the test set. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written. |
+| [`numeric matrix`](#doc_numeric_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
 ## class linear_regression
 {: #linear_regression }
@@ -3581,8 +3707,8 @@ y_train <- y[as.integer(pp[["training_labels"]]), 1]
 y_test <- y[as.integer(pp[["test_labels"]]), 1]
 
 model <- linear_regression_train(training=X_train, training_responses=y_train)
-
-pred <- predict(model, newdata=X_test)
+  
+pred <- predict(model, newdata=X_test) 
 ```
 
 ### Methods
@@ -3600,14 +3726,14 @@ Train a linear regression model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing training set X (regressors). |
-| `training_responses` | [`numeric vector`](#doc_numeric_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. |
+| `training` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing training set X (regressors). | 
+| `training_responses` | [`numeric vector`](#doc_numeric_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`LinearRegression`](#doc_model) | Output LinearRegression model. |
+| [`LinearRegression`](#doc_model) | Output LinearRegression model. | 
 
 ### 2. predict
 
@@ -3617,10 +3743,11 @@ Predictions from model.
 
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
-| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing X' (test regressors). |
+| `test` | [`numeric matrix`](#doc_numeric_matrix) | Matrix containing X' (test regressors). | 
 
-#### Returns:
+#### Returns: 
 
 | **type** | **description** |
 |----------|-----------------|
-| [`numeric vector`](#doc_numeric_vector) | Matrix containing predicted responses. |
+| [`numeric vector`](#doc_numeric_vector) | Matrix containing predicted responses. | 
+

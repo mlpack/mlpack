@@ -76,9 +76,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save furthest neighbor distances to. |
-| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save neighbor indices to. |
-| `output_model` | [`ApproxKFNModel`](#doc_model) | File to save output model to. |
+| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save furthest neighbor distances to. | 
+| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save neighbor indices to. | 
+| `output_model` | [`ApproxKFNModel`](#doc_model) | File to save output model to. | 
 
 ### Detailed documentation
 {: #approx_kfn_detailed-documentation }
@@ -189,8 +189,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix that will store output recommendations. |
-| `output_model` | [`CFModel`](#doc_model) | Output for trained CF model. |
+| `output` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix that will store output recommendations. | 
+| `output_model` | [`CFModel`](#doc_model) | Output for trained CF model. | 
 
 ### Detailed documentation
 {: #cf_detailed-documentation }
@@ -240,7 +240,7 @@ The following ranking normalization algorithms can be specified via the `normali
 A trained model may be saved to with the `output_model` output parameter.
 
 ### Example
-To train a CF model on a dataset ``training_set`` using NMF for decomposition and saving the trained model to ``model``, one could call:
+To train a CF model on a dataset ``training_set`` using NMF for decomposition and saving the trained model to ``model``, one could call: 
 
 ```julia
 julia> using CSV
@@ -248,7 +248,7 @@ julia> training_set = CSV.read("training_set.csv")
 julia> _, model = cf(algorithm="NMF", training=training_set)
 ```
 
-Then, to use this model to generate recommendations for the list of users in the query set ``users``, storing 5 recommendations in ``recommendations``, one could call
+Then, to use this model to generate recommendations for the list of users in the query set ``users``, storing 5 recommendations in ``recommendations``, one could call 
 
 ```julia
 julia> using CSV
@@ -301,8 +301,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `assignments` | [`Int vector-like`](#doc_Int_vector_like) | Output matrix for assignments of each point. |
-| `centroids` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save output centroids to. |
+| `assignments` | [`Int vector-like`](#doc_Int_vector_like) | Output matrix for assignments of each point. | 
+| `centroids` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save output centroids to. | 
 
 ### Detailed documentation
 {: #dbscan_detailed-documentation }
@@ -370,12 +370,12 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DTree`](#doc_model) | Output to save trained density estimation tree to. |
-| `tag_counters_file` | [`String`](#doc_String) | The file to output the number of points that went to each leaf. |
-| `tag_file` | [`String`](#doc_String) | The file to output the tags (and possibly paths) for each sample in the test set. |
-| `test_set_estimates` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output estimates on the test set from the final optimally pruned tree. |
-| `training_set_estimates` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output density estimates on the training set from the final optimally pruned tree. |
-| `vi` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output variable importance values for each feature. |
+| `output_model` | [`DTree`](#doc_model) | Output to save trained density estimation tree to. | 
+| `tag_counters_file` | [`String`](#doc_String) | The file to output the number of points that went to each leaf. | 
+| `tag_file` | [`String`](#doc_String) | The file to output the tags (and possibly paths) for each sample in the test set. | 
+| `test_set_estimates` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output estimates on the test set from the final optimally pruned tree. | 
+| `training_set_estimates` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output density estimates on the training set from the final optimally pruned tree. | 
+| `vi` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The output variable importance values for each feature. | 
 
 ### Detailed documentation
 {: #det_detailed-documentation }
@@ -426,7 +426,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output data.  Stored as an edge list. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output data.  Stored as an edge list. | 
 
 ### Detailed documentation
 {: #emst_detailed-documentation }
@@ -497,9 +497,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `indices` | [`Int matrix-like`](#doc_Int_matrix_like) | Output matrix of indices. |
-| `kernels` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix of kernels. |
-| `output_model` | [`FastMKSModel`](#doc_model) | Output for FastMKS model. |
+| `indices` | [`Int matrix-like`](#doc_Int_matrix_like) | Output matrix of indices. | 
+| `kernels` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix of kernels. | 
+| `output_model` | [`FastMKSModel`](#doc_model) | Output for FastMKS model. | 
 
 ### Detailed documentation
 {: #fastmks_detailed-documentation }
@@ -575,7 +575,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`GMM`](#doc_model) | Output for trained GMM model. |
+| `output_model` | [`GMM`](#doc_model) | Output for trained GMM model. | 
 
 ### Detailed documentation
 {: #gmm_train_detailed-documentation }
@@ -601,7 +601,7 @@ julia> data = CSV.read("data.csv")
 julia> gmm = gmm_train(6, data; trials=3)
 ```
 
-To re-train that GMM on another set of data ``data2``, the following command may be used:
+To re-train that GMM on another set of data ``data2``, the following command may be used: 
 
 ```julia
 julia> using CSV
@@ -648,7 +648,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save output samples in. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save output samples in. | 
 
 ### Detailed documentation
 {: #gmm_generate_detailed-documentation }
@@ -700,7 +700,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to store calculated probabilities in. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to store calculated probabilities in. | 
 
 ### Detailed documentation
 {: #gmm_probability_detailed-documentation }
@@ -764,7 +764,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`HMMModel`](#doc_model) | Output for trained HMM. |
+| `output_model` | [`HMMModel`](#doc_model) | Output for trained HMM. | 
 
 ### Detailed documentation
 {: #hmm_train_detailed-documentation }
@@ -818,8 +818,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save observation sequence to. |
-| `state` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save hidden state sequence to. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save observation sequence to. | 
+| `state` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save hidden state sequence to. | 
 
 ### Detailed documentation
 {: #hmm_generate_detailed-documentation }
@@ -829,7 +829,7 @@ This utility takes an already-trained HMM, specified as the `model` parameter, a
 The state to start the sequence in may be specified with the `start_state` parameter.
 
 ### Example
-For example, to generate a sequence of length 150 from the HMM ``hmm`` and save the observation sequence to ``observations`` and the hidden state sequence to ``states``, the following command may be used:
+For example, to generate a sequence of length 150 from the HMM ``hmm`` and save the observation sequence to ``observations`` and the hidden state sequence to ``states``, the following command may be used: 
 
 ```julia
 julia> observations, states = hmm_generate(150, hmm)
@@ -874,7 +874,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `log_likelihood` | [`Float64`](#doc_Float64) | Log-likelihood of the sequence. |
+| `log_likelihood` | [`Float64`](#doc_Float64) | Log-likelihood of the sequence. | 
 
 ### Detailed documentation
 {: #hmm_loglik_detailed-documentation }
@@ -882,7 +882,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 This utility takes an already-trained HMM, specified with the `input_model` parameter, and evaluates the log-likelihood of a sequence of observations, given with the `input` parameter.  The computed log-likelihood is given as output.
 
 ### Example
-For example, to compute the log-likelihood of the sequence ``seq`` with the pre-trained HMM ``hmm``, the following command may be used:
+For example, to compute the log-likelihood of the sequence ``seq`` with the pre-trained HMM ``hmm``, the following command may be used: 
 
 ```julia
 julia> using CSV
@@ -929,7 +929,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Int matrix-like`](#doc_Int_matrix_like) | File to save predicted state sequence to. |
+| `output` | [`Int matrix-like`](#doc_Int_matrix_like) | File to save predicted state sequence to. | 
 
 ### Detailed documentation
 {: #hmm_viterbi_detailed-documentation }
@@ -990,7 +990,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save images data to, Onlyneeded if you are specifying 'save' option. | 
 
 ### Detailed documentation
 {: #image_converter_detailed-documentation }
@@ -1001,7 +1001,7 @@ There are other options too, that can be specified such as `quality`.
 You can also provide a dataset and save them as images using `dataset` and `save` as an parameter.
 
 ### Example
- An example to load an image :
+ An example to load an image : 
 
 ```julia
 julia> Y = image_converter(X; channels=3, height=256, width=256)
@@ -1068,8 +1068,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`KDEModel`](#doc_model) | If specified, the KDE model will be saved here. |
-| `predictions` | [`Float64 vector-like`](#doc_Float64_vector_like) | Vector to store density predictions. |
+| `output_model` | [`KDEModel`](#doc_model) | If specified, the KDE model will be saved here. | 
+| `predictions` | [`Float64 vector-like`](#doc_Float64_vector_like) | Vector to store density predictions. | 
 
 ### Detailed documentation
 {: #kde_detailed-documentation }
@@ -1157,7 +1157,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save modified dataset to. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save modified dataset to. | 
 
 ### Detailed documentation
 {: #kernel_pca_detailed-documentation }
@@ -1194,7 +1194,7 @@ The parameters for each of the kernels should be specified with the options `ban
 Optionally, the Nystroem method ("Using the Nystroem method to speed up kernel machines", 2001) can be used to calculate the kernel matrix by specifying the `nystroem_method` parameter. This approach works by using a subset of the data as basis to reconstruct the kernel matrix; to specify the sampling scheme, the `sampling` parameter is used.  The sampling scheme for the Nystroem method can be chosen from the following list: 'kmeans', 'random', 'ordered'.
 
 ### Example
-For example, the following command will perform KPCA on the dataset ``input`` using the Gaussian kernel, and saving the transformed data to ``transformed``:
+For example, the following command will perform KPCA on the dataset ``input`` using the Gaussian kernel, and saving the transformed data to ``transformed``: 
 
 ```julia
 julia> using CSV
@@ -1258,8 +1258,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centroid` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, the centroids of each cluster will  be written to the given file. |
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to store output labels or labeled data to. |
+| `centroid` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, the centroids of each cluster will  be written to the given file. | 
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to store output labels or labeled data to. | 
 
 ### Detailed documentation
 {: #kmeans_detailed-documentation }
@@ -1339,16 +1339,16 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. |
-| `predictions` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If --test_file is specified, this file is where the predicted responses will be saved. |
-| `stds` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, this is where the standard deviations of the predictive distribution will be saved. |
+| `output_model` | [`BayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
+| `predictions` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| `stds` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
 
 ### Detailed documentation
 {: #bayesian_linear_regression_detailed-documentation }
 
 An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution.
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
 
 This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
 
@@ -1367,7 +1367,7 @@ julia> blr_model, _, _ = bayesian_linear_regression(center=1,
             input=data, responses=responses, scale=0)
 ```
 
-The following command uses the ``blr_model`` to provide predicted  responses for the data ``test`` and save those  responses to ``test_predictions``:
+The following command uses the ``blr_model`` to provide predicted  responses for the data ``test`` and save those  responses to ``test_predictions``: 
 
 ```julia
 julia> using CSV
@@ -1376,7 +1376,7 @@ julia> _, test_predictions, _ =
             bayesian_linear_regression(input_model=blr_model, test=test)
 ```
 
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `stds` parameter allows one to save the prediction uncertainties:
+Because the estimator computes a predictive distribution instead of a simple point estimate, the `stds` parameter allows one to save the prediction uncertainties: 
 
 ```julia
 julia> using CSV
@@ -1431,8 +1431,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`LARS`](#doc_model) | Output LARS model. |
-| `output_predictions` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If --test_file is specified, this file is where the predicted responses will be saved. |
+| `output_model` | [`LARS`](#doc_model) | Output LARS model. | 
+| `output_predictions` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If --test_file is specified, this file is where the predicted responses will be saved. | 
 
 ### Detailed documentation
 {: #lars_detailed-documentation }
@@ -1470,7 +1470,7 @@ julia> lasso_model, _ = lars(input=data, lambda1=0.4, lambda2=0,
             responses=responses)
 ```
 
-The following command uses the ``lasso_model`` to provide predicted responses for the data ``test`` and save those responses to ``test_predictions``:
+The following command uses the ``lasso_model`` to provide predicted responses for the data ``test`` and save those responses to ``test_predictions``: 
 
 ```julia
 julia> using CSV
@@ -1536,35 +1536,35 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centered_data` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for mean-centered dataset. |
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for learned distance matrix. |
-| `transformed_data` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for transformed dataset. |
+| `centered_data` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for mean-centered dataset. | 
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for learned distance matrix. | 
+| `transformed_data` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for transformed dataset. | 
 
 ### Detailed documentation
 {: #lmnn_detailed-documentation }
 
 This program implements Large Margin Nearest Neighbors, a distance learning technique.  The method seeks to improve k-nearest-neighbor classification on a dataset.  The method employes the strategy of reducing distance between similar labeled data points (a.k.a target neighbors) and increasing distance between differently labeled points (a.k.a impostors) using standard optimization techniques over the gradient of the distance between data points.
 
-To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point).
+To work, this algorithm needs labeled data.  It can be given as the last row of the input dataset (specified with `input`), or alternatively as a separate matrix (specified with `labels`).  Additionally, a starting point for optimization (specified with `distance`can be given, having (r x d) dimensionality.  Here r should satisfy 1 <= r <= d, Consequently a Low-Rank matrix will be optimized. Alternatively, Low-Rank distance can be learned by specifying the `rank`parameter (A Low-Rank matrix with uniformly distributed values will be used as initial learning point). 
 
 The program also requires number of targets neighbors to work with ( specified with `k`), A regularization parameter can also be passed, It acts as a trade of between the pulling and pushing terms (specified with `regularization`), In addition, this implementation of LMNN includes a parameter to decide the interval after which impostors must be re-calculated (specified with `update_interval`).
 
-Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter.
+Output can either be the learned distance matrix (specified with `output`), or the transformed dataset  (specified with `transformed_data`), or both. Additionally mean-centered dataset (specified with `centered_data`) can be accessed given mean-centering (specified with `center`) is performed on the dataset. Accuracy on initial dataset and final transformed dataset can be printed by specifying the `print_accuracy`parameter. 
 
-This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer.
+This implementation of LMNN uses AdaGrad, BigBatch_SGD, stochastic gradient descent, mini-batch stochastic gradient descent, or the L_BFGS optimizer. 
 
-AdaGrad, specified by the value 'adagrad' for the parameter `optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`). Inaddition, a normalized starting point can be used by specifying the `normalize` parameter.
+AdaGrad, specified by the value 'adagrad' for the parameter `optimizer`, uses maximum of past squared gradients. It primarily on six parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`). Inaddition, a normalized starting point can be used by specifying the `normalize` parameter. 
 
-BigBatch_SGD, specified by the value 'bbsgd' for the parameter `optimizer`, depends primarily on four parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter.
+BigBatch_SGD, specified by the value 'bbsgd' for the parameter `optimizer`, depends primarily on four parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. 
 
-Stochastic gradient descent, specified by the value 'sgd' for the parameter `optimizer`, depends primarily on three parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), and the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `center`parameter.
+Stochastic gradient descent, specified by the value 'sgd' for the parameter `optimizer`, depends primarily on three parameters: the step size (specified with `step_size`), the batch size (specified with `batch_size`), and the maximum number of passes (specified with `passes`).  In addition, a normalized starting point can be used by specifying the `normalize` parameter. Furthermore, mean-centering can be performed on the dataset by specifying the `center`parameter. 
 
 The L-BFGS optimizer, specified by the value 'lbfgs' for the parameter `optimizer`, uses a back-tracking line search algorithm to minimize a function.  The following parameters are used by L-BFGS: `max_iterations`, `tolerance`(the optimization is terminated when the gradient norm is below this value).  For more details on the L-BFGS optimizer, consult either the mlpack L-BFGS documentation (in lbfgs.hpp) or the vast set of published literature on L-BFGS.  In addition, a normalized starting point can be used by specifying the `normalize` parameter.
 
 By default, the AMSGrad optimizer is used.
 
 ### Example
-Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like:
+Example - Let's say we want to learn distance on iris dataset with number of targets as 3 using BigBatch_SGD optimizer. A simple call for the same will look like: 
 
 ```julia
 julia> using CSV
@@ -1574,7 +1574,7 @@ julia> _, output, _ = lmnn(iris; k=3, labels=iris_labels,
             optimizer="bbsgd")
 ```
 
-Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as:
+Another program call making use of update interval & regularization parameter with dataset having labels as last column can be made as: 
 
 ```julia
 julia> using CSV
@@ -1631,9 +1631,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `codes` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output codes matrix. |
-| `dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output dictionary matrix. |
-| `output_model` | [`LocalCoordinateCoding`](#doc_model) | Output for trained LCC model. |
+| `codes` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output codes matrix. | 
+| `dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output dictionary matrix. | 
+| `output_model` | [`LocalCoordinateCoding`](#doc_model) | Output for trained LCC model. | 
 
 ### Detailed documentation
 {: #local_coordinate_coding_detailed-documentation }
@@ -1717,9 +1717,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | If test data is specified, this matrix is where the predictions for the test set will be saved. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. |
+| `output_model` | [`LogisticRegression`](#doc_model) | Output for trained logistic regression model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
 
 ### Detailed documentation
 {: #logistic_regression_detailed-documentation }
@@ -1753,7 +1753,7 @@ julia> lr_model, _, _ = logistic_regression(labels=labels,
             lambda=0.1, print_training_accuracy=1, training=data)
 ```
 
-Then, to use that model to predict classes for the dataset '``test``', storing the output predictions in '``predictions``', the following command may be used:
+Then, to use that model to predict classes for the dataset '``test``', storing the output predictions in '``predictions``', the following command may be used: 
 
 ```julia
 julia> using CSV
@@ -1813,14 +1813,14 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. |
-| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. |
-| `output_model` | [`LSHSearch`](#doc_model) | Output for trained LSH model. |
+| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. | 
+| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. | 
+| `output_model` | [`LSHSearch`](#doc_model) | Output for trained LSH model. | 
 
 ### Detailed documentation
 {: #lsh_detailed-documentation }
 
-This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
+This program will calculate the k approximate-nearest-neighbors of a set of points using locality-sensitive hashing. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. 
 
 ### Example
 For example, the following will return 5 neighbors from the data for each point in ``input`` and store the distances in ``distances`` and the neighbors in ``neighbors``:
@@ -1881,8 +1881,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `centroid` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, the centroids of each cluster will be written to the given matrix. |
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to write output labels or labeled data to. |
+| `centroid` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If specified, the centroids of each cluster will be written to the given matrix. | 
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to write output labels or labeled data to. | 
 
 ### Detailed documentation
 {: #mean_shift_detailed-documentation }
@@ -1894,7 +1894,7 @@ The input dataset should be specified with the `input` parameter, and the radius
 The output labels may be saved with the `output` output parameter and the centroids of each cluster may be saved with the `centroid` output parameter.
 
 ### Example
-For example, to run mean shift clustering on the dataset ``data`` and store the centroids to ``centroids``, the following command may be used:
+For example, to run mean shift clustering on the dataset ``data`` and store the centroids to ``centroids``, the following command may be used: 
 
 ```julia
 julia> using CSV
@@ -1959,7 +1959,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for learned distance matrix. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Output matrix for learned distance matrix. | 
 
 ### Detailed documentation
 {: #nca_detailed-documentation }
@@ -2030,9 +2030,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. |
-| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. |
-| `output_model` | [`KNNModel`](#doc_model) | If specified, the kNN model will be output here. |
+| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. | 
+| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. | 
+| `output_model` | [`KNNModel`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
 {: #knn_detailed-documentation }
@@ -2040,7 +2040,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 This program will calculate the k-nearest-neighbors of a set of points using kd-trees or cover trees (cover tree support is experimental and may be slow). You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following command will calculate the 5 nearest neighbors of each point in ``input`` and store the distances in ``distances`` and the neighbors in ``neighbors``:
+For example, the following command will calculate the 5 nearest neighbors of each point in ``input`` and store the distances in ``distances`` and the neighbors in ``neighbors``: 
 
 ```julia
 julia> using CSV
@@ -2103,9 +2103,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. |
-| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. |
-| `output_model` | [`KFNModel`](#doc_model) | If specified, the kFN model will be output here. |
+| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. | 
+| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. | 
+| `output_model` | [`KFNModel`](#doc_model) | If specified, the kFN model will be output here. | 
 
 ### Detailed documentation
 {: #kfn_detailed-documentation }
@@ -2113,7 +2113,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 This program will calculate the k-furthest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set.
 
 ### Example
-For example, the following will calculate the 5 furthest neighbors of eachpoint in ``input`` and store the distances in ``distances`` and the neighbors in ``neighbors``:
+For example, the following will calculate the 5 furthest neighbors of eachpoint in ``input`` and store the distances in ``distances`` and the neighbors in ``neighbors``: 
 
 ```julia
 julia> using CSV
@@ -2169,13 +2169,13 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `h` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the calculated H to. |
-| `w` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the calculated W to. |
+| `h` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the calculated H to. | 
+| `w` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the calculated W to. | 
 
 ### Detailed documentation
 {: #nmf_detailed-documentation }
 
-This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that
+This program performs non-negative matrix factorization on the given dataset, storing the resulting decomposed matrices in the specified files.  For an input dataset V, NMF decomposes V into two matrices W and H such that 
 
 V = W * H
 
@@ -2190,7 +2190,7 @@ Optionally, the desired update rules for each NMF iteration can be chosen from t
 The maximum number of iterations is specified with `max_iterations`, and the minimum residue required for algorithm termination is specified with the `min_residue` parameter.
 
 ### Example
-For example, to run NMF on the input matrix ``V`` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into ``W`` and ``H``, the following command could be used:
+For example, to run NMF on the input matrix ``V`` using the 'multdist' update rules with a rank-10 decomposition and storing the decomposed matrices into ``W`` and ``H``, the following command could be used: 
 
 ```julia
 julia> using CSV
@@ -2241,7 +2241,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save modified dataset to. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save modified dataset to. | 
 
 ### Detailed documentation
 {: #pca_detailed-documentation }
@@ -2304,10 +2304,10 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save test data to. |
-| `test_labels` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save test labels to. |
-| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save training data to. |
-| `training_labels` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save train labels to. |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save test data to. | 
+| `test_labels` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save test labels to. | 
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save training data to. | 
+| `training_labels` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to save train labels to. | 
 
 ### Detailed documentation
 {: #preprocess_split_detailed-documentation }
@@ -2319,7 +2319,7 @@ The output training and test matrices may be saved with the `training` and `test
 Optionally, labels can also be split along with the data by specifying the `input_labels` parameter.  Splitting labels works the same way as splitting the data. The output training and test labels may be saved with the `training_labels` and `test_labels` output parameters, respectively.
 
 ### Example
-So, a simple example where we want to split the dataset ``X`` into ``X_train`` and ``X_test`` with 60% of the data in the training set and 40% of the dataset in the test set, we could run
+So, a simple example where we want to split the dataset ``X`` into ``X_train`` and ``X_test`` with 60% of the data in the training set and 40% of the dataset in the test set, we could run 
 
 ```julia
 julia> using CSV
@@ -2392,7 +2392,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix in which to save the output. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix in which to save the output. | 
 
 ### Detailed documentation
 {: #preprocess_binarize_detailed-documentation }
@@ -2462,7 +2462,7 @@ This utility takes a dataset and prints out the descriptive statistics of the da
 Optionally, width and precision of the output can be adjusted by a user using the `width` and `precision` parameters. A user can also select a specific dimension to analyze if there are too many dimensions. The `population` parameter can be specified when the dataset should be considered as a population.  Otherwise, the dataset will be considered as a sample.
 
 ### Example
-So, a simple example where we want to print out statistical facts about the dataset ``X`` using the default settings, we could run
+So, a simple example where we want to print out statistical facts about the dataset ``X`` using the default settings, we could run 
 
 ```julia
 julia> using CSV
@@ -2521,8 +2521,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save scaled data to. |
-| `output_model` | [`ScalingModel`](#doc_model) | Output scaling model. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save scaled data to. | 
+| `output_model` | [`ScalingModel`](#doc_model) | Output scaling model. | 
 
 ### Detailed documentation
 {: #preprocess_scale_detailed-documentation }
@@ -2534,7 +2534,7 @@ The output scaled feature matrix may be saved with the `output` output parameter
 The model to scale features can be saved using `output_model` and later can be loaded back using`input_model`.
 
 ### Example
-So, a simple example where we want to scale the dataset ``X`` into ``X_scaled`` with  standard_scaler as scaler_method, we could run
+So, a simple example where we want to scale the dataset ``X`` into ``X_scaled`` with  standard_scaler as scaler_method, we could run 
 
 ```julia
 julia> using CSV
@@ -2543,7 +2543,7 @@ julia> X_scaled, _ = preprocess_scale(X;
             scaler_method="standard_scaler")
 ```
 
-A simple example where we want to whiten the dataset ``X`` into ``X_whitened`` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run
+A simple example where we want to whiten the dataset ``X`` into ``X_whitened`` with  PCA as whitening_method and use 0.01 as regularization parameter, we could run 
 
 ```julia
 julia> using CSV
@@ -2561,7 +2561,7 @@ julia> X, _ = preprocess_scale(X_scaled; input_model=saved,
             inverse_scaling=1)
 ```
 
-Another simple example where we want to scale the dataset ``X`` into ``X_scaled`` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run
+Another simple example where we want to scale the dataset ``X`` into ``X_scaled`` with  min_max_scaler as scaler method, where scaling range is 1 to 3 instead of default 0 to 1. We could run 
 
 ```julia
 julia> using CSV
@@ -2606,7 +2606,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save one-hot encoded features data to. |
+| `output` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save one-hot encoded features data to. | 
 
 ### Detailed documentation
 {: #preprocess_one_hot_encoding_detailed-documentation }
@@ -2669,8 +2669,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_ic` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save independent components to. |
-| `output_unmixing` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save unmixing matrix to. |
+| `output_ic` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save independent components to. | 
+| `output_unmixing` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save unmixing matrix to. | 
 
 ### Detailed documentation
 {: #radical_detailed-documentation }
@@ -2680,7 +2680,7 @@ An implementation of RADICAL, a method for independent component analysis (ICA).
 The input matrix to perform ICA on should be specified with the `input` parameter.  The output matrix Y may be saved with the `output_ic` output parameter, and the output unmixing matrix W may be saved with the `output_unmixing` output parameter.
 
 ### Example
-For example, to perform ICA on the matrix ``X`` with 40 replicates, saving the independent components to ``ic``, the following command may be used:
+For example, to perform ICA on the matrix ``X`` with 40 replicates, saving the independent components to ``ic``, the following command may be used: 
 
 ```julia
 julia> using CSV
@@ -2741,9 +2741,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. |
-| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. |
-| `output_model` | [`RAModel`](#doc_model) | If specified, the kNN model will be output here. |
+| `distances` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to output distances into. | 
+| `neighbors` | [`Int matrix-like`](#doc_Int_matrix_like) | Matrix to output neighbors into. | 
+| `output_model` | [`RAModel`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
 {: #krann_detailed-documentation }
@@ -2812,9 +2812,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to save predictions for test dataset into. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save class probabilities for test dataset into. |
+| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to save predictions for test dataset into. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save class probabilities for test dataset into. | 
 
 ### Detailed documentation
 {: #softmax_regression_detailed-documentation }
@@ -2828,7 +2828,7 @@ The trained model can be saved with the `output_model` output parameter. If trai
 The program is also able to evaluate a model on test data.  A test dataset can be specified with the `test` parameter. Class predictions can be saved with the `predictions` output parameter.  If labels are specified for the test data with the `test_labels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
 
 ### Example
-For example, to train a softmax regression model on the data ``dataset`` with labels ``labels`` with a maximum of 1000 iterations for training, saving the trained model to ``sr_model``, the following command can be used:
+For example, to train a softmax regression model on the data ``dataset`` with labels ``labels`` with a maximum of 1000 iterations for training, saving the trained model to ``sr_model``, the following command can be used: 
 
 ```julia
 julia> using CSV
@@ -2898,9 +2898,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `codes` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the output sparse codes of the test matrix (--test_file) to. |
-| `dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the output dictionary to. |
-| `output_model` | [`SparseCoding`](#doc_model) | File to save trained sparse coding model to. |
+| `codes` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
+| `dictionary` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save the output dictionary to. | 
+| `output_model` | [`SparseCoding`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
 {: #sparse_coding_detailed-documentation }
@@ -2916,7 +2916,7 @@ Once a dictionary D is found, the sparse coding model may be used to encode othe
 To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `training` option, along with the number of atoms in the dictionary (specified with the `atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `initial_dictionary` parameter.  An input model may be specified with the `input_model` parameter.
 
 ### Example
-As an example, to build a sparse coding model on the dataset ``data`` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into ``model``, use
+As an example, to build a sparse coding model on the dataset ``data`` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into ``model``, use 
 
 ```julia
 julia> using CSV
@@ -2925,7 +2925,7 @@ julia> _, _, model = sparse_coding(atoms=200, lambda1=0.1,
             training=data)
 ```
 
-Then, this model could be used to encode a new matrix, ``otherdata``, and save the output codes to ``codes``:
+Then, this model could be used to encode a new matrix, ``otherdata``, and save the output codes to ``codes``: 
 
 ```julia
 julia> using CSV
@@ -2988,9 +2988,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`RandomForestModel`](#doc_model) | Model to save trained random forest to. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Predicted classes for each point in the test set. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Predicted class probabilities for each point in the test set. |
+| `output_model` | [`RandomForestModel`](#doc_model) | Model to save trained random forest to. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Predicted classes for each point in the test set. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Predicted class probabilities for each point in the test set. | 
 
 ### Detailed documentation
 {: #random_forest_detailed-documentation }
@@ -3015,7 +3015,7 @@ julia> rf_model, _, _ = random_forest(labels=labels,
             training=data)
 ```
 
-Then, to use that model to classify points in ``test_set`` and print the test error given the labels ``test_labels`` using that model, while saving the predictions for each point to ``predictions``, one could call
+Then, to use that model to classify points in ``test_set`` and print the test error given the labels ``test_labels`` using that model, while saving the predictions for each point to ``predictions``, one could call 
 
 ```julia
 julia> using CSV
@@ -3076,9 +3076,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`DecisionTreeModel`](#doc_model) | Output for trained decision tree. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Class predictions for each test point. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Class probabilities for each test point. |
+| `output_model` | [`DecisionTreeModel`](#doc_model) | Output for trained decision tree. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Class predictions for each test point. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Class probabilities for each test point. | 
 
 ### Detailed documentation
 {: #decision_tree_detailed-documentation }
@@ -3103,7 +3103,7 @@ julia> tree, _, _ = decision_tree(labels=labels,
             print_training_accuracy=1, training=data)
 ```
 
-Then, to use that model to classify points in ``test_set`` and print the test error given the labels ``test_labels`` using that model, while saving the predictions for each point to ``predictions``, one could call
+Then, to use that model to classify points in ``test_set`` and print the test error given the labels ``test_labels`` using that model, while saving the predictions for each point to ``predictions``, one could call 
 
 ```julia
 julia> using CSV
@@ -3120,6 +3120,20 @@ julia> _, predictions, _ = decision_tree(input_model=tree,
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
+## perceptron()
+{: #perceptron }
+
+#### Perceptron
+{: #perceptron_descr }
+
+```julia
+julia> using mlpack: perceptron
+julia> output_model, predictions = perceptron( ; input_model=nothing,
+          labels=Int[], max_iterations=1000, test=zeros(0, 0), training=zeros(0,
+          0), verbose=false)
+```
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
 
 
 
@@ -3128,6 +3142,11 @@ julia> _, predictions, _ = decision_tree(input_model=tree,
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `input_model` | [`PerceptronModel`](#doc_model) | Input perceptron model. | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels for the training set. | `Int[]` |
+| `max_iterations` | [`Int`](#doc_Int) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the test set. | `zeros(0, 0)` |
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set. | `zeros(0, 0)` |
 | `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -3136,6 +3155,140 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
+| `output_model` | [`PerceptronModel`](#doc_model) | Output for trained perceptron model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
+
+### Detailed documentation
+{: #perceptron_detailed-documentation }
+
+This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+
+This program allows loading a perceptron from a model (via the `input_model` parameter) or training a perceptron given training data (via the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `test` parameter) and the classification results on the test set may be saved with the `predictions` output parameter.  The perceptron model may be saved with the `output_model` output parameter.
+
+### Example
+The training data given with the `training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `labels` parameter may be used to specify a separate matrix of labels.
+
+All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on ``training_data`` with labels ``training_labels``, and saves the model to ``perceptron_model``.
+
+```julia
+julia> using CSV
+julia> training_data = CSV.read("training_data.csv")
+julia> training_labels = CSV.read("training_labels.csv"; type=Int)
+julia> perceptron_model, _ = perceptron(labels=training_labels,
+            training=training_data)
+```
+
+Then, this model can be re-used for classification on the test data ``test_data``.  The example below does precisely that, saving the predicted classes to ``predictions``.
+
+```julia
+julia> using CSV
+julia> test_data = CSV.read("test_data.csv")
+julia> _, predictions = perceptron(input_model=perceptron_model,
+            test=test_data)
+```
+
+Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `input_model` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
+
+### See also
+
+ - [adaboost()](#adaboost)
+ - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
+
+## linear_svm()
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```julia
+julia> using mlpack: linear_svm
+julia> output_model, predictions, probabilities = linear_svm( ;
+          delta=1.0, epochs=50, input_model=nothing, labels=Int[],
+          lambda=0.0001, max_iterations=10000, no_intercept=false,
+          num_classes=0, optimizer="lbfgs", seed=0, shuffle=false,
+          step_size=0.01, test=zeros(0, 0), test_labels=Int[], tolerance=1e-10,
+          training=zeros(0, 0), verbose=false)
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `delta` | [`Float64`](#doc_Float64) | Margin of difference between correct class and other classes. | `1.0` |
+| `epochs` | [`Int`](#doc_Int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `input_model` | [`LinearSVMModel`](#doc_model) | Existing model (parameters). | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). | `Int[]` |
+| `lambda` | [`Float64`](#doc_Float64) | L2-regularization parameter for training. | `0.0001` |
+| `max_iterations` | [`Int`](#doc_Int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `no_intercept` | [`Bool`](#doc_Bool) | Do not add the intercept term to the model. | `false` |
+| `num_classes` | [`Int`](#doc_Int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `optimizer` | [`String`](#doc_String) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
+| `seed` | [`Int`](#doc_Int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `shuffle` | [`Bool`](#doc_Bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
+| `step_size` | [`Float64`](#doc_Float64) | Step size for parallel SGD optimizer. | `0.01` |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing test dataset. | `zeros(0, 0)` |
+| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Matrix containing test labels. | `Int[]` |
+| `tolerance` | [`Float64`](#doc_Float64) | Convergence tolerance for optimizer. | `1e-10` |
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set (the matrix of predictors, X). | `zeros(0, 0)` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`LinearSVMModel`](#doc_model) | Output for trained linear svm model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `input_model` parameter) or training a linear SVM model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained linear SVM model may be saved using the `output_model` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing linear SVM model is given with the `input_model` parameter.  The output predictions from the linear SVM model may be saved with the `predictions` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '``data``' with labels '``labels``' with L2 regularization of 0.1, saving the model to '``lsvm_model``', the following command may be used:
+
+```julia
+julia> using CSV
+julia> data = CSV.read("data.csv")
+julia> labels = CSV.read("labels.csv"; type=Int)
+julia> lsvm_model, _, _ = linear_svm(delta=1, labels=labels,
+            lambda=0.1, num_classes=0, training=data)
+```
+
+Then, to use that model to predict classes for the dataset '``test``', storing the output predictions in '``predictions``', the following command may be used: 
+
+```julia
+julia> using CSV
+julia> test = CSV.read("test.csv")
+julia> _, predictions, _ = linear_svm(input_model=lsvm_model,
+            test=test)
+```
+
+### See also
+
+ - [random_forest()](#random_forest)
+ - [logistic_regression()](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## adaboost()
 {: #adaboost }
@@ -3175,9 +3328,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Predicted labels for the test set. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Predicted class probabilities for each point in the test set. |
+| `output_model` | [`AdaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Predicted labels for the test set. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Predicted class probabilities for each point in the test set. | 
 
 ### Detailed documentation
 {: #adaboost_detailed-documentation }
@@ -3191,7 +3344,7 @@ This program allows training of an AdaBoost model, and then application of that 
 Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `test` parameter.  The predicted classes for each point in the test dataset are output to the `predictions` output parameter.  The AdaBoost model itself is output to the `output_model` output parameter.
 
 ### Example
-For example, to run AdaBoost on an input dataset ``data`` with labels ``labels``and perceptrons as the weak learner type, storing the trained model in ``model``, one could use the following command:
+For example, to run AdaBoost on an input dataset ``data`` with labels ``labels``and perceptrons as the weak learner type, storing the trained model in ``model``, one could use the following command: 
 
 ```julia
 julia> using CSV
@@ -3201,7 +3354,7 @@ julia> model, _, _ = adaboost(labels=labels, training=data,
             weak_learner="perceptron")
 ```
 
-Similarly, an already-trained model in ``model`` can be used to provide class predictions from test data ``test_data`` and store the output in ``predictions`` with the following command:
+Similarly, an already-trained model in ``model`` can be used to provide class predictions from test data ``test_data`` and store the output in ``predictions`` with the following command: 
 
 ```julia
 julia> using CSV
@@ -3265,9 +3418,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to output label predictions for test data into. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | In addition to predicting labels, provide rediction probabilities in this matrix. |
+| `output_model` | [`HoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to output label predictions for test data into. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
 
 ### Detailed documentation
 {: #hoeffding_tree_detailed-documentation }
@@ -3292,7 +3445,7 @@ julia> tree, _, _ = hoeffding_tree(confidence=0.99,
             training=dataset)
 ```
 
-Then, this tree may be used to make predictions on the test set ``test_set``, saving the predictions into ``predictions`` and the class probabilities into ``class_probs`` with the following command:
+Then, this tree may be used to make predictions on the test set ``test_set``, saving the predictions into ``predictions`` and the class probabilities into ``class_probs`` with the following command: 
 
 ```julia
 julia> using CSV
@@ -3343,9 +3496,9 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. |
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. |
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written. |
+| `output_model` | [`NBCModel`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | The matrix in which the predicted labels for the test set will be written. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | The matrix in which the predicted probability of labels for the test set will be written. | 
 
 ### Detailed documentation
 {: #nbc_detailed-documentation }
@@ -3423,8 +3576,8 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `output_model` | [`LinearRegression`](#doc_model) | Output LinearRegression model. |
-| `output_predictions` | [`Float64 vector-like`](#doc_Float64_vector_like) | If --test_file is specified, this matrix is where the predicted responses will be saved. |
+| `output_model` | [`LinearRegression`](#doc_model) | Output LinearRegression model. | 
+| `output_predictions` | [`Float64 vector-like`](#doc_Float64_vector_like) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
 
 ### Detailed documentation
 {: #linear_regression_detailed-documentation }
@@ -3466,3 +3619,4 @@ julia> _, X_test_responses = linear_regression(input_model=lr_model,
  - [lars()](#lars)
  - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
  - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+
