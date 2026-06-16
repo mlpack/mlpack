@@ -2346,78 +2346,6 @@ $ mlpack_pca --input_file data.csv --new_dimensionality 5
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
  - [PCA C++ class documentation](../../user/methods/pca.md)
 
-## mlpack_perceptron
-{: #perceptron }
-
-#### Perceptron
-{: #perceptron_descr }
-
-```bash
-$ mlpack_perceptron [--help] [--info <string>] [--input_model_file
-        <string>] [--labels_file <string>] [--max_iterations 1000] [--test_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_model_file <string>] [--predictions_file <string>]
-```
-
-An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`PerceptronModel file`](#doc_model) | Input perceptron model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels for the training set. | `''` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`PerceptronModel file`](#doc_model) | Output for trained perceptron model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
-
-### Detailed documentation
-{: #perceptron_detailed-documentation }
-
-This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `--max_iterations (-n)` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-
-This program allows loading a perceptron from a model (via the `--input_model_file (-m)` parameter) or training a perceptron given training data (via the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `--test_file (-T)` parameter) and the classification results on the test set may be saved with the `--predictions_file (-P)` output parameter.  The perceptron model may be saved with the `--output_model_file (-M)` output parameter.
-
-### Example
-The training data given with the `--training_file (-t)` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
-
-All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `'training_data.csv'` with labels `'training_labels.csv'`, and saves the model to `'perceptron_model.bin'`.
-
-```bash
-$ mlpack_perceptron --training_file training_data.csv --labels_file
-  training_labels.csv --output_model_file perceptron_model.bin
-```
-
-Then, this model can be re-used for classification on the test data `'test_data.csv'`.  The example below does precisely that, saving the predicted classes to `'predictions.csv'`.
-
-```bash
-$ mlpack_perceptron --input_model_file perceptron_model.bin --test_file
-  test_data.csv --predictions_file predictions.csv
-```
-
-Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `--input_model_file (-m)` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
-
-### See also
-
- - [mlpack_adaboost](#adaboost)
- - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
-
 ## mlpack_preprocess_split
 {: #preprocess_split }
 
@@ -3251,6 +3179,78 @@ $ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
  - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
  - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
  - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
+
+## mlpack_perceptron
+{: #perceptron }
+
+#### Perceptron
+{: #perceptron_descr }
+
+```bash
+$ mlpack_perceptron [--help] [--info <string>] [--input_model_file
+        <string>] [--labels_file <string>] [--max_iterations 1000] [--test_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--output_model_file <string>] [--predictions_file <string>]
+```
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`PerceptronModel file`](#doc_model) | Input perceptron model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels for the training set. | `''` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`PerceptronModel file`](#doc_model) | Output for trained perceptron model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
+
+### Detailed documentation
+{: #perceptron_detailed-documentation }
+
+This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `--max_iterations (-n)` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+
+This program allows loading a perceptron from a model (via the `--input_model_file (-m)` parameter) or training a perceptron given training data (via the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `--test_file (-T)` parameter) and the classification results on the test set may be saved with the `--predictions_file (-P)` output parameter.  The perceptron model may be saved with the `--output_model_file (-M)` output parameter.
+
+### Example
+The training data given with the `--training_file (-t)` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
+
+All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `'training_data.csv'` with labels `'training_labels.csv'`, and saves the model to `'perceptron_model.bin'`.
+
+```bash
+$ mlpack_perceptron --training_file training_data.csv --labels_file
+  training_labels.csv --output_model_file perceptron_model.bin
+```
+
+Then, this model can be re-used for classification on the test data `'test_data.csv'`.  The example below does precisely that, saving the predicted classes to `'predictions.csv'`.
+
+```bash
+$ mlpack_perceptron --input_model_file perceptron_model.bin --test_file
+  test_data.csv --predictions_file predictions.csv
+```
+
+Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `--input_model_file (-m)` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
+
+### See also
+
+ - [mlpack_adaboost](#adaboost)
+ - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## mlpack_adaboost
 {: #adaboost }
