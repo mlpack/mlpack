@@ -1799,125 +1799,6 @@ _, test_predictions := mlpack.Lars(param)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
 
-## LinearSvm()
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Delta = 1
-param.Epochs = 50
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Lambda = 0.0001
-param.MaxIterations = 10000
-param.NoIntercept = false
-param.NumClasses = 0
-param.Optimizer = "lbfgs"
-param.Seed = 0
-param.Shuffle = false
-param.StepSize = 0.01
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.LinearSvm(param)
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Delta` | [`float64`](#doc_float64) | Margin of difference between correct class and other classes. | `1` |
-| `Epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `InputModel` | [`linearsvmModel`](#doc_model) | Existing model (parameters). | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
-| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0.0001` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
-| `NumClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
-| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `Shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
-| `StepSize` | [`float64`](#doc_float64) | Step size for parallel SGD optimizer. | `0.01` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`linearsvmModel`](#doc_model) | Output for trained linear svm model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `InputModel` parameter) or training a linear SVM model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained linear SVM model may be saved using the `OutputModel` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lsvm_model`', the following command may be used:
-
-```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Training = data
-param.Labels = labels
-param.Lambda = 0.1
-param.Delta = 1
-param.NumClasses = 0
-
-lsvm_model, _, _ := mlpack.LinearSvm(param)
-```
-
-Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
-
-```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.InputModel = &lsvm_model
-param.Test = test
-
-_, predictions, _ := mlpack.LinearSvm(param)
-```
-
-### See also
-
- - [RandomForest()](#random_forest)
- - [LogisticRegression()](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
 ## Lmnn()
 {: #lmnn }
 
@@ -4038,6 +3919,127 @@ Note that all of the options may be specified at once: predictions may be calcul
  - [Adaboost()](#adaboost)
  - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
  - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
+
+## LinearSvm()
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.Delta = 1
+param.Epochs = 50
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Lambda = 0.0001
+param.MaxIterations = 10000
+param.NoIntercept = false
+param.NumClasses = 0
+param.Optimizer = "lbfgs"
+param.Seed = 0
+param.Shuffle = false
+param.StepSize = 0.01
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Tolerance = 1e-10
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.LinearSvm(param)
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Delta` | [`float64`](#doc_float64) | Margin of difference between correct class and other classes. | `1` |
+| `Epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `InputModel` | [`linearsvmModel`](#doc_model) | Existing model (parameters). | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
+| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0.0001` |
+| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
+| `NumClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
+| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `Shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
+| `StepSize` | [`float64`](#doc_float64) | Step size for parallel SGD optimizer. | `0.01` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
+| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`linearsvmModel`](#doc_model) | Output for trained linear svm model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `InputModel` parameter) or training a linear SVM model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained linear SVM model may be saved using the `OutputModel` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lsvm_model`', the following command may be used:
+
+```go
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.Training = data
+param.Labels = labels
+param.Lambda = 0.1
+param.Delta = 1
+param.NumClasses = 0
+
+lsvm_model, _, _ := mlpack.LinearSvm(param)
+```
+
+Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
+
+```go
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.InputModel = &lsvm_model
+param.Test = test
+
+_, predictions, _ := mlpack.LinearSvm(param)
+```
+
+### See also
+
+ - [RandomForest()](#random_forest)
+ - [LogisticRegression()](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## Adaboost()
 {: #adaboost }

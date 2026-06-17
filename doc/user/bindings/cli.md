@@ -1474,96 +1474,6 @@ $ mlpack_lars --input_model_file lasso_model.bin --test_file test.csv
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
 
-## mlpack_linear_svm
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```bash
-$ mlpack_linear_svm [--delta 1] [--epochs 50] [--help] [--info <string>]
-        [--input_model_file <string>] [--labels_file <string>] [--lambda 0.0001]
-        [--max_iterations 10000] [--no_intercept] [--num_classes 0] [--optimizer
-        'lbfgs'] [--seed 0] [--shuffle] [--step_size 0.01] [--test_file
-        <string>] [--test_labels_file <string>] [--tolerance 1e-10]
-        [--training_file <string>] [--verbose] [--version] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--delta (-d)` | [`double`](#doc_double) | Margin of difference between correct class and other classes. | `1` |
-| `--epochs (-E)` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`LinearSVMModel file`](#doc_model) | Existing model (parameters). | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
-| `--lambda (-r)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0.0001` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `--no_intercept (-N)` | [`flag`](#doc_flag) | Do not add the intercept term to the model. |  |
-| `--num_classes (-c)` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
-| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `--shuffle (-S)` | [`flag`](#doc_flag) | Don't shuffle the order in which data points are visited for parallel SGD. |  |
-| `--step_size (-a)` | [`double`](#doc_double) | Step size for parallel SGD optimizer. | `0.01` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix containing test labels. | `''` |
-| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`LinearSVMModel file`](#doc_model) | Output for trained linear svm model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `--input_model_file (-m)` parameter) or training a linear SVM model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained linear SVM model may be saved using the `--output_model_file (-M)` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing linear SVM model is given with the `--input_model_file (-m)` parameter.  The output predictions from the linear SVM model may be saved with the `--predictions_file (-P)` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lsvm_model.bin'`', the following command may be used:
-
-```bash
-$ mlpack_linear_svm --training_file data.csv --labels_file labels.csv --lambda
-  0.1 --delta 1 --num_classes 0 --output_model_file lsvm_model.bin
-```
-
-Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
-
-```bash
-$ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [mlpack_random_forest](#random_forest)
- - [mlpack_logistic_regression](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
 ## mlpack_lmnn
 {: #lmnn }
 
@@ -3251,6 +3161,98 @@ Note that all of the options may be specified at once: predictions may be calcul
  - [mlpack_adaboost](#adaboost)
  - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
  - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
+
+## mlpack_linear_svm
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```bash
+$ mlpack_linear_svm [--delta 1] [--epochs 50] [--help] [--info <string>]
+        [--input_model_file <string>] [--labels_file <string>] [--lambda 0.0001]
+        [--max_iterations 10000] [--no_intercept] [--num_classes 0] [--optimizer
+        'lbfgs'] [--seed 0] [--shuffle] [--step_size 0.01] [--test_file
+        <string>] [--test_labels_file <string>] [--tolerance 1e-10]
+        [--training_file <string>] [--verbose] [--version] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--delta (-d)` | [`double`](#doc_double) | Margin of difference between correct class and other classes. | `1` |
+| `--epochs (-E)` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`LinearSVMModel file`](#doc_model) | Existing model (parameters). | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
+| `--lambda (-r)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0.0001` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `--no_intercept (-N)` | [`flag`](#doc_flag) | Do not add the intercept term to the model. |  |
+| `--num_classes (-c)` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
+| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `--shuffle (-S)` | [`flag`](#doc_flag) | Don't shuffle the order in which data points are visited for parallel SGD. |  |
+| `--step_size (-a)` | [`double`](#doc_double) | Step size for parallel SGD optimizer. | `0.01` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix containing test labels. | `''` |
+| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`LinearSVMModel file`](#doc_model) | Output for trained linear svm model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `--input_model_file (-m)` parameter) or training a linear SVM model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained linear SVM model may be saved using the `--output_model_file (-M)` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing linear SVM model is given with the `--input_model_file (-m)` parameter.  The output predictions from the linear SVM model may be saved with the `--predictions_file (-P)` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lsvm_model.bin'`', the following command may be used:
+
+```bash
+$ mlpack_linear_svm --training_file data.csv --labels_file labels.csv --lambda
+  0.1 --delta 1 --num_classes 0 --output_model_file lsvm_model.bin
+```
+
+Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
+
+```bash
+$ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [mlpack_random_forest](#random_forest)
+ - [mlpack_logistic_regression](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## mlpack_adaboost
 {: #adaboost }

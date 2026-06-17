@@ -197,6 +197,9 @@ add_executable(mlpack_test
   main_tests/linear_regression_train_test.cpp
   main_tests/linear_regression_predict_test.cpp
   main_tests/linear_svm_test.cpp
+  main_tests/linear_svm_train_test.cpp
+  main_tests/linear_svm_classify_test.cpp
+  main_tests/linear_svm_scores_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp

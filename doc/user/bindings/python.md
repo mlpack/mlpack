@@ -1505,100 +1505,6 @@ An implementation of Least Angle Regression (stagewise/lasso), also known as LAR
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Matrix containing predicted responses. | 
 
-## linear_svm()
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```python
->>> from mlpack import linear_svm
->>> d = linear_svm(check_input_matrices=False, copy_all_inputs=False,
-        delta=1, epochs=50, input_model=None, labels=np.empty([0],
-        dtype=np.uint64), lambda_=0.0001, max_iterations=10000,
-        no_intercept=False, num_classes=0, optimizer='lbfgs', seed=0,
-        shuffle=False, step_size=0.01, test=np.empty([0, 0]),
-        test_labels=np.empty([0], dtype=np.uint64), tolerance=1e-10,
-        training=np.empty([0, 0]), verbose=False)
->>> output_model = d['output_model']
->>> predictions = d['predictions']
->>> probabilities = d['probabilities']
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `delta` | [`float`](#doc_float) | Margin of difference between correct class and other classes. | `1` |
-| `epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `input_model` | [`LinearSVMModelType`](#doc_model) | Existing model (parameters). | `None` |
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | `np.empty([0], dtype=np.uint64)` |
-| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0.0001` |
-| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
-| `num_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
-| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `False` |
-| `step_size` | [`float`](#doc_float) | Step size for parallel SGD optimizer. | `0.01` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | `np.empty([0, 0])` |
-| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | `np.empty([0], dtype=np.uint64)` |
-| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LinearSVMModelType`](#doc_model) | Output for trained linear svm model. | 
-| `predictions` | [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `probabilities` | [`matrix`](#doc_matrix) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `input_model` parameter) or training a linear SVM model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained linear SVM model may be saved using the `output_model` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing linear SVM model is given with the `input_model` parameter.  The output predictions from the linear SVM model may be saved with the `predictions` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '`'data'`' with labels '`'labels'`' with L2 regularization of 0.1, saving the model to '`'lsvm_model'`', the following command may be used:
-
-```python
->>> output = linear_svm(training=data, labels=labels, lambda_=0.1, delta=1,
-  num_classes=0)
->>> lsvm_model = output['output_model']
-```
-
-Then, to use that model to predict classes for the dataset '`'test'`', storing the output predictions in '`'predictions'`', the following command may be used: 
-
-```python
->>> output = linear_svm(input_model=lsvm_model, test=test)
->>> predictions = output['predictions']
-```
-
-### See also
-
- - [random_forest()](#random_forest)
- - [logistic_regression()](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
 ## lmnn()
 {: #lmnn }
 
@@ -3396,6 +3302,122 @@ Class predictions from perceptron model.
 | **type** | **description** |
 |----------|-----------------|
 | [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
+
+## class LinearSvm
+{: #linear_svm }
+
+#### Linear SVM Training
+{: #linear_svm_descr }
+
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This implementation allows training a linear SVM model given training data (specified with the `training` parameter).
+
+The training data may have class labels as its last dimension. Alternately, the `labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `delta` | [`float`](#doc_float) | Margin of difference between correct class and other classes. | `1` |
+| `epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0.0001` |
+| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
+| `num_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
+| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `False` |
+| `step_size` | [`float`](#doc_float) | Step size for parallel SGD optimizer. | `0.01` |
+| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import LinearSvm
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = LinearSvm(check_input_matrices=False, copy_all_inputs=False,
+  delta=1, epochs=50, lambda_=0.0001, max_iterations=10000, no_intercept=False,
+  num_classes=0, optimizer='lbfgs', seed=0, shuffle=False, step_size=0.01,
+  tolerance=1e-10, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> scores = model.scores(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of linear SVM for multiclass classification. Given labeled data, a model is. |
+| predict | Class prediction from Linear SVM model. |
+| scores | Class scores from Linear SVM model. |
+
+### 1. fit
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model is.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LinearSVMModelType`](#doc_model) | Output for trained linear svm model. | 
+
+### 2. predict
+
+Class prediction from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+
+### 3. scores
+
+Class scores from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Requested scores. | 
 
 ## class Adaboost
 {: #adaboost }

@@ -1485,99 +1485,6 @@ julia> _, test_predictions = lars(input_model=lasso_model,
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
 
-## linear_svm()
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```julia
-julia> using mlpack: linear_svm
-julia> output_model, predictions, probabilities = linear_svm( ;
-          delta=1.0, epochs=50, input_model=nothing, labels=Int[],
-          lambda=0.0001, max_iterations=10000, no_intercept=false,
-          num_classes=0, optimizer="lbfgs", seed=0, shuffle=false,
-          step_size=0.01, test=zeros(0, 0), test_labels=Int[], tolerance=1e-10,
-          training=zeros(0, 0), verbose=false)
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `delta` | [`Float64`](#doc_Float64) | Margin of difference between correct class and other classes. | `1.0` |
-| `epochs` | [`Int`](#doc_Int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `input_model` | [`LinearSVMModel`](#doc_model) | Existing model (parameters). | `nothing` |
-| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). | `Int[]` |
-| `lambda` | [`Float64`](#doc_Float64) | L2-regularization parameter for training. | `0.0001` |
-| `max_iterations` | [`Int`](#doc_Int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `no_intercept` | [`Bool`](#doc_Bool) | Do not add the intercept term to the model. | `false` |
-| `num_classes` | [`Int`](#doc_Int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `optimizer` | [`String`](#doc_String) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
-| `seed` | [`Int`](#doc_Int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `shuffle` | [`Bool`](#doc_Bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
-| `step_size` | [`Float64`](#doc_Float64) | Step size for parallel SGD optimizer. | `0.01` |
-| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing test dataset. | `zeros(0, 0)` |
-| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Matrix containing test labels. | `Int[]` |
-| `tolerance` | [`Float64`](#doc_Float64) | Convergence tolerance for optimizer. | `1e-10` |
-| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set (the matrix of predictors, X). | `zeros(0, 0)` |
-| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`LinearSVMModel`](#doc_model) | Output for trained linear svm model. | 
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `input_model` parameter) or training a linear SVM model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained linear SVM model may be saved using the `output_model` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing linear SVM model is given with the `input_model` parameter.  The output predictions from the linear SVM model may be saved with the `predictions` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '``data``' with labels '``labels``' with L2 regularization of 0.1, saving the model to '``lsvm_model``', the following command may be used:
-
-```julia
-julia> using CSV
-julia> data = CSV.read("data.csv")
-julia> labels = CSV.read("labels.csv"; type=Int)
-julia> lsvm_model, _, _ = linear_svm(delta=1, labels=labels,
-            lambda=0.1, num_classes=0, training=data)
-```
-
-Then, to use that model to predict classes for the dataset '``test``', storing the output predictions in '``predictions``', the following command may be used: 
-
-```julia
-julia> using CSV
-julia> test = CSV.read("test.csv")
-julia> _, predictions, _ = linear_svm(input_model=lsvm_model,
-            test=test)
-```
-
-### See also
-
- - [random_forest()](#random_forest)
- - [logistic_regression()](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
 ## lmnn()
 {: #lmnn }
 
@@ -3287,6 +3194,101 @@ Note that all of the options may be specified at once: predictions may be calcul
  - [adaboost()](#adaboost)
  - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
  - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
+
+## linear_svm()
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```julia
+julia> using mlpack: linear_svm
+julia> output_model, predictions, probabilities = linear_svm( ;
+          delta=1.0, epochs=50, input_model=nothing, labels=Int[],
+          lambda=0.0001, max_iterations=10000, no_intercept=false,
+          num_classes=0, optimizer="lbfgs", seed=0, shuffle=false,
+          step_size=0.01, test=zeros(0, 0), test_labels=Int[], tolerance=1e-10,
+          training=zeros(0, 0), verbose=false)
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `delta` | [`Float64`](#doc_Float64) | Margin of difference between correct class and other classes. | `1.0` |
+| `epochs` | [`Int`](#doc_Int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `input_model` | [`LinearSVMModel`](#doc_model) | Existing model (parameters). | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). | `Int[]` |
+| `lambda` | [`Float64`](#doc_Float64) | L2-regularization parameter for training. | `0.0001` |
+| `max_iterations` | [`Int`](#doc_Int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `no_intercept` | [`Bool`](#doc_Bool) | Do not add the intercept term to the model. | `false` |
+| `num_classes` | [`Int`](#doc_Int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `optimizer` | [`String`](#doc_String) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
+| `seed` | [`Int`](#doc_Int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `shuffle` | [`Bool`](#doc_Bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
+| `step_size` | [`Float64`](#doc_Float64) | Step size for parallel SGD optimizer. | `0.01` |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing test dataset. | `zeros(0, 0)` |
+| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Matrix containing test labels. | `Int[]` |
+| `tolerance` | [`Float64`](#doc_Float64) | Convergence tolerance for optimizer. | `1e-10` |
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set (the matrix of predictors, X). | `zeros(0, 0)` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`LinearSVMModel`](#doc_model) | Output for trained linear svm model. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `input_model` parameter) or training a linear SVM model given training data (specified with the `training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `test` parameter) and the classification results may be saved with the `predictions` output parameter. The trained linear SVM model may be saved using the `output_model` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `test` is specified.  The `test` parameter can be specified without the `training` parameter, so long as an existing linear SVM model is given with the `input_model` parameter.  The output predictions from the linear SVM model may be saved with the `predictions` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '``data``' with labels '``labels``' with L2 regularization of 0.1, saving the model to '``lsvm_model``', the following command may be used:
+
+```julia
+julia> using CSV
+julia> data = CSV.read("data.csv")
+julia> labels = CSV.read("labels.csv"; type=Int)
+julia> lsvm_model, _, _ = linear_svm(delta=1, labels=labels,
+            lambda=0.1, num_classes=0, training=data)
+```
+
+Then, to use that model to predict classes for the dataset '``test``', storing the output predictions in '``predictions``', the following command may be used: 
+
+```julia
+julia> using CSV
+julia> test = CSV.read("test.csv")
+julia> _, predictions, _ = linear_svm(input_model=lsvm_model,
+            test=test)
+```
+
+### See also
+
+ - [random_forest()](#random_forest)
+ - [logistic_regression()](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## adaboost()
 {: #adaboost }
