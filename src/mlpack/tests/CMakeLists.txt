@@ -230,6 +230,9 @@ add_executable(mlpack_test
   main_tests/random_forest_probabilities_test.cpp
   main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
+  main_tests/softmax_regression_train_test.cpp
+  main_tests/softmax_regression_classify_test.cpp
+  main_tests/softmax_regression_probabilities_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/main_test_fixture.hpp
 )
