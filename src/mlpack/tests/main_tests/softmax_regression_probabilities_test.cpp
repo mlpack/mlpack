@@ -126,7 +126,8 @@ TEST_CASE_METHOD(SoftmaxRegressionProbabilitiesTestFixture,
   // times the number of classes
   REQUIRE(probs.n_rows == 3);
   REQUIRE(probs.n_cols == M);
-  // Also check that probabilities are sensible, sum to 1 and are bounded by [0,1]
+  // Also check that probabilities are sensible, sum to 1
+  // and are bounded by [0,1]
   for (size_t i = 0; i < probs.n_cols; ++i)
   {
     const double sum = accu(probs.col(i));

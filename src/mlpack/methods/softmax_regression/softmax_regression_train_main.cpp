@@ -48,14 +48,6 @@ BINDING_LONG_DESC(
     " parameter and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
     "\n\n");
-    // "The program is also able to evaluate a model on test data.  A test dataset"
-    // " can be specified with the " + PRINT_PARAM_STRING("test") + " parameter. "
-    // "Class predictions can be saved with the " +
-    // PRINT_PARAM_STRING("predictions") + " output parameter.  If labels are "
-    // "specified for the test data with the " +
-    // PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
-    // "print the accuracy of the predictions on the given test set and its "
-    // "corresponding labels.");
 
 // Example.
 BINDING_EXAMPLE(
