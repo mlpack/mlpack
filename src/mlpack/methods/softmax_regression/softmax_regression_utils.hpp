@@ -26,7 +26,9 @@ template<typename Model>
 inline void TestClassifyAcc(util::Params& params,
                             util::Timers& timers,
                             const size_t numClasses,
-                            const Model& model);
+                            const Model& model,
+                            const bool retPreds,
+                            const bool retProbas);
 
 // Build the softmax model given the parameters.
 template<typename Model>

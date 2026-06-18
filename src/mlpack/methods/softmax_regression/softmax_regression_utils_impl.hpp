@@ -40,7 +40,9 @@ template<typename Model>
 inline void TestClassifyAcc(util::Params& params,
                             util::Timers& timers,
                             const size_t numClasses,
-                            const Model& model)
+                            const Model& model,
+                            const bool retPreds = true,
+                            const bool retProbas = true)
 {
   using namespace mlpack;
 
@@ -92,10 +94,10 @@ inline void TestClassifyAcc(util::Params& params,
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
   // Save predictions if requested
-  if (params.Has("predictions"))
+  if (retPreds)
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
   // Save probabiltities if requested
-  if (params.Has("probabilities"))
+  if (retProbas)
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
 
