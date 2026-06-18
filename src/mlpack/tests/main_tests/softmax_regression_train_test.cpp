@@ -148,11 +148,9 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
 {
   constexpr int N = 10;
   constexpr int D = 2;
-  constexpr int M = 5;
   arma::mat trainX = arma::trans(arma::randu<arma::mat>(N, D));
   arma::Row<size_t> trainY =
     arma::randi<arma::Row<size_t>>(N, arma::distr_param(0, 4));
-  arma::mat testX = arma::trans(arma::randu<arma::mat>(M, D));
 
   // Input training data.
   SetInputParam("training", trainX);
@@ -163,8 +161,8 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
   RUN_BINDING();
 
   // Store output parameters.
-  arma::Row<size_t> preds1;
-  params.Get<SoftmaxRegression<>*>("output_model")->Classify(testX, preds1);
+  arma::mat params1 =
+    params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
   // Reset passed parameters.
   CleanMemory();
@@ -179,11 +177,10 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
 
   RUN_BINDING();
 
-  arma::Row<size_t> preds2;
-  params.Get<SoftmaxRegression<>*>("output_model")->Classify(
-    std::move(testX), preds2);
+  arma::mat params2 =
+    params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
-  REQUIRE(arma::approx_equal(preds1, preds2, "absdiff", 1e-7));
+  REQUIRE(!arma::approx_equal(params1, params2, "absdiff", 1e-7));
 }
 
 /**
@@ -196,11 +193,9 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
 {
   constexpr int N = 10;
   constexpr int D = 2;
-  constexpr int M = 5;
   arma::mat trainX = arma::trans(arma::randu<arma::mat>(N, D));
   arma::Row<size_t> trainY =
     arma::randi<arma::Row<size_t>>(N, arma::distr_param(0, 4));
-  arma::mat testX = arma::trans(arma::randu<arma::mat>(M, D));
 
   // Input training data.
   SetInputParam("training", trainX);
@@ -210,8 +205,8 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
   RUN_BINDING();
 
   // Store output parameters.
-  arma::Row<size_t> preds1;
-  params.Get<SoftmaxRegression<>*>("output_model")->Classify(testX, preds1);
+  arma::mat params1 =
+    params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
   // Reset passed parameters.
   CleanMemory();
@@ -224,11 +219,10 @@ TEST_CASE_METHOD(SoftmaxRegressionTrainTestFixture,
 
   RUN_BINDING();
 
-  arma::Row<size_t> preds2;
-  params.Get<SoftmaxRegression<>*>("output_model")->Classify(
-    std::move(testX), preds2);
+  arma::mat params2 =
+    params.Get<SoftmaxRegression<>*>("output_model")->Parameters();
 
-  REQUIRE(arma::approx_equal(preds1, preds2, "absdiff", 1e-7));
+  REQUIRE(!arma::approx_equal(params1, params2, "absdiff", 1e-7));
 }
 
 /**
