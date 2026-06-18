@@ -110,8 +110,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       [](int x) { return x >= 0; }, true, "number of classes must be greater "
       "than or equal to 0 (equal to 0 in case of unspecified.)");
 
-  SoftmaxRegression<>* sm = TrainSoftmax<SoftmaxRegression<>>(params, timers,
-      maxIterations);
+  SoftmaxRegression<>* sm =
+      smutil::TrainSoftmax<SoftmaxRegression<>>(params, timers, maxIterations);
 
   params.Get<SoftmaxRegression<>*>("output_model") = sm;
 }

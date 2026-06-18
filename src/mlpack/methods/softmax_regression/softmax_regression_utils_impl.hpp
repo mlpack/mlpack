@@ -19,6 +19,7 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 namespace mlpack {
+namespace smutil {
 
 inline size_t CalculateNumberOfClasses(const size_t numClasses,
                                        const arma::Row<size_t>& trainLabels)
@@ -39,8 +40,7 @@ template<typename Model>
 inline void TestClassifyAcc(util::Params& params,
                             util::Timers& timers,
                             const size_t numClasses,
-                            const Model& model,
-                            bool returnProbabilities = false)
+                            const Model& model)
 {
   using namespace mlpack;
 
@@ -91,10 +91,11 @@ inline void TestClassifyAcc(util::Params& params,
         << (totalBingo) / static_cast<double>(predictLabels.n_elem) << " ("
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
-  // Save predictions (unless probabilities requested)
-  if (!returnProbabilities)
+  // Save predictions if requested
+  if (params.Has("predictions"))
     params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
-  else
+  // Save probabiltities if requested
+  if (params.Has("probabilities"))
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
 
@@ -113,7 +114,7 @@ inline Model* TrainSoftmax(util::Params& params,
     Log::Fatal << "Samples of input_data should same as the size of "
         << "input_label." << endl;
 
-  const size_t numClasses = CalculateNumberOfClasses(
+  const size_t numClasses = smutil::CalculateNumberOfClasses(
       (size_t) params.Get<int>("number_of_classes"), trainLabels);
 
   const bool intercept = params.Has("no_intercept") ? false : true;
@@ -127,6 +128,7 @@ inline Model* TrainSoftmax(util::Params& params,
   return sm;
 }
 
+} // namespace smutil
 } // namespace mlpack
 
 #endif

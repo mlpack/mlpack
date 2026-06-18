@@ -15,6 +15,7 @@
 #include "softmax_regression_utils_impl.hpp"
 
 namespace mlpack {
+namespace smutil {
 
 // Count the number of classes in the given labels (if numClasses == 0).
 inline size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -25,8 +26,7 @@ template<typename Model>
 inline void TestClassifyAcc(util::Params& params,
                             util::Timers& timers,
                             const size_t numClasses,
-                            const Model& model,
-                            bool returnProbabilities);
+                            const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
@@ -34,6 +34,7 @@ inline Model* TrainSoftmax(util::Params& params,
                            util::Timers& timers,
                            const size_t maxIterations);
 
+} // namespace smutil
 } // namespace mlpack
 
 #endif

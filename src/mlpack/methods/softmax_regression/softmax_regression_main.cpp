@@ -16,7 +16,6 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
-#include <mlpack/methods/softmax_regression/softmax_regression_utils.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -126,6 +125,23 @@ PARAM_DOUBLE_IN("lambda", "L2-regularization constant", "r", 0.0001);
 
 PARAM_FLAG("no_intercept", "Do not add the intercept term to the model.", "N");
 
+// Count the number of classes in the given labels (if numClasses == 0).
+size_t CalculateNumberOfClasses(const size_t numClasses,
+                                const arma::Row<size_t>& trainLabels);
+
+// Test the accuracy of the model.
+template<typename Model>
+void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
+                     const size_t numClasses,
+                     const Model& model);
+
+// Build the softmax model given the parameters.
+template<typename Model>
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations);
+
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const int maxIterations = params.Get<int>("max_iterations");
@@ -161,4 +177,129 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
   params.Get<SoftmaxRegression<>*>("output_model") = sm;
+}
+
+size_t CalculateNumberOfClasses(const size_t numClasses,
+                                const arma::Row<size_t>& trainLabels)
+{
+  if (numClasses == 0)
+  {
+    const set<size_t> unique_labels(begin(trainLabels),
+                                    end(trainLabels));
+    return unique_labels.size();
+  }
+  else
+  {
+    return numClasses;
+  }
+}
+
+template<typename Model>
+void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
+                     const size_t numClasses,
+                     const Model& model)
+{
+  using namespace mlpack;
+
+  // If there is no test set, there is nothing to test on.
+  if (!params.Has("test"))
+  {
+    ReportIgnoredParam(params, {{ "test", false }}, "test_labels");
+    ReportIgnoredParam(params, {{ "test", false }}, "predictions");
+
+    return;
+  }
+
+  // Get the test dataset, and get predictions.
+  arma::mat testData = std::move(params.Get<arma::mat>("test"));
+
+  arma::Row<size_t> predictLabels;
+  arma::mat probabilities;
+  timers.Start("softmax_regression_classification");
+  model.Classify(testData, predictLabels, probabilities);
+  timers.Stop("softmax_regression_classification");
+
+  // Calculate accuracy, if desired.
+  if (params.Has("test_labels"))
+  {
+    arma::Row<size_t> testLabels =
+      std::move(params.Get<arma::Row<size_t>>("test_labels"));
+
+    if (testData.n_cols != testLabels.n_elem)
+    {
+      Log::Fatal << "Test data given with " << PRINT_PARAM_STRING("test")
+          << " has " << testData.n_cols << " points, but labels in "
+          << PRINT_PARAM_STRING("test_labels") << " have " << testLabels.n_elem
+          << " labels!" << endl;
+    }
+
+    vector<size_t> bingoLabels(numClasses, 0);
+    vector<size_t> labelSize(numClasses, 0);
+    for (arma::uword i = 0; i != predictLabels.n_elem; ++i)
+    {
+      if (predictLabels(i) == testLabels(i))
+      {
+        ++bingoLabels[testLabels(i)];
+      }
+      ++labelSize[testLabels(i)];
+    }
+
+    size_t totalBingo = 0;
+    for (size_t i = 0; i != bingoLabels.size(); ++i)
+    {
+      Log::Info << "Accuracy for points with label " << i << " is "
+          << (bingoLabels[i] / static_cast<double>(labelSize[i])) << " ("
+          << bingoLabels[i] << " of " << labelSize[i] << ")." << endl;
+      totalBingo += bingoLabels[i];
+    }
+
+    Log::Info << "Total accuracy for all points is "
+        << (totalBingo) / static_cast<double>(predictLabels.n_elem) << " ("
+        << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
+  }
+  // Save predictions, if desired.
+  if (params.Has("predictions"))
+    params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+
+  // Save probabilities, if desired.
+  if (params.Has("probabilities"))
+    params.Get<arma::mat>("probabilities") = std::move(probabilities);
+}
+
+template<typename Model>
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations)
+{
+  using namespace mlpack;
+
+  Model* sm;
+  if (params.Has("input_model"))
+  {
+    sm = params.Get<Model*>("input_model");
+  }
+  else
+  {
+    arma::mat trainData = std::move(params.Get<arma::mat>("training"));
+    arma::Row<size_t> trainLabels =
+        std::move(params.Get<arma::Row<size_t>>("labels"));
+
+    if (trainData.n_cols != trainLabels.n_elem)
+      Log::Fatal << "Samples of input_data should same as the size of "
+          << "input_label." << endl;
+
+    const size_t numClasses = CalculateNumberOfClasses(
+        (size_t) params.Get<int>("number_of_classes"), trainLabels);
+
+    const bool intercept = params.Has("no_intercept") ? false : true;
+
+    const size_t numBasis = 5;
+    ens::L_BFGS optimizer(numBasis, maxIterations);
+    timers.Start("softmax_regression_optimization");
+    sm = new Model(trainData, trainLabels, numClasses,
+        params.Get<double>("lambda"), intercept, std::move(optimizer));
+    timers.Stop("softmax_regression_optimization");
+  }
+  return sm;
 }
