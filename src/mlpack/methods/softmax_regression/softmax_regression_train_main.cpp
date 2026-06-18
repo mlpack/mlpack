@@ -1,7 +1,7 @@
 /**
- * @file methods/softmax_regression/softmax_regression_main.cpp
+ * @file methods/softmax_regression/softmax_regression_train_main.cpp
  *
- * Main program for softmax regression.
+ * Implementation of softmax regression classification training step.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -11,7 +11,7 @@
 #include <mlpack/core.hpp>
 
 #undef BINDING_NAME
-#define BINDING_NAME softmax_regression
+#define BINDING_NAME softmax_regression_train
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -29,16 +29,13 @@ BINDING_USER_NAME("Softmax Regression");
 BINDING_SHORT_DESC(
     "An implementation of softmax regression for classification, which is a "
     "multiclass generalization of logistic regression.  Given labeled data, a "
-    "softmax regression model can be trained and saved for future use, or, a "
-    "pre-trained softmax regression model can be used for classification of "
-    "new points.");
+    "softmax regression model can be trained for future use of "
+    "classification on new points.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "This program performs softmax regression, a generalization of logistic "
-    "regression to the multiclass case, and has support for L2 regularization. "
-    " The program is able to train a model, load  an existing model, and give "
-    "predictions (and optionally their accuracy) for test data."
+    "Implementation of softmax regression, a generalization of logistic "
+    "regression to the multiclass case, with support for L2 regularization. "
     "\n\n"
     "Training a softmax regression model is done by giving a file of training "
     "points with the " + PRINT_PARAM_STRING("training") + " parameter and their"
@@ -50,40 +47,28 @@ BINDING_LONG_DESC(
     "constant can be specified with the " + PRINT_PARAM_STRING("lambda") +
     " parameter and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
-    "\n\n"
-    "The trained model can be saved with the " +
-    PRINT_PARAM_STRING("output_model") + " output parameter. If training is not"
-    " desired, but only testing is, a model can be loaded with the " +
-    PRINT_PARAM_STRING("input_model") + " parameter.  At the current time, a "
-    "loaded model cannot be trained further, so specifying both " +
-    PRINT_PARAM_STRING("input_model") + " and " +
-    PRINT_PARAM_STRING("training") + " is not allowed."
-    "\n\n"
-    "The program is also able to evaluate a model on test data.  A test dataset"
-    " can be specified with the " + PRINT_PARAM_STRING("test") + " parameter. "
-    "Class predictions can be saved with the " +
-    PRINT_PARAM_STRING("predictions") + " output parameter.  If labels are "
-    "specified for the test data with the " +
-    PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
-    "print the accuracy of the predictions on the given test set and its "
-    "corresponding labels.");
+    "\n\n");
+    // "The program is also able to evaluate a model on test data.  A test dataset"
+    // " can be specified with the " + PRINT_PARAM_STRING("test") + " parameter. "
+    // "Class predictions can be saved with the " +
+    // PRINT_PARAM_STRING("predictions") + " output parameter.  If labels are "
+    // "specified for the test data with the " +
+    // PRINT_PARAM_STRING("test_labels") + " parameter, then the program will "
+    // "print the accuracy of the predictions on the given test set and its "
+    // "corresponding labels.");
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to train a softmax regression model on the data " +
-    PRINT_DATASET("dataset") + " with labels " + PRINT_DATASET("labels") +
-    " with a maximum of 1000 iterations for training, saving the trained model "
-    "to " + PRINT_MODEL("sr_model") + ", the following command can be used: "
-    "\n\n" +
-    PRINT_CALL("softmax_regression", "training", "dataset", "labels", "labels",
-        "output_model", "sr_model") +
-    "\n\n"
-    "Then, to use " + PRINT_MODEL("sr_model") + " to classify the test points "
-    "in " + PRINT_DATASET("test_points") + ", saving the output predictions to"
-    " " + PRINT_DATASET("predictions") + ", the following command can be used:"
-    "\n\n" +
-    PRINT_CALL("softmax_regression", "input_model", "sr_model", "test",
-        "test_points", "predictions", "predictions"));
+    IMPORT_EXT_LIB() + "\n" +
+    IMPORT_SPLIT() + "\n" +
+    IMPORT_THIS("softmax_regression") + "\n" +
+    GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
+    GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
+    "0.2") + "\n" +
+    CREATE_OBJECT("model", "softmax_regression") + "\n" +
+    CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train",
+                "lambda", 0.1));
 
 // See also...
 BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
@@ -95,24 +80,14 @@ BINDING_SEE_ALSO("SoftmaxRegression C++ class documentation",
     "@doc/user/methods/softmax_regression.md");
 
 // Required options.
-PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
-    "of predictors, X).", "t");
-PARAM_UROW_IN("labels", "A matrix containing labels (0 or 1) for the points "
-    "in the training set (y). The labels must order as a row.", "l");
+PARAM_MATRIX_IN_REQ("training", "A matrix containing the training set (the "
+    "matrix of predictors, X).", "t");
+PARAM_UROW_IN_REQ("labels", "A matrix containing labels (0 or 1) for the "
+    "points in the training set (y). The labels must order as a row.", "l");
 
-// Model loading/saving.
-PARAM_MODEL_IN(SoftmaxRegression<>, "input_model", "File containing existing "
-    "model (parameters).", "m");
+// Model output.
 PARAM_MODEL_OUT(SoftmaxRegression<>, "output_model", "File to save trained "
     "softmax regression model to.", "M");
-
-// Testing.
-PARAM_MATRIX_IN("test", "Matrix containing test dataset.", "T");
-PARAM_UROW_OUT("predictions", "Matrix to save predictions for test dataset "
-    "into.", "p");
-PARAM_MATRIX_OUT("probabilities", "Matrix to save class probabilities for test "
-    "dataset into.", "P");
-PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 
 // Softmax configuration options.
 PARAM_INT_IN("max_iterations", "Maximum number of iterations before "
@@ -130,14 +105,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const int maxIterations = params.Get<int>("max_iterations");
 
-  // One of inputFile and modelFile must be specified.
-  RequireOnlyOnePassed(params, { "input_model", "training" }, true);
-  if (params.Has("training"))
-  {
-    RequireAtLeastOnePassed(params, { "labels" }, true, "if training data is "
-        "specified, labels must also be specified");
-  }
-  ReportIgnoredParam(params, {{ "training", false }}, "labels");
   ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
   ReportIgnoredParam(params, {{ "training", false }}, "number_of_classes");
   ReportIgnoredParam(params, {{ "training", false }}, "lambda");
@@ -151,14 +118,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       [](int x) { return x >= 0; }, true, "number of classes must be greater "
       "than or equal to 0 (equal to 0 in case of unspecified.)");
 
-  // Make sure we have an output file of some sort.
-  RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
-      "no results will be saved");
-
   SoftmaxRegression<>* sm = TrainSoftmax<SoftmaxRegression<>>(params, timers,
       maxIterations);
-
-  TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
   params.Get<SoftmaxRegression<>*>("output_model") = sm;
 }

@@ -98,7 +98,7 @@ add_all_bindings(preprocess preprocess_one_hot_encoding "Preprocessing")
 add_all_bindings(radical radical "Transformations")
 #add_all_bindings(random_forest random_forest "Classification")
 add_all_bindings(rann krann "Geometry")
-add_all_bindings(softmax_regression softmax_regression "Classification")
+#add_all_bindings(softmax_regression softmax_regression "Classification")
 add_all_bindings(sparse_coding sparse_coding "Transformations")
 
 # Now, define the "special" bindings that are different somehow.
@@ -195,6 +195,20 @@ add_r_binding(naive_bayes nbc_classify "skip")
 add_r_binding(naive_bayes nbc_probabilities "skip")
 add_markdown_docs(naive_bayes nbc "cli;python;julia;go;r" "python;r")
 
+#add_all_bindings(softmax_regression softmax_regression "Classification")
+add_category(softmax_regression "Classification")
+group_bindings(softmax_regression softmax_regression "train;classify;probabilities")
+add_python_wrapper(softmax_regression softmax_regression)
+add_julia_class(softmax_regression softmax_regression)
+add_cli_executable(softmax_regression softmax_regression)
+add_go_binding(softmax_regression softmax_regression)
+add_r_binding(softmax_regression softmax_regression "include")
+add_r_binding(softmax_regression softmax_regression_train "skip")
+add_r_binding(softmax_regression softmax_regression_classify "skip")
+add_r_binding(softmax_regression softmax_regression_probabilities "skip")
+add_markdown_docs(softmax_regression softmax_regression "cli;python;julia;go;r" "python;r")
+
+
 
 # Linear Regression has a Python wrapper class that encapsulates its
 # functionality in a few methods.
@@ -202,7 +216,6 @@ add_category(linear_regression "Regression")
 group_bindings(linear_regression linear_regression "train;predict")
 add_python_wrapper(linear_regression linear_regression)
 add_julia_class(linear_regression linear_regression)
-
 add_cli_executable(linear_regression linear_regression)
 add_go_binding(linear_regression linear_regression)
 add_r_binding(linear_regression linear_regression "include")
