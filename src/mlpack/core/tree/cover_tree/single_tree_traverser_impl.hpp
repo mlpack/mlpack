@@ -20,31 +20,6 @@
 
 namespace mlpack {
 
-//! This is the structure the cover tree map will use for traversal.
-template<
-    typename DistanceType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-struct CoverTreeMapEntry
-{
-  //! The node this entry refers to.
-  CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>* node;
-  //! The score of the node.
-  double score;
-  //! The index of the parent node.
-  size_t parent;
-  //! The base case evaluation.
-  double baseCase;
-
-  //! Comparison operator.
-  bool operator<(const CoverTreeMapEntry& other) const
-  {
-    return (score < other.score);
-  }
-};
-
 template<
     typename DistanceType,
     typename StatisticType,
@@ -56,7 +31,9 @@ CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
-{ /* Nothing to do. */ }
+{
+  // Nothing to do.
+}
 
 template<
     typename DistanceType,
@@ -72,20 +49,17 @@ SingleTreeTraverser<RuleType>::Traverse(
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  using MapEntryType = CoverTreeMapEntry<DistanceType, StatisticType, MatType,
-      RootPointPolicy>;
 
-  // We will use this map as a priority queue.  Each key represents the scale,
-  // and then the vector is all the nodes in that scale which need to be
-  // investigated.  Because no point in a scale can add a point in its own
-  // scale, we know that the vector for each scale is final when we get to it.
-  // In addition, the map is organized in such a way that begin() will return
-  // the largest scale.
-  std::map<int, std::vector<MapEntryType>, std::greater<int>> mapQueue;
+  // Generally, a single-tree traversal will only have a couple active scale
+  // levels at any given time; the vast majority of times we descend any
+  // reference node, the child we descend to is either the next scale level, or
+  // perhaps two scale levels away.  Therefore, we maintain a "hot" set of scale
+  // vectors for quick lookup, and in the odd case that we get something at a
+  // totally different level, we use a std::map as a priority queue.  These are
+  // all members of the SingleTreeTraverser class.
 
   // Create the score for the children.
   double rootChildScore = rule.Score(queryIndex, referenceNode);
-
   if (rootChildScore == DBL_MAX)
   {
     numPrunes += referenceNode.NumChildren();
@@ -96,7 +70,7 @@ SingleTreeTraverser<RuleType>::Traverse(
     // Often, a ruleset will return without doing any computation on cover trees
     // using TreeTraits::FirstPointIsCentroid; this is an optimization that
     // (theoretically) the compiler should get right.
-    double rootBaseCase = rule.BaseCase(queryIndex, referenceNode.Point());
+    rule.BaseCase(queryIndex, referenceNode.Point());
 
     // Don't add the self-leaf.
     size_t i = 0;
@@ -108,108 +82,101 @@ SingleTreeTraverser<RuleType>::Traverse(
 
     for (/* i was set above. */; i < referenceNode.NumChildren(); ++i)
     {
-      MapEntryType newFrame;
-      newFrame.node = &referenceNode.Child(i);
-      newFrame.score = rootChildScore;
-      newFrame.baseCase = rootBaseCase;
-      newFrame.parent = referenceNode.Point();
-
-      // Put it into the map.
-      mapQueue[newFrame.node->Scale()].push_back(newFrame);
+      recursionSets.GetScaleVector(referenceNode.Child(i).Scale()).emplace_back(
+          &referenceNode.Child(i), rootChildScore);
     }
   }
 
-  // Now begin the iteration through the map, but only if it has anything in it.
-  if (mapQueue.empty())
-    return;
-  int maxScale = mapQueue.cbegin()->first;
-
-  // We will treat the leaves differently (below).
+  // Now begin the iteration through the levels of the tree.  We will treat the
+  // leaves differently (below).
+  int maxScale = recursionSets.MaxScale();
   while (maxScale != INT_MIN)
   {
     // Get a reference to the current scale.
-    std::vector<MapEntryType>& scaleVector = mapQueue[maxScale];
+    std::vector<MapEntryType>& scaleVector =
+        recursionSets.GetScaleVector(maxScale);
 
-    // Before traversing all the points in this scale, sort by score.
-    std::sort(scaleVector.begin(), scaleVector.end());
-
-    // Now loop over each element.
+    // Iterate over all the nodes at the current scale, pruning if we can.
+    size_t firstGoodIndex = 0;
     for (size_t i = 0; i < scaleVector.size(); ++i)
     {
-      // Get a reference to the current element.
+      MapEntryType& frame = scaleVector.at(i);
+      if (rule.Rescore(queryIndex, *frame.node, frame.score) == DBL_MAX)
+      {
+        ++numPrunes;
+        frame.score = DBL_MAX;
+        if (i > firstGoodIndex)
+        {
+          std::swap(frame, scaleVector.at(firstGoodIndex));
+          ++firstGoodIndex;
+        }
+        continue;
+      }
+
+      frame.score = rule.Score(queryIndex, *frame.node);
+      if (frame.score == DBL_MAX)
+      {
+        ++numPrunes;
+        if (i > firstGoodIndex)
+        {
+          std::swap(frame, scaleVector.at(firstGoodIndex));
+          ++firstGoodIndex;
+        }
+        continue;
+      }
+
+      // Compute the base case if we are not a self-child.
+      const size_t point = frame.node->Point();
+      if (frame.node->Parent()->Point() != point)
+        rule.BaseCase(queryIndex, point);
+    }
+
+    // For what remains, sort the vector so that we only add children with the
+    // most likely good nodes first.
+    std::sort(scaleVector.begin() + firstGoodIndex, scaleVector.end());
+
+    // In a second pass, add the children of nodes that weren't pruned.
+    for (size_t i = firstGoodIndex; i < scaleVector.size(); ++i)
+    {
       const MapEntryType& frame = scaleVector.at(i);
-
-      CoverTree* node = frame.node;
-      const double score = frame.score;
-      const size_t parent = frame.parent;
-      const size_t point = node->Point();
-      double baseCase = frame.baseCase;
-
-      // First we recalculate the score of this node to find if we can prune it.
-      if (rule.Rescore(queryIndex, *node, score) == DBL_MAX)
+      // One more pruning attempt.
+      if (frame.score == DBL_MAX ||
+          rule.Rescore(queryIndex, *frame.node, frame.score) == DBL_MAX)
       {
-        ++numPrunes;
+        numPrunes += frame.node->NumChildren();
         continue;
       }
 
-      // Create the score for the children.
-      const double childScore = rule.Score(queryIndex, *node);
-
-      // Now if this childScore is DBL_MAX we can prune all children.  In this
-      // recursion setup pruning is all or nothing for children.
-      if (childScore == DBL_MAX)
+      for (size_t c = 0; c < frame.node->NumChildren(); ++c)
       {
-        numPrunes += node->NumChildren();
-        continue;
-      }
+        // Don't add a self-leaf.
+        if (c == 0 && frame.node->Child(0).NumChildren() == 0)
+        {
+          ++numPrunes;
+          continue;
+        }
 
-      // If we are a self-child, the base case has already been evaluated.
-      // Often, a ruleset will return without doing any computation on cover
-      // trees using TreeTraits::FirstPointIsCentroid; this is an optimization
-      // that (theoretically) the compiler should get right.
-      if (point != parent)
-      {
-        baseCase = rule.BaseCase(queryIndex, point);
-      }
-
-      // Don't add the self-leaf.
-      size_t j = 0;
-      if (node->Child(0).NumChildren() == 0)
-      {
-        ++numPrunes;
-        j = 1;
-      }
-
-      for (/* j is already set. */; j < node->NumChildren(); ++j)
-      {
-        MapEntryType newFrame;
-        newFrame.node = &node->Child(j);
-        newFrame.score = childScore;
-        newFrame.baseCase = baseCase;
-        newFrame.parent = point;
-
-        mapQueue[newFrame.node->Scale()].push_back(newFrame);
+        recursionSets.GetScaleVector(frame.node->Child(c).Scale()).emplace_back(
+            &frame.node->Child(c), frame.score);
       }
     }
 
     // Now clear the memory for this scale; it isn't needed anymore.
-    mapQueue.erase(maxScale);
-    maxScale = mapQueue.begin()->first;
+    recursionSets.RemoveScale(maxScale);
+    maxScale = recursionSets.MaxScale();
   }
 
-  // Now deal with the leaves.
-  for (size_t i = 0; i < mapQueue[INT_MIN].size(); ++i)
+  std::vector<MapEntryType>& leafVector = recursionSets.GetScaleVector(INT_MIN);
+  for (size_t i = 0; i < leafVector.size(); ++i)
   {
-    const MapEntryType& frame = mapQueue[INT_MIN].at(i);
+    MapEntryType& frame = leafVector.at(i);
 
     CoverTree* node = frame.node;
     const double score = frame.score;
     const size_t point = node->Point();
 
     // First, recalculate the score of this node to find if we can prune it.
-    double rescore = rule.Rescore(queryIndex, *node, score);
-
-    if (rescore == DBL_MAX)
+    if (rule.Rescore(queryIndex, *node, score) == DBL_MAX)
     {
       ++numPrunes;
       continue;
@@ -234,6 +201,8 @@ SingleTreeTraverser<RuleType>::Traverse(
       rule.BaseCase(queryIndex, point);
     }
   }
+
+  recursionSets.RemoveScale(INT_MIN); // For next call to Traverse().
 }
 
 } // namespace mlpack
