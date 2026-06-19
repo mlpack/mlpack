@@ -59,5 +59,5 @@ PARAM_UROW_IN("test_labels", "Matrix containing test labels.", "L");
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   SoftmaxRegression<>* sm = params.Get<SoftmaxRegression<>*>("input_model");
-  smutil::TestClassifyAcc(params, timers, sm->NumClasses(), *sm, true, false);
+  TestClassifyAcc(params, timers, sm->NumClasses(), *sm, true, false);
 }

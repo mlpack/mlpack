@@ -110,8 +110,30 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       [](int x) { return x >= 0; }, true, "number of classes must be greater "
       "than or equal to 0 (equal to 0 in case of unspecified.)");
 
-  SoftmaxRegression<>* sm =
-      smutil::TrainSoftmax<SoftmaxRegression<>>(params, timers, maxIterations);
+  arma::mat trainData = std::move(params.Get<arma::mat>("training"));
+  arma::Row<size_t> trainLabels =
+    std::move(params.Get<arma::Row<size_t>>("labels"));
+
+  if (trainData.n_cols != trainLabels.n_elem)
+    Log::Fatal << "Samples of input_data should same as the size of "
+        << "input_label." << endl;
+
+  size_t numClasses = (size_t) params.Get<int>("number_of_classes");
+  if (numClasses == 0)
+  {
+    set<size_t> unique_labels(begin(trainLabels), end(trainLabels));
+    numClasses = unique_labels.size();
+  }
+
+  const bool intercept = params.Has("no_intercept") ? false : true;
+
+  const size_t numBasis = 5;
+  ens::L_BFGS optimizer(numBasis, maxIterations);
+  timers.Start("softmax_regression_optimization");
+  SoftmaxRegression<>* sm = new SoftmaxRegression<>(trainData, trainLabels,
+      numClasses, params.Get<double>("lambda"), intercept,
+      std::move(optimizer));
+  timers.Stop("softmax_regression_optimization");
 
   params.Get<SoftmaxRegression<>*>("output_model") = sm;
 }

@@ -19,30 +19,15 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 namespace mlpack {
-namespace smutil {
-
-inline size_t CalculateNumberOfClasses(const size_t numClasses,
-                                       const arma::Row<size_t>& trainLabels)
-{
-  if (numClasses == 0)
-  {
-    const set<size_t> unique_labels(begin(trainLabels),
-                                    end(trainLabels));
-    return unique_labels.size();
-  }
-  else
-  {
-    return numClasses;
-  }
-}
+namespace util {
 
 template<typename Model>
 inline void TestClassifyAcc(util::Params& params,
                             util::Timers& timers,
                             const size_t numClasses,
                             const Model& model,
-                            const bool retPreds = true,
-                            const bool retProbas = true)
+                            const bool retPreds,  // no default argument here
+                            const bool retProbas) // to have diff. signature
 {
   using namespace mlpack;
 
@@ -101,36 +86,7 @@ inline void TestClassifyAcc(util::Params& params,
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
 
-template<typename Model>
-inline Model* TrainSoftmax(util::Params& params,
-                           util::Timers& timers,
-                           const size_t maxIterations)
-{
-  using namespace mlpack;
-
-  arma::mat trainData = std::move(params.Get<arma::mat>("training"));
-  arma::Row<size_t> trainLabels =
-    std::move(params.Get<arma::Row<size_t>>("labels"));
-
-  if (trainData.n_cols != trainLabels.n_elem)
-    Log::Fatal << "Samples of input_data should same as the size of "
-        << "input_label." << endl;
-
-  const size_t numClasses = smutil::CalculateNumberOfClasses(
-      (size_t) params.Get<int>("number_of_classes"), trainLabels);
-
-  const bool intercept = params.Has("no_intercept") ? false : true;
-
-  const size_t numBasis = 5;
-  ens::L_BFGS optimizer(numBasis, maxIterations);
-  timers.Start("softmax_regression_optimization");
-  Model* sm = new Model(trainData, trainLabels, numClasses,
-      params.Get<double>("lambda"), intercept, std::move(optimizer));
-  timers.Stop("softmax_regression_optimization");
-  return sm;
-}
-
-} // namespace smutil
+} // namespace util
 } // namespace mlpack
 
 #endif
