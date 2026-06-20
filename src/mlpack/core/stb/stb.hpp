@@ -14,6 +14,8 @@
 #ifndef MLPACK_CORE_STB_STB_HPP
 #define MLPACK_CORE_STB_STB_HPP
 
+#ifndef MLPACK_DISABLE_STB
+
 #ifndef STB_IMAGE_STATIC
   #define STB_IMAGE_STATIC
 #endif
@@ -81,5 +83,7 @@
 #include "bundled/stb_image_resize2.h"
 
 #endif
+
+#endif // MLPACK_DISABLE_STB
 
 #endif

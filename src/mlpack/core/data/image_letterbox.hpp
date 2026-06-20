@@ -20,6 +20,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Resize an image to `imgSize` x `imgSize` while keeping the original
  * image's aspect ratio. Fill in white space with `fillValue`.
@@ -109,6 +111,8 @@ void LetterboxImages(arma::Mat<eT>& src,
   src = std::move(dest);
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

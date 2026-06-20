@@ -18,6 +18,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 template<typename eT>
 bool SaveImage(const std::vector<std::string>& files,
                const arma::Mat<eT>& matrix,
@@ -100,6 +102,21 @@ bool SaveImage(const std::vector<std::string>& files,
 
   return success;
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+bool SaveImage(const std::vector<std::string>& /* files */,
+               const arma::Mat<eT>& /* matrix */,
+               ImageOptions& opts)
+{
+  std::stringstream oss;
+  oss << "Save(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to save images.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

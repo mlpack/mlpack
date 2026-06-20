@@ -20,6 +20,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Image resize/crop interfaces.
  */
@@ -274,6 +276,8 @@ void ResizeCropImages(arma::Mat<eT>& images, ImageOptions& opts,
   opts.Width() = newWidth;
   opts.Height() = newHeight;
 }
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 
