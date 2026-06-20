@@ -17,6 +17,7 @@ option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not availab
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
+option(DISABLE_STB "Disable STB support with mlpack." OFF)
 option(USE_SYSTEM_DR_LIBS "Use system dr_libs instead of version bundled with mlpack." OFF)
 option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with mlpack." OFF)
 option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
@@ -249,6 +250,11 @@ endif()
 
 if (USE_SYSTEM_STB)
   set(MLPACK_USE_SYSTEM_STB ON)
+endif ()
+
+# If the user would like to disable STB for embedded system
+if (DISABLE_STB)
+  set(MLPACK_DISABLE_STB ON)
 endif ()
 
 if (USE_SYSTEM_DR_LIBS)

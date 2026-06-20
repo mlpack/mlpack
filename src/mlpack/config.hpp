@@ -65,6 +65,14 @@
 #endif
 
 //
+// MLPACK_DISABLE_STB is used to disable usage of locally installed
+// cpp-httplib.
+//
+#if !defined(MLPACK_DISABLE_STB)
+  // #define MLPACK_DISABLE_STB
+#endif
+
+//
 // This is necessary if we would like to overwrite the default packaging
 // condition.
 //
