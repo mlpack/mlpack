@@ -112,6 +112,21 @@ void LetterboxImages(arma::Mat<eT>& src,
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
 
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+void LetterboxImages(arma::Mat<eT>& /* src */,
+                    ImageOptions& opts,
+                    const size_t = 0,
+                    const size_t = 0,
+                    const double = 0.0)
+{
+  std::stringstream oss;
+  oss << "LetterboxImages(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to support images.";
+  HandleError(oss, opts);
+}
+
 #endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
