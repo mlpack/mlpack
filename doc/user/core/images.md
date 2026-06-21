@@ -41,6 +41,9 @@ The `ResizeImages()` function can be used to resize image data:
      dimensions. If this is not the case, iteratively call `ResizeImages()` with
      a single image/column in `images`.
 
+   * If [`MLPACK_DISABLE_STB`](../compile.md#configuring-mlpack-with-compile-time-definitions)
+     is defined, an exception will be thrown, as STB image support is not available.
+
 Example usage of the `ResizeImages()` function on a set of images with
 different dimensions:
 
@@ -168,6 +171,9 @@ that the width and height of the image both no smaller than `outputWidth` and
    * This function expects all the images to have identical dimensions. If this
      is not the case, iteratively call `ResizeCropImages()` with a single
      image/column in `images`.
+
+   * If [`MLPACK_DISABLE_STB`](../compile.md#configuring-mlpack-with-compile-time-definitions)
+     is defined, an exception will be thrown, as STB image support is not available.
 
 Example usage of the `ResizeCropImages()` function on a set of images with
 different dimensions:
@@ -343,6 +349,8 @@ with `fillValue`.
     Each channel will be filled in with this value, i.e., if `fillValue` is 127
     then each RGB channel will be 127.
   * Only images with 1 or 3 channels can be used.
+  * If [`MLPACK_DISABLE_STB`](../compile.md#configuring-mlpack-with-compile-time-definitions)
+    is defined, an exception will be thrown, as STB image support is not available.
 
 #### Example
 

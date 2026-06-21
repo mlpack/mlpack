@@ -206,6 +206,9 @@ object `X` to be loaded or saved:
      specific to image formats.
    - Supported formats are PNG, JPEG, TGA, BMP, PSD, GIF, PIC, and PNM;
      see [the table of format options](#formats).
+   - If [`MLPACK_DISABLE_STB`](compile.md#configuring-mlpack-with-compile-time-definitions)
+     is defined, loading or saving images will throw an exception, as STB image
+     support is not available.
    - See [image data examples](#image-data-loadsave-examples) for example usage.
 
  * For [***audio data***](#audio-data),
