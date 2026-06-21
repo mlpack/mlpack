@@ -2771,89 +2771,6 @@ The output matrices are organized such that row i and column j in the neighbors 
  - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
-## softmax_regression()
-{: #softmax_regression }
-
-#### Softmax Regression
-{: #softmax_regression_descr }
-
-```julia
-julia> using mlpack: softmax_regression
-julia> output_model, predictions, probabilities = softmax_regression(
-          ; input_model=nothing, labels=Int[], lambda=0.0001,
-          max_iterations=400, no_intercept=false, number_of_classes=0,
-          test=zeros(0, 0), test_labels=Int[], training=zeros(0, 0),
-          verbose=false)
-```
-
-An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `input_model` | [`SoftmaxRegression`](#doc_model) | File containing existing model (parameters). | `nothing` |
-| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `Int[]` |
-| `lambda` | [`Float64`](#doc_Float64) | L2-regularization constant | `0.0001` |
-| `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations before termination. | `400` |
-| `no_intercept` | [`Bool`](#doc_Bool) | Do not add the intercept term to the model. | `false` |
-| `number_of_classes` | [`Int`](#doc_Int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing test dataset. | `zeros(0, 0)` |
-| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Matrix containing test labels. | `Int[]` |
-| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set (the matrix of predictors, X). | `zeros(0, 0)` |
-| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
-| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to save predictions for test dataset into. | 
-| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save class probabilities for test dataset into. | 
-
-### Detailed documentation
-{: #softmax_regression_detailed-documentation }
-
-This program performs softmax regression, a generalization of logistic regression to the multiclass case, and has support for L2 regularization.  The program is able to train a model, load  an existing model, and give predictions (and optionally their accuracy) for test data.
-
-Training a softmax regression model is done by giving a file of training points with the `training` parameter and their corresponding labels with the `labels` parameter. The number of classes can be manually specified with the `number_of_classes` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `max_iterations` parameter.  The L2 regularization constant can be specified with the `lambda` parameter and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
-
-The trained model can be saved with the `output_model` output parameter. If training is not desired, but only testing is, a model can be loaded with the `input_model` parameter.  At the current time, a loaded model cannot be trained further, so specifying both `input_model` and `training` is not allowed.
-
-The program is also able to evaluate a model on test data.  A test dataset can be specified with the `test` parameter. Class predictions can be saved with the `predictions` output parameter.  If labels are specified for the test data with the `test_labels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
-
-### Example
-For example, to train a softmax regression model on the data ``dataset`` with labels ``labels`` with a maximum of 1000 iterations for training, saving the trained model to ``sr_model``, the following command can be used: 
-
-```julia
-julia> using CSV
-julia> dataset = CSV.read("dataset.csv")
-julia> labels = CSV.read("labels.csv"; type=Int)
-julia> sr_model, _, _ = softmax_regression(labels=labels,
-            training=dataset)
-```
-
-Then, to use ``sr_model`` to classify the test points in ``test_points``, saving the output predictions to ``predictions``, the following command can be used:
-
-```julia
-julia> using CSV
-julia> test_points = CSV.read("test_points.csv")
-julia> _, predictions, _ = softmax_regression(input_model=sr_model,
-            test=test_points)
-```
-
-### See also
-
- - [logistic_regression()](#logistic_regression)
- - [random_forest()](#random_forest)
- - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
- - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
-
 ## sparse_coding()
 {: #sparse_coding }
 
@@ -3540,6 +3457,89 @@ julia> _, predictions, _ = nbc(input_model=nbc_model,
  - [random_forest()](#random_forest)
  - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
  - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+
+## softmax_regression()
+{: #softmax_regression }
+
+#### Softmax Regression
+{: #softmax_regression_descr }
+
+```julia
+julia> using mlpack: softmax_regression
+julia> output_model, predictions, probabilities = softmax_regression(
+          ; input_model=nothing, labels=Int[], lambda=0.0001,
+          max_iterations=400, no_intercept=false, number_of_classes=0,
+          test=zeros(0, 0), test_labels=Int[], training=zeros(0, 0),
+          verbose=false)
+```
+
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `input_model` | [`SoftmaxRegression`](#doc_model) | File containing existing model (parameters). | `nothing` |
+| `labels` | [`Int vector-like`](#doc_Int_vector_like) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `Int[]` |
+| `lambda` | [`Float64`](#doc_Float64) | L2-regularization constant | `0.0001` |
+| `max_iterations` | [`Int`](#doc_Int) | Maximum number of iterations before termination. | `400` |
+| `no_intercept` | [`Bool`](#doc_Bool) | Do not add the intercept term to the model. | `false` |
+| `number_of_classes` | [`Int`](#doc_Int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `test` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix containing test dataset. | `zeros(0, 0)` |
+| `test_labels` | [`Int vector-like`](#doc_Int_vector_like) | Matrix containing test labels. | `Int[]` |
+| `training` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | A matrix containing the training set (the matrix of predictors, X). | `zeros(0, 0)` |
+| `verbose` | [`Bool`](#doc_Bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Results are returned as a tuple, and can be unpacked directly into return values or stored directly as a tuple; undesired results can be ignored with the _ keyword.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `output_model` | [`SoftmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
+| `predictions` | [`Int vector-like`](#doc_Int_vector_like) | Matrix to save predictions for test dataset into. | 
+| `probabilities` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Matrix to save class probabilities for test dataset into. | 
+
+### Detailed documentation
+{: #softmax_regression_detailed-documentation }
+
+This program performs softmax regression, a generalization of logistic regression to the multiclass case, and has support for L2 regularization.  The program is able to train a model, load  an existing model, and give predictions (and optionally their accuracy) for test data.
+
+Training a softmax regression model is done by giving a file of training points with the `training` parameter and their corresponding labels with the `labels` parameter. The number of classes can be manually specified with the `number_of_classes` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `max_iterations` parameter.  The L2 regularization constant can be specified with the `lambda` parameter and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+The trained model can be saved with the `output_model` output parameter. If training is not desired, but only testing is, a model can be loaded with the `input_model` parameter.  At the current time, a loaded model cannot be trained further, so specifying both `input_model` and `training` is not allowed.
+
+The program is also able to evaluate a model on test data.  A test dataset can be specified with the `test` parameter. Class predictions can be saved with the `predictions` output parameter.  If labels are specified for the test data with the `test_labels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
+
+### Example
+For example, to train a softmax regression model on the data ``dataset`` with labels ``labels`` with a maximum of 1000 iterations for training, saving the trained model to ``sr_model``, the following command can be used: 
+
+```julia
+julia> using CSV
+julia> dataset = CSV.read("dataset.csv")
+julia> labels = CSV.read("labels.csv"; type=Int)
+julia> sr_model, _, _ = softmax_regression(labels=labels,
+            training=dataset)
+```
+
+Then, to use ``sr_model`` to classify the test points in ``test_points``, saving the output predictions to ``predictions``, the following command can be used:
+
+```julia
+julia> using CSV
+julia> test_points = CSV.read("test_points.csv")
+julia> _, predictions, _ = softmax_regression(input_model=sr_model,
+            test=test_points)
+```
+
+### See also
+
+ - [logistic_regression()](#logistic_regression)
+ - [random_forest()](#random_forest)
+ - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
+ - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
 ## linear_regression()
 {: #linear_regression }

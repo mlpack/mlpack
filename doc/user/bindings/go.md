@@ -3400,106 +3400,6 @@ The output matrices are organized such that row i and column j in the neighbors 
  - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
-## SoftmaxRegression()
-{: #softmax_regression }
-
-#### Softmax Regression
-{: #softmax_regression_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for SoftmaxRegression().
-param := mlpack.SoftmaxRegressionOptions()
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Lambda = 0.0001
-param.MaxIterations = 400
-param.NoIntercept = false
-param.NumberOfClasses = 0
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.SoftmaxRegression(param)
-```
-
-An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`softmaxRegression`](#doc_model) | File containing existing model (parameters). | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `mat.NewDense(1, 1, nil)` |
-| `Lambda` | [`float64`](#doc_float64) | L2-regularization constant | `0.0001` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
-| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
-| `NumberOfClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`softmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to save predictions for test dataset into. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save class probabilities for test dataset into. | 
-
-### Detailed documentation
-{: #softmax_regression_detailed-documentation }
-
-This program performs softmax regression, a generalization of logistic regression to the multiclass case, and has support for L2 regularization.  The program is able to train a model, load  an existing model, and give predictions (and optionally their accuracy) for test data.
-
-Training a softmax regression model is done by giving a file of training points with the `Training` parameter and their corresponding labels with the `Labels` parameter. The number of classes can be manually specified with the `NumberOfClasses` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `MaxIterations` parameter.  The L2 regularization constant can be specified with the `Lambda` parameter and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
-
-The trained model can be saved with the `OutputModel` output parameter. If training is not desired, but only testing is, a model can be loaded with the `InputModel` parameter.  At the current time, a loaded model cannot be trained further, so specifying both `InputModel` and `Training` is not allowed.
-
-The program is also able to evaluate a model on test data.  A test dataset can be specified with the `Test` parameter. Class predictions can be saved with the `Predictions` output parameter.  If labels are specified for the test data with the `TestLabels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
-
-### Example
-For example, to train a softmax regression model on the data `dataset` with labels `labels` with a maximum of 1000 iterations for training, saving the trained model to `sr_model`, the following command can be used: 
-
-```go
-// Initialize optional parameters for SoftmaxRegression().
-param := mlpack.SoftmaxRegressionOptions()
-param.Training = dataset
-param.Labels = labels
-
-sr_model, _, _ := mlpack.SoftmaxRegression(param)
-```
-
-Then, to use `sr_model` to classify the test points in `test_points`, saving the output predictions to `predictions`, the following command can be used:
-
-```go
-// Initialize optional parameters for SoftmaxRegression().
-param := mlpack.SoftmaxRegressionOptions()
-param.InputModel = &sr_model
-param.Test = test_points
-
-_, predictions, _ := mlpack.SoftmaxRegression(param)
-```
-
-### See also
-
- - [LogisticRegression()](#logistic_regression)
- - [RandomForest()](#random_forest)
- - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
- - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
-
 ## SparseCoding()
 {: #sparse_coding }
 
@@ -4346,6 +4246,106 @@ _, predictions, _ := mlpack.Nbc(param)
  - [RandomForest()](#random_forest)
  - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
  - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+
+## SoftmaxRegression()
+{: #softmax_regression }
+
+#### Softmax Regression
+{: #softmax_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for SoftmaxRegression().
+param := mlpack.SoftmaxRegressionOptions()
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Lambda = 0.0001
+param.MaxIterations = 400
+param.NoIntercept = false
+param.NumberOfClasses = 0
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.SoftmaxRegression(param)
+```
+
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`softmaxRegression`](#doc_model) | File containing existing model (parameters). | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `mat.NewDense(1, 1, nil)` |
+| `Lambda` | [`float64`](#doc_float64) | L2-regularization constant | `0.0001` |
+| `MaxIterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
+| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
+| `NumberOfClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`softmaxRegression`](#doc_model) | File to save trained softmax regression model to. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to save predictions for test dataset into. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save class probabilities for test dataset into. | 
+
+### Detailed documentation
+{: #softmax_regression_detailed-documentation }
+
+This program performs softmax regression, a generalization of logistic regression to the multiclass case, and has support for L2 regularization.  The program is able to train a model, load  an existing model, and give predictions (and optionally their accuracy) for test data.
+
+Training a softmax regression model is done by giving a file of training points with the `Training` parameter and their corresponding labels with the `Labels` parameter. The number of classes can be manually specified with the `NumberOfClasses` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `MaxIterations` parameter.  The L2 regularization constant can be specified with the `Lambda` parameter and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
+
+The trained model can be saved with the `OutputModel` output parameter. If training is not desired, but only testing is, a model can be loaded with the `InputModel` parameter.  At the current time, a loaded model cannot be trained further, so specifying both `InputModel` and `Training` is not allowed.
+
+The program is also able to evaluate a model on test data.  A test dataset can be specified with the `Test` parameter. Class predictions can be saved with the `Predictions` output parameter.  If labels are specified for the test data with the `TestLabels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
+
+### Example
+For example, to train a softmax regression model on the data `dataset` with labels `labels` with a maximum of 1000 iterations for training, saving the trained model to `sr_model`, the following command can be used: 
+
+```go
+// Initialize optional parameters for SoftmaxRegression().
+param := mlpack.SoftmaxRegressionOptions()
+param.Training = dataset
+param.Labels = labels
+
+sr_model, _, _ := mlpack.SoftmaxRegression(param)
+```
+
+Then, to use `sr_model` to classify the test points in `test_points`, saving the output predictions to `predictions`, the following command can be used:
+
+```go
+// Initialize optional parameters for SoftmaxRegression().
+param := mlpack.SoftmaxRegressionOptions()
+param.InputModel = &sr_model
+param.Test = test_points
+
+_, predictions, _ := mlpack.SoftmaxRegression(param)
+```
+
+### See also
+
+ - [LogisticRegression()](#logistic_regression)
+ - [RandomForest()](#random_forest)
+ - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
+ - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
 ## LinearRegression()
 {: #linear_regression }
