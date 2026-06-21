@@ -74,7 +74,7 @@ TEST_CASE_METHOD(SoftmaxRegressionProbabilitiesTestFixture,
   SoftmaxRegression<>* model = new SoftmaxRegression<>;
   model->Train(trainX, trainY, 2);
   SetInputParam("input_model", std::move(model));
-  // Test data has the wrong dimensionality. Should throw a runtime error.
+  // Test data is missing. Should throw a runtime error.
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 

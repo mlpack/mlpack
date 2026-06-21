@@ -2,7 +2,8 @@
  * @file methods/softmax_regression/softmax_regression_utils_impl.hpp
  * @author Dirk Eddelbuettel
  *
- * Implementation of function to be optimized for softmax regression.
+ * Implementation of prediction step used in 'classify' and 'probabilities'.
+ * Used only for bindings.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -19,15 +20,14 @@ using namespace mlpack;
 using namespace mlpack::util;
 
 namespace mlpack {
-namespace util {
 
 template<typename Model>
-inline void TestClassifyAcc(util::Params& params,
-                            util::Timers& timers,
-                            const size_t numClasses,
-                            const Model& model,
-                            const bool retPreds,  // no default argument here
-                            const bool retProbas) // to have diff. signature
+inline void RunPredictionStep(util::Params& params,
+                              util::Timers& timers,
+                              const size_t numClasses,
+                              const Model& model,
+                              const bool retPreds,  // no default argument here
+                              const bool retProbas) // to have diff. signature
 {
   using namespace mlpack;
 
@@ -86,7 +86,6 @@ inline void TestClassifyAcc(util::Params& params,
     params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }
 
-} // namespace util
 } // namespace mlpack
 
 #endif

@@ -97,11 +97,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const int maxIterations = params.Get<int>("max_iterations");
 
-  ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
-  ReportIgnoredParam(params, {{ "training", false }}, "number_of_classes");
-  ReportIgnoredParam(params, {{ "training", false }}, "lambda");
-  ReportIgnoredParam(params, {{ "training", false }}, "no_intercept");
-
   RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "maximum number of iterations must be greater than or equal to 0");
   RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
