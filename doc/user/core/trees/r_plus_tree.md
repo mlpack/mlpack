@@ -29,7 +29,7 @@ functionality is required, then the R+-tree or other variants of
  * [`KNN`](../../methods/knn.md)
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [R+-Tree on Wikipedia](https://en.wikipedia.org/wiki/R%2B_tree)
- * [The R+-tree: A Dynamic Index for Multi-Dimensional Objects (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=d93f031437af6f04e96d2300942eedbacd6ddde4)
+ * [The R+-tree: A Dynamic Index for Multi-Dimensional Objects (pdf)](https://www.vldb.org/conf/1987/P507.PDF)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 
 ## Template parameters
