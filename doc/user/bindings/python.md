@@ -1353,11 +1353,11 @@ To train a BayesianLinearRegression model, the `input_` and `responses` paramete
 >>> from mlpack import BayesianLinearRegression
 >>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
 >>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> d = preprocess_split(input_=X, input_labels=list(range(len(y))), test_ratio=0.2)
 >>> X_train = d['training']
->>> y_train = d['training_labels']
+>>> y_train = y[d['training_labels']]
 >>> X_test = d['test']
->>> y_test = d['test_labels']
+>>> y_test = y[d['test_labels']]
 >>> model = BayesianLinearRegression(center=False, check_input_matrices=False,
   copy_all_inputs=False, scale=False, verbose=False)
 >>> output_model = model.fit(input_=X_train, responses=y_train)
@@ -1453,11 +1453,11 @@ To train a LARS/LASSO/Elastic Net model, the `input_` and `responses` parameters
 >>> from mlpack import Lars
 >>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
 >>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> d = preprocess_split(input_=X, input_labels=list(range(len(y))), test_ratio=0.2)
 >>> X_train = d['training']
->>> y_train = d['training_labels']
+>>> y_train = y[d['training_labels']]
 >>> X_test = d['test']
->>> y_test = d['test_labels']
+>>> y_test = y[d['test_labels']]
 >>> model = Lars(check_input_matrices=False, copy_all_inputs=False, lambda1=0,
   lambda2=0, no_intercept=False, no_normalize=False, use_cholesky=False,
   verbose=False)
@@ -3249,7 +3249,7 @@ Implementation of a perceptron, which is a single level neural network. The perc
 ```python
 >>> import pandas as pd
 >>> from mlpack import preprocess_split
->>> from mlpack import DecisionTree
+>>> from mlpack import Perceptron
 >>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
 >>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
 >>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
@@ -3257,7 +3257,7 @@ Implementation of a perceptron, which is a single level neural network. The perc
 >>> y_train = d['training_labels']
 >>> X_test = d['test']
 >>> y_test = d['test_labels']
->>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
+>>> model = Perceptron(check_input_matrices=False, copy_all_inputs=False,
   max_iterations=1000, verbose=False)
 >>> output_model = model.fit(training=X_train, labels=y_train)
 >>> predictions = model.predict(test=X_test)
@@ -3756,11 +3756,11 @@ An implementation of simple linear regression and simple ridge regression using 
 >>> from mlpack import LinearRegression
 >>> X = pd.read_csv('https://datasets.mlpack.org/admission_predict.csv')
 >>> y = pd.read_csv('https://datasets.mlpack.org/admission_predict.responses.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> d = preprocess_split(input_=X, input_labels=list(range(len(y))), test_ratio=0.2)
 >>> X_train = d['training']
->>> y_train = d['training_labels']
+>>> y_train = y[d['training_labels']]
 >>> X_test = d['test']
->>> y_test = d['test_labels']
+>>> y_test = y[d['test_labels']]
 >>> model = LinearRegression(check_input_matrices=False,
   copy_all_inputs=False, lambda_=0, verbose=False)
 >>> output_model = model.fit(training=X_train, training_responses=y_train)
