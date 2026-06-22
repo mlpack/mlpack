@@ -47,8 +47,8 @@ BINDING_EXAMPLE(
         "\n" +
     GET_DATASET("y",
         "https://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
-        "0.2") + "\n" +
+    SPLIT_TRAIN_TEST_REGRESSION("X", "y", "X_train", "y_train", "X_test",
+        "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "linear_regression") + "\n" +
     CALL_METHOD("model", "train", "training", "X_train", "training_responses",
         "y_train"));

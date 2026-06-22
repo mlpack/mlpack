@@ -167,12 +167,13 @@ inline std::string GetDataset(const std::string& datasetName,
  * Code to split a given dataset into test and training set for both
  * the predictor variables and the response variable.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
                                   const std::string& splitRatio);
 
 /**

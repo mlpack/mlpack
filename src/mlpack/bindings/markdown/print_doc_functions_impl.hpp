@@ -830,7 +830,8 @@ inline std::string ImportThis(const std::string& groupName,
   return s;
 }
 
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,
@@ -841,12 +842,17 @@ inline std::string SplitTrainTest(const std::string& datasetName,
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::SplitTrainTest(datasetName, labelName,
+    s = python::SplitTrainTest(integerLabels, datasetName, labelName,
         trainDataset, trainLabels, testDataset, testLabels, splitRatio);
   }
   else if (BindingInfo::Language() == "r")
   {
-    s = r::SplitTrainTest(datasetName, labelName,
+    s = r::SplitTrainTest(integerLabels, datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::SplitTrainTest(integerLabels, datasetName, labelName,
         trainDataset, trainLabels, testDataset, testLabels, splitRatio);
   }
   else

@@ -128,7 +128,8 @@ inline std::string ImportThis(const std::string& groupName,
 /**
  * Print the string that splits dataset into training and testing.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,

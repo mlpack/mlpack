@@ -84,8 +84,8 @@ BINDING_EXAMPLE(
       "http://datasets.mlpack.org/admission_predict.csv") + "\n" +
     GET_DATASET("y",
       "http://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test",
-      "y_test", "0.2") + "\n" +
+    SPLIT_TRAIN_TEST_REGRESSION("X", "y", "X_train", "y_train", "X_test",
+        "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "lars") + "\n" +
     CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
       "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));

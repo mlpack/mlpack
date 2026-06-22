@@ -586,14 +586,42 @@ inline std::string ImportThis(const std::string& groupName,
       ImportThisMethodHelper(args...);
 }
 
-template<typename... Args>
-std::string CreateObject(const std::string& /* bindingName */,
-                         const std::string& /* objectName */,
-                         const std::string& /* groupName */,
-                         Args... /* args */)
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio)
 {
-  // TODO: implement
-  return "";
+  // If the labels are not integers, then preprocess_split cannot be used
+  // directly, since its input_label parameter expects an arma::Mat<size_t>.
+  std::string result = "(";
+  if (!integerLabels)
+  {
+    result += testDataset + ", ";
+    result += testLabels + "_indices, ";
+    result += trainDataset + ", ";
+    result += trainLabels + "_indices) = preprocess_split(";
+    result += datasetName + ", input_labels=collect(1:size(" + labelName +
+        ", 1)), test_ratio=" + splitRatio + ")\n";
+    result += trainLabels + " = " + labelName + "[" + trainLabels +
+        "_indices[1:end], 1]\n";
+    result += testLabels + " = " + labelName + "[" + testLabels +
+        "_indices[1:end], 1]";
+  }
+  else
+  {
+    result += testDataset + ", ";
+    result += testLabels + ", ";
+    result += trainDataset + ", ";
+    result += trainLabels + ") = preprocess_split(";
+    result += datasetName + ", input_labels=" + labelName + ", test_ratio=" +
+        splitRatio + ")";
+  }
+
+  return result;
 }
 
 inline std::string CreateObject(const std::string& /* bindingName */,
