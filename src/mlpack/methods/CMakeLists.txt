@@ -211,9 +211,8 @@ add_r_binding(softmax_regression softmax_regression "include")
 add_r_binding(softmax_regression softmax_regression_train "skip")
 add_r_binding(softmax_regression softmax_regression_classify "skip")
 add_r_binding(softmax_regression softmax_regression_probabilities "skip")
-add_markdown_docs(softmax_regression softmax_regression "cli;python;julia;go;r" "python;r")
-
-
+add_markdown_docs(softmax_regression softmax_regression "cli;python;julia;go;r"
+    "python;r;julia")
 
 # Linear Regression has a Python wrapper class that encapsulates its
 # functionality in a few methods.
