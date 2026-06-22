@@ -9,6 +9,8 @@ _????-??-??_
  * Update `LinearSVM` documentation: `Classify()` returns class scores, not
    class probabilities (#4187).
 
+ * Check that Julia models are trained when calling `predict()` (#4195).
+
 ## mlpack 4.8.0
 
 _2026-06-07_
