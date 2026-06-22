@@ -371,7 +371,8 @@ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${g
 
   # Add to the list of Julia group bindings.  These will all be appended to
   # mlpack.jl in post_julia_setup().
-  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name} PARENT_SCOPE)
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name})
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} PARENT_SCOPE)
 endmacro()
 
 if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)
