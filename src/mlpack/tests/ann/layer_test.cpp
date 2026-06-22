@@ -48,6 +48,7 @@
 #include "layer/parametric_relu.cpp"
 #include "layer/relu6.cpp"
 #include "layer/repeat.cpp"
+#include "layer/scale.cpp"
 #include "layer/softmax.cpp"
 #include "layer/softmin.cpp"
 #include "layer/ftswish.cpp"
