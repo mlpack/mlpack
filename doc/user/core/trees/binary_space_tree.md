@@ -1992,7 +1992,7 @@ class CustomStatistic
 
 *Example*: suppose we wanted to know, for each node, the exact time at which it
 was created.  A `StatisticType` could be created that has a
-[`std::time_t`](https://en.cppreference.com/w/cpp/chrono/c/time_t) member,
+[`std::time_t`](https://en.cppreference.com/cpp/chrono/c/time_t) member,
 whose value is computed in the constructor.
 
 ## `SplitType`

@@ -258,7 +258,7 @@ Then, to use this model to generate recommendations for the list of users in the
 
  - [Collaborative Filtering on Wikipedia](https://en.wikipedia.org/wiki/Collaborative_filtering)
  - [Matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
- - [Matrix factorization techniques for recommender systems (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=cf17f85a0a7991fa01dbfb3e5878fbf71ea4bdc5)
+ - [Matrix factorization techniques for recommender systems (pdf)](https://www.cs.columbia.edu/~blei/fogm/2023F/readings/KorenBellVolinsky2009.pdf)
  - [CFType class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/cf/cf.hpp)
 
 ## dbscan()
@@ -1956,7 +1956,7 @@ For example, to run mean shift clustering on the dataset `'data'` and store the 
  - [kmeans()](#kmeans)
  - [dbscan()](#dbscan)
  - [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
- - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
+ - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
 ## nca()
@@ -2843,89 +2843,6 @@ The output matrices are organized such that row i and column j in the neighbors 
  - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
  - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
-## softmax_regression()
-{: #softmax_regression }
-
-#### Softmax Regression
-{: #softmax_regression_descr }
-
-```python
->>> from mlpack import softmax_regression
->>> d = softmax_regression(check_input_matrices=False,
-        copy_all_inputs=False, input_model=None, labels=np.empty([0],
-        dtype=np.uint64), lambda_=0.0001, max_iterations=400,
-        no_intercept=False, number_of_classes=0, test=np.empty([0, 0]),
-        test_labels=np.empty([0], dtype=np.uint64), training=np.empty([0, 0]),
-        verbose=False)
->>> output_model = d['output_model']
->>> predictions = d['predictions']
->>> probabilities = d['probabilities']
-```
-
-An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained and saved for future use, or, a pre-trained softmax regression model can be used for classification of new points. [Detailed documentation](#softmax_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `input_model` | [`SoftmaxRegressionType`](#doc_model) | File containing existing model (parameters). | `None` |
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | `np.empty([0], dtype=np.uint64)` |
-| `lambda_` | [`float`](#doc_float) | L2-regularization constant | `0.0001` |
-| `max_iterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
-| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
-| `number_of_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | `np.empty([0, 0])` |
-| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | `np.empty([0], dtype=np.uint64)` |
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `output_model` | [`SoftmaxRegressionType`](#doc_model) | File to save trained softmax regression model to. | 
-| `predictions` | [`int vector`](#doc_int_vector) | Matrix to save predictions for test dataset into. | 
-| `probabilities` | [`matrix`](#doc_matrix) | Matrix to save class probabilities for test dataset into. | 
-
-### Detailed documentation
-{: #softmax_regression_detailed-documentation }
-
-This program performs softmax regression, a generalization of logistic regression to the multiclass case, and has support for L2 regularization.  The program is able to train a model, load  an existing model, and give predictions (and optionally their accuracy) for test data.
-
-Training a softmax regression model is done by giving a file of training points with the `training` parameter and their corresponding labels with the `labels` parameter. The number of classes can be manually specified with the `number_of_classes` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `max_iterations` parameter.  The L2 regularization constant can be specified with the `lambda_` parameter and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
-
-The trained model can be saved with the `output_model` output parameter. If training is not desired, but only testing is, a model can be loaded with the `input_model` parameter.  At the current time, a loaded model cannot be trained further, so specifying both `input_model` and `training` is not allowed.
-
-The program is also able to evaluate a model on test data.  A test dataset can be specified with the `test` parameter. Class predictions can be saved with the `predictions` output parameter.  If labels are specified for the test data with the `test_labels` parameter, then the program will print the accuracy of the predictions on the given test set and its corresponding labels.
-
-### Example
-For example, to train a softmax regression model on the data `'dataset'` with labels `'labels'` with a maximum of 1000 iterations for training, saving the trained model to `'sr_model'`, the following command can be used: 
-
-```python
->>> output = softmax_regression(training=dataset, labels=labels)
->>> sr_model = output['output_model']
-```
-
-Then, to use `'sr_model'` to classify the test points in `'test_points'`, saving the output predictions to `'predictions'`, the following command can be used:
-
-```python
->>> output = softmax_regression(input_model=sr_model, test=test_points)
->>> predictions = output['predictions']
-```
-
-### See also
-
- - [logistic_regression()](#logistic_regression)
- - [random_forest()](#random_forest)
- - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
- - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
-
 ## sparse_coding()
 {: #sparse_coding }
 
@@ -3012,7 +2929,7 @@ Then, this model could be used to encode a new matrix, `'otherdata'`, and save t
  - [local_coordinate_coding()](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
  - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
 ## class RandomForest
@@ -3728,6 +3645,110 @@ Class probabilities from a Naive Bayes Classifier model.
 | **type** | **description** |
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+## class SoftmaxRegression
+{: #softmax_regression }
+
+#### Softmax Regression
+{: #softmax_regression_descr }
+
+
+Implementation of softmax regression, a generalization of logistic regression to the multiclass case, with support for L2 regularization. 
+
+Training a softmax regression model is done by giving a file of training points with the `training` parameter and their corresponding labels with the `labels` parameter. The number of classes can be manually specified with the `number_of_classes` parameter, and the maximum number of iterations of the L-BFGS optimizer can be specified with the `max_iterations` parameter.  The L2 regularization constant can be specified with the `lambda_` parameter and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda_` | [`float`](#doc_float) | L2-regularization constant | `0.0001` |
+| `max_iterations` | [`int`](#doc_int) | Maximum number of iterations before termination. | `400` |
+| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
+| `number_of_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import SoftmaxRegression
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = SoftmaxRegression(check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0.0001, max_iterations=400, no_intercept=False,
+  number_of_classes=0, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained for future use of classification on new points. |
+| predict | An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given a pre-trained softmax regression model, new points are classified. |
+| predict_proba | An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given a pre-trained softmax regression model, new points are classified. |
+
+### 1. fit
+
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given labeled data, a softmax regression model can be trained for future use of classification on new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). The labels must order as a row. | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`SoftmaxRegressionType`](#doc_model) | File to save trained softmax regression model to. | 
+
+### 2. predict
+
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given a pre-trained softmax regression model, new points are classified.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | Matrix to save predictions for test dataset into. | 
+
+### 3. predict_proba
+
+An implementation of softmax regression for classification, which is a multiclass generalization of logistic regression.  Given a pre-trained softmax regression model, new points are classified.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Matrix to save class probabilities for test dataset into. | 
 
 ## class LinearRegression
 {: #linear_regression }

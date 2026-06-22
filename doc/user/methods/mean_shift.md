@@ -53,7 +53,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
  * [mlpack clustering algorithms](../modeling.md#clustering)
  * [mlpack kernels](../core/kernels.md)
  * [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
- * [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
+ * [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
 
 ### Constructors
 

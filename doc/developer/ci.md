@@ -176,13 +176,19 @@ Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
    `#mlpack:matrix.org` is the best bet!)
 
  * A number of embedded devices are available to Jenkins and are used in the
-   cross-compilation job.  Each system is named after a main ingredient in a
-   good meal eaten just before receiving the embedded device.
-    - `couscous.ratml.org`: [Raspberry Pi 5](https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf),
+   cross-compilation job.  Each system (with one exception) is named after a
+   main ingredient in a good meal eaten just before receiving the embedded device.
+    - `couscous.ratml.org`: [Raspberry Pi 5](https://pip-assets.raspberrypi.com/categories/892-raspberry-pi-5/documents/RP-008348-DS-6-raspberry-pi-5-product-brief.pdf),
       4GB RAM, 4-core ARM Cortex-A76
-    - `tofu.ratml.org`: [Raspberry Pi 3 B+](https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-b-plus-product-brief.pdf),
+    - `tofu.ratml.org`: [Raspberry Pi 3 B+](https://pip-assets.raspberrypi.com/categories/532-raspberry-pi-3-model-b/documents/RP-008338-DS-2-raspberry-pi-3-b-plus-product-brief.pdf),
       1GB RAM, 4-core ARM Cortex-A53
     - `chorizo.ratml.org`: [Jetson Orin Nano](https://nvdam.widen.net/s/zkfqjmtds2/jetson-orin-datasheet-nano-developer-kit-3575392-r2),
       8GB RAM, 6-core ARM Cortex-A78AE, NVIDIA Ampere GPU
     - `tatertot.ratml.org`: [BeagleBone AI-64](https://www.beagleboard.org/boards/beaglebone-ai-64),
       4GB RAM, 2-core ARM Cortex-A72
+    - `megakelvin.ncsemiconductor.com`: [Apple Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube),
+      1GB RAM, 1-core 500 MHz PowerPC G4; graciously hosted by [NC Semiconductor](https://ncsemiconductor.com)
+    - `laziji.ratml.org`: [Sun Blade 100](https://en.wikipedia.org/wiki/Sun_Blade_(workstation)),
+      512MB RAM, 1-core 500 MHz UltraSparc IIe
+    - `cayenne.ratml.org`: [VoCore 2 Ultimate](https://vocore.io/), 128MB RAM,
+      580 MHz MT7628 (MIPS 24k)
