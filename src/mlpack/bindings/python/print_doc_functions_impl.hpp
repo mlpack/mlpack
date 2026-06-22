@@ -190,7 +190,7 @@ std::string PrintInputOptions(util::Params& params,
 
   // Continue recursion.
   std::string rest = PrintInputOptions(params, onlyHyperParams,
-                                       onlyMatrixParams, args...);
+      onlyMatrixParams, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -403,7 +403,9 @@ inline std::string ImportSplit()
   return ">>> from mlpack import preprocess_split";
 }
 
-inline std::string ImportThis(const std::string& groupName)
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... /* methodNames */)
 {
   return ">>> from mlpack import " + GetClassName(groupName);
 }

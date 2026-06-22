@@ -42,7 +42,7 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("linear_regression") + "\n" +
+    IMPORT_THIS("linear_regression", "train", "predict") + "\n" +
     GET_DATASET("X", "https://datasets.mlpack.org/admission_predict.csv") +
         "\n" +
     GET_DATASET("y",

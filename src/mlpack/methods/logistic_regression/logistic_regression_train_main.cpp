@@ -87,7 +87,8 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("logistic_regression") + "\n" +
+    IMPORT_THIS("logistic_regression", "train", "classify", "probabilities") +
+    "\n" +
     GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
     GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",

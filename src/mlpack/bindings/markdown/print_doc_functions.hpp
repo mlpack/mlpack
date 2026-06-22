@@ -119,9 +119,11 @@ inline std::string ImportExtLib();
 inline std::string ImportSplit();
 
 /**
- * Import the current method.
+ * Import the current binding group and any methods.
  */
-inline std::string ImportThis(const std::string& groupName);
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames);
 
 /**
  * Print the string that splits dataset into training and testing.

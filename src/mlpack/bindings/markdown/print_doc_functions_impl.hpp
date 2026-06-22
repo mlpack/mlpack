@@ -804,16 +804,22 @@ inline std::string ImportSplit()
   return s;
 }
 
-inline std::string ImportThis(const std::string& groupName)
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames)
 {
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::ImportThis(groupName);
+    s = python::ImportThis(groupName, methodNames...);
   }
   else if (BindingInfo::Language() == "r")
   {
-    s = r::ImportThis(groupName, false);
+    s = r::ImportThis(groupName, false, methodNames...);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::ImportThis(groupName, methodNames...);
   }
   else
   {

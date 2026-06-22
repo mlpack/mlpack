@@ -516,8 +516,10 @@ inline std::string ImportSplit()
  * Import the package itself. For R, we honor an additional flag to wrap
  * this in \dontrun{}.
  */
+template<typename... Args>
 inline std::string ImportThis(const std::string& /* groupName */,
-                              const bool dontrun = true)
+                              const bool dontrun,
+                              Args&&... /* methodNames */)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we use it to load mlpack itself.

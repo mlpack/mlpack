@@ -123,7 +123,9 @@ inline std::string ImportExtLib();
 
 inline std::string ImportSplit();
 
-inline std::string ImportThis(const std::string& groupName);
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames);
 
 inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& labelName,

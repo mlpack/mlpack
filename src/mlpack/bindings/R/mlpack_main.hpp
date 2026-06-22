@@ -67,7 +67,8 @@
  * IMPORT_THIS() returns a string that imports the current method.
  * For R, all functions in the package are already accessible.
  */
-#define IMPORT_THIS mlpack::bindings::r::ImportThis
+#define IMPORT_THIS(binding, ...) \
+    mlpack::bindings::r::ImportThis(binding, false, __VA_ARGS__)
 
 /**
  * GET_DATASET() returns a string that reads data from a source and,

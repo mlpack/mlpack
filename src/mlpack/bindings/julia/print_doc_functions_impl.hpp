@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_JULIA_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -565,29 +566,24 @@ inline std::string ImportSplit()
   return "";
 }
 
-inline std::string ImportThis(const std::string& /* groupName */)
+inline std::string ImportThisMethodHelper()
 {
-  // TODO: implement
   return "";
 }
 
-inline std::string SplitTrainTest(const std::string& /* datasetName */,
-                                  const std::string& /* labelName */,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
-                                  const std::string& /* splitRatio */)
+template<typename M, typename... Methods>
+inline std::string ImportThisMethodHelper(const M& method, Methods&&... methods)
 {
-  // TODO: implement
-  return "";
+  return ", " + GetMappedName(method) + ImportThisMethodHelper(methods...);
 }
 
-inline std::string GetDataset(const std::string& /* datasetName */,
-                              const std::string& /* url */)
+template<typename... MethodNameTypes>
+inline std::string ImportThis(const std::string& groupName,
+                              MethodNameTypes&&... args)
 {
-  // TODO: implement
-  return "";
+  // e.g.: "using mlpack: BayesianLinearRegression, fit!, predict"
+  return "using mlpack: " + GetClassName(groupName) +
+      ImportThisMethodHelper(args...);
 }
 
 template<typename... Args>

@@ -152,8 +152,10 @@ inline std::string ImportSplit();
  * Import the package itself. For R, we honor an additional flag to wrap
  * this in \dontrun{}.
  */
+template<typename... Args>
 inline std::string ImportThis(const std::string& /* groupName */,
-                              const bool dontrun);
+                              const bool dontrun,
+                              Args&&... /* methodNames */);
 
 /**
  * Code to load a given dataset from a given URL.

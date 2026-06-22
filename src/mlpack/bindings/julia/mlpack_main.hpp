@@ -63,7 +63,8 @@
 #define IMPORT_SPLIT mlpack::bindings::julia::ImportSplit
 
 /**
- * IMPORT_THIS returns a string that imports the current method.
+ * IMPORT_THIS returns a string that imports the current binding group, as well
+ * as any methods that might need to be explicitly imported.
  */
 #define IMPORT_THIS mlpack::bindings::julia::ImportThis
 
