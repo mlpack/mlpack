@@ -9,6 +9,8 @@ _????-??-??_
  * Update `LinearSVM` documentation: `Classify()` returns class scores, not
    class probabilities (#4187).
 
+ * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
+
 ## mlpack 4.8.0
 
 _2026-06-07_
