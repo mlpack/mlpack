@@ -280,7 +280,8 @@ inline std::string PrintInputOptions(util::Params& p,
     util::ParamData& d = it->second;
     if (d.input && d.required)
     {
-      // Always ignore some parameters that aren't present in the Julia bindings.
+      // Always ignore some parameters that aren't present in the Julia
+      // bindings.
       if (d.name != "help" && d.name != "info" && d.name != "version" &&
           d.name != "check_input_matrices" && d.name != "copy_all_inputs")
       {
