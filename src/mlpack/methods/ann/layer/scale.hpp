@@ -96,7 +96,7 @@ class Scale : public Layer<MatType>
 
  private:
   // Factor to scale the inputs by.
-  double scaleFactor;
+  ElemType scaleFactor;
 }; // class Scale
 
 } // namespace mlpack
