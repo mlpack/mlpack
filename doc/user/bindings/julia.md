@@ -3582,7 +3582,7 @@ Training a softmax regression model is done by giving a file of training points 
 using DataFrames
 using CSV
 using mlpack: preprocess_split
-using mlpack: SoftmaxRegression
+using mlpack: SoftmaxRegression, fit!, predict, predict_proba
 X = CSV.read(download("http://datasets.mlpack.org/iris.csv"), DataFrame)
 y = CSV.read(download("http://datasets.mlpack.org/iris_labels.csv"), DataFrame)
 (X_test, y_test, X_train, y_train) = preprocess_split(X, input_labels=y, test_ratio=0.2)
