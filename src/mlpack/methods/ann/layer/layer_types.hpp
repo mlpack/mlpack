@@ -54,6 +54,7 @@
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
+#include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 #include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/repeat.hpp>
