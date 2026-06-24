@@ -86,9 +86,9 @@ class Scale : public Layer<MatType>
                 MatType& g);
 
   // Get the scale factor..
-  double const& ScaleFactor() const { return scaleFactor; }
+  const ElemType& ScaleFactor() const { return scaleFactor; }
   // Modify the scale factor.
-  double& ScaleFactor() { return scaleFactor; }
+  ElemType& ScaleFactor() { return scaleFactor; }
 
   //! Serialize the layer.
   template<typename Archive>
