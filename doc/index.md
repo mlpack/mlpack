@@ -32,10 +32,6 @@ _If you use mlpack, please [cite the software](citation.md)._
     (Your browser does not support inline SVG objects.  Browse the mlpack
      pipeline using the navigation sidebar instead.)
 </object>
-<object data="img/pipeline-narrow.svg" type="image/svg+xml" id="pipeline-narrow">
-    (Your browser does not support inline SVG objects.  Browse the mlpack
-     pipeline using the navigation sidebar instead.)
-</object>
 
 ## Changelog
 
