@@ -398,6 +398,16 @@ if (BUILD_R_BINDINGS)
   # 3. Create the content previously in generics.R
   if ("${model_ptr_impl}" STREQUAL "include" AND NOT "${${name}_VALID_METHODS}" STREQUAL "")
     set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
+    if (${name}_METHODS MATCHES "probabilities")
+      SET(${name}_TYPES "c(\"predictions\", \"probabilities\")")
+      SET(${name}_ELSE "} else {")
+      string(APPEND ${name}_ELSE "   res <- ")
+      string(APPEND ${name}_ELSE ${name})
+      string(APPEND ${name}_ELSE "_probabilities(input_model=object, newdata, ...)")
+    else()
+      SET(${name}_TYPES "c(\"predictions\")")
+      SET(${name}_ELSE "")
+    endif()
     add_custom_command(
       OUTPUT "${GENERATED_GENERIC_PATH}"
       COMMAND ${CMAKE_COMMAND}
@@ -405,6 +415,10 @@ if (BUILD_R_BINDINGS)
         -DDIRECTORY=${directory}
         -DR_GENERICS_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
         -DR_GENERICS_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R
+        -DVALID_METHODS=${${name}_VALID_METHODS}
+        -DMETHODS=${${name}_METHODS}
+        -DTYPES=${${name}_TYPES}
+        -DELSE=${${name}_ELSE}
         -P ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
@@ -414,7 +428,7 @@ if (BUILD_R_BINDINGS)
       ALL
       DEPENDS ${GENERATED_GENERIC_PATH})
     add_dependencies(R ${name}_generic.R)
-    #message(STATUS "XXX dir:${directory} name:${name} mpi:${model_ptr_impl} method:${${name}_VALID_METHODS}")
+    message(STATUS "XXX dir:${directory} name:${name} mpi:${model_ptr_impl} methods:${${name}_METHODS}")
   endif()
 endif()
 endmacro()

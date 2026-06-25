@@ -1,3 +1,15 @@
-foo_${NAME} <- function() {
-    cat("${NAME}\n")
+#' @rdname ${NAME}
+#' @param object An instantiated model object for which prediction is desired
+#' @param newdata A test data set
+#' @param ... Additional optional arguments affecting the prediction
+#' @export
+predict.mlpack_${NAME} <- function(object, newdata, type=${TYPES}, ...) {
+    if (missing(newdata)) {
+        stop("Need 'newdata'")
+    }
+    type <- match.arg(type)
+    if (type == "predictions") {
+        ${NAME}_classify(input_model=object, newdata, ...)
+    ${ELSE}
+    }
 }
