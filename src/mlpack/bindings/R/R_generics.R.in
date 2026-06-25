@@ -9,7 +9,8 @@ predict.mlpack_${NAME} <- function(object, newdata, type=${TYPES}, ...) {
     }
     type <- match.arg(type)
     if (type == "predictions") {
-        ${NAME}_classify(input_model=object, newdata, ...)
+        res <- ${NAME}_${ACTION}(input_model=object, newdata, ...)
     ${ELSE}
     }
+    res
 }

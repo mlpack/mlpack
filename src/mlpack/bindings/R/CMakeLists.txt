@@ -400,13 +400,27 @@ if (BUILD_R_BINDINGS)
     set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
     if (${name}_METHODS MATCHES "probabilities")
       SET(${name}_TYPES "c(\"predictions\", \"probabilities\")")
+      # 'else' branch. Different approaches to add newlines failed.
       SET(${name}_ELSE "} else {")
       string(APPEND ${name}_ELSE "   res <- ")
       string(APPEND ${name}_ELSE ${name})
       string(APPEND ${name}_ELSE "_probabilities(input_model=object, newdata, ...)")
+    elseif (${name}_METHODS MATCHES "scores")
+      SET(${name}_TYPES "c(\"predictions\", \"scores\")")
+      # 'else' branch. Different approaches to add newlines failed.
+      SET(${name}_ELSE "} else {")
+      string(APPEND ${name}_ELSE "   res <- ")
+      string(APPEND ${name}_ELSE ${name})
+      string(APPEND ${name}_ELSE "_scores(input_model=object, newdata, ...)")
     else()
       SET(${name}_TYPES "c(\"predictions\")")
       SET(${name}_ELSE "")
+    endif()
+    set(REGRESSION_METHODS_LIST "linear_regression" "lars" "bayesian_linear_regression")
+    if (${name} IN_LIST REGRESSION_METHODS_LIST)
+      SET(${name}_ACTION "predict")
+    else()
+      SET(${name}_ACTION "classify")
     endif()
     add_custom_command(
       OUTPUT "${GENERATED_GENERIC_PATH}"
@@ -419,6 +433,7 @@ if (BUILD_R_BINDINGS)
         -DMETHODS=${${name}_METHODS}
         -DTYPES=${${name}_TYPES}
         -DELSE=${${name}_ELSE}
+        -DACTION=${${name}_ACTION}
         -P ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
