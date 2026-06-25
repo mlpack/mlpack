@@ -97,10 +97,10 @@ class BatchNorm : public Layer<MatType>
    * @param momentum Parameter used to to update the running mean and variance.
    */
   BatchNorm(const size_t minAxis,
-                const size_t maxAxis,
-                const double eps = 1e-8,
-                const bool average = true,
-                const double momentum = 0.1);
+            const size_t maxAxis,
+            const double eps = 1e-8,
+            const bool average = true,
+            const double momentum = 0.1);
 
   virtual ~BatchNorm() { }
 
