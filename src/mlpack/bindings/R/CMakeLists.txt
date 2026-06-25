@@ -326,8 +326,19 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
+#add_custom_command(
+#  OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/newgenerics.R
+#  COMMAND echo "## Bootstrap"
+#  COMMENT "Running generics generator init"
+#)
+##     #COMMAND bash ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/makeGenerics.sh "${directory}" "${name}" "${method}" "${${name}_VALID_METHODS}"
+
+
+# Here 'direcory' is eg 'naive_bayes'), 'name' is 'nbc' and model_ptr_impl always 'include'.
+# In all but two cases 'directory' and 'name' are equal.
 macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
+
   # Append content to the list of models.
   set_property(GLOBAL APPEND PROPERTY R_MODELS
       ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp)
@@ -383,6 +394,28 @@ if (BUILD_R_BINDINGS)
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
   add_dependencies(generate_r_${name} r_copy)
   add_dependencies(r_build generate_r_${name})
+
+  # 3. Create the content previously in generics.R
+  if ("${model_ptr_impl}" STREQUAL "include" AND NOT "${${name}_VALID_METHODS}" STREQUAL "")
+    set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
+    add_custom_command(
+      OUTPUT "${GENERATED_GENERIC_PATH}"
+      COMMAND ${CMAKE_COMMAND}
+        -DNAME=${name}
+        -DDIRECTORY=${directory}
+        -DR_GENERICS_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
+        -DR_GENERICS_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R
+        -P ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
+        ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
+      VERBATIM
+      COMMENT "Creating ${GENERATED_GENERIC_PATH}")
+    add_custom_target(${name}_generic.R
+      ALL
+      DEPENDS ${GENERATED_GENERIC_PATH})
+    add_dependencies(R ${name}_generic.R)
+    #message(STATUS "XXX dir:${directory} name:${name} mpi:${model_ptr_impl} method:${${name}_VALID_METHODS}")
+  endif()
 endif()
 endmacro()
 
