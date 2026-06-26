@@ -326,8 +326,9 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-# Here 'direcory' is eg 'naive_bayes'), 'name' is 'nbc' and model_ptr_impl always 'include'.
-# In all but two cases 'directory' and 'name' are equal.
+# Here 'directory' is eg 'naive_bayes'), 'name' is 'nbc' and 'model_ptr_impl' is one
+# of 'include' (when we create S3 dispatches) or 'skip'. In all but two cases
+# 'directory' and 'name' are equal.
 macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
 
@@ -387,7 +388,7 @@ if (BUILD_R_BINDINGS)
   add_dependencies(generate_r_${name} r_copy)
   add_dependencies(r_build generate_r_${name})
 
-  # 3. Create the content previously in generics.R
+  # 3. Create the S3 dispatchers for the generic 'predict()' function
   if ("${model_ptr_impl}" STREQUAL "include" AND NOT "${${name}_VALID_METHODS}" STREQUAL "")
     set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
     if (${name}_METHODS MATCHES "probabilities")
@@ -408,11 +409,12 @@ if (BUILD_R_BINDINGS)
       SET(${name}_TYPES "c(\"predictions\")")
       SET(${name}_ELSE "")
     endif()
-    set(REGRESSION_METHODS_LIST "linear_regression" "lars" "bayesian_linear_regression")
-    if (${name} IN_LIST REGRESSION_METHODS_LIST)
+    if (${name}_CATEGORY STREQUAL "Regression")
       SET(${name}_ACTION "predict")
-    else()
+    elseif (${name}_CATEGORY STREQUAL "Classification")
       SET(${name}_ACTION "classify")
+    else()
+      MESSAGE(FATAL_ERROR "Category '${name}_CATEGORY' is not supported")
     endif()
     add_custom_command(
       OUTPUT "${GENERATED_GENERIC_PATH}"
@@ -420,7 +422,6 @@ if (BUILD_R_BINDINGS)
         -DNAME=${name}
         -DR_GENERICS_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
         -DR_GENERICS_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R
-        -DMETHODS=${${name}_METHODS}
         -DTYPES=${${name}_TYPES}
         -DELSE=${${name}_ELSE}
         -DACTION=${${name}_ACTION}
@@ -433,7 +434,6 @@ if (BUILD_R_BINDINGS)
       ALL
       DEPENDS ${GENERATED_GENERIC_PATH})
     add_dependencies(R ${name}_generic.R)
-    message(STATUS "XXX dir:${directory} name:${name} mpi:${model_ptr_impl} methods:${${name}_METHODS}")
   endif()
 endif()
 endmacro()
