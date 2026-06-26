@@ -391,14 +391,14 @@ if (BUILD_R_BINDINGS)
   # 3. Create the S3 dispatchers for the generic 'predict()' function
   if ("${model_ptr_impl}" STREQUAL "include" AND NOT "${${name}_VALID_METHODS}" STREQUAL "")
     set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
-    if (${name}_METHODS MATCHES "probabilities")
+    if (${name}_VALID_METHODS MATCHES "probabilities")
       SET(${name}_TYPES "c(\"predictions\", \"probabilities\")")
       # 'else' branch. Different approaches to add newlines failed.
       SET(${name}_ELSE "} else {")
       string(APPEND ${name}_ELSE "   res <- ")
       string(APPEND ${name}_ELSE ${name})
       string(APPEND ${name}_ELSE "_probabilities(input_model=object, newdata, ...)")
-    elseif (${name}_METHODS MATCHES "scores")
+    elseif (${name}_VALID_METHODS MATCHES "scores")
       SET(${name}_TYPES "c(\"predictions\", \"scores\")")
       # 'else' branch. Different approaches to add newlines failed.
       SET(${name}_ELSE "} else {")
