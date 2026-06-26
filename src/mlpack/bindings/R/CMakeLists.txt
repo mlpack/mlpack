@@ -326,14 +326,6 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-#add_custom_command(
-#  OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/newgenerics.R
-#  COMMAND echo "## Bootstrap"
-#  COMMENT "Running generics generator init"
-#)
-##     #COMMAND bash ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/makeGenerics.sh "${directory}" "${name}" "${method}" "${${name}_VALID_METHODS}"
-
-
 # Here 'direcory' is eg 'naive_bayes'), 'name' is 'nbc' and model_ptr_impl always 'include'.
 # In all but two cases 'directory' and 'name' are equal.
 macro (add_r_binding directory name model_ptr_impl)
@@ -426,10 +418,8 @@ if (BUILD_R_BINDINGS)
       OUTPUT "${GENERATED_GENERIC_PATH}"
       COMMAND ${CMAKE_COMMAND}
         -DNAME=${name}
-        -DDIRECTORY=${directory}
         -DR_GENERICS_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
         -DR_GENERICS_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R
-        -DVALID_METHODS=${${name}_VALID_METHODS}
         -DMETHODS=${${name}_METHODS}
         -DTYPES=${${name}_TYPES}
         -DELSE=${${name}_ELSE}
