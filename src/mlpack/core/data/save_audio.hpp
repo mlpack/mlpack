@@ -16,6 +16,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_DR_LIBS
+
 // WAV saving helper utilities:
 //
 // These handle actually calling dr_wav saving functions, after potentially
@@ -394,6 +396,21 @@ bool SaveAudio(const std::string& file,
 
   return true;
 }
+
+#else // MLPACK_DISABLE_DR_LIBS
+
+template<typename eT>
+bool SaveAudio(const std::string& /* file */,
+               const arma::Mat<eT>& /* matrix */,
+               AudioOptions& opts)
+{
+  std::stringstream oss;
+  oss << "SaveAudio(): audio support was disabled at compile time "
+         "(MLPACK_DISABLE_DR_LIBS); rebuild without it to save audio.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_DR_LIBS
 
 } //namespace mlpack
 

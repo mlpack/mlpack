@@ -19,6 +19,7 @@ option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." 
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
 option(DISABLE_STB "Disable STB support with mlpack." OFF)
 option(USE_SYSTEM_DR_LIBS "Use system dr_libs instead of version bundled with mlpack." OFF)
+option(DISABLE_DR_LIBS "Disable dr_libs (audio) support within mlpack." OFF)
 option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with mlpack." OFF)
 option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
 option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
@@ -261,6 +262,11 @@ if (USE_SYSTEM_DR_LIBS)
   set(MLPACK_USE_SYSTEM_DR_LIBS ON)
 endif ()
 
+# If the user would like to disable dr_libs (audio) for embedded systems
+if (DISABLE_DR_LIBS)
+  set(MLPACK_DISABLE_DR_LIBS ON)
+endif ()
+
 if (USE_SYSTEM_HTTPLIB)
   set(MLPACK_USE_SYSTEM_HTTPLIB ON)
 endif ()
@@ -373,9 +379,19 @@ if (USE_SYSTEM_STB)
       "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
+if (DISABLE_STB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_STB\n"
+      "#define MLPACK_DISABLE_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
 if (USE_SYSTEM_DR_LIBS)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_DR_LIBS\n"
       "#define MLPACK_USE_SYSTEM_DR_LIBS\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_DR_LIBS)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_DR_LIBS\n"
+      "#define MLPACK_DISABLE_DR_LIBS\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
 if (USE_SYSTEM_HTTPLIB)

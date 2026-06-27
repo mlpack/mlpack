@@ -221,6 +221,9 @@ object `X` to be loaded or saved:
      specific to audio formats.
    - Supported formats are MP3 and WAV;
      see [the table of format options](#formats).
+   - If [`MLPACK_DISABLE_DR_LIBS`](compile.md#configuring-mlpack-with-compile-time-definitions)
+     is defined, loading or saving audio will throw an exception, as dr_libs
+     audio support is not available.
    - See [audio data examples](#audio-data-loadsave-examples) for example usage.
 
  * For [***mlpack models and objects***](#mlpack-models-and-objects),
