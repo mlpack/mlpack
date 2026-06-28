@@ -242,9 +242,9 @@ press **Space** to start/stop), or use `--no-tui` for scripted capture over SSH:
 
 ```sh
 mkdir data
-./collect --no-tui --label walking   --sensors all --duration 30 --out-dir data --mag-cal mag.cal
-./collect --no-tui --label sitting   --sensors all --duration 30 --out-dir data --mag-cal mag.cal
-./collect --no-tui --label squat     --sensors all --duration 30 --out-dir data --mag-cal mag.cal
+./collect --no-tui --label walking   --sensors accel --duration 30 --out-dir data
+./collect --no-tui --label sitting   --sensors accel --duration 30 --out-dir data
+./collect --no-tui --label squat     --sensors accel --duration 30 --out-dir data
 ```
 
 Collect several recordings per movement (more files means more training
@@ -269,8 +269,8 @@ the stream, runs the same FFT, and prints the predicted movement.  Pass the same
 `--sensors` you trained with:
 
 ```sh
-./infer --bundle model --sensors all            # prints predictions to stdout
-./infer --bundle model --sensors all --tui      # interactive ncurses view
+./infer --bundle model --sensors accel            # prints predictions to stdout
+./infer --bundle model --sensors accel --tui      # interactive ncurses view
 ```
 
 You can pass `--bundle` more than once to compare several trained networks on
