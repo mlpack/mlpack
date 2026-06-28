@@ -176,9 +176,11 @@ make train infer
 ```
 
 `ARCH_NAME=C906` selects C906 tuning (`-mtune=thead-c906`) and a scalar
-`RISCV64_GENERIC` OpenBLAS build (no large vector buffers — friendlier on
+`RISCV64_GENERIC` OpenBLAS build (no large vector buffers, friendlier on
 64 MB), and OpenMP is disabled (the board is effectively single-core for this
-workload).  `NCURSES_PREFIX` points `infer` at the same target ncurses used for
+workload), check [Annex C](#annex-c-making-openblas-fit-so-training-runs-on-the-device),
+for more details regarding OpenBLAS optimization for this specific device.
+`NCURSES_PREFIX` points `infer` at the same target ncurses used for
 `collect`; if it is omitted, `infer` is skipped and only `train` is built.
 
 When the build finishes you will have `driver/imu_test`, `collect/collect`, and
@@ -209,10 +211,8 @@ ssh root@192.168.42.1 'chmod +x /root/imu_test /root/collect /root/train /root/i
 
 SSH into the board.  All the commands below run **on the Duo**.
 
-**1. Mux the I2C0 pins and check the sensor.**  :
-
 **1. Check the I2C0 pins and the sensor.** The GP0/GP1 pads must be set to
-their I2C function first; :
+their I2C function first:
 
 ```sh
 i2cdetect -y -r 0          # should show devices at 0x1d and 0x6b (and 0x77)
@@ -227,7 +227,7 @@ duo-pinmux -p GP1 -f IIC0_SDA
 i2cdetect -y -r 0          # Now it should show devices at 0x1d and 0x6b (and 0x77)
 ```
 
-**2. Check the sensor and calibrate the magnetometer (recommended).**
+**2. Check the sensor and calibrate the magnetometer**
 Even though we are going to use Accelerometer only. Calibration is important and it is 
 built into `imu_test`; rotate the board through all orientations while it samples:
 
@@ -275,9 +275,6 @@ the stream, runs the same FFT, and prints the predicted movement.  Pass the same
 
 You can pass `--bundle` more than once to compare several trained networks on
 the same live stream.
-
-That is the whole loop — collected, trained, and run without ever leaving the
-device.
 
 ### Annex A: shrinking the binary (image and audio support)
 
