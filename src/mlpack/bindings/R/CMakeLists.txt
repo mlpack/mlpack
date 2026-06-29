@@ -428,7 +428,6 @@ if (BUILD_R_BINDINGS)
         -P ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
         ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
-      VERBATIM
       COMMENT "Creating ${GENERATED_GENERIC_PATH}")
     add_custom_target(${name}_generic.R
       ALL
