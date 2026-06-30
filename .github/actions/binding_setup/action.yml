@@ -99,7 +99,7 @@ runs:
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
+          Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild", "tinytest2JUnit"))'
           Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
     - name: Install cereal manually for R
