@@ -47,8 +47,10 @@ runs:
       run: |
           ROOTDIR=`pwd`;
           cd build/src/mlpack/bindings/R/mlpack/
-          Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.output_file='r_bindings.junit.xml'); test_file('tests/testthat/test-R_binding.R', reporter = 'junit')"
-          mv tests/testthat/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
+          Rscript -e 'res <- tinytest::run_test_dir("inst/tinytest"); tinytest2JUnit::writeJUnit(res, "r_bindings.junit.xml")'
+          mv r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
+          #Rscript -e "library(pkgload); load_all('.'); library(testthat); options(testthat.output_file='r_bindings.junit.xml'); test_file('tests/testthat/test-R_binding.R', reporter = 'junit')"
+          #mv tests/testthat/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
 
     - name: "Upload R package artifact"
       if: inputs.lang == 'R' && runner.os == 'Linux' # Only upload one tarball.
