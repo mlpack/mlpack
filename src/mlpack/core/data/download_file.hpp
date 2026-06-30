@@ -44,11 +44,13 @@ inline void ParseURL(const std::string& url, std::string& host,
  * @param url Given URL to download dataset from.
  * @param filename The path to save the downloaded file to; if empty,
  * then `filename` is set to a generated temporary filename.
+ * @param readTimeout Timeout for reading the response body, in seconds.
  * @return true if download is successful, otherwise, throw error on failure, or
  * return false.
  */
 inline bool DownloadFile(const std::string& url,
-                         std::string& filename);
+                         std::string& filename,
+                         const size_t readTimeout = 0);
 
 } // namespace mlpack
 

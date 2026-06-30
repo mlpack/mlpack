@@ -129,7 +129,8 @@ inline void ParseURL(const std::string& url, std::string& host,
 }
 
 inline bool DownloadFile(const std::string& url,
-                         std::string& filename)
+                         std::string& filename,
+                         const size_t readTimeout)
 {
   std::fstream stream;
   int port = -1;
@@ -156,6 +157,7 @@ inline bool DownloadFile(const std::string& url,
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
+  cli.set_read_timeout(readTimeout);
   httplib::Result res = cli.Get(url);
   if (!res)
   {
@@ -223,7 +225,8 @@ inline void ParseURL(const std::string& url, std::string& host,
 }
 
 inline bool DownloadFile(const std::string& url,
-                         std::string& filename)
+                         std::string& filename,
+                         const size_t /* readTimeout */)
 {
   filename = "";
   throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
