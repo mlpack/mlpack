@@ -34,6 +34,104 @@ mlpack bindings for Go take and return a restricted set of types, for simplicity
 </div>
 
 
+## Adaboost()
+{: #adaboost }
+
+#### AdaBoost
+{: #adaboost_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.InputModel = nil
+param.Iterations = 1000
+param.Labels = mat.NewDense(1, 1, nil)
+param.Test = mat.NewDense(1, 1, nil)
+param.Tolerance = 1e-10
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+param.WeakLearner = "decision_stump"
+
+output_model, predictions, probabilities := mlpack.Adaboost(param)
+```
+
+An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`adaBoostModel`](#doc_model) | Input AdaBoost model. | `nil` |
+| `Iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for the training set. | `mat.NewDense(1, 1, nil)` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Test dataset. | `mat.NewDense(1, 1, nil)` |
+| `Tolerance` | [`float64`](#doc_float64) | The tolerance for change in values of the weighted error during training. | `1e-10` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Dataset for training AdaBoost. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `WeakLearner` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `"decision_stump"` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
+
+### Detailed documentation
+{: #adaboost_detailed-documentation }
+
+This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
+
+For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
+
+This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `Training` option.  Labels can be given with the `Labels` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `InputModel` option.
+
+Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
+
+### Example
+For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
+
+```go
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.Training = data
+param.Labels = labels
+param.WeakLearner = "perceptron"
+
+model, _, _ := mlpack.Adaboost(param)
+```
+
+Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
+
+```go
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.InputModel = &model
+param.Test = test_data
+
+_, predictions, _ := mlpack.Adaboost(param)
+```
+
+### See also
+
+ - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
+ - [Perceptron](#perceptron)
+ - [Decision Trees](#decision_tree)
+ - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
 ## ApproxKfn()
 {: #approx_kfn }
 
@@ -156,6 +254,114 @@ _, neighbors, _ := mlpack.ApproxKfn(param)
  - [Approximate furthest neighbor in high dimensions (pdf)](https://www.rasmuspagh.net/papers/approx-furthest-neighbor-SISAP15.pdf)
  - [QDAFN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/qdafn.hpp)
  - [DrusillaSelect class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/drusilla_select.hpp)
+
+## BayesianLinearRegression()
+{: #bayesian_linear_regression }
+
+#### BayesianLinearRegression
+{: #bayesian_linear_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.Center = false
+param.Input = mat.NewDense(1, 1, nil)
+param.InputModel = nil
+param.Responses = mat.NewDense(1, 1, nil)
+param.Scale = false
+param.Test = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, stds := mlpack.BayesianLinearRegression(param)
+```
+
+An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `Center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `false` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Input` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of covariates (X). | `mat.NewDense(1, 1, nil)` |
+| `InputModel` | [`bayesianLinearRegression`](#doc_model) | Trained BayesianLinearRegression model to use. | `nil` |
+| `Responses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix of responses/observations (y). | `mat.NewDense(1, 1, nil)` |
+| `Scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `false` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing points to regress on (test points). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
+| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
+
+### Detailed documentation
+{: #bayesian_linear_regression_detailed-documentation }
+
+An implementation of the Bayesian linear regression.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+
+This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
+
+To train a BayesianLinearRegression model, the `Input` and `Responses`parameters must be given. The `Center`and `Scale` parameters control the centering and the normalizing options. A trained model can be saved with the `OutputModel`. If no training is desired at all, a model can be passed via the `InputModel` parameter.
+
+The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `Test` parameter.  Predicted responses to the test points can be saved with the `Predictions` output parameter. The corresponding standard deviation can be save by precising the `Stds` parameter.
+
+### Example
+For example, the following command trains a model on the data `data` and responses `responses`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `blr_model`:
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.Input = data
+param.Responses = responses
+param.Center = 1
+param.Scale = 0
+
+blr_model, _, _ := mlpack.BayesianLinearRegression(param)
+```
+
+The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`: 
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.InputModel = &blr_model
+param.Test = test
+
+_, test_predictions, _ := mlpack.BayesianLinearRegression(param)
+```
+
+Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties: 
+
+```go
+// Initialize optional parameters for BayesianLinearRegression().
+param := mlpack.BayesianLinearRegressionOptions()
+param.InputModel = &blr_model
+param.Test = test
+
+_, test_predictions, stds := mlpack.BayesianLinearRegression(param)
+```
+
+### See also
+
+ - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## Cf()
 {: #cf }
@@ -388,6 +594,112 @@ _, _ := mlpack.Dbscan(input, param)
  - [DBSCAN on Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
  - [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
  - [DBSCAN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/dbscan/dbscan.hpp)
+
+## DecisionTree()
+{: #decision_tree }
+
+#### Decision tree
+{: #decision_tree_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.MaximumDepth = 0
+param.MinimumGainSplit = 1e-07
+param.MinimumLeafSize = 20
+param.PrintTrainingAccuracy = false
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+param.Weights = mat.NewDense(1, 1, nil)
+
+output_model, predictions, probabilities := mlpack.DecisionTree(param)
+```
+
+An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`decisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Training labels. | `mat.NewDense(1, 1, nil)` |
+| `MaximumDepth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
+| `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
+| `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
+| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
+| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `Weights` | [`*mat.Dense`](#doc_a__mat_Dense) | The weight of labels | `mat.NewDense(1, 1, nil)` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. | 
+
+### Detailed documentation
+{: #decision_tree_detailed-documentation }
+
+Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
+
+The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
+
+Test data may be specified with the `Test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved via the `Predictions` output parameter.  Class probabilities for each prediction may be saved with the `Probabilities` output parameter.
+
+### Example
+For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `data` with labels `labels`, saving the output model to `tree` and printing the training error, one could call
+
+```go
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.Training = data
+param.Labels = labels
+param.MinimumLeafSize = 20
+param.MinimumGainSplit = 0.001
+param.PrintTrainingAccuracy = true
+
+tree, _, _ := mlpack.DecisionTree(param)
+```
+
+Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
+
+```go
+// Initialize optional parameters for DecisionTree().
+param := mlpack.DecisionTreeOptions()
+param.InputModel = &tree
+param.Test = test_set
+param.TestLabels = test_labels
+
+_, predictions, _ := mlpack.DecisionTree(param)
+```
+
+### See also
+
+ - [Random forest](#random_forest)
+ - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
+ - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## Det()
 {: #det }
@@ -1143,6 +1455,118 @@ states := mlpack.HmmViterbi(obs, &hmm, param)
  - [Hidden Mixture Models on Wikipedia](https://en.wikipedia.org/wiki/Hidden_Markov_model)
  - [HMM class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hmm/hmm.hpp)
 
+## HoeffdingTree()
+{: #hoeffding_tree }
+
+#### Hoeffding trees
+{: #hoeffding_tree_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.BatchMode = false
+param.Bins = 10
+param.Confidence = 0.95
+param.InfoGain = false
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.MaxSamples = 5000
+param.MinSamples = 100
+param.NumericSplitStrategy = "binary"
+param.ObservationsBeforeBinning = 100
+param.Passes = 1
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.HoeffdingTree(param)
+```
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `BatchMode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `false` |
+| `Bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Confidence` | [`float64`](#doc_float64) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `InfoGain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `false` |
+| `InputModel` | [`hoeffdingTreeModel`](#doc_model) | Input trained Hoeffding tree model. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for training dataset. | `mat.NewDense(1, 1, nil)` |
+| `MaxSamples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `MinSamples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `NumericSplitStrategy` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
+| `ObservationsBeforeBinning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `Passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels of test data. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+### Detailed documentation
+{: #hoeffding_tree_detailed-documentation }
+
+This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
+
+The training file and associated labels are specified with the `Training` and `Labels` parameters, respectively. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `BatchMode` option, but this may not be the best option for large datasets.
+
+When a model is trained, it may be saved via the `OutputModel` output parameter.  A model may be loaded from file for further training or testing with the `InputModel` parameter.
+
+Test data may be specified with the `Test` parameter, and if performance statistics are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved with the `Predictions` output parameter, and class probabilities for each prediction may be saved with the `Probabilities` output parameter.
+
+### Example
+For example, to train a Hoeffding tree with confidence 0.99 with data `dataset`, saving the trained tree to `tree`, the following command may be used:
+
+```go
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.Training = dataset
+param.Confidence = 0.99
+
+tree, _, _ := mlpack.HoeffdingTree(param)
+```
+
+Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command: 
+
+```go
+// Initialize optional parameters for HoeffdingTree().
+param := mlpack.HoeffdingTreeOptions()
+param.InputModel = &tree
+param.Test = test_set
+
+_, predictions, class_probs := mlpack.HoeffdingTree(param)
+```
+
+### See also
+
+ - [DecisionTree()](#decision_tree)
+ - [RandomForest()](#random_forest)
+ - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
 ## ImageConverter()
 {: #image_converter }
 
@@ -1577,114 +2001,6 @@ final, _ := mlpack.Kmeans(data, 10, param)
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
-## BayesianLinearRegression()
-{: #bayesian_linear_regression }
-
-#### BayesianLinearRegression
-{: #bayesian_linear_regression_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.Center = false
-param.Input = mat.NewDense(1, 1, nil)
-param.InputModel = nil
-param.Responses = mat.NewDense(1, 1, nil)
-param.Scale = false
-param.Test = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, stds := mlpack.BayesianLinearRegression(param)
-```
-
-An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `Center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `false` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Input` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of covariates (X). | `mat.NewDense(1, 1, nil)` |
-| `InputModel` | [`bayesianLinearRegression`](#doc_model) | Trained BayesianLinearRegression model to use. | `nil` |
-| `Responses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix of responses/observations (y). | `mat.NewDense(1, 1, nil)` |
-| `Scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `false` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing points to regress on (test points). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`bayesianLinearRegression`](#doc_model) | Output BayesianLinearRegression model. | 
-| `Predictions` | [`*mat.Dense`](#doc_a__mat_Dense) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-| `Stds` | [`*mat.Dense`](#doc_a__mat_Dense) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
-
-### Detailed documentation
-{: #bayesian_linear_regression_detailed-documentation }
-
-An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
-
-This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
-
-To train a BayesianLinearRegression model, the `Input` and `Responses`parameters must be given. The `Center`and `Scale` parameters control the centering and the normalizing options. A trained model can be saved with the `OutputModel`. If no training is desired at all, a model can be passed via the `InputModel` parameter.
-
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `Test` parameter.  Predicted responses to the test points can be saved with the `Predictions` output parameter. The corresponding standard deviation can be save by precising the `Stds` parameter.
-
-### Example
-For example, the following command trains a model on the data `data` and responses `responses`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `blr_model`:
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.Input = data
-param.Responses = responses
-param.Center = 1
-param.Scale = 0
-
-blr_model, _, _ := mlpack.BayesianLinearRegression(param)
-```
-
-The following command uses the `blr_model` to provide predicted  responses for the data `test` and save those  responses to `test_predictions`: 
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.InputModel = &blr_model
-param.Test = test
-
-_, test_predictions, _ := mlpack.BayesianLinearRegression(param)
-```
-
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `Stds` parameter allows one to save the prediction uncertainties: 
-
-```go
-// Initialize optional parameters for BayesianLinearRegression().
-param := mlpack.BayesianLinearRegressionOptions()
-param.InputModel = &blr_model
-param.Test = test
-
-_, test_predictions, stds := mlpack.BayesianLinearRegression(param)
-```
-
-### See also
-
- - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
-
 ## Lars()
 {: #lars }
 
@@ -1798,6 +2114,221 @@ _, test_predictions := mlpack.Lars(param)
  - [LinearRegression()](#linear_regression)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
+
+## LinearRegression()
+{: #linear_regression }
+
+#### Simple Linear Regression and Prediction
+{: #linear_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.InputModel = nil
+param.Lambda = 0
+param.Test = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.TrainingResponses = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, output_predictions := mlpack.LinearRegression(param)
+```
+
+An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`linearRegression`](#doc_model) | Existing LinearRegression model to use. | `nil` |
+| `Lambda` | [`float64`](#doc_float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing X' (test regressors). | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing training set X (regressors). | `mat.NewDense(1, 1, nil)` |
+| `TrainingResponses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. | 
+| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+
+### Detailed documentation
+{: #linear_regression_detailed-documentation }
+
+An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+
+  y = X * b + e
+
+where X (specified by `Training`) and y (specified either as the last column of the input matrix `Training` or via the `TrainingResponses` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `Lambda`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `OutputPredictions` output parameter.
+
+Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `Test` parameter):
+
+   y' = X' * b
+
+and the predicted responses y' may be saved with the `OutputPredictions` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+
+### Example
+For example, to run a linear regression on the dataset `X` with responses `y`, saving the trained model to `lr_model`, the following command could be used:
+
+```go
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.Training = X
+param.TrainingResponses = y
+
+lr_model, _ := mlpack.LinearRegression(param)
+```
+
+Then, to use `lr_model` to predict responses for a test set `X_test`, saving the predictions to `X_test_responses`, the following command could be used:
+
+```go
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.InputModel = &lr_model
+param.Test = X_test
+
+_, X_test_responses := mlpack.LinearRegression(param)
+```
+
+### See also
+
+ - [Lars()](#lars)
+ - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
+ - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+
+## LinearSvm()
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.Delta = 1
+param.Epochs = 50
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Lambda = 0.0001
+param.MaxIterations = 10000
+param.NoIntercept = false
+param.NumClasses = 0
+param.Optimizer = "lbfgs"
+param.Seed = 0
+param.Shuffle = false
+param.StepSize = 0.01
+param.Test = mat.NewDense(1, 1, nil)
+param.TestLabels = mat.NewDense(1, 1, nil)
+param.Tolerance = 1e-10
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.LinearSvm(param)
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `Delta` | [`float64`](#doc_float64) | Margin of difference between correct class and other classes. | `1` |
+| `Epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `InputModel` | [`linearsvmModel`](#doc_model) | Existing model (parameters). | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
+| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0.0001` |
+| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
+| `NumClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
+| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `Shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
+| `StepSize` | [`float64`](#doc_float64) | Step size for parallel SGD optimizer. | `0.01` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
+| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
+| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`linearsvmModel`](#doc_model) | Output for trained linear svm model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `InputModel` parameter) or training a linear SVM model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained linear SVM model may be saved using the `OutputModel` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lsvm_model`', the following command may be used:
+
+```go
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.Training = data
+param.Labels = labels
+param.Lambda = 0.1
+param.Delta = 1
+param.NumClasses = 0
+
+lsvm_model, _, _ := mlpack.LinearSvm(param)
+```
+
+Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
+
+```go
+// Initialize optional parameters for LinearSvm().
+param := mlpack.LinearSvmOptions()
+param.InputModel = &lsvm_model
+param.Test = test
+
+_, predictions, _ := mlpack.LinearSvm(param)
+```
+
+### See also
+
+ - [RandomForest()](#random_forest)
+ - [LogisticRegression()](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## Lmnn()
 {: #lmnn }
@@ -2327,6 +2858,102 @@ centroids, _ := mlpack.MeanShift(data, param)
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
+## Nbc()
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier
+{: #nbc_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.IncrementalVariance = false
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.Test = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions, probabilities := mlpack.Nbc(param)
+```
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `IncrementalVariance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `false` |
+| `InputModel` | [`nbcModel`](#doc_model) | Input Naive Bayes model. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A file containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+### Detailed documentation
+{: #nbc_detailed-documentation }
+
+This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
+
+The training set is specified with the `Training` parameter.  Labels may be either the last row of the training set, or alternately the `Labels` parameter may be specified to pass a separate matrix of labels.
+
+If training is not desired, a pre-existing model may be loaded with the `InputModel` parameter.
+
+
+
+The `IncrementalVariance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+
+If classifying a test set is desired, the test set may be specified with the `Test` parameter, and the classifications may be saved with the `Predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `OutputModel` output parameter.
+
+### Example
+For example, to train a Naive Bayes classifier on the dataset `data` with labels `labels` and save the model to `nbc_model`, the following command may be used:
+
+```go
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.Training = data
+param.Labels = labels
+
+nbc_model, _, _ := mlpack.Nbc(param)
+```
+
+Then, to use `nbc_model` to predict the classes of the dataset `test_set` and save the predicted classes to `predictions`, the following command may be used:
+
+```go
+// Initialize optional parameters for Nbc().
+param := mlpack.NbcOptions()
+param.InputModel = &nbc_model
+param.Test = test_set
+
+_, predictions, _ := mlpack.Nbc(param)
+```
+
+### See also
+
+ - [SoftmaxRegression()](#softmax_regression)
+ - [RandomForest()](#random_forest)
+ - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+
 ## Nca()
 {: #nca }
 
@@ -2771,6 +3398,96 @@ data_mod := mlpack.Pca(data, param)
 
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
  - [PCA C++ class documentation](../../user/methods/pca.md)
+
+## Perceptron()
+{: #perceptron }
+
+#### Perceptron
+{: #perceptron_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for Perceptron().
+param := mlpack.PerceptronOptions()
+param.InputModel = nil
+param.Labels = mat.NewDense(1, 1, nil)
+param.MaxIterations = 1000
+param.Test = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, predictions := mlpack.Perceptron(param)
+```
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`perceptronModel`](#doc_model) | Input perceptron model. | `nil` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
+| `MaxIterations` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`perceptronModel`](#doc_model) | Output for trained perceptron model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
+
+### Detailed documentation
+{: #perceptron_detailed-documentation }
+
+This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `MaxIterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+
+This program allows loading a perceptron from a model (via the `InputModel` parameter) or training a perceptron given training data (via the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `Test` parameter) and the classification results on the test set may be saved with the `Predictions` output parameter.  The perceptron model may be saved with the `OutputModel` output parameter.
+
+### Example
+The training data given with the `Training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
+
+All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `training_data` with labels `training_labels`, and saves the model to `perceptron_model`.
+
+```go
+// Initialize optional parameters for Perceptron().
+param := mlpack.PerceptronOptions()
+param.Training = training_data
+param.Labels = training_labels
+
+perceptron_model, _ := mlpack.Perceptron(param)
+```
+
+Then, this model can be re-used for classification on the test data `test_data`.  The example below does precisely that, saving the predicted classes to `predictions`.
+
+```go
+// Initialize optional parameters for Perceptron().
+param := mlpack.PerceptronOptions()
+param.InputModel = &perceptron_model
+param.Test = test_data
+
+_, predictions := mlpack.Perceptron(param)
+```
+
+Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `InputModel` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
+
+### See also
+
+ - [Adaboost()](#adaboost)
+ - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## PreprocessSplit()
 {: #preprocess_split }
@@ -3300,216 +4017,6 @@ ic, _ := mlpack.Radical(X, param)
  - [ICA using spacings estimates of entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
  - [Radical C++ class documentation](../../user/methods/radical.md)
 
-## Krann()
-{: #krann }
-
-#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
-{: #krann_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for Krann().
-param := mlpack.KrannOptions()
-param.Alpha = 0.95
-param.FirstLeafExact = false
-param.InputModel = nil
-param.K = 0
-param.LeafSize = 20
-param.Naive = false
-param.Query = mat.NewDense(1, 1, nil)
-param.RandomBasis = false
-param.Reference = mat.NewDense(1, 1, nil)
-param.SampleAtLeaves = false
-param.Seed = 0
-param.SingleMode = false
-param.SingleSampleLimit = 20
-param.Tau = 5
-param.TreeType = "kd"
-param.Verbose = false
-
-distances, neighbors, output_model := mlpack.Krann(param)
-```
-
-An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `Alpha` | [`float64`](#doc_float64) | The desired success probability. | `0.95` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `FirstLeafExact` | [`bool`](#doc_bool) | The flag to trigger sampling only after exactly exploring the first leaf. | `false` |
-| `InputModel` | [`raModel`](#doc_model) | Pre-trained kNN model. | `nil` |
-| `K` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
-| `LeafSize` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
-| `Naive` | [`bool`](#doc_bool) | If true, sampling will be done without using a tree. | `false` |
-| `Query` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing query points (optional). | `mat.NewDense(1, 1, nil)` |
-| `RandomBasis` | [`bool`](#doc_bool) | Before tree-building, project the data onto a random orthogonal basis. | `false` |
-| `Reference` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing the reference dataset. | `mat.NewDense(1, 1, nil)` |
-| `SampleAtLeaves` | [`bool`](#doc_bool) | The flag to trigger sampling at leaves. | `false` |
-| `Seed` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
-| `SingleMode` | [`bool`](#doc_bool) | If true, single-tree search is used (as opposed to dual-tree search. | `false` |
-| `SingleSampleLimit` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
-| `Tau` | [`float64`](#doc_float64) | The allowed rank-error in terms of the percentile of the data. | `5` |
-| `TreeType` | [`string`](#doc_string) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `"kd"` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
-| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
-| `OutputModel` | [`raModel`](#doc_model) | If specified, the kNN model will be output here. | 
-
-### Detailed documentation
-{: #krann_detailed-documentation }
-
-This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
-
-### Example
-For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `input` and store the distances in `distances` and the neighbors in `neighbors.csv`:
-
-```go
-// Initialize optional parameters for Krann().
-param := mlpack.KrannOptions()
-param.Reference = input
-param.K = 5
-param.Tau = 0.1
-
-distances, neighbors, _ := mlpack.Krann(param)
-```
-
-Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
-
-The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
-
-### See also
-
- - [Knn()](#knn)
- - [Lsh()](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
- - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
-
-## SparseCoding()
-{: #sparse_coding }
-
-#### Sparse Coding
-{: #sparse_coding_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for SparseCoding().
-param := mlpack.SparseCodingOptions()
-param.Atoms = 15
-param.InitialDictionary = mat.NewDense(1, 1, nil)
-param.InputModel = nil
-param.Lambda1 = 0
-param.Lambda2 = 0
-param.MaxIterations = 0
-param.NewtonTolerance = 1e-06
-param.Normalize = false
-param.ObjectiveTolerance = 0.01
-param.Seed = 0
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-codes, dictionary, output_model := mlpack.SparseCoding(param)
-```
-
-An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `Atoms` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InitialDictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Optional initial dictionary matrix. | `mat.NewDense(1, 1, nil)` |
-| `InputModel` | [`sparseCoding`](#doc_model) | File containing input sparse coding model. | `nil` |
-| `Lambda1` | [`float64`](#doc_float64) | Sparse coding l1-norm regularization parameter. | `0` |
-| `Lambda2` | [`float64`](#doc_float64) | Sparse coding l2-norm regularization parameter. | `0` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
-| `NewtonTolerance` | [`float64`](#doc_float64) | Tolerance for convergence of Newton method. | `1e-06` |
-| `Normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `false` |
-| `ObjectiveTolerance` | [`float64`](#doc_float64) | Tolerance for convergence of the objective function. | `0.01` |
-| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Optional matrix to be encoded by trained model. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of training data (X). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
-| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output dictionary to. | 
-| `OutputModel` | [`sparseCoding`](#doc_model) | File to save trained sparse coding model to. | 
-
-### Detailed documentation
-{: #sparse_coding_detailed-documentation }
-
-An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
-
-The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
-
-The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
-
-Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
-
-To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `Training` option, along with the number of atoms in the dictionary (specified with the `Atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `InitialDictionary` parameter.  An input model may be specified with the `InputModel` parameter.
-
-### Example
-As an example, to build a sparse coding model on the dataset `data` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `model`, use 
-
-```go
-// Initialize optional parameters for SparseCoding().
-param := mlpack.SparseCodingOptions()
-param.Training = data
-param.Atoms = 200
-param.Lambda1 = 0.1
-
-_, _, model := mlpack.SparseCoding(param)
-```
-
-Then, this model could be used to encode a new matrix, `otherdata`, and save the output codes to `codes`: 
-
-```go
-// Initialize optional parameters for SparseCoding().
-param := mlpack.SparseCodingOptions()
-param.InputModel = &model
-param.Test = otherdata
-
-codes, _, _ := mlpack.SparseCoding(param)
-```
-
-### See also
-
- - [LocalCoordinateCoding()](#local_coordinate_coding)
- - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
- - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
-
 ## RandomForest()
 {: #random_forest }
 
@@ -3624,117 +4131,11 @@ _, predictions, _ := mlpack.RandomForest(param)
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
  - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
 
-## DecisionTree()
-{: #decision_tree }
+## Krann()
+{: #krann }
 
-#### Decision tree
-{: #decision_tree_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaximumDepth = 0
-param.MinimumGainSplit = 1e-07
-param.MinimumLeafSize = 20
-param.PrintTrainingAccuracy = false
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-param.Weights = mat.NewDense(1, 1, nil)
-
-output_model, predictions, probabilities := mlpack.DecisionTree(param)
-```
-
-An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`decisionTreeModel`](#doc_model) | Pre-trained decision tree, to be used with test points. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Training labels. | `mat.NewDense(1, 1, nil)` |
-| `MaximumDepth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `MinimumGainSplit` | [`float64`](#doc_float64) | Minimum gain for node splitting. | `1e-07` |
-| `MinimumLeafSize` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `PrintTrainingAccuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `false` |
-| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Test point labels, if accuracy calculation is desired. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `Weights` | [`*mat.Dense`](#doc_a__mat_Dense) | The weight of labels | `mat.NewDense(1, 1, nil)` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`decisionTreeModel`](#doc_model) | Output for trained decision tree. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Class predictions for each test point. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Class probabilities for each test point. | 
-
-### Detailed documentation
-{: #decision_tree_detailed-documentation }
-
-Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
-
-The training set and associated labels are specified with the `Training` and `Labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-When a model is trained, the `OutputModel` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `InputModel` parameter.  The `InputModel` parameter may not be specified when the `Training` parameter is specified.  The `MinimumLeafSize` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `MinimumGainSplit` parameter specifies the minimum gain that is needed for the node to split.  The `MaximumDepth` parameter specifies the maximum depth of the tree.  If `PrintTrainingAccuracy` is specified, the training accuracy will be printed.
-
-Test data may be specified with the `Test` parameter, and if performance numbers are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved via the `Predictions` output parameter.  Class probabilities for each prediction may be saved with the `Probabilities` output parameter.
-
-### Example
-For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `data` with labels `labels`, saving the output model to `tree` and printing the training error, one could call
-
-```go
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.Training = data
-param.Labels = labels
-param.MinimumLeafSize = 20
-param.MinimumGainSplit = 0.001
-param.PrintTrainingAccuracy = true
-
-tree, _, _ := mlpack.DecisionTree(param)
-```
-
-Then, to use that model to classify points in `test_set` and print the test error given the labels `test_labels` using that model, while saving the predictions for each point to `predictions`, one could call 
-
-```go
-// Initialize optional parameters for DecisionTree().
-param := mlpack.DecisionTreeOptions()
-param.InputModel = &tree
-param.Test = test_set
-param.TestLabels = test_labels
-
-_, predictions, _ := mlpack.DecisionTree(param)
-```
-
-### See also
-
- - [Random forest](#random_forest)
- - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
- - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
-
-## Perceptron()
-{: #perceptron }
-
-#### Perceptron
-{: #perceptron_descr }
+#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
+{: #krann_descr }
 
 ```go
 import (
@@ -3742,120 +4143,29 @@ import (
   "gonum.org/v1/gonum/mat"
 )
 
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
+// Initialize optional parameters for Krann().
+param := mlpack.KrannOptions()
+param.Alpha = 0.95
+param.FirstLeafExact = false
 param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaxIterations = 1000
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions := mlpack.Perceptron(param)
-```
-
-An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`perceptronModel`](#doc_model) | Input perceptron model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `MaxIterations` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`perceptronModel`](#doc_model) | Output for trained perceptron model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
-
-### Detailed documentation
-{: #perceptron_detailed-documentation }
-
-This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `MaxIterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-
-This program allows loading a perceptron from a model (via the `InputModel` parameter) or training a perceptron given training data (via the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `Test` parameter) and the classification results on the test set may be saved with the `Predictions` output parameter.  The perceptron model may be saved with the `OutputModel` output parameter.
-
-### Example
-The training data given with the `Training` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `Labels` parameter may be used to specify a separate matrix of labels.
-
-All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `training_data` with labels `training_labels`, and saves the model to `perceptron_model`.
-
-```go
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
-param.Training = training_data
-param.Labels = training_labels
-
-perceptron_model, _ := mlpack.Perceptron(param)
-```
-
-Then, this model can be re-used for classification on the test data `test_data`.  The example below does precisely that, saving the predicted classes to `predictions`.
-
-```go
-// Initialize optional parameters for Perceptron().
-param := mlpack.PerceptronOptions()
-param.InputModel = &perceptron_model
-param.Test = test_data
-
-_, predictions := mlpack.Perceptron(param)
-```
-
-Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `InputModel` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
-
-### See also
-
- - [Adaboost()](#adaboost)
- - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
-
-## LinearSvm()
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Delta = 1
-param.Epochs = 50
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Lambda = 0.0001
-param.MaxIterations = 10000
-param.NoIntercept = false
-param.NumClasses = 0
-param.Optimizer = "lbfgs"
+param.K = 0
+param.LeafSize = 20
+param.Naive = false
+param.Query = mat.NewDense(1, 1, nil)
+param.RandomBasis = false
+param.Reference = mat.NewDense(1, 1, nil)
+param.SampleAtLeaves = false
 param.Seed = 0
-param.Shuffle = false
-param.StepSize = 0.01
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
+param.SingleMode = false
+param.SingleSampleLimit = 20
+param.Tau = 5
+param.TreeType = "kd"
 param.Verbose = false
 
-output_model, predictions, probabilities := mlpack.LinearSvm(param)
+distances, neighbors, output_model := mlpack.Krann(param)
 ```
 
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
 
 
 
@@ -3864,23 +4174,22 @@ There are two types of input options: required options, which are passed directl
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `Alpha` | [`float64`](#doc_float64) | The desired success probability. | `0.95` |
 | `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Delta` | [`float64`](#doc_float64) | Margin of difference between correct class and other classes. | `1` |
-| `Epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `InputModel` | [`linearsvmModel`](#doc_model) | Existing model (parameters). | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A matrix containing labels (0 or 1) for the points in the training set (y). | `mat.NewDense(1, 1, nil)` |
-| `Lambda` | [`float64`](#doc_float64) | L2-regularization parameter for training. | `0.0001` |
-| `MaxIterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `NoIntercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `false` |
-| `NumClasses` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `Optimizer` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `"lbfgs"` |
-| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `Shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `false` |
-| `StepSize` | [`float64`](#doc_float64) | Step size for parallel SGD optimizer. | `0.01` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing test dataset. | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix containing test labels. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | Convergence tolerance for optimizer. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set (the matrix of predictors, X). | `mat.NewDense(1, 1, nil)` |
+| `FirstLeafExact` | [`bool`](#doc_bool) | The flag to trigger sampling only after exactly exploring the first leaf. | `false` |
+| `InputModel` | [`raModel`](#doc_model) | Pre-trained kNN model. | `nil` |
+| `K` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
+| `LeafSize` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
+| `Naive` | [`bool`](#doc_bool) | If true, sampling will be done without using a tree. | `false` |
+| `Query` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing query points (optional). | `mat.NewDense(1, 1, nil)` |
+| `RandomBasis` | [`bool`](#doc_bool) | Before tree-building, project the data onto a random orthogonal basis. | `false` |
+| `Reference` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing the reference dataset. | `mat.NewDense(1, 1, nil)` |
+| `SampleAtLeaves` | [`bool`](#doc_bool) | The flag to trigger sampling at leaves. | `false` |
+| `Seed` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
+| `SingleMode` | [`bool`](#doc_bool) | If true, single-tree search is used (as opposed to dual-tree search. | `false` |
+| `SingleSampleLimit` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
+| `Tau` | [`float64`](#doc_float64) | The allowed rank-error in terms of the percentile of the data. | `5` |
+| `TreeType` | [`string`](#doc_string) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `"kd"` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -3889,363 +4198,38 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`linearsvmModel`](#doc_model) | Output for trained linear svm model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+| `Distances` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output distances into. | 
+| `Neighbors` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to output neighbors into. | 
+| `OutputModel` | [`raModel`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
-{: #linear_svm_detailed-documentation }
+{: #krann_detailed-documentation }
 
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `InputModel` parameter) or training a linear SVM model given training data (specified with the `Training` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `Test` parameter) and the classification results may be saved with the `Predictions` output parameter. The trained linear SVM model may be saved using the `OutputModel` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
-
-Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
+This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
 
 ### Example
-As an example, to train a LinaerSVM on the data '`data`' with labels '`labels`' with L2 regularization of 0.1, saving the model to '`lsvm_model`', the following command may be used:
+For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `input` and store the distances in `distances` and the neighbors in `neighbors.csv`:
 
 ```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.Training = data
-param.Labels = labels
-param.Lambda = 0.1
-param.Delta = 1
-param.NumClasses = 0
+// Initialize optional parameters for Krann().
+param := mlpack.KrannOptions()
+param.Reference = input
+param.K = 5
+param.Tau = 0.1
 
-lsvm_model, _, _ := mlpack.LinearSvm(param)
+distances, neighbors, _ := mlpack.Krann(param)
 ```
 
-Then, to use that model to predict classes for the dataset '`test`', storing the output predictions in '`predictions`', the following command may be used: 
+Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
 
-```go
-// Initialize optional parameters for LinearSvm().
-param := mlpack.LinearSvmOptions()
-param.InputModel = &lsvm_model
-param.Test = test
-
-_, predictions, _ := mlpack.LinearSvm(param)
-```
+The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
 
 ### See also
 
- - [RandomForest()](#random_forest)
- - [LogisticRegression()](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
-## Adaboost()
-{: #adaboost }
-
-#### AdaBoost
-{: #adaboost_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.InputModel = nil
-param.Iterations = 1000
-param.Labels = mat.NewDense(1, 1, nil)
-param.Test = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-param.WeakLearner = "decision_stump"
-
-output_model, predictions, probabilities := mlpack.Adaboost(param)
-```
-
-An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`adaBoostModel`](#doc_model) | Input AdaBoost model. | `nil` |
-| `Iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Test dataset. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | The tolerance for change in values of the weighted error during training. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Dataset for training AdaBoost. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `WeakLearner` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `"decision_stump"` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
-
-### Detailed documentation
-{: #adaboost_detailed-documentation }
-
-This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
-
-For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
-
-This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `Training` option.  Labels can be given with the `Labels` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `InputModel` option.
-
-Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
-
-### Example
-For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
-
-```go
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.Training = data
-param.Labels = labels
-param.WeakLearner = "perceptron"
-
-model, _, _ := mlpack.Adaboost(param)
-```
-
-Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
-
-```go
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.InputModel = &model
-param.Test = test_data
-
-_, predictions, _ := mlpack.Adaboost(param)
-```
-
-### See also
-
- - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
- - [Perceptron](#perceptron)
- - [Decision Trees](#decision_tree)
- - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
-
-## HoeffdingTree()
-{: #hoeffding_tree }
-
-#### Hoeffding trees
-{: #hoeffding_tree_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.BatchMode = false
-param.Bins = 10
-param.Confidence = 0.95
-param.InfoGain = false
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.MaxSamples = 5000
-param.MinSamples = 100
-param.NumericSplitStrategy = "binary"
-param.ObservationsBeforeBinning = 100
-param.Passes = 1
-param.Test = mat.NewDense(1, 1, nil)
-param.TestLabels = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.HoeffdingTree(param)
-```
-
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `BatchMode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `false` |
-| `Bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Confidence` | [`float64`](#doc_float64) | Confidence before splitting (between 0 and 1). | `0.95` |
-| `InfoGain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `false` |
-| `InputModel` | [`hoeffdingTreeModel`](#doc_model) | Input trained Hoeffding tree model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for training dataset. | `mat.NewDense(1, 1, nil)` |
-| `MaxSamples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
-| `MinSamples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
-| `NumericSplitStrategy` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `"binary"` |
-| `ObservationsBeforeBinning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
-| `Passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
-| `Test` | [`matrixWithInfo`](#doc_matrixWithInfo) | Testing dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `TestLabels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels of test data. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`matrixWithInfo`](#doc_matrixWithInfo) | Training dataset (may be categorical). | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`hoeffdingTreeModel`](#doc_model) | Output for trained Hoeffding tree model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Matrix to output label predictions for test data into. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
-
-### Detailed documentation
-{: #hoeffding_tree_detailed-documentation }
-
-This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
-
-The training file and associated labels are specified with the `Training` and `Labels` parameters, respectively. Optionally, if `Labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `BatchMode` option, but this may not be the best option for large datasets.
-
-When a model is trained, it may be saved via the `OutputModel` output parameter.  A model may be loaded from file for further training or testing with the `InputModel` parameter.
-
-Test data may be specified with the `Test` parameter, and if performance statistics are desired for that test set, labels may be specified with the `TestLabels` parameter.  Predictions for each test point may be saved with the `Predictions` output parameter, and class probabilities for each prediction may be saved with the `Probabilities` output parameter.
-
-### Example
-For example, to train a Hoeffding tree with confidence 0.99 with data `dataset`, saving the trained tree to `tree`, the following command may be used:
-
-```go
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.Training = dataset
-param.Confidence = 0.99
-
-tree, _, _ := mlpack.HoeffdingTree(param)
-```
-
-Then, this tree may be used to make predictions on the test set `test_set`, saving the predictions into `predictions` and the class probabilities into `class_probs` with the following command: 
-
-```go
-// Initialize optional parameters for HoeffdingTree().
-param := mlpack.HoeffdingTreeOptions()
-param.InputModel = &tree
-param.Test = test_set
-
-_, predictions, class_probs := mlpack.HoeffdingTree(param)
-```
-
-### See also
-
- - [DecisionTree()](#decision_tree)
- - [RandomForest()](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
- - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
-
-## Nbc()
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.IncrementalVariance = false
-param.InputModel = nil
-param.Labels = mat.NewDense(1, 1, nil)
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, predictions, probabilities := mlpack.Nbc(param)
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `IncrementalVariance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `false` |
-| `InputModel` | [`nbcModel`](#doc_model) | Input Naive Bayes model. | `nil` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | A file containing labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the test set. | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | A matrix containing the training set. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`nbcModel`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | The matrix in which the predicted labels for the test set will be written. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `Training` parameter.  Labels may be either the last row of the training set, or alternately the `Labels` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `InputModel` parameter.
-
-
-
-The `IncrementalVariance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `Test` parameter, and the classifications may be saved with the `Predictions`predictions  parameter.  If saving the trained model is desired, this may be done with the `OutputModel` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `data` with labels `labels` and save the model to `nbc_model`, the following command may be used:
-
-```go
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.Training = data
-param.Labels = labels
-
-nbc_model, _, _ := mlpack.Nbc(param)
-```
-
-Then, to use `nbc_model` to predict the classes of the dataset `test_set` and save the predicted classes to `predictions`, the following command may be used:
-
-```go
-// Initialize optional parameters for Nbc().
-param := mlpack.NbcOptions()
-param.InputModel = &nbc_model
-param.Test = test_set
-
-_, predictions, _ := mlpack.Nbc(param)
-```
-
-### See also
-
- - [SoftmaxRegression()](#softmax_regression)
- - [RandomForest()](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+ - [Knn()](#knn)
+ - [Lsh()](#lsh)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
+ - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## SoftmaxRegression()
 {: #softmax_regression }
@@ -4347,11 +4331,11 @@ _, predictions, _ := mlpack.SoftmaxRegression(param)
  - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
  - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
-## LinearRegression()
-{: #linear_regression }
+## SparseCoding()
+{: #sparse_coding }
 
-#### Simple Linear Regression and Prediction
-{: #linear_regression_descr }
+#### Sparse Coding
+{: #sparse_coding_descr }
 
 ```go
 import (
@@ -4359,19 +4343,26 @@ import (
   "gonum.org/v1/gonum/mat"
 )
 
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
+// Initialize optional parameters for SparseCoding().
+param := mlpack.SparseCodingOptions()
+param.Atoms = 15
+param.InitialDictionary = mat.NewDense(1, 1, nil)
 param.InputModel = nil
-param.Lambda = 0
+param.Lambda1 = 0
+param.Lambda2 = 0
+param.MaxIterations = 0
+param.NewtonTolerance = 1e-06
+param.Normalize = false
+param.ObjectiveTolerance = 0.01
+param.Seed = 0
 param.Test = mat.NewDense(1, 1, nil)
 param.Training = mat.NewDense(1, 1, nil)
-param.TrainingResponses = mat.NewDense(1, 1, nil)
 param.Verbose = false
 
-output_model, output_predictions := mlpack.LinearRegression(param)
+codes, dictionary, output_model := mlpack.SparseCoding(param)
 ```
 
-An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
 
 
 
@@ -4380,12 +4371,19 @@ There are two types of input options: required options, which are passed directl
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `Atoms` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
 | `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`linearRegression`](#doc_model) | Existing LinearRegression model to use. | `nil` |
-| `Lambda` | [`float64`](#doc_float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing X' (test regressors). | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing training set X (regressors). | `mat.NewDense(1, 1, nil)` |
-| `TrainingResponses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `mat.NewDense(1, 1, nil)` |
+| `InitialDictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Optional initial dictionary matrix. | `mat.NewDense(1, 1, nil)` |
+| `InputModel` | [`sparseCoding`](#doc_model) | File containing input sparse coding model. | `nil` |
+| `Lambda1` | [`float64`](#doc_float64) | Sparse coding l1-norm regularization parameter. | `0` |
+| `Lambda2` | [`float64`](#doc_float64) | Sparse coding l2-norm regularization parameter. | `0` |
+| `MaxIterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
+| `NewtonTolerance` | [`float64`](#doc_float64) | Tolerance for convergence of Newton method. | `1e-06` |
+| `Normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `false` |
+| `ObjectiveTolerance` | [`float64`](#doc_float64) | Tolerance for convergence of the objective function. | `0.01` |
+| `Seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Optional matrix to be encoded by trained model. | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix of training data (X). | `mat.NewDense(1, 1, nil)` |
 | `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
 
 ### Output options
@@ -4394,50 +4392,52 @@ Output options are returned via Go's support for multiple return values, in the 
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. | 
-| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+| `Codes` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
+| `Dictionary` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix to save the output dictionary to. | 
+| `OutputModel` | [`sparseCoding`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
-{: #linear_regression_detailed-documentation }
+{: #sparse_coding_detailed-documentation }
 
-An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
 
-  y = X * b + e
+The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
 
-where X (specified by `Training`) and y (specified either as the last column of the input matrix `Training` or via the `TrainingResponses` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `Lambda`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `OutputPredictions` output parameter.
+The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
 
-Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `Test` parameter):
+Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
 
-   y' = X' * b
-
-and the predicted responses y' may be saved with the `OutputPredictions` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `Training` option, along with the number of atoms in the dictionary (specified with the `Atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `InitialDictionary` parameter.  An input model may be specified with the `InputModel` parameter.
 
 ### Example
-For example, to run a linear regression on the dataset `X` with responses `y`, saving the trained model to `lr_model`, the following command could be used:
+As an example, to build a sparse coding model on the dataset `data` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `model`, use 
 
 ```go
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
-param.Training = X
-param.TrainingResponses = y
+// Initialize optional parameters for SparseCoding().
+param := mlpack.SparseCodingOptions()
+param.Training = data
+param.Atoms = 200
+param.Lambda1 = 0.1
 
-lr_model, _ := mlpack.LinearRegression(param)
+_, _, model := mlpack.SparseCoding(param)
 ```
 
-Then, to use `lr_model` to predict responses for a test set `X_test`, saving the predictions to `X_test_responses`, the following command could be used:
+Then, this model could be used to encode a new matrix, `otherdata`, and save the output codes to `codes`: 
 
 ```go
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
-param.InputModel = &lr_model
-param.Test = X_test
+// Initialize optional parameters for SparseCoding().
+param := mlpack.SparseCodingOptions()
+param.InputModel = &model
+param.Test = otherdata
 
-_, X_test_responses := mlpack.LinearRegression(param)
+codes, _, _ := mlpack.SparseCoding(param)
 ```
 
 ### See also
 
- - [Lars()](#lars)
- - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
- - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+ - [LocalCoordinateCoding()](#local_coordinate_coding)
+ - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
+ - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 

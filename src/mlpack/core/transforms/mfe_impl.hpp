@@ -104,8 +104,6 @@ inline void MFE(const arma::Mat<eT>& inputSignal,
     Log::Fatal << "MFE(): nFFT cannot be lower than window length in samples. "
                << "nFFT needs to be >= windowLength x sampleRate." << std::endl;
 
-  size_t numBins = nFFT / 2 + 1;
-
   arma::Mat<eT> filterBanks = MelFilterbank<eT>(numMelFilters, nFFT, sampleRate,
       lowFreq, highFreq);
 

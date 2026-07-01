@@ -22,9 +22,9 @@ The `ResizeImages()` function can be used to resize image data:
    * `images` is a [column-major matrix](../matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`ImageOptions&`](../load_save.md#imageoptions) containing details about
-     the images in `images`, and will be modified to contain the new size of the
-     images.
+   * `opts` is a [`ImageOptions`](../load_save.md#imageoptions) containing
+     details about the images in `images`, and will be modified to contain the
+     new size of the images.
 
    * `newWidth` and `newHeight` (of type `size_t`) are the desired new
      dimensions of the resized images.
@@ -147,8 +147,8 @@ that the width and height of the image both no smaller than `outputWidth` and
    * `images` is a [column-major matrix](../matrices.md) containing a set of
       images; each image is represented as a flattened vector in one column.
 
-   * `opts` is a [`ImageOptions&`](../load_save.md#imageoptions) containing details about
-     the images in `images`.
+   * `opts` is a [`ImageOptions`](../load_save.md#imageoptions) containing
+     details about the images in `images`.
 
    * `images` and `opts` are modified in-place.
 
@@ -224,31 +224,35 @@ beforehand.
 
 ---
 
-#### `GroupChannels()`
+### `GroupChannels()`
 
- * `GroupChannels(images, opts)`
+ * `groupedImages = GroupChannels(images, opts)`
     - `images` must be a matrix where each column is an image. Each image is
       expected to be interleaved, i.e. in the format `[r, g, b, r, g, b ... ]`.
 
-    - `opts` ImageOptions object describes the shape of each image.
+    - `opts` is an [`ImageOptions`](../load_save.md#imageoptions) object
+      containing the shape and metadata of each image.
 
-    - Returns a matrix where each image from `images` are in the
+    - Returns a matrix `groupedImages` where each image from `images` is in the
       format `[r, r, ... , g, g, ... , b, b]`.
 
 ---
 
-#### `InterleaveChannels()`
+### `InterleaveChannels()`
 
- * `InterleaveChannels(images, opts)`
+ * `interleavedImages = InterleaveChannels(images, opts)`
     - Performs the reverse of `GroupChannels()`.
 
     - `images` must be a matrix where each column is an image. Each image is
       expected to be grouped, i.e. in the format `[r, r, ..., g, g, ..., b, b]`.
 
-    - `opts` ImagesOptions object describes the shape of each image.
+    - `opts` is an [`ImageOptions`](../load_save.md#imageoptions) object
+      containing the shape and metadata of each image.
 
-    - Returns a matrix where each image from `images` are in the
-      format `[r, g, b, r, g, b ... ]`.
+    - Returns a matrix `interleavedImages` where each image from `images` is in
+      the format `[r, g, b, r, g, b ... ]`.
+
+---
 
 #### Example
 
@@ -306,7 +310,7 @@ std::cout << std::endl << std::endl;
 mlpack::Save("mlpack-favicon.png", image, opts);
 ```
 
-### Letterbox transform
+## Letterbox transform
 
 The letterbox transform resizes an image's dimensions to `width x height` but
 keeps the aspect ratio of the original image. Whitespace is then filled in
@@ -335,8 +339,8 @@ with `fillValue`.
 - `LetterboxImages(src, opt, width, height, fillValue)`
   * `src` is a [column-major matrix](../matrices.md) containing a single image,
     where the image is represented as a flattened vector in one column.
-  * `opt` is an [`ImageOptions&`](../load_save.md#imageoptions) containing info on
-    the dimensions of the image.
+  * `opt` is an [`ImageOptions`](../load_save.md#imageoptions) containing info
+    on the dimensions of the image.
   * `width` and `height` are `const size_t`s determining the new width and
     height of `src`.
   * `fillValue` is the white space value that pads out the resized image.
@@ -386,12 +390,14 @@ You can do this through the `BoundingBoxImage()` function.
       There must be at most one image, otherwise an exception will be thrown.
       Pixel values are expected to be in the 0-255 range.
 
-    - `opts` is the [`ImageOptions`](../load_save.md#imageoptions) object containing metadata relating
-      to the image.
+    - `opts` is the [`ImageOptions`](../load_save.md#imageoptions) object
+      containing metadata relating to the image.
 
-    - `bbox` is a [column vector](../matrices.md#representing-data-in-mlpack) representing the bounding box to be drawn as a four-element vector: `(x1, y1, x2, y2)`.
-      * Elements after the fourth in `bbox` are ignored. There must be at least four elements,
-        otherwise an exception will be thrown.
+    - `bbox` is a [column vector](../matrices.md#representing-data-in-mlpack)
+      representing the bounding box to be drawn as a four-element vector:
+      `(x1, y1, x2, y2)`.
+      * Elements after the fourth in `bbox` are ignored. There must be at least
+        four elements, otherwise an exception will be thrown.
       * The area of the bounding box must be greater than 0.
       * If `x1 >= x2` or `y1 >= y2` an exception will be thrown.
       * Bounding boxes larger than the image will be clipped and their borders will lie along

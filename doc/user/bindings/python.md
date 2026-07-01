@@ -36,6 +36,105 @@ mlpack bindings for Python take and return a restricted set of types, for simpli
 </div>
 
 
+## class Adaboost
+{: #adaboost }
+
+#### AdaBoost
+{: #adaboost_descr }
+
+
+This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
+
+For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
+| `tolerance` | [`float`](#doc_float) | The tolerance for change in values of the weighted error during training. | `1e-10` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `weak_learner` | [`str`](#doc_str) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import Adaboost
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = Adaboost(check_input_matrices=False, copy_all_inputs=False,
+  iterations=1000, tolerance=1e-10, verbose=False,
+  weak_learner='decision_stump')
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | Training AdaBoost model. |
+| predict | Class predictions from model. |
+| predict_proba | Class probabilities from model. |
+
+### 1. fit
+
+Training AdaBoost model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | Labels for the training set. | 
+| `training` | [`matrix`](#doc_matrix) | Dataset for training AdaBoost. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`AdaBoostModelType`](#doc_model) | Output trained AdaBoost model. | 
+
+### 2. predict
+
+Class predictions from model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | Predicted labels for the test set. | 
+
+### 3. predict_proba
+
+Class probabilities from model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Test dataset. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
+
 ## approx_kfn()
 {: #approx_kfn }
 
@@ -135,6 +234,90 @@ A trained model can be re-used.  If a model has been previously saved to `'model
  - [Approximate furthest neighbor in high dimensions (pdf)](https://www.rasmuspagh.net/papers/approx-furthest-neighbor-SISAP15.pdf)
  - [QDAFN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/qdafn.hpp)
  - [DrusillaSelect class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/drusilla_select.hpp)
+
+## class BayesianLinearRegression
+{: #bayesian_linear_regression }
+
+#### BayesianLinearRegression Training
+{: #bayesian_linear_regression_descr }
+
+
+An implementation of the Bayesian linear regression.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+
+To train a BayesianLinearRegression model, the `input_` and `responses` parameters must be given. The `center` and `scale` parameters control the centering and the normalizing options. A trained model is returned.
+
+
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `False` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+| `stddevs` | [`bool`](#doc_bool) | Return standard deviations along with predictions. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import BayesianLinearRegression
+>>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = BayesianLinearRegression(center=False, check_input_matrices=False,
+  copy_all_inputs=False, scale=False, verbose=False)
+>>> output_model = model.fit(input_=X_train, responses=y_train)
+>>> predictions = model.predict(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of the Bayesian linear regression training. |
+| predict | An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions. |
+
+### 1. fit
+
+An implementation of the Bayesian linear regression training.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | 
+| `responses` | [`vector`](#doc_vector) | Matrix of responses/observations (y). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`BayesianLinearRegressionType`](#doc_model) | Output BayesianLinearRegression model. | 
+
+### 2. predict
+
+An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. | 
 
 ## cf()
 {: #cf }
@@ -328,6 +511,111 @@ An example usage to run DBSCAN on the dataset in `'input'` with a radius of 0.5 
  - [DBSCAN on Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
  - [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
  - [DBSCAN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/dbscan/dbscan.hpp)
+
+## class DecisionTree
+{: #decision_tree }
+
+#### Decision tree training
+{: #decision_tree_descr }
+
+
+Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
+
+The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The trained model is returned, and can then be used for prediction. The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `maximum_depth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
+| `minimum_gain_split` | [`float`](#doc_float) | Minimum gain for node splitting. | `1e-07` |
+| `minimum_leaf_size` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
+| `print_training_accuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import DecisionTree
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
+  maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
+  print_training_accuracy=False, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | Training ID3-style decision tree model. |
+| predict | Class predictions from train decision tree model. |
+| predict_proba | Class predictions from train decision tree model. |
+
+### 1. fit
+
+Training ID3-style decision tree model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | Training labels. | 
+| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may contain categorical variables). | 
+| `weights` | [`matrix`](#doc_matrix) | The weight of labels | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`DecisionTreeModelType`](#doc_model) | Output for trained decision tree. | 
+
+### 2. predict
+
+Class predictions from train decision tree model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may contain categorical variables). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | Class predictions for each test point. | 
+
+### 3. predict_proba
+
+Class predictions from train decision tree model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may contain categorical variables). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Class probabilities for each test point if probabilities has been selected. | 
 
 ## det()
 {: #det }
@@ -971,6 +1259,119 @@ For example, to predict the state sequence of the observations `'obs'` using the
  - [Hidden Mixture Models on Wikipedia](https://en.wikipedia.org/wiki/Hidden_Markov_model)
  - [HMM class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hmm/hmm.hpp)
 
+## class HoeffdingTree
+{: #hoeffding_tree }
+
+#### Hoeffding trees training
+{: #hoeffding_tree_descr }
+
+
+Implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets, supporting both categorical and numeric data.  Given an input dataset, it is able to train the tree with numerous training options, and return the model.
+
+The training file and associated labels are specified with the `training` and `labels` parameters, respectively. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `batch_mode` option, but this may not be the best option for large datasets.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `batch_mode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `False` |
+| `bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `confidence` | [`float`](#doc_float) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `info_gain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `False` |
+| `max_samples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `min_samples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `numeric_split_strategy` | [`str`](#doc_str) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
+| `observations_before_binning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import HoeffdingTrees
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = HoeffdingTrees(batch_mode=False, bins=10,
+  check_input_matrices=False, confidence=0.95, copy_all_inputs=False,
+  info_gain=False, max_samples=5000, min_samples=100,
+  numeric_split_strategy='binary', observations_before_binning=100, passes=1,
+  verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points. |
+| predict | Class predictions from Hoeffding trees model. |
+| predict_proba | Class probabilities from Hoeffding trees model. |
+
+### 1. fit
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | Labels for training dataset. | 
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may be categorical). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`HoeffdingTreeModelType`](#doc_model) | Output for trained Hoeffding tree model. | 
+
+### 2. predict
+
+Class predictions from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | Matrix to output label predictions for test data into. | 
+
+### 3. predict_proba
+
+Class probabilities from Hoeffding trees model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
 ## image_converter()
 {: #image_converter }
 
@@ -1320,90 +1721,6 @@ To run k-means on that same dataset with initial centroids specified in `'initia
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
-## class BayesianLinearRegression
-{: #bayesian_linear_regression }
-
-#### BayesianLinearRegression Training
-{: #bayesian_linear_regression_descr }
-
-
-An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
-
-To train a BayesianLinearRegression model, the `input_` and `responses` parameters must be given. The `center` and `scale` parameters control the centering and the normalizing options. A trained model is returned.
-
-
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `center` | [`bool`](#doc_bool) | Center the data and fit the intercept if enabled. | `False` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `scale` | [`bool`](#doc_bool) | Scale each feature by their standard deviations if enabled. | `False` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-| `stddevs` | [`bool`](#doc_bool) | Return standard deviations along with predictions. | `False` |
-
-### Example
-
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import BayesianLinearRegression
->>> X = pd.read_csv('http://datasets.mlpack.org/admission_predict.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/admission_predict.responses.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = BayesianLinearRegression(center=False, check_input_matrices=False,
-  copy_all_inputs=False, scale=False, verbose=False)
->>> output_model = model.fit(input_=X_train, responses=y_train)
->>> predictions = model.predict(test=X_test)
-```
-
-### Methods
-
-| **name** | **description** |
-|----------|-----------------|
-| fit | An implementation of the Bayesian linear regression training. |
-| predict | An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions. |
-
-### 1. fit
-
-An implementation of the Bayesian linear regression training.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `input_` | [`matrix`](#doc_matrix) | Matrix of covariates (X). | 
-| `responses` | [`vector`](#doc_vector) | Matrix of responses/observations (y). | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`BayesianLinearRegressionType`](#doc_model) | Output BayesianLinearRegression model. | 
-
-### 2. predict
-
-An implementation of the Bayesian linear regression prediction: Given a pre-trained model and a test data set, it provides model predictions.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Matrix containing points to regress on (test points). | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | Matrix of predicted responses, with associated standard deviations if option selected. | 
-
 ## class Lars
 {: #lars }
 
@@ -1504,6 +1821,200 @@ An implementation of Least Angle Regression (stagewise/lasso), also known as LAR
 | **type** | **description** |
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Matrix containing predicted responses. | 
+
+## class LinearRegression
+{: #linear_regression }
+
+#### Simple Linear Regression
+{: #linear_regression_descr }
+
+
+An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+
+  y = X * b + e
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `lambda_` | [`float`](#doc_float) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import LinearRegression
+>>> X = pd.read_csv('https://datasets.mlpack.org/admission_predict.csv')
+>>> y = pd.read_csv('https://datasets.mlpack.org/admission_predict.responses.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = LinearRegression(check_input_matrices=False,
+  copy_all_inputs=False, lambda_=0, verbose=False)
+>>> output_model = model.fit(training=X_train, training_responses=y_train)
+>>> output_predictions = model.predict(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | Train a linear regression model. |
+| predict | Predictions from model. |
+
+### 1. fit
+
+Train a linear regression model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `training` | [`matrix`](#doc_matrix) | Matrix containing training set X (regressors). | 
+| `training_responses` | [`vector`](#doc_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LinearRegressionType`](#doc_model) | Output LinearRegression model. | 
+
+### 2. predict
+
+Predictions from model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing X' (test regressors). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`vector`](#doc_vector) | Matrix containing predicted responses. | 
+
+## class LinearSvm
+{: #linear_svm }
+
+#### Linear SVM Training
+{: #linear_svm_descr }
+
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This implementation allows training a linear SVM model given training data (specified with the `training` parameter).
+
+The training data may have class labels as its last dimension. Alternately, the `labels` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `delta` | [`float`](#doc_float) | Margin of difference between correct class and other classes. | `1` |
+| `epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0.0001` |
+| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
+| `num_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
+| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `False` |
+| `step_size` | [`float`](#doc_float) | Step size for parallel SGD optimizer. | `0.01` |
+| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import LinearSvm
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = LinearSvm(check_input_matrices=False, copy_all_inputs=False,
+  delta=1, epochs=50, lambda_=0.0001, max_iterations=10000, no_intercept=False,
+  num_classes=0, optimizer='lbfgs', seed=0, shuffle=False, step_size=0.01,
+  tolerance=1e-10, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> scores = model.scores(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of linear SVM for multiclass classification. Given labeled data, a model is. |
+| predict | Class prediction from Linear SVM model. |
+| scores | Class scores from Linear SVM model. |
+
+### 1. fit
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model is.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`LinearSVMModelType`](#doc_model) | Output for trained linear svm model. | 
+
+### 2. predict
+
+Class prediction from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+
+### 3. scores
+
+Class scores from Linear SVM model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
+| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | Requested scores. | 
 
 ## lmnn()
 {: #lmnn }
@@ -1959,6 +2470,104 @@ For example, to run mean shift clustering on the dataset `'data'` and store the 
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
+## class Nbc
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier training
+{: #nbc_descr }
+
+
+Implements the Naive Bayes classifier on the given labeled training set for us of that trained model to classify the points in a given test set.
+
+The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
+
+The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `incremental_variance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `False` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import NaiveBayes
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = NaiveBayesTrees(check_input_matrices=False, copy_all_inputs=False,
+  incremental_variance=False, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+>>> probabilities = model.predict_proba(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data. |
+| predict | Class predictions from a Naive Bayes Classifier model. |
+| predict_proba | Class probabilities from a Naive Bayes Classifier model. |
+
+### 1. fit
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A vector containing labels for the training set. | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`NBCModelType`](#doc_model) | File to save trained Naive Bayes model to. | 
+
+### 2. predict
+
+Class predictions from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
+
+### 3. predict_proba
+
+Class probabilities from a Naive Bayes Classifier model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
 ## nca()
 {: #nca }
 
@@ -2329,6 +2938,82 @@ For example, to reduce the dimensionality of the matrix `'data'` to 5 dimensions
 
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
  - [PCA C++ class documentation](../../user/methods/pca.md)
+
+## class Perceptron
+{: #perceptron }
+
+#### Perceptron training
+{: #perceptron_descr }
+
+
+Implementation of a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+### Parameters
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
+| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
+| `max_iterations` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+
+### Example
+
+```python
+>>> import pandas as pd
+>>> from mlpack import preprocess_split
+>>> from mlpack import DecisionTree
+>>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
+>>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
+>>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
+>>> X_train = d['training']
+>>> y_train = d['training_labels']
+>>> X_test = d['test']
+>>> y_test = d['test_labels']
+>>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
+  max_iterations=1000, verbose=False)
+>>> output_model = model.fit(training=X_train, labels=y_train)
+>>> predictions = model.predict(test=X_test)
+```
+
+### Methods
+
+| **name** | **description** |
+|----------|-----------------|
+| fit | An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points. |
+| predict | Class predictions from perceptron model. |
+
+### 1. fit
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels for the training set. | 
+| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`PerceptronModelType`](#doc_model) | Output for trained perceptron model. | 
+
+### 2. predict
+
+Class predictions from perceptron model.
+
+#### Input Parameters:
+
+| **name** | **type** | **description** |
+|----------|----------|-----------------|
+| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
+
+#### Returns: 
+
+| **type** | **description** |
+|----------|-----------------|
+| [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
 
 ## preprocess_split()
 {: #preprocess_split }
@@ -2762,176 +3447,6 @@ For example, to perform ICA on the matrix `'X'` with 40 replicates, saving the i
  - [ICA using spacings estimates of entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
  - [Radical C++ class documentation](../../user/methods/radical.md)
 
-## krann()
-{: #krann }
-
-#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
-{: #krann_descr }
-
-```python
->>> from mlpack import krann
->>> d = krann(alpha=0.95, check_input_matrices=False,
-        copy_all_inputs=False, first_leaf_exact=False, input_model=None, k=0,
-        leaf_size=20, naive=False, query=np.empty([0, 0]), random_basis=False,
-        reference=np.empty([0, 0]), sample_at_leaves=False, seed=0,
-        single_mode=False, single_sample_limit=20, tau=5, tree_type='kd',
-        verbose=False)
->>> distances = d['distances']
->>> neighbors = d['neighbors']
->>> output_model = d['output_model']
-```
-
-An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `alpha` | [`float`](#doc_float) | The desired success probability. | `0.95` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `first_leaf_exact` | [`bool`](#doc_bool) | The flag to trigger sampling only after exactly exploring the first leaf. | `False` |
-| `input_model` | [`RAModelType`](#doc_model) | Pre-trained kNN model. | `None` |
-| `k` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
-| `leaf_size` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
-| `naive` | [`bool`](#doc_bool) | If true, sampling will be done without using a tree. | `False` |
-| `query` | [`matrix`](#doc_matrix) | Matrix containing query points (optional). | `np.empty([0, 0])` |
-| `random_basis` | [`bool`](#doc_bool) | Before tree-building, project the data onto a random orthogonal basis. | `False` |
-| `reference` | [`matrix`](#doc_matrix) | Matrix containing the reference dataset. | `np.empty([0, 0])` |
-| `sample_at_leaves` | [`bool`](#doc_bool) | The flag to trigger sampling at leaves. | `False` |
-| `seed` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
-| `single_mode` | [`bool`](#doc_bool) | If true, single-tree search is used (as opposed to dual-tree search. | `False` |
-| `single_sample_limit` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
-| `tau` | [`float`](#doc_float) | The allowed rank-error in terms of the percentile of the data. | `5` |
-| `tree_type` | [`str`](#doc_str) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `'kd'` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `distances` | [`matrix`](#doc_matrix) | Matrix to output distances into. | 
-| `neighbors` | [`int matrix`](#doc_int_matrix) | Matrix to output neighbors into. | 
-| `output_model` | [`RAModelType`](#doc_model) | If specified, the kNN model will be output here. | 
-
-### Detailed documentation
-{: #krann_detailed-documentation }
-
-This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
-
-### Example
-For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `'input'` and store the distances in `'distances'` and the neighbors in `'neighbors.csv'`:
-
-```python
->>> output = krann(reference=input, k=5, tau=0.1)
->>> distances = output['distances']
->>> neighbors = output['neighbors']
-```
-
-Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
-
-The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
-
-### See also
-
- - [knn()](#knn)
- - [lsh()](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
- - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
-
-## sparse_coding()
-{: #sparse_coding }
-
-#### Sparse Coding
-{: #sparse_coding_descr }
-
-```python
->>> from mlpack import sparse_coding
->>> d = sparse_coding(atoms=15, check_input_matrices=False,
-        copy_all_inputs=False, initial_dictionary=np.empty([0, 0]),
-        input_model=None, lambda1=0, lambda2=0, max_iterations=0,
-        newton_tolerance=1e-06, normalize=False, objective_tolerance=0.01,
-        seed=0, test=np.empty([0, 0]), training=np.empty([0, 0]),
-        verbose=False)
->>> codes = d['codes']
->>> dictionary = d['dictionary']
->>> output_model = d['output_model']
-```
-
-An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `atoms` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary matrix. | `np.empty([0, 0])` |
-| `input_model` | [`SparseCodingType`](#doc_model) | File containing input sparse coding model. | `None` |
-| `lambda1` | [`float`](#doc_float) | Sparse coding l1-norm regularization parameter. | `0` |
-| `lambda2` | [`float`](#doc_float) | Sparse coding l2-norm regularization parameter. | `0` |
-| `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
-| `newton_tolerance` | [`float`](#doc_float) | Tolerance for convergence of Newton method. | `1e-06` |
-| `normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `False` |
-| `objective_tolerance` | [`float`](#doc_float) | Tolerance for convergence of the objective function. | `0.01` |
-| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `test` | [`matrix`](#doc_matrix) | Optional matrix to be encoded by trained model. | `np.empty([0, 0])` |
-| `training` | [`matrix`](#doc_matrix) | Matrix of training data (X). | `np.empty([0, 0])` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Output options
-
-Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `codes` | [`matrix`](#doc_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
-| `dictionary` | [`matrix`](#doc_matrix) | Matrix to save the output dictionary to. | 
-| `output_model` | [`SparseCodingType`](#doc_model) | File to save trained sparse coding model to. | 
-
-### Detailed documentation
-{: #sparse_coding_detailed-documentation }
-
-An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
-
-The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
-
-The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
-
-Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
-
-To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `training` option, along with the number of atoms in the dictionary (specified with the `atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `initial_dictionary` parameter.  An input model may be specified with the `input_model` parameter.
-
-### Example
-As an example, to build a sparse coding model on the dataset `'data'` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `'model'`, use 
-
-```python
->>> output = sparse_coding(training=data, atoms=200, lambda1=0.1)
->>> model = output['output_model']
-```
-
-Then, this model could be used to encode a new matrix, `'otherdata'`, and save the output codes to `'codes'`: 
-
-```python
->>> output = sparse_coding(input_model=model, test=otherdata)
->>> codes = output['codes']
-```
-
-### See also
-
- - [local_coordinate_coding()](#local_coordinate_coding)
- - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
- - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
-
 ## class RandomForest
 {: #random_forest }
 
@@ -3039,612 +3554,86 @@ Class probabilities from random forest model.
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
 
-## class DecisionTree
-{: #decision_tree }
+## krann()
+{: #krann }
 
-#### Decision tree training
-{: #decision_tree_descr }
+#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
+{: #krann_descr }
+
+```python
+>>> from mlpack import krann
+>>> d = krann(alpha=0.95, check_input_matrices=False,
+        copy_all_inputs=False, first_leaf_exact=False, input_model=None, k=0,
+        leaf_size=20, naive=False, query=np.empty([0, 0]), random_basis=False,
+        reference=np.empty([0, 0]), sample_at_leaves=False, seed=0,
+        single_mode=False, single_sample_limit=20, tau=5, tree_type='kd',
+        verbose=False)
+>>> distances = d['distances']
+>>> neighbors = d['neighbors']
+>>> output_model = d['output_model']
+```
+
+An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
 
 
-Train using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
 
-The training set and associated labels are specified with the `training` and `labels` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The trained model is returned, and can then be used for prediction. The `minimum_leaf_size` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `minimum_gain_split` parameter specifies the minimum gain that is needed for the node to split.  The `maximum_depth` parameter specifies the maximum depth of the tree.  If `print_training_accuracy` is specified, the training accuracy will be printed.
-### Parameters
+### Input options
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `alpha` | [`float`](#doc_float) | The desired success probability. | `0.95` |
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `maximum_depth` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `minimum_gain_split` | [`float`](#doc_float) | Minimum gain for node splitting. | `1e-07` |
-| `minimum_leaf_size` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `print_training_accuracy` | [`bool`](#doc_bool) | Print the training accuracy. | `False` |
+| `first_leaf_exact` | [`bool`](#doc_bool) | The flag to trigger sampling only after exactly exploring the first leaf. | `False` |
+| `input_model` | [`RAModelType`](#doc_model) | Pre-trained kNN model. | `None` |
+| `k` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
+| `leaf_size` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
+| `naive` | [`bool`](#doc_bool) | If true, sampling will be done without using a tree. | `False` |
+| `query` | [`matrix`](#doc_matrix) | Matrix containing query points (optional). | `np.empty([0, 0])` |
+| `random_basis` | [`bool`](#doc_bool) | Before tree-building, project the data onto a random orthogonal basis. | `False` |
+| `reference` | [`matrix`](#doc_matrix) | Matrix containing the reference dataset. | `np.empty([0, 0])` |
+| `sample_at_leaves` | [`bool`](#doc_bool) | The flag to trigger sampling at leaves. | `False` |
+| `seed` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
+| `single_mode` | [`bool`](#doc_bool) | If true, single-tree search is used (as opposed to dual-tree search. | `False` |
+| `single_sample_limit` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
+| `tau` | [`float`](#doc_float) | The allowed rank-error in terms of the percentile of the data. | `5` |
+| `tree_type` | [`str`](#doc_str) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `'kd'` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
-### Example
+### Output options
 
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import DecisionTree
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
-  maximum_depth=0, minimum_gain_split=1e-07, minimum_leaf_size=20,
-  print_training_accuracy=False, verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
-```
+Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
 
-### Methods
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `distances` | [`matrix`](#doc_matrix) | Matrix to output distances into. | 
+| `neighbors` | [`int matrix`](#doc_int_matrix) | Matrix to output neighbors into. | 
+| `output_model` | [`RAModelType`](#doc_model) | If specified, the kNN model will be output here. | 
 
-| **name** | **description** |
-|----------|-----------------|
-| fit | Training ID3-style decision tree model. |
-| predict | Class predictions from train decision tree model. |
-| predict_proba | Class predictions from train decision tree model. |
+### Detailed documentation
+{: #krann_detailed-documentation }
 
-### 1. fit
-
-Training ID3-style decision tree model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | Training labels. | 
-| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may contain categorical variables). | 
-| `weights` | [`matrix`](#doc_matrix) | The weight of labels | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`DecisionTreeModelType`](#doc_model) | Output for trained decision tree. | 
-
-### 2. predict
-
-Class predictions from train decision tree model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may contain categorical variables). | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | Class predictions for each test point. | 
-
-### 3. predict_proba
-
-Class predictions from train decision tree model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may contain categorical variables). | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Test point labels, if accuracy calculation is desired. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | Class probabilities for each test point if probabilities has been selected. | 
-
-## class Perceptron
-{: #perceptron }
-
-#### Perceptron training
-{: #perceptron_descr }
-
-
-Implementation of a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `max_iterations` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `max_iterations` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
+This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
 
 ### Example
+For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `'input'` and store the distances in `'distances'` and the neighbors in `'neighbors.csv'`:
 
 ```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import DecisionTree
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = DecisionTree(check_input_matrices=False, copy_all_inputs=False,
-  max_iterations=1000, verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
+>>> output = krann(reference=input, k=5, tau=0.1)
+>>> distances = output['distances']
+>>> neighbors = output['neighbors']
 ```
 
-### Methods
+Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
 
-| **name** | **description** |
-|----------|-----------------|
-| fit | An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points. |
-| predict | Class predictions from perceptron model. |
+The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
 
-### 1. fit
+### See also
 
-An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and later be used for classification on new points.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels for the training set. | 
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`PerceptronModelType`](#doc_model) | Output for trained perceptron model. | 
-
-### 2. predict
-
-Class predictions from perceptron model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
-
-## class LinearSvm
-{: #linear_svm }
-
-#### Linear SVM Training
-{: #linear_svm_descr }
-
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This implementation allows training a linear SVM model given training data (specified with the `training` parameter).
-
-The training data may have class labels as its last dimension. Alternately, the `labels` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `lambda_` option, and the number of classes can be manually specified with the `num_classes`and if an intercept term is not desired in the model, the `no_intercept` parameter can be specified.
-
-Margin of difference between correct class and other classes can be specified with the `delta` option.The optimizer used to train the model can be specified with the `optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `max_iterations` parameter specifies the maximum number of allowed iterations, and the `tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `step_size` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `delta` | [`float`](#doc_float) | Margin of difference between correct class and other classes. | `1` |
-| `epochs` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `lambda_` | [`float`](#doc_float) | L2-regularization parameter for training. | `0.0001` |
-| `max_iterations` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `no_intercept` | [`bool`](#doc_bool) | Do not add the intercept term to the model. | `False` |
-| `num_classes` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `optimizer` | [`str`](#doc_str) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
-| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `shuffle` | [`bool`](#doc_bool) | Don't shuffle the order in which data points are visited for parallel SGD. | `False` |
-| `step_size` | [`float`](#doc_float) | Step size for parallel SGD optimizer. | `0.01` |
-| `tolerance` | [`float`](#doc_float) | Convergence tolerance for optimizer. | `1e-10` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Example
-
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import LinearSvm
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = LinearSvm(check_input_matrices=False, copy_all_inputs=False,
-  delta=1, epochs=50, lambda_=0.0001, max_iterations=10000, no_intercept=False,
-  num_classes=0, optimizer='lbfgs', seed=0, shuffle=False, step_size=0.01,
-  tolerance=1e-10, verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> scores = model.scores(test=X_test)
-```
-
-### Methods
-
-| **name** | **description** |
-|----------|-----------------|
-| fit | An implementation of linear SVM for multiclass classification. Given labeled data, a model is. |
-| predict | Class prediction from Linear SVM model. |
-| scores | Class scores from Linear SVM model. |
-
-### 1. fit
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model is.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | A matrix containing labels (0 or 1) for the points in the training set (y). | 
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set (the matrix of predictors, X). | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`LinearSVMModelType`](#doc_model) | Output for trained linear svm model. | 
-
-### 2. predict
-
-Class prediction from Linear SVM model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-
-### 3. scores
-
-Class scores from Linear SVM model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Matrix containing test dataset. | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Matrix containing test labels. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | Requested scores. | 
-
-## class Adaboost
-{: #adaboost }
-
-#### AdaBoost
-{: #adaboost_descr }
-
-
-This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
-
-For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
-| `tolerance` | [`float`](#doc_float) | The tolerance for change in values of the weighted error during training. | `1e-10` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-| `weak_learner` | [`str`](#doc_str) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
-
-### Example
-
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import Adaboost
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = Adaboost(check_input_matrices=False, copy_all_inputs=False,
-  iterations=1000, tolerance=1e-10, verbose=False,
-  weak_learner='decision_stump')
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
-```
-
-### Methods
-
-| **name** | **description** |
-|----------|-----------------|
-| fit | Training AdaBoost model. |
-| predict | Class predictions from model. |
-| predict_proba | Class probabilities from model. |
-
-### 1. fit
-
-Training AdaBoost model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | Labels for the training set. | 
-| `training` | [`matrix`](#doc_matrix) | Dataset for training AdaBoost. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`AdaBoostModelType`](#doc_model) | Output trained AdaBoost model. | 
-
-### 2. predict
-
-Class predictions from model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Test dataset. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | Predicted labels for the test set. | 
-
-### 3. predict_proba
-
-Class probabilities from model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Test dataset. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | Predicted class probabilities for each point in the test set. | 
-
-## class HoeffdingTree
-{: #hoeffding_tree }
-
-#### Hoeffding trees training
-{: #hoeffding_tree_descr }
-
-
-Implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets, supporting both categorical and numeric data.  Given an input dataset, it is able to train the tree with numerous training options, and return the model.
-
-The training file and associated labels are specified with the `training` and `labels` parameters, respectively. Optionally, if `labels` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `batch_mode` option, but this may not be the best option for large datasets.
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `batch_mode` | [`bool`](#doc_bool) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. | `False` |
-| `bins` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `confidence` | [`float`](#doc_float) | Confidence before splitting (between 0 and 1). | `0.95` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `info_gain` | [`bool`](#doc_bool) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. | `False` |
-| `max_samples` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
-| `min_samples` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
-| `numeric_split_strategy` | [`str`](#doc_str) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
-| `observations_before_binning` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
-| `passes` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Example
-
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import HoeffdingTrees
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = HoeffdingTrees(batch_mode=False, bins=10,
-  check_input_matrices=False, confidence=0.95, copy_all_inputs=False,
-  info_gain=False, max_samples=5000, min_samples=100,
-  numeric_split_strategy='binary', observations_before_binning=100, passes=1,
-  verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
-```
-
-### Methods
-
-| **name** | **description** |
-|----------|-----------------|
-| fit | An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points. |
-| predict | Class predictions from Hoeffding trees model. |
-| predict_proba | Class probabilities from Hoeffding trees model. |
-
-### 1. fit
-
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data a Hoeffding tree can be trained for later use of predicting the classifications of new points.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | Labels for training dataset. | 
-| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
-| `training` | [`categorical matrix`](#doc_categorical_matrix) | Training dataset (may be categorical). | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`HoeffdingTreeModelType`](#doc_model) | Output for trained Hoeffding tree model. | 
-
-### 2. predict
-
-Class predictions from Hoeffding trees model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | Matrix to output label predictions for test data into. | 
-
-### 3. predict_proba
-
-Class probabilities from Hoeffding trees model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`categorical matrix`](#doc_categorical_matrix) | Testing dataset (may be categorical). | 
-| `test_labels` | [`int vector`](#doc_int_vector) | Labels of test data. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
-
-## class Nbc
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier training
-{: #nbc_descr }
-
-
-Implements the Naive Bayes classifier on the given labeled training set for us of that trained model to classify the points in a given test set.
-
-The training set is specified with the `training` parameter.  Labels may be either the last row of the training set, or alternately the `labels` parameter may be specified to pass a separate matrix of labels.
-
-The `incremental_variance` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-### Parameters
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
-| `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `incremental_variance` | [`bool`](#doc_bool) | The variance of each class will be calculated incrementally. | `False` |
-| `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
-
-### Example
-
-```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import NaiveBayes
->>> X = pd.read_csv('http://datasets.mlpack.org/iris.csv')
->>> y = pd.read_csv('http://datasets.mlpack.org/iris_labels.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = NaiveBayesTrees(check_input_matrices=False, copy_all_inputs=False,
-  incremental_variance=False, verbose=False)
->>> output_model = model.fit(training=X_train, labels=y_train)
->>> predictions = model.predict(test=X_test)
->>> probabilities = model.predict_proba(test=X_test)
-```
-
-### Methods
-
-| **name** | **description** |
-|----------|-----------------|
-| fit | An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data. |
-| predict | Class predictions from a Naive Bayes Classifier model. |
-| predict_proba | Class probabilities from a Naive Bayes Classifier model. |
-
-### 1. fit
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model is be trained for later use for classification on new data.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `labels` | [`int vector`](#doc_int_vector) | A vector containing labels for the training set. | 
-| `training` | [`matrix`](#doc_matrix) | A matrix containing the training set. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`NBCModelType`](#doc_model) | File to save trained Naive Bayes model to. | 
-
-### 2. predict
-
-Class predictions from a Naive Bayes Classifier model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`int vector`](#doc_int_vector) | The matrix in which the predicted labels for the test set will be written. | 
-
-### 3. predict_proba
-
-Class probabilities from a Naive Bayes Classifier model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | A matrix containing the test set. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`matrix`](#doc_matrix) | The matrix in which the predicted probability of labels for the test set will be written. | 
+ - [knn()](#knn)
+ - [lsh()](#lsh)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
+ - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## class SoftmaxRegression
 {: #softmax_regression }
@@ -3750,81 +3739,92 @@ An implementation of softmax regression for classification, which is a multiclas
 |----------|-----------------|
 | [`matrix`](#doc_matrix) | Matrix to save class probabilities for test dataset into. | 
 
-## class LinearRegression
-{: #linear_regression }
+## sparse_coding()
+{: #sparse_coding }
 
-#### Simple Linear Regression
-{: #linear_regression_descr }
+#### Sparse Coding
+{: #sparse_coding_descr }
+
+```python
+>>> from mlpack import sparse_coding
+>>> d = sparse_coding(atoms=15, check_input_matrices=False,
+        copy_all_inputs=False, initial_dictionary=np.empty([0, 0]),
+        input_model=None, lambda1=0, lambda2=0, max_iterations=0,
+        newton_tolerance=1e-06, normalize=False, objective_tolerance=0.01,
+        seed=0, test=np.empty([0, 0]), training=np.empty([0, 0]),
+        verbose=False)
+>>> codes = d['codes']
+>>> dictionary = d['dictionary']
+>>> output_model = d['output_model']
+```
+
+An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
 
 
-An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
 
-  y = X * b + e
-### Parameters
+### Input options
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `atoms` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `lambda_` | [`float`](#doc_float) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `initial_dictionary` | [`matrix`](#doc_matrix) | Optional initial dictionary matrix. | `np.empty([0, 0])` |
+| `input_model` | [`SparseCodingType`](#doc_model) | File containing input sparse coding model. | `None` |
+| `lambda1` | [`float`](#doc_float) | Sparse coding l1-norm regularization parameter. | `0` |
+| `lambda2` | [`float`](#doc_float) | Sparse coding l2-norm regularization parameter. | `0` |
+| `max_iterations` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
+| `newton_tolerance` | [`float`](#doc_float) | Tolerance for convergence of Newton method. | `1e-06` |
+| `normalize` | [`bool`](#doc_bool) | If set, the input data matrix will be normalized before coding. | `False` |
+| `objective_tolerance` | [`float`](#doc_float) | Tolerance for convergence of the objective function. | `0.01` |
+| `seed` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `test` | [`matrix`](#doc_matrix) | Optional matrix to be encoded by trained model. | `np.empty([0, 0])` |
+| `training` | [`matrix`](#doc_matrix) | Matrix of training data (X). | `np.empty([0, 0])` |
 | `verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `False` |
 
+### Output options
+
+Results are returned in a Python dictionary.  The keys of the dictionary are the names of the output parameters.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `codes` | [`matrix`](#doc_matrix) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
+| `dictionary` | [`matrix`](#doc_matrix) | Matrix to save the output dictionary to. | 
+| `output_model` | [`SparseCodingType`](#doc_model) | File to save trained sparse coding model to. | 
+
+### Detailed documentation
+{: #sparse_coding_detailed-documentation }
+
+An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
+
+The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
+
+The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
+
+Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
+
+To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `training` option, along with the number of atoms in the dictionary (specified with the `atoms` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `initial_dictionary` parameter.  An input model may be specified with the `input_model` parameter.
+
 ### Example
+As an example, to build a sparse coding model on the dataset `'data'` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `'model'`, use 
 
 ```python
->>> import pandas as pd
->>> from mlpack import preprocess_split
->>> from mlpack import LinearRegression
->>> X = pd.read_csv('https://datasets.mlpack.org/admission_predict.csv')
->>> y = pd.read_csv('https://datasets.mlpack.org/admission_predict.responses.csv')
->>> d = preprocess_split(input_=X, input_labels=y, test_ratio=0.2)
->>> X_train = d['training']
->>> y_train = d['training_labels']
->>> X_test = d['test']
->>> y_test = d['test_labels']
->>> model = LinearRegression(check_input_matrices=False,
-  copy_all_inputs=False, lambda_=0, verbose=False)
->>> output_model = model.fit(training=X_train, training_responses=y_train)
->>> output_predictions = model.predict(test=X_test)
+>>> output = sparse_coding(training=data, atoms=200, lambda1=0.1)
+>>> model = output['output_model']
 ```
 
-### Methods
+Then, this model could be used to encode a new matrix, `'otherdata'`, and save the output codes to `'codes'`: 
 
-| **name** | **description** |
-|----------|-----------------|
-| fit | Train a linear regression model. |
-| predict | Predictions from model. |
+```python
+>>> output = sparse_coding(input_model=model, test=otherdata)
+>>> codes = output['codes']
+```
 
-### 1. fit
+### See also
 
-Train a linear regression model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `training` | [`matrix`](#doc_matrix) | Matrix containing training set X (regressors). | 
-| `training_responses` | [`vector`](#doc_vector) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`LinearRegressionType`](#doc_model) | Output LinearRegression model. | 
-
-### 2. predict
-
-Predictions from model.
-
-#### Input Parameters:
-
-| **name** | **type** | **description** |
-|----------|----------|-----------------|
-| `test` | [`matrix`](#doc_matrix) | Matrix containing X' (test regressors). | 
-
-#### Returns: 
-
-| **type** | **description** |
-|----------|-----------------|
-| [`vector`](#doc_vector) | Matrix containing predicted responses. | 
+ - [local_coordinate_coding()](#local_coordinate_coding)
+ - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
+ - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
