@@ -56,13 +56,13 @@ if (BUILD_R_BINDINGS)
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
         OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      message(FATAL_ERROR "Could not Build R Bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      message(FATAL_ERROR "Could not build R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   else ()
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
         OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      not_found_return("Not building R bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      not_found_return("Not building R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   endif ()
 
