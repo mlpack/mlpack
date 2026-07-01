@@ -222,7 +222,7 @@ if (BUILD_R_BINDINGS)
   )
 
   set(R_TINYTEST_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test-R_binding.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test_binding.R"
   )
 
   # Configure the license file.
