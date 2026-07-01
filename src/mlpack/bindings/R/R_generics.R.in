@@ -1,6 +1,7 @@
 #' @rdname ${NAME}
 #' @param object An instantiated model object for which prediction is desired
 #' @param newdata A test data set
+#' @param type The type of result desired
 #' @param ... Additional optional arguments affecting the prediction
 #' @export
 predict.mlpack_${NAME} <- function(object, newdata, type=${TYPES}, ...) {
