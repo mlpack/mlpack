@@ -48,8 +48,8 @@ BINDING_SEE_ALSO("Least angle regression (pdf)",
 BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
 PARAM_MODEL_IN_REQ(LARS<>, "input_model", "Trained LARS model to use.", "m");
-
-PARAM_MATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
+// Note that lars uses internal transposition hence 'TMATRIX' as input.
+PARAM_TMATRIX_IN_REQ("test", "Matrix containing points to regress on (test "
     "points).", "t");
 
 PARAM_MATRIX_OUT("predictions", "Matrix containing predicted responses.", "o");
