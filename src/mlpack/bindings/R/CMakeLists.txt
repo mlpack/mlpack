@@ -269,14 +269,17 @@ if (BUILD_R_BINDINGS)
             ${bindings_file}
             ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
   endforeach()
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TINYTEST_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TESTS_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
+  foreach(r_file ${R_TINYTEST_SOURCES})
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${r_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest/)
+  endforeach()
+
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/tinytest.R"
+       DESTINATION
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
