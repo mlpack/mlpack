@@ -99,7 +99,7 @@ inline eT Pow2(const size_t exponent,
                const typename std::enable_if_t<
                    std::is_integral<eT>::value>* = 0)
 {
-  return (eT(2) << exponent);
+  return (eT(1) << exponent);
 }
 
 template<typename eT>
