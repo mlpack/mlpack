@@ -155,8 +155,10 @@ void SetParamURow(SEXP params,
   // because in R labels should start from 1.
   if (arma::any(paramValue == 0))
   {
-    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
-        << "the range from 1 to the number of classes!" << std::endl;
+    //Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+    //    << "the range from 1 to the number of classes!" << std::endl;
+    Rcpp::stop("When passing labels from R to mlpack, labels should be in "
+               "the range from 1 to the number of classes!");
   }
 
   p.Get<arma::Row<size_t>>(paramName) = paramValue - 1;
@@ -186,8 +188,10 @@ void SetParamUCol(SEXP params,
   // because in R labels should start from 1.
   if (arma::any(paramValue == 0))
   {
-    Log::Fatal << "When passing labels from R to mlpack, labels should be in "
-        << "the range from 1 to the number of classes!" << std::endl;
+    // Log::Fatal << "When passing labels from R to mlpack, labels should be in "
+    //     << "the range from 1 to the number of classes!" << std::endl;
+    Rcpp::stop("When passing labels from R to mlpack, labels should be in "
+               "the range from 1 to the number of classes!");
   }
 
   p.Get<arma::Col<size_t>>(paramName) = paramValue - 1;
