@@ -45,28 +45,24 @@ if (BUILD_R_BINDINGS)
   if (NOT R_RCPPENSMALLEN)
     set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - RcppEnsmallen")
   endif ()
-  find_r_module(testthat)
-  if (NOT R_TESTTHAT)
-    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - testthat")
-  endif ()
-  find_r_module(pkgbuild) # Required for roxygen2 with src/ directories.
-  if (NOT R_PKGBUILD)
-    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - pkgbuild")
+  find_r_module(tinytest)
+  if (NOT R_TINYTEST)
+    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - tinytest")
   endif ()
 
   ## We need to check here if R and other dependencies is even available, as
   ## it is require to build R-bindings.
   if (FORCE_BUILD_R_BINDINGS)
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_PKGBUILD)
+        OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      message(FATAL_ERROR "Could not Build R Bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      message(FATAL_ERROR "Could not build R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   else ()
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_PKGBUILD)
+        OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      not_found_return("Not building R bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      not_found_return("Not building R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   endif ()
 
@@ -221,12 +217,13 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_r_binding_main.cpp"
   )
 
-  set(R_TESTTHAT_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat/test-R_binding.R"
+  set(R_TESTS_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/tinytest.R"
   )
 
-  set(R_TESTS_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat.R"
+  set(R_TINYTEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test_binding_framework.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test_refactored_bindings.R"
   )
 
   # Configure the license file.
@@ -241,9 +238,9 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/
       COMMAND ${CMAKE_COMMAND} -E make_directory
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/testthat
-      COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R/tests
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest
    )
 
   if (BUILD_TESTS)
@@ -272,14 +269,17 @@ if (BUILD_R_BINDINGS)
             ${bindings_file}
             ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
   endforeach()
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TESTTHAT_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/testthat)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TESTS_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
+  foreach(r_file ${R_TINYTEST_SOURCES})
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${r_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest/)
+  endforeach()
+
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/tinytest.R"
+       DESTINATION
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
