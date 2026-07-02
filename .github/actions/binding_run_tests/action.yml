@@ -41,16 +41,6 @@ runs:
     #
     # R bindings.
     #
-    - name: "Run R binding tests"
-      if: inputs.lang == 'R'
-      shell: bash
-      run: |
-          ROOTDIR=`pwd`;
-          cd build/src/mlpack/bindings/R/mlpack/
-          R CMD INSTALL .
-          Rscript -e 'res <- tinytest::run_test_dir("inst/tinytest"); tinytest2JUnit::writeJUnit(res, "r_bindings.junit.xml")'
-          mv r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
-
     - name: "Upload R package artifact"
       if: inputs.lang == 'R' && runner.os == 'Linux' # Only upload one tarball.
       uses: actions/upload-artifact@v4.4.0
@@ -68,8 +58,16 @@ runs:
     - name: "Run R CMD check"
       if: inputs.lang == 'R'
       shell: bash
+      # This moves the JUnit-style XML file for later consumption in another task. The
+      # file will be create in a subdirectory of 'check' (an argument to `rcmdcheck()),
+      # and therein the standard directory 'mlpack.Rcheck/tests/'
       # TODO: revert to error_on = 'warning'
-      run: Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', args = c('--no-manual', '--as-cran'), error_on = 'error', check_dir = 'check')"
+      run: |
+          Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{env.MLPACK_R_PACKAGE }}', \
+                         args = c('--no-manual', '--as-cran'), \
+                         error_on = 'error', \
+                         check_dir = 'check')"
+          mv check/mlpack.Rcheck/tests/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
 
     # TODO: upload check results on failure
 
