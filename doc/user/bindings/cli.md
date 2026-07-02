@@ -36,6 +36,84 @@ mlpack bindings for CLI take and return a restricted set of types, for simplicit
 </div>
 
 
+## mlpack_adaboost
+{: #adaboost }
+
+#### AdaBoost
+{: #adaboost_descr }
+
+```bash
+$ mlpack_adaboost [--help] [--info <string>] [--input_model_file
+        <string>] [--iterations 1000] [--labels_file <string>] [--test_file
+        <string>] [--tolerance 1e-10] [--training_file <string>] [--verbose]
+        [--version] [--weak_learner 'decision_stump'] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`AdaBoostModel file`](#doc_model) | Input AdaBoost model. | `''` |
+| `--iterations (-i)` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for the training set. | `''` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Test dataset. | `''` |
+| `--tolerance (-e)` | [`double`](#doc_double) | The tolerance for change in values of the weighted error during training. | `1e-10` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Dataset for training AdaBoost. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--weak_learner (-w)` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`AdaBoostModel file`](#doc_model) | Output trained AdaBoost model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Predicted class probabilities for each point in the test set. | 
+
+### Detailed documentation
+{: #adaboost_detailed-documentation }
+
+This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
+
+For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
+
+This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `--training_file (-t)` option.  Labels can be given with the `--labels_file (-l)` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `--input_model_file (-m)` option.
+
+Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `--test_file (-T)` parameter.  The predicted classes for each point in the test dataset are output to the `--predictions_file (-P)` output parameter.  The AdaBoost model itself is output to the `--output_model_file (-M)` output parameter.
+
+### Example
+For example, to run AdaBoost on an input dataset `'data.csv'` with labels `'labels.csv'`and perceptrons as the weak learner type, storing the trained model in `'model.bin'`, one could use the following command: 
+
+```bash
+$ mlpack_adaboost --training_file data.csv --labels_file labels.csv
+  --output_model_file model.bin --weak_learner perceptron
+```
+
+Similarly, an already-trained model in `'model.bin'` can be used to provide class predictions from test data `'test_data.csv'` and store the output in `'predictions.csv'` with the following command: 
+
+```bash
+$ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
+ - [Perceptron](#perceptron)
+ - [Decision Trees](#decision_tree)
+ - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
 ## mlpack_approx_kfn
 {: #approx_kfn }
 
@@ -132,6 +210,91 @@ $ mlpack_approx_kfn --input_model_file model.bin --query_file
  - [Approximate furthest neighbor in high dimensions (pdf)](https://www.rasmuspagh.net/papers/approx-furthest-neighbor-SISAP15.pdf)
  - [QDAFN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/qdafn.hpp)
  - [DrusillaSelect class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/approx_kfn/drusilla_select.hpp)
+
+## mlpack_bayesian_linear_regression
+{: #bayesian_linear_regression }
+
+#### BayesianLinearRegression
+{: #bayesian_linear_regression_descr }
+
+```bash
+$ mlpack_bayesian_linear_regression [--center] [--help] [--info
+        <string>] [--input_file <string>] [--input_model_file <string>]
+        [--responses_file <string>] [--scale] [--test_file <string>] [--verbose]
+        [--version] [--output_model_file <string>] [--predictions_file <string>]
+        [--stds_file <string>]
+```
+
+An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--center (-c)` | [`flag`](#doc_flag) | Center the data and fit the intercept if enabled. |  |
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix of covariates (X). | `''` |
+| `--input_model_file (-m)` | [`BayesianLinearRegression<> file`](#doc_model) | Trained BayesianLinearRegression model to use. | `''` |
+| `--responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Matrix of responses/observations (y). | `''` |
+| `--scale (-s)` | [`flag`](#doc_flag) | Scale each feature by their standard deviations if enabled. |  |
+| `--test_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing points to regress on (test points). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`BayesianLinearRegression<> file`](#doc_model) | Output BayesianLinearRegression model. | 
+| `--predictions_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If --test_file is specified, this file is where the predicted responses will be saved. | 
+| `--stds_file (-u)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
+
+### Detailed documentation
+{: #bayesian_linear_regression_detailed-documentation }
+
+An implementation of the Bayesian linear regression.
+This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
+Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
+
+This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
+
+To train a BayesianLinearRegression model, the `--input_file (-i)` and `--responses_file (-r)`parameters must be given. The `--center (-c)`and `--scale (-s)` parameters control the centering and the normalizing options. A trained model can be saved with the `--output_model_file (-M)`. If no training is desired at all, a model can be passed via the `--input_model_file (-m)` parameter.
+
+The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `--test_file (-t)` parameter.  Predicted responses to the test points can be saved with the `--predictions_file (-o)` output parameter. The corresponding standard deviation can be save by precising the `--stds_file (-u)` parameter.
+
+### Example
+For example, the following command trains a model on the data `'data.csv'` and responses `'responses.csv'`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `'blr_model.bin'`:
+
+```bash
+$ mlpack_bayesian_linear_regression --input_file data.csv --responses_file
+  responses.csv --center --scale --output_model_file blr_model.bin
+```
+
+The following command uses the `'blr_model.bin'` to provide predicted  responses for the data `'test.csv'` and save those  responses to `'test_predictions.csv'`: 
+
+```bash
+$ mlpack_bayesian_linear_regression --input_model_file blr_model.bin
+  --test_file test.csv --predictions_file test_predictions.csv
+```
+
+Because the estimator computes a predictive distribution instead of a simple point estimate, the `--stds_file (-u)` parameter allows one to save the prediction uncertainties: 
+
+```bash
+$ mlpack_bayesian_linear_regression --input_model_file blr_model.bin
+  --test_file test.csv --predictions_file test_predictions.csv --stds_file
+  stds.csv
+```
+
+### See also
+
+ - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
+ - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
+ - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
 
 ## mlpack_cf
 {: #cf }
@@ -322,6 +485,89 @@ $ mlpack_dbscan --input_file input.csv --epsilon 0.5 --min_size 5
  - [DBSCAN on Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
  - [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
  - [DBSCAN class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/dbscan/dbscan.hpp)
+
+## mlpack_decision_tree
+{: #decision_tree }
+
+#### Decision tree
+{: #decision_tree_descr }
+
+```bash
+$ mlpack_decision_tree [--help] [--info <string>] [--input_model_file
+        <string>] [--labels_file <string>] [--maximum_depth 0]
+        [--minimum_gain_split 1e-07] [--minimum_leaf_size 20]
+        [--print_training_accuracy] [--test_file <string>] [--test_labels_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--weights_file <string>] [--output_model_file <string>]
+        [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`DecisionTreeModel file`](#doc_model) | Pre-trained decision tree, to be used with test points. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Training labels. | `''` |
+| `--maximum_depth (-D)` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
+| `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
+| `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
+| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
+| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
+| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--weights_file (-w)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The weight of labels | `''` |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`DecisionTreeModel file`](#doc_model) | Output for trained decision tree. | 
+| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Class predictions for each test point. | 
+| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Class probabilities for each test point. | 
+
+### Detailed documentation
+{: #decision_tree_detailed-documentation }
+
+Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
+
+The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
+
+Test data may be specified with the `--test_file (-T)` parameter, and if performance numbers are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved via the `--predictions_file (-p)` output parameter.  Class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
+
+### Example
+For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `'data.csv'` with labels `'labels.csv'`, saving the output model to `'tree.bin'` and printing the training error, one could call
+
+```bash
+$ mlpack_decision_tree --training_file data.arff --labels_file labels.csv
+  --output_model_file tree.bin --minimum_leaf_size 20 --minimum_gain_split 0.001
+  --print_training_accuracy
+```
+
+Then, to use that model to classify points in `'test_set.csv'` and print the test error given the labels `'test_labels.csv'` using that model, while saving the predictions for each point to `'predictions.csv'`, one could call 
+
+```bash
+$ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
+  --test_labels_file test_labels.csv --predictions_file predictions.csv
+```
+
+### See also
+
+ - [Random forest](#random_forest)
+ - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
+ - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
+ - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
 
 ## mlpack_det
 {: #det }
@@ -956,6 +1202,94 @@ $ mlpack_hmm_viterbi --input_file obs.csv --input_model_file hmm.bin
  - [Hidden Mixture Models on Wikipedia](https://en.wikipedia.org/wiki/Hidden_Markov_model)
  - [HMM class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/hmm/hmm.hpp)
 
+## mlpack_hoeffding_tree
+{: #hoeffding_tree }
+
+#### Hoeffding trees
+{: #hoeffding_tree_descr }
+
+```bash
+$ mlpack_hoeffding_tree [--batch_mode] [--bins 10] [--confidence 0.95]
+        [--help] [--info <string>] [--info_gain] [--input_model_file <string>]
+        [--labels_file <string>] [--max_samples 5000] [--min_samples 100]
+        [--numeric_split_strategy 'binary'] [--observations_before_binning 100]
+        [--passes 1] [--test_file <string>] [--test_labels_file <string>]
+        [--training_file <string>] [--verbose] [--version] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--batch_mode (-b)` | [`flag`](#doc_flag) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. |  |
+| `--bins (-B)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--confidence (-c)` | [`double`](#doc_double) | Confidence before splitting (between 0 and 1). | `0.95` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--info_gain (-i)` | [`flag`](#doc_flag) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. |  |
+| `--input_model_file (-m)` | [`HoeffdingTreeModel file`](#doc_model) | Input trained Hoeffding tree model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for training dataset. | `''` |
+| `--max_samples (-n)` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
+| `--min_samples (-I)` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
+| `--numeric_split_strategy (-N)` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
+| `--observations_before_binning (-o)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
+| `--passes (-s)` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
+| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels of test data. | `''` |
+| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`HoeffdingTreeModel file`](#doc_model) | Output for trained Hoeffding tree model. | 
+| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix to output label predictions for test data into. | 
+| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
+
+### Detailed documentation
+{: #hoeffding_tree_detailed-documentation }
+
+This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
+
+The training file and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
+
+The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `--batch_mode (-b)` option, but this may not be the best option for large datasets.
+
+When a model is trained, it may be saved via the `--output_model_file (-M)` output parameter.  A model may be loaded from file for further training or testing with the `--input_model_file (-m)` parameter.
+
+Test data may be specified with the `--test_file (-T)` parameter, and if performance statistics are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved with the `--predictions_file (-p)` output parameter, and class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
+
+### Example
+For example, to train a Hoeffding tree with confidence 0.99 with data `'dataset.csv'`, saving the trained tree to `'tree.bin'`, the following command may be used:
+
+```bash
+$ mlpack_hoeffding_tree --training_file dataset.arff --confidence 0.99
+  --output_model_file tree.bin
+```
+
+Then, this tree may be used to make predictions on the test set `'test_set.csv'`, saving the predictions into `'predictions.csv'` and the class probabilities into `'class_probs.csv'` with the following command: 
+
+```bash
+$ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
+  --predictions_file predictions.csv --probabilities_file class_probs.csv
+```
+
+### See also
+
+ - [mlpack_decision_tree](#decision_tree)
+ - [mlpack_random_forest](#random_forest)
+ - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
+ - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
+
 ## mlpack_image_converter
 {: #image_converter }
 
@@ -1298,91 +1632,6 @@ $ mlpack_kmeans --input_file data.csv --initial_centroids_file initial.csv
  - [A dual-tree algorithm for fast k-means clustering with large k (pdf)](http://www.ratml.org/pub/pdf/2017dual.pdf)
  - [KMeans class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/kmeans/kmeans.hpp)
 
-## mlpack_bayesian_linear_regression
-{: #bayesian_linear_regression }
-
-#### BayesianLinearRegression
-{: #bayesian_linear_regression_descr }
-
-```bash
-$ mlpack_bayesian_linear_regression [--center] [--help] [--info
-        <string>] [--input_file <string>] [--input_model_file <string>]
-        [--responses_file <string>] [--scale] [--test_file <string>] [--verbose]
-        [--version] [--output_model_file <string>] [--predictions_file <string>]
-        [--stds_file <string>]
-```
-
-An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--center (-c)` | [`flag`](#doc_flag) | Center the data and fit the intercept if enabled. |  |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix of covariates (X). | `''` |
-| `--input_model_file (-m)` | [`BayesianLinearRegression<> file`](#doc_model) | Trained BayesianLinearRegression model to use. | `''` |
-| `--responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Matrix of responses/observations (y). | `''` |
-| `--scale (-s)` | [`flag`](#doc_flag) | Scale each feature by their standard deviations if enabled. |  |
-| `--test_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing points to regress on (test points). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`BayesianLinearRegression<> file`](#doc_model) | Output BayesianLinearRegression model. | 
-| `--predictions_file (-o)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If --test_file is specified, this file is where the predicted responses will be saved. | 
-| `--stds_file (-u)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If specified, this is where the standard deviations of the predictive distribution will be saved. | 
-
-### Detailed documentation
-{: #bayesian_linear_regression_detailed-documentation }
-
-An implementation of the Bayesian linear regression.
-This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
-Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
-
-This program is able to train a Bayesian linear regression model or load a model from file, output regression predictions for a test set, and save the trained model to a file.
-
-To train a BayesianLinearRegression model, the `--input_file (-i)` and `--responses_file (-r)`parameters must be given. The `--center (-c)`and `--scale (-s)` parameters control the centering and the normalizing options. A trained model can be saved with the `--output_model_file (-M)`. If no training is desired at all, a model can be passed via the `--input_model_file (-m)` parameter.
-
-The program can also provide predictions for test data using either the trained model or the given input model.  Test points can be specified with the `--test_file (-t)` parameter.  Predicted responses to the test points can be saved with the `--predictions_file (-o)` output parameter. The corresponding standard deviation can be save by precising the `--stds_file (-u)` parameter.
-
-### Example
-For example, the following command trains a model on the data `'data.csv'` and responses `'responses.csv'`with center set to true and scale set to false (so, Bayesian linear regression is being solved, and then the model is saved to `'blr_model.bin'`:
-
-```bash
-$ mlpack_bayesian_linear_regression --input_file data.csv --responses_file
-  responses.csv --center --scale --output_model_file blr_model.bin
-```
-
-The following command uses the `'blr_model.bin'` to provide predicted  responses for the data `'test.csv'` and save those  responses to `'test_predictions.csv'`: 
-
-```bash
-$ mlpack_bayesian_linear_regression --input_model_file blr_model.bin
-  --test_file test.csv --predictions_file test_predictions.csv
-```
-
-Because the estimator computes a predictive distribution instead of a simple point estimate, the `--stds_file (-u)` parameter allows one to save the prediction uncertainties: 
-
-```bash
-$ mlpack_bayesian_linear_regression --input_model_file blr_model.bin
-  --test_file test.csv --predictions_file test_predictions.csv --stds_file
-  stds.csv
-```
-
-### See also
-
- - [Bayesian Interpolation](https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf)
- - [Bayesian Linear Regression, Section 3.3](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)
- - [BayesianLinearRegression C++ class documentation](../../user/methods/bayesian_linear_regression.md)
-
 ## mlpack_lars
 {: #lars }
 
@@ -1473,6 +1722,175 @@ $ mlpack_lars --input_model_file lasso_model.bin --test_file test.csv
  - [mlpack_linear_regression](#linear_regression)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
+
+## mlpack_linear_regression
+{: #linear_regression }
+
+#### Simple Linear Regression and Prediction
+{: #linear_regression_descr }
+
+```bash
+$ mlpack_linear_regression [--help] [--info <string>]
+        [--input_model_file <string>] [--lambda 0] [--test_file <string>]
+        [--training_file <string>] [--training_responses_file <string>]
+        [--verbose] [--version] [--output_model_file <string>]
+        [--output_predictions_file <string>]
+```
+
+An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`LinearRegression<> file`](#doc_model) | Existing LinearRegression model to use. | `''` |
+| `--lambda (-l)` | [`double`](#doc_double) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing X' (test regressors). | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing training set X (regressors). | `''` |
+| `--training_responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`LinearRegression<> file`](#doc_model) | Output LinearRegression model. | 
+| `--output_predictions_file (-o)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+
+### Detailed documentation
+{: #linear_regression_detailed-documentation }
+
+An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+
+  y = X * b + e
+
+where X (specified by `--training_file (-t)`) and y (specified either as the last column of the input matrix `--training_file (-t)` or via the `--training_responses_file (-r)` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `--lambda (-l)`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `--output_predictions_file (-o)` output parameter.
+
+Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `--test_file (-T)` parameter):
+
+   y' = X' * b
+
+and the predicted responses y' may be saved with the `--output_predictions_file (-o)` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+
+### Example
+For example, to run a linear regression on the dataset `'X.csv'` with responses `'y.csv'`, saving the trained model to `'lr_model.bin'`, the following command could be used:
+
+```bash
+$ mlpack_linear_regression --training_file X.csv --training_responses_file
+  y.csv --output_model_file lr_model.bin
+```
+
+Then, to use `'lr_model.bin'` to predict responses for a test set `'X_test.csv'`, saving the predictions to `'X_test_responses.csv'`, the following command could be used:
+
+```bash
+$ mlpack_linear_regression --input_model_file lr_model.bin --test_file
+  X_test.csv --output_predictions_file X_test_responses.csv
+```
+
+### See also
+
+ - [mlpack_lars](#lars)
+ - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
+ - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+
+## mlpack_linear_svm
+{: #linear_svm }
+
+#### Linear SVM is an L2-regularized support vector machine.
+{: #linear_svm_descr }
+
+```bash
+$ mlpack_linear_svm [--delta 1] [--epochs 50] [--help] [--info <string>]
+        [--input_model_file <string>] [--labels_file <string>] [--lambda 0.0001]
+        [--max_iterations 10000] [--no_intercept] [--num_classes 0] [--optimizer
+        'lbfgs'] [--seed 0] [--shuffle] [--step_size 0.01] [--test_file
+        <string>] [--test_labels_file <string>] [--tolerance 1e-10]
+        [--training_file <string>] [--verbose] [--version] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--delta (-d)` | [`double`](#doc_double) | Margin of difference between correct class and other classes. | `1` |
+| `--epochs (-E)` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`LinearSVMModel file`](#doc_model) | Existing model (parameters). | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
+| `--lambda (-r)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0.0001` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
+| `--no_intercept (-N)` | [`flag`](#doc_flag) | Do not add the intercept term to the model. |  |
+| `--num_classes (-c)` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
+| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
+| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `--shuffle (-S)` | [`flag`](#doc_flag) | Don't shuffle the order in which data points are visited for parallel SGD. |  |
+| `--step_size (-a)` | [`double`](#doc_double) | Step size for parallel SGD optimizer. | `0.01` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
+| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix containing test labels. | `''` |
+| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`LinearSVMModel file`](#doc_model) | Output for trained linear svm model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
+
+### Detailed documentation
+{: #linear_svm_detailed-documentation }
+
+An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
+
+This program allows loading a linear SVM model (via the `--input_model_file (-m)` parameter) or training a linear SVM model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained linear SVM model may be saved using the `--output_model_file (-M)` output parameter.
+
+The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate vector of labels.
+
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+
+Optionally, the model can be used to predict the labels for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing linear SVM model is given with the `--input_model_file (-m)` parameter.  The output predictions from the linear SVM model may be saved with the `--predictions_file (-P)` parameter.
+
+### Example
+As an example, to train a LinaerSVM on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lsvm_model.bin'`', the following command may be used:
+
+```bash
+$ mlpack_linear_svm --training_file data.csv --labels_file labels.csv --lambda
+  0.1 --delta 1 --num_classes 0 --output_model_file lsvm_model.bin
+```
+
+Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
+
+```bash
+$ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [mlpack_random_forest](#random_forest)
+ - [mlpack_logistic_regression](#logistic_regression)
+ - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
+ - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
 
 ## mlpack_lmnn
 {: #lmnn }
@@ -1895,6 +2313,85 @@ $ mlpack_mean_shift --input_file data.csv --centroid_file centroids.csv
  - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
+## mlpack_nbc
+{: #nbc }
+
+#### Parametric Naive Bayes Classifier
+{: #nbc_descr }
+
+```bash
+$ mlpack_nbc [--help] [--incremental_variance] [--info <string>]
+        [--input_model_file <string>] [--labels_file <string>] [--test_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--output_model_file <string>] [--predictions_file <string>]
+        [--probabilities_file <string>]
+```
+
+An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--incremental_variance (-I)` | [`flag`](#doc_flag) | The variance of each class will be calculated incrementally. |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`NBCModel file`](#doc_model) | Input Naive Bayes model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A file containing labels for the training set. | `''` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`NBCModel file`](#doc_model) | File to save trained Naive Bayes model to. | 
+| `--predictions_file (-a)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written. | 
+
+### Detailed documentation
+{: #nbc_detailed-documentation }
+
+This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
+
+The training set is specified with the `--training_file (-t)` parameter.  Labels may be either the last row of the training set, or alternately the `--labels_file (-l)` parameter may be specified to pass a separate matrix of labels.
+
+If training is not desired, a pre-existing model may be loaded with the `--input_model_file (-m)` parameter.
+
+
+
+The `--incremental_variance (-I)` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
+
+If classifying a test set is desired, the test set may be specified with the `--test_file (-T)` parameter, and the classifications may be saved with the `--predictions_file (-a)`predictions  parameter.  If saving the trained model is desired, this may be done with the `--output_model_file (-M)` output parameter.
+
+### Example
+For example, to train a Naive Bayes classifier on the dataset `'data.csv'` with labels `'labels.csv'` and save the model to `'nbc_model.bin'`, the following command may be used:
+
+```bash
+$ mlpack_nbc --training_file data.csv --labels_file labels.csv
+  --output_model_file nbc_model.bin
+```
+
+Then, to use `'nbc_model.bin'` to predict the classes of the dataset `'test_set.csv'` and save the predicted classes to `'predictions.csv'`, the following command may be used:
+
+```bash
+$ mlpack_nbc --input_model_file nbc_model.bin --test_file test_set.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [mlpack_softmax_regression](#softmax_regression)
+ - [mlpack_random_forest](#random_forest)
+ - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+ - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+
 ## mlpack_nca
 {: #nca }
 
@@ -2255,6 +2752,78 @@ $ mlpack_pca --input_file data.csv --new_dimensionality 5
 
  - [Principal component analysis on Wikipedia](https://en.wikipedia.org/wiki/Principal_component_analysis)
  - [PCA C++ class documentation](../../user/methods/pca.md)
+
+## mlpack_perceptron
+{: #perceptron }
+
+#### Perceptron
+{: #perceptron_descr }
+
+```bash
+$ mlpack_perceptron [--help] [--info <string>] [--input_model_file
+        <string>] [--labels_file <string>] [--max_iterations 1000] [--test_file
+        <string>] [--training_file <string>] [--verbose] [--version]
+        [--output_model_file <string>] [--predictions_file <string>]
+```
+
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`PerceptronModel file`](#doc_model) | Input perceptron model. | `''` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels for the training set. | `''` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`PerceptronModel file`](#doc_model) | Output for trained perceptron model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
+
+### Detailed documentation
+{: #perceptron_detailed-documentation }
+
+This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `--max_iterations (-n)` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
+
+This program allows loading a perceptron from a model (via the `--input_model_file (-m)` parameter) or training a perceptron given training data (via the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `--test_file (-T)` parameter) and the classification results on the test set may be saved with the `--predictions_file (-P)` output parameter.  The perceptron model may be saved with the `--output_model_file (-M)` output parameter.
+
+### Example
+The training data given with the `--training_file (-t)` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
+
+All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `'training_data.csv'` with labels `'training_labels.csv'`, and saves the model to `'perceptron_model.bin'`.
+
+```bash
+$ mlpack_perceptron --training_file training_data.csv --labels_file
+  training_labels.csv --output_model_file perceptron_model.bin
+```
+
+Then, this model can be re-used for classification on the test data `'test_data.csv'`.  The example below does precisely that, saving the predicted classes to `'predictions.csv'`.
+
+```bash
+$ mlpack_perceptron --input_model_file perceptron_model.bin --test_file
+  test_data.csv --predictions_file predictions.csv
+```
+
+Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `--input_model_file (-m)` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
+
+### See also
+
+ - [mlpack_adaboost](#adaboost)
+ - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
+ - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
 
 ## mlpack_preprocess_split
 {: #preprocess_split }
@@ -2673,171 +3242,6 @@ $ mlpack_radical --input_file X.csv --replicates 40 --output_ic_file ic.csv
  - [ICA using spacings estimates of entropy (pdf)](https://www.jmlr.org/papers/volume4/learned-miller03a/learned-miller03a.pdf)
  - [Radical C++ class documentation](../../user/methods/radical.md)
 
-## mlpack_krann
-{: #krann }
-
-#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
-{: #krann_descr }
-
-```bash
-$ mlpack_krann [--alpha 0.95] [--first_leaf_exact] [--help] [--info
-        <string>] [--input_model_file <string>] [--k 0] [--leaf_size 20]
-        [--naive] [--query_file <string>] [--random_basis] [--reference_file
-        <string>] [--sample_at_leaves] [--seed 0] [--single_mode]
-        [--single_sample_limit 20] [--tau 5] [--tree_type 'kd'] [--verbose]
-        [--version] [--distances_file <string>] [--neighbors_file <string>]
-        [--output_model_file <string>]
-```
-
-An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--alpha (-a)` | [`double`](#doc_double) | The desired success probability. | `0.95` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--first_leaf_exact (-X)` | [`flag`](#doc_flag) | The flag to trigger sampling only after exactly exploring the first leaf. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`RAModel file`](#doc_model) | Pre-trained kNN model. | `''` |
-| `--k (-k)` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
-| `--leaf_size (-l)` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
-| `--naive (-N)` | [`flag`](#doc_flag) | If true, sampling will be done without using a tree. |  |
-| `--query_file (-q)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing query points (optional). | `''` |
-| `--random_basis (-R)` | [`flag`](#doc_flag) | Before tree-building, project the data onto a random orthogonal basis. |  |
-| `--reference_file (-r)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing the reference dataset. | `''` |
-| `--sample_at_leaves (-L)` | [`flag`](#doc_flag) | The flag to trigger sampling at leaves. |  |
-| `--seed (-s)` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
-| `--single_mode (-S)` | [`flag`](#doc_flag) | If true, single-tree search is used (as opposed to dual-tree search. |  |
-| `--single_sample_limit (-z)` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
-| `--tau (-T)` | [`double`](#doc_double) | The allowed rank-error in terms of the percentile of the data. | `5` |
-| `--tree_type (-t)` | [`string`](#doc_string) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `'kd'` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--distances_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to output distances into. | 
-| `--neighbors_file (-n)` | [`2-d index matrix file`](#doc_a_2_d_index_matrix_file) | Matrix to output neighbors into. | 
-| `--output_model_file (-M)` | [`RAModel file`](#doc_model) | If specified, the kNN model will be output here. | 
-
-### Detailed documentation
-{: #krann_detailed-documentation }
-
-This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
-
-### Example
-For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `'input.csv'` and store the distances in `'distances.csv'` and the neighbors in `'neighbors.csv.csv'`:
-
-```bash
-$ mlpack_krann --reference_file input.csv --k 5 --distances_file distances.csv
-  --neighbors_file neighbors.csv --tau 0.1
-```
-
-Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
-
-The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
-
-### See also
-
- - [mlpack_knn](#knn)
- - [mlpack_lsh](#lsh)
- - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
- - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
-
-## mlpack_sparse_coding
-{: #sparse_coding }
-
-#### Sparse Coding
-{: #sparse_coding_descr }
-
-```bash
-$ mlpack_sparse_coding [--atoms 15] [--help] [--info <string>]
-        [--initial_dictionary_file <string>] [--input_model_file <string>]
-        [--lambda1 0] [--lambda2 0] [--max_iterations 0] [--newton_tolerance
-        1e-06] [--normalize] [--objective_tolerance 0.01] [--seed 0]
-        [--test_file <string>] [--training_file <string>] [--verbose]
-        [--version] [--codes_file <string>] [--dictionary_file <string>]
-        [--output_model_file <string>]
-```
-
-An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--atoms (-k)` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--initial_dictionary_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional initial dictionary matrix. | `''` |
-| `--input_model_file (-m)` | [`SparseCoding<> file`](#doc_model) | File containing input sparse coding model. | `''` |
-| `--lambda1 (-l)` | [`double`](#doc_double) | Sparse coding l1-norm regularization parameter. | `0` |
-| `--lambda2 (-L)` | [`double`](#doc_double) | Sparse coding l2-norm regularization parameter. | `0` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
-| `--newton_tolerance (-w)` | [`double`](#doc_double) | Tolerance for convergence of Newton method. | `1e-06` |
-| `--normalize (-N)` | [`flag`](#doc_flag) | If set, the input data matrix will be normalized before coding. |  |
-| `--objective_tolerance (-o)` | [`double`](#doc_double) | Tolerance for convergence of the objective function. | `0.01` |
-| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional matrix to be encoded by trained model. | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix of training data (X). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--codes_file (-c)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
-| `--dictionary_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output dictionary to. | 
-| `--output_model_file (-M)` | [`SparseCoding<> file`](#doc_model) | File to save trained sparse coding model to. | 
-
-### Detailed documentation
-{: #sparse_coding_detailed-documentation }
-
-An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
-
-The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
-
-The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
-
-Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
-
-To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `--training_file (-t)` option, along with the number of atoms in the dictionary (specified with the `--atoms (-k)` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `--initial_dictionary_file (-i)` parameter.  An input model may be specified with the `--input_model_file (-m)` parameter.
-
-### Example
-As an example, to build a sparse coding model on the dataset `'data.csv'` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `'model.bin'`, use 
-
-```bash
-$ mlpack_sparse_coding --training_file data.csv --atoms 200 --lambda1 0.1
-  --output_model_file model.bin
-```
-
-Then, this model could be used to encode a new matrix, `'otherdata.csv'`, and save the output codes to `'codes.csv'`: 
-
-```bash
-$ mlpack_sparse_coding --input_model_file model.bin --test_file otherdata.csv
-  --codes_file codes.csv
-```
-
-### See also
-
- - [mlpack_local_coordinate_coding](#local_coordinate_coding)
- - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
- - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
- - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
-
 ## mlpack_random_forest
 {: #random_forest }
 
@@ -2927,23 +3331,23 @@ $ mlpack_random_forest --input_model_file rf_model.bin --test_file
  - [Random forests (pdf)](https://www.eecis.udel.edu/~shatkay/Course/papers/BreimanRandomForests2001.pdf)
  - [RandomForest C++ class documentation](../../user/methods/random_forest.md)
 
-## mlpack_decision_tree
-{: #decision_tree }
+## mlpack_krann
+{: #krann }
 
-#### Decision tree
-{: #decision_tree_descr }
+#### K-Rank-Approximate-Nearest-Neighbors (kRANN)
+{: #krann_descr }
 
 ```bash
-$ mlpack_decision_tree [--help] [--info <string>] [--input_model_file
-        <string>] [--labels_file <string>] [--maximum_depth 0]
-        [--minimum_gain_split 1e-07] [--minimum_leaf_size 20]
-        [--print_training_accuracy] [--test_file <string>] [--test_labels_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--weights_file <string>] [--output_model_file <string>]
-        [--predictions_file <string>] [--probabilities_file <string>]
+$ mlpack_krann [--alpha 0.95] [--first_leaf_exact] [--help] [--info
+        <string>] [--input_model_file <string>] [--k 0] [--leaf_size 20]
+        [--naive] [--query_file <string>] [--random_basis] [--reference_file
+        <string>] [--sample_at_leaves] [--seed 0] [--single_mode]
+        [--single_sample_limit 20] [--tau 5] [--tree_type 'kd'] [--verbose]
+        [--version] [--distances_file <string>] [--neighbors_file <string>]
+        [--output_model_file <string>]
 ```
 
-An implementation of an ID3-style decision tree for classification, which supports categorical data.  Given labeled data with numeric or categorical features, a decision tree can be trained and saved; or, an existing decision tree can be used for classification on new points. [Detailed documentation](#decision_tree_detailed-documentation).
+An implementation of rank-approximate k-nearest-neighbor search (kRANN)  using single-tree and dual-tree algorithms.  Given a set of reference points and query points, this can find the k nearest neighbors in the reference set of each query point using trees; trees that are built can be saved for future use. [Detailed documentation](#krann_detailed-documentation).
 
 
 
@@ -2951,94 +3355,24 @@ An implementation of an ID3-style decision tree for classification, which suppor
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `--alpha (-a)` | [`double`](#doc_double) | The desired success probability. | `0.95` |
 | `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--first_leaf_exact (-X)` | [`flag`](#doc_flag) | The flag to trigger sampling only after exactly exploring the first leaf. |  |
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`DecisionTreeModel file`](#doc_model) | Pre-trained decision tree, to be used with test points. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Training labels. | `''` |
-| `--maximum_depth (-D)` | [`int`](#doc_int) | Maximum depth of the tree (0 means no limit). | `0` |
-| `--minimum_gain_split (-g)` | [`double`](#doc_double) | Minimum gain for node splitting. | `1e-07` |
-| `--minimum_leaf_size (-n)` | [`int`](#doc_int) | Minimum number of points in a leaf. | `20` |
-| `--print_training_accuracy (-a)` | [`flag`](#doc_flag) | Print the training accuracy. |  |
-| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Test point labels, if accuracy calculation is desired. | `''` |
-| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--weights_file (-w)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The weight of labels | `''` |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`DecisionTreeModel file`](#doc_model) | Output for trained decision tree. | 
-| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Class predictions for each test point. | 
-| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Class probabilities for each test point. | 
-
-### Detailed documentation
-{: #decision_tree_detailed-documentation }
-
-Train and evaluate using a decision tree.  Given a dataset containing numeric or categorical features, and associated labels for each point in the dataset, this program can train a decision tree on that data.
-
-The training set and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively.  The labels should be in the range `[0, num_classes - 1]`. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-When a model is trained, the `--output_model_file (-M)` output parameter may be used to save the trained model.  A model may be loaded for predictions with the `--input_model_file (-m)` parameter.  The `--input_model_file (-m)` parameter may not be specified when the `--training_file (-t)` parameter is specified.  The `--minimum_leaf_size (-n)` parameter specifies the minimum number of training points that must fall into each leaf for it to be split.  The `--minimum_gain_split (-g)` parameter specifies the minimum gain that is needed for the node to split.  The `--maximum_depth (-D)` parameter specifies the maximum depth of the tree.  If `--print_training_accuracy (-a)` is specified, the training accuracy will be printed.
-
-Test data may be specified with the `--test_file (-T)` parameter, and if performance numbers are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved via the `--predictions_file (-p)` output parameter.  Class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
-
-### Example
-For example, to train a decision tree with a minimum leaf size of 20 on the dataset contained in `'data.csv'` with labels `'labels.csv'`, saving the output model to `'tree.bin'` and printing the training error, one could call
-
-```bash
-$ mlpack_decision_tree --training_file data.arff --labels_file labels.csv
-  --output_model_file tree.bin --minimum_leaf_size 20 --minimum_gain_split 0.001
-  --print_training_accuracy
-```
-
-Then, to use that model to classify points in `'test_set.csv'` and print the test error given the labels `'test_labels.csv'` using that model, while saving the predictions for each point to `'predictions.csv'`, one could call 
-
-```bash
-$ mlpack_decision_tree --input_model_file tree.bin --test_file test_set.arff
-  --test_labels_file test_labels.csv --predictions_file predictions.csv
-```
-
-### See also
-
- - [Random forest](#random_forest)
- - [Decision trees on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
- - [Induction of Decision Trees (pdf)](https://www.hunch.net/~coms-4771/quinlan.pdf)
- - [DecisionTree C++ class documentation](../../user/methods/decision_tree.md)
-
-## mlpack_perceptron
-{: #perceptron }
-
-#### Perceptron
-{: #perceptron_descr }
-
-```bash
-$ mlpack_perceptron [--help] [--info <string>] [--input_model_file
-        <string>] [--labels_file <string>] [--max_iterations 1000] [--test_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_model_file <string>] [--predictions_file <string>]
-```
-
-An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`PerceptronModel file`](#doc_model) | Input perceptron model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels for the training set. | `''` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | The maximum number of iterations the perceptron is to be run | `1000` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
+| `--input_model_file (-m)` | [`RAModel file`](#doc_model) | Pre-trained kNN model. | `''` |
+| `--k (-k)` | [`int`](#doc_int) | Number of nearest neighbors to find. | `0` |
+| `--leaf_size (-l)` | [`int`](#doc_int) | Leaf size for tree building (used for kd-trees, UB trees, R trees, R* trees, X trees, Hilbert R trees, R+ trees, R++ trees, and octrees). | `20` |
+| `--naive (-N)` | [`flag`](#doc_flag) | If true, sampling will be done without using a tree. |  |
+| `--query_file (-q)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing query points (optional). | `''` |
+| `--random_basis (-R)` | [`flag`](#doc_flag) | Before tree-building, project the data onto a random orthogonal basis. |  |
+| `--reference_file (-r)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing the reference dataset. | `''` |
+| `--sample_at_leaves (-L)` | [`flag`](#doc_flag) | The flag to trigger sampling at leaves. |  |
+| `--seed (-s)` | [`int`](#doc_int) | Random seed (if 0, std::time(NULL) is used). | `0` |
+| `--single_mode (-S)` | [`flag`](#doc_flag) | If true, single-tree search is used (as opposed to dual-tree search. |  |
+| `--single_sample_limit (-z)` | [`int`](#doc_int) | The limit on the maximum number of samples (and hence the largest node you can approximate). | `20` |
+| `--tau (-T)` | [`double`](#doc_double) | The allowed rank-error in terms of the percentile of the data. | `5` |
+| `--tree_type (-t)` | [`string`](#doc_string) | Type of tree to use: 'kd', 'ub', 'cover', 'r', 'x', 'r-star', 'hilbert-r', 'r-plus', 'r-plus-plus', 'oct'. | `'kd'` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
 
@@ -3047,377 +3381,33 @@ An implementation of a perceptron---a single level neural network---for classifi
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_model_file (-M)` | [`PerceptronModel file`](#doc_model) | Output for trained perceptron model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
+| `--distances_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to output distances into. | 
+| `--neighbors_file (-n)` | [`2-d index matrix file`](#doc_a_2_d_index_matrix_file) | Matrix to output neighbors into. | 
+| `--output_model_file (-M)` | [`RAModel file`](#doc_model) | If specified, the kNN model will be output here. | 
 
 ### Detailed documentation
-{: #perceptron_detailed-documentation }
+{: #krann_detailed-documentation }
 
-This program implements a perceptron, which is a single level neural network. The perceptron makes its predictions based on a linear predictor function combining a set of weights with the feature vector.  The perceptron learning rule is able to converge, given enough iterations (specified using the `--max_iterations (-n)` parameter), if the data supplied is linearly separable.  The perceptron is parameterized by a matrix of weight vectors that denote the numerical weights of the neural network.
-
-This program allows loading a perceptron from a model (via the `--input_model_file (-m)` parameter) or training a perceptron given training data (via the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (via the `--test_file (-T)` parameter) and the classification results on the test set may be saved with the `--predictions_file (-P)` output parameter.  The perceptron model may be saved with the `--output_model_file (-M)` output parameter.
+This program will calculate the k rank-approximate-nearest-neighbors of a set of points. You may specify a separate set of reference points and query points, or just a reference set which will be used as both the reference and query set. You must specify the rank approximation (in %) (and optionally the success probability).
 
 ### Example
-The training data given with the `--training_file (-t)` option may have class labels as its last dimension (so, if the training data is in CSV format, labels should be the last column).  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate matrix of labels.
-
-All these options make it easy to train a perceptron, and then re-use that perceptron for later classification.  The invocation below trains a perceptron on `'training_data.csv'` with labels `'training_labels.csv'`, and saves the model to `'perceptron_model.bin'`.
+For example, the following will return 5 neighbors from the top 0.1% of the data (with probability 0.95) for each point in `'input.csv'` and store the distances in `'distances.csv'` and the neighbors in `'neighbors.csv.csv'`:
 
 ```bash
-$ mlpack_perceptron --training_file training_data.csv --labels_file
-  training_labels.csv --output_model_file perceptron_model.bin
+$ mlpack_krann --reference_file input.csv --k 5 --distances_file distances.csv
+  --neighbors_file neighbors.csv --tau 0.1
 ```
 
-Then, this model can be re-used for classification on the test data `'test_data.csv'`.  The example below does precisely that, saving the predicted classes to `'predictions.csv'`.
+Note that tau must be set such that the number of points in the corresponding percentile of the data is greater than k.  Thus, if we choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting to choose 5 nearest neighbors out of the closest 1 point -- this is invalid and the program will terminate with an error message.
 
-```bash
-$ mlpack_perceptron --input_model_file perceptron_model.bin --test_file
-  test_data.csv --predictions_file predictions.csv
-```
-
-Note that all of the options may be specified at once: predictions may be calculated right after training a model, and model training can occur even if an existing perceptron model is passed with the `--input_model_file (-m)` parameter.  However, note that the number of classes and the dimensionality of all data must match.  So you cannot pass a perceptron model trained on 2 classes and then re-train with a 4-class dataset.  Similarly, attempting classification on a 3-dimensional dataset with a perceptron that has been trained on 8 dimensions will cause an error.
+The output matrices are organized such that row i and column j in the neighbors output file corresponds to the index of the point in the reference set which is the i'th nearest neighbor from the point in the query set with index j.  Row i and column j in the distances output file corresponds to the distance between those two points.
 
 ### See also
 
- - [mlpack_adaboost](#adaboost)
- - [Perceptron on Wikipedia](https://en.wikipedia.org/wiki/Perceptron)
- - [Perceptron C++ class documentation](../../user/methods/perceptron.md)
-
-## mlpack_linear_svm
-{: #linear_svm }
-
-#### Linear SVM is an L2-regularized support vector machine.
-{: #linear_svm_descr }
-
-```bash
-$ mlpack_linear_svm [--delta 1] [--epochs 50] [--help] [--info <string>]
-        [--input_model_file <string>] [--labels_file <string>] [--lambda 0.0001]
-        [--max_iterations 10000] [--no_intercept] [--num_classes 0] [--optimizer
-        'lbfgs'] [--seed 0] [--shuffle] [--step_size 0.01] [--test_file
-        <string>] [--test_labels_file <string>] [--tolerance 1e-10]
-        [--training_file <string>] [--verbose] [--version] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of linear SVM for multiclass classification. Given labeled data, a model can be trained and saved for future use; or, a pre-trained model can be used to classify new points. [Detailed documentation](#linear_svm_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--delta (-d)` | [`double`](#doc_double) | Margin of difference between correct class and other classes. | `1` |
-| `--epochs (-E)` | [`int`](#doc_int) | Maximum number of full epochs over dataset for psgd | `50` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`LinearSVMModel file`](#doc_model) | Existing model (parameters). | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A matrix containing labels (0 or 1) for the points in the training set (y). | `''` |
-| `--lambda (-r)` | [`double`](#doc_double) | L2-regularization parameter for training. | `0.0001` |
-| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum iterations for optimizer (0 indicates no limit). | `10000` |
-| `--no_intercept (-N)` | [`flag`](#doc_flag) | Do not add the intercept term to the model. |  |
-| `--num_classes (-c)` | [`int`](#doc_int) | Number of classes for classification; if unspecified (or 0), the number of classes found in the labels will be used. | `0` |
-| `--optimizer (-O)` | [`string`](#doc_string) | Optimizer to use for training ('lbfgs' or 'psgd'). | `'lbfgs'` |
-| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
-| `--shuffle (-S)` | [`flag`](#doc_flag) | Don't shuffle the order in which data points are visited for parallel SGD. |  |
-| `--step_size (-a)` | [`double`](#doc_double) | Step size for parallel SGD optimizer. | `0.01` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing test dataset. | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix containing test labels. | `''` |
-| `--tolerance (-e)` | [`double`](#doc_double) | Convergence tolerance for optimizer. | `1e-10` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set (the matrix of predictors, X). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`LinearSVMModel file`](#doc_model) | Output for trained linear svm model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | If test data is specified, this matrix is where the predictions for the test set will be saved. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | If test data is specified, this matrix is where the class probabilities for the test set will be saved. | 
-
-### Detailed documentation
-{: #linear_svm_detailed-documentation }
-
-An implementation of linear SVMs that uses either L-BFGS or parallel SGD (stochastic gradient descent) to train the model.
-
-This program allows loading a linear SVM model (via the `--input_model_file (-m)` parameter) or training a linear SVM model given training data (specified with the `--training_file (-t)` parameter), or both those things at once.  In addition, this program allows classification on a test dataset (specified with the `--test_file (-T)` parameter) and the classification results may be saved with the `--predictions_file (-P)` output parameter. The trained linear SVM model may be saved using the `--output_model_file (-M)` output parameter.
-
-The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate vector of labels.
-
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.
-
-Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
-
-Optionally, the model can be used to predict the labels for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing linear SVM model is given with the `--input_model_file (-m)` parameter.  The output predictions from the linear SVM model may be saved with the `--predictions_file (-P)` parameter.
-
-### Example
-As an example, to train a LinaerSVM on the data '`'data.csv'`' with labels '`'labels.csv'`' with L2 regularization of 0.1, saving the model to '`'lsvm_model.bin'`', the following command may be used:
-
-```bash
-$ mlpack_linear_svm --training_file data.csv --labels_file labels.csv --lambda
-  0.1 --delta 1 --num_classes 0 --output_model_file lsvm_model.bin
-```
-
-Then, to use that model to predict classes for the dataset '`'test.csv'`', storing the output predictions in '`'predictions.csv'`', the following command may be used: 
-
-```bash
-$ mlpack_linear_svm --input_model_file lsvm_model.bin --test_file test.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [mlpack_random_forest](#random_forest)
- - [mlpack_logistic_regression](#logistic_regression)
- - [LinearSVM on Wikipedia](https://en.wikipedia.org/wiki/Support-vector_machine)
- - [LinearSVM C++ class documentation](../../user/methods/linear_svm.md)
-
-## mlpack_adaboost
-{: #adaboost }
-
-#### AdaBoost
-{: #adaboost_descr }
-
-```bash
-$ mlpack_adaboost [--help] [--info <string>] [--input_model_file
-        <string>] [--iterations 1000] [--labels_file <string>] [--test_file
-        <string>] [--tolerance 1e-10] [--training_file <string>] [--verbose]
-        [--version] [--weak_learner 'decision_stump'] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`AdaBoostModel file`](#doc_model) | Input AdaBoost model. | `''` |
-| `--iterations (-i)` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for the training set. | `''` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Test dataset. | `''` |
-| `--tolerance (-e)` | [`double`](#doc_double) | The tolerance for change in values of the weighted error during training. | `1e-10` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Dataset for training AdaBoost. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--weak_learner (-w)` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`AdaBoostModel file`](#doc_model) | Output trained AdaBoost model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Predicted class probabilities for each point in the test set. | 
-
-### Detailed documentation
-{: #adaboost_detailed-documentation }
-
-This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
-
-For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
-
-This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `--training_file (-t)` option.  Labels can be given with the `--labels_file (-l)` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `--input_model_file (-m)` option.
-
-Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `--test_file (-T)` parameter.  The predicted classes for each point in the test dataset are output to the `--predictions_file (-P)` output parameter.  The AdaBoost model itself is output to the `--output_model_file (-M)` output parameter.
-
-### Example
-For example, to run AdaBoost on an input dataset `'data.csv'` with labels `'labels.csv'`and perceptrons as the weak learner type, storing the trained model in `'model.bin'`, one could use the following command: 
-
-```bash
-$ mlpack_adaboost --training_file data.csv --labels_file labels.csv
-  --output_model_file model.bin --weak_learner perceptron
-```
-
-Similarly, an already-trained model in `'model.bin'` can be used to provide class predictions from test data `'test_data.csv'` and store the output in `'predictions.csv'` with the following command: 
-
-```bash
-$ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
- - [Perceptron](#perceptron)
- - [Decision Trees](#decision_tree)
- - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
-
-## mlpack_hoeffding_tree
-{: #hoeffding_tree }
-
-#### Hoeffding trees
-{: #hoeffding_tree_descr }
-
-```bash
-$ mlpack_hoeffding_tree [--batch_mode] [--bins 10] [--confidence 0.95]
-        [--help] [--info <string>] [--info_gain] [--input_model_file <string>]
-        [--labels_file <string>] [--max_samples 5000] [--min_samples 100]
-        [--numeric_split_strategy 'binary'] [--observations_before_binning 100]
-        [--passes 1] [--test_file <string>] [--test_labels_file <string>]
-        [--training_file <string>] [--verbose] [--version] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of Hoeffding trees, a form of streaming decision tree for classification.  Given labeled data, a Hoeffding tree can be trained and saved for later use, or a pre-trained Hoeffding tree can be used for predicting the classifications of new points. [Detailed documentation](#hoeffding_tree_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--batch_mode (-b)` | [`flag`](#doc_flag) | If true, samples will be considered in batch instead of as a stream.  This generally results in better trees but at the cost of memory usage and runtime. |  |
-| `--bins (-B)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of bins for each numeric split. | `10` |
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--confidence (-c)` | [`double`](#doc_double) | Confidence before splitting (between 0 and 1). | `0.95` |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--info_gain (-i)` | [`flag`](#doc_flag) | If set, information gain is used instead of Gini impurity for calculating Hoeffding bounds. |  |
-| `--input_model_file (-m)` | [`HoeffdingTreeModel file`](#doc_model) | Input trained Hoeffding tree model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for training dataset. | `''` |
-| `--max_samples (-n)` | [`int`](#doc_int) | Maximum number of samples before splitting. | `5000` |
-| `--min_samples (-I)` | [`int`](#doc_int) | Minimum number of samples before splitting. | `100` |
-| `--numeric_split_strategy (-N)` | [`string`](#doc_string) | The splitting strategy to use for numeric features: 'domingos' or 'binary'. | `'binary'` |
-| `--observations_before_binning (-o)` | [`int`](#doc_int) | If the 'domingos' split strategy is used, this specifies the number of samples observed before binning is performed. | `100` |
-| `--passes (-s)` | [`int`](#doc_int) | Number of passes to take over the dataset. | `1` |
-| `--test_file (-T)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Testing dataset (may be categorical). | `''` |
-| `--test_labels_file (-L)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels of test data. | `''` |
-| `--training_file (-t)` | [`2-d categorical matrix file`](#doc_a_2_d_categorical_matrix_file) | Training dataset (may be categorical). | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`HoeffdingTreeModel file`](#doc_model) | Output for trained Hoeffding tree model. | 
-| `--predictions_file (-p)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Matrix to output label predictions for test data into. | 
-| `--probabilities_file (-P)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | In addition to predicting labels, provide rediction probabilities in this matrix. | 
-
-### Detailed documentation
-{: #hoeffding_tree_detailed-documentation }
-
-This program implements Hoeffding trees, a form of streaming decision tree suited best for large (or streaming) datasets.  This program supports both categorical and numeric data.  Given an input dataset, this program is able to train the tree with numerous training options, and save the model to a file.  The program is also able to use a trained model or a model from file in order to predict classes for a given test set.
-
-The training file and associated labels are specified with the `--training_file (-t)` and `--labels_file (-l)` parameters, respectively. Optionally, if `--labels_file (-l)` is not specified, the labels are assumed to be the last dimension of the training dataset.
-
-The training may be performed in batch mode (like a typical decision tree algorithm) by specifying the `--batch_mode (-b)` option, but this may not be the best option for large datasets.
-
-When a model is trained, it may be saved via the `--output_model_file (-M)` output parameter.  A model may be loaded from file for further training or testing with the `--input_model_file (-m)` parameter.
-
-Test data may be specified with the `--test_file (-T)` parameter, and if performance statistics are desired for that test set, labels may be specified with the `--test_labels_file (-L)` parameter.  Predictions for each test point may be saved with the `--predictions_file (-p)` output parameter, and class probabilities for each prediction may be saved with the `--probabilities_file (-P)` output parameter.
-
-### Example
-For example, to train a Hoeffding tree with confidence 0.99 with data `'dataset.csv'`, saving the trained tree to `'tree.bin'`, the following command may be used:
-
-```bash
-$ mlpack_hoeffding_tree --training_file dataset.arff --confidence 0.99
-  --output_model_file tree.bin
-```
-
-Then, this tree may be used to make predictions on the test set `'test_set.csv'`, saving the predictions into `'predictions.csv'` and the class probabilities into `'class_probs.csv'` with the following command: 
-
-```bash
-$ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
-  --predictions_file predictions.csv --probabilities_file class_probs.csv
-```
-
-### See also
-
- - [mlpack_decision_tree](#decision_tree)
- - [mlpack_random_forest](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
- - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
-
-## mlpack_nbc
-{: #nbc }
-
-#### Parametric Naive Bayes Classifier
-{: #nbc_descr }
-
-```bash
-$ mlpack_nbc [--help] [--incremental_variance] [--info <string>]
-        [--input_model_file <string>] [--labels_file <string>] [--test_file
-        <string>] [--training_file <string>] [--verbose] [--version]
-        [--output_model_file <string>] [--predictions_file <string>]
-        [--probabilities_file <string>]
-```
-
-An implementation of the Naive Bayes Classifier, used for classification. Given labeled data, an NBC model can be trained and saved, or, a pre-trained model can be used for classification. [Detailed documentation](#nbc_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--incremental_variance (-I)` | [`flag`](#doc_flag) | The variance of each class will be calculated incrementally. |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`NBCModel file`](#doc_model) | Input Naive Bayes model. | `''` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | A file containing labels for the training set. | `''` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the test set. | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | A matrix containing the training set. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`NBCModel file`](#doc_model) | File to save trained Naive Bayes model to. | 
-| `--predictions_file (-a)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | The matrix in which the predicted labels for the test set will be written. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | The matrix in which the predicted probability of labels for the test set will be written. | 
-
-### Detailed documentation
-{: #nbc_detailed-documentation }
-
-This program trains the Naive Bayes classifier on the given labeled training set, or loads a model from the given model file, and then may use that trained model to classify the points in a given test set.
-
-The training set is specified with the `--training_file (-t)` parameter.  Labels may be either the last row of the training set, or alternately the `--labels_file (-l)` parameter may be specified to pass a separate matrix of labels.
-
-If training is not desired, a pre-existing model may be loaded with the `--input_model_file (-m)` parameter.
-
-
-
-The `--incremental_variance (-I)` parameter can be used to force the training to use an incremental algorithm for calculating variance.  This is slower, but can help avoid loss of precision in some cases.
-
-If classifying a test set is desired, the test set may be specified with the `--test_file (-T)` parameter, and the classifications may be saved with the `--predictions_file (-a)`predictions  parameter.  If saving the trained model is desired, this may be done with the `--output_model_file (-M)` output parameter.
-
-### Example
-For example, to train a Naive Bayes classifier on the dataset `'data.csv'` with labels `'labels.csv'` and save the model to `'nbc_model.bin'`, the following command may be used:
-
-```bash
-$ mlpack_nbc --training_file data.csv --labels_file labels.csv
-  --output_model_file nbc_model.bin
-```
-
-Then, to use `'nbc_model.bin'` to predict the classes of the dataset `'test_set.csv'` and save the predicted classes to `'predictions.csv'`, the following command may be used:
-
-```bash
-$ mlpack_nbc --input_model_file nbc_model.bin --test_file test_set.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [mlpack_softmax_regression](#softmax_regression)
- - [mlpack_random_forest](#random_forest)
- - [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
- - [NaiveBayesClassifier C++ class documentation](../../user/methods/naive_bayes_classifier.md)
+ - [mlpack_knn](#knn)
+ - [mlpack_lsh](#lsh)
+ - [Rank-approximate nearest neighbor search: Retaining meaning and speed in high dimensions (pdf)](https://proceedings.neurips.cc/paper_files/paper/2009/file/ddb30680a691d157187ee1cf9e896d03-Paper.pdf)
+ - [RASearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/rann/ra_search.hpp)
 
 ## mlpack_softmax_regression
 {: #softmax_regression }
@@ -3499,21 +3489,23 @@ $ mlpack_softmax_regression --input_model_file sr_model.bin --test_file
  - [Multinomial logistic regression (softmax regression) on Wikipedia](https://en.wikipedia.org/wiki/Multinomial_logistic_regression)
  - [SoftmaxRegression C++ class documentation](../../user/methods/softmax_regression.md)
 
-## mlpack_linear_regression
-{: #linear_regression }
+## mlpack_sparse_coding
+{: #sparse_coding }
 
-#### Simple Linear Regression and Prediction
-{: #linear_regression_descr }
+#### Sparse Coding
+{: #sparse_coding_descr }
 
 ```bash
-$ mlpack_linear_regression [--help] [--info <string>]
-        [--input_model_file <string>] [--lambda 0] [--test_file <string>]
-        [--training_file <string>] [--training_responses_file <string>]
-        [--verbose] [--version] [--output_model_file <string>]
-        [--output_predictions_file <string>]
+$ mlpack_sparse_coding [--atoms 15] [--help] [--info <string>]
+        [--initial_dictionary_file <string>] [--input_model_file <string>]
+        [--lambda1 0] [--lambda2 0] [--max_iterations 0] [--newton_tolerance
+        1e-06] [--normalize] [--objective_tolerance 0.01] [--seed 0]
+        [--test_file <string>] [--training_file <string>] [--verbose]
+        [--version] [--codes_file <string>] [--dictionary_file <string>]
+        [--output_model_file <string>]
 ```
 
-An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+An implementation of Sparse Coding with Dictionary Learning.  Given a dataset, this will decompose the dataset into a sparse combination of a few dictionary elements, where the dictionary is learned during computation; a dictionary can be reused for future sparse coding of new points. [Detailed documentation](#sparse_coding_detailed-documentation).
 
 
 
@@ -3521,14 +3513,21 @@ An implementation of simple linear regression and ridge regression using ordinar
 
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
+| `--atoms (-k)` | [`int`](#doc_int) | Number of atoms in the dictionary. | `15` |
 | `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`LinearRegression<> file`](#doc_model) | Existing LinearRegression model to use. | `''` |
-| `--lambda (-l)` | [`double`](#doc_double) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing X' (test regressors). | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing training set X (regressors). | `''` |
-| `--training_responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `''` |
+| `--initial_dictionary_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional initial dictionary matrix. | `''` |
+| `--input_model_file (-m)` | [`SparseCoding<> file`](#doc_model) | File containing input sparse coding model. | `''` |
+| `--lambda1 (-l)` | [`double`](#doc_double) | Sparse coding l1-norm regularization parameter. | `0` |
+| `--lambda2 (-L)` | [`double`](#doc_double) | Sparse coding l2-norm regularization parameter. | `0` |
+| `--max_iterations (-n)` | [`int`](#doc_int) | Maximum number of iterations for sparse coding (0 indicates no limit). | `0` |
+| `--newton_tolerance (-w)` | [`double`](#doc_double) | Tolerance for convergence of Newton method. | `1e-06` |
+| `--normalize (-N)` | [`flag`](#doc_flag) | If set, the input data matrix will be normalized before coding. |  |
+| `--objective_tolerance (-o)` | [`double`](#doc_double) | Tolerance for convergence of the objective function. | `0.01` |
+| `--seed (-s)` | [`int`](#doc_int) | Random seed.  If 0, 'std::time(NULL)' is used. | `0` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Optional matrix to be encoded by trained model. | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix of training data (X). | `''` |
 | `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
 | `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
 
@@ -3537,44 +3536,45 @@ An implementation of simple linear regression and ridge regression using ordinar
 
 | ***name*** | ***type*** | ***description*** |
 |------------|------------|-------------------|
-| `--output_model_file (-M)` | [`LinearRegression<> file`](#doc_model) | Output LinearRegression model. | 
-| `--output_predictions_file (-o)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+| `--codes_file (-c)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output sparse codes of the test matrix (--test_file) to. | 
+| `--dictionary_file (-d)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix to save the output dictionary to. | 
+| `--output_model_file (-M)` | [`SparseCoding<> file`](#doc_model) | File to save trained sparse coding model to. | 
 
 ### Detailed documentation
-{: #linear_regression_detailed-documentation }
+{: #sparse_coding_detailed-documentation }
 
-An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+An implementation of Sparse Coding with Dictionary Learning, which achieves sparsity via an l1-norm regularizer on the codes (LASSO) or an (l1+l2)-norm regularizer on the codes (the Elastic Net).  Given a dense data matrix X with d dimensions and n points, sparse coding seeks to find a dense dictionary matrix D with k atoms in d dimensions, and a sparse coding matrix Z with n points in k dimensions.
 
-  y = X * b + e
+The original data matrix X can then be reconstructed as Z * D.  Therefore, this program finds a representation of each point in X as a sparse linear combination of atoms in the dictionary D.
 
-where X (specified by `--training_file (-t)`) and y (specified either as the last column of the input matrix `--training_file (-t)` or via the `--training_responses_file (-r)` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `--lambda (-l)`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `--output_predictions_file (-o)` output parameter.
+The sparse coding is found with an algorithm which alternates between a dictionary step, which updates the dictionary D, and a sparse coding step, which updates the sparse coding matrix.
 
-Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `--test_file (-T)` parameter):
+Once a dictionary D is found, the sparse coding model may be used to encode other matrices, and saved for future usage.
 
-   y' = X' * b
-
-and the predicted responses y' may be saved with the `--output_predictions_file (-o)` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+To run this program, either an input matrix or an already-saved sparse coding model must be specified.  An input matrix may be specified with the `--training_file (-t)` option, along with the number of atoms in the dictionary (specified with the `--atoms (-k)` parameter).  It is also possible to specify an initial dictionary for the optimization, with the `--initial_dictionary_file (-i)` parameter.  An input model may be specified with the `--input_model_file (-m)` parameter.
 
 ### Example
-For example, to run a linear regression on the dataset `'X.csv'` with responses `'y.csv'`, saving the trained model to `'lr_model.bin'`, the following command could be used:
+As an example, to build a sparse coding model on the dataset `'data.csv'` using 200 atoms and an l1-regularization parameter of 0.1, saving the model into `'model.bin'`, use 
 
 ```bash
-$ mlpack_linear_regression --training_file X.csv --training_responses_file
-  y.csv --output_model_file lr_model.bin
+$ mlpack_sparse_coding --training_file data.csv --atoms 200 --lambda1 0.1
+  --output_model_file model.bin
 ```
 
-Then, to use `'lr_model.bin'` to predict responses for a test set `'X_test.csv'`, saving the predictions to `'X_test_responses.csv'`, the following command could be used:
+Then, this model could be used to encode a new matrix, `'otherdata.csv'`, and save the output codes to `'codes.csv'`: 
 
 ```bash
-$ mlpack_linear_regression --input_model_file lr_model.bin --test_file
-  X_test.csv --output_predictions_file X_test_responses.csv
+$ mlpack_sparse_coding --input_model_file model.bin --test_file otherdata.csv
+  --codes_file codes.csv
 ```
 
 ### See also
 
- - [mlpack_lars](#lars)
- - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
- - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+ - [mlpack_local_coordinate_coding](#local_coordinate_coding)
+ - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
+ - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
+ - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
 
 ## mlpack_preprocess_imputer
 {: #preprocess_imputer }

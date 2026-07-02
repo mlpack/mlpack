@@ -97,6 +97,7 @@ BINDING_SEE_ALSO("Least angle regression (pdf)",
     "https://mlpack.org/papers/lars.pdf");
 BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
+// Note that lars uses internal transposition hence 'TMATRIX' as input.
 PARAM_TMATRIX_IN_REQ("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN_REQ("responses", "Row vector of responses/observations (y).", "r");
 
