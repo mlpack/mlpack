@@ -50,6 +50,8 @@ end
 function to_matrix(input, T::Type, transpose::Bool)
   result = if isa(input, Array{T, 1})
     convert_to_2d(input)
+  elseif string(typeof(input)) == "DataFrame"
+    Array{T, 2}(input)
   else
     convert(Array{T, 2}, input)
   end
@@ -61,6 +63,8 @@ end
 function to_vector(input, T::Type)
   if isa(input, Array{T, 1})
     input
+  elseif string(typeof(input)) == "DataFrame"
+    Array{T, 1}(input)
   else
     convert_to_1d(convert(Array{T, 2}, input))
   end
@@ -108,8 +112,8 @@ function SetParamMat(params::Ptr{Nothing},
                      pointsAsRows::Bool,
                      transpose::Bool,
                      juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramMat = to_matrix(paramValue, Float64, transpose)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramMat)))
   ccall((:SetParamMat, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t, Csize_t, Bool), params, paramName, Base.pointer(paramMat),
       size(paramMat, 1), size(paramMat, 2), pointsAsRows)
@@ -121,8 +125,8 @@ function SetParamUMat(params::Ptr{Nothing},
                       pointsAsRows::Bool,
                       transpose::Bool,
                       juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramMat = to_matrix(paramValue, Int, transpose)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramMat)))
 
   # Sanity check.
   if minimum(paramMat) <= 0
@@ -177,8 +181,8 @@ function SetParamRow(params::Ptr{Nothing},
                      paramName::String,
                      paramValue,
                      juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Float64)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramVec)))
   ccall((:SetParamRow, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t), params, paramName, Base.pointer(paramVec), size(paramVec, 1))
 end
@@ -187,8 +191,8 @@ function SetParamCol(params::Ptr{Nothing},
                      paramName::String,
                      paramValue,
                      juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Float64)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramVec)))
   ccall((:SetParamCol, library), Nothing, (Ptr{Nothing}, Cstring, Ptr{Float64},
       Csize_t), params, paramName, Base.pointer(paramVec), size(paramVec, 1))
 end
@@ -197,8 +201,8 @@ function SetParamURow(params::Ptr{Nothing},
                       paramName::String,
                       paramValue,
                       juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Int)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramVec)))
 
   # Sanity check.
   if minimum(paramVec) <= 0
@@ -216,8 +220,8 @@ function SetParamUCol(params::Ptr{Nothing},
                       paramName::String,
                       paramValue,
                       juliaOwnedMemory::Set{Ptr{Nothing}})
-  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramValue)))
   paramVec = to_vector(paramValue, Int)
+  push!(juliaOwnedMemory, convert(Ptr{Nothing}, Base.pointer(paramVec)))
 
   # Sanity check.
   if minimum(paramVec) <= 0

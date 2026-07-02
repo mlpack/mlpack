@@ -51,12 +51,12 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("decision_tree") + "\n" +
+    IMPORT_THIS("perceptron", "train", "classify") + "\n" +
     GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
     GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
     "0.2") + "\n" +
-    CREATE_OBJECT("model", "decision_tree") + "\n" +
+    CREATE_OBJECT("model", "perceptron") + "\n" +
     CALL_METHOD("model", "train", "training", "X_train", "labels", "y_train",
                 "max_iterations", 100));
 

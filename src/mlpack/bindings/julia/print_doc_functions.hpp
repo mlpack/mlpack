@@ -77,7 +77,10 @@ inline std::string PrintModel(const std::string& model);
 inline std::string PrintType(util::ParamData& param);
 
 // Recursion base case.
-inline std::string PrintInputOptions(util::Params& p);
+inline std::string PrintInputOptions(util::Params& p,
+                                     const bool onlyHyperparams,
+                                     const bool onlyMatrixParams,
+                                     const bool checkRequiredParams);
 
 /**
  * Print an input option.  This will throw an exception if the parameter does
@@ -86,6 +89,9 @@ inline std::string PrintInputOptions(util::Params& p);
  */
 template<typename T, typename... Args>
 std::string PrintInputOptions(util::Params& p,
+                              const bool onlyHyperparams,
+                              const bool onlyMatrixParams,
+                              const bool checkRequiredParams,
                               const std::string& paramName,
                               const T& value,
                               Args... args);
@@ -123,9 +129,12 @@ inline std::string ImportExtLib();
 
 inline std::string ImportSplit();
 
-inline std::string ImportThis(const std::string& groupName);
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames);
 
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,

@@ -64,12 +64,11 @@ For more information about the algorithm, see the paper "Improved Boosting Algor
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- adaboost_train(training=X_train, labels=y_train)
 
@@ -540,12 +539,11 @@ The trained model is returned, and can then be used for prediction. The `minimum
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- decision_tree_train(training=X_train, labels=y_train,
   minimum_leaf_size=20, minimum_gain_split=0.001)
@@ -1274,12 +1272,11 @@ The training may be performed in batch mode (like a typical decision tree algori
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- hoeffding_tree_train(training=X_train, labels=y_train)
 
@@ -1911,12 +1908,11 @@ Margin of difference between correct class and other classes can be specified wi
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- linear_svm_train(training=X_train, labels=y_train, lambda=0.1,
   delta=1, num_classes=0)
@@ -2217,12 +2213,11 @@ This implementation of logistic regression does not support the general multi-cl
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- logistic_regression_train(training=X_train, labels=y_train,
   lambda=0.1)
@@ -2461,12 +2456,11 @@ The `incremental_variance` parameter can be used to force the training to use an
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- nbc_train(training=X_train, labels=y_train)
 
@@ -2921,12 +2915,11 @@ Implementation of a perceptron, which is a single level neural network. The perc
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- perceptron_train(training=X_train, labels=y_train,
   max_iterations=100)
@@ -3430,12 +3423,11 @@ The `minimum_leaf_size` parameter specifies the minimum number of training point
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- random_forest_train(training=X_train, labels=y_train,
   minimum_leaf_size=20, num_trees=10, print_training_accuracy=TRUE)
@@ -3614,12 +3606,11 @@ Training a softmax regression model is done by giving a file of training points 
 suppressMessages(library(mlpack)) # in case 'mlpack' is not yet loaded
 X <- as.matrix(read.csv("http://datasets.mlpack.org/iris.csv", header=FALSE))
 y <- as.matrix(read.csv("http://datasets.mlpack.org/iris_labels.csv", header=FALSE))
-pp <- preprocess_split(input=X, input_label=as.matrix(1:nrow(X)), test_ratio=0.2)
+pp <- preprocess_split(input=X, input_label=y, test_ratio=0.2)
 X_train <- pp[["training"]]
 X_test <- pp[["test"]]
-# labels are indices to operate on both factors or numeric data
-y_train <- y[as.integer(pp[["training_labels"]]), 1]
-y_test <- y[as.integer(pp[["test_labels"]]), 1]
+y_train <- pp[["training_labels"]]
+y_test <- pp[["test_labels"]]
 
 model <- softmax_regression_train(training=X_train, labels=y_train,
   lambda=0.1)

@@ -63,7 +63,8 @@
 #define IMPORT_SPLIT mlpack::bindings::julia::ImportSplit
 
 /**
- * IMPORT_THIS returns a string that imports the current method.
+ * IMPORT_THIS returns a string that imports the current binding group, as well
+ * as any methods that might need to be explicitly imported.
  */
 #define IMPORT_THIS mlpack::bindings::julia::ImportThis
 
@@ -74,9 +75,16 @@
 #define GET_DATASET mlpack::bindings::julia::GetDataset
 
 /**
- * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets assuming
+ * integer labels.
+ *
+ * SPLIT_TRAIN_TEST_REGRESSION() does the same, but assumes floating-point
+ * labels.
  */
-#define SPLIT_TRAIN_TEST mlpack::bindings::julia::SplitTrainTest
+#define SPLIT_TRAIN_TEST(...) \
+    mlpack::bindings::julia::SplitTrainTest(true, __VA_ARGS__)
+#define SPLIT_TRAIN_TEST_REGRESSION(...) \
+    mlpack::bindings::julia::SplitTrainTest(false, __VA_ARGS__)
 
 /**
  * CREATE_OBJECT() returns a string that creates an instance of the
