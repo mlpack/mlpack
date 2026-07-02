@@ -13,6 +13,8 @@
 #ifndef MLPACK_CORE_AUDIO_AUDIO_HPP
 #define MLPACK_CORE_AUDIO_AUDIO_HPP
 
+#ifndef MLPACK_DISABLE_DR_LIBS
+
 //
 // MP3 Includes
 //
@@ -68,5 +70,7 @@
 #include "bundled/dr_wav.h"
 
 #endif
+
+#endif // MLPACK_DISABLE_DR_LIBS
 
 #endif // MLPACK_CODE_AUDIO_AUDIO_HPP
