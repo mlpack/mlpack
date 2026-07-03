@@ -165,7 +165,6 @@ expect_identical(output$vector_out, c(1:4))
 x <- letters[1:5]
 output <- test_r_binding(4.0, 12, "hello", str_vector_in=x)
 expect_identical(output$str_vector_out, letters[1:4])
-exit_file("TEMP QUIT HERE")
 
 # If we give data other than matrix/data.frame in matrix_in/matrix_and_info_in,
 # we should get an error.
@@ -175,6 +174,7 @@ expect_error(test_r_binding(4.0, 12, "hello", matrix_in=1e6))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in="wrong"))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in=12))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in=1e6))
+exit_file("TEMP QUIT HERE")
 
 # If we pass labels that start from 0, we should get an error.
 x <- vector(mode="integer", 10)
