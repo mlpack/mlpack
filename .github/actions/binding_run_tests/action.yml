@@ -61,14 +61,13 @@ runs:
       # This moves the JUnit-style XML file for later consumption in another task. The
       # file will be create in a subdirectory of 'check' (an argument to `rcmdcheck()),
       # and therein the standard directory 'mlpack.Rcheck/tests/'
-      # TODO: revert to error_on = 'warning'
+      # TODO: revert to error_on = 'warning' (but our dev versions often have warnings)
       run: |
-          ROOTDIR=`pwd`
           Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', \
                          args = c('--no-manual', '--as-cran'), \
                          error_on = 'error', \
                          check_dir = 'check')"
-          mv check/mlpack.Rcheck/tests/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
+          mv check/mlpack.Rcheck/tests/r_bindings.junit.xml build/r_bindings.junit.xml
 
     # TODO: upload check results on failure
 
