@@ -79,13 +79,13 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("lars") + "\n" +
+    IMPORT_THIS("lars", "train", "predict") + "\n" +
     GET_DATASET("X",
       "http://datasets.mlpack.org/admission_predict.csv") + "\n" +
     GET_DATASET("y",
       "http://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test",
-      "y_test", "0.2") + "\n" +
+    SPLIT_TRAIN_TEST_REGRESSION("X", "y", "X_train", "y_train", "X_test",
+        "y_test", "0.2") + "\n" +
     CREATE_OBJECT("model", "lars") + "\n" +
     CALL_METHOD("model", "train", "input", "X_train", "responses", "y_train",
       "lambda1", 1e-5, "lambda2", 1e-6, "output_model", "lars_model"));
@@ -97,6 +97,7 @@ BINDING_SEE_ALSO("Least angle regression (pdf)",
     "https://mlpack.org/papers/lars.pdf");
 BINDING_SEE_ALSO("LARS C++ class documentation", "@doc/user/methods/lars.md");
 
+// Note that lars uses internal transposition hence 'TMATRIX' as input.
 PARAM_TMATRIX_IN_REQ("input", "Matrix of covariates (X).", "i");
 PARAM_ROW_IN_REQ("responses", "Row vector of responses/observations (y).", "r");
 

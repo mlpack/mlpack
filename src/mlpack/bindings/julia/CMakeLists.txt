@@ -258,7 +258,9 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_member_defn.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/wrapper_functions.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/wrapper_functions_impl.hpp)
   if (BUILD_SHARED_LIBS)
     target_link_libraries(generate_jl_${name} ${MLPACK_LIBRARIES})
   else ()
@@ -369,7 +371,8 @@ ${CMAKE_BINARY_DIR}/src/mlpack/bindings/julia/mlpack/build/generate_jl_group_${g
 
   # Add to the list of Julia group bindings.  These will all be appended to
   # mlpack.jl in post_julia_setup().
-  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name} PARENT_SCOPE)
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} ${group_name})
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} PARENT_SCOPE)
 endmacro()
 
 if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)

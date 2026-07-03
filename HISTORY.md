@@ -4,6 +4,25 @@
 
 _????-??-??_
 
+ * Accelerated `LeakyReLU` ANN Layer (#4174).
+
+ * Update `LinearSVM` documentation: `Classify()` returns class scores, not
+   class probabilities (#4187).
+
+ * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
+
+## mlpack 4.8.0
+
+_2026-06-07_
+
+ * Add Mel Filterbanks Energies (MFE) and Mel-frequency cepstral coefficients
+   (MFCC) as part of our signal processing utilities (#4144).
+
+ * Add support for audio data via dr_wav and dr_mp3 allowing to load these
+   file types (#4112, #4113).
+
+ * Add HTTP support via cpp-httplib to allow online dataset downloading (#4092, #4099).
+
  * Fix header inclusion and warnings in R package (#4098).
 
  * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
@@ -20,6 +39,9 @@ _????-??-??_
    newer Armadillo versions (#4149).
 
  * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
 
 ## mlpack 4.7.0
 

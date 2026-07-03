@@ -516,8 +516,10 @@ inline std::string ImportSplit()
  * Import the package itself. For R, we honor an additional flag to wrap
  * this in \dontrun{}.
  */
+template<typename... Args>
 inline std::string ImportThis(const std::string& /* groupName */,
-                              const bool dontrun = true)
+                              const bool dontrun,
+                              Args&&... /* methodNames */)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we use it to load mlpack itself.
@@ -533,7 +535,7 @@ inline std::string ImportThis(const std::string& /* groupName */,
 inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url)
 {
-  return datasetName + " <- as.matrix(read.cv(\"" + url +
+  return datasetName + " <- as.matrix(read.csv(\"" + url +
     "\", header=FALSE))";
 }
 
@@ -541,22 +543,39 @@ inline std::string GetDataset(const std::string& datasetName,
  * Code to split a given dataset into test and training set for both
  * the predictor variables and the response variable.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
                                   const std::string& splitRatio)
 {
-  return std::string("pp <- preprocess_split(input=") + datasetName +
-    ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
-    ", test_ratio=" + splitRatio + ")\n" +
-    "X_train <- pp[[\"training\"]]\n" +
-    "X_test <- pp[[\"test\"]]\n" +
-    "# labels are indices to operate on both factors or numeric data\n" +
-    "y_train <- " + labelName + "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
-    "y_test <- " + labelName + "[as.integer(pp[[\"test_labels\"]]), 1]";
+  // If the labels are integers, then we can use preprocess_split() entirely.
+  // If the labels are not integers, then we need to use an auxiliary vector.
+  if (integerLabels)
+  {
+    return "pp <- preprocess_split(input=" + datasetName +
+        ", input_label=" + labelName + ", test_ratio=" + splitRatio + ")\n" +
+        trainDataset + " <- pp[[\"training\"]]\n" +
+        testDataset + " <- pp[[\"test\"]]\n" +
+        trainLabels + " <- pp[[\"training_labels\"]]\n" +
+        testLabels + " <- pp[[\"test_labels\"]]";
+  }
+  else
+  {
+    return "pp <- preprocess_split(input=" + datasetName +
+        ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
+        ", test_ratio=" + splitRatio + ")\n" +
+        trainDataset + " <- pp[[\"training\"]]\n" +
+        testDataset + " <- pp[[\"test\"]]\n" +
+        "# labels are indices to operate on both factors or numeric data\n" +
+        trainLabels + " <- " + labelName +
+        "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
+        testLabels + " <- " + labelName +
+        "[as.integer(pp[[\"test_labels\"]]), 1]";
+  }
 }
 
 /**

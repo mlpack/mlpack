@@ -694,7 +694,7 @@ TEST_CASE_METHOD(HoeffdingTreeTestFixture,
   RUN_BINDING();
 
   // Check that both models have different number of nodes.
-  CHECK((params.Get<HoeffdingTreeModel*>("output_model"))->NumNodes() !=
+  REQUIRE((params.Get<HoeffdingTreeModel*>("output_model"))->NumNodes() !=
       (size_t) nodes);
 }
 

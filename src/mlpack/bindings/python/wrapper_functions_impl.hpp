@@ -47,12 +47,14 @@ inline std::string GetValidName(const std::string& paramName)
 
 inline std::string GetMappedName(const std::string& methodName)
 {
-  std::map<std::string, std::string> nameMap;
-  nameMap["train"] = "fit";
-  nameMap["classify"] = "predict";
-  nameMap["predict"] = "predict";
-  nameMap["probabilities"] = "predict_proba";
-  return nameMap[methodName];
+  if (methodName == "train")
+    return "fit";
+  else if (methodName == "classify")
+    return "predict";
+  else if (methodName == "probabilities")
+    return "predict_proba";
+  else
+    return methodName;
 }
 
 } // namespace python

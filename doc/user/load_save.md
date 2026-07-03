@@ -1035,7 +1035,7 @@ will be populated with the metadata of the image.
 
 Images are flattened along rows, with channel values interleaved, starting from
 the top left.  Thus, the value of the pixel at position `(x, y)` in channel `c`
-will be contained in element/row `y * (channels) + x * (width * channels) + c`
+will be contained in element/row `x * (channels) + y * (width * channels) + c`
 of the flattened vector.
 
  * Supported image loading formats are JPEG, PNG, TGA, BMP, PSD, GIF, PIC, and

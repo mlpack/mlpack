@@ -36,6 +36,84 @@ mlpack bindings for CLI take and return a restricted set of types, for simplicit
 </div>
 
 
+## mlpack_adaboost
+{: #adaboost }
+
+#### AdaBoost
+{: #adaboost_descr }
+
+```bash
+$ mlpack_adaboost [--help] [--info <string>] [--input_model_file
+        <string>] [--iterations 1000] [--labels_file <string>] [--test_file
+        <string>] [--tolerance 1e-10] [--training_file <string>] [--verbose]
+        [--version] [--weak_learner 'decision_stump'] [--output_model_file
+        <string>] [--predictions_file <string>] [--probabilities_file <string>]
+```
+
+An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`AdaBoostModel file`](#doc_model) | Input AdaBoost model. | `''` |
+| `--iterations (-i)` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
+| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for the training set. | `''` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Test dataset. | `''` |
+| `--tolerance (-e)` | [`double`](#doc_double) | The tolerance for change in values of the weighted error during training. | `1e-10` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Dataset for training AdaBoost. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--weak_learner (-w)` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`AdaBoostModel file`](#doc_model) | Output trained AdaBoost model. | 
+| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
+| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Predicted class probabilities for each point in the test set. | 
+
+### Detailed documentation
+{: #adaboost_detailed-documentation }
+
+This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
+
+For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
+
+This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `--training_file (-t)` option.  Labels can be given with the `--labels_file (-l)` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `--input_model_file (-m)` option.
+
+Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `--test_file (-T)` parameter.  The predicted classes for each point in the test dataset are output to the `--predictions_file (-P)` output parameter.  The AdaBoost model itself is output to the `--output_model_file (-M)` output parameter.
+
+### Example
+For example, to run AdaBoost on an input dataset `'data.csv'` with labels `'labels.csv'`and perceptrons as the weak learner type, storing the trained model in `'model.bin'`, one could use the following command: 
+
+```bash
+$ mlpack_adaboost --training_file data.csv --labels_file labels.csv
+  --output_model_file model.bin --weak_learner perceptron
+```
+
+Similarly, an already-trained model in `'model.bin'` can be used to provide class predictions from test data `'test_data.csv'` and store the output in `'predictions.csv'` with the following command: 
+
+```bash
+$ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
+  --predictions_file predictions.csv
+```
+
+### See also
+
+ - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
+ - [Perceptron](#perceptron)
+ - [Decision Trees](#decision_tree)
+ - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
 ## mlpack_approx_kfn
 {: #approx_kfn }
 
@@ -147,7 +225,7 @@ $ mlpack_bayesian_linear_regression [--center] [--help] [--info
         [--stds_file <string>]
 ```
 
-An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
+An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
 
 
 
@@ -179,7 +257,7 @@ An implementation of the bayesian linear regression. [Detailed documentation](#b
 ### Detailed documentation
 {: #bayesian_linear_regression_detailed-documentation }
 
-An implementation of the bayesian linear regression.
+An implementation of the Bayesian linear regression.
 This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
 Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
 
@@ -339,7 +417,7 @@ $ mlpack_cf --input_model_file model.bin --query_file users.csv
 
  - [Collaborative Filtering on Wikipedia](https://en.wikipedia.org/wiki/Collaborative_filtering)
  - [Matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
- - [Matrix factorization techniques for recommender systems (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=cf17f85a0a7991fa01dbfb3e5878fbf71ea4bdc5)
+ - [Matrix factorization techniques for recommender systems (pdf)](https://www.cs.columbia.edu/~blei/fogm/2023F/readings/KorenBellVolinsky2009.pdf)
  - [CFType class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/cf/cf.hpp)
 
 ## mlpack_dbscan
@@ -1209,7 +1287,7 @@ $ mlpack_hoeffding_tree --input_model_file tree.bin --test_file test_set.arff
 
  - [mlpack_decision_tree](#decision_tree)
  - [mlpack_random_forest](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
+ - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## mlpack_image_converter
@@ -1645,6 +1723,83 @@ $ mlpack_lars --input_model_file lasso_model.bin --test_file test.csv
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
 
+## mlpack_linear_regression
+{: #linear_regression }
+
+#### Simple Linear Regression and Prediction
+{: #linear_regression_descr }
+
+```bash
+$ mlpack_linear_regression [--help] [--info <string>]
+        [--input_model_file <string>] [--lambda 0] [--test_file <string>]
+        [--training_file <string>] [--training_responses_file <string>]
+        [--verbose] [--version] [--output_model_file <string>]
+        [--output_predictions_file <string>]
+```
+
+An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+
+
+
+### Input options
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
+| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
+| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
+| `--input_model_file (-m)` | [`LinearRegression<> file`](#doc_model) | Existing LinearRegression model to use. | `''` |
+| `--lambda (-l)` | [`double`](#doc_double) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing X' (test regressors). | `''` |
+| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing training set X (regressors). | `''` |
+| `--training_responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `''` |
+| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
+| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
+
+### Output options
+
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `--output_model_file (-M)` | [`LinearRegression<> file`](#doc_model) | Output LinearRegression model. | 
+| `--output_predictions_file (-o)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+
+### Detailed documentation
+{: #linear_regression_detailed-documentation }
+
+An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+
+  y = X * b + e
+
+where X (specified by `--training_file (-t)`) and y (specified either as the last column of the input matrix `--training_file (-t)` or via the `--training_responses_file (-r)` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `--lambda (-l)`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `--output_predictions_file (-o)` output parameter.
+
+Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `--test_file (-T)` parameter):
+
+   y' = X' * b
+
+and the predicted responses y' may be saved with the `--output_predictions_file (-o)` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+
+### Example
+For example, to run a linear regression on the dataset `'X.csv'` with responses `'y.csv'`, saving the trained model to `'lr_model.bin'`, the following command could be used:
+
+```bash
+$ mlpack_linear_regression --training_file X.csv --training_responses_file
+  y.csv --output_model_file lr_model.bin
+```
+
+Then, to use `'lr_model.bin'` to predict responses for a test set `'X_test.csv'`, saving the predictions to `'X_test_responses.csv'`, the following command could be used:
+
+```bash
+$ mlpack_linear_regression --input_model_file lr_model.bin --test_file
+  X_test.csv --output_predictions_file X_test_responses.csv
+```
+
+### See also
+
+ - [mlpack_lars](#lars)
+ - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
+ - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+
 ## mlpack_linear_svm
 {: #linear_svm }
 
@@ -1709,7 +1864,9 @@ This program allows loading a linear SVM model (via the `--input_model_file (-m)
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `--labels_file (-l)` parameter may be used to specify a separate vector of labels.
 
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `--lambda (-r)` option, and the number of classes can be manually specified with the `--num_classes (-c)`and if an intercept term is not desired in the model, the `--no_intercept (-N)` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `--delta (-d)` option.The optimizer used to train the model can be specified with the `--optimizer (-O)` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `--max_iterations (-n)` parameter specifies the maximum number of allowed iterations, and the `--tolerance (-e)` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `--step_size (-a)` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `--epochs (-E)`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
 
 Optionally, the model can be used to predict the labels for another matrix of data points, if `--test_file (-T)` is specified.  The `--test_file (-T)` parameter can be specified without the `--training_file (-t)` parameter, so long as an existing linear SVM model is given with the `--input_model_file (-m)` parameter.  The output predictions from the linear SVM model may be saved with the `--predictions_file (-P)` parameter.
 
@@ -2153,7 +2310,7 @@ $ mlpack_mean_shift --input_file data.csv --centroid_file centroids.csv
  - [mlpack_kmeans](#kmeans)
  - [mlpack_dbscan](#dbscan)
  - [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
- - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
+ - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
 ## mlpack_nbc
@@ -2609,7 +2766,7 @@ $ mlpack_perceptron [--help] [--info <string>] [--input_model_file
         [--output_model_file <string>] [--predictions_file <string>]
 ```
 
-An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
 
 
 
@@ -3088,7 +3245,7 @@ $ mlpack_radical --input_file X.csv --replicates 40 --output_ic_file ic.csv
 ## mlpack_random_forest
 {: #random_forest }
 
-#### Random forests
+#### Random Forests
 {: #random_forest_descr }
 
 ```bash
@@ -3416,163 +3573,8 @@ $ mlpack_sparse_coding --input_model_file model.bin --test_file otherdata.csv
  - [mlpack_local_coordinate_coding](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
  - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
-
-## mlpack_adaboost
-{: #adaboost }
-
-#### AdaBoost
-{: #adaboost_descr }
-
-```bash
-$ mlpack_adaboost [--help] [--info <string>] [--input_model_file
-        <string>] [--iterations 1000] [--labels_file <string>] [--test_file
-        <string>] [--tolerance 1e-10] [--training_file <string>] [--verbose]
-        [--version] [--weak_learner 'decision_stump'] [--output_model_file
-        <string>] [--predictions_file <string>] [--probabilities_file <string>]
-```
-
-An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`AdaBoostModel file`](#doc_model) | Input AdaBoost model. | `''` |
-| `--iterations (-i)` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
-| `--labels_file (-l)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Labels for the training set. | `''` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Test dataset. | `''` |
-| `--tolerance (-e)` | [`double`](#doc_double) | The tolerance for change in values of the weighted error during training. | `1e-10` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Dataset for training AdaBoost. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--weak_learner (-w)` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `'decision_stump'` |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`AdaBoostModel file`](#doc_model) | Output trained AdaBoost model. | 
-| `--predictions_file (-P)` | [`1-d index matrix file`](#doc_a_1_d_index_matrix_file) | Predicted labels for the test set. | 
-| `--probabilities_file (-p)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Predicted class probabilities for each point in the test set. | 
-
-### Detailed documentation
-{: #adaboost_detailed-documentation }
-
-This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
-
-For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
-
-This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `--training_file (-t)` option.  Labels can be given with the `--labels_file (-l)` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `--input_model_file (-m)` option.
-
-Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `--test_file (-T)` parameter.  The predicted classes for each point in the test dataset are output to the `--predictions_file (-P)` output parameter.  The AdaBoost model itself is output to the `--output_model_file (-M)` output parameter.
-
-### Example
-For example, to run AdaBoost on an input dataset `'data.csv'` with labels `'labels.csv'`and perceptrons as the weak learner type, storing the trained model in `'model.bin'`, one could use the following command: 
-
-```bash
-$ mlpack_adaboost --training_file data.csv --labels_file labels.csv
-  --output_model_file model.bin --weak_learner perceptron
-```
-
-Similarly, an already-trained model in `'model.bin'` can be used to provide class predictions from test data `'test_data.csv'` and store the output in `'predictions.csv'` with the following command: 
-
-```bash
-$ mlpack_adaboost --input_model_file model.bin --test_file test_data.csv
-  --predictions_file predictions.csv
-```
-
-### See also
-
- - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
- - [Perceptron](#perceptron)
- - [Decision Trees](#decision_tree)
- - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
-
-## mlpack_linear_regression
-{: #linear_regression }
-
-#### Simple Linear Regression and Prediction
-{: #linear_regression_descr }
-
-```bash
-$ mlpack_linear_regression [--help] [--info <string>]
-        [--input_model_file <string>] [--lambda 0] [--test_file <string>]
-        [--training_file <string>] [--training_responses_file <string>]
-        [--verbose] [--version] [--output_model_file <string>]
-        [--output_predictions_file <string>]
-```
-
-An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
-
-
-
-### Input options
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
-| `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
-| `--input_model_file (-m)` | [`LinearRegression<> file`](#doc_model) | Existing LinearRegression model to use. | `''` |
-| `--lambda (-l)` | [`double`](#doc_double) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
-| `--test_file (-T)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing X' (test regressors). | `''` |
-| `--training_file (-t)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Matrix containing training set X (regressors). | `''` |
-| `--training_responses_file (-r)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `''` |
-| `--verbose (-v)` | [`flag`](#doc_flag) | Display informational messages and the full list of parameters and timers at the end of execution. |  |
-| `--version (-V)` | [`flag`](#doc_flag) | Display the version of mlpack.  <span class="special">Only exists in CLI binding.</span> |  |
-
-### Output options
-
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `--output_model_file (-M)` | [`LinearRegression<> file`](#doc_model) | Output LinearRegression model. | 
-| `--output_predictions_file (-o)` | [`1-d matrix file`](#doc_a_1_d_matrix_file) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
-
-### Detailed documentation
-{: #linear_regression_detailed-documentation }
-
-An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
-
-  y = X * b + e
-
-where X (specified by `--training_file (-t)`) and y (specified either as the last column of the input matrix `--training_file (-t)` or via the `--training_responses_file (-r)` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `--lambda (-l)`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `--output_predictions_file (-o)` output parameter.
-
-Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `--test_file (-T)` parameter):
-
-   y' = X' * b
-
-and the predicted responses y' may be saved with the `--output_predictions_file (-o)` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
-
-### Example
-For example, to run a linear regression on the dataset `'X.csv'` with responses `'y.csv'`, saving the trained model to `'lr_model.bin'`, the following command could be used:
-
-```bash
-$ mlpack_linear_regression --training_file X.csv --training_responses_file
-  y.csv --output_model_file lr_model.bin
-```
-
-Then, to use `'lr_model.bin'` to predict responses for a test set `'X_test.csv'`, saving the predictions to `'X_test_responses.csv'`, the following command could be used:
-
-```bash
-$ mlpack_linear_regression --input_model_file lr_model.bin --test_file
-  X_test.csv --output_predictions_file X_test_responses.csv
-```
-
-### See also
-
- - [mlpack_lars](#lars)
- - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
- - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
 
 ## mlpack_preprocess_imputer
 {: #preprocess_imputer }

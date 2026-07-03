@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_JULIA_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include "wrapper_functions.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -174,7 +175,13 @@ inline std::string CreateInputArguments(util::Params& p,
 }
 
 // Recursion base case.
-inline std::string PrintInputOptions(util::Params& /* params */) { return ""; }
+inline std::string PrintInputOptions(util::Params& /* params */,
+                                     const bool /* onlyHyperparams */,
+                                     const bool /* onlyMatrixParams */,
+                                     const bool /* checkRequiredParams */)
+{
+  return "";
+}
 
 /**
  * This prints an argument, assuming that it is already known whether or not it
@@ -260,7 +267,11 @@ inline void GetOptions(
  * the parameter is required.
  */
 template<typename... Args>
-inline std::string PrintInputOptions(util::Params& p, Args... args)
+inline std::string PrintInputOptions(util::Params& p,
+                                     const bool onlyHyperparams,
+                                     const bool onlyMatrixParams,
+                                     const bool checkRequiredParams,
+                                     Args... args)
 {
   // Gather list of required and non-required options.
   std::vector<std::string> inputOptions;
@@ -269,9 +280,26 @@ inline std::string PrintInputOptions(util::Params& p, Args... args)
     util::ParamData& d = it->second;
     if (d.input && d.required)
     {
-      // Ignore some parameters.
-      if (d.name != "help" && d.name != "info" && d.name != "version")
-        inputOptions.push_back(it->first);
+      // Always ignore some parameters that aren't present in the Julia
+      // bindings.
+      if (d.name != "help" && d.name != "info" && d.name != "version" &&
+          d.name != "check_input_matrices" && d.name != "copy_all_inputs")
+      {
+        // Determine if the parameter is a serializable model, a matrix type, or
+        // a hyperparameter.
+        bool isSerializable;
+        p.functionMap[d.tname]["IsSerializable"](d, NULL,
+            (void*) &isSerializable);
+        const bool isArma = (d.cppType.find("arma") != std::string::npos);
+        const bool isHyperparam = !isSerializable && !isArma;
+
+        if (onlyHyperparams && isHyperparam)
+          inputOptions.push_back(it->first);
+        else if (!onlyHyperparams && onlyMatrixParams && isArma)
+          inputOptions.push_back(it->first);
+        else if (!onlyHyperparams && !onlyMatrixParams)
+          inputOptions.push_back(it->first);
+      }
     }
   }
 
@@ -279,8 +307,24 @@ inline std::string PrintInputOptions(util::Params& p, Args... args)
   {
     util::ParamData& d = it->second;
     if (d.input && !d.required && d.name != "help" && d.name != "info" &&
-        d.name != "version")
-      inputOptions.push_back(it->first);
+        d.name != "version" && d.name != "check_input_matrices" &&
+        d.name != "copy_all_inputs")
+    {
+      // Determine if the parameter is a serializable model, a matrix type, or a
+      // hyperparameter.
+      bool isSerializable;
+      p.functionMap[d.tname]["IsSerializable"](d, NULL,
+          (void*) &isSerializable);
+      const bool isArma = (d.cppType.find("arma") == std::string::npos);
+      const bool isHyperparam = !isSerializable && !isArma;
+
+      if (onlyHyperparams && isHyperparam)
+        inputOptions.push_back(it->first);
+      else if (!onlyHyperparams && onlyMatrixParams && isArma)
+        inputOptions.push_back(it->first);
+      else if (!onlyHyperparams && !onlyMatrixParams)
+        inputOptions.push_back(it->first);
+    }
   }
 
   // Now collect the way that we print all the parameters.
@@ -333,7 +377,7 @@ inline std::string PrintInputOptions(util::Params& p, Args... args)
       printedAny = true;
       oss << std::get<1>(printedParameters[index]);
     }
-    else if (d.required)
+    else if (d.required && checkRequiredParams)
     {
       throw std::invalid_argument("Required parameter '" + inputOptions[i] +
           "' not passed in list of input arguments to PROGRAM_CALL()!");
@@ -433,7 +477,7 @@ inline std::string ProgramCall(const std::string& programName,
   ossCall << programName << "(";
 
   // Now process each input option.
-  ossCall << PrintInputOptions(p, args...);
+  ossCall << PrintInputOptions(p, false, false, true, args...);
   ossCall << ")";
 
   // Since `julia> ` is 8 characters, let's indent 12 otherwise it looks weird.
@@ -555,67 +599,191 @@ inline std::string ParamString(const std::string& paramName)
 
 inline std::string ImportExtLib()
 {
-  // TODO: implement
-  return "";
+  // The mlpack examples require DataFrames and CSV to load remote data.
+  return "using DataFrames\nusing CSV";
 }
 
 inline std::string ImportSplit()
 {
-  // TODO: implement
+  return "using mlpack: preprocess_split";
+}
+
+inline std::string ImportThisMethodHelper()
+{
   return "";
 }
 
-inline std::string ImportThis(const std::string& /* groupName */)
+template<typename M, typename... Methods>
+inline std::string ImportThisMethodHelper(const M& method, Methods&&... methods)
 {
-  // TODO: implement
-  return "";
+  return ", " + GetMappedName(method) + ImportThisMethodHelper(methods...);
 }
 
-inline std::string SplitTrainTest(const std::string& /* datasetName */,
-                                  const std::string& /* labelName */,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
-                                  const std::string& /* splitRatio */)
+template<typename... MethodNameTypes>
+inline std::string ImportThis(const std::string& groupName,
+                              MethodNameTypes&&... args)
 {
-  // TODO: implement
-  return "";
+  // e.g.: "using mlpack: BayesianLinearRegression, fit!, predict"
+  return "using mlpack: " + GetClassName(groupName) +
+      ImportThisMethodHelper(args...);
 }
 
-inline std::string GetDataset(const std::string& /* datasetName */,
-                              const std::string& /* url */)
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio)
 {
-  // TODO: implement
-  return "";
+  // If the labels are not integers, then preprocess_split cannot be used
+  // directly, since its input_label parameter expects an arma::Mat<size_t>.
+  std::string result = "(";
+  if (!integerLabels)
+  {
+    result += testDataset + ", ";
+    result += testLabels + "_indices, ";
+    result += trainDataset + ", ";
+    result += trainLabels + "_indices) = preprocess_split(";
+    result += datasetName + ", input_labels=collect(1:size(" + labelName +
+        ", 1)), test_ratio=" + splitRatio + ")\n";
+    result += trainLabels + " = " + labelName + "[" + trainLabels +
+        "_indices[1:end], 1]\n";
+    result += testLabels + " = " + labelName + "[" + testLabels +
+        "_indices[1:end], 1]";
+  }
+  else
+  {
+    result += testDataset + ", ";
+    result += testLabels + ", ";
+    result += trainDataset + ", ";
+    result += trainLabels + ") = preprocess_split(";
+    result += datasetName + ", input_labels=" + labelName + ", test_ratio=" +
+        splitRatio + ")";
+  }
+
+  return result;
+}
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  return datasetName + " = CSV.read(download(\"" + url + "\"), DataFrame)";
 }
 
 template<typename... Args>
-std::string CreateObject(const std::string& /* bindingName */,
-                         const std::string& /* objectName */,
-                         const std::string& /* groupName */,
-                         Args... /* args */)
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args)
 {
-  // TODO: implement
-  return "";
+  // Print only the specified hyperparameters in `args`.
+  //
+  // TODO: maybe it would be better if we printed default values for any
+  // non-specified arguments?
+  util::Params params = IO::Parameters(bindingName);
+  std::string createObj = objectName + " = " + GetClassName(groupName) + "(";
+  createObj += PrintInputOptions(params, true, false, false, args...);
+  createObj += ")";
+  return util::HyphenateString(createObj, 2);
 }
 
-inline std::string CreateObject(const std::string& /* bindingName */,
-                                const std::string& /* objectName */,
-                                const std::string& /* groupName */)
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName)
 {
-  // TODO: implement
-  return "";
+  // Print the default values for each hyperparameter.
+  //
+  // Note that the line below only works because we assume we are only ever
+  // calling CreateObject() from the 'train' binding (where all the
+  // hyperparameters for training will be available).
+  util::Params params = IO::Parameters(bindingName);
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
+
+  std::string createObj = objectName + " = " + GetClassName(groupName) + "(";
+
+  bool first = true;
+  for (auto it = parameters.begin(); it != parameters.end(); ++it)
+  {
+    // Skip parameters that aren't used in Julia (but still appear in the map).
+    if (it->second.name == "check_input_matrices" ||
+        it->second.name == "copy_all_inputs" ||
+        it->second.name == "help" || it->second.name == "version")
+      continue;
+
+    bool isSerial;
+    params.functionMap[it->second.tname]["IsSerializable"](
+        it->second, NULL, (void*) &isSerial);
+
+    bool isHyperParam = false;
+    size_t foundArma = it->second.cppType.find("arma");
+    if (it->second.input && foundArma == std::string::npos && !isSerial)
+      isHyperParam = true;
+
+    if (!isHyperParam)
+      continue;
+    if (it->second.name == "help" || it->second.name == "info" ||
+        it->second.name == "version")
+      continue;
+
+    if (!first)
+      createObj += ", ";
+    else
+      first = false;
+
+    // Print the input option.
+    createObj += GetValidName(it->second.name) + "=";
+
+    std::string value;
+    params.functionMap[it->second.tname]["DefaultParam"](
+        it->second, NULL, (void*) &value);
+    createObj += value;
+  }
+
+  createObj += ")";
+  return util::HyphenateString(createObj, 2);
 }
 
 template<typename... Args>
-std::string CallMethod(const std::string& /* bindingName */,
-                       const std::string& /* objectName */,
-                       const std::string& /* methodName */,
-                       Args... /* args */)
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args)
 {
-  // TODO: implement
-  return "";
+  // This will be the set of parameters for whatever binding we are actually
+  // calling.
+  util::Params params = IO::Parameters(bindingName);
+  std::map<std::string, util::ParamData> parameters = params.Parameters();
+  std::string callMethod;
+
+  // Find out if there are any non-model output options.
+  for (auto it = parameters.begin(); it != parameters.end(); it++)
+  {
+    if (!it->second.input)
+    {
+      bool isSerializable = false;
+      params.functionMap[it->second.tname]["IsSerializable"](it->second, NULL,
+          (void*) &isSerializable);
+
+      // If it's not a model, then we need to print the output parameter name.
+      if (!isSerializable)
+        callMethod += it->first + ", ";
+    }
+  }
+
+  // If there is an input model to this grouped binding, set the argument as
+  // passed.
+
+  if (callMethod != "")
+  {
+    callMethod = callMethod.substr(0, callMethod.size() - 2); // remove ", "
+    callMethod += " = ";
+  }
+  callMethod += GetMappedName(methodName) + "(" + objectName + ", ";
+  callMethod += PrintInputOptions(params, false, true, false, args...);
+  callMethod += ")";
+  return util::HyphenateString(callMethod, 2);
 }
 
 /**

@@ -34,6 +34,104 @@ mlpack bindings for Go take and return a restricted set of types, for simplicity
 </div>
 
 
+## Adaboost()
+{: #adaboost }
+
+#### AdaBoost
+{: #adaboost_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.InputModel = nil
+param.Iterations = 1000
+param.Labels = mat.NewDense(1, 1, nil)
+param.Test = mat.NewDense(1, 1, nil)
+param.Tolerance = 1e-10
+param.Training = mat.NewDense(1, 1, nil)
+param.Verbose = false
+param.WeakLearner = "decision_stump"
+
+output_model, predictions, probabilities := mlpack.Adaboost(param)
+```
+
+An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`adaBoostModel`](#doc_model) | Input AdaBoost model. | `nil` |
+| `Iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
+| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for the training set. | `mat.NewDense(1, 1, nil)` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Test dataset. | `mat.NewDense(1, 1, nil)` |
+| `Tolerance` | [`float64`](#doc_float64) | The tolerance for change in values of the weighted error during training. | `1e-10` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Dataset for training AdaBoost. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+| `WeakLearner` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `"decision_stump"` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
+| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
+| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
+
+### Detailed documentation
+{: #adaboost_detailed-documentation }
+
+This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
+
+For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
+
+This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `Training` option.  Labels can be given with the `Labels` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `InputModel` option.
+
+Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
+
+### Example
+For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
+
+```go
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.Training = data
+param.Labels = labels
+param.WeakLearner = "perceptron"
+
+model, _, _ := mlpack.Adaboost(param)
+```
+
+Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
+
+```go
+// Initialize optional parameters for Adaboost().
+param := mlpack.AdaboostOptions()
+param.InputModel = &model
+param.Test = test_data
+
+_, predictions, _ := mlpack.Adaboost(param)
+```
+
+### See also
+
+ - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
+ - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
+ - [Perceptron](#perceptron)
+ - [Decision Trees](#decision_tree)
+ - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
+
 ## ApproxKfn()
 {: #approx_kfn }
 
@@ -182,7 +280,7 @@ param.Verbose = false
 output_model, predictions, stds := mlpack.BayesianLinearRegression(param)
 ```
 
-An implementation of the bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
+An implementation of the Bayesian linear regression. [Detailed documentation](#bayesian_linear_regression_detailed-documentation).
 
 
 
@@ -213,7 +311,7 @@ Output options are returned via Go's support for multiple return values, in the 
 ### Detailed documentation
 {: #bayesian_linear_regression_detailed-documentation }
 
-An implementation of the bayesian linear regression.
+An implementation of the Bayesian linear regression.
 This model is a probabilistic view and implementation of the linear regression. The final solution is obtained by computing a posterior distribution from gaussian likelihood and a zero mean gaussian isotropic  prior distribution on the solution. 
 Optimization is AUTOMATIC and does not require cross validation. The optimization is performed by maximization of the evidence function. Parameters are tuned during the maximization of the marginal likelihood. This procedure includes the Ockham's razor that penalizes over complex solutions. 
 
@@ -412,7 +510,7 @@ recommendations, _ := mlpack.Cf(param)
 
  - [Collaborative Filtering on Wikipedia](https://en.wikipedia.org/wiki/Collaborative_filtering)
  - [Matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
- - [Matrix factorization techniques for recommender systems (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=cf17f85a0a7991fa01dbfb3e5878fbf71ea4bdc5)
+ - [Matrix factorization techniques for recommender systems (pdf)](https://www.cs.columbia.edu/~blei/fogm/2023F/readings/KorenBellVolinsky2009.pdf)
  - [CFType class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/cf/cf.hpp)
 
 ## Dbscan()
@@ -1466,7 +1564,7 @@ _, predictions, class_probs := mlpack.HoeffdingTree(param)
 
  - [DecisionTree()](#decision_tree)
  - [RandomForest()](#random_forest)
- - [Mining High-Speed Data Streams (pdf)](http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf)
+ - [Mining High-Speed Data Streams (pdf)](https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf)
  - [HoeffdingTree class documentation](../../user/methods/hoeffding_tree.md)
 
 ## ImageConverter()
@@ -2017,6 +2115,100 @@ _, test_predictions := mlpack.Lars(param)
  - [Least angle regression (pdf)](https://mlpack.org/papers/lars.pdf)
  - [LARS C++ class documentation](../../user/methods/lars.md)
 
+## LinearRegression()
+{: #linear_regression }
+
+#### Simple Linear Regression and Prediction
+{: #linear_regression_descr }
+
+```go
+import (
+  "mlpack.org/v1/mlpack"
+  "gonum.org/v1/gonum/mat"
+)
+
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.InputModel = nil
+param.Lambda = 0
+param.Test = mat.NewDense(1, 1, nil)
+param.Training = mat.NewDense(1, 1, nil)
+param.TrainingResponses = mat.NewDense(1, 1, nil)
+param.Verbose = false
+
+output_model, output_predictions := mlpack.LinearRegression(param)
+```
+
+An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
+
+
+
+### Input options
+There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
+
+| ***name*** | ***type*** | ***description*** | ***default*** |
+|------------|------------|-------------------|---------------|
+| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
+| `InputModel` | [`linearRegression`](#doc_model) | Existing LinearRegression model to use. | `nil` |
+| `Lambda` | [`float64`](#doc_float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
+| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing X' (test regressors). | `mat.NewDense(1, 1, nil)` |
+| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing training set X (regressors). | `mat.NewDense(1, 1, nil)` |
+| `TrainingResponses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `mat.NewDense(1, 1, nil)` |
+| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
+
+### Output options
+
+Output options are returned via Go's support for multiple return values, in the order listed below.
+
+| ***name*** | ***type*** | ***description*** |
+|------------|------------|-------------------|
+| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. | 
+| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
+
+### Detailed documentation
+{: #linear_regression_detailed-documentation }
+
+An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
+
+  y = X * b + e
+
+where X (specified by `Training`) and y (specified either as the last column of the input matrix `Training` or via the `TrainingResponses` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `Lambda`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `OutputPredictions` output parameter.
+
+Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `Test` parameter):
+
+   y' = X' * b
+
+and the predicted responses y' may be saved with the `OutputPredictions` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
+
+### Example
+For example, to run a linear regression on the dataset `X` with responses `y`, saving the trained model to `lr_model`, the following command could be used:
+
+```go
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.Training = X
+param.TrainingResponses = y
+
+lr_model, _ := mlpack.LinearRegression(param)
+```
+
+Then, to use `lr_model` to predict responses for a test set `X_test`, saving the predictions to `X_test_responses`, the following command could be used:
+
+```go
+// Initialize optional parameters for LinearRegression().
+param := mlpack.LinearRegressionOptions()
+param.InputModel = &lr_model
+param.Test = X_test
+
+_, X_test_responses := mlpack.LinearRegression(param)
+```
+
+### See also
+
+ - [Lars()](#lars)
+ - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
+ - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
+
 ## LinearSvm()
 {: #linear_svm }
 
@@ -2099,7 +2291,9 @@ This program allows loading a linear SVM model (via the `InputModel` parameter) 
 
 The training data, if specified, may have class labels as its last dimension.  Alternately, the `Labels` parameter may be used to specify a separate vector of labels.
 
-When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
+When a model is being trained, there are many options.  L2 regularization (to prevent overfitting) can be specified with the `Lambda` option, and the number of classes can be manually specified with the `NumClasses`and if an intercept term is not desired in the model, the `NoIntercept` parameter can be specified.
+
+Margin of difference between correct class and other classes can be specified with the `Delta` option.The optimizer used to train the model can be specified with the `Optimizer` parameter.  Available options are 'psgd' (parallel stochastic gradient descent) and 'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the optimizer; the `MaxIterations` parameter specifies the maximum number of allowed iterations, and the `Tolerance` parameter specifies the tolerance for convergence.  For the parallel SGD optimizer, the `StepSize` parameter controls the step size taken at each iteration by the optimizer and the maximum number of epochs (specified with `Epochs`). If the objective function for your data is oscillating between Inf and 0, the step size is probably too large.  There are more parameters for the optimizers, but the C++ interface must be used to access these.
 
 Optionally, the model can be used to predict the labels for another matrix of data points, if `Test` is specified.  The `Test` parameter can be specified without the `Training` parameter, so long as an existing linear SVM model is given with the `InputModel` parameter.  The output predictions from the linear SVM model may be saved with the `Predictions` parameter.
 
@@ -2661,7 +2855,7 @@ centroids, _ := mlpack.MeanShift(data, param)
  - [Kmeans()](#kmeans)
  - [Dbscan()](#dbscan)
  - [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
- - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=1c168275c59ba382588350ee1443537f59978183)
+ - [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
  - [mlpack::mean_shift::MeanShift C++ class documentation](../../user/methods/mean_shift.md)
 
 ## Nbc()
@@ -3229,7 +3423,7 @@ param.Verbose = false
 output_model, predictions := mlpack.Perceptron(param)
 ```
 
-An implementation of a perceptron---a single level neural network--=for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
+An implementation of a perceptron---a single level neural network---for classification.  Given labeled data, a perceptron can be trained and saved for future use; or, a pre-trained perceptron can be used for classification on new points. [Detailed documentation](#perceptron_detailed-documentation).
 
 
 
@@ -3826,7 +4020,7 @@ ic, _ := mlpack.Radical(X, param)
 ## RandomForest()
 {: #random_forest }
 
-#### Random forests
+#### Random Forests
 {: #random_forest_descr }
 
 ```go
@@ -4244,198 +4438,6 @@ codes, _, _ := mlpack.SparseCoding(param)
  - [LocalCoordinateCoding()](#local_coordinate_coding)
  - [Sparse dictionary learning on Wikipedia](https://en.wikipedia.org/wiki/Sparse_dictionary_learning)
  - [Efficient sparse coding algorithms (pdf)](https://proceedings.neurips.cc/paper_files/paper/2006/file/2d71b2ae158c7c5912cc0bbde2bb9d95-Paper.pdf)
- - [Regularization and variable selection via the elastic net](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=46217f372a75dddc2254fdbc6b9418ba3554e453)
+ - [Regularization and variable selection via the elastic net (pdf)](https://sites.stat.washington.edu/courses/stat527/s13/readings/zouhastie05.pdf)
  - [SparseCoding C++ class documentation](../../user/methods/sparse_coding.md)
-
-## Adaboost()
-{: #adaboost }
-
-#### AdaBoost
-{: #adaboost_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.InputModel = nil
-param.Iterations = 1000
-param.Labels = mat.NewDense(1, 1, nil)
-param.Test = mat.NewDense(1, 1, nil)
-param.Tolerance = 1e-10
-param.Training = mat.NewDense(1, 1, nil)
-param.Verbose = false
-param.WeakLearner = "decision_stump"
-
-output_model, predictions, probabilities := mlpack.Adaboost(param)
-```
-
-An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for classification.  This can be used to train an AdaBoost model on labeled data or use an existing AdaBoost model to predict the classes of new points. [Detailed documentation](#adaboost_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`adaBoostModel`](#doc_model) | Input AdaBoost model. | `nil` |
-| `Iterations` | [`int`](#doc_int) | The maximum number of boosting iterations to be run (0 will run until convergence.) | `1000` |
-| `Labels` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Labels for the training set. | `mat.NewDense(1, 1, nil)` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Test dataset. | `mat.NewDense(1, 1, nil)` |
-| `Tolerance` | [`float64`](#doc_float64) | The tolerance for change in values of the weighted error during training. | `1e-10` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Dataset for training AdaBoost. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-| `WeakLearner` | [`string`](#doc_string) | The type of weak learner to use: 'decision_stump', or 'perceptron'. | `"decision_stump"` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`adaBoostModel`](#doc_model) | Output trained AdaBoost model. | 
-| `Predictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Predicted labels for the test set. | 
-| `Probabilities` | [`*mat.Dense`](#doc_a__mat_Dense) | Predicted class probabilities for each point in the test set. | 
-
-### Detailed documentation
-{: #adaboost_detailed-documentation }
-
-This program implements the AdaBoost (or Adaptive Boosting) algorithm. The variant of AdaBoost implemented here is AdaBoost.MH. It uses a weak learner, either decision stumps or perceptrons, and over many iterations, creates a strong learner that is a weighted ensemble of weak learners. It runs these iterations until a tolerance value is crossed for change in the value of the weighted training error.
-
-For more information about the algorithm, see the paper "Improved Boosting Algorithms Using Confidence-Rated Predictions", by R.E. Schapire and Y. Singer.
-
-This program allows training of an AdaBoost model, and then application of that model to a test dataset.  To train a model, a dataset must be passed with the `Training` option.  Labels can be given with the `Labels` option; if no labels are specified, the labels will be assumed to be the last column of the input dataset.  Alternately, an AdaBoost model may be loaded with the `InputModel` option.
-
-Once a model is trained or loaded, it may be used to provide class predictions for a given test dataset.  A test dataset may be specified with the `Test` parameter.  The predicted classes for each point in the test dataset are output to the `Predictions` output parameter.  The AdaBoost model itself is output to the `OutputModel` output parameter.
-
-### Example
-For example, to run AdaBoost on an input dataset `data` with labels `labels`and perceptrons as the weak learner type, storing the trained model in `model`, one could use the following command: 
-
-```go
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.Training = data
-param.Labels = labels
-param.WeakLearner = "perceptron"
-
-model, _, _ := mlpack.Adaboost(param)
-```
-
-Similarly, an already-trained model in `model` can be used to provide class predictions from test data `test_data` and store the output in `predictions` with the following command: 
-
-```go
-// Initialize optional parameters for Adaboost().
-param := mlpack.AdaboostOptions()
-param.InputModel = &model
-param.Test = test_data
-
-_, predictions, _ := mlpack.Adaboost(param)
-```
-
-### See also
-
- - [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- - [Improved boosting algorithms using confidence-rated predictions (pdf)](http://www.schapire.net/papers/SchapireSi98.pdf)
- - [Perceptron](#perceptron)
- - [Decision Trees](#decision_tree)
- - [AdaBoost C++ class documentation](../../user/methods/adaboost.md)
-
-## LinearRegression()
-{: #linear_regression }
-
-#### Simple Linear Regression and Prediction
-{: #linear_regression_descr }
-
-```go
-import (
-  "mlpack.org/v1/mlpack"
-  "gonum.org/v1/gonum/mat"
-)
-
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
-param.InputModel = nil
-param.Lambda = 0
-param.Test = mat.NewDense(1, 1, nil)
-param.Training = mat.NewDense(1, 1, nil)
-param.TrainingResponses = mat.NewDense(1, 1, nil)
-param.Verbose = false
-
-output_model, output_predictions := mlpack.LinearRegression(param)
-```
-
-An implementation of simple linear regression and ridge regression using ordinary least squares.  Given a dataset and responses, a model can be trained and saved for later use, or a pre-trained model can be used to output regression predictions for a test set. [Detailed documentation](#linear_regression_detailed-documentation).
-
-
-
-### Input options
-There are two types of input options: required options, which are passed directly to the function call, and optional options, which are passed via an initialized struct, which allows keyword access to each of the options.
-
-| ***name*** | ***type*** | ***description*** | ***default*** |
-|------------|------------|-------------------|---------------|
-| `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `InputModel` | [`linearRegression`](#doc_model) | Existing LinearRegression model to use. | `nil` |
-| `Lambda` | [`float64`](#doc_float64) | Tikhonov regularization for ridge regression.  If 0, the method reduces to linear regression. | `0` |
-| `Test` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing X' (test regressors). | `mat.NewDense(1, 1, nil)` |
-| `Training` | [`*mat.Dense`](#doc_a__mat_Dense) | Matrix containing training set X (regressors). | `mat.NewDense(1, 1, nil)` |
-| `TrainingResponses` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | Optional vector containing y (responses). If not given, the responses are assumed to be the last row of the input file. | `mat.NewDense(1, 1, nil)` |
-| `Verbose` | [`bool`](#doc_bool) | Display informational messages and the full list of parameters and timers at the end of execution. | `false` |
-
-### Output options
-
-Output options are returned via Go's support for multiple return values, in the order listed below.
-
-| ***name*** | ***type*** | ***description*** |
-|------------|------------|-------------------|
-| `OutputModel` | [`linearRegression`](#doc_model) | Output LinearRegression model. | 
-| `OutputPredictions` | [`*mat.Dense (1d)`](#doc_a__mat_Dense__1d_) | If --test_file is specified, this matrix is where the predicted responses will be saved. | 
-
-### Detailed documentation
-{: #linear_regression_detailed-documentation }
-
-An implementation of simple linear regression and simple ridge regression using ordinary least squares. This solves the problem
-
-  y = X * b + e
-
-where X (specified by `Training`) and y (specified either as the last column of the input matrix `Training` or via the `TrainingResponses` parameter) are known and b is the desired variable.  If the covariance matrix (X'X) is not invertible, or if the solution is overdetermined, then specify a Tikhonov regularization constant (with `Lambda`) greater than 0, which will regularize the covariance matrix to make it invertible.  The calculated b may be saved with the `OutputPredictions` output parameter.
-
-Optionally, the calculated value of b is used to predict the responses for another matrix X' (specified by the `Test` parameter):
-
-   y' = X' * b
-
-and the predicted responses y' may be saved with the `OutputPredictions` output parameter.  This type of regression is related to least-angle regression, which mlpack implements as the 'lars' program.
-
-### Example
-For example, to run a linear regression on the dataset `X` with responses `y`, saving the trained model to `lr_model`, the following command could be used:
-
-```go
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
-param.Training = X
-param.TrainingResponses = y
-
-lr_model, _ := mlpack.LinearRegression(param)
-```
-
-Then, to use `lr_model` to predict responses for a test set `X_test`, saving the predictions to `X_test_responses`, the following command could be used:
-
-```go
-// Initialize optional parameters for LinearRegression().
-param := mlpack.LinearRegressionOptions()
-param.InputModel = &lr_model
-param.Test = X_test
-
-_, X_test_responses := mlpack.LinearRegression(param)
-```
-
-### See also
-
- - [Lars()](#lars)
- - [Linear regression on Wikipedia](https://en.wikipedia.org/wiki/Linear_regression)
- - [LinearRegression C++ class documentation](../../user/methods/linear_regression.md)
 
