@@ -18,15 +18,22 @@
 # data.frame or vector), convert it into a matrix (or leave as is).
 to_matrix <- function(x) {
   if (!is.matrix(x) && !is.vector(x) && !is.data.frame(x)) {
-    stop("Input must be either a `matrix` or `data.frame` not `",
-        class(x)[1], "`.", call. = FALSE)
+    stop("Input must be either a 'matrix' or 'vector' or 'data.frame' not '",
+         class(x)[1], "'.", call. = FALSE)
   }
-  if (is.matrix(x) || is.vector(x)) {
+  if (is.matrix(x)) {
     return(x)
+  } else if (is.vector(x)) {
+    if (length(x) == 1 || is.character(x)) {
+      stop("Scalar (i.e. length one) or character arguments not admissable as input.",
+        call. = FALSE)
+    }
+    return(as.matrix(x))
   } else if (is.data.frame(x)) {
     y <- data.matrix(x) # requires R 4.0.0 for factor conversion.
     return(y)
   }
+  ## no fallback as we allow only for matrix, vector or data.frame
 }
 
 # Determine column classes
