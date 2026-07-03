@@ -67,7 +67,8 @@
  * IMPORT_THIS() returns a string that imports the current method.
  * For R, all functions in the package are already accessible.
  */
-#define IMPORT_THIS mlpack::bindings::r::ImportThis
+#define IMPORT_THIS(binding, ...) \
+    mlpack::bindings::r::ImportThis(binding, false, __VA_ARGS__)
 
 /**
  * GET_DATASET() returns a string that reads data from a source and,
@@ -76,9 +77,16 @@
 #define GET_DATASET mlpack::bindings::r::GetDataset
 
 /**
- * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets assuming
+ * integer labels.
+ *
+ * SPLIT_TRAIN_TEST_REGRESSION() does the same, but assumes floating-point
+ * labels.
  */
-#define SPLIT_TRAIN_TEST mlpack::bindings::r::SplitTrainTest
+#define SPLIT_TRAIN_TEST(...) \
+    mlpack::bindings::r::SplitTrainTest(true, __VA_ARGS__)
+#define SPLIT_TRAIN_TEST_REGRESSION(...) \
+    mlpack::bindings::r::SplitTrainTest(false, __VA_ARGS__)
 
 /**
  * CREATE_OBJECT() returns a string that creates an instance of the

@@ -40,6 +40,7 @@
 #define IMPORT_THIS(...) std::string(" ")
 #define GET_DATASET(...) std::string(" ")
 #define SPLIT_TRAIN_TEST(...) std::string(" ")
+#define SPLIT_TRAIN_TEST_REGRESSION(...) std::string(" ")
 #define CREATE_OBJECT(...) std::string(" ")
 #define CALL_METHOD(...) std::string(" ")
 
