@@ -174,7 +174,6 @@ expect_error(test_r_binding(4.0, 12, "hello", matrix_in=1e6))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in="wrong"))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in=12))
 expect_error(test_r_binding(4.0, 12, "hello", matrix_and_info_in=1e6))
-exit_file("TEMP QUIT HERE")
 
 # If we pass labels that start from 0, we should get an error.
 x <- vector(mode="integer", 10)
