@@ -47,9 +47,10 @@ DualTreeTraverser<RuleType>::Traverse(CoverTree& queryRoot,
   RecursionSets rootRecursionSets;
 
   // Perform the evaluation between the roots of either tree.
-  MapEntryType rootRefEntry(&referenceNode,
-      rule.Score(queryRoot, referenceNode),
-      rule.BaseCase(queryRoot.Point(), referenceNode.Point()),
+  const double rootScore = rule.Score(queryRoot, referenceNode);
+  const double rootBaseCase = rule.BaseCase(queryRoot.Point(),
+      referenceNode.Point());
+  MapEntryType rootRefEntry(&referenceNode, rootScore, rootBaseCase,
       rule.TraversalInfo());
 
   rootRecursionSets.GetScaleVector(referenceNode.Scale()).push_back(
