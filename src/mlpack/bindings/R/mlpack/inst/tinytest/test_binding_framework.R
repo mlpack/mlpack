@@ -159,12 +159,13 @@ expect_identical(output$matrix_and_info_out[, 10], as.numeric(x[, "e"]))
 x <- c(1, 2, 3, 4, 5)
 output <- test_r_binding(4.0, 12, "hello", vector_in=x)
 expect_identical(output$vector_out, c(1:4))
-exit_file("TEMP QUIT HERE")
+
 # Test that we can pass a vector of strings and get back that same vector but
 # with the last element removed.
 x <- letters[1:5]
 output <- test_r_binding(4.0, 12, "hello", str_vector_in=x)
 expect_identical(output$str_vector_out, letters[1:4])
+exit_file("TEMP QUIT HERE")
 
 # If we give data other than matrix/data.frame in matrix_in/matrix_and_info_in,
 # we should get an error.
