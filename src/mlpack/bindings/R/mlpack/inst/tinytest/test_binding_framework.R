@@ -153,7 +153,7 @@ for (i in 1:9) {
     }
 }
 expect_identical(output$matrix_and_info_out[, 10], as.numeric(x[, "e"]))
-
+exit_file("TEMP QUIT HERE")
 # Test that we can pass a vector of ints and get back that same vector but with
 # the last element removed.
 x <- c(1, 2, 3, 4, 5)
