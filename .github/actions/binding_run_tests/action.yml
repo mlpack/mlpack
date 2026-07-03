@@ -63,16 +63,11 @@ runs:
       # and therein the standard directory 'mlpack.Rcheck/tests/'
       # TODO: revert to error_on = 'warning'
       run: |
+          ROOTDIR=`pwd`
           Rscript -e "rcmdcheck::rcmdcheck('build/src/mlpack/bindings/R/${{ env.MLPACK_R_PACKAGE }}', \
                          args = c('--no-manual', '--as-cran'), \
                          error_on = 'error', \
                          check_dir = 'check')"
-          pwd
-          ls -ld check
-          ls -ld check/mlpack.Rcheck
-          ls -ld check/mlpack.Rcheck/tests
-          ls -l check/mlpack.Rcheck/tests/
-          ls -ld $ROOTDIR/build/
           mv check/mlpack.Rcheck/tests/r_bindings.junit.xml $ROOTDIR/build/r_bindings.junit.xml
 
     # TODO: upload check results on failure
