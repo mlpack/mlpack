@@ -195,6 +195,7 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/matrix_utils.R"
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/package.R"
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/generics.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/inline.R"
   )
 
   set(BINDINGS_SOURCES
