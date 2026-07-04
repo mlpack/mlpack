@@ -48,7 +48,7 @@ bool testAgent(AgentType& agent,
 
     Log::Debug << "Average return in last " << returnList.size()
         << " consecutive episodes: " << averageReturn
-        << " Episode return: " << episodeReturn << std::endl;
+        << ".  Episode return: " << episodeReturn << std::endl;
 
     // For the speed of the test case, a high criterion should not be set
     // for the rewardThreshold.
