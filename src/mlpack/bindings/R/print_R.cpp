@@ -111,7 +111,8 @@ void PrintR(util::Params& params,
   const bool isMainMethodCall =
     (functionName.find("_predict") == std::string::npos &&
      functionName.find("_classify") == std::string::npos &&
-     functionName.find("_probabilities") == std::string::npos);
+     functionName.find("_probabilities") == std::string::npos &&
+     functionName.find("_scores") == std::string::npos);
   // Next print the long description as @details. But only if
   // we are not a '_predict' or '_classify' or '_probabilities' function
   if (isMainMethodCall)

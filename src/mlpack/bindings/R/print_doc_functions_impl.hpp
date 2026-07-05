@@ -631,7 +631,7 @@ std::string CallMethod(const std::string& bindingName,
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
   bool nonFitMethod = methodName == "classify" || methodName == "predict" ||
-    methodName == "probabilities";
+    methodName == "probabilities" || methodName == "scores";
 
   if (methodName == "train")
   {
@@ -662,8 +662,14 @@ std::string CallMethod(const std::string& bindingName,
   if (methodName == "probabilities")
     callMethod += ", type=\"probabilities\"";
   callMethod += ")";
-  callMethod += (methodName == "train" ? "\n" : " ");
-  callMethod += (dontrun ? "}" : "");
+  if (methodName == "train")
+  {
+    callMethod += "\n";
+  }
+  else
+  {
+    callMethod += (dontrun ? " }" : "");
+  }
   return util::HyphenateString(callMethod, 2);
 }
 
