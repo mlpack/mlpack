@@ -281,19 +281,7 @@ void ResizeCropImages(arma::Mat<eT>& images, ImageOptions& opts,
 
 template<typename eT>
 void ResizeImages(arma::Mat<eT>& /* images */, ImageOptions& opts,
-    const size_t /* newWidth */ = 0, const size_t /* newHeight */ = 0,
-    const typename std::enable_if_t<std::is_floating_point<eT>::value>* = 0)
-{
-  std::stringstream oss;
-  oss << "ResizeImages(): image support was disabled at compile time "
-         "(MLPACK_DISABLE_STB); rebuild without it to resize images.";
-  HandleError(oss, opts);
-}
-
-template<typename eT>
-void ResizeImages(arma::Mat<eT>& /* images */, ImageOptions& opts,
-    const size_t /* newWidth */ = 0, const size_t /* newHeight */ = 0,
-    const typename std::enable_if_t<std::is_integral_v<eT>>* = 0)
+    const size_t /* newWidth */ = 0, const size_t /* newHeight */ = 0)
 {
   std::stringstream oss;
   oss << "ResizeImages(): image support was disabled at compile time "
