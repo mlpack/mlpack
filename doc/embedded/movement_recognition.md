@@ -343,7 +343,7 @@ does it for you.
 In the following we are detailing necessary modification relevant to OpenBLAS
 to make it able to run neural network on resource constrained device. The
 current default configuration, the neural network training step would freeze when 
-we try to run it on the target device. The raison for this is the matrix
+we try to run it on the target device. The reason for this is the matrix
 multiplication function (GEMM). By default GEMM allocates an internal buffer
 with default `BUFFER_SIZE=32` MB allocated, which we are going to reduce to 8 MB.
 
