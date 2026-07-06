@@ -630,15 +630,13 @@ std::string CallMethod(const std::string& bindingName,
   util::Params params = IO::Parameters(bindingName);
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
-  bool nonFitMethod = methodName == "classify" || methodName == "predict" ||
-    methodName == "probabilities";
 
   if (methodName == "train")
   {
     // If we are a 'train' method a possible \dontrun{} occurred earlier
     callMethod += objectName + " <- " + bindingName + "(";
   }
-  else if (nonFitMethod)
+  else
   {
     // Other methods consider 'dontrun', adjust method and binding name use.
     callMethod += (dontrun ? "\\dontrun{ " : "");
@@ -652,7 +650,7 @@ std::string CallMethod(const std::string& bindingName,
   {
     callMethod += PrintInputOptions(params, args...);
   }
-  else if (nonFitMethod)
+  else
   {
     // We need a special case to turn 'test=X_test' into
     // 'newdata=X_test' to satisfy the R generic
@@ -660,10 +658,18 @@ std::string CallMethod(const std::string& bindingName,
   }
 
   if (methodName == "probabilities")
+  {
     callMethod += ", type=\"probabilities\"";
+  }
   callMethod += ")";
-  callMethod += (methodName == "train" ? "\n" : " ");
-  callMethod += (dontrun ? "}" : "");
+  if (methodName == "train")
+  {
+    callMethod += "\n";
+  }
+  else
+  {
+    callMethod += (dontrun ? " }" : "");
+  }
   return util::HyphenateString(callMethod, 2);
 }
 
