@@ -25,7 +25,7 @@ to_matrix <- function(x) {
     return(x)
   } else if (is.vector(x)) {
     if (length(x) == 1 || is.character(x)) {
-      stop("Scalar (i.e. length one) or character arguments not admissable as input.",
+      stop("Scalar (i.e. length one) or character arguments not admissible as input.",
         call. = FALSE)
     }
     return(as.matrix(x))
