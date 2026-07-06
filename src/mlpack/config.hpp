@@ -126,4 +126,9 @@
   #undef MLPACK_HAS_BFD_DL
 #endif
 
+#ifdef MLPACK_DISABLE_HTTPLIB
+  #undef MLPACK_ENABLE_HTTPLIB
+  #undef MLPACK_USE_SYSTEM_HTTPLIB
+#endif
+
 #endif

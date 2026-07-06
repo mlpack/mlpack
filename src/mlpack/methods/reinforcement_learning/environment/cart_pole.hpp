@@ -219,14 +219,14 @@ class CartPole
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;
       return true;
     }
     else if (std::abs(state.Position()) > xThreshold ||
         std::abs(state.Angle()) > thetaThresholdRadians)
     {
-      Log::Info << "Episode terminated due to agent failing.";
+      Log::Info << "Episode terminated due to agent failing." << std::endl;
       return true;
     }
     return false;
