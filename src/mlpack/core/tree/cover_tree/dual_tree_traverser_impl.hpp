@@ -197,8 +197,8 @@ DualTreeTraverser<RuleType>::PruneMap(
           refNode->Point());
 
       // Add to child map.
-      MapEntryType& newFrame = childScaleVector.emplace_back(
-          frame.node, score, baseCase, rule.TraversalInfo());
+      childScaleVector.emplace_back(frame.node, score, baseCase,
+          rule.TraversalInfo());
     }
 
     // If we didn't add anything, then strike this vector from the map.
@@ -277,11 +277,10 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
             refNode->Child(j).Point());
 
         const int newScale = refNode->Child(j).Scale();
-        MapEntryType& newFrame = recursionSets.GetScaleVector(
-            newScale).emplace_back(&refNode->Child(j),
-                                   childScore, // Use the score of the parent.
-                                   baseCase,
-                                   rule.TraversalInfo());
+        recursionSets.GetScaleVector(newScale).emplace_back(&refNode->Child(j),
+            childScore, // Use the score of the parent.
+            baseCase,
+            rule.TraversalInfo());
       }
     }
 
