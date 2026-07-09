@@ -116,10 +116,10 @@ void LetterboxImages(arma::Mat<eT>& src,
 
 template<typename eT>
 void LetterboxImages(arma::Mat<eT>& /* src */,
-                    ImageOptions& opts,
-                    const size_t = 0,
-                    const size_t = 0,
-                    const double = 0.0)
+                     ImageOptions& opts,
+                     const size_t = 0,
+                     const size_t = 0,
+                     const double = 0.0)
 {
   std::stringstream oss;
   oss << "LetterboxImages(): image support was disabled at compile time "
