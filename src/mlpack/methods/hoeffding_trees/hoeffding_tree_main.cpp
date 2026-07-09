@@ -89,7 +89,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
-    "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+    "https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf");
 BINDING_SEE_ALSO("HoeffdingTree class documentation",
     "@doc/user/methods/hoeffding_tree.md");
 

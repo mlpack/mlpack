@@ -516,8 +516,10 @@ inline std::string ImportSplit()
  * Import the package itself. For R, we honor an additional flag to wrap
  * this in \dontrun{}.
  */
+template<typename... Args>
 inline std::string ImportThis(const std::string& /* groupName */,
-                              const bool dontrun = true)
+                              const bool dontrun,
+                              Args&&... /* methodNames */)
 {
   // This function has to exist to satisfy the cross-language macro.
   // For R, we use it to load mlpack itself.
@@ -541,22 +543,39 @@ inline std::string GetDataset(const std::string& datasetName,
  * Code to split a given dataset into test and training set for both
  * the predictor variables and the response variable.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
                                   const std::string& splitRatio)
 {
-  return std::string("pp <- preprocess_split(input=") + datasetName +
-    ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
-    ", test_ratio=" + splitRatio + ")\n" +
-    "X_train <- pp[[\"training\"]]\n" +
-    "X_test <- pp[[\"test\"]]\n" +
-    "# labels are indices to operate on both factors or numeric data\n" +
-    "y_train <- " + labelName + "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
-    "y_test <- " + labelName + "[as.integer(pp[[\"test_labels\"]]), 1]";
+  // If the labels are integers, then we can use preprocess_split() entirely.
+  // If the labels are not integers, then we need to use an auxiliary vector.
+  if (integerLabels)
+  {
+    return "pp <- preprocess_split(input=" + datasetName +
+        ", input_label=" + labelName + ", test_ratio=" + splitRatio + ")\n" +
+        trainDataset + " <- pp[[\"training\"]]\n" +
+        testDataset + " <- pp[[\"test\"]]\n" +
+        trainLabels + " <- pp[[\"training_labels\"]]\n" +
+        testLabels + " <- pp[[\"test_labels\"]]";
+  }
+  else
+  {
+    return "pp <- preprocess_split(input=" + datasetName +
+        ", input_label=as.matrix(1:nrow(" + datasetName + "))" +
+        ", test_ratio=" + splitRatio + ")\n" +
+        trainDataset + " <- pp[[\"training\"]]\n" +
+        testDataset + " <- pp[[\"test\"]]\n" +
+        "# labels are indices to operate on both factors or numeric data\n" +
+        trainLabels + " <- " + labelName +
+        "[as.integer(pp[[\"training_labels\"]]), 1]\n" +
+        testLabels + " <- " + labelName +
+        "[as.integer(pp[[\"test_labels\"]]), 1]";
+  }
 }
 
 /**
@@ -611,15 +630,13 @@ std::string CallMethod(const std::string& bindingName,
   util::Params params = IO::Parameters(bindingName);
   std::map<std::string, util::ParamData> parameters = params.Parameters();
   std::string callMethod = "";
-  bool nonFitMethod = methodName == "classify" || methodName == "predict" ||
-    methodName == "probabilities";
 
   if (methodName == "train")
   {
     // If we are a 'train' method a possible \dontrun{} occurred earlier
     callMethod += objectName + " <- " + bindingName + "(";
   }
-  else if (nonFitMethod)
+  else
   {
     // Other methods consider 'dontrun', adjust method and binding name use.
     callMethod += (dontrun ? "\\dontrun{ " : "");
@@ -633,7 +650,7 @@ std::string CallMethod(const std::string& bindingName,
   {
     callMethod += PrintInputOptions(params, args...);
   }
-  else if (nonFitMethod)
+  else
   {
     // We need a special case to turn 'test=X_test' into
     // 'newdata=X_test' to satisfy the R generic
@@ -641,10 +658,18 @@ std::string CallMethod(const std::string& bindingName,
   }
 
   if (methodName == "probabilities")
+  {
     callMethod += ", type=\"probabilities\"";
+  }
   callMethod += ")";
-  callMethod += (methodName == "train" ? "\n" : " ");
-  callMethod += (dontrun ? "}" : "");
+  if (methodName == "train")
+  {
+    callMethod += "\n";
+  }
+  else
+  {
+    callMethod += (dontrun ? " }" : "");
+  }
   return util::HyphenateString(callMethod, 2);
 }
 

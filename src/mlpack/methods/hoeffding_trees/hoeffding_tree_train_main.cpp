@@ -58,7 +58,8 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("hoeffding_trees") + "\n" +
+    IMPORT_THIS("hoeffding_trees", "train", "classify", "probabilities") +
+    "\n" +
     GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
     GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
@@ -71,7 +72,7 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
-    "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+    "https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf");
 BINDING_SEE_ALSO("HoeffdingTree class documentation",
     "@doc/user/methods/hoeffding_tree.md");
 

@@ -91,6 +91,7 @@
     CEREAL_REGISTER_TYPE(mlpack::RBF<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ReLU6<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Repeat<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Scale<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Softmax<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Softmin<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanH<__VA_ARGS__>); \

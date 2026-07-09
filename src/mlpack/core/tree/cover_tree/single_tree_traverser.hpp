@@ -17,6 +17,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include "cover_tree.hpp"
+#include "recursion_sets.hpp"
 
 namespace mlpack {
 
@@ -51,11 +52,18 @@ class CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   size_t& NumPrunes() { return numPrunes; }
 
  private:
-  //! Reference to the rules with which the tree will be traversed.
+  // Reference to the rules with which the tree will be traversed.
   RuleType& rule;
 
-  //! The number of nodes which have been pruned during traversal.
+  // The number of nodes which have been pruned during traversal.
   size_t numPrunes;
+
+  typedef SingleCoverTreeMapEntry<CoverTree> MapEntryType;
+
+  // Auxiliary data structures for managing the breadth-first search.  We keep
+  // them at the class level, because the memory allocated with them can be
+  // reused for each query point.
+  CoverTreeRecursionSets<MapEntryType, 8> recursionSets;
 };
 
 } // namespace mlpack

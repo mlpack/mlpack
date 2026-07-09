@@ -4,7 +4,12 @@
 
 _????-??-??_
 
- * Accelerated `LeakyReLU` ANN Layer (#4174)
+ * Accelerated `LeakyReLU` ANN Layer (#4174).
+
+ * Update `LinearSVM` documentation: `Classify()` returns class scores, not
+   class probabilities (#4187).
+
+ * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
 
 ## mlpack 4.8.0
 
@@ -34,6 +39,9 @@ _2026-06-07_
    newer Armadillo versions (#4149).
 
  * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
 
 ## mlpack 4.7.0
 

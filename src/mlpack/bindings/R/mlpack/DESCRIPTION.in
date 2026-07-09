@@ -13,7 +13,7 @@ Imports: Rcpp (>= 0.12.12)
 LinkingTo: Rcpp,
            RcppArmadillo (>= @RcppArmadillo_Version@),
            RcppEnsmallen (>= @RcppEnsmallen_Version@)
-Suggests: testthat (>= 2.1.0)
+Suggests: tinytest, tinytest2JUnit
 URL: https://www.mlpack.org/doc/user/bindings/r.html,
      https://github.com/mlpack/mlpack
 BugReports: https://github.com/mlpack/mlpack/issues

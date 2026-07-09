@@ -62,8 +62,8 @@ BINDING_SEE_ALSO("@dbscan", "#dbscan");
 BINDING_SEE_ALSO("Mean shift on Wikipedia",
     "https://en.wikipedia.org/wiki/Mean_shift");
 BINDING_SEE_ALSO("Mean Shift, Mode Seeking, and Clustering (pdf)",
-    "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
-    "&doi=1c168275c59ba382588350ee1443537f59978183");
+    "https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/"
+    "meanShiftCluster.pdf");
 BINDING_SEE_ALSO("mlpack::mean_shift::MeanShift C++ class documentation",
     "@doc/user/methods/mean_shift.md");
 
