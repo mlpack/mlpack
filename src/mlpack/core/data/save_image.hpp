@@ -26,7 +26,6 @@ bool SaveImage(const std::vector<std::string>& files,
 #ifdef MLPACK_DISABLE_STB
   (void) files;
   (void) matrix;
-  (void) opts;
   std::stringstream oss;
   oss << "Save(): image support was disabled at compile time "
          "(MLPACK_DISABLE_STB); rebuild without it to save images.";
