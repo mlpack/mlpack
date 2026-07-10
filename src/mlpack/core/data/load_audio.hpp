@@ -19,6 +19,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_DR_LIBS
+
 /**
  * ========================================
  *          Theoretical Concept.
@@ -515,6 +517,21 @@ bool LoadMP3(const std::string& file,
 
   return true;
 }
+
+#else // MLPACK_DISABLE_DR_LIBS
+
+template<typename eT>
+bool LoadAudio(const std::string /* file */,
+               arma::Mat<eT>& /* matrix */,
+               AudioOptions& opts)
+{
+  std::stringstream oss;
+  oss << "LoadAudio(): audio support was disabled at compile time "
+         "(MLPACK_DISABLE_DR_LIBS); rebuild without it to load audio.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_DR_LIBS
 
 } //namespace mlpack
 
