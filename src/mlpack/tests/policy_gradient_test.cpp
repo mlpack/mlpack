@@ -226,7 +226,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   REQUIRE(stdDevErr <= 1e-4);
 }
 
-//! Test TD3 on Pendulum task.
+// Test TD3 on Pendulum task.
 TEST_CASE("PendulumWithTD3", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
@@ -239,22 +239,22 @@ TEST_CASE("PendulumWithTD3", "[PolicyGradientTest][long]")
     RandomReplay<Pendulum> replayMethod(32, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.001;
+    config.StepSize() = 0.0012;
     config.TargetNetworkSyncInterval() = 2;
     config.UpdateInterval() = 3;
 
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
-        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add<Linear>(128);
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.02));
+    policyNetwork.Add<Linear>(64);
     policyNetwork.Add<ReLU>();
     policyNetwork.Add<Linear>(1);
     policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
-        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add<Linear>(128);
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.02));
+    qNetwork.Add<Linear>(64);
     qNetwork.Add<ReLU>();
     qNetwork.Add<Linear>(1);
 

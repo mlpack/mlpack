@@ -9,6 +9,7 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+    if: ${{ github.repository == 'mlpack/mlpack' }}
     steps:
       - uses: actions/stale@v10
         with:

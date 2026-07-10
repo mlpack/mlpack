@@ -20,6 +20,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Resize an image to `imgSize` x `imgSize` while keeping the original
  * image's aspect ratio. Fill in white space with `fillValue`.
@@ -109,6 +111,23 @@ void LetterboxImages(arma::Mat<eT>& src,
   src = std::move(dest);
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+void LetterboxImages(arma::Mat<eT>& /* src */,
+                     ImageOptions& opts,
+                     const size_t = 0,
+                     const size_t = 0,
+                     const double = 0.0)
+{
+  std::stringstream oss;
+  oss << "LetterboxImages(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to support images.";
+  HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

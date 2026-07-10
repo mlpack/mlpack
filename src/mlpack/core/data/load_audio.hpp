@@ -19,6 +19,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_DR_LIBS
+
 /**
  * ========================================
  *          Theoretical Concept.
@@ -93,6 +95,22 @@ bool LoadAudio(const std::string file,
 //
 // These handle actually calling dr_wav loading functions, and mapping the
 // loaded input to the desired type with the minimum number of copies.
+
+template<typename eT>
+inline eT Pow2(const size_t exponent,
+               const typename std::enable_if_t<
+                   std::is_integral<eT>::value>* = 0)
+{
+  return (eT(1) << exponent);
+}
+
+template<typename eT>
+inline eT Pow2(const size_t exponent,
+               const typename std::enable_if_t<
+                   !std::is_integral<eT>::value>* = 0)
+{
+  return std::pow(eT(2), eT(exponent));
+}
 
 /**
  * Load a WAV file into a float32 matrix.
@@ -176,13 +194,13 @@ inline void ConvertType(
   {
     // If eT1 is smaller, then we have to shrink before we convert.
     dest = arma::conv_to<arma::Mat<eT1>>::from(
-        src / std::pow(2, 8 * (sizeof(eT2) - sizeof(eT1))));
+        src / Pow2<eT2>(8 * (sizeof(eT2) - sizeof(eT1))));
   }
   else if (sizeof(eT1) > sizeof(eT2))
   {
     // If eT1 is larger, then we have to convert before we expand the range.
     dest = arma::conv_to<arma::Mat<eT1>>::from(src) *
-        std::pow(2, 8 * (sizeof(eT1) - sizeof(eT2)));
+        Pow2<eT1>(8 * (sizeof(eT1) - sizeof(eT2)));
   }
 }
 
@@ -207,14 +225,14 @@ inline void ConvertType(
     typedef typename std::make_unsigned_t<eT2> ueT2;
     arma::Mat<ueT2> srcAlias((ueT2*) src.memptr(), src.n_rows, src.n_cols,
         false, true);
-    srcAlias += std::pow(2, 8 * sizeof(ueT2) - 1);
+    srcAlias += Pow2<ueT2>(8 * sizeof(ueT2) - 1);
     // Now do the actual conversion with signedness being the same.
     ConvertType(dest, srcAlias);
   }
   else
   {
     // eT2 is unsigned so we can do the sign change directly.
-    src -= std::pow(2, 8 * sizeof(eT2) - 1);
+    src -= Pow2<eT2>(8 * sizeof(eT2) - 1);
     typedef typename std::make_signed_t<eT2> seT2;
     arma::Mat<seT2> srcAlias((seT2*) src.memptr(), src.n_rows, src.n_cols,
         false, true);
@@ -259,7 +277,7 @@ inline size_t LoadWAVInternalInt(
     // to shift the values to the unsigned range.  However, because signed
     // overflow is not guaranteed by the C++ standard, we have to do the
     // shifting on the eT2 (unsigned) version.
-    matrix += std::pow(2, 8 * sizeof(eT1) - 1);
+    matrix += Pow2<eT2>(8 * sizeof(eT1) - 1);
   }
   else
   {
@@ -269,7 +287,7 @@ inline size_t LoadWAVInternalInt(
     // the matrix as an unsigned matrix.
     arma::Mat<eT1> alias((eT1*) matrix.memptr(), matrix.n_rows, matrix.n_cols,
         false, true);
-    alias -= std::pow(2, 8 * sizeof(eT1) - 1);
+    alias -= Pow2<eT1>(8 * sizeof(eT1) - 1);
   }
 
   return framesRead;
@@ -318,7 +336,7 @@ inline size_t LoadWAVInternalForce(
   // If the destination type is unsigned, then we have to map from the signed
   // range (which we loaded) to the unsigned range.
   if (!std::is_signed_v<eT2>)
-    matrix += std::pow(2, 8 * sizeof(eT2) - 1);
+    matrix += Pow2<eT2>(8 * sizeof(eT2) - 1);
 
   return framesRead;
 }
@@ -499,6 +517,21 @@ bool LoadMP3(const std::string& file,
 
   return true;
 }
+
+#else // MLPACK_DISABLE_DR_LIBS
+
+template<typename eT>
+bool LoadAudio(const std::string /* file */,
+               arma::Mat<eT>& /* matrix */,
+               AudioOptions& opts)
+{
+  std::stringstream oss;
+  oss << "LoadAudio(): audio support was disabled at compile time "
+         "(MLPACK_DISABLE_DR_LIBS); rebuild without it to load audio.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_DR_LIBS
 
 } //namespace mlpack
 

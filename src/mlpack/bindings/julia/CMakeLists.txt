@@ -258,7 +258,9 @@ if (BUILD_JULIA_BINDINGS)
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_model_type_import.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/print_member_defn.hpp
       ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param.hpp
-      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp)
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/default_param_impl.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/wrapper_functions.hpp
+      ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/julia/wrapper_functions_impl.hpp)
   if (BUILD_SHARED_LIBS)
     target_link_libraries(generate_jl_${name} ${MLPACK_LIBRARIES})
   else ()

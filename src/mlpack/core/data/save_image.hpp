@@ -23,6 +23,16 @@ bool SaveImage(const std::vector<std::string>& files,
                const arma::Mat<eT>& matrix,
                ImageOptions& opts)
 {
+#ifdef MLPACK_DISABLE_STB
+  (void) files;
+  (void) matrix;
+  std::stringstream oss;
+  oss << "Save(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to save images.";
+  return HandleError(oss, opts);
+
+#else // MLPACK_DISABLE_STB
+
   if (files.empty())
   {
     std::stringstream oss;
@@ -99,6 +109,8 @@ bool SaveImage(const std::vector<std::string>& files,
   }
 
   return success;
+
+#endif // MLPACK_DISABLE_STB
 }
 
 } // namespace mlpack

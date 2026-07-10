@@ -90,16 +90,17 @@ runs:
           echo 'CC90=$(CCACHE) gcc -std=gnu90' >> ~/.R/Makevars
           echo 'CC99=$(CCACHE) gcc -std=gnu99' >> ~/.R/Makevars
           echo 'CXX=$(CCACHE) g++' >> ~/.R/Makevars
-          echo 'CXX11=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX14=$(CCACHE) g++' >> ~/.R/Makevars
           echo 'CXX17=$(CCACHE) g++' >> ~/.R/Makevars
+          echo 'CXX20=$(CCACHE) g++' >> ~/.R/Makevars
+          echo 'CXX23=$(CCACHE) g++' >> ~/.R/Makevars
 
     - name: "Query R dependencies"
       if: inputs.lang == 'R'
       shell: bash
       run: |
           cp src/mlpack/bindings/R/mlpack/DESCRIPTION.in DESCRIPTION
-          Rscript -e 'install.packages(c("remotes", "roxygen2", "pkgbuild"))'
+          Rscript -e 'install.packages(c("remotes", "roxygen2"))'
           Rscript -e 'remotes::install_deps(".", dependencies=TRUE)'
 
     - name: Install cereal manually for R

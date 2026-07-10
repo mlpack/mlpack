@@ -65,6 +65,14 @@
 #endif
 
 //
+// MLPACK_DISABLE_STB is used to disable the bundled STB image loaders; use this
+// if your system does not need image processing (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_STB)
+  // #define MLPACK_DISABLE_STB
+#endif
+
+//
 // This is necessary if we would like to overwrite the default packaging
 // condition.
 //
@@ -78,6 +86,15 @@
 //
 #if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
   // #define MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
+// MLPACK_DISABLE_DR_LIBS is used to disable the bundled dr_mp3 and dr_wav
+// audio loaders; use this if your system does not need audio processing
+// (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_DR_LIBS)
+  // #define MLPACK_DISABLE_DR_LIBS
 #endif
 
 //
@@ -124,6 +141,11 @@
 
 #ifdef MLPACK_DISABLE_BFD_DL
   #undef MLPACK_HAS_BFD_DL
+#endif
+
+#ifdef MLPACK_DISABLE_HTTPLIB
+  #undef MLPACK_ENABLE_HTTPLIB
+  #undef MLPACK_USE_SYSTEM_HTTPLIB
 #endif
 
 #endif

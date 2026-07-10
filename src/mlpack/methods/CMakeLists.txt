@@ -29,7 +29,7 @@ add_r_binding(adaboost adaboost "include")
 add_r_binding(adaboost adaboost_train "skip")
 add_r_binding(adaboost adaboost_classify "skip")
 add_r_binding(adaboost adaboost_probabilities "skip")
-add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python;r")
+add_markdown_docs(adaboost adaboost "cli;python;julia;go;r" "python;r;julia")
 #
 add_all_bindings(approx_kfn approx_kfn "Geometry")
 #
@@ -46,7 +46,7 @@ add_r_binding(bayesian_linear_regression bayesian_linear_regression_train
 add_r_binding(bayesian_linear_regression bayesian_linear_regression_predict
   "skip")
 add_markdown_docs(bayesian_linear_regression bayesian_linear_regression
-  "cli;python;julia;go;r" "python;r")
+  "cli;python;julia;go;r" "python;r;julia")
 #
 add_all_bindings(cf cf "Misc. / Other")
 add_all_bindings(dbscan dbscan "Clustering")
@@ -61,7 +61,8 @@ add_r_binding(decision_tree decision_tree "include")
 add_r_binding(decision_tree decision_tree_train "skip")
 add_r_binding(decision_tree decision_tree_classify "skip")
 add_r_binding(decision_tree decision_tree_probabilities "skip")
-add_markdown_docs(decision_tree decision_tree "cli;python;julia;go;r" "python;r")
+add_markdown_docs(decision_tree decision_tree "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(det det "Misc. / Other")
 add_all_bindings(emst emst "Geometry")
@@ -84,7 +85,8 @@ add_r_binding(hoeffding_trees hoeffding_tree "include")
 add_r_binding(hoeffding_trees hoeffding_tree_train "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_classify "skip")
 add_r_binding(hoeffding_trees hoeffding_tree_probabilities "skip")
-add_markdown_docs(hoeffding_trees hoeffding_tree "cli;python;julia;go;r" "python;r")
+add_markdown_docs(hoeffding_trees hoeffding_tree "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(preprocess image_converter "Preprocessing")
 add_all_bindings(kde kde "Misc. / Other")
@@ -100,7 +102,7 @@ add_go_binding(lars lars)
 add_r_binding(lars lars "include")
 add_r_binding(lars lars_train "skip")
 add_r_binding(lars lars_predict "skip")
-add_markdown_docs(lars lars "cli;python;julia;go;r" "python;r")
+add_markdown_docs(lars lars "cli;python;julia;go;r" "python;r;julia")
 #
 add_category(linear_regression "Regression")
 group_bindings(linear_regression linear_regression "train;predict")
@@ -112,7 +114,7 @@ add_r_binding(linear_regression linear_regression "include")
 add_r_binding(linear_regression linear_regression_train "skip")
 add_r_binding(linear_regression linear_regression_predict "skip")
 add_markdown_docs(linear_regression linear_regression "cli;python;julia;go;r"
-    "python;r")
+    "python;r;julia")
 #
 add_category(linear_svm "Classification")
 group_bindings(linear_svm linear_svm "train;classify;scores")
@@ -124,7 +126,8 @@ add_r_binding(linear_svm linear_svm "include")
 add_r_binding(linear_svm linear_svm_train "skip")
 add_r_binding(linear_svm linear_svm_classify "skip")
 add_r_binding(linear_svm linear_svm_scores "skip")
-add_markdown_docs(linear_svm linear_svm "cli;python;julia;go;r" "python;r")
+add_markdown_docs(linear_svm linear_svm "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(lmnn lmnn "Transformations")
 add_all_bindings(local_coordinate_coding local_coordinate_coding
@@ -142,7 +145,7 @@ add_r_binding(logistic_regression logistic_regression_train "skip")
 add_r_binding(logistic_regression logistic_regression_classify "skip")
 add_r_binding(logistic_regression logistic_regression_probabilities "skip")
 add_markdown_docs(logistic_regression logistic_regression
-  "cli;python;julia;go;r" "python;r")
+  "cli;python;julia;go;r" "python;r;julia")
 #
 add_all_bindings(lsh lsh "Geometry")
 add_all_bindings(mean_shift mean_shift "Clustering")
@@ -157,7 +160,7 @@ add_r_binding(naive_bayes nbc "include")
 add_r_binding(naive_bayes nbc_train "skip")
 add_r_binding(naive_bayes nbc_classify "skip")
 add_r_binding(naive_bayes nbc_probabilities "skip")
-add_markdown_docs(naive_bayes nbc "cli;python;julia;go;r" "python;r")
+add_markdown_docs(naive_bayes nbc "cli;python;julia;go;r" "python;r;julia")
 #
 add_all_bindings(nca nca "Transformations")
 add_all_bindings(neighbor_search knn "Geometry")
@@ -174,7 +177,8 @@ add_go_binding(perceptron perceptron)
 add_r_binding(perceptron perceptron "include")
 add_r_binding(perceptron perceptron_train "skip")
 add_r_binding(perceptron perceptron_classify "skip")
-add_markdown_docs(perceptron perceptron "cli;python;julia;go;r" "python;r")
+add_markdown_docs(perceptron perceptron "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(preprocess preprocess_split "Preprocessing")
 add_all_bindings(preprocess preprocess_binarize "Preprocessing")
@@ -193,7 +197,8 @@ add_r_binding(random_forest random_forest "include")
 add_r_binding(random_forest random_forest_train "skip")
 add_r_binding(random_forest random_forest_classify "skip")
 add_r_binding(random_forest random_forest_probabilities "skip")
-add_markdown_docs(random_forest random_forest "cli;python;julia;go;r" "python;r")
+add_markdown_docs(random_forest random_forest "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(rann krann "Geometry")
 #
@@ -208,7 +213,8 @@ add_r_binding(softmax_regression softmax_regression "include")
 add_r_binding(softmax_regression softmax_regression_train "skip")
 add_r_binding(softmax_regression softmax_regression_classify "skip")
 add_r_binding(softmax_regression softmax_regression_probabilities "skip")
-add_markdown_docs(softmax_regression softmax_regression "cli;python;julia;go;r" "python;r")
+add_markdown_docs(softmax_regression softmax_regression "cli;python;julia;go;r"
+    "python;r;julia")
 #
 add_all_bindings(sparse_coding sparse_coding "Transformations")
 

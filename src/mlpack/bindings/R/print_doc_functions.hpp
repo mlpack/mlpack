@@ -152,8 +152,10 @@ inline std::string ImportSplit();
  * Import the package itself. For R, we honor an additional flag to wrap
  * this in \dontrun{}.
  */
+template<typename... Args>
 inline std::string ImportThis(const std::string& /* groupName */,
-                              const bool dontrun);
+                              const bool dontrun,
+                              Args&&... /* methodNames */);
 
 /**
  * Code to load a given dataset from a given URL.
@@ -165,12 +167,13 @@ inline std::string GetDataset(const std::string& datasetName,
  * Code to split a given dataset into test and training set for both
  * the predictor variables and the response variable.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
-                                  const std::string& /* trainDataset */,
-                                  const std::string& /* trainLabels */,
-                                  const std::string& /* testDataset */,
-                                  const std::string& /* testLabels */,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
                                   const std::string& splitRatio);
 
 /**

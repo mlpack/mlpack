@@ -18,6 +18,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 template<typename eT>
 bool LoadImage(const std::vector<std::string>& files,
                arma::Mat<eT>& matrix,
@@ -91,6 +93,21 @@ bool LoadImage(const std::vector<std::string>& files,
   matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
   return true;
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+bool LoadImage(const std::vector<std::string>& /* files */,
+               arma::Mat<eT>& /* matrix */,
+               ImageOptions& opts)
+{
+  std::stringstream oss;
+  oss << "Load(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to load images.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

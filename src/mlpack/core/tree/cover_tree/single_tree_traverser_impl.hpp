@@ -32,67 +32,7 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 {
-  hotScaleLevels.fill(INT_MIN);
-}
-
-template<
-    typename DistanceType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-template<typename RuleType>
-inline size_t
-CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-SingleTreeTraverser<RuleType>::ScaleIndex(const int scale)
-{
-  // If it's a leaf, we have to put it in the leaf vector.
-  if (scale == INT_MIN)
-    return size_t(-1);
-
-  // Loop through the hot scales.  Allocate one, if it's unallocated.
-  int minScale = INT_MAX;
-  int firstMinScale = 8;
-  for (size_t i = 0; i < 8; ++i)
-  {
-    if (hotScaleLevels[i] == INT_MIN)
-      firstMinScale = i; // We will allocate this vector.
-    if (hotScaleLevels[i] == scale)
-      return i;
-    if (hotScaleLevels[i] < minScale)
-      minScale = hotScaleLevels[i];
-  }
-  if (firstMinScale != 8)
-  {
-    hotScaleLevels[firstMinScale] = scale;
-    return firstMinScale;
-  }
-
-  if (scale > minScale)
-  {
-    // In this case, we are encountering a scale that *should* be in the hot
-    // scale set but isn't!  So, we need to evict an existing one.
-    size_t minScaleIndex = 8;
-    minScale = INT_MAX;
-    for (size_t i = 0; i < 8; ++i)
-    {
-      if (hotScaleLevels[i] < minScale)
-      {
-        minScaleIndex = i;
-        minScale = hotScaleLevels[i];
-      }
-    }
-
-    // Move the smallest-scale vector into the cold map and claim the hot
-    // vector for this scale.
-    mapQueue[minScale] = std::move(hotScaleVectors[minScaleIndex]);
-    hotScaleLevels[minScaleIndex] = scale;
-    return minScaleIndex;
-  }
-
-  // If there are no hot scales for this scale level, we will need to put it in
-  // the std::map.
-  return 8;
+  // Nothing to do.
 }
 
 template<
@@ -130,7 +70,7 @@ SingleTreeTraverser<RuleType>::Traverse(
     // Often, a ruleset will return without doing any computation on cover trees
     // using TreeTraits::FirstPointIsCentroid; this is an optimization that
     // (theoretically) the compiler should get right.
-    double rootBaseCase = rule.BaseCase(queryIndex, referenceNode.Point());
+    rule.BaseCase(queryIndex, referenceNode.Point());
 
     // Don't add the self-leaf.
     size_t i = 0;
@@ -142,35 +82,25 @@ SingleTreeTraverser<RuleType>::Traverse(
 
     for (/* i was set above. */; i < referenceNode.NumChildren(); ++i)
     {
-      CoverTreeMapEntry newFrame;
-      newFrame.node = &referenceNode.Child(i);
-      newFrame.score = rootChildScore;
-      newFrame.baseCase = rootBaseCase;
-
-      // Put it into the map.
-      const size_t scaleIndex = ScaleIndex(newFrame.node->Scale());
-      if (scaleIndex < 8)
-        hotScaleVectors[scaleIndex].push_back(std::move(newFrame));
-      else if (scaleIndex == size_t(-1))
-        leafVector.push_back(std::move(newFrame));
-      else
-        mapQueue[newFrame.node->Scale()].push_back(newFrame);
+      recursionSets.GetScaleVector(referenceNode.Child(i).Scale()).emplace_back(
+          &referenceNode.Child(i), rootChildScore);
     }
   }
 
   // Now begin the iteration through the levels of the tree.  We will treat the
   // leaves differently (below).
-  size_t maxIndex = hotScaleLevels.index_max();
-  while (hotScaleLevels[maxIndex] != INT_MIN)
+  int maxScale = recursionSets.MaxScale();
+  while (maxScale != INT_MIN)
   {
     // Get a reference to the current scale.
-    std::vector<CoverTreeMapEntry>& scaleVector = hotScaleVectors[maxIndex];
+    std::vector<MapEntryType>& scaleVector =
+        recursionSets.GetScaleVector(maxScale);
 
     // Iterate over all the nodes at the current scale, pruning if we can.
     size_t firstGoodIndex = 0;
     for (size_t i = 0; i < scaleVector.size(); ++i)
     {
-      CoverTreeMapEntry& frame = scaleVector.at(i);
+      MapEntryType& frame = scaleVector.at(i);
       if (rule.Rescore(queryIndex, *frame.node, frame.score) == DBL_MAX)
       {
         ++numPrunes;
@@ -198,17 +128,17 @@ SingleTreeTraverser<RuleType>::Traverse(
       // Compute the base case if we are not a self-child.
       const size_t point = frame.node->Point();
       if (frame.node->Parent()->Point() != point)
-        frame.baseCase = rule.BaseCase(queryIndex, point);
+        rule.BaseCase(queryIndex, point);
     }
 
-    // For what remains, sort the vector so that we compute base cases with the
+    // For what remains, sort the vector so that we only add children with the
     // most likely good nodes first.
     std::sort(scaleVector.begin() + firstGoodIndex, scaleVector.end());
 
     // In a second pass, add the children of nodes that weren't pruned.
     for (size_t i = firstGoodIndex; i < scaleVector.size(); ++i)
     {
-      const CoverTreeMapEntry& frame = scaleVector.at(i);
+      const MapEntryType& frame = scaleVector.at(i);
       // One more pruning attempt.
       if (frame.score == DBL_MAX ||
           rule.Rescore(queryIndex, *frame.node, frame.score) == DBL_MAX)
@@ -226,43 +156,20 @@ SingleTreeTraverser<RuleType>::Traverse(
           continue;
         }
 
-        CoverTreeMapEntry newFrame;
-        newFrame.node = &frame.node->Child(c);
-        newFrame.score = frame.score;
-        newFrame.baseCase = frame.baseCase;
-
-        // Determine which vector to add the child to.
-        const size_t scaleIndex = ScaleIndex(newFrame.node->Scale());
-        if (scaleIndex < 8)
-          hotScaleVectors[scaleIndex].push_back(std::move(newFrame));
-        else if (scaleIndex == size_t(-1))
-          leafVector.push_back(std::move(newFrame));
-        else
-          mapQueue[newFrame.node->Scale()].push_back(newFrame);
+        recursionSets.GetScaleVector(frame.node->Child(c).Scale()).emplace_back(
+            &frame.node->Child(c), frame.score);
       }
     }
 
     // Now clear the memory for this scale; it isn't needed anymore.
-    if (!mapQueue.empty())
-    {
-      // Reallocate the hot vector to the next largest scale level we have been
-      // collecting points for.
-      hotScaleVectors[maxIndex] = std::move(mapQueue.begin()->second);
-      hotScaleLevels[maxIndex] = mapQueue.begin()->first;
-      mapQueue.erase(mapQueue.begin()->first);
-    }
-    else
-    {
-      hotScaleVectors[maxIndex].clear();
-      hotScaleLevels[maxIndex] = INT_MIN;
-    }
-
-    maxIndex = hotScaleLevels.index_max();
+    recursionSets.RemoveScale(maxScale);
+    maxScale = recursionSets.MaxScale();
   }
 
+  std::vector<MapEntryType>& leafVector = recursionSets.GetScaleVector(INT_MIN);
   for (size_t i = 0; i < leafVector.size(); ++i)
   {
-    CoverTreeMapEntry& frame = leafVector.at(i);
+    MapEntryType& frame = leafVector.at(i);
 
     CoverTree* node = frame.node;
     const double score = frame.score;
@@ -295,7 +202,7 @@ SingleTreeTraverser<RuleType>::Traverse(
     }
   }
 
-  leafVector.clear(); // For next call to Traverse().
+  recursionSets.RemoveScale(INT_MIN); // For next call to Traverse().
 }
 
 } // namespace mlpack

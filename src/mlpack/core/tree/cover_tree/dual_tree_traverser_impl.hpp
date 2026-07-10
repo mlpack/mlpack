@@ -39,114 +39,103 @@ template<
 >
 template<typename RuleType>
 void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-DualTreeTraverser<RuleType>::Traverse(CoverTree& queryNode,
+DualTreeTraverser<RuleType>::Traverse(CoverTree& queryRoot,
                                       CoverTree& referenceNode)
 {
-  // Start by creating a map and adding the reference root node to it.
-  std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>> refMap;
-
-  DualCoverTreeMapEntry rootRefEntry;
-
-  rootRefEntry.referenceNode = &referenceNode;
+  // Start by creating the recursion sets and adding the reference node to it.
+  typedef CoverTreeRecursionSets<MapEntryType, 8> RecursionSets;
+  RecursionSets rootRecursionSets;
 
   // Perform the evaluation between the roots of either tree.
-  rootRefEntry.score = rule.Score(queryNode, referenceNode);
-  rootRefEntry.baseCase = rule.BaseCase(queryNode.Point(),
+  const double rootScore = rule.Score(queryRoot, referenceNode);
+  const double rootBaseCase = rule.BaseCase(queryRoot.Point(),
       referenceNode.Point());
-  rootRefEntry.traversalInfo = rule.TraversalInfo();
+  MapEntryType rootRefEntry(&referenceNode, rootScore, rootBaseCase,
+      rule.TraversalInfo());
 
-  refMap[referenceNode.Scale()].push_back(rootRefEntry);
+  rootRecursionSets.GetScaleVector(referenceNode.Scale()).push_back(
+      rootRefEntry);
 
-  Traverse(queryNode, refMap);
-}
-
-template<
-    typename DistanceType,
-    typename StatisticType,
-    typename MatType,
-    typename RootPointPolicy
->
-template<typename RuleType>
-void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
-DualTreeTraverser<RuleType>::Traverse(
-    CoverTree& queryNode,
-    std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-        referenceMap)
-{
-  if (referenceMap.size() == 0)
-    return; // Nothing to do!
-
-  // First recurse down the reference nodes as necessary.
-  ReferenceRecursion(queryNode, referenceMap);
-
-  // Did the map get emptied?
-  if (referenceMap.size() == 0)
-    return; // Nothing to do!
-
-  // Now, reduce the scale of the query node by recursing.  But we can't recurse
-  // if the query node is a leaf node.
-  if ((queryNode.Scale() != INT_MIN) &&
-      (queryNode.Scale() >= (*referenceMap.begin()).first))
+  std::stack<std::pair<CoverTree*, RecursionSets>> queryStack;
+  queryStack.push(std::make_pair(&queryRoot, std::move(rootRecursionSets)));
+  while (!queryStack.empty())
   {
-    // Recurse into the non-self-children first.  The recursion order cannot
-    // affect the runtime of the algorithm, because each query child recursion's
-    // results are separate and independent.  I don't think this is true in
-    // every case, and we may have to modify this section to consider scores in
-    // the future.
-    for (size_t i = 1; i < queryNode.NumChildren(); ++i)
+    CoverTree* queryNode = queryStack.top().first;
+    RecursionSets recursionSets = std::move(queryStack.top().second);
+
+    queryStack.pop();
+
+    if (recursionSets.IsEmpty())
+      continue;
+
+    // First recurse down the reference nodes as necessary.
+    ReferenceRecursion(*queryNode, recursionSets);
+
+    // Did the map get emptied?
+    if (recursionSets.IsEmpty())
+      continue; // Nothing to do!
+
+    // Now, reduce the scale of the query node by recursing.  But we can't
+    // recurse if the query node is a leaf node.
+    if ((queryNode->Scale() != INT_MIN) &&
+        (queryNode->Scale() >= recursionSets.MaxScale()))
     {
-      // We need a copy of the map for this child.
-      std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>
-          childMap;
-
-      PruneMap(queryNode.Child(i), referenceMap, childMap);
-      Traverse(queryNode.Child(i), childMap);
-    }
-    std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>
-        selfChildMap;
-
-    PruneMap(queryNode.Child(0), referenceMap, selfChildMap);
-    Traverse(queryNode.Child(0), selfChildMap);
-  }
-
-  if (queryNode.Scale() != INT_MIN)
-    return; // No need to evaluate base cases at this level.  It's all done.
-
-  // If we have made it this far, all we have is a bunch of base case
-  // evaluations to do.
-  Log::Assert((*referenceMap.begin()).first == INT_MIN);
-  Log::Assert(queryNode.Scale() == INT_MIN);
-  std::vector<DualCoverTreeMapEntry>& pointVector = referenceMap[INT_MIN];
-
-  for (size_t i = 0; i < pointVector.size(); ++i)
-  {
-    // Get a reference to the frame.
-    const DualCoverTreeMapEntry& frame = pointVector[i];
-
-    CoverTree* refNode = frame.referenceNode;
-
-    // If the point is the same as both parents, then we have already done this
-    // base case.
-    if ((refNode->Point() == refNode->Parent()->Point()) &&
-        (queryNode.Point() == queryNode.Parent()->Point()))
-    {
-      ++numPrunes;
+      // Recurse into the non-self-children first.  The recursion order cannot
+      // affect the runtime of the algorithm, because each query child
+      // recursion's results are separate and independent.  I don't think this
+      // is true in every case, and we may have to modify this section to
+      // consider scores in the future.
+      for (size_t i = 0; i < queryNode->NumChildren(); ++i)
+      {
+        // We need a copy of the map for this child.
+        RecursionSets childRecursionSets;
+        PruneMap(queryNode->Child(i), recursionSets, childRecursionSets);
+        queryStack.push(std::make_pair(&queryNode->Child(i),
+            std::move(childRecursionSets)));
+      }
       continue;
     }
 
-    // Score the node, to see if we can prune it, after restoring the traversal
-    // info.
-    rule.TraversalInfo() = frame.traversalInfo;
-    double score = rule.Score(queryNode, *refNode);
+    if (queryNode->Scale() != INT_MIN)
+      continue; // No need to evaluate base cases at this level.  It's all done.
 
-    if (score == DBL_MAX)
+    // If we have made it this far, all we have is a bunch of base case
+    // evaluations to do.
+    Log::Assert(recursionSets.MaxScale() == INT_MIN);
+    Log::Assert(queryNode->Scale() == INT_MIN);
+    std::vector<MapEntryType>& pointVector =
+        recursionSets.GetScaleVector(INT_MIN);
+
+    for (size_t i = 0; i < pointVector.size(); ++i)
     {
-      ++numPrunes;
-      continue;
-    }
+      // Get a reference to the frame.
+      const MapEntryType& frame = pointVector[i];
 
-    // If not, compute the base case.
-    rule.BaseCase(queryNode.Point(), pointVector[i].referenceNode->Point());
+      CoverTree* refNode = frame.node;
+
+      // If the point is the same as both parents, then we have already done
+      // this base case.
+      if ((refNode->Point() == refNode->Parent()->Point()) &&
+          (queryNode->Point() == queryNode->Parent()->Point()))
+      {
+        ++numPrunes;
+        continue;
+      }
+
+      // Score the node, to see if we can prune it, after restoring the
+      // traversal info.
+      rule.TraversalInfo() = frame.traversalInfo;
+      double score = rule.Score(*queryNode, *refNode);
+
+      if (score == DBL_MAX)
+      {
+        ++numPrunes;
+        continue;
+      }
+
+      // If not, compute the base case.
+      rule.BaseCase(queryNode->Point(), pointVector[i].node->Point());
+    }
   }
 }
 
@@ -160,33 +149,37 @@ template<typename RuleType>
 void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::PruneMap(
     CoverTree& queryNode,
-    std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-        referenceMap,
-    std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-        childMap)
+    CoverTreeRecursionSets<MapEntryType, 8>& recursionSets,
+    CoverTreeRecursionSets<MapEntryType, 8>& childRecursionSets)
 {
-  if (referenceMap.empty())
+  if (recursionSets.IsEmpty())
     return; // Nothing to do.
 
-  // Copy the zero set first.
-  if (referenceMap.count(INT_MIN) == 1)
+  typename CoverTreeRecursionSets<MapEntryType, 8>::Iterator it =
+      recursionSets.begin();
+  while (!it.AtEnd())
   {
     // Get a reference to the vector representing the entries at this scale.
-    std::vector<DualCoverTreeMapEntry>& scaleVector = referenceMap[INT_MIN];
+    std::vector<MapEntryType>& scaleVector = it.Vector();
+    const int scale = it.Scale();
+    std::vector<MapEntryType>& childScaleVector =
+        childRecursionSets.GetScaleVector(scale);
 
-    // Before traversing all the points in this scale, sort by score.
-    std::sort(scaleVector.begin(), scaleVector.end());
+    // Before traversing all the points in this scale, sort by score.  Don't
+    // bother sorting the leaf set, because getting that in the right order
+    // isn't likely to affect traversal time in any meaningful way.
+    if (scale != INT_MIN)
+      std::sort(scaleVector.begin(), scaleVector.end());
 
-    childMap[INT_MIN].reserve(scaleVector.size());
-    std::vector<DualCoverTreeMapEntry>& newScaleVector = childMap[INT_MIN];
+    childScaleVector.reserve(scaleVector.size());
 
     // Loop over each entry in the vector.
     for (size_t j = 0; j < scaleVector.size(); ++j)
     {
-      const DualCoverTreeMapEntry& frame = scaleVector[j];
+      const MapEntryType& frame = scaleVector[j];
 
       // First evaluate if we can prune without performing the base case.
-      CoverTree* refNode = frame.referenceNode;
+      CoverTree* refNode = frame.node;
 
       // Perform the actual scoring, after restoring the traversal info.
       rule.TraversalInfo() = frame.traversalInfo;
@@ -204,68 +197,13 @@ DualTreeTraverser<RuleType>::PruneMap(
           refNode->Point());
 
       // Add to child map.
-      newScaleVector.push_back(frame);
-      newScaleVector.back().score = score;
-      newScaleVector.back().baseCase = baseCase;
-      newScaleVector.back().traversalInfo = rule.TraversalInfo();
+      childScaleVector.emplace_back(frame.node, score, baseCase,
+          rule.TraversalInfo());
     }
 
     // If we didn't add anything, then strike this vector from the map.
-    if (newScaleVector.size() == 0)
-      childMap.erase(INT_MIN);
-  }
-
-  typename std::map<int, std::vector<DualCoverTreeMapEntry>,
-      std::greater<int>>::iterator it = referenceMap.begin();
-
-  while ((it != referenceMap.end()))
-  {
-    const int thisScale = (*it).first;
-    if (thisScale == INT_MIN) // We already did it.
-      break;
-
-    // Get a reference to the vector representing the entries at this scale.
-    std::vector<DualCoverTreeMapEntry>& scaleVector = (*it).second;
-
-    // Before traversing all the points in this scale, sort by score.
-    std::sort(scaleVector.begin(), scaleVector.end());
-
-    childMap[thisScale].reserve(scaleVector.size());
-    std::vector<DualCoverTreeMapEntry>& newScaleVector = childMap[thisScale];
-
-    // Loop over each entry in the vector.
-    for (size_t j = 0; j < scaleVector.size(); ++j)
-    {
-      const DualCoverTreeMapEntry& frame = scaleVector[j];
-
-      // First evaluate if we can prune without performing the base case.
-      CoverTree* refNode = frame.referenceNode;
-
-      // Perform the actual scoring, after restoring the traversal info.
-      rule.TraversalInfo() = frame.traversalInfo;
-      double score = rule.Score(queryNode, *refNode);
-
-      if (score == DBL_MAX)
-      {
-        // Pruned.  Move on.
-        ++numPrunes;
-        continue;
-      }
-
-      // If it isn't pruned, we must evaluate the base case.
-      const double baseCase = rule.BaseCase(queryNode.Point(),
-          refNode->Point());
-
-      // Add to child map.
-      newScaleVector.push_back(frame);
-      newScaleVector.back().score = score;
-      newScaleVector.back().baseCase = baseCase;
-      newScaleVector.back().traversalInfo = rule.TraversalInfo();
-    }
-
-    // If we didn't add anything, then strike this vector from the map.
-    if (newScaleVector.size() == 0)
-      childMap.erase((*it).first);
+    if (childScaleVector.size() == 0)
+      childRecursionSets.RemoveScale(scale);
 
     ++it; // Advance to next scale.
   }
@@ -281,14 +219,14 @@ template<typename RuleType>
 void CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
 DualTreeTraverser<RuleType>::ReferenceRecursion(
     CoverTree& queryNode,
-    std::map<int, std::vector<DualCoverTreeMapEntry>, std::greater<int>>&
-        referenceMap)
+    CoverTreeRecursionSets<MapEntryType, 8>& recursionSets)
 {
   // First, reduce the maximum scale in the reference map down to the scale of
   // the query node.
-  while (!referenceMap.empty())
+  while (!recursionSets.IsEmpty())
   {
-    const int maxScale = ((*referenceMap.begin()).first);
+    // Start from the largest scale and keep recursing until we are done.
+    const int maxScale = recursionSets.MaxScale();
     // Hacky bullshit to imitate jl cover tree.
     if (queryNode.Parent() == NULL && maxScale < queryNode.Scale())
       break;
@@ -300,17 +238,15 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       break;
 
     // Get a reference to the current largest scale.
-    std::vector<DualCoverTreeMapEntry>& scaleVector = referenceMap[maxScale];
-
-    // Before traversing all the points in this scale, sort by score.
-    std::sort(scaleVector.begin(), scaleVector.end());
+    std::vector<MapEntryType>& scaleVector =
+        recursionSets.GetScaleVector(maxScale);
 
     // Now loop over each element.
     for (size_t i = 0; i < scaleVector.size(); ++i)
     {
       // Get a reference to the current element.
-      const DualCoverTreeMapEntry& frame = scaleVector.at(i);
-      CoverTree* refNode = frame.referenceNode;
+      const MapEntryType& frame = scaleVector.at(i);
+      CoverTree* refNode = frame.node;
 
       // Create the score for the children.
       double score = rule.Rescore(queryNode, *refNode, frame.score);
@@ -340,17 +276,16 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
         const double baseCase = rule.BaseCase(queryNode.Point(),
             refNode->Child(j).Point());
 
-        DualCoverTreeMapEntry newFrame;
-        newFrame.referenceNode = &refNode->Child(j);
-        newFrame.score = childScore; // Use the score of the parent.
-        newFrame.baseCase = baseCase;
-        newFrame.traversalInfo = rule.TraversalInfo();
-        referenceMap[newFrame.referenceNode->Scale()].push_back(newFrame);
+        const int newScale = refNode->Child(j).Scale();
+        recursionSets.GetScaleVector(newScale).emplace_back(&refNode->Child(j),
+            childScore, // Use the score of the parent.
+            baseCase,
+            rule.TraversalInfo());
       }
     }
 
     // Now clear the memory for this scale; it isn't needed anymore.
-    referenceMap.erase(maxScale);
+    recursionSets.RemoveScale(maxScale);
   }
 }
 
