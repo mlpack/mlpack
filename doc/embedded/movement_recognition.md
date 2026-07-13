@@ -1,7 +1,7 @@
 ## On-device movement recognition with an IMU
 
-In this tutorial we build a complete, end-to-end **human-movement / activity
-recognition** pipeline that runs *entirely on a tiny RISC-V Linux board*. The
+In this tutorial we build a complete, end-to-end human-movement / activity
+recognition pipeline that runs entirely on a tiny RISC-V Linux board. The
 pipeline consists of data collection, training, and inference all happen on the target device.
 The main target of this tutorial is to provide an end to end example of using mlpack
 on real resource-constrained embedded hardware.
@@ -31,7 +31,7 @@ Contents:
 ### What are we building
 
 We are building a machine learning based human movement recognition to detect
-movements such as  *walking*, *sitting*, *squats*, and *climbing stairs*. This
+movements such as  walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into a Fast Fourier
 Transform in order to extract the features from each collected windows.
@@ -52,25 +52,25 @@ target is to provide an example on how such a software can be built:
 
 `collect` and `imu_test` only need the Linux I2C headers, so they compile to
 ~150–170 KB static binaries.  `train` and `infer` link mlpack.  All four are
-built from **one CMake project** that uses the same cross-compilation
+built from one CMake project that uses the same cross-compilation
 infrastructure described in the [embedded example tutorial](crosscompile_example.md).
 
-The pipeline is: **`collect`** writes one CSV file per recording (the file name
-is the label), **`train`** turns those CSVs into FFT features and fits a network,
-and **`infer`** reads the live sensor stream and prints the predicted movement.
+The pipeline is: `collect` writes one CSV file per recording (the file name
+is the label), `train` turns those CSVs into FFT features and fits a network,
+and `infer` reads the live sensor stream and prints the predicted movement.
 
 ### Hardware
 
-This tutorial uses a **[Milk-V Duo](https://milkv.io/duo)** — a SOPHGO
-CV1800B board with a dual-core RISC-V C906 CPU and **64 MB of RAM** (of which
+This tutorial uses a [Milk-V Duo](https://milkv.io/duo) — a SOPHGO
+CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
 only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
-**GY-89** 10-DOF breakout, which carries three separate I2C chips:
+GY-89 10-DOF breakout, which carries three separate I2C chips:
 
 | Chip        | Function                            | 7-bit address |
 |-------------|-------------------------------------|---------------|
-| **L3GD20H** | 3-axis gyroscope                    | `0x6B`        |
-| **LSM303D** | 3-axis accelerometer + magnetometer | `0x1D`        |
-| **BMP180**  | barometric pressure + temperature   | `0x77`        |
+| L3GD20H | 3-axis gyroscope                    | `0x6B`        |
+| LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
+| BMP180  | barometric pressure + temperature   | `0x77`        |
 
 Wire the GY-89 to the Duo's I²C0 bus (the example defaults to `/dev/i2c-0`):
 
@@ -94,7 +94,7 @@ RAM, therefore, we cross-compile on a host `x86_64` machine and copy the static
 binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
 [Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
-the smallest static binary we use the **musl** variant
+the smallest static binary we use the musl variant
 
 ```sh
 wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--musl--stable-2024.02-1.tar.bz2
@@ -124,7 +124,7 @@ cd examples/cpp/movement_recognition
 
 ### Building the programs
 
-All four programs build from **one CMake project**.  `imu_test` and `collect`
+All four programs build from one CMake project.  `imu_test` and `collect`
 only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
 reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
 mlpack and its dependencies and cross-compile OpenBLAS, as described in the
@@ -162,7 +162,7 @@ file train
 ### Copying everything to the device
 
 The Duo's BusyBox userland has no SFTP server, so a plain `scp` fails with
-`sh: /usr/libexec/sftp-server: not found`.  Use scp's **legacy protocol** with
+`sh: /usr/libexec/sftp-server: not found`.  Use scp's legacy protocol with
 `-O`.  Over the Duo's USB-OTG connection the board is usually reachable at
 `192.168.42.1`, you can check that by doing a local ping. The default password
 for the Duo is `milkv`:
@@ -174,9 +174,9 @@ ssh root@192.168.42.1 'chmod +x /root/imu_test /root/collect /root/train /root/i
 
 ### Running it on the device
 
-SSH into the board.  All the commands below run **on the Duo**.
+SSH into the board.  All the commands below run on the Duo.
 
-**1. Check the I2C0 pins and the sensor.** The GP0/GP1 pads must be set to
+1. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
 their I2C function first:
 
 ```sh
@@ -192,7 +192,7 @@ duo-pinmux -p GP1 -f IIC0_SDA
 i2cdetect -y -r 0          # Now it should show devices at 0x1d and 0x6b (and 0x77)
 ```
 
-**2. Check the sensor and calibrate the magnetometer**
+2. Check the sensor and calibrate the magnetometer
 Even though we are going to use Accelerometer only. Calibration is important and it is 
 built into `imu_test`; rotate the board through all orientations while it samples:
 
@@ -200,8 +200,8 @@ built into `imu_test`; rotate the board through all orientations while it sample
 ./imu_test --calibrate mag.cal /dev/i2c-0 20
 ```
 
-**3. Collect labelled data.**  Each recording is written to its own file named
-`<label>_<date>.csv`, so the *label is the file name*.  Run `collect` once per
+3. Collect labelled data.  Each recording is written to its own file named
+`<label>_<date>.csv`, so the label is the file name.  Run `collect` once per
 movement:
 
 ```sh
@@ -214,10 +214,10 @@ mkdir data
 Collect several recordings per movement (more files means more training
 windows), keeping the same `--sensors` selection across all of them.
 
-**4. Train the network.**  `train` groups the CSVs by label, cuts each into
+4. Train the network.  `train` groups the CSVs by label, cuts each into
 non-overlapping windows of `--window` samples, runs one FFT per channel to get
 features, and trains a small `float32` neural network.  Instead of a fixed epoch
-count it uses **early stopping**: `--patience` is how many epochs it keeps
+count it uses early stopping: `--patience` is how many epochs it keeps
 searching after the lowest validation loss before stopping:
 
 ```sh
@@ -228,7 +228,7 @@ It prints a per-epoch loss and a progress bar while training, then a held-out
 test accuracy, and writes `model.bin` (the trained weights) and `model.labels`
 (window size + class names).
 
-**5. Run live inference.**  `infer` reads the IMU, slides the same window over
+5. Run live inference.  `infer` reads the IMU, slides the same window over
 the stream, runs the same FFT, and prints the predicted movement.  Pass the same
 `--sensors` you trained with:
 
@@ -242,7 +242,7 @@ the same live stream.
 ### Annex A: shrinking the binary (image and audio support)
 
 When you `#include <mlpack.hpp>`, mlpack's `data::Load`/`data::Save` pull in
-support for **image** files (via the bundled STB libraries) and **audio** files
+support for image files (via the bundled STB libraries) and audio files
 (via the bundled dr_libs `dr_mp3`/`dr_wav`).  In this tutorial, we only loads CSVs,
 However, the image and audio function symbols is already part of the binary. It
 would be great to remove this dead code by disabling these two libraries to
@@ -267,15 +267,15 @@ add_compile_definitions(MLPACK_DISABLE_STB)
 # add_compile_definitions(MLPACK_DISABLE_DR_LIBS)  # if your mlpack provides it
 ```
 
-By far the largest single saving in this example, however, is **not** a
+By far the largest single saving in this example, however, is not a
 third-party switch: serializing a neural network with
-`MLPACK_ENABLE_ANN_SERIALIZATION` registers *every* layer type and adds well
+`MLPACK_ENABLE_ANN_SERIALIZATION` registers every layer type and adds well
 over a megabyte.  `train` avoids it entirely by saving only the trained weight
 matrix (`net.Parameters()`) and rebuilding the fixed architecture in `infer`.
 
 ### Annex B: making OpenBLAS fit (so training runs on the device)
 
-This is the single most important thing to understand for training *on* a
+This is the single most important thing to understand for training on a
 64 MB board, so it is worth reading carefully even though the example already
 does it for you.
 
