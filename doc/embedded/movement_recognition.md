@@ -22,13 +22,11 @@ Contents:
  * [Hardware](#hardware)
  * [Setting up the cross-compilation toolchain](#setting-up-the-cross-compilation-toolchain)
  * [Getting the example](#getting-the-example)
- * [Building the data-collection tools](#building-the-data-collection-tools)
- * [Building the training and inference programs](#building-the-training-and-inference-programs)
+ * [Building the programs](#building-the-programs)
  * [Copying everything to the device](#copying-everything-to-the-device)
  * [Running it on the device](#running-it-on-the-device)
  * [Annex A: shrinking the binary (image and audio support)](#annex-a-shrinking-the-binary-image-and-audio-support)
- * [Annex B: cross-compiling ncurses for the TUI](#annex-b-cross-compiling-ncurses-for-the-tui)
- * [Annex C: making OpenBLAS fit (so training runs on the device)](#annex-c-making-openblas-fit-so-training-runs-on-the-device)
+ * [Annex B: making OpenBLAS fit (so training runs on the device)](#annex-b-making-openblas-fit-so-training-runs-on-the-device)
 
 ### What are we building
 
@@ -53,8 +51,8 @@ target is to provide an example on how such a software can be built:
 | `infer`          | `infer/infer.cpp`  | yes          | live inference from the IMU |
 
 `collect` and `imu_test` only need the Linux I2C headers, so they compile to
-~150–170 KB static binaries with their own `Makefile`s.  `train` and `infer`
-link mlpack and are built with CMake using the same cross-compilation
+~150–170 KB static binaries.  `train` and `infer` link mlpack.  All four are
+built from **one CMake project** that uses the same cross-compilation
 infrastructure described in the [embedded example tutorial](crosscompile_example.md).
 
 The pipeline is: **`collect`** writes one CSV file per recording (the file name
@@ -124,43 +122,14 @@ git clone https://github.com/mlpack/examples.git
 cd examples/cpp/movement_recognition
 ```
 
-### Building the data-collection tools
+### Building the programs
 
-`imu_test` (sensor check + magnetometer calibration) and `collect` (recording)
-have no mlpack dependency, so they build directly with their own `Makefile`s and
-the cross toolchain.  Pass the cross compiler and ask for a
-static binary:
-
-```sh
-# Sensor check + magnetometer calibration  ->  driver/imu_test
-make -C driver CXX=$GXX STATIC=-static
-```
-
-`collect` includes an interactive ncurses front-end by default (pass `--no-tui` at runtime
-for plain command-line recording). ncurses is not part of the toolchain, so point the build
-at a target ncurses you cross-build once (see [Annex B](#annex-b-cross-compiling-ncurses-for-the-tui)):
-
-```sh
-export P=/path/to/ncurses-riscv64
-
-# Data-collection tool  ->  collect/collect
-make -C collect CXX=$GXX STATIC=-static \
-     NCURSES_CFLAGS="-isystem $P/include -isystem $P/include/ncursesw" \
-     NCURSES_LIBS="-L$P/lib -lncursesw"
-```
-
-If you do not need the TUI, you can build a smaller command line only `collect` with
-`make -C collect CXX=$GXX STATIC=-static NCURSES=0` (then always pass
-`--no-tui`).
-
-### Building the training and inference programs
-
-`train` and `infer` link against mlpack, so they use the CMake flow, which reuses the
-repository's embedded cross-compile machinery (`CMake/`) to fetch mlpack and its
-dependencies and cross-compile OpenBLAS, as described in 
-[embedded example tutorial](crosscompile_example.md). 
-At this stage, we need to define the architecture of the target device, using
-the following variable and the riscv-cpu as follows:`ARCH_NAME=C906`:
+All four programs build from **one CMake project**.  `imu_test` and `collect`
+only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
+reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
+mlpack and its dependencies and cross-compile OpenBLAS, as described in the
+[embedded example tutorial](crosscompile_example.md).  At this stage, we need to
+define the architecture of the target device with the `ARCH_NAME=C906` variable:
 
 ```sh
 mkdir build && cd build
@@ -170,25 +139,24 @@ cmake \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=$TC/bin/riscv64-buildroot-linux-musl- \
     -DCMAKE_SYSROOT=$TC/riscv64-buildroot-linux-musl/sysroot \
-    -DNCURSES_PREFIX=$P \
     ..
-make train infer
+make            # builds imu_test, collect, train, and infer
 ```
 
 `ARCH_NAME=C906` selects C906 tuning (`-mtune=thead-c906`) and a scalar
 `RISCV64_GENERIC` OpenBLAS build (no large vector buffers, friendlier on
 64 MB), and OpenMP is disabled (the board is effectively single-core for this
-workload), check [Annex C](#annex-c-making-openblas-fit-so-training-runs-on-the-device),
-for more details regarding OpenBLAS optimization for this specific device.
-`NCURSES_PREFIX` points `infer` at the same target ncurses used for
-`collect`; if it is omitted, `infer` is skipped and only `train` is built.
+workload), check [Annex B](#annex-b-making-openblas-fit-so-training-runs-on-the-device),
+for more details regarding OpenBLAS optimization for this specific device.  When
+cross-compiling, every binary is linked statically, so nothing needs to be
+installed on the device.  You can also build a single program, e.g. `make collect`.
 
-When the build finishes you will have `driver/imu_test`, `collect/collect`, and
-`build/train` + `build/infer`, all static RISC-V binaries:
+When the build finishes you will have `imu_test`, `collect`, `train`, and
+`infer` in the build directory, all static RISC-V binaries:
 
 ```sh
-file build/train
-# build/train: ELF 64-bit LSB executable, UCB RISC-V, ... statically linked, stripped
+file train
+# train: ELF 64-bit LSB executable, UCB RISC-V, ... statically linked, stripped
 ```
 
 ### Copying everything to the device
@@ -200,10 +168,7 @@ The Duo's BusyBox userland has no SFTP server, so a plain `scp` fails with
 for the Duo is `milkv`:
 
 ```sh
-scp -O driver/imu_test  root@192.168.42.1:/root/imu_test
-scp -O collect/collect  root@192.168.42.1:/root/collect
-scp -O build/train      root@192.168.42.1:/root/train
-scp -O build/infer      root@192.168.42.1:/root/infer
+scp -O imu_test collect train infer  root@192.168.42.1:/root/
 ssh root@192.168.42.1 'chmod +x /root/imu_test /root/collect /root/train /root/infer'
 ```
 
@@ -237,14 +202,13 @@ built into `imu_test`; rotate the board through all orientations while it sample
 
 **3. Collect labelled data.**  Each recording is written to its own file named
 `<label>_<date>.csv`, so the *label is the file name*.  Run `collect` once per
-movement; the interactive TUI is the default (pick the label, toggle sensors,
-press **Space** to start/stop), or use `--no-tui` for scripted capture over SSH:
+movement:
 
 ```sh
 mkdir data
-./collect --no-tui --label walking   --sensors accel --duration 30 --out-dir data
-./collect --no-tui --label sitting   --sensors accel --duration 30 --out-dir data
-./collect --no-tui --label squat     --sensors accel --duration 30 --out-dir data
+./collect --label walking   --sensors accel --duration 30 --out-dir data
+./collect --label sitting   --sensors accel --duration 30 --out-dir data
+./collect --label squat     --sensors accel --duration 30 --out-dir data
 ```
 
 Collect several recordings per movement (more files means more training
@@ -270,7 +234,6 @@ the stream, runs the same FFT, and prints the predicted movement.  Pass the same
 
 ```sh
 ./infer --bundle model --sensors accel            # prints predictions to stdout
-./infer --bundle model --sensors accel --tui      # interactive ncurses view
 ```
 
 You can pass `--bundle` more than once to compare several trained networks on
@@ -310,31 +273,7 @@ third-party switch: serializing a neural network with
 over a megabyte.  `train` avoids it entirely by saving only the trained weight
 matrix (`net.Parameters()`) and rebuilding the fixed architecture in `infer`.
 
-### Annex B: cross-compiling ncurses for the TUI
-
-The `collect --tui` and `infer --tui` front-ends need ncurses, which the Bootlin
-toolchain does not ship for the target.  Cross-build it once (static, with a few
-terminal fallbacks baked in so no terminfo database is needed on the device),
-then point the two builds at it with `NCURSES_PREFIX` (and the
-`NCURSES_CFLAGS`/`NCURSES_LIBS` variables for `collect`):
-
-```sh
-# In an unpacked ncurses source tree; P is where it gets installed:
-export P=/path/to/ncurses-riscv64
-./configure --host=riscv64-buildroot-linux-musl CC=$TC/bin/riscv64-buildroot-linux-musl-gcc \
-    --prefix=$P --without-shared --without-cxx --without-progs \
-    --disable-database --with-build-cc=gcc \
-    --with-fallbacks=linux,vt100,xterm,xterm-256color,screen,ansi
-make && make install
-```
-
-After this, `$P/lib/libncursesw.a` and the headers under `$P/include` are what
-the `collect` and `train`/`infer` build commands above expect.  If you do not
-need the interactive front-ends, build `collect` with `NCURSES=0` and omit
-`-DNCURSES_PREFIX`, and use the command-line modes (`collect --no-tui`,
-`infer` without `--tui`).
-
-### Annex C: making OpenBLAS fit (so training runs on the device)
+### Annex B: making OpenBLAS fit (so training runs on the device)
 
 This is the single most important thing to understand for training *on* a
 64 MB board, so it is worth reading carefully even though the example already
