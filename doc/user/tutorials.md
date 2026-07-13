@@ -7,7 +7,7 @@ usage of the library.
    simple examples of mlpack usage for various machine learning tasks, in C++
    and other languages.  Both notebooks and standalone programs are available.
 
- * [On-device movement recognition with an IMU](../embedded/movement_recognition.md):
+ * [On-device movement recognition with an IMU](../tutorials/movement_recognition.md):
    a complete data-collection, training, and inference pipeline that reads a
    9-DOF IMU and runs entirely on a tiny RISC-V Linux board (Milk-V Duo).
 

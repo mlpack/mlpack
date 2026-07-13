@@ -8,9 +8,9 @@ on real resource-constrained embedded hardware.
 
 If you have not cross-compiled mlpack before, read these first:
 
- * [Run mlpack bindings on a Raspberry Pi](crosscompile_armv7.md)
- * [Cross-compile an mlpack example for embedded hardware](crosscompile_example.md)
- * [Cross-compilation setup (toolchains per board)](supported_boards.md)
+ * [Run mlpack bindings on a Raspberry Pi](../embedded/crosscompile_armv7.md)
+ * [Cross-compile an mlpack example for embedded hardware](../embedded/crosscompile_example.md)
+ * [Cross-compilation setup (toolchains per board)](../embedded/supported_boards.md)
 
 The full source code for this tutorial can be found in the
 [mlpack examples repository](https://github.com/mlpack/examples), under
@@ -43,17 +43,20 @@ can be run by the user to do one specific task. It is up to the user to
 combine them or integrate such a functionality in their project. Our main
 target is to provide an example on how such a software can be built: 
 
-| Program          | Built from         | Uses mlpack? | Purpose |
-|------------------|--------------------|:------------:|---------|
-| `driver/imu_test`| `driver/`          | no           | sensor check + magnetometer calibration |
-| `collect`        | `collect/`         | no           | record sensor data to CSV (small, exception-free) |
-| `train`          | `train/train.cpp`  | yes          | train a neural network from the CSVs |
-| `infer`          | `infer/infer.cpp`  | yes          | live inference from the IMU |
+| Program    | Built from         | Uses mlpack? | Purpose |
+|------------|--------------------|:------------:|---------|
+| `imu_test` | `driver/`          | no           | sensor check + magnetometer calibration |
+| `collect`  | `collect/`         | no           | record sensor data to CSV (small, exception-free) |
+| `train`    | `train/train.cpp`  | yes          | train a neural network from the CSVs |
+| `infer`    | `infer/infer.cpp`  | yes          | live inference from the IMU |
 
-`collect` and `imu_test` only need the Linux I2C headers, so they compile to
-~150–170 KB static binaries.  `train` and `infer` link mlpack.  All four are
-built from one CMake project that uses the same cross-compilation
-infrastructure described in the [embedded example tutorial](crosscompile_example.md).
+All three sensor-reading programs share the self-contained driver under
+`driver/`, which wraps the whole GY-89 board behind one `SensorBoard` object:
+`collect` and `infer` just open it, bring up the selected sensors, and read
+whole samples.  `collect` and `imu_test` only need the Linux I2C headers, so
+they compile to ~150–170 KB static binaries; `train` and `infer` link mlpack.
+All four are built from one CMake project that uses the same cross-compilation
+infrastructure described in the [embedded example tutorial](../embedded/crosscompile_example.md).
 
 The pipeline is: `collect` writes one CSV file per recording (the file name
 is the label), `train` turns those CSVs into FFT features and fits a network,
@@ -91,7 +94,7 @@ different interface.
 
 Since the device is resource constrained with only 28 MB available
 RAM, therefore, we cross-compile on a host `x86_64` machine and copy the static
-binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](crosscompile_armv7.md).
+binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
 [Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
 the smallest static binary we use the musl variant
@@ -110,7 +113,7 @@ export GXX=$TC/bin/riscv64-buildroot-linux-musl-g++
 ```
 
 The C906 architecture and its toolchain prefix/sysroot are listed on the
-[cross-compilation setup page](supported_boards.md#c906). However, note that
+[cross-compilation setup page](../embedded/supported_boards.md#c906). However, note that
 we are using the musl toolchain here instead of the glibc one shown there.
 
 ### Getting the example
@@ -128,7 +131,7 @@ All four programs build from one CMake project.  `imu_test` and `collect`
 only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
 reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
 mlpack and its dependencies and cross-compile OpenBLAS, as described in the
-[embedded example tutorial](crosscompile_example.md).  At this stage, we need to
+[embedded example tutorial](../embedded/crosscompile_example.md).  At this stage, we need to
 define the architecture of the target device with the `ARCH_NAME=C906` variable:
 
 ```sh
