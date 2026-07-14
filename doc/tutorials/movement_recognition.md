@@ -100,15 +100,15 @@ The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
 the smallest static binary we use the musl variant
 
 ```sh
-wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--musl--stable-2024.02-1.tar.bz2
-tar -xvf riscv64-lp64d--musl--stable-2024.02-1.tar.bz2
+wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--musl--stable-2025.08-1.tar.xz
+tar -xvf riscv64-lp64d--musl--stable-2025.08-1.tar.xz
 ```
 
 For the rest of the tutorial we refer to the unpacked toolchain through two
 shell variables; adjust the path to where you extracted it:
 
 ```sh
-export TC=/path/to/riscv64-lp64d--musl--stable-2024.02-1
+export TC=/path/to/riscv64-lp64d--musl--stable-2025.08-1
 export GXX=$TC/bin/riscv64-buildroot-linux-musl-g++
 ```
 
@@ -204,27 +204,30 @@ built into `imu_test`; rotate the board through all orientations while it sample
 ```
 
 3. Collect labelled data.  Each recording is written to its own file named
-`<label>_<date>.csv`, so the label is the file name.  Run `collect` once per
-movement:
+`<label>_<date>.csv`, so the label is the file name.  The arguments are
+positional -- `collect <label> [sensors] [out-dir] [device] [rate-hz]
+[duration-sec] [mag-cal]` -- so here we record accelerometer only, into `data`,
+on the default bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
 
 ```sh
 mkdir data
-./collect --label walking   --sensors accel --duration 30 --out-dir data
-./collect --label sitting   --sensors accel --duration 30 --out-dir data
-./collect --label squat     --sensors accel --duration 30 --out-dir data
+./collect walking   accel data /dev/i2c-0 100 30
+./collect sitting   accel data /dev/i2c-0 100 30
+./collect squat     accel data /dev/i2c-0 100 30
 ```
 
 Collect several recordings per movement (more files means more training
-windows), keeping the same `--sensors` selection across all of them.
+windows), keeping the same sensor selection across all of them.
 
 4. Train the network.  `train` groups the CSVs by label, cuts each into
-non-overlapping windows of `--window` samples, runs one FFT per channel to get
+non-overlapping windows of `window` samples, runs one FFT per channel to get
 features, and trains a small `float32` neural network.  Instead of a fixed epoch
-count it uses early stopping: `--patience` is how many epochs it keeps
-searching after the lowest validation loss before stopping:
+count it uses early stopping: the `patience` argument is how many epochs it keeps
+searching after the lowest validation loss before stopping.  The arguments are
+positional -- `train <data-dir> [window] [out-prefix] [patience] [test-split]`:
 
 ```sh
-./train --data data --window 64 --patience 10 --out model
+./train data 64 model 10
 ```
 
 It prints a per-epoch loss and a progress bar while training, then a held-out
@@ -232,14 +235,16 @@ test accuracy, and writes `model.bin` (the trained weights) and `model.labels`
 (window size + class names).
 
 5. Run live inference.  `infer` reads the IMU, slides the same window over
-the stream, runs the same FFT, and prints the predicted movement.  Pass the same
-`--sensors` you trained with:
+the stream, runs the same FFT, and prints the predicted movement.  The arguments
+are positional -- `infer <sensors> <device> <mag-cal> <model-prefix>
+[model-prefix ...]` -- and you must pass the same sensors you trained with (use
+`-` for the mag-cal file to skip it):
 
 ```sh
-./infer --bundle model --sensors accel            # prints predictions to stdout
+./infer accel /dev/i2c-0 - model                  # prints predictions to stdout
 ```
 
-You can pass `--bundle` more than once to compare several trained networks on
+You can pass more than one model prefix to compare several trained networks on
 the same live stream.
 
 ### Annex A: shrinking the binary (image and audio support)
@@ -297,25 +302,10 @@ The above reduction is possible for two reason: the first one is that this
 board has only 28 MB available, and second reason is that all also our matrices
 are tiny in this example (e.g., 64 x 297). 
 
-The fix is simple, we patch two headers in OpenBLAS before it is compiled in 
-`CMake/ConfigureCrossCompile.cmake` as follows:
-
-```cmake
-# NN-on-device memory fit (riscv64).  OpenBLAS lazily allocates a per-GEMM
-# scratch buffer (BUFFER_SIZE -- 32 MB on riscv64) sized for its default
-# N-block (SGEMM_DEFAULT_R = 12288).  That single 32 MB allocation does
-# not fit on a ~28 MB device, so the first f32 matrix-multiply -- e.g. the
-# neural network's dense layers -- is OOM-killed at startup.  
-# Our matrices are tiny, so shrink the N-block to 2048 and the buffer to 8 MB.
-if(OPENBLAS_TARGET STREQUAL "RISCV64_GENERIC")
-  execute_process(COMMAND sed -i
-      "/#ifdef RISCV64_GENERIC/,/#endif/{s/_DEFAULT_R 12288/_DEFAULT_R 2048/;s/_DEFAULT_R 8192/_DEFAULT_R 2048/;s/_DEFAULT_R 4096/_DEFAULT_R 2048/}"
-      "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/param.h")
-  execute_process(COMMAND sed -i
-      "s/( 32 << 20)/( 8 << 20)/"
-      "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version}/common_riscv64.h")
-endif()
-```
+Both reductions are shipped as a patch file that lowers these two values in the
+OpenBLAS source before it is built.  It is applied automatically for the riscv64
+target, so you normally do nothing; to apply it explicitly (or supply your own),
+pass it to CMake with `-DOPENBLAS_PATCHES=CMake/patches/openblas-riscv64-low-memory.patch`.
 
 In addition to this, OpenBLAS is build as a single thread, since the cpu is a
 single-core:

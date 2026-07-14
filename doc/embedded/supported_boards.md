@@ -90,130 +90,289 @@ architecture with a similar word size, or, adapt the parameters directly in
 `CMake/crosscompile-arch-config.cmake` and feel free to open a pull request so we can get
 the new architecture added to this table.
 
+Each section below gives the glibc toolchain by default.  Where Bootlin also
+ships a **musl** toolchain for that architecture, a second block is provided:
+musl produces a smaller footprint, which can matter on very constrained devices.
+
 ### ARM11
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_armv6-eabihf.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv6-eabihf--musl--stable-2025.08-1/arm-buildroot-linux-musleabihf/sysroot
 ```
 
 ### CORTEXA7
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_armv7-eabihf.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/arm-buildroot-linux-musleabihf/sysroot
 ```
 
 ### CORTEXA8
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_armv7-eabihf.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/arm-buildroot-linux-musleabihf/sysroot
 ```
 
 ### CORTEXA9
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_armv7-eabihf.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/arm-buildroot-linux-musleabihf/sysroot
 ```
 
 ### CORTEXA15
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_armv7-eabihf.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--musl--stable-2025.08-1/arm-buildroot-linux-musleabihf/sysroot
 ```
 
 ### CORTEXA53
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_aarch64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/bin/aarch64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
 ### CORTEXA72
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_aarch64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/bin/aarch64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
 ### CORTEXA76
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_aarch64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/bin/aarch64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
 ### CORTEXA78
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_aarch64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/bin/aarch64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
 ### BCM2711
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2025.08-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_aarch64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/bin/aarch64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
 ### C906
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/riscv64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/riscv64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2025.08-1/bin/riscv64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2025.08-1/riscv64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_riscv64-lp64d.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--musl--stable-2025.08-1/bin/riscv64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--musl--stable-2025.08-1/riscv64-buildroot-linux-musl/sysroot
 ```
 
 ### x280
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/bin/riscv64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2024.02-1/riscv64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2025.08-1/bin/riscv64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2025.08-1/riscv64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_riscv64-lp64d.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--musl--stable-2025.08-1/bin/riscv64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/riscv64-lp64d--musl--stable-2025.08-1/riscv64-buildroot-linux-musl/sysroot
 ```
 
 ### KATAMI
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/x86-i686-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/x86-i686-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2025.08-1/bin/i686-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2025.08-1/i686-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_x86-i686.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--musl--stable-2025.08-1/bin/i686-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--musl--stable-2025.08-1/i686-buildroot-linux-musl/sysroot
 ```
 
 ### NORTHWOOD
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/bin/x86-64-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-64--glibc--stable-2024.02-1/x86-64-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-64--glibc--stable-2025.08-1/bin/x86_64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-64--glibc--stable-2025.08-1/x86_64-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_x86-64.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-64--musl--stable-2025.08-1/bin/x86_64-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-64--musl--stable-2025.08-1/x86_64-buildroot-linux-musl/sysroot
 ```
 
 ### COPPERMINE
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/bin/x86-i686-buildroot-linux-gnueabihf-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2024.02-1/x86-i686-buildroot-linux-gnueabihf/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2025.08-1/bin/i686-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--glibc--stable-2025.08-1/i686-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_x86-i686.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/x86-i686--musl--stable-2025.08-1/bin/i686-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/x86-i686--musl--stable-2025.08-1/i686-buildroot-linux-musl/sysroot
 ```
 
 ### POWERPCG4
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/bin/powerpc-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2024.02-1/powerpc-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2025.08-1/bin/powerpc-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--glibc--stable-2025.08-1/powerpc-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_powerpc-440fp.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/powerpc-440fp--musl--stable-2025.08-1/bin/powerpc-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/powerpc-440fp--musl--stable-2025.08-1/powerpc-buildroot-linux-musl/sysroot
 ```
 
 ### MIPS24K
 
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--glibc--stable-2024.02-1/bin/mips32-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--glibc--stable-2024.02-1/mips32-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/bin/mips-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--glibc--stable-2025.08-1/mips-buildroot-linux-gnu/sysroot
+```
+
+For a smaller footprint, Bootlin also provides a
+[musl libc toolchain](https://toolchains.bootlin.com/releases_mips32.html);
+use these variables instead:
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/mips32--musl--stable-2025.08-1/bin/mips-buildroot-linux-musl-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/mips32--musl--stable-2025.08-1/mips-buildroot-linux-musl/sysroot
 ```
 
 ### ULTRASPARC
 
+Bootlin ships sparc64 as a glibc toolchain only (no musl variant is available).
+
 ```
--DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/bin/sparc64-buildroot-linux-gnu-
--DCMAKE_SYSROOT=/path/to/bootlin/toolchain/sparc64--glibc--stable-2024.05-1/sparc64-buildroot-linux-gnu/sysroot
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/sparc64--glibc--stable-2025.08-1/bin/sparc64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/sparc64--glibc--stable-2025.08-1/sparc64-buildroot-linux-gnu/sysroot
 ```
 
 ***Note:*** the sparc64 instruction set does not support unaligned loads;
