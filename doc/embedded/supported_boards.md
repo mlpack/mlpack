@@ -57,7 +57,7 @@ cmake \
 | CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76) |
 | CORTEXA78 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa78) | [Cortex A78 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A78) |
 | BCM2711 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#bcm2711) | [Raspberry Pi 4 on Wikipedia](https://en.wikipedia.org/wiki/Raspberry_Pi_4) |
-| C906 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html) | [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
+| RV64GCV | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html) | [Sysroot and toolchain prefix](#rv64gcv) | [T-Head C906 (an RV64GCV core)](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
 | x280 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html) | [Sysroot and toolchain prefix](#x280) | [SiFive x280 product brief](https://www.sifive.com/document-file/sifive-intelligence-x280-product-brief) |
 | KATAMI | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html) | [Sysroot and toolchain prefix](#katami) | [Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III) |
 | NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html) | [Sysroot and toolchain prefix](#northwood) | [Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4) |
@@ -235,7 +235,7 @@ use these variables instead:
 -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot
 ```
 
-### C906
+### RV64GCV
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/riscv64-lp64d--glibc--stable-2025.08-1/bin/riscv64-buildroot-linux-gnu-

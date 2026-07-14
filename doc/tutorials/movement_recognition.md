@@ -112,9 +112,11 @@ export TC=/path/to/riscv64-lp64d--musl--stable-2025.08-1
 export GXX=$TC/bin/riscv64-buildroot-linux-musl-g++
 ```
 
-The C906 architecture and its toolchain prefix/sysroot are listed on the
-[cross-compilation setup page](../embedded/supported_boards.md#c906). However, note that
-we are using the musl toolchain here instead of the glibc one shown there.
+The C906's architecture is `RV64GCV`, and that architecture's toolchain prefix/sysroot
+are listed on the
+[cross-compilation setup page](../embedded/supported_boards.md#rv64gcv). However,
+note that we are using the musl toolchain here instead of the glibc one shown
+there.
 
 ### Getting the example
 
@@ -132,13 +134,14 @@ only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
 reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
 mlpack and its dependencies and cross-compile OpenBLAS, as described in the
 [embedded example tutorial](../embedded/crosscompile_example.md).  At this stage, we need to
-define the architecture of the target device with the `ARCH_NAME=C906` variable:
+define the architecture of the target device with the `ARCH_NAME=RV64GCV`
+variable (the ISA of the board's C906 core):
 
 ```sh
 mkdir build && cd build
 cmake \
     -DCMAKE_CROSSCOMPILING=ON \
-    -DARCH_NAME=C906 \
+    -DARCH_NAME=RV64GCV \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
     -DTOOLCHAIN_PREFIX=$TC/bin/riscv64-buildroot-linux-musl- \
     -DCMAKE_SYSROOT=$TC/riscv64-buildroot-linux-musl/sysroot \
@@ -146,7 +149,7 @@ cmake \
 make            # builds imu_test, collect, train, and infer
 ```
 
-`ARCH_NAME=C906` selects C906 tuning (`-mtune=thead-c906`) and a scalar
+`ARCH_NAME=RV64GCV` selects C906 tuning (`-mtune=thead-c906`) and a scalar
 `RISCV64_GENERIC` OpenBLAS build (no large vector buffers, friendlier on
 64 MB), and OpenMP is disabled (the board is effectively single-core for this
 workload), check [Annex B](#annex-b-making-openblas-fit-so-training-runs-on-the-device),
