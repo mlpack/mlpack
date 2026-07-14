@@ -13,11 +13,6 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
-// With RcppArmadillo 15.0.1-1 or later, prefer current Armadillo
-#if !defined(ARMA_USE_CURRENT)
-  #define ARMA_USE_CURRENT
-#endif
-
 // Armadillo does not provide an official support for unsigned / signed 8 bits
 // integers.
 // Since `char` might be represented differently on various hardware.
@@ -41,6 +36,25 @@
 #endif
 #if !defined(MLPACK_CERR_STREAM)
   #define MLPACK_CERR_STREAM Rcpp::Rcerr
+#endif
+
+// The R bindings default to not enabling STB, DR_LIBS or HTTPLIB.
+// This can be overriden via package compilerflags, i.e.
+//   PKG_CPPFLAGS=-DMLPACK_R_ENABLE_DR_LIBS R CMD INSTALL mlpack_*.tar.gz
+// on the command-line, or by editing src/Makevars or ~/.R/Makevars.
+#if !defined(MLPACK_R_ENABLE_STB)
+  #undef  MLPACK_DISABLE_STB
+  #define MLPACK_DISABLE_STB
+#endif
+
+#if !defined(MLPACK_R_ENABLE_DR_LIBS)
+  #undef  MLPACK_DISABLE_DR_LIBS
+  #define MLPACK_DISABLE_DR_LIBS
+#endif
+
+#if !defined(MLPACK_R_ENABLE_HTTPLIB)
+  #undef  MLPACK_DISABLE_HTTPLIB
+  #define MLPACK_DISABLE_HTTPLIB
 #endif
 
 #endif

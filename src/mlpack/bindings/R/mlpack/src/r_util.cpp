@@ -378,3 +378,26 @@ void SetPassed(SEXP params, const std::string& paramName)
   util::Params& p = *Rcpp::as<Rcpp::XPtr<util::Params>>(params);
   p.SetPassed(paramName);
 }
+
+// Show compile-time capabilities. These three libraries are 'opt-in' for
+// the R package build.
+// [[Rcpp::export]]
+Rcpp::LogicalVector capabilities() {
+  Rcpp::LogicalVector v(3);     // default is all FALSE as FALSE == 0
+
+#if !defined(MLPACK_DISABLE_STB)
+  v[0] = TRUE;
+#endif
+
+#if !defined(MLPACK_DISABLE_DR_LIBS)
+  v[1] = TRUE;
+#endif
+
+#if !defined(MLPACK_DISABLE_HTTPLIB)
+  v[2] = TRUE;
+#endif
+
+  v.names() = Rcpp::CharacterVector::create("STB", "DR_LIBS", "HTTPLIB");
+
+  return v;
+}

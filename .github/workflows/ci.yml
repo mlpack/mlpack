@@ -67,7 +67,7 @@ jobs:
             runner: ubuntu-latest,
             os: 'Linux',
             name: 'R',
-            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DENABLE_HTTPLIB=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/',
+            cmakeVars: '-DBUILD_CLI_EXECUTABLES=OFF -DBUILD_R_BINDINGS=ON -DCEREAL_INCLUDE_DIR=../cereal-1.3.2/include/',
             cores: 4
           },
           {
