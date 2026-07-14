@@ -45,45 +45,26 @@ cmake \
     ../
 ```
 
-|-----------------------------------------------------------------------------
 | `ARCH_NAME` | link to crosscompiler | CMake command | Example applications |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ARM11    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#arm11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-------------|-----------------------|---------------|----------------------|
+| ARM11 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv6-eabihf.html) | [Sysroot and toolchain prefix](#arm11) | [ARM11 on Wikipedia](https://en.wikipedia.org/wiki/ARM11) |
 | CORTEXA7 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa7) | [Cortex A7 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A7) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA8 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa8) | [Cortex A8 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A8) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA9  | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa9) |[Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA15 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15)  |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA53 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa53) | [Cortex A53 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A53)  |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA72 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa72) | [Cortex A72 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A72)  |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76)  |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CORTEXA78 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa78) | [Cortex A78 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A78)  |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BCM2711   | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#bcm2711) | [Raspberry Pi 4 on Wikipedia](https://en.wikipedia.org/wiki/Raspberry_Pi_4) |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| x280      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#x280) | [SiFive x280 product brief](https://www.sifive.com/document-file/sifive-intelligence-x280-product-brief) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| KATAMI    | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)     | [Sysroot and toolchain prefix](#katami) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)          |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html)       | [Sysroot and toolchain prefix](#northwood)   |[Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4)       |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPPERMINE | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html)   | [Sysroot and toolchain prefix](#coppermine) |[Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III)       |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| POWERPCG4 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_powerpc-440fp.html)   | [Sysroot and toolchain prefix](#powerpcg4) |[Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube), [BAE RAD750](https://en.wikipedia.org/wiki/RAD750) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| MIPS24K | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_mips32.html)   | [Sysroot and toolchain prefix](#mips24k) |[MIPS32k on Wikipedia](https://en.wikipedia.org/wiki/MIPS_architecture#MIPS32/MIPS64) [VoCore Ultimate](http://vocore.io/v2u.html) |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ULTRASPARC | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_sparc64.html)   | [Sysroot and toolchain prefix](#ultrasparc) |[UltraSPARC on Wikipedia](https://en.wikipedia.org/wiki/UltraSPARC)        |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CORTEXA9 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa9) | [Cortex A9 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A9) |
+| CORTEXA15 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_armv7-eabihf.html) | [Sysroot and toolchain prefix](#cortexa15) | [Cortex A15 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A15) |
+| CORTEXA53 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa53) | [Cortex A53 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A53) |
+| CORTEXA72 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa72) | [Cortex A72 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A72) |
+| CORTEXA76 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa76) | [Cortex A76 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A76) |
+| CORTEXA78 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#cortexa78) | [Cortex A78 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A78) |
+| BCM2711 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html) | [Sysroot and toolchain prefix](#bcm2711) | [Raspberry Pi 4 on Wikipedia](https://en.wikipedia.org/wiki/Raspberry_Pi_4) |
+| C906 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html) | [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
+| x280 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html) | [Sysroot and toolchain prefix](#x280) | [SiFive x280 product brief](https://www.sifive.com/document-file/sifive-intelligence-x280-product-brief) |
+| KATAMI | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html) | [Sysroot and toolchain prefix](#katami) | [Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III) |
+| NORTHWOOD | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-64.html) | [Sysroot and toolchain prefix](#northwood) | [Pentium 4 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_4) |
+| COPPERMINE | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_x86-i686.html) | [Sysroot and toolchain prefix](#coppermine) | [Pentium 3 on Wikipedia](https://en.wikipedia.org/wiki/Pentium_III) |
+| POWERPCG4 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_powerpc-440fp.html) | [Sysroot and toolchain prefix](#powerpcg4) | [Power Mac G4 Cube](https://en.wikipedia.org/wiki/Power_Mac_G4_Cube), [BAE RAD750](https://en.wikipedia.org/wiki/RAD750) |
+| MIPS24K | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_mips32.html) | [Sysroot and toolchain prefix](#mips24k) | [MIPS32k on Wikipedia](https://en.wikipedia.org/wiki/MIPS_architecture#MIPS32/MIPS64), [VoCore Ultimate](http://vocore.io/v2u.html) |
+| ULTRASPARC | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_sparc64.html) | [Sysroot and toolchain prefix](#ultrasparc) | [UltraSPARC on Wikipedia](https://en.wikipedia.org/wiki/UltraSPARC) |
 
 If you didn't see your architecture in the table above, use the closest
 architecture with a similar word size, or, adapt the parameters directly in
