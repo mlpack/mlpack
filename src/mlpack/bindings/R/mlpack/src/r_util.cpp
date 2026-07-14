@@ -379,7 +379,8 @@ void SetPassed(SEXP params, const std::string& paramName)
   p.SetPassed(paramName);
 }
 
-// Show compile-time capabilities.
+// Show compile-time capabilities. These three libraries are 'opt-in' for
+// the R package build.
 // [[Rcpp::export]]
 Rcpp::LogicalVector capabilities() {
   Rcpp::LogicalVector v(3);     // default is all FALSE as FALSE == 0
