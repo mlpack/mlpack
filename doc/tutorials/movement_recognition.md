@@ -104,12 +104,11 @@ wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/
 tar -xvf riscv64-lp64d--musl--stable-2025.08-1.tar.xz
 ```
 
-For the rest of the tutorial we refer to the unpacked toolchain through two
-shell variables; adjust the path to where you extracted it:
+For the rest of the tutorial we refer to the unpacked toolchain through a shell
+variable; adjust the path to where you extracted it:
 
 ```sh
 export TC=/path/to/riscv64-lp64d--musl--stable-2025.08-1
-export GXX=$TC/bin/riscv64-buildroot-linux-musl-g++
 ```
 
 The C906's architecture is `RV64GCV`, and that architecture's toolchain prefix/sysroot
@@ -265,12 +264,6 @@ on the command line.  Add them to the configure step from
 ```sh
 cmake ... -DMLPACK_DISABLE_STB=ON -DMLPACK_DISABLE_DR_LIBS=ON -DMLPACK_DISABLE_HTTPLIB=ON ..
 ```
-
-By far the largest single saving in this example, however, is not a
-third-party switch: serializing a neural network with
-`MLPACK_ENABLE_ANN_SERIALIZATION` registers every layer type and adds well
-over a megabyte.  `train` avoids it entirely by saving only the trained weight
-matrix (`net.Parameters()`) and rebuilding the fixed architecture in `infer`.
 
 ### Annex B: making OpenBLAS fit (so training runs on the device)
 
