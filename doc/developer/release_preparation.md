@@ -60,7 +60,7 @@ Push new benchmarks to website
 We need to rebuild the benchmark reports so that the figure colors are right for the webpage.
 
 1. Check out the benchmarking system to some directory.
-2. Download massif.tar.gz and benchmark.db from the artifacts of the build server's [http://big.cc.gt.atl.ga.us:8080/job/benchmark%20-%20reports/ completed "benchmark - reports" job]
+2. Download massif.tar.gz and benchmark.db from the artifacts of the build server's [completed "benchmark - reports" job](http://big.cc.gt.atl.ga.us:8080/job/benchmark%20-%20reports/)
 3. Put benchmark.db in the reports/ folder, and unpack the .mout files from massif.tar.gz into reports/etc/
 4. Modify config.yaml; change chartColor to #000000, topChartColor to #000000, and textColor to #aaaaaa (the same color as the website text).
 5. Run 'make reports' from the base benchmark directory.

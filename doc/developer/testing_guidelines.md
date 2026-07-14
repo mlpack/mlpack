@@ -83,7 +83,7 @@ However, for a quick view, you can refer to the previously implemented test case
 ### Tests With Random Input
 For time and resource-based constraints, `Travis` only runs the test cases for a single time. This is however not the correct way to test out the code implementations which require a random input. It is possible that the code may pass on a single run, but while on multiple runs, it might lead to a failure (like the way it is done in `Jenkins`). For such a case, the right way to test the random input based tests is to set the random seed and run many times locally on your machine to be sure. Add `mlpack::math::RandomSeed(std::time(NULL))` to the top of your test case, compile and then run the following script in the terminal:
 ```
-$ i=0; while(true); do echo $i; bin/mlpack_test --rng-seed $i "[testname]" 2>&1 | grep 'fatal error'; i=$(($i + 1)); sleep 1; done
+$ i=0; while(true); do echo $i; bin/mlpack_test --rng-seed $i "\[testname\]" 2>&1 | grep 'fatal error'; i=$(($i + 1)); sleep 1; done
 ```
 
 It's useful to run that script for ~1000 iterations and make sure the test does not fail in that period.  If you don't do this, then you should not be surprised if a bug gets opened and you get tagged in it because the test you wrote that got merged was not stable. :)

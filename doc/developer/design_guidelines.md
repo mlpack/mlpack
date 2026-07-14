@@ -10,7 +10,7 @@ Goals of mlpack (plus a little history)
 
 The mlpack project was started around 2007 as "FASTLIB/MLPACK", a machine learning library for use by Alex Gray's FASTLab (http://www.fast-lab.org/) to implement their fast machine learning algorithms.  The types of problems considered were generally statistical tasks: nearest neighbor search, density estimation, range search, and so forth.  In addition to being a research delivery vehicle for the research of the FASTLab, the goal was to produce very high-speed implementations of these algorithms that could be used as building blocks for higher-level tasks.
 
-In 2009 and 2010, a complete code overhaul was started after an in-depth survey of the code.  This led to the design document "The Future of MLPACK": http://www.igglybob.com/mlpack_future.pdf.  That document, and the later papers (at the NIPS BigLearning workshop (http://www.ratml.org/pub/pdf/2011mlpack.pdf) and in JMLR (http://www.ratml.org/pub/pdf/2013mlpack.pdf)) formalizes four development goals of mlpack:
+In 2009 and 2010, a complete code overhaul was started after an in-depth survey of the code.  This led to the design document "The Future of MLPACK": http://www.igglybob.com/mlpack_future.pdf.  That document, and the later papers (at the NIPS BigLearning workshop (<http://www.ratml.org/pub/pdf/2011mlpack.pdf>) and in JMLR (<http://www.ratml.org/pub/pdf/2013mlpack.pdf>)) formalizes four development goals of mlpack:
 
 * Implement scalable, fast machine learning algorithms 
 * Design an intuitive, simple API for users who are not C++ experts
