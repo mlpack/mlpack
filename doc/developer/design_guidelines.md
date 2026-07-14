@@ -17,7 +17,7 @@ In 2009 and 2010, a complete code overhaul was started after an in-depth survey 
 * Implement as large a collection as possible of machine learning methods
 * Provide cutting-edge machine learning algorithms that no other library does
 
-This last goal is somewhat in contrast to the scikit-learn project, which generally only implements stable, well-known algorithms.  mlpack can fill a niche by providing high-quality implementations of algorithms that just appeared in conferences or journals.  In those cases where mlpack is implementing well-known algorithms (i.e. SVMs or other standard techniques), we should strive to ensure that our implementation is faster than other implementations.  To ensure that, we may use the automatic benchmarking system; see https://www.github.com/zoq/benchmarks/.
+This last goal is somewhat in contrast to the scikit-learn project, which generally only implements stable, well-known algorithms.  mlpack can fill a niche by providing high-quality implementations of algorithms that just appeared in conferences or journals.  In those cases where mlpack is implementing well-known algorithms (i.e. SVMs or other standard techniques), we should strive to ensure that our implementation is faster than other implementations.  To ensure that, we may use the automatic benchmarking system; see <https://www.github.com/zoq/benchmarks/>.
 
 General Machine Learning Abstractions
 =====================================
