@@ -253,29 +253,17 @@ the same live stream.
 ### Annex A: shrinking the binary (image and audio support)
 
 When you `#include <mlpack.hpp>`, mlpack's `data::Load`/`data::Save` pull in
-support for image files (via the bundled STB libraries) and audio files
-(via the bundled dr_libs `dr_mp3`/`dr_wav`).  In this tutorial, we only loads CSVs,
-However, the image and audio function symbols is already part of the binary. It
-would be great to remove this dead code by disabling these two libraries to
-reduce the footprint of the static binary. Removing these two will allow us to
-reduce approximately 100 KB from the target binary.
+support for image files (via the bundled STB libraries) and audio files (via the
+bundled dr_libs).  This tutorial only loads CSVs, so that image and audio code is
+dead weight. Therefore, disabling it trims roughly 100 KB from the static binary.
 
-mlpack provides [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions)
-that can compile both out as follows:
+mlpack exposes these as [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions),
+and the CMake infrastructure this example uses turns them into flags you can pass
+on the command line.  Add them to the configure step from
+[Building the programs](#building-the-programs):
 
-| CMake option | Code define | Effect |
-|--------------|-------------|--------|
-| `-DDISABLE_STB=ON`     | `MLPACK_DISABLE_STB`     | Remove image (STB) support |
-| `-DDISABLE_DR_LIBS=ON` | `MLPACK_DISABLE_DR_LIBS` | Remove audio (dr_libs) support |
-
-
-Since `train`/`infer` have their own CMake files, and they are using a local
-none installed headers of mlpack. Therefore We can add these compile definition
-directly from cmake as follows:
-
-```cmake
-add_compile_definitions(MLPACK_DISABLE_STB)
-# add_compile_definitions(MLPACK_DISABLE_DR_LIBS)  # if your mlpack provides it
+```sh
+cmake ... -DMLPACK_DISABLE_STB=ON -DMLPACK_DISABLE_DR_LIBS=ON -DMLPACK_DISABLE_HTTPLIB=ON ..
 ```
 
 By far the largest single saving in this example, however, is not a
