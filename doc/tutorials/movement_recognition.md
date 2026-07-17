@@ -62,6 +62,23 @@ The pipeline is: `collect` writes one CSV file per recording (the file name
 is the label), `train` turns those CSVs into FFT features and fits a network,
 and `infer` reads the live sensor stream and prints the predicted movement.
 
+The figure below shows that feature pipeline on the real recorded data, from
+raw signal to the features the network learns from:
+
+<center>
+<img src="../img/movement_fft_pipeline.png" width="520" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
+</center>
+
+(a) `raw recording`, the accelerometer's three axes over a few seconds;
+the vertical axis (`az`) oscillates around 1 g with the movement's rhythm.
+(b) `sliding windows` cuts each recording into fixed-length windows that overlap by
+half a window (a sliding window with a 50% step): overlap generate more
+training windows, creating a higher exposure for each movement. Therefore
+increasing the accuracy. (c) `FFT power per movement` for each window FFT is
+applied per-channel to extract the power spectrum. The gravity (DC) component
+is removed from this plot for clarity. However, is kept part of the features
+space used for training.
+
 ### Hardware
 
 This tutorial uses a [Milk-V Duo](https://milkv.io/duo) — a SOPHGO
@@ -222,19 +239,23 @@ Collect several recordings per movement (more files means more training
 windows), keeping the same sensor selection across all of them.
 
 4. Train the network.  `train` groups the CSVs by label, cuts each into
-non-overlapping windows of `window` samples, runs one FFT per channel to get
-features, and trains a small `float32` neural network.  Instead of a fixed epoch
-count it uses early stopping: the `patience` argument is how many epochs it keeps
-searching after the lowest validation loss before stopping.  The arguments are
-positional -- `train <data-dir> [window] [out-prefix] [patience] [test-split]`:
+overlapping sliding windows of `window` samples spaced `step` apart (a 50%
+overlap by default), turns each window into features (the per-channel FFT power
+spectrum plus per-channel mean, standard deviation, and median), and trains a
+small `float32` neural network.  Instead of a fixed epoch count it uses early
+stopping: the `patience` argument is how many epochs it keeps searching after
+the lowest validation loss before stopping.  The arguments are positional --
+`train <data-dir> [window] [out-prefix] [patience] [test-split] [step]`:
 
 ```sh
-./train data 64 model 10
+./train data 256 model 10
 ```
 
 It prints a per-epoch loss and a progress bar while training, then a held-out
-test accuracy, and writes `model.bin` (the trained weights) and `model.labels`
-(window size + class names).
+test accuracy, and writes `model.bin` (the trained network), `model.labels`
+(window size, window step, and class names), and `model_scaler.bin` (the
+feature scaler, so `infer` standardizes live features the same way training
+did).
 
 5. Run live inference.  `infer` reads the IMU, slides the same window over
 the stream, runs the same FFT, and prints the predicted movement.  The arguments
