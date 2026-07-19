@@ -47,7 +47,6 @@ template<typename MatType = arma::mat>
 class StandardScaler
 {
  public:
-
   using VecType = typename GetColType<MatType>::type;
   using ElemType = typename MatType::elem_type;
 

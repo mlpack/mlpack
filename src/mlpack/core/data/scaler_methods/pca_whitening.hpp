@@ -46,7 +46,6 @@ template<typename MatType = arma::mat>
 class PCAWhitening
 {
  public:
-
   using VecType = typename GetColType<MatType>::type;
   using ElemType = typename MatType::elem_type;
 
