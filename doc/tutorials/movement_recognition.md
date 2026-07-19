@@ -30,8 +30,8 @@ Contents:
 
 ### What are we building
 
-We are building a machine learning based human movement recognition to detect
-movements such as  walking, sitting, squats, and climbing stairs. This
+We are building a machine learning based human movement recognition pipline to detect
+movements such as walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into a Fast Fourier
 Transform in order to extract the features from each collected windows.
@@ -69,19 +69,21 @@ raw signal to the features the network learns from:
 <img src="../img/movement_fft_pipeline.png" width="520" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
 </center>
 
-(a) `raw recording`, the accelerometer's three axes over a few seconds;
-the vertical axis (`az`) oscillates around 1 g with the movement's rhythm.
+We show in (a) a `raw recording` for the squat movement only using the accelerometer's three
+axes over a few seconds; the vertical axis (`az`) oscillates around 1 g with the movement's rhythm.
 (b) `sliding windows` cuts each recording into fixed-length windows that overlap by
 half a window (a sliding window with a 50% step): overlap generate more
 training windows, creating a higher exposure for each movement. Therefore
-increasing the accuracy. (c) `FFT power per movement` for each window FFT is
-applied per-channel to extract the power spectrum. The gravity (DC) component
+increasing the accuracy. (c) `FFT power per movement`, in this figure we should
+how FFT is applied per-channel for each window on all the movements in order to
+extract the relevant power spectrum. As demonstrated, different movements can
+be identified with different frequencies. Note that, the gravity (DC) component
 is removed from this plot for clarity. However, is kept part of the features
 space used for training.
 
 ### Hardware
 
-This tutorial uses a [Milk-V Duo](https://milkv.io/duo) — a SOPHGO
+This tutorial uses a [Milk-V Duo](https://milkv.io/duo), a SOPHGO
 CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
 only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
 GY-89 10-DOF breakout, which carries three separate I2C chips:
@@ -92,14 +94,23 @@ GY-89 10-DOF breakout, which carries three separate I2C chips:
 | LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
 | BMP180  | barometric pressure + temperature   | `0x77`        |
 
-Wire the GY-89 to the Duo's I²C0 bus (the example defaults to `/dev/i2c-0`):
+Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`):
 
 | GY-89 pin | Milk-V Duo |
 |-----------|------------|
-| VIN/VCC   | 3V3        |
-| GND       | GND        |
-| SCL       | IIC0_SCL (GP0) |
-| SDA       | IIC0_SDA (GP1) |
+| VIN/VCC   | 3V3(OUT), pin 36 |
+| GND       | GND, pin 38 |
+| SCL       | IIC0_SCL (GP0), pin 1 |
+| SDA       | IIC0_SDA (GP1), pin 2 |
+
+<center>
+<img src="../img/wiring_gy89_duo.png" width="620" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
+</center>
+
+The Duo is a DIP-style board, so its 40 pins run down the two long edges: pins
+1&ndash;20 top-to-bottom on the left, and pins 40&ndash;21 top-to-bottom on the
+right (pin&nbsp;1 sits opposite pin&nbsp;40, next to the USB-C connector).  The
+3.3&nbsp;V output and a ground pin are the adjacent pair on the right edge.
 
 On the Duo those pads / pins default to a different function and must be muxed to I2C.
 This is done on the device with `duo-pinmux` and is shown in
@@ -114,7 +125,7 @@ RAM, therefore, we cross-compile on a host `x86_64` machine and copy the static
 binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
 [Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
-the smallest static binary we use the musl variant
+a small static binary, therefore, we use the musl variant
 
 ```sh
 wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--musl--stable-2025.08-1.tar.xz
@@ -129,10 +140,7 @@ export TC=/path/to/riscv64-lp64d--musl--stable-2025.08-1
 ```
 
 The C906's architecture is `RV64GCV`, and that architecture's toolchain prefix/sysroot
-are listed on the
-[cross-compilation setup page](../embedded/supported_boards.md#rv64gcv). However,
-note that we are using the musl toolchain here instead of the glibc one shown
-there.
+are listed on the [cross-compilation setup page](../embedded/supported_boards.md#rv64gcv).
 
 ### Getting the example
 
