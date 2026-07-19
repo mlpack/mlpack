@@ -42,9 +42,13 @@ namespace mlpack {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class PCAWhitening
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * A constructor to set the regularization parameter.
    *
@@ -65,7 +69,6 @@ class PCAWhitening
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMean = mean(input, 1);
@@ -81,7 +84,6 @@ class PCAWhitening
    * @param input Dataset to scale features.
    * @param output Output matrix with whitened features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     if (eigenValues.is_empty() || eigenVectors.is_empty())
@@ -101,7 +103,6 @@ class PCAWhitening
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output = arma::diagmat(sqrt(eigenValues)) * inv(eigenVectors.t())
@@ -110,13 +111,13 @@ class PCAWhitening
   }
 
   //! Get the mean row vector.
-  const arma::vec& ItemMean() const { return itemMean; }
+  const VecType& ItemMean() const { return itemMean; }
   //! Get the eigenvalues vector.
-  const arma::vec& EigenValues() const { return eigenValues; }
+  const VecType& EigenValues() const { return eigenValues; }
   //! Get the eigenvector.
-  const arma::mat& EigenVectors() const { return eigenVectors; }
+  const MatType& EigenVectors() const { return eigenVectors; }
   //! Get the regularization parameter.
-  const double& Epsilon() const { return epsilon; }
+  const ElemType& Epsilon() const { return epsilon; }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -129,13 +130,13 @@ class PCAWhitening
 
  private:
   // Vector which holds mean of each feature.
-  arma::vec itemMean;
+  VecType itemMean;
   // Mat which hold the eigenvectors.
-  arma::mat eigenVectors;
+  MatType eigenVectors;
   // Regularization Paramter.
-  double epsilon;
+  ElemType epsilon;
   // Vector which hold the eigenvalues.
-  arma::vec eigenValues;
+  VecType eigenValues;
 }; // class PCAWhitening
 
 } // namespace mlpack

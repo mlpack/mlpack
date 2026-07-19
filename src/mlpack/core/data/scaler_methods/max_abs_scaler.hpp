@@ -42,22 +42,25 @@ namespace mlpack {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class MaxAbsScaler
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Function to fit features, to find out the min max and scale.
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMin = min(input, 1);
     itemMax = arma::max(input, 1);
     scale = arma::max(arma::abs(itemMin), arma::abs(itemMax));
     // Handling zeros in scale vector.
-    scale.for_each([](arma::vec::elem_type& val) { val =
+    scale.for_each([](ElemType& val) { val =
         (val == 0) ? 1 : val; });
   }
 
@@ -67,7 +70,6 @@ class MaxAbsScaler
    * @param input Dataset to scale features.
    * @param output Output matrix with scaled features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     if (scale.is_empty())
@@ -85,7 +87,6 @@ class MaxAbsScaler
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
@@ -93,11 +94,11 @@ class MaxAbsScaler
   }
 
   //! Get the Min row vector.
-  const arma::vec& ItemMin() const { return itemMin; }
+  const VecType& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
-  const arma::vec& ItemMax() const { return itemMax; }
+  const VecType& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
-  const arma::vec& Scale() const { return scale; }
+  const VecType& Scale() const { return scale; }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -108,11 +109,11 @@ class MaxAbsScaler
   }
  private:
   // Vector which holds minimum of each feature.
-  arma::vec itemMin;
+  VecType itemMin;
   // Vector which holds maximum of each feature.
-  arma::vec itemMax;
+  VecType itemMax;
   // Vector which is used to scale up each feature.
-  arma::vec scale;
+  VecType scale;
 }; // class MaxAbsScaler
 
 } // namespace mlpack

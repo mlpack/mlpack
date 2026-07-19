@@ -43,21 +43,24 @@ namespace mlpack {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class StandardScaler
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Function to fit features, to find out the min max and scale.
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMean = mean(input, 1);
     itemStdDev = stddev(input, 1, 1);
     // Handle zeros in scale vector.
-    itemStdDev.for_each([](arma::vec::elem_type& val) { val =
+    itemStdDev.for_each([](ElemType& val) { val =
         (val == 0) ? 1 : val; });
   }
 
@@ -67,7 +70,6 @@ class StandardScaler
    * @param input Dataset to scale features.
    * @param output Output matrix with scaled features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     if (itemMean.is_empty() || itemStdDev.is_empty())
@@ -85,7 +87,6 @@ class StandardScaler
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
@@ -93,9 +94,9 @@ class StandardScaler
   }
 
   //! Get the mean row vector.
-  const arma::vec& ItemMean() const { return itemMean; }
+  const VecType& ItemMean() const { return itemMean; }
   //! Get the standard deviation row vector.
-  const arma::vec& ItemStdDev() const { return itemStdDev; }
+  const VecType& ItemStdDev() const { return itemStdDev; }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -106,9 +107,9 @@ class StandardScaler
 
  private:
   // Vector which holds mean of each feature.
-  arma::vec itemMean;
-  // Vector which holds standard devation of each feature.
-  arma::vec itemStdDev;
+  VecType itemMean;
+  // Vector which holds standard deviation of each feature.
+  VecType itemStdDev;
 }; // class StandardScaler
 
 } // namespace mlpack
