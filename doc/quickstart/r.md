@@ -18,9 +18,10 @@ install.packages('mlpack')
 Building the R bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions in the
 [installation guide](../user/install.md#compile-bindings-manually). Note that
-the mlpack R binding turn off support for the STB, DR_LIBS, and HTTPLIB
-libraries which may be of lesser interst to R users. If desired, support at
-the C++ level can be enabled by setting per-library `#define` statements.
+by default, mlpack's R bindings disable support for the STB, dr_libs, and httplib
+libraries, as they are not used in any of the R bindings. If desired, support at
+the C++ level can be enabled by setting per-library `#define` statements; see
+`inst/include/mlpack.h` in the generated package.
 
 ## Simple mlpack quickstart example
 
