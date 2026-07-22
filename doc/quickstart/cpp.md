@@ -27,7 +27,7 @@ and on Fedora or Red Hat:
 sudo dnf install mlpack-devel
 ```
 
-You can also use a Docker image from Dockerhub, 
+You can also use a Docker image from Dockerhub,
 which has mlpack headers already installed:
 
 ```sh
@@ -83,8 +83,8 @@ If the version is outdated or there is a new release version, please [create an 
 
 As a really simple example of how to use mlpack in C++, let's do some simple
 classification on a subset of the standard machine learning `covertype` dataset.
-We'll first split the dataset into a training set and a test set, then we'll
-train an mlpack random forest on the training data, and finally we'll print the
+We will first split the dataset into a training set and a test set, then we will
+train an mlpack random forest on the training data, and finally we will print the
 accuracy of the random forest on the test dataset.
 
 The first step is to download the covertype dataset onto your system so that it
@@ -181,9 +181,9 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's `CF`
-class.  We'll train this on this
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+In this example, we will train a collaborative filtering model using mlpack's `CF`
+class.  We will train this on this
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 First, download the MovieLens dataset:
