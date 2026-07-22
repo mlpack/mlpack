@@ -111,16 +111,14 @@ jobs:
     runs-on: ${{ matrix.config.runner }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Set up ccache.
       - name: Get ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ matrix.config.os }}-${{ matrix.config.name }}
-          append-timestamp: false
-          variant: ccache
-          max-size: 1G # Github has a 10GB repo cache limit, so we use 1GB/job.
+          max-size: 1.5G # Github has a 10GB repo cache limit, so we use 1.5GB/job.
 
       - name: Configure ccache
         shell: bash
@@ -220,16 +218,14 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Set up ccache.
       - name: Get ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
           key: ${{ runner.os }}
-          append-timestamp: false
-          variant: ccache
-          max-size: 1G
+          max-size: 1.5G # Github has a 10GB repo cache limit, so we use 1.5GB/job.
 
       # Set up Visual Studio.
       - name: Set up Visual Studio
