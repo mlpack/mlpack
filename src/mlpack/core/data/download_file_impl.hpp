@@ -136,6 +136,32 @@ inline bool DownloadFile(const std::string& url,
   std::string host;
   ParseURL(url, host, filename, port);
 
+  // We need to find the correct way to integrate this functionallity
+  // 1. Make it as independant function
+  // 2. Check how this wil fit with the current filename
+  // 3. Be sure that we do not have conflict with docs and user expectation.
+  // 4. Solve problem related to DownLoadFile overload
+#ifdef MLPACK_CACHE_REMOTE_DATASETS
+  if (std::filesystem::exists(originalFilename))
+  {
+    std::filesystem::file_time_type fileTime =
+        std::filesystem::last_write_time(originalFilename);
+
+    std::chrono::time_point<std::filesystem::file_time_type::clock,
+        FileTimeClock::duration> now = FileTimeClock::now();
+
+    FileTimeClock::duration difference = now - fileTime;
+
+    std::chrono::hours difference =
+        std::chrono::duration_cast<std::chrono::hours>(difference);
+    if (difference.count() > 5)
+    {
+      // only return, the file exist and we don't need to download it
+      return true;
+    }
+  }
+#endif
+
   // Sanity check if in case.
   if (host.empty())
   {
@@ -170,6 +196,11 @@ inline bool DownloadFile(const std::string& url,
         << res->status << " returned.";
     throw std::runtime_error(oss.str());
   }
+
+  // This we can solve differently since we are writing to a file directly
+//#ifdef MLPACK_CACHE_REMOTE_DATASETS
+//  success = WriteToFile(originalFilename, opts, data.str(), stream);
+//#else
 
   std::filesystem::path tmpFilename = TempName();
   // This is necessary to get the extension.
