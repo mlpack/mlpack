@@ -1,5 +1,0 @@
-CC=ccache gcc
-CXX=ccache g++
-CXX17=ccache g++ -Wno-deprecated-declarations
-#CXX17=ccache g++ 
-SHLIB_CXXLD=ccache g++
