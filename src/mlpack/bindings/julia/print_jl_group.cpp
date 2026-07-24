@@ -209,6 +209,13 @@ void PrintJLGroup(const string& /* category */,
     }
     else
     {
+      cout << "  # Make sure that the model exists." << endl;
+      cout << "  if in_model.ptr == C_NULL" << endl;
+      cout << "    throw(ArgumentError(\"given model is not trained;\"" << endl;
+      cout << "        * \" call fit!() first\"))" << endl;
+      cout << "  end" << endl;
+      cout << endl;
+
       cout << "  return _Internal." << groupName << "_" << methods[i] << "(";
     }
 
