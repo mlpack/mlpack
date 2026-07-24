@@ -1,0 +1,333 @@
+## On-device movement recognition with an IMU
+
+In this tutorial we build a complete, end-to-end human-movement / activity
+recognition pipeline that runs entirely on a tiny RISC-V Linux board. The
+pipeline consists of data collection, training, and inference all happen on the target device.
+The main target of this tutorial is to provide an end to end example of using mlpack
+on real resource-constrained embedded hardware.
+
+If you have not cross-compiled mlpack before, read these first:
+
+ * [Run mlpack bindings on a Raspberry Pi](../embedded/crosscompile_armv7.md)
+ * [Cross-compile an mlpack example for embedded hardware](../embedded/crosscompile_example.md)
+ * [Cross-compilation setup (toolchains per board)](../embedded/supported_boards.md)
+
+The full source code for this tutorial can be found in the
+[mlpack examples repository](https://github.com/mlpack/examples), under
+[`cpp/movement_recognition/`](https://github.com/mlpack/examples/tree/master/cpp/movement_recognition).
+
+Contents:
+
+ * [What are we building](#what-are-we-building)
+ * [Hardware](#hardware)
+ * [Setting up the cross-compilation toolchain](#setting-up-the-cross-compilation-toolchain)
+ * [Getting the example](#getting-the-example)
+ * [Building the programs](#building-the-programs)
+ * [Copying everything to the device](#copying-everything-to-the-device)
+ * [Running it on the device](#running-it-on-the-device)
+ * [Annex A: shrinking the binary (image and audio support)](#annex-a-shrinking-the-binary-image-and-audio-support)
+ * [Annex B: making OpenBLAS fit (so training runs on the device)](#annex-b-making-openblas-fit-so-training-runs-on-the-device)
+
+### What are we building
+
+We are building a machine learning based human movement recognition pipline to detect
+movements such as walking, sitting, squats, and climbing stairs. This
+is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
+The collected data is cut into windows, and then fed into a Fast Fourier
+Transform in order to extract the features from each collected windows.
+Finally, we build a small `float32` neural network, that learns to recognize the
+movements, with the highest possible accuracy. 
+
+The example is split into four small independent programs. Each one of them
+can be run by the user to do one specific task. It is up to the user to
+combine them or integrate such a functionality in their project. Our main
+target is to provide an example on how such a software can be built: 
+
+| Program    | Built from         | Uses mlpack? | Purpose |
+|------------|--------------------|:------------:|---------|
+| `imu_test` | `driver/`          | no           | sensor check + magnetometer calibration |
+| `collect`  | `collect/`         | no           | record sensor data to CSV (small, exception-free) |
+| `train`    | `train/train.cpp`  | yes          | train a neural network from the CSVs |
+| `infer`    | `infer/infer.cpp`  | yes          | live inference from the IMU |
+
+All three sensor-reading programs share the self-contained driver under
+`driver/`, which wraps the whole GY-89 board behind one `SensorBoard` object:
+`collect` and `infer` just open it, bring up the selected sensors, and read
+whole samples.  `collect` and `imu_test` only need the Linux I2C headers, so
+they compile to ~150–170 KB static binaries; `train` and `infer` link mlpack.
+All four are built from one CMake project that uses the same cross-compilation
+infrastructure described in the [embedded example tutorial](../embedded/crosscompile_example.md).
+
+The pipeline is: `collect` writes one CSV file per recording (the file name
+is the label), `train` turns those CSVs into FFT features and fits a network,
+and `infer` reads the live sensor stream and prints the predicted movement.
+
+The figure below shows that feature pipeline on the real recorded data, from
+raw signal to the features the network learns from:
+
+<center>
+<img src="../img/movement_fft_pipeline.png" width="520" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
+</center>
+
+We show in (a) a `raw recording` for the squat movement only using the accelerometer's three
+axes over a few seconds; the vertical axis (`az`) oscillates around 1 g with the movement's rhythm.
+(b) `sliding windows` cuts each recording into fixed-length windows that overlap by
+half a window (a sliding window with a 50% step): overlap generate more
+training windows, creating a higher exposure for each movement. Therefore
+increasing the accuracy. (c) `FFT power per movement`, in this figure we should
+how FFT is applied per-channel for each window on all the movements in order to
+extract the relevant power spectrum. As demonstrated, different movements can
+be identified with different frequencies. Note that, the gravity (DC) component
+is removed from this plot for clarity. However, is kept part of the features
+space used for training.
+
+### Hardware
+
+This tutorial uses a [Milk-V Duo](https://milkv.io/duo), a SOPHGO
+CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
+only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
+GY-89 10-DOF breakout, which carries three separate I2C chips:
+
+| Chip        | Function                            | 7-bit address |
+|-------------|-------------------------------------|---------------|
+| L3GD20H | 3-axis gyroscope                    | `0x6B`        |
+| LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
+| BMP180  | barometric pressure + temperature   | `0x77`        |
+
+Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`):
+
+| GY-89 pin | Milk-V Duo |
+|-----------|------------|
+| VIN/VCC   | 3V3(OUT), pin 36 |
+| GND       | GND, pin 38 |
+| SCL       | IIC0_SCL (GP0), pin 1 |
+| SDA       | IIC0_SDA (GP1), pin 2 |
+
+<center>
+<img src="../img/wiring_gy89_duo.png" width="620" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
+</center>
+
+The Duo is a DIP-style board, so its 40 pins run down the two long edges: pins
+1&ndash;20 top-to-bottom on the left, and pins 40&ndash;21 top-to-bottom on the
+right (pin&nbsp;1 sits opposite pin&nbsp;40, next to the USB-C connector).  The
+3.3&nbsp;V output and a ground pin are the adjacent pair on the right edge.
+
+On the Duo those pads / pins default to a different function and must be muxed to I2C.
+This is done on the device with `duo-pinmux` and is shown in
+[Running it on the device](#running-it-on-the-device). Feel free to check
+pinmux software on the Duo to change the functionality of the pins and use a
+different interface.
+
+### Setting up the cross-compilation toolchain
+
+Since the device is resource constrained with only 28 MB available
+RAM, therefore, we cross-compile on a host `x86_64` machine and copy the static
+binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
+The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
+[Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
+a small static binary, therefore, we use the musl variant
+
+```sh
+wget https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--musl--stable-2025.08-1.tar.xz
+tar -xvf riscv64-lp64d--musl--stable-2025.08-1.tar.xz
+```
+
+For the rest of the tutorial we refer to the unpacked toolchain through a shell
+variable; adjust the path to where you extracted it:
+
+```sh
+export TC=/path/to/riscv64-lp64d--musl--stable-2025.08-1
+```
+
+The C906's architecture is `RV64GCV`, and that architecture's toolchain prefix/sysroot
+are listed on the [cross-compilation setup page](../embedded/supported_boards.md#rv64gcv).
+
+### Getting the example
+
+Clone the examples repository and move into the example directory:
+
+```sh
+git clone https://github.com/mlpack/examples.git
+cd examples/cpp/movement_recognition
+```
+
+### Building the programs
+
+All four programs build from one CMake project.  `imu_test` and `collect`
+only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
+reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
+mlpack and its dependencies and cross-compile OpenBLAS, as described in the
+[embedded example tutorial](../embedded/crosscompile_example.md).  At this stage, we need to
+define the architecture of the target device with the `ARCH_NAME=RV64GCV`
+variable (the ISA of the board's C906 core):
+
+```sh
+mkdir build && cd build
+cmake \
+    -DCMAKE_CROSSCOMPILING=ON \
+    -DARCH_NAME=RV64GCV \
+    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
+    -DTOOLCHAIN_PREFIX=$TC/bin/riscv64-buildroot-linux-musl- \
+    -DCMAKE_SYSROOT=$TC/riscv64-buildroot-linux-musl/sysroot \
+    ..
+make            # builds imu_test, collect, train, and infer
+```
+
+`ARCH_NAME=RV64GCV` selects C906 tuning (`-mtune=thead-c906`) and a scalar
+`RISCV64_GENERIC` OpenBLAS build (no large vector buffers, friendlier on
+64 MB), and OpenMP is disabled (the board is effectively single-core for this
+workload), check [Annex B](#annex-b-making-openblas-fit-so-training-runs-on-the-device),
+for more details regarding OpenBLAS optimization for this specific device.  When
+cross-compiling, every binary is linked statically, so nothing needs to be
+installed on the device.  You can also build a single program, e.g. `make collect`.
+
+When the build finishes you will have `imu_test`, `collect`, `train`, and
+`infer` in the build directory, all static RISC-V binaries:
+
+```sh
+file train
+# train: ELF 64-bit LSB executable, UCB RISC-V, ... statically linked, stripped
+```
+
+### Copying everything to the device
+
+The Duo's BusyBox userland has no SFTP server, so a plain `scp` fails with
+`sh: /usr/libexec/sftp-server: not found`.  Use scp's legacy protocol with
+`-O`.  Over the Duo's USB-OTG connection the board is usually reachable at
+`192.168.42.1`, you can check that by doing a local ping. The default password
+for the Duo is `milkv`:
+
+```sh
+scp -O imu_test collect train infer  root@192.168.42.1:/root/
+ssh root@192.168.42.1 'chmod +x /root/imu_test /root/collect /root/train /root/infer'
+```
+
+### Running it on the device
+
+SSH into the board.  All the commands below run on the Duo.
+
+1. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
+their I2C function first:
+
+```sh
+i2cdetect -y -r 0          # should show devices at 0x1d and 0x6b (and 0x77)
+```
+
+This is the step most likely to be missing if the sensor does not respond.
+Therefore, you can mux the pins and change their functionality as follows:
+
+```sh
+duo-pinmux -p GP0 -f IIC0_SCL
+duo-pinmux -p GP1 -f IIC0_SDA
+i2cdetect -y -r 0          # Now it should show devices at 0x1d and 0x6b (and 0x77)
+```
+
+2. Check the sensor and calibrate the magnetometer
+Even though we are going to use Accelerometer only. Calibration is important and it is 
+built into `imu_test`; rotate the board through all orientations while it samples:
+
+```sh
+./imu_test --calibrate mag.cal /dev/i2c-0 20
+```
+
+3. Collect labelled data.  Each recording is written to its own file named
+`<label>_<date>.csv`, so the label is the file name.  The arguments are
+positional -- `collect <label> [sensors] [out-dir] [device] [rate-hz]
+[duration-sec] [mag-cal]` -- so here we record accelerometer only, into `data`,
+on the default bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
+
+```sh
+mkdir data
+./collect walking   accel data /dev/i2c-0 100 30
+./collect sitting   accel data /dev/i2c-0 100 30
+./collect squat     accel data /dev/i2c-0 100 30
+```
+
+Collect several recordings per movement (more files means more training
+windows), keeping the same sensor selection across all of them.
+
+4. Train the network.  `train` groups the CSVs by label, cuts each into
+overlapping sliding windows of `window` samples spaced `step` apart (a 50%
+overlap by default), turns each window into features (the per-channel FFT power
+spectrum plus per-channel mean, standard deviation, and median), and trains a
+small `float32` neural network.  Instead of a fixed epoch count it uses early
+stopping: the `patience` argument is how many epochs it keeps searching after
+the lowest validation loss before stopping.  The arguments are positional --
+`train <data-dir> [window] [out-prefix] [patience] [test-split] [step]`:
+
+```sh
+./train data 256 model 10
+```
+
+It prints a per-epoch loss and a progress bar while training, then a held-out
+test accuracy, and writes `model.bin` (the trained network), `model.labels`
+(window size, window step, and class names), and `model_scaler.bin` (the
+feature scaler, so `infer` standardizes live features the same way training
+did).
+
+5. Run live inference.  `infer` reads the IMU, slides the same window over
+the stream, runs the same FFT, and prints the predicted movement.  The arguments
+are positional -- `infer <sensors> <device> <mag-cal> <model-prefix>
+[model-prefix ...]` -- and you must pass the same sensors you trained with (use
+`-` for the mag-cal file to skip it):
+
+```sh
+./infer accel /dev/i2c-0 - model                  # prints predictions to stdout
+```
+
+You can pass more than one model prefix to compare several trained networks on
+the same live stream.
+
+### Annex A: shrinking the binary (image and audio support)
+
+When you `#include <mlpack.hpp>`, mlpack's `data::Load`/`data::Save` pull in
+support for image files (via the bundled STB libraries) and audio files (via the
+bundled dr_libs).  This tutorial only loads CSVs, so that image and audio code is
+dead weight. Therefore, disabling it trims roughly 100 KB from the static binary.
+
+mlpack exposes these as [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions),
+and the CMake infrastructure this example uses turns them into flags you can pass
+on the command line.  Add them to the configure step from
+[Building the programs](#building-the-programs):
+
+```sh
+cmake ... -DMLPACK_DISABLE_STB=ON -DMLPACK_DISABLE_DR_LIBS=ON -DMLPACK_DISABLE_HTTPLIB=ON ..
+```
+
+### Annex B: making OpenBLAS fit (so training runs on the device)
+
+This is the single most important thing to understand for training on a
+64 MB board, so it is worth reading carefully even though the example already
+does it for you.
+
+In the following we are detailing necessary modification relevant to OpenBLAS
+to make it able to run neural network on resource constrained device. The
+current default configuration, the neural network training step would freeze when 
+we try to run it on the target device. The reason for this is the matrix
+multiplication function (GEMM). By default GEMM allocates an internal buffer
+with default `BUFFER_SIZE=32` MB allocated, which we are going to reduce to 8 MB.
+
+In addition to this, we need to reduce the number of columns block treated by
+the CPU at one time, since the cache is lower on our device. We need to reduce
+this from `SGEMM_DEFAULT_R = 12288` to `2048`.
+
+The above reduction is possible for two reason: the first one is that this 
+board has only 28 MB available, and second reason is that all also our matrices
+are tiny in this example (e.g., 64 x 297). 
+
+Both reductions are shipped as a patch file that lowers these two values in the
+OpenBLAS source before it is built.  It is applied automatically for the riscv64
+target, so you normally do nothing; to apply it explicitly (or supply your own),
+pass it to CMake with `-DOPENBLAS_PATCHES=CMake/patches/openblas-riscv64-low-memory.patch`.
+
+In addition to this, OpenBLAS is build as a single thread, since the cpu is a
+single-core:
+
+`USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0`:
+
+```cmake
+execute_process(COMMAND make TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY}
+    HOSTCC=gcc CC=${CMAKE_C_COMPILER} FC=${CMAKE_FORTRAN_COMPILER}
+    NO_SHARED=1 USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${version})
+```
