@@ -257,7 +257,6 @@ void YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   const size_t numBoxes = model.OutputDimensions()[1];
   const size_t size = opts.Width() * opts.Height() * opts.Channels();
 
-  const size_t numClasses = classNames.size();
   const arma::Col<ElemType> red = {255.0f, 0, 0};
 
   arma::ucolvec nmsIndices;
