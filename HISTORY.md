@@ -11,6 +11,8 @@ _????-??-??_
 
  * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
 
+ * Check that Julia models are trained when calling `predict()` (#4195).
+
 ## mlpack 4.8.0
 
 _2026-06-07_
