@@ -34,7 +34,7 @@ We are building a machine learning based human movement recognition pipline to d
 movements such as walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into a Fast Fourier
-Transform in order to extract the features from each collected windows.
+Transform (FFT) in order to extract the features from each collected windows.
 Finally, we build a small `float32` neural network, that learns to recognize the
 movements, with the highest possible accuracy. 
 
@@ -74,7 +74,7 @@ axes over a few seconds; the vertical axis (`az`) oscillates around 1 g with the
 (b) `sliding windows` cuts each recording into fixed-length windows that overlap by
 half a window (a sliding window with a 50% step): overlap generate more
 training windows, creating a higher exposure for each movement. Therefore
-increasing the accuracy. (c) `FFT power per movement`, in this figure we should
+increasing the accuracy. (c) `FFT power per movement`, in this figure we show
 how FFT is applied per-channel for each window on all the movements in order to
 extract the relevant power spectrum. As demonstrated, different movements can
 be identified with different frequencies. Note that, the gravity (DC) component
@@ -108,9 +108,9 @@ Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`):
 </center>
 
 The Duo is a DIP-style board, so its 40 pins run down the two long edges: pins
-1&ndash;20 top-to-bottom on the left, and pins 40&ndash;21 top-to-bottom on the
-right (pin&nbsp;1 sits opposite pin&nbsp;40, next to the USB-C connector).  The
-3.3&nbsp;V output and a ground pin are the adjacent pair on the right edge.
+1 to 20 top-to-bottom on the left, and pins 40 to 21 top-to-bottom on the
+right (pin 1 sits opposite to pin 40, next to the USB-C connector).  The
+3.3V output and a ground pin are the adjacent pair on the right edge.
 
 On the Duo those pads / pins default to a different function and must be muxed to I2C.
 This is done on the device with `duo-pinmux` and is shown in
@@ -155,7 +155,7 @@ cd examples/cpp/movement_recognition
 
 All four programs build from one CMake project.  `imu_test` and `collect`
 only need the Linux I2C headers, while `train` and `infer` link mlpack; CMake
-reuses the repository's embedded cross-compile machinery (`CMake/`) to fetch
+reuses the repository's embedded cross-compile infrastructure (`CMake/`) to fetch
 mlpack and its dependencies and cross-compile OpenBLAS, as described in the
 [embedded example tutorial](../embedded/crosscompile_example.md).  At this stage, we need to
 define the architecture of the target device with the `ARCH_NAME=RV64GCV`
@@ -304,7 +304,7 @@ In the following we are detailing necessary modification relevant to OpenBLAS
 to make it able to run neural network on resource constrained device. The
 current default configuration, the neural network training step would freeze when 
 we try to run it on the target device. The reason for this is the matrix
-multiplication function (GEMM). By default GEMM allocates an internal buffer
+multiplication function `GEMM`. By default GEMM allocates an internal buffer
 with default `BUFFER_SIZE=32` MB allocated, which we are going to reduce to 8 MB.
 
 In addition to this, we need to reduce the number of columns block treated by
