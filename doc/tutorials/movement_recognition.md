@@ -66,7 +66,7 @@ The figure below shows that feature pipeline on the real recorded data, from
 raw signal to the features the network learns from:
 
 <center>
-<img src="../img/movement_fft_pipeline.png" width="520" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
+<img src="../img/movement_fft_pipeline.png" width="720" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
 </center>
 
 We show in (a) a `raw recording` for the squat movement only using the accelerometer's three
@@ -104,7 +104,7 @@ Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`):
 | SDA       | IIC0_SDA (GP1), pin 2 |
 
 <center>
-<img src="../img/wiring_gy89_duo.png" width="620" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
+<img src="../img/wiring_gy89_duo.png" width="760" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
 </center>
 
 The Duo is a DIP-style board, so its 40 pins run down the two long edges: pins
