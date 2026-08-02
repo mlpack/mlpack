@@ -15,8 +15,10 @@
 #include "wrapper_functions.hpp"
 #include "strip_type.hpp"
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/bindings/util/wrapper_utilities.hpp>
 
 using namespace mlpack::util;
+using namespace mlpack::bindings::util;
 using namespace std;
 
 namespace mlpack {

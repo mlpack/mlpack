@@ -59,7 +59,7 @@ mitigation strategy.  However, we can use machine learning techniques to detect
 DGA-generated domain names with a high level of accuracy!
 
 This strategy has been shown to be effective in
-[some previous work](https://www.arxiv.org/pdf/1611.00791).
+[some previous work](https://arxiv.org/pdf/1611.00791).
 
 Adapting that approach for simplicity, we will train simple recurrent neural
 networks with LSTMs to detect benign domains and DGA domains, and then the

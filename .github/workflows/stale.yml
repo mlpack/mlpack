@@ -9,8 +9,9 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+    if: ${{ github.repository == 'mlpack/mlpack' }}
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         with:
           days-before-issue-stale: 30
           days-before-issue-close: 7

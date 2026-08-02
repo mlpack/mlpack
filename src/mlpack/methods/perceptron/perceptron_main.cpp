@@ -20,6 +20,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "perceptron.hpp"
+#include "perceptron_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -31,7 +32,7 @@ BINDING_USER_NAME("Perceptron");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of a perceptron---a single level neural network--=for "
+    "An implementation of a perceptron---a single level neural network---for "
     "classification.  Given labeled data, a perceptron can be trained and saved"
     " for future use; or, a pre-trained perceptron can be used for "
     "classification on new points.");
@@ -98,30 +99,6 @@ BINDING_SEE_ALSO("Perceptron on Wikipedia",
     "https://en.wikipedia.org/wiki/Perceptron");
 BINDING_SEE_ALSO("Perceptron C++ class documentation",
     "@doc/user/methods/perceptron.md");
-
-// When we save a model, we must also save the class mappings.  So we use this
-// auxiliary structure to store both the perceptron and the mapping, and we'll
-// save this.
-class PerceptronModel
-{
- private:
-  Perceptron<> p;
-  Col<size_t> map;
-
- public:
-  Perceptron<>& P() { return p; }
-  const Perceptron<>& P() const { return p; }
-
-  Col<size_t>& Map() { return map; }
-  const Col<size_t>& Map() const { return map; }
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(p));
-    ar(CEREAL_NVP(map));
-  }
-};
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");

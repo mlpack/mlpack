@@ -287,10 +287,10 @@ template<typename VecType>
 void LinearSVM<ModelMatType>::Classify(
     const VecType& point,
     size_t& label,
-    typename LinearSVM<ModelMatType>::DenseColType& probabilities) const
+    typename LinearSVM<ModelMatType>::DenseColType& scores) const
 {
   arma::Row<size_t> labelRow(1);
-  Classify(point, labelRow, probabilities);
+  Classify(point, labelRow, scores);
   label = labelRow[0];
 }
 

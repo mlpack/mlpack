@@ -350,7 +350,7 @@ class TransposedConvolution : public Layer<MatType>
         * higherInDimensions;
 
     if (output.size() != outputSize)
-      output = zeros(outputSize, batchSize);
+      output = zeros<MatType>(outputSize, batchSize);
 
     CubeType reshapedInput, reshapedOutput;
     MakeAlias(reshapedInput, input, this->inputDimensions[0],

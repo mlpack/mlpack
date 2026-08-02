@@ -36,7 +36,7 @@ using namespace ens;
  * @param transitions Reber grammar transition matrix.
  * @param reber The generated Reber grammar string.
  */
-void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
+void GenerateReber(const arma::Mat<int8_t>& transitions, std::string& reber)
 {
   size_t idx = 0;
   reber = "B";
@@ -61,7 +61,7 @@ void GenerateReber(const arma::Mat<char>& transitions, std::string& reber)
  * @param reber The generated embedded Reber grammar string.
  * @param addEnd Add ending 'E' to the generated grammar.
  */
-void GenerateRecursiveReber(const arma::Mat<char>& transitions,
+void GenerateRecursiveReber(const arma::Mat<int8_t>& transitions,
                             size_t averageRecursion,
                             size_t maxRecursion,
                             std::string& reber,
@@ -127,7 +127,7 @@ void ReberTranslation(const char symbol, arma::colvec& translation)
  * @param reber The Reber string used to generate all reachable next symbols.
  * @param nextReber All reachable next symbols.
  */
-void GenerateNextReber(const arma::Mat<char>& transitions,
+void GenerateNextReber(const arma::Mat<int8_t>& transitions,
                        const std::string& reber, std::string& nextReber)
 {
   size_t idx = 0;
@@ -153,7 +153,7 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
  * @param reber The Reber string used to generate all reachable next symbols.
  * @param nextReber All reachable next symbols.
  */
-void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
+void GenerateNextRecursiveReber(const arma::Mat<int8_t>& transitions,
                                 const std::string& reber,
                                 std::string& nextReber)
 {
@@ -236,9 +236,9 @@ void GenerateNextRecursiveReber(const arma::Mat<char>& transitions,
  * @param testReberGrammarCount The number of test set
  * @param averageRecursion Average recursion
  * @param maxRecursion Max recursion
- * @return arma::Mat<char> The Reber state translation to be used.
+ * @return arma::Mat<int8_t> The Reber state translation to be used.
  */
-arma::Mat<char> GenerateReberGrammarData(
+arma::Mat<int8_t> GenerateReberGrammarData(
                               arma::field<arma::mat>& trainInput,
                               arma::field<arma::mat>& trainLabels,
                               arma::field<arma::mat>& testInput,
@@ -250,7 +250,7 @@ arma::Mat<char> GenerateReberGrammarData(
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
-  arma::Mat<char> transitions;
+  arma::Mat<int8_t> transitions;
   transitions = { { 'T', 'P', '1', '2' },
                   { 'X', 'S', '3', '1' },
                   { 'V', 'T', '4', '2' },
@@ -318,7 +318,7 @@ void ReberGrammarTestNetwork(ModelType& model,
   arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
   arma::field<arma::mat> testInput(1, testReberGrammarCount);
 
-  arma::Mat<char> transitions =
+  arma::Mat<int8_t> transitions =
                   GenerateReberGrammarData(trainInput,
                                            trainLabels,
                                            testInput,
@@ -484,7 +484,7 @@ void ReberGrammarTestCustomNetwork(const size_t hiddenSize = 4,
   arma::field<arma::mat> trainLabels(1, trainReberGrammarCount);
   arma::field<arma::mat> testInput(1, testReberGrammarCount);
 
-  arma::Mat<char> transitions =
+  arma::Mat<int8_t> transitions =
                   GenerateReberGrammarData(trainInput,
                                            trainLabels,
                                            testInput,

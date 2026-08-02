@@ -15,14 +15,15 @@
 #define BINDING_NAME random_forest
 
 #include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/methods/random_forest/random_forest.hpp>
+#include "random_forest.hpp"
+#include "random_forest_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Random forests");
+BINDING_USER_NAME("Random Forests");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -135,30 +136,8 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("warm_start", "If true and passed along with `training` and "
     "`input_model` then trains more trees on top of existing model.", "w");
 
-/**
- * This is the class that we will serialize.  It is a pretty simple wrapper
- * around DecisionTree<>.  In order to support categoricals, it will need to
- * also hold and serialize a DatasetInfo.
- */
-class RandomForestModel
-{
- public:
-  // The tree itself, left public for direct access by this program.
-  RandomForest<> rf;
-
-  // Create the model.
-  RandomForestModel() { /* Nothing to do. */ }
-
-  // Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(rf));
-  }
-};
-
-PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
-    "use for classification.", "m");
+PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest "
+    "to use for classification.", "m");
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 

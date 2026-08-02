@@ -225,8 +225,8 @@ class Acrobot
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;;
       return true;
     }
     else if (-std::cos(state.Theta1()) - std::cos(state.Theta1() +

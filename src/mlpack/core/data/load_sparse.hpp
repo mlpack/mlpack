@@ -53,7 +53,8 @@ bool LoadSparse(const std::string& filename,
         << "only supported for dense matrices.";
     return HandleError(oss, opts);
   }
-  else if (opts.Format() == FileType::CSVASCII)
+  else if (opts.Format() == FileType::CSVASCII ||
+           opts.Format() == FileType::TSVASCII)
   {
     // Armadillo sparse matrices can't load CSVs, so we have to load a separate
     // matrix to do that.  If the CSV has three columns, we assume it's a

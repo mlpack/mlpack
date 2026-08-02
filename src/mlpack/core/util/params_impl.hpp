@@ -67,7 +67,11 @@ inline bool Params::Has(const std::string& key) const
   }
   const std::string& checkKey = usedKey;
 
-  return (parameters.at(checkKey).wasPassed > 0);
+  // For boolean parameters, return the actual value of the parameter.
+  if (parameters.at(checkKey).cppType == "bool")
+    return *std::any_cast<bool>(&parameters.at(checkKey).value);
+  else
+    return (parameters.at(checkKey).wasPassed > 0);
 }
 
 /**

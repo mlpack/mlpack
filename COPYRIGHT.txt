@@ -164,6 +164,7 @@ Copyright:
   Copyright 2025, Maksym Prots <imaxprots@gmail.com>
   Copyright 2025, Zachary Ng <zachn716@gmail.com>
   Copyright 2026, Ranjodh Singh <ranjodhsingh1729@gmail.com>
+  Copyright 2026, Mohammad Mundiwala <mohammadmundiwala@gmail.com>
 
 License: BSD-3-clause
   All rights reserved.

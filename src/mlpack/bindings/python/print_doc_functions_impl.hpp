@@ -190,7 +190,7 @@ std::string PrintInputOptions(util::Params& params,
 
   // Continue recursion.
   std::string rest = PrintInputOptions(params, onlyHyperParams,
-                                       onlyMatrixParams, args...);
+      onlyMatrixParams, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -403,12 +403,15 @@ inline std::string ImportSplit()
   return ">>> from mlpack import preprocess_split";
 }
 
-inline std::string ImportThis(const std::string& groupName)
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... /* methodNames */)
 {
   return ">>> from mlpack import " + GetClassName(groupName);
 }
 
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,
@@ -417,13 +420,34 @@ inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& splitRatio)
 {
   std::string splitString;
-  splitString += ">>> d = preprocess_split(input_=" + datasetName +
-      ", input_labels=";
-  splitString += labelName + ", test_ratio=" + splitRatio + ")\n";
-  splitString += ">>> " + trainDataset + " = d['training']\n";
-  splitString += ">>> " + trainLabels + " = d['training_labels']\n";
-  splitString += ">>> " + testDataset + " = d['test']\n";
-  splitString += ">>> " + testLabels + " = d['test_labels']";
+
+  if (integerLabels)
+  {
+    splitString += ">>> d = preprocess_split(input_=" + datasetName +
+        ", input_labels=";
+    splitString += labelName + ", test_ratio=" + splitRatio + ")\n";
+    splitString += ">>> " + trainDataset + " = d['training']\n";
+    splitString += ">>> " + trainLabels + " = d['training_labels']\n";
+    splitString += ">>> " + testDataset + " = d['test']\n";
+    splitString += ">>> " + testLabels + " = d['test_labels']";
+    return splitString;
+  }
+  else
+  {
+    // When the labels are not integers, then we have to call preprocess_split()
+    // on a list of indices, since it expects the input_labels parameters to be
+    // an integer matrix/vector.
+    splitString += ">>> d = preprocess_split(input_=" + datasetName +
+        ", input_labels=list(range(len(" + labelName + "))), test_ratio=" +
+        splitRatio + ")\n";
+    splitString += ">>> " + trainDataset + " = d['training']\n";
+    splitString += ">>> " + trainLabels + " = " + labelName +
+        "[d['training_labels']]\n";
+    splitString += ">>> " + testDataset + " = d['test']\n";
+    splitString += ">>> " + testLabels + " = " + labelName +
+        "[d['test_labels']]";
+  }
+
   return splitString;
 }
 

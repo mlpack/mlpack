@@ -84,7 +84,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   //
 
   template<typename Derived2>
-  explicit MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
+  MatrixOptionsBase(const DataOptionsBase<Derived2>& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to copy operator.
@@ -92,7 +92,7 @@ class MatrixOptionsBase : public DataOptionsBase<MatrixOptionsBase<Derived>>
   }
 
   template<typename Derived2>
-  explicit MatrixOptionsBase(DataOptionsBase<Derived2>&& opts) :
+  MatrixOptionsBase(DataOptionsBase<Derived2>&& opts) :
       DataOptionsBase<MatrixOptionsBase<Derived>>()
   {
     // Delegate to move operator.

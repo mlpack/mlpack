@@ -17,6 +17,8 @@ functionality can be used to access the documentation that way.
 """
 module mlpack
 
+import Serialization
+
 # Include any types of models.
 include("types.jl")
 

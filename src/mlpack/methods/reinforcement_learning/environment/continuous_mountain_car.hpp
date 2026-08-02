@@ -199,13 +199,13 @@ class ContinuousMountainCar
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;
       return true;
     }
     else if (state.Position() >= positionGoal)
     {
-      Log::Info << "Episode terminated due to agent succeeding.";
+      Log::Info << "Episode terminated due to agent succeeding." << std::endl;
       return true;
     }
     return false;

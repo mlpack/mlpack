@@ -15,7 +15,6 @@
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
-#include "../../serialization.hpp"
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
@@ -167,53 +166,6 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
   double gradient = CheckGradient(function);
 
   REQUIRE(gradient < 1e-1);
-}
-
-// General ANN serialization test.
-template<typename LayerType>
-void ANNLayerSerializationTest(LayerType& layer)
-{
-  arma::mat input(5, 100, arma::fill::randu);
-  arma::mat output = arma::randi<arma::mat>(1, 100,
-      arma::distr_param(0, 4));
-
-  FFN<> model;
-  model.Add<Linear>(10);
-  model.Add<LayerType>(layer);
-  model.Add<ReLU>();
-  model.Add<Linear>(5);
-  model.Add<LogSoftMax>();
-
-  ens::StandardSGD opt(0.1, 1, 5, -100, false);
-  model.Train(input, output, opt);
-
-  arma::mat originalOutput;
-  model.Predict(input, originalOutput);
-
-  // Now serialize the model.
-  FFN<> xmlModel, jsonModel, binaryModel;
-  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
-
-  // Ensure that predictions are the same.
-  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
-  model.Predict(input, modelOutput);
-  xmlModel.Predict(input, xmlOutput);
-  jsonModel.Predict(input, jsonOutput);
-  binaryModel.Predict(input, binaryOutput);
-
-  CheckMatrices(originalOutput, modelOutput, 1e-5);
-  CheckMatrices(originalOutput, xmlOutput, 1e-5);
-  CheckMatrices(originalOutput, jsonOutput, 1e-5);
-  CheckMatrices(originalOutput, binaryOutput, 1e-5);
-}
-
-/**
- * Simple serialization test for batch normalization layer.
- */
-TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
-{
-  BatchNorm layer;
-  ANNLayerSerializationTest(layer);
 }
 
 TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")

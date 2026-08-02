@@ -28,11 +28,11 @@ BINDING_USER_NAME("BayesianLinearRegression");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of the bayesian linear regression.");
+    "An implementation of the Bayesian linear regression.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of the bayesian linear regression."
+    "An implementation of the Bayesian linear regression."
     "\n"
     "This model is a probabilistic view and implementation of the linear "
     "regression. The final solution is obtained by computing a posterior "
@@ -172,7 +172,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
                  << endl;
     }
 
-    arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
     timers.Start("bayesian_linear_regression_training");
     bayesLinReg->Train(matX, responses);

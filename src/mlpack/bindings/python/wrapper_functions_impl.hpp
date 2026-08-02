@@ -45,28 +45,16 @@ inline std::string GetValidName(const std::string& paramName)
   return correctParamName;
 }
 
-inline std::vector<std::string> GetMethods(const std::string& validMethods)
-{
-  std::vector<std::string> methods;
-  std::stringstream methodStream(validMethods);
-  std::string temp;
-
-  while (std::getline(methodStream, temp, ' '))
-  {
-    methods.push_back(temp);
-  }
-
-  return methods;
-}
-
 inline std::string GetMappedName(const std::string& methodName)
 {
-  std::map<std::string, std::string> nameMap;
-  nameMap["train"] = "fit";
-  nameMap["classify"] = "predict";
-  nameMap["predict"] = "predict";
-  nameMap["probabilities"] = "predict_proba";
-  return nameMap[methodName];
+  if (methodName == "train")
+    return "fit";
+  else if (methodName == "classify")
+    return "predict";
+  else if (methodName == "probabilities")
+    return "predict_proba";
+  else
+    return methodName;
 }
 
 } // namespace python

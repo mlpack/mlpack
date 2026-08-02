@@ -29,6 +29,20 @@ void PrintR(util::Params& params,
             const std::string& functionName,
             const std::string& bindingName);
 
+/**
+ * Split the last part of a method name.
+ *
+ * This defaults to '_' as the delimiter.
+ *
+ * @param bindingname Binding name as e.g. 'linear_regression_train'.
+ * @param delim Delimiter string, defaults to "_".
+ */
+inline std::string SplitBindingName(const std::string& s,
+                                    const std::string& delim = "_")
+{
+  return s.substr(0, s.rfind(delim));
+}
+
 } // namespace r
 } // namespace bindings
 } // namespace mlpack

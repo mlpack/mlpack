@@ -116,4 +116,48 @@ inline ElemType RMSE(const arma::Row<ElemType>& predictions,
   return sqrt(mse);
 }
 
+template<typename MatType>
+void GenerateFiveGaussianDataset(MatType& data,
+                                 arma::Row<size_t>& labels,
+                                 const size_t points)
+{
+  using VecType = typename GetColType<MatType>::type;
+
+  MatType identity = arma::eye<MatType>(5, 5);
+  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  data.set_size(5, points);
+  labels.set_size(points);
+
+  for (size_t i = 0; i < points / 5; ++i)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; ++i)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
+}
+
 #endif

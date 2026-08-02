@@ -72,9 +72,9 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("adaboost") + "\n" +
-    GET_DATASET("X", "https://example.com") + "\n" +
-    GET_DATASET("y", "https://example.com") + "\n" +
+    IMPORT_THIS("adaboost", "train", "classify", "probabilities") + "\n" +
+    GET_DATASET("X", "http://datasets.mlpack.org/iris.csv") + "\n" +
+    GET_DATASET("y", "http://datasets.mlpack.org/iris_labels.csv") + "\n" +
     SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test",
     "0.2") + "\n" +
     CREATE_OBJECT("model", "adaboost") + "\n" +

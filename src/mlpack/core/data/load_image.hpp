@@ -18,6 +18,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 template<typename eT>
 bool LoadImage(const std::vector<std::string>& files,
                arma::Mat<eT>& matrix,
@@ -48,7 +50,7 @@ bool LoadImage(const std::vector<std::string>& files,
 
   // Temporary variables needed as stb_image.h supports int parameters.
   int tempWidth, tempHeight, tempChannels;
-  arma::Mat<unsigned char> images;
+  arma::Mat<uint8_t> images;
   unsigned char* imageBuf = nullptr;
   size_t i = 0;
 
@@ -83,7 +85,7 @@ bool LoadImage(const std::vector<std::string>& files,
           << " function iteratively." << std::endl;
       return HandleError(oss, opts);
     }
-    images.col(i) = arma::Mat<unsigned char>(imageBuf, dimension, 1,
+    images.col(i) = arma::Mat<uint8_t>(imageBuf, dimension, 1,
         false, true);
     stbi_image_free(imageBuf);
     i++;
@@ -91,6 +93,21 @@ bool LoadImage(const std::vector<std::string>& files,
   matrix = arma::conv_to<arma::Mat<eT>>::from(std::move(images));
   return true;
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+bool LoadImage(const std::vector<std::string>& /* files */,
+               arma::Mat<eT>& /* matrix */,
+               ImageOptions& opts)
+{
+  std::stringstream oss;
+  oss << "Load(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to load images.";
+  return HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

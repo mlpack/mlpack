@@ -16,6 +16,7 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "decision_tree.hpp"
+#include "decision_tree_model.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -119,29 +120,6 @@ PARAM_FLAG("print_training_accuracy", "Print the training accuracy.", "a");
 PARAM_MATRIX_OUT("probabilities", "Class probabilities for each test point.",
     "P");
 PARAM_UROW_OUT("predictions", "Class predictions for each test point.", "p");
-
-/**
- * This is the class that we will serialize.  It is a pretty simple wrapper
- * around DecisionTree<>.
- */
-class DecisionTreeModel
-{
- public:
-  // The tree itself, left public for direct access by this program.
-  DecisionTree<> tree;
-  DatasetInfo info;
-
-  // Create the model.
-  DecisionTreeModel() { /* Nothing to do. */ }
-
-  // Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(tree));
-    ar(CEREAL_NVP(info));
-  }
-};
 
 // Models.
 PARAM_MODEL_IN(DecisionTreeModel, "input_model", "Pre-trained decision tree, "

@@ -21,12 +21,6 @@
 
 #include <ensmallen.hpp>
 
-enum ConnectionTypes
-{
-  CONCATENATE,
-  ADDITION
-};
-
 namespace mlpack {
 
 /**
@@ -61,6 +55,13 @@ namespace mlpack {
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  * @tparam MatType Type of matrix to be given as input to the network.
  */
+
+enum ConnectionTypes
+{
+  CONCATENATE,
+  ADDITION
+};
+
 template<
     typename OutputLayerType = NegativeLogLikelihood,
     typename InitializationRuleType = RandomInitialization,

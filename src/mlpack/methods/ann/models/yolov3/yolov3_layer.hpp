@@ -91,7 +91,7 @@ class YOLOv3Layer : public Layer<MatType>
    * Takes in 3d input and outputs bounding boxes, based on anchors,
    * input image size and cell position, for each batch item.
    *
-   * Bounding boxes are outputted in the format: x1, y1, x2, y2.
+   * Bounding boxes are outputted in the format: cx, cy, w, h.
    *
    * @param input Input data representing outputs of model.
    * @param output Resulting bounding boxes after being normalized to image.

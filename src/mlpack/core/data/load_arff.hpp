@@ -24,7 +24,9 @@ namespace mlpack {
  * if any features are non-numeric.
  */
 template<typename eT>
-bool LoadARFF(const std::string& filename, arma::Mat<eT>& matrix);
+bool LoadARFF(const std::string& filename,
+              arma::Mat<eT>& matrix,
+              bool transpose);
 
 /**
  * A utility function to load an ARFF dataset as numeric and categorical
@@ -52,7 +54,8 @@ template<typename eT, typename PolicyType>
 bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
               DatasetMapper<PolicyType>& info,
-              bool fatal);
+              bool fatal,
+              bool transpose);
 
 } // namespace mlpack
 
