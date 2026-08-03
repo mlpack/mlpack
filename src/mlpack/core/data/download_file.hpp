@@ -2,7 +2,7 @@
  * @file core/data/download_file.hpp
  * @author Omar Shrit
  *
- * mlpack Load function that download dataset from a URL.
+ * Functions to download datasets from a URL, with optional caching.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,40 +15,128 @@
 // In case if it is not included
 #include "../httplib/httplib.hpp"
 
+#include <fstream>
+#include <sstream>
+#include <unordered_map>
+
 namespace mlpack {
 
+// ============================================================================
+// URL validation and parsing
+// ============================================================================
+
 /*
- * Check if the provided URL is valid or not.
+ * Check if the provided string is a valid URL (starts with http:// or https://).
  *
- * @param url to be checked.
- * @return false on failure.
+ * @param url String to be checked.
+ * @return true if the string is a URL, false otherwise.
  */
 inline bool CheckIfURL(const std::string& url);
+
+/*
+ * Check if the provided hostname contains only valid characters (lowercase
+ * letters, digits, hyphens and dots).
+ *
+ * @param host Hostname to validate.
+ * @return true if the hostname is valid.
+ */
+inline bool CheckValidHost(const std::string& host);
+
+/*
+ * Check if a string is composed entirely of digits.
+ *
+ * @param str String to check.
+ * @return true if every character in str is a digit.
+ */
+inline bool IsDigits(const std::string& str);
 
 /*
  * Parse a given URL and try to extract hostname, filename and the port
  * number.
  *
- * @param url Given URL to download dataset from.
- * @param Extract hostname, throw exception on failure
- * @param filename Try to extract the filename of the downloaded file.
- * @param port Try To extract the port number from the url if provided.
- * @return void, only throws exception on failure
+ * @param url Given URL to parse.
+ * @param host Extracted hostname; throws on failure.
+ * @param filename Extracted filename from the URL path.
+ * @param port Extracted port number, or -1 if not specified.
  */
 inline void ParseURL(const std::string& url, std::string& host,
                      std::string& filename, int& port);
 
+// ============================================================================
+// Cache infrastructure
+// ============================================================================
+
+// The cache manifest maps a URL to (etag, content_length, local_path).
+using CacheManifest =
+    std::unordered_map<std::string,
+                       std::tuple<std::string, size_t, std::string>>;
+
 /*
- * Try to download a file from a URL provided by the user.
+ * The idea is to allow three cache pattern, the frirst one, user defined
+ * macro, the second one a default cache path if no user defined, and the last
+ * one is the system temp directory.
+ *
+ * Following follows Bandicoot's kernel-cache pattern, defined in cache_meat.hpp
+ *   1. MLPACK_CACHE_DIR (compile-time macro)
+ *   2. $HOME/.mlpack/cache/  (POSIX) or %APPDATA%\mlpack\cache\ (Windows)
+ *   3. system temp directory
+ *
+ * @return The absolute path to the cache directory.
+ */
+inline std::string GetCacheDir();
+
+/*
+ * Load the cache manifest (cache_manifest.csv) from disk.  The manifest is
+ * populated via the out-parameter; it is left empty if no manifest exists yet.
+ *
+ * @param cacheDir Path to the cache directory.
+ * @param manifest Populated with the cached entries on success.
+ * @return true if the manifest was read, false if it does not exist yet.
+ */
+inline bool LoadManifest(const std::string& cacheDir,
+                         CacheManifest& manifest);
+
+/*
+ * Write the cache manifest back to disk, overwriting the previous one.
+ *
+ * @param cacheDir Path to the cache directory.
+ * @param manifest The manifest to write.
+ * @return true on success, false on failure.
+ */
+inline bool SaveManifest(const std::string& cacheDir,
+                         const CacheManifest& manifest);
+
+// ============================================================================
+// Download functions
+// ============================================================================
+
+/*
+ * Download a file from a URL and save it to a user-specified destination.
+ * The cache is NOT used -- the user has explicitly chosen where to save the
+ * file.
  *
  * @param url Given URL to download dataset from.
- * @param filename The path to save the downloaded file to; if empty,
- * then `filename` is set to a generated temporary filename.
- * @return true if download is successful, otherwise, throw error on failure, or
- * return false.
+ * @param dest The local path to save the downloaded file to.
+ * @return true on success, throws on failure.
  */
 inline bool DownloadFile(const std::string& url,
-                         std::string& filename);
+                         const std::string& dest);
+
+/*
+ * Internal: download a file from a URL (used by Load()).  When caching is
+ * enabled (the default), the file is stored in the cache directory and
+ * subsequent calls with the same URL skip the download if the server's ETag
+ * and Content-Length have not changed.  When caching is disabled (via
+ * MLPACK_DISABLE_CACHE_REMOTE_DATASETS), the file is saved to a generated
+ * temporary path.  Either way, `filename` is set to the local path where the
+ * data ended up.
+ *
+ * @param url Given URL to download dataset from.
+ * @param filename Set to the local path of the downloaded (or cached) file.
+ * @return true if download (or cache hit) is successful, otherwise throws.
+ */
+inline bool DownloadFileInternal(const std::string& url,
+                                 std::string& filename);
 
 } // namespace mlpack
 
