@@ -63,6 +63,8 @@ using CacheManifest =
     std::unordered_map<std::string,
                        std::tuple<std::string, size_t, std::string>>;
 
+#ifdef MLPACK_ENABLE_HTTPLIB
+
 /*
  * The idea is to allow three cache pattern, the first one, user defined
  * macro, the second one a default cache path if no user defined, and the last
@@ -122,6 +124,8 @@ inline bool DownloadFile(const std::string& url,
  */
 inline bool DownloadFileInternal(const std::string& url,
                                  std::string& filename);
+
+#endif
 
 } // namespace mlpack
 
