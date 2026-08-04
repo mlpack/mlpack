@@ -136,11 +136,11 @@ inline std::string GetCacheDir()
   dir = MLPACK_CACHE_DIR;
 #else
   #ifdef _WIN32
-  const char* appdata = std::getenv("APPDATA");
+  char* appdata = std::getenv("APPDATA");
   if (appdata)
     dir = std::filesystem::path(appdata) / "mlpack" / "cache";
   #else
-  const char* home = std::getenv("HOME");
+  char* home = std::getenv("HOME");
   if (home)
     dir = std::filesystem::path(home) / ".mlpack" / "cache";
   #endif
@@ -151,6 +151,7 @@ inline std::string GetCacheDir()
 
   std::error_code ec;
   std::filesystem::create_directories(dir, ec);
+
   if (ec)
   {
     Log::Fatal << "GetCacheDir(): cannot create cache directory '"
@@ -162,7 +163,7 @@ inline std::string GetCacheDir()
 inline bool LoadManifest(const std::string& cacheDir,
                          CacheManifest& manifest)
 {
-  const std::string path =
+  std::string path =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::ifstream in(path);
   if (!in)
@@ -188,7 +189,7 @@ inline bool LoadManifest(const std::string& cacheDir,
 inline bool SaveManifest(const std::string& cacheDir,
                          const CacheManifest& manifest)
 {
-  const std::string path =
+  std::string path =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::ofstream out(path, std::ios::trunc);
 
@@ -209,7 +210,6 @@ inline bool SaveManifest(const std::string& cacheDir,
   return true;
 }
 
-// Write the HTTP response body to a local file.
 inline void WriteResponseToFile(const std::string& path,
                                 const httplib::Result& res)
 {
@@ -222,7 +222,7 @@ inline void WriteResponseToFile(const std::string& path,
 
   if (!stream.is_open())
   {
-    Log::Fatal << "DownloadFile(): cannot open file '" << path
+    Log::Fatal << "WriteResponseToFile(): cannot open file '" << path
         << "' for writing." << std::endl;
   }
   errno = 0;
@@ -230,14 +230,13 @@ inline void WriteResponseToFile(const std::string& path,
   stream.flush();
   if (!stream.good())
   {
-    Log::Fatal << "DownloadFile(): error writing to '" << path
+    Log::Fatal << "WriteResponseToFile(): error writing to '" << path
         << "': " << std::strerror(errno) << std::endl;
   }
   stream.close();
 }
 
-inline bool DownloadFile(const std::string& url,
-                        const std::string& dest)
+inline bool DownloadFile(const std::string& url, const std::string& dest)
 {
   std::string host, filename;
   int port = -1;
@@ -250,57 +249,17 @@ inline bool DownloadFile(const std::string& url,
   }
 
 #ifdef MLPACK_USE_HTTPS
-  if (port == -1) port = 443;
+  if (port == -1)
+    port = 443;
   httplib::SSLClient cli(host, port);
 #else
-  if (port == -1) port = 80;
-  httplib::Client cli(host, port);
-#endif
-  cli.set_connection_timeout(2);
-
-  httplib::Result res = cli.Get(url);
-  if (!res)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
-    throw std::runtime_error(oss.str());
-  }
-  if (res->status == 404)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page / File not found: "
-        << res->status << " returned.";
-    throw std::runtime_error(oss.str());
-  }
-
-  WriteResponseToFile(dest, res);
-  return true;
-}
-
-inline bool DownloadFileInternal(const std::string& url,
-                                 std::string& filename)
-{
-  int port = -1;
-  std::string host;
-  ParseURL(url, host, filename, port);
-
-  if (host.empty())
-  {
-    throw std::runtime_error("DownloadFile(): domain name could not be parsed"
-        " from URL '" + url + "'");
-  }
-
-#ifdef MLPACK_USE_HTTPS
-  if (port == -1) port = 443;
-  httplib::SSLClient cli(host, port);
-#else
-  if (port == -1) port = 80;
+  if (port == -1)
+    port = 80;
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
 
 #ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
-
   std::string cacheDir = GetCacheDir();
   CacheManifest manifest;
   LoadManifest(cacheDir, manifest);
@@ -317,78 +276,76 @@ inline bool DownloadFileInternal(const std::string& url,
       serverSize = std::stoull(headRes->get_header_value("Content-Length"));
   }
 
-  // Do we already have this URL cached with a matching ETag and size?
+  // If we already have this URL cached with a matching ETag, size, and the
+  // destination file still exists on disk, skip the download.
   CacheManifest::iterator it = manifest.find(url);
   if (it != manifest.end())
   {
-    std::string& cachedEtag  = std::get<0>(it->second);
-    size_t cachedSize        = std::get<1>(it->second);
-    std::string& cachedPath  = std::get<2>(it->second);
+    std::string& cachedEtag = std::get<0>(it->second);
+    size_t cachedSize       = std::get<1>(it->second);
     if (!serverEtag.empty() &&
         cachedEtag == serverEtag &&
         cachedSize == serverSize &&
-        std::filesystem::exists(cachedPath))
+        std::filesystem::exists(dest))
     {
-      filename = cachedPath;
       return true;
     }
   }
-
-  // If not available in cache, or cannot get the header, then try to download.
-  httplib::Result res = cli.Get(url);
-  if (!res)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
-    throw std::runtime_error(oss.str());
-  }
-
-  if (res->status == 404)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page / File not found: "
-        << res->status << " returned.";
-    throw std::runtime_error(oss.str());
-  }
-
-  std::string cachedPath =
-      (std::filesystem::path(cacheDir) / filename).string();
-
-  WriteResponseToFile(cachedPath, res);
-
-  manifest[url] = std::make_tuple(serverEtag, serverSize, cachedPath);
-  SaveManifest(cacheDir, manifest);
-
-  filename = cachedPath;
-  return true;
-
-#else
-
-  // Cache disabled: download to a temporary file (original behaviour).
-  httplib::Result res = cli.Get(url);
-  if (!res)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
-    throw std::runtime_error(oss.str());
-  }
-  if (res->status == 404)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page / File not found: "
-        << res->status << " returned.";
-    throw std::runtime_error(oss.str());
-  }
-
-  std::filesystem::path tmpFilename = TempName();
-  tmpFilename += "." + Extension(filename);
-
-  WriteResponseToFile(tmpFilename.string(), res);
-
-  filename = tmpFilename.generic_string();
-  return true;
-
 #endif
+
+  httplib::Result res = cli.Get(url);
+  if (!res)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
+    throw std::runtime_error(oss.str());
+  }
+  if (res->status == 404)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: Page or File not found: "
+        << res->status << " returned.";
+    throw std::runtime_error(oss.str());
+  }
+
+  WriteResponseToFile(dest, res);
+
+#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+  manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
+  SaveManifest(cacheDir, manifest);
+#endif
+
+  return true;
+}
+
+// @rcurtin, The following duplication of the ParseURL is necessary to extract
+// destination, but it should not really affect the efficiency of the download
+// process, if you have an idea, how to avoid it please let me know. I am
+// trying to avoid refactoring ParseURL, since it is already well tested.
+inline bool DownloadFileInternal(const std::string& url,
+                                 std::string& filename)
+{
+  std::string host;
+  int port = -1;
+  ParseURL(url, host, filename, port);
+
+#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+  std::string dest =
+      (std::filesystem::path(GetCacheDir()) / filename).string();
+#else
+  std::filesystem::path dest = TempName();
+  dest += "." + Extension(filename);
+#endif
+
+  bool success = DownloadFile(url, dest);
+
+#ifdef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+  filename = dest.generic_string();
+#else
+  filename = dest;
+#endif
+
+  return success;
 }
 
 #else
@@ -410,7 +367,7 @@ inline void ParseURL(const std::string& url, std::string& host,
 }
 
 inline bool DownloadFile(const std::string& url,
-                        const std::string& /* dest */)
+                         const std::string& /* dest */)
 {
   throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
       " download URL '" + url + "'.  Enable httplib by adding '#define "

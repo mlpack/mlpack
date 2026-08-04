@@ -21,10 +21,6 @@
 
 namespace mlpack {
 
-// ============================================================================
-// URL validation and parsing
-// ============================================================================
-
 /*
  * Check if the provided string is a valid URL (starts with http:// or https://).
  *
@@ -62,17 +58,13 @@ inline bool IsDigits(const std::string& str);
 inline void ParseURL(const std::string& url, std::string& host,
                      std::string& filename, int& port);
 
-// ============================================================================
-// Cache infrastructure
-// ============================================================================
-
 // The cache manifest maps a URL to (etag, content_length, local_path).
 using CacheManifest =
     std::unordered_map<std::string,
                        std::tuple<std::string, size_t, std::string>>;
 
 /*
- * The idea is to allow three cache pattern, the frirst one, user defined
+ * The idea is to allow three cache pattern, the first one, user defined
  * macro, the second one a default cache path if no user defined, and the last
  * one is the system temp directory.
  *
@@ -86,11 +78,11 @@ using CacheManifest =
 inline std::string GetCacheDir();
 
 /*
- * Load the cache manifest (cache_manifest.csv) from disk.  The manifest is
- * populated via the out-parameter; it is left empty if no manifest exists yet.
+ * Load the cache manifest (cache_manifest.csv) from disk. This allow to use
+ * previous cached dataset from previous sessions
  *
  * @param cacheDir Path to the cache directory.
- * @param manifest Populated with the cached entries on success.
+ * @param manifest Filled with the cached entries on success.
  * @return true if the manifest was read, false if it does not exist yet.
  */
 inline bool LoadManifest(const std::string& cacheDir,
@@ -106,14 +98,10 @@ inline bool LoadManifest(const std::string& cacheDir,
 inline bool SaveManifest(const std::string& cacheDir,
                          const CacheManifest& manifest);
 
-// ============================================================================
-// Download functions
-// ============================================================================
-
 /*
  * Download a file from a URL and save it to a user-specified destination.
- * The cache is NOT used -- the user has explicitly chosen where to save the
- * file.
+ * Checks the cache first, if the ETag and size match and dest already exists,
+ * the download is skipped.
  *
  * @param url Given URL to download dataset from.
  * @param dest The local path to save the downloaded file to.
@@ -123,17 +111,14 @@ inline bool DownloadFile(const std::string& url,
                          const std::string& dest);
 
 /*
- * Internal: download a file from a URL (used by Load()).  When caching is
- * enabled (the default), the file is stored in the cache directory and
- * subsequent calls with the same URL skip the download if the server's ETag
- * and Content-Length have not changed.  When caching is disabled (via
- * MLPACK_DISABLE_CACHE_REMOTE_DATASETS), the file is saved to a generated
- * temporary path.  Either way, `filename` is set to the local path where the
- * data ended up.
+ * Internal function used by Load() to download a file from a URL.
+ * The file is stored in the cache directory.  When caching is disabled,
+ * the file is saved to a generated temporary path.
+ * Either way, `filename` is set to the local path where the data ended up.
  *
  * @param url Given URL to download dataset from.
  * @param filename Set to the local path of the downloaded (or cached) file.
- * @return true if download (or cache hit) is successful, otherwise throws.
+ * @return true if download or cache is successful, otherwise throws.
  */
 inline bool DownloadFileInternal(const std::string& url,
                                  std::string& filename);
