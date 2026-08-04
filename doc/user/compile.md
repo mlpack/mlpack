@@ -73,7 +73,8 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISABLE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems).|
-| `-DMLPACK_CACHE_REMOTE_DATASETS` | `#define MLPACK_CACHE_REMOTE_DATASETS` | Save the downloaded file locally by default in the executable's path or in a specific location defined by the user. |
+| `-DMLPACK_DISABLE_CACHE_REMOTE_DATASETS` | `#define MLPACK_DISABLE_CACHE_REMOTE_DATASETS` | Disable caching of downloaded datasets.  When set, files downloaded via `Load()` are saved to the system temporary directory instead of the cache directory. |
+| `-DMLPACK_CACHE_DIR="/path/to/cache/"` | `#define MLPACK_CACHE_DIR "/path/to/cache/"` | Override the directory where cached datasets are stored.  Defaults to `$HOME/.mlpack/cache/` on Linux/MacOS and `%APPDATA%\mlpack\cache\` on Windows. |
 
 ***Note:*** If your code serializes (saves or loads) mlpack neural networks, the
 `MLPACK_ENABLE_ANN_SERIALIZATION` option must be enabled.  This option is not

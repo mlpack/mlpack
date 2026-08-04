@@ -754,32 +754,31 @@ A remote URL can be given to either `DownloadFile()` or `Load()`:
    are called again on the same URL, the function will check for any difference in dataset size. 
    If the dataset size does not match, the will download the dataset file again.
 
-    <!-- 
-    @rcurtin,  Possible confusion here: 
-    (I wrote it as a code since it is better expressed
-    than my broken English).
+<!-- @rcurtin let me know if the following make sense or it is too much -->
 
-    // Suppose Cache Enabled by default.
-    // First function call.
-    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myIris.csv);
-        
-    // After 10K line of the code, suppose the user call it again and try to
-    store it to a new new file called: myNewIris.csv 
-    mlpack::DownloadFile("https://datasets.mlpack.org/iris.csv", myNewIris.csv);
+### Loading directly from a URL
 
-    In this case, we should re-download and store a second file.
+When a URL is passed to `Load()`, the file is downloaded automatically since caching
+is enabled by default. Note that if `Load()` is called again with the same URL,
+mlpack checks server's `ETag` and `Content-Length`, if they match the cached copy,
+then the download is skipped and the cached file is used directly.
 
-    If you are expecting a different behaviour please let me know.
-    -->
- 
- * If the user specifies `#define MLPACK_DISABLE_CACHE_REMOTE_DATASETS`,  the downloaded file
-   will be saved to the system temporary directory (e.g. `/tmp/` on Linux systems).
+Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
+`%APPDATA%\mlpack\cache\` on Windows.  The cache directory can be overridden at
+compile time with
+[`MLPACK_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
+
+To disable caching entirely (so that downloaded files go to the system temporary
+directory, e.g. `/tmp/`), define `MLPACK_DISABLE_CACHE_REMOTE_DATASETS` before
+including mlpack.
 
 ```c++
-// Throw an exception if loading fails with the Fatal option.
+
+//@rcurtin, how we can show case this in an efficient way ? 
+// I can call the first mlpack::Load() twice, but I do not thing neither this
+// is efficient or well represent the docs.
+
 arma::mat dataset;
-// satellite.train.csv is downloaded and saved in the same location as the
-// binary.
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
@@ -787,7 +786,6 @@ arma::Row<size_t> labels;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
     labels, mlpack::Fatal);
 
-// Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
 std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
@@ -798,21 +796,18 @@ std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 ```
 
-Specify the filename when downloaded, in the following we are loading a dataset
-that has a header.
+### Downloading to a specific file with `DownloadFile()`
 
 ```c++
 arma::fmat dataset;
-// We have to make a TextOptions object so that we can recover the headers.
 mlpack::TextOptions opts;
 opts.Format() = mlpack::FileType::CSVASCII;
 opts.HasHeaders() = true;
 
-// Download `Admission_Predict.csv` file and save it as `myDataset`.
-// Note: We opted to remove the `.csv` extension to demonstrate that you can 
-// load files without explicit extension if `opts.Format()` is defined.
-mlpack::Load(DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
-    "myDataset"), dataset, opts);
+// Download and save as "myDataset.csv", then load it.
+mlpack::DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
+    "myDataset.csv");
+mlpack::Load("myDataset.csv", dataset, opts);
 
 std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
 for (size_t i = 0; i < opts.Headers().size(); ++i)
