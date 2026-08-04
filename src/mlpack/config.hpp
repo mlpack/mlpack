@@ -148,4 +148,15 @@
   #undef MLPACK_USE_SYSTEM_HTTPLIB
 #endif
 
+// MLPACK_DISABLE_CACHE_REMOTE_DATASETS disables the download cache.  
+// This feature is enabled by default.
+#if !defined(MLPACK_DISABLE_CACHE_REMOTE_DATASETS)
+  // #define MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+#endif
+
+// MLPACK_CACHE_DIR can be set to override the default cache directory.
+// If not set, the default is $HOME/.mlpack/cache/ on POSIX and
+// %APPDATA%\mlpack\cache\ on Windows.
+// #define MLPACK_CACHE_DIR "/custom/cache/path/"
+
 #endif
