@@ -43,6 +43,9 @@ _2026-06-07_
  * Significant efficiency improvements (5-10x) for `CoverTree` construction
    (#4164).
 
+ * Refactor bindings for regression and classification methods (#4122, #4132,
+   #4161, #4170, #4171, #4180, #4182, #4186, #4188, #4189, #4202, #4203)
+
 ## mlpack 4.7.0
 
 _2026-01-30_
