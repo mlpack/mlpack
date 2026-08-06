@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Templetize Scalar methods to allow using float types (#4229).
+
  * Accelerated `LeakyReLU` ANN Layer (#4174).
 
  * Update `LinearSVM` documentation: `Classify()` returns class scores, not
