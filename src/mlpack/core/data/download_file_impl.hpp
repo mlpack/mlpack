@@ -242,12 +242,6 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
   int port = -1;
   ParseURL(url, host, filename, port);
 
-  if (host.empty())
-  {
-    throw std::runtime_error("DownloadFile(): domain name could not be parsed"
-        " from URL '" + url + "'");
-  }
-
 #ifdef MLPACK_USE_HTTPS
   if (port == -1)
     port = 443;
@@ -259,15 +253,57 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
 #endif
   cli.set_connection_timeout(2);
 
+  httplib::Result res = cli.Get(url);
+
+  if (!res)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
+    throw std::runtime_error(oss.str());
+  }
+
+  if (res->status == 404)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: Page or File not found: "
+        << res->status << " returned.";
+    throw std::runtime_error(oss.str());
+  }
+
+  WriteResponseToFile(dest, res);
+  return true;
+}
+
+inline bool DownloadFileInternal(const std::string& url,
+                                 std::string& filename)
+{
+  std::string host;
+  int port = -1;
+  ParseURL(url, host, filename, port);
+
 #ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   std::string cacheDir = GetCacheDir();
   CacheManifest manifest;
   LoadManifest(cacheDir, manifest);
 
-  // Check the server's current ETag and Content-Length with a HEAD request.
-  httplib::Result headRes = cli.Head(url);
+  std::string dest =
+      (std::filesystem::path(cacheDir) / filename).string();
+
+  // Do a head request to to get the cache info to compare it.
+#ifdef MLPACK_USE_HTTPS
+  if (port == -1)
+    port = 443;
+  httplib::SSLClient cli(host, port);
+#else
+  if (port == -1)
+    port = 80;
+  httplib::Client cli(host, port);
+#endif
+  cli.set_connection_timeout(2);
+
   std::string serverEtag;
   size_t serverSize = 0;
+  httplib::Result headRes = cli.Head(url);
   if (headRes)
   {
     if (headRes->has_header("ETag"))
@@ -276,8 +312,6 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
       serverSize = std::stoull(headRes->get_header_value("Content-Length"));
   }
 
-  // If we already have this URL cached with a matching ETag, size, and the
-  // destination file still exists on disk, skip the download.
   CacheManifest::iterator it = manifest.find(url);
   if (it != manifest.end())
   {
@@ -288,64 +322,29 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
         cachedSize == serverSize &&
         std::filesystem::exists(dest))
     {
+      filename = dest;
       return true;
     }
   }
-#endif
 
-  httplib::Result res = cli.Get(url);
-  if (!res)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
-    throw std::runtime_error(oss.str());
-  }
-  if (res->status == 404)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page or File not found: "
-        << res->status << " returned.";
-    throw std::runtime_error(oss.str());
-  }
+  // Download the file if it is not available in cache.
+  DownloadFile(url, dest);
 
-  WriteResponseToFile(dest, res);
-
-#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
   SaveManifest(cacheDir, manifest);
-#endif
-
+  filename = dest;
   return true;
-}
 
-// @rcurtin, The following duplication of the ParseURL is necessary to extract
-// destination, but it should not really affect the efficiency of the download
-// process, if you have an idea, how to avoid it please let me know. I am
-// trying to avoid refactoring ParseURL, since it is already well tested.
-inline bool DownloadFileInternal(const std::string& url,
-                                 std::string& filename)
-{
-  std::string host;
-  int port = -1;
-  ParseURL(url, host, filename, port);
-
-#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
-  std::string dest =
-      (std::filesystem::path(GetCacheDir()) / filename).string();
 #else
+
+  // Download to a temporary file if cache is disabled.
   std::filesystem::path dest = TempName();
   dest += "." + Extension(filename);
-#endif
-
-  bool success = DownloadFile(url, dest);
-
-#ifdef MLPACK_DISABLE_REMOTE_DATASET_CACHE
+  DownloadFile(url, dest.string());
   filename = dest.generic_string();
-#else
-  filename = dest;
-#endif
+  return true;
 
-  return success;
+#endif
 }
 
 #else

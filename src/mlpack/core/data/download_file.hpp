@@ -102,8 +102,6 @@ inline bool SaveManifest(const std::string& cacheDir,
 
 /*
  * Download a file from a URL and save it to a user-specified destination.
- * Checks the cache first, if the ETag and size match and dest already exists,
- * the download is skipped.
  *
  * @param url Given URL to download dataset from.
  * @param dest The local path to save the downloaded file to.
