@@ -259,7 +259,7 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
 #endif
   cli.set_connection_timeout(2);
 
-#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   std::string cacheDir = GetCacheDir();
   CacheManifest manifest;
   LoadManifest(cacheDir, manifest);
@@ -310,7 +310,7 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
 
   WriteResponseToFile(dest, res);
 
-#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
   SaveManifest(cacheDir, manifest);
 #endif
@@ -329,7 +329,7 @@ inline bool DownloadFileInternal(const std::string& url,
   int port = -1;
   ParseURL(url, host, filename, port);
 
-#ifndef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   std::string dest =
       (std::filesystem::path(GetCacheDir()) / filename).string();
 #else
@@ -339,7 +339,7 @@ inline bool DownloadFileInternal(const std::string& url,
 
   bool success = DownloadFile(url, dest);
 
-#ifdef MLPACK_DISABLE_CACHE_REMOTE_DATASETS
+#ifdef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   filename = dest.generic_string();
 #else
   filename = dest;
