@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Support caching downloaded dataset using manifest file (#4103).
+
  * Accelerated `LeakyReLU` ANN Layer (#4174).
 
  * Update `LinearSVM` documentation: `Classify()` returns class scores, not
