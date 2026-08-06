@@ -774,13 +774,14 @@ including mlpack.
 
 ```c++
 
-//@rcurtin, how we can show case this in an efficient way ? 
-// I can call the first mlpack::Load() twice, but I do not thing neither this
-// is efficient or well represent the docs.
-
 arma::mat dataset;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
+
+// If a second call to
+//     mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", ...)
+// is made, the dataset does not need to be downloaded: the local cache will be
+// used (unless MLPACK_DISABLE_REMOTE_DATASET_CACHE is defined).
 
 arma::Row<size_t> labels;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
