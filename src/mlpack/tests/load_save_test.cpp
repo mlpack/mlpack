@@ -4560,45 +4560,23 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
 #ifdef MLPACK_ENABLE_HTTPLIB
 
 /**
- * Test that DownloadFile() downloads a file to a user-specified destination,
- * and that calling it again with the same URL so it skips the download.
+ * Test that DownloadFile() downloads a file to a user-specified destination.
  */
 TEST_CASE("DownloadFileTest", "[LoadSaveTest]")
 {
   std::string dest = "test_download_iris.csv";
-  std::string cacheDir = GetCacheDir();
-  std::string manifestPath =
-      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
-
   remove(dest.c_str());
-  remove(manifestPath.c_str());
 
-  // Should download the file.
   REQUIRE(DownloadFile("https://datasets.mlpack.org/iris.csv", dest) == true);
   REQUIRE(std::filesystem::exists(dest));
   REQUIRE(std::filesystem::file_size(dest) > 0);
 
-  REQUIRE(std::filesystem::exists(manifestPath));
-
-  arma::mat data1;
-  REQUIRE(Load(dest, data1) == true);
-  REQUIRE(data1.n_rows == 4);
-  REQUIRE(data1.n_cols == 150);
-
-  auto mtime1 = std::filesystem::last_write_time(dest);
-
-  REQUIRE(DownloadFile("https://datasets.mlpack.org/iris.csv", dest) == true);
-
-  // Check if the cache has been overwritten.
-  auto mtime2 = std::filesystem::last_write_time(dest);
-  REQUIRE(mtime1 == mtime2);
-
-  arma::mat data2;
-  REQUIRE(Load(dest, data2) == true);
-  REQUIRE(arma::approx_equal(data1, data2, "absdiff", 1e-10));
+  arma::mat data;
+  REQUIRE(Load(dest, data) == true);
+  REQUIRE(data.n_rows == 4);
+  REQUIRE(data.n_cols == 150);
 
   remove(dest.c_str());
-  remove(manifestPath.c_str());
 }
 
 /**

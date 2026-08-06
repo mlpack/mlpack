@@ -735,9 +735,9 @@ mlpack supports loading datasets from URLs.  Files will be downloaded using the
 [cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
 with mlpack for ease of use.
 
-A remote URL can be given to either `DownloadFile()` or `Load()`:
-
- - `DownloadFile(URL, filename)`
+There are two ways to download a dataset either by passing a URL to `Load()`, or calling
+`DownloadFile()` directly.  They differ in where the file is saved and whether
+the download cache is used.
 
  * The URL must start with either `http://` or `https://` or loading will fail.
 
@@ -745,16 +745,6 @@ A remote URL can be given to either `DownloadFile()` or `Load()`:
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
-
- * `filename` A given name to the local file that will store the dataset. The name should include
-   the full path to the location where the file should be saved. If the path is not specified explicitly,
-   the downloaded file will be saved to the directory where the binary is located.
-
- * The downloaded file will be cached locally. If `mlpack::Load()` or `mlpack::DownloadFile()`
-   are called again on the same URL, the function will check for any difference in dataset size. 
-   If the dataset size does not match, the will download the dataset file again.
-
-<!-- @rcurtin let me know if the following make sense or it is too much -->
 
 ### Loading directly from a URL
 
@@ -798,6 +788,10 @@ std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 ```
 
 ### Downloading to a specific file with `DownloadFile()`
+
+`DownloadFile(url, dest)` downloads the file and saves it to the path you
+specify.  The file is always downloaded and not cached since the user has
+explicitly chosen where to save it.
 
 ```c++
 arma::fmat dataset;
