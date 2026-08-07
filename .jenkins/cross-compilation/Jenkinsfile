@@ -111,7 +111,7 @@ pipeline
           {
             name 'target'
             values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
-                   'cayenne', 'laziji'
+                   'cayenne', 'laziji', 'manaeesh'
           }
         }
 
