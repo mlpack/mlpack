@@ -57,8 +57,9 @@ target_info = [
       'arch_type': 'riscv64-lp64d-musl',
       'arch_name': 'C906',
       'test_filters': '[tiny]',
-      'openblas_extra_flags': 'USE_THREAD=0',
-      'scp_opts': '-O'
+      'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',
+      'scp_opts': '-O',
+      'extra_cmake_opts': '-DMLPACK_DISABLE_STB=ON -DMLPACK_DISABLE_DR_LIBS=ON -DMLPACK_DISABLE_HTTPLIB=ON'
   ]
 ]
 
