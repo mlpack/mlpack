@@ -51,6 +51,14 @@ target_info = [
       // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
       // download a precompiled reference BLAS implementation.
       'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+  ],
+  'manaeesh': [
+      'device_name': 'milkv-duo',
+      'arch_type': 'riscv64-lp64d-musl',
+      'arch_name': 'C906',
+      'test_filters': '[tiny]',
+      'openblas_extra_flags': 'USE_THREAD=0',
+      'scp_opts': '-O'
   ]
 ]
 
