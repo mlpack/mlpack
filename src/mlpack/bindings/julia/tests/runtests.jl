@@ -10,6 +10,7 @@
 
 using Test
 using mlpack: test_julia_binding, GaussianKernel, serialize_bin, deserialize_bin
+using mlpack: TestGroupJuliaBinding, fit!, predict
 using Serialization
 import Base.Filesystem
 
@@ -505,4 +506,32 @@ end
   # This should free the other models.  It's likely to crash if a model might be
   # freed multiple times.
   GC.gc()
+end
+
+# Test that when we create a grouped binding and then train and predict that it
+# works correctly.
+@testset "TestGroupBindingGeneralUsage" begin
+  # Create fake data and labels.
+  data = rand(100, 5)
+  labels = mod.(rand(Int, 100), 3) .+ 1
+
+  model = TestGroupJuliaBinding(unused_hyperparam=50)
+  fit!(model, data, labels)
+
+  # Now make sure we can predict.
+  predictions = predict(model, data)
+
+  # Just make sure the size of the predictions is reasonable.
+  @test length(predictions) == size(data, 1)
+end
+
+# Test that trying to predict with an untrained group binding throws an
+# exception.
+@testset "TestGroupBindingRequireTraining" begin
+  model = TestGroupJuliaBinding()
+  data = rand(100, 5)
+
+  # An untrained model should throw an exception because the model hasn't been
+  # initialized.
+  @test_throws ArgumentError predict(model, data)
 end

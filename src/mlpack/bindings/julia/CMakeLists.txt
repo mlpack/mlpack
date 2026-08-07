@@ -294,11 +294,10 @@ endif ()
 endmacro ()
 
 macro (add_julia_class directory group_name)
-  # First add the binding definitions for each member function of the class,
-  # but don't append any serialization functions or model pointer type
-  # information.
+  # First add the binding definitions for each member function of the class.
+  # Append serialization functions for the first of the bindings.
   foreach (method ${${group_name}_VALID_METHODS})
-    add_julia_binding(${directory} "${group_name}_${method}" "true" "skip")
+    add_julia_binding("${directory}" "${group_name}_${method}" "true" "skip")
   endforeach()
 
   # Generate a file of includes so that we can include all of the _main.cpp
@@ -377,4 +376,5 @@ endmacro()
 
 if (BUILD_TESTS AND BUILD_JULIA_BINDINGS)
   add_subdirectory(tests)
+  set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} PARENT_SCOPE)
 endif ()

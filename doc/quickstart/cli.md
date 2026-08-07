@@ -40,9 +40,9 @@ instructions in the
 
 As a really simple example of how to use mlpack from the command-line, let's do
 some simple classification on a subset of the standard machine learning
-`covertype` dataset.  We'll first split the dataset into a training set and a
-testing set, then we'll train an mlpack random forest on the training data, and
-finally we'll print the accuracy of the random forest on the test dataset.
+`covertype` dataset.  We will first split the dataset into a training set and a
+testing set, then we will train an mlpack random forest on the training data, and
+finally we will print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into your shell to run it.
 
@@ -99,9 +99,9 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's
-`mlpack_cf` program.  We'll train this on the
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+In this example, we will train a collaborative filtering model using mlpack's
+`mlpack_cf` program.  We will train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 You can copy-paste this code directly into the command line to run it.

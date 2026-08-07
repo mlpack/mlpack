@@ -45,6 +45,21 @@
   #define MLPACK_DISABLE_HTTPLIB
 #endif
 
+#if !defined(MLPACK_R_ENABLE_STB)
+  #undef  MLPACK_DISABLE_STB
+  #define MLPACK_DISABLE_STB
+#endif
+
+#if !defined(MLPACK_R_ENABLE_DR_LIBS)
+  #undef  MLPACK_DISABLE_DR_LIBS
+  #define MLPACK_DISABLE_DR_LIBS
+#endif
+
+#if !defined(MLPACK_R_ENABLE_HTTPLIB)
+  #undef  MLPACK_DISABLE_HTTPLIB
+  #define MLPACK_DISABLE_HTTPLIB
+#endif
+
 @R_SRC@
 
 // Include the core library

@@ -86,22 +86,22 @@ class YOLOv3Layer : public Layer<MatType>
   void ComputeOutputDimensions() override;
 
   /**
-   * NOTE: This will be changed when training is implemented.
+   * If training is true, returns raw model outputs.
    *
-   * Takes in 3d input and outputs bounding boxes, based on anchors,
-   * input image size and cell position, for each batch item.
+   * Otherwise, takes in input and outputs bounding boxes, based on anchors,
+   * original image size and cell position, for each batch item.
    *
    * Bounding boxes are outputted in the format: cx, cy, w, h.
    *
    * @param input Input data representing outputs of model.
-   * @param output Resulting bounding boxes after being normalized to image.
+   * @param output If training is true, returns raw model outputs. Otherwise,
+   *               resulting bounding boxes after being normalized to
+   *               the input image dimensions.
    */
   void Forward(const MatType& input, MatType& output) override;
 
   /**
-   * NOTE: This will be changed when training is implemented.
-   *
-   * Currently not implemented.
+   * Simply copies gradients to previous layer.
    */
   void Backward(const MatType& input,
                 const MatType& output,
