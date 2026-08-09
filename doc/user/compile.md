@@ -70,7 +70,8 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_USE_SYSTEM_DR_LIBS` | `#define MLPACK_USE_SYSTEM_DR_LIBS` | Use the version of dr\_libs available on the system instead of the version bundled with mlpack.  If set, make sure `dr_mp3.h` and `dr_wav.h` are available. |
 | `-DMLPACK_DONT_USE_SYSTEM_DR_LIBS` | `#define MLPACK_DONT_USE_SYSTEM_DR_LIBS` | Force usage of the bundled version of dr\_libs.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_DR_LIBS=ON`. |
 | `-DMLPACK_DISABLE_DR_LIBS` | `#define MLPACK_DISABLE_DR_LIBS` | Disable dr_libs (audio) support within mlpack; use this if your system does not need audio processing (e.g., you are only using real time sensors data). |
-| `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB`| Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
+| `-DMLPACK_ENABLE_HTTPS` | `#define MLPACK_ENABLE_HTTPS` | Enable HTTPS support for remote dataset loading with [`Load()`](load_save.md#loading-from-remote-urls); requires [linking with `-lssl -lcrypto`](compile.md#linking-against-optional-mlpack-dependencies). |
+| `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISABLE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems).|
 
@@ -78,6 +79,24 @@ program (before including mlpack or Armadillo!).
 `MLPACK_ENABLE_ANN_SERIALIZATION` option must be enabled.  This option is not
 enabled by default because it can cause compilation time to increase
 significantly, but it is necessary for any code that serializes neural networks.
+
+## Linking against optional mlpack dependencies
+
+The use of some optional mlpack dependencies necessitates linking against
+additional dependencies; add those to the example compilation command below
+after `-fopenmp`:
+
+```sh
+g++ -std=c++17 -O3 -o mlpack_program mlpack_program.cpp -larmadillo -fopenmp [extra libraries]
+```
+
+ * If HTTPS support is enabled with
+   [`MLPACK_ENABLE_HTTPS`](#configuring-mlpack-with-compile-time-definitions),
+   the SSL and libcrypto libraries must be linked against with `-lssl -lcrypto`.
+
+ * If the Armadillo runtime library is not available or linking against the underlying
+   BLAS/LAPACK libraries is desired, see the
+   [section below](#linking-without-the-armadillo-wrapper).
 
 ## Linking without the Armadillo wrapper
 
@@ -115,10 +134,11 @@ Some notes on the command above:
    reference LAPACK/BLAS, Intel MKL, and so forth.
 
  * In some programs, especially if sparse matrix support or HDF5 support is
-   used, it may be necessary to link against other libraries (e.g. `-lSuperLU
-   -lhdf5`, etc.).  The precise set of libraries to link against depends on the
-   code being used and the system configuration, but it should be easy enough to
-   use any linker errors to figure out what libraries need to be linked against.
+   used, it may be necessary to link against other libraries (e.g.
+   `-lSuperLU -lhdf5`, etc.).  The precise set of libraries to link against
+   depends on the code being used and the system configuration, but it should be
+   easy enough to use any linker errors to figure out what libraries need to be
+   linked against.
 
 ## Using mlpack in another CMake project
 

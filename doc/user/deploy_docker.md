@@ -83,10 +83,11 @@ g++ -O3 -o lstm_dga_detection_train lstm_dga_detection_train.cpp -fopenmp -larma
 
 Some modification of the command above may be necessary if mlpack is installed
 on your system in a nonstandard location, or if you are not using the Armadillo
-wrapper.  See [Configuring mlpack with compile-time
-definitions](compile.md#configuring-mlpack-with-compile-time-definitions) and
-[Linking without the Armadillo
-wrapper](compile.md#linking-without-the-armadillo-wrapper) for more details.
+wrapper.  See
+[Configuring mlpack with compile-time definitions](compile.md#configuring-mlpack-with-compile-time-definitions)
+and
+[Linking without the Armadillo wrapper](compile.md#linking-without-the-armadillo-wrapper)
+for more details.
 
 Once the program is compiled, we can train on a
 [dataset of domain names](https://datasets.mlpack.org/dga_domains.csv.gz).  The

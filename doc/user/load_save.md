@@ -741,8 +741,8 @@ When a remote URL is given to `Load()`:
 
  * If the URL starts with `https://`, support must be enabled with
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
-     including mlpack, and the program must be additionally [linked with `-lssl
-     -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
+     including mlpack, and the program must be additionally
+     [linked with `-lssl -lcrypto`](compile.md#linking-against-optional-mlpack-dependencies).
 
  * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
     Linux systems).

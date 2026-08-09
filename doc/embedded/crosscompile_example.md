@@ -1,4 +1,4 @@
-## Crosscompile mlpack example for an embedded hardware
+## Cross-compile mlpack example for an embedded hardware
 
 In this article, we explore how to add mlpack to a CMake project that cross-compiles
 code to embedded hardware.  See also these related other guides, which may be useful
@@ -30,6 +30,7 @@ Next, let's look at the `CMakeLists.txt` (e.g. the CMake configuration) in the
 The first part of the code, printed below or
 [available here](https://github.com/mlpack/examples/blob/master/embedded/crosscompile_random_forest/CMakeLists.txt),
 defines the project name and includes two useful CMake configuration files:
+
  * `mlpack.cmake`: finds mlpack's dependencies and download them if necessary.
  * `ConfigureCrossCompile.cmake`: set up CMake configuration for cross-compilation.
  * `crosscompile-toolchain.cmake`: invoke CMake crosscompilation infrastructure.

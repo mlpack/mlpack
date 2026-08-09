@@ -113,17 +113,17 @@
       </a>
 
       <a xlink:href="../user/core/normalizing_labels.html" target="_top">
-        <text x="140" y="615" text-anchor="middle">Normalizing labels</text>
+        <text x="140" y="605" text-anchor="middle">Normalizing labels</text>
       </a>
       <a xlink:href="../user/core/split.html" target="_top">
-        <text x="140" y="630" text-anchor="middle">Dataset splitting</text>
+        <text x="140" y="620" text-anchor="middle">Dataset splitting</text>
       </a>
       <a xlink:href="../user/core/images.html" target="_top">
-        <text x="140" y="645" text-anchor="middle">Image preprocessing</text>
+        <text x="140" y="635" text-anchor="middle">Image preprocessing</text>
       </a>
 
       <a xlink:href="../user/core/imputation.html" target="_top">
-        <text x="140" y="660" text-anchor="middle">Imputing missing values</text>
+        <text x="140" y="650" text-anchor="middle">Imputing missing values</text>
       </a>
     </g>
 
