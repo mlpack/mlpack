@@ -265,7 +265,7 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
   if (res->status == 404)
   {
     std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page or File not found: "
+    oss << "DownloadFile(): httplib error: URL not found: "
         << res->status << " returned.";
     throw std::runtime_error(oss.str());
   }
