@@ -312,19 +312,14 @@ inline bool DownloadFileWithCache(const std::string& url,
       serverSize = std::stoull(headRes->get_header_value("Content-Length"));
   }
 
-  CacheManifest::iterator it = manifest.find(url);
-  if (it != manifest.end())
+  if (manifest.count(url) > 0 &&
+      !serverEtag.empty() &&
+      std::get<0>(manifest[url]) == serverEtag &&
+      std::get<1>(manifest[url]) == serverSize &&
+      std::filesystem::exists(dest))
   {
-    std::string& cachedEtag = std::get<0>(it->second);
-    size_t cachedSize       = std::get<1>(it->second);
-    if (!serverEtag.empty() &&
-        cachedEtag == serverEtag &&
-        cachedSize == serverSize &&
-        std::filesystem::exists(dest))
-    {
-      filename = dest;
-      return true;
-    }
+    filename = dest;
+    return true;
   }
 
   // Download the file if it is not available in cache.
