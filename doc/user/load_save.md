@@ -735,9 +735,7 @@ mlpack supports loading datasets from URLs.  Files will be downloaded using the
 [cpp-httplib](https://github.com/yhirose/cpp-httplib) library, which is bundled
 with mlpack for ease of use.
 
-There are two ways to download a dataset either by passing a URL to `Load()`, or calling
-`DownloadFile()` directly.  They differ in where the file is saved and whether
-the download cache is used.
+When a remote URL is given to `Load()`:
 
  * The URL must start with either `http://` or `https://` or loading will fail.
 
@@ -746,24 +744,18 @@ the download cache is used.
      including mlpack, and the program must be additionally [linked with `-lssl
      -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
 
-### Loading directly from a URL
-
-When a URL is passed to `Load()`, the file is downloaded automatically since caching
-is enabled by default. Note that if `Load()` is called again with the same URL,
-mlpack checks server's `ETag` and `Content-Length`, if they match the cached copy,
-then the download is skipped and the cached file is used directly.
-
-Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
-`%APPDATA%\mlpack\cache\` on Windows.  The cache directory can be overridden at
-compile time with
-[`MLPACK_REMOTE_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
-
-To disable caching entirely (so that downloaded files go to the system temporary
-directory, e.g. `/tmp/`), define `MLPACK_DISABLE_REMOTE_DATASET_CACHE` before
-including mlpack.
+ * The dataset will be added to a cache to prevent a second download if the same
+   URL is loaded again.
+   - If the server reports the same `ETag` and `Content-Length` headers for the
+     URL, the cached version will be used.
+   - The cache can be disabled with the
+     [`MLPACK_DISABLE_REMOTE_DATASET_CACHE` compilation option](compile.md#configuring-mlpack-with-compile-time-definitions).
+   - Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
+     `%APPDATA%\mlpack\cache\` on Windows.
+   - The cache directory can be overridden at compile time with
+     [`MLPACK_REMOTE_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
 ```c++
-
 arma::mat dataset;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
@@ -787,13 +779,22 @@ std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 ```
 
+Instead of passing a URL directly to `Load()`, it is also possible to download a
+remote dataset manually to a specific local path with the
+[`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
+
 ### Downloading to a specific file with `DownloadFile()`
 
  * `DownloadFile(url, dest)`
-   - Download the file located at `url` (a `std::string`) and save it to the path given with `dest` (a `std::string`).
+   - Download the file located at `url` (a `std::string`) and save it to the
+     path given with `dest` (a `std::string`).
    - No cache is used; the file will always be downloaded.
-   - If `dest` already exists, or permissions to write to `dest` are lacking, or any other failure while writing is encountered, an exception will be thrown.
-   - If the URL starts with `https://`, support must be enabled with [#define MLPACK_USE_HTTPS](https://www.mlpack.org/doc/user/compile.html#configuring-mlpack-with-compile-time-definitions) before including mlpack, and the program must be additionally linked with `-lssl -lcrypto`.
+   - If permissions to write to `dest` are lacking, or any other failure while
+     writing is encountered, an exception will be thrown.
+   - If the URL starts with `https://`, support must be enabled with
+     [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions)
+     before including mlpack, and the program must be additionally
+     [linked with `-lssl -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
 
 ```c++
 arma::fmat dataset;
