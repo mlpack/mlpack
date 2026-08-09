@@ -301,19 +301,23 @@ inline bool DownloadFileWithCache(const std::string& url,
 #endif
   cli.set_connection_timeout(2);
 
+  // Register in cache only if the head request has succeeded.
+  // If not just jump to download and do not cache the file, not enough
+  // information to cache.
   std::string serverEtag;
   size_t serverSize = 0;
+  bool headSucceeded = false;
   httplib::Result headRes = cli.Head(url);
-  if (headRes)
+  if (headRes && headRes->has_header("ETag"))
   {
-    if (headRes->has_header("ETag"))
-      serverEtag = headRes->get_header_value("ETag");
+    serverEtag = headRes->get_header_value("ETag");
     if (headRes->has_header("Content-Length"))
       serverSize = std::stoull(headRes->get_header_value("Content-Length"));
+    headSucceeded = true;
   }
 
-  if (manifest.count(url) > 0 &&
-      !serverEtag.empty() &&
+  if (headSucceeded &&
+      manifest.count(url) > 0 &&
       std::get<0>(manifest[url]) == serverEtag &&
       std::get<1>(manifest[url]) == serverSize &&
       std::filesystem::exists(dest))
@@ -322,11 +326,13 @@ inline bool DownloadFileWithCache(const std::string& url,
     return true;
   }
 
-  // Download the file if it is not available in cache.
   DownloadFile(url, dest);
 
-  manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
-  SaveManifest(cacheDir, manifest);
+  if (headSucceeded)
+  {
+    manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
+    SaveManifest(cacheDir, manifest);
+  }
   filename = dest;
   return true;
 
