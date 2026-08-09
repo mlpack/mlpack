@@ -789,9 +789,11 @@ std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 
 ### Downloading to a specific file with `DownloadFile()`
 
-`DownloadFile(url, dest)` downloads the file and saves it to the path you
-specify.  The file is always downloaded and not cached since the user has
-explicitly chosen where to save it.
+ * `DownloadFile(url, dest)`
+   - Download the file located at `url` (a `std::string`) and save it to the path given with `dest` (a `std::string`).
+   - No cache is used; the file will always be downloaded.
+   - If `dest` already exists, or permissions to write to `dest` are lacking, or any other failure while writing is encountered, an exception will be thrown.
+   - If the URL starts with `https://`, support must be enabled with [#define MLPACK_USE_HTTPS](https://www.mlpack.org/doc/user/compile.html#configuring-mlpack-with-compile-time-definitions) before including mlpack, and the program must be additionally linked with `-lssl -lcrypto`.
 
 ```c++
 arma::fmat dataset;
