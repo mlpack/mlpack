@@ -262,11 +262,11 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
     throw std::runtime_error(oss.str());
   }
 
-  if (res->status == 404)
+  if (res->status != 200)
   {
     std::stringstream oss;
-    oss << "DownloadFile(): httplib error: URL not found: "
-        << res->status << " returned.";
+    oss << "DownloadFile(): HTTP request failed with status code "
+        << res->status << " for URL '" << url << "'.";
     throw std::runtime_error(oss.str());
   }
 
