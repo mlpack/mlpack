@@ -70,7 +70,7 @@ using CacheManifest =
  * macro, the second one a default cache path if no user defined, and the last
  * one is the system temp directory.
  *
- * Following follows Bandicoot's kernel-cache pattern, defined in cache_meat.hpp
+ * This follows Bandicoot's kernel-cache pattern, defined in cache_meat.hpp
  *   1. MLPACK_CACHE_DIR (compile-time macro)
  *   2. $HOME/.mlpack/cache/  (POSIX) or %APPDATA%\mlpack\cache\ (Windows)
  *   3. system temp directory
