@@ -790,7 +790,7 @@ remote dataset manually to a specific local path with the
      path given with `dest` (a `std::string`).
    - No cache is used; the file will always be downloaded.
    - If permissions to write to `dest` are lacking, or any other failure while
-     writing is encountered, an exception will be thrown.
+     writing is encountered, a fatal error will be reported.
    - If the URL starts with `https://`, support must be enabled with
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions)
      before including mlpack, and the program must be additionally
