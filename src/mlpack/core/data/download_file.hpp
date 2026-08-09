@@ -116,7 +116,7 @@ inline bool DownloadFile(const std::string& url,
  * @param filename Set to the local path of the downloaded (or cached) file.
  * @return true if download or cache is successful, otherwise throws.
  */
-inline bool DownloadFileInternal(const std::string& url,
+inline bool DownloadFileWithCache(const std::string& url,
                                  std::string& filename);
 
 #endif

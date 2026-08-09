@@ -274,7 +274,7 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
   return true;
 }
 
-inline bool DownloadFileInternal(const std::string& url,
+inline bool DownloadFileWithCache(const std::string& url,
                                  std::string& filename)
 {
   std::string host;
@@ -374,7 +374,7 @@ inline bool DownloadFile(const std::string& url,
   return false;
 }
 
-inline bool DownloadFileInternal(const std::string& url,
+inline bool DownloadFileWithCache(const std::string& url,
                                  std::string& filename)
 {
   filename = "";

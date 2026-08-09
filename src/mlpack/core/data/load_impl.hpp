@@ -71,7 +71,7 @@ bool Load(const std::string& src,
     // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
     // the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
-    success = DownloadFileInternal(src, filename);
+    success = DownloadFileWithCache(src, filename);
     if (!success)
     {
       Timer::Stop("loading_data");
