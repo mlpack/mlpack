@@ -132,8 +132,8 @@ inline std::string GetCacheDir()
 {
   std::filesystem::path dir;
 
-#ifdef MLPACK_CACHE_DIR
-  dir = MLPACK_CACHE_DIR;
+#ifdef MLPACK_REMOTE_CACHE_DIR
+  dir = MLPACK_REMOTE_CACHE_DIR;
 #else
   #ifdef _WIN32
   char* appdata = std::getenv("APPDATA");

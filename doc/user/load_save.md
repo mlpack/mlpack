@@ -756,7 +756,7 @@ then the download is skipped and the cached file is used directly.
 Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
 `%APPDATA%\mlpack\cache\` on Windows.  The cache directory can be overridden at
 compile time with
-[`MLPACK_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
+[`MLPACK_REMOTE_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
 To disable caching entirely (so that downloaded files go to the system temporary
 directory, e.g. `/tmp/`), define `MLPACK_DISABLE_REMOTE_DATASET_CACHE` before

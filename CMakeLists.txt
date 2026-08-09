@@ -24,7 +24,7 @@ option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with ml
 option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
 option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
 option(DISABLE_REMOTE_DATASET_CACHE "Disable caching of downloaded datasets." OFF)
-set(CACHE_DIR "" CACHE STRING "Override the directory where cached datasets are stored.")
+set(REMOTE_CACHE_DIR "" CACHE STRING "Override the directory where cached datasets are stored.")
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -285,8 +285,8 @@ if (DISABLE_REMOTE_DATASET_CACHE)
   set(MLPACK_DISABLE_REMOTE_DATASET_CACHE ON)
 endif ()
 
-if (CACHE_DIR)
-  set(MLPACK_CACHE_DIR "${CACHE_DIR}")
+if (REMOTE_CACHE_DIR)
+  set(MLPACK_REMOTE_CACHE_DIR "${REMOTE_CACHE_DIR}")
 endif ()
 
 set(MLPACK_DONT_FIND_MLPACK 1)
@@ -423,9 +423,9 @@ if (DISABLE_REMOTE_DATASET_CACHE)
       "${CONFIG_CONTENTS}")
 endif()
 
-if (CACHE_DIR)
-  string(REGEX REPLACE "// #define MLPACK_CACHE_DIR.*\n"
-      "#define MLPACK_CACHE_DIR \"${CACHE_DIR}\"\n" CONFIG_CONTENTS
+if (REMOTE_CACHE_DIR)
+  string(REGEX REPLACE "// #define MLPACK_REMOTE_CACHE_DIR.*\n"
+      "#define MLPACK_REMOTE_CACHE_DIR \"${REMOTE_CACHE_DIR}\"\n" CONFIG_CONTENTS
       "${CONFIG_CONTENTS}")
 endif()
 
