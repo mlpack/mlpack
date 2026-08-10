@@ -1261,3 +1261,46 @@ TEST_CASE("JacobianNegativeLogLikelihoodLayerTest", "[LossFunctionsTest][tiny]")
     REQUIRE(error <= 1e-5);
   }
 }
+
+/**
+ * Simple FocalLoss test. GEMINI GENERATED
+ */
+TEST_CASE("FocalLossTest", "[ANNLossTest]")
+{
+  arma::mat prediction = {{-0.5, 1.2, 2.0}, {-1.0, 0.0, 0.5}};
+  arma::mat target = {{0.0, 1.0, 1.0}, {0.0, 0.0, 1.0}};
+
+  // 1. Test Forward & Backward execution
+  FocalLoss loss(2.0, 0.25, true);
+  double lossValue = loss.Forward(prediction, target);
+  REQUIRE(lossValue > 0.0);
+
+  arma::mat outputGrad;
+  loss.Backward(prediction, target, outputGrad);
+  REQUIRE(outputGrad.n_rows == prediction.n_rows);
+  REQUIRE(outputGrad.n_cols == prediction.n_cols);
+
+  // 2. Numerical Gradient Check via Finite Differences
+  const double eps = 1e-5;
+  arma::mat numGrad(prediction.n_rows, prediction.n_cols);
+
+  for (size_t i = 0; i < prediction.n_elem; ++i)
+  {
+    arma::mat predPlus = prediction;
+    arma::mat predMinus = prediction;
+
+    predPlus(i) += eps;
+    predMinus(i) -= eps;
+
+    double lossPlus = loss.Forward(predPlus, target);
+    double lossMinus = loss.Forward(predMinus, target);
+
+    numGrad(i) = (lossPlus - lossMinus) / (2.0 * eps);
+  }
+
+  // Check that analytical gradient matches numerical gradient
+  for (size_t i = 0; i < prediction.n_elem; ++i)
+  {
+    REQUIRE(outputGrad(i) == Approx(numGrad(i)).margin(1e-4));
+  }
+}
