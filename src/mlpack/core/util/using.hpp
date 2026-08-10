@@ -91,6 +91,7 @@ using arma::pow;
 using arma::randi;
 using arma::randn;
 using arma::randu;
+using arma::regspace;
 using arma::repmat;
 using arma::sign;
 using arma::size;

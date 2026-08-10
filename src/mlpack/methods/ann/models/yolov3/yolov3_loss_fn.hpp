@@ -21,25 +21,36 @@ class YOLOv3Loss
 {
  public:
   using ElemType = typename MatType::elem_type;
-  /**
-   * Create the YOLOv3Loss object, with default coefficients.
-   */
-  YOLOv3Loss() : YOLOv3Loss(1.0, 0.2, 1.0, 5.0) {}
+  using CubeType = typename GetCubeType<MatType>::type;
 
+  YOLOv3Loss() { std::cout << "Default yolo loss.\n"; }
   /**
-   * Create the YOLOv3Loss object.
-   *
-   * Parameters are coefficients, which scale how much their particular loss effects
-   * the total loss.
    */
-  YOLOv3Loss(ElemType objectness,
-             ElemType no_objectness,
-             ElemType classification,
-             ElemType coord);
+  YOLOv3Loss(size_t numBoxes,
+             size_t numTruths,
+             size_t numAttributes) :
+    numBoxes(numBoxes),
+    numTruths(numTruths),
+    numAttributes(numAttributes),
+    keepObjectRange(repmat(regspace(0, numTruths - 1).t(), numAttributes, 1))
+  {
+  }
 
+  // Expected shapes for each input:
+  // prediction: (numAttributes * numBoxes, batchSize)
+  // targets: (numAttributes * numTruths, batchSize)
+  // besPredictionIndices: (numTruths, batchSize)
+  // ignorePrediction: (numBoxes, batchSize)
+  // scales: (numTruths, batchSize)
+  // numTargets: (batchSize)
   /**
    */
-  ElemType Forward(const MatType& input, const MatType& target);
+  ElemType Forward(const MatType& predictions,
+                   const MatType& targets,
+                   const MatType& bestPredictionIndices,
+                   const MatType& ignorePredictions,
+                   const MatType& scales,
+                   const MatType& numTargets);
 
   /**
    */
@@ -52,10 +63,10 @@ class YOLOv3Loss
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
  private:
 
-  ElemType objectness_coeff;
-  ElemType no_objectness_coeff;
-  ElemType classification_coeff;
-  ElemType coordinate_coeff;
+  size_t numBoxes;
+  size_t numTruths;
+  size_t numAttributes;
+  MatType keepObjectRange;
 };
 
 }; // namespace mlpack
