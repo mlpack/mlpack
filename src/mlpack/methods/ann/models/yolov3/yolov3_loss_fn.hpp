@@ -22,6 +22,7 @@ class YOLOv3Loss
  public:
   using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
+  using IndexType = typename GetUColType<MatType>::type;
 
   YOLOv3Loss() { std::cout << "Default yolo loss.\n"; }
   /**
@@ -36,13 +37,6 @@ class YOLOv3Loss
   {
   }
 
-  // Expected shapes for each input:
-  // prediction: (numAttributes * numBoxes, batchSize)
-  // targets: (numAttributes * numTruths, batchSize)
-  // besPredictionIndices: (numTruths, batchSize)
-  // ignorePrediction: (numBoxes, batchSize)
-  // scales: (numTruths, batchSize)
-  // numTargets: (batchSize)
   /**
    */
   ElemType Forward(const MatType& predictions,
@@ -54,14 +48,31 @@ class YOLOv3Loss
 
   /**
    */
-  void Backward(const MatType& prediction,
-                const MatType& target,
+  void Backward(const MatType& predictions,
+                const MatType& targets,
+                const MatType& bestPredictionIndices,
+                const MatType& ignorePredictions,
+                const MatType& scales,
+                const MatType& numTargets,
                 MatType& loss);
 
   //! Serialize the EmptyLossType.
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
  private:
+  // Expected shapes for each input:
+  // prediction: (numAttributes * numBoxes, batchSize)
+  // targets: (numAttributes * numTruths, batchSize)
+  // besPredictionIndices: (numTruths, batchSize)
+  // ignorePrediction: (numBoxes, batchSize)
+  // scales: (numTruths, batchSize)
+  // numTargets: (batchSize)
+  void CheckShapes(const MatType& predictions,
+                   const MatType& targets,
+                   const MatType& bestPredictionIndices,
+                   const MatType& ignorePredictions,
+                   const MatType& scales,
+                   const MatType& numTargets);
 
   size_t numBoxes;
   size_t numTruths;

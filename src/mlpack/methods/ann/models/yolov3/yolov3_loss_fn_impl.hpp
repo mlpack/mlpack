@@ -23,63 +23,15 @@ YOLOv3Loss<MatType>::Forward(const MatType& predictions,
                              const MatType& scales,
                              const MatType& numTargets)
 {
-  // TODO: should work on arma and coot.
-  using IndexType = arma::Mat<long long unsigned int>;
 
   const size_t batchSize = predictions.n_cols;
 
-  std::ostringstream errMessage;
-  if (predictions.n_rows != numAttributes * numBoxes)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected predictions to be of shape ("
-      << numAttributes * numBoxes << ", " << batchSize << "), but got (" <<
-      predictions.n_rows << ", " << predictions.n_cols << ").";
-    throw std::logic_error(errMessage.str());
-  }
-
-  if (targets.n_rows != numAttributes * numTruths ||
-      targets.n_cols != batchSize)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected targets to be of shape ("
-      << numAttributes * numTruths << ", " << batchSize << "), but got (" <<
-      targets.n_rows << ", " << targets.n_cols << ").";
-    throw std::logic_error(errMessage.str());
-  }
-
-  if (bestPredictionIndices.n_rows != numTruths ||
-      bestPredictionIndices.n_cols != batchSize)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected bestPredictionIndices to be"
-      " of shape (" << numTruths << ", " << batchSize << "), but got (" <<
-      bestPredictionIndices.n_rows << ", " << bestPredictionIndices.n_cols <<
-      ").";
-    throw std::logic_error(errMessage.str());
-  }
-
-  if (ignorePredictions.n_rows != numBoxes ||
-      ignorePredictions.n_cols != batchSize)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected ignorePredictions to be"
-      " of shape (" << numBoxes << ", " << batchSize << "), but got (" <<
-      ignorePredictions.n_rows << ", " << ignorePredictions.n_cols << ").";
-    throw std::logic_error(errMessage.str());
-  }
-
-  if (scales.n_rows != numTruths || scales.n_cols != batchSize)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected scales to be of shape ("
-      << numTruths << ", " << batchSize << "), but got (" <<
-      scales.n_rows << ", " << scales.n_cols << ").";
-    throw std::logic_error(errMessage.str());
-  }
-
-  if (numTargets.n_rows != 1 || numTargets.n_cols != batchSize)
-  {
-    errMessage << "YOLOv3Loss::Forward(): Expected numTargets to be of shape ("
-      << 1 << ", " << batchSize << "), but got (" <<
-      numTargets.n_rows << ", " << numTargets.n_cols << ").";
-    throw std::logic_error(errMessage.str());
-  }
+  CheckShapes(predictions,
+              targets,
+              bestPredictionIndices,
+              ignorePredictions,
+              scales,
+              numTargets);
 
   ElemType loss = 0;
   MatType probabilities, correctBoxes, keepObject;
@@ -139,12 +91,125 @@ YOLOv3Loss<MatType>::Forward(const MatType& predictions,
 }
 
 template<typename MatType>
-void YOLOv3Loss<MatType>::Backward(
-    const MatType& prediction,
-    const MatType& target,
-    MatType& loss)
+void YOLOv3Loss<MatType>::Backward(const MatType& predictions,
+                                   const MatType& targets,
+                                   const MatType& bestPredictionIndices,
+                                   const MatType& ignorePredictions,
+                                   const MatType& scales,
+                                   const MatType& numTargets,
+                                   MatType& loss)
 {
+  const size_t batchSize = predictions.n_cols;
 
+  CheckShapes(predictions,
+              targets,
+              bestPredictionIndices,
+              ignorePredictions,
+              scales,
+              numTargets);
+
+  loss.set_size(predictions.n_rows, predictions.n_cols);
+  loss.fill(0);
+
+  CubeType predictionsCube, targetsCube, lossCube;
+  MakeAlias(predictionsCube, predictions, numAttributes, numBoxes, batchSize);
+  MakeAlias(targetsCube, targets, numAttributes, numTruths, batchSize);
+  MakeAlias(lossCube, loss, numAttributes, numBoxes, batchSize);
+
+  MatType dLossdBoxes = MatType(numAttributes, numTruths);
+
+  MatType probabilities, correctBoxes, keepObject;
+
+  MatType repeatedNumTargets = repmat(numTargets, numAttributes, 1);
+
+  lossCube.row(4) = 1. / (1. + exp(-predictionsCube.row(4)));
+  for (size_t i = 0; i < batchSize; i++)
+  {
+
+    correctBoxes = predictionsCube.slice(i).cols(conv_to<IndexType>::from(bestPredictionIndices.col(i)));
+    dLossdBoxes.rows(0, 3) = repmat(scales.col(i).t(), 4, 1) % (2. * (correctBoxes.rows(0, 3) - targetsCube.slice(i).rows(0, 3)));
+
+    probabilities = 1. / (1. + exp(-correctBoxes.rows(4, numAttributes - 1)));
+    dLossdBoxes.row(4) = probabilities.row(0) - 1.;
+
+    dLossdBoxes.rows(5, numAttributes - 1) =
+      targetsCube.slice(i).rows(5, numAttributes - 1) * (probabilities.rows(1, numAttributes - 5) - 1.) +
+      (1 - targetsCube.slice(i).rows(5, numAttributes - 1)) * (probabilities.rows(1, numAttributes - 5));
+
+    keepObject = conv_to<MatType>::from(
+      keepObjectRange < repmat(repeatedNumTargets.col(i), 1, numTruths));
+    lossCube.slice(i).cols(conv_to<IndexType>::from(bestPredictionIndices.col(i))) =
+      lossCube.slice(i).cols(conv_to<IndexType>::from(bestPredictionIndices.col(i))) % (1 - keepObject) +
+      (dLossdBoxes % keepObject);
+
+    lossCube.slice(i) %=
+      (1. - repmat(ignorePredictions.col(i).t(), numAttributes, 1));
+  }
+
+}
+
+template <typename MatType>
+void YOLOv3Loss<MatType>::CheckShapes(const MatType& predictions,
+                                      const MatType& targets,
+                                      const MatType& bestPredictionIndices,
+                                      const MatType& ignorePredictions,
+                                      const MatType& scales,
+                                      const MatType& numTargets)
+{
+  const size_t batchSize = predictions.n_cols;
+
+  std::ostringstream errMessage;
+  if (predictions.n_rows != numAttributes * numBoxes)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected predictions to be of shape ("
+      << numAttributes * numBoxes << ", " << batchSize << "), but got (" <<
+      predictions.n_rows << ", " << predictions.n_cols << ").";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (targets.n_rows != numAttributes * numTruths ||
+      targets.n_cols != batchSize)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected targets to be of shape ("
+      << numAttributes * numTruths << ", " << batchSize << "), but got (" <<
+      targets.n_rows << ", " << targets.n_cols << ").";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (bestPredictionIndices.n_rows != numTruths ||
+      bestPredictionIndices.n_cols != batchSize)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected bestPredictionIndices to be"
+      " of shape (" << numTruths << ", " << batchSize << "), but got (" <<
+      bestPredictionIndices.n_rows << ", " << bestPredictionIndices.n_cols <<
+      ").";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (ignorePredictions.n_rows != numBoxes ||
+      ignorePredictions.n_cols != batchSize)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected ignorePredictions to be"
+      " of shape (" << numBoxes << ", " << batchSize << "), but got (" <<
+      ignorePredictions.n_rows << ", " << ignorePredictions.n_cols << ").";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (scales.n_rows != numTruths || scales.n_cols != batchSize)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected scales to be of shape ("
+      << numTruths << ", " << batchSize << "), but got (" <<
+      scales.n_rows << ", " << scales.n_cols << ").";
+    throw std::logic_error(errMessage.str());
+  }
+
+  if (numTargets.n_rows != 1 || numTargets.n_cols != batchSize)
+  {
+    errMessage << "YOLOv3Loss::Forward(): Expected numTargets to be of shape ("
+      << 1 << ", " << batchSize << "), but got (" <<
+      numTargets.n_rows << ", " << numTargets.n_cols << ").";
+    throw std::logic_error(errMessage.str());
+  }
 }
 
 } // namespace mlpack
