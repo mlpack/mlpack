@@ -3,9 +3,10 @@
  *
  * Implementation of the Focal Loss function with logits.
  *
- * mlpack is free software; you may redistribute it and/or modify it under the
- * terms of the 3-clause BSD license.  You should have received a copy of the
- * 3-clause BSD license along with mlpack.  If not, see
+ * mlpack is free software; you may redistribute it and/or modify it 
+ * under the terms of the 3-clause BSD license.  You should have 
+ * received a copy of the 3-clause BSD license along with mlpack.  
+ * If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #ifndef MLPACK_METHODS_ANN_LOSS_FUNCTION_FOCAL_LOSS_IMPL_HPP
@@ -71,7 +72,8 @@ void FocalLossType<MatType>::Backward(
   MatType alpha_t = target * alpha + (1.0 - target) * (1.0 - alpha);
 
   // Gradient w.r.t logits (x):
-  // dFL/dx = alpha_t * (1 - p_t)^gamma * (gamma * p_t * log(p_t) + p_t - 1) * (2*y - 1)
+  // dFL/dx = alpha_t * (1 - p_t)^gamma * (gamma * p_t * log(p_t)
+  // + p_t - 1) * (2*y - 1)
   MatType term1 = arma::pow(1.0 - p_t, gamma);
   MatType term2 = gamma * p_t % arma::log(p_t) + p_t - 1.0;
   MatType signFactor = 2.0 * target - 1.0;
