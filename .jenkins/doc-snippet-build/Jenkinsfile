@@ -50,6 +50,10 @@ pipeline
         script { u.updateCheckStatus('Testing documentation snippets...') }
 
         sh'''
+          # Set $HOME because the Docker container may be running with a
+          # different uid.
+          export HOME="${WORKSPACE}/"
+
           export CCACHE_DIR=/opt/ccache/;
           export CXX="ccache g++";
           export CXXFLAGS="-O3 -DNDEBUG -fopenmp -I./src/ -I/usr/include/eigen3/";
