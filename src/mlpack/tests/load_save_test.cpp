@@ -4664,4 +4664,54 @@ TEST_CASE("ManifestLoadSave", "[LoadSaveTest]")
   remove(manifestPath.c_str());
 }
 
+/**
+ * Test cache invalidation and tampering with the manifest (wrong ETag and size).
+ * The next Load() function call with the same URL must detect the mismatch
+ * therefore re-downloading the data.
+ */
+TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "iris.csv").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat originalData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", originalData,
+      Fatal) == true);
+  REQUIRE(originalData.n_rows == 4);
+  REQUIRE(originalData.n_cols == 150);
+  REQUIRE(std::filesystem::exists(manifestPath));
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  // Change the ETag and the size
+  CacheManifest manifest;
+  REQUIRE(LoadManifest(cacheDir, manifest) == true);
+  REQUIRE(manifest.count("https://datasets.mlpack.org/iris.csv") == 1);
+  manifest["https://datasets.mlpack.org/iris.csv"] =
+      std::make_tuple("\"fake-etag-corrupted\"", (size_t) 42, cachedFile);
+  REQUIRE(SaveManifest(cacheDir, manifest) == true);
+
+  // Also change the data, this might not be necessary.
+  std::ofstream out(cachedFile, std::ios::trunc);
+  REQUIRE(out.is_open());
+  out << "this,is,corrupted,data\n1,2,3,4\n";
+
+  arma::mat reloadedData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", reloadedData,
+      Fatal) == true);
+  REQUIRE(reloadedData.n_rows == 4);
+  REQUIRE(reloadedData.n_cols == 150);
+
+  // Check that the downloaded data is equal to the original loaded data.
+  REQUIRE(arma::approx_equal(originalData, reloadedData, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
 #endif
