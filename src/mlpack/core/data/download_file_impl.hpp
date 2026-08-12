@@ -141,7 +141,10 @@ inline std::string GetCacheDir()
     dir = std::filesystem::path(appdata) / "mlpack" / "cache";
   #else
   char* home = std::getenv("HOME");
-  if (home)
+  // If we are running inside a Docker container, probably the home directory
+  // does not exist, therefore the following is added to check that we have a
+  // proper home directory in place.
+  if (home && home[0] != '\0' && std::string(home) != "/")
     dir = std::filesystem::path(home) / ".mlpack" / "cache";
   #endif
 
