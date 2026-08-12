@@ -755,6 +755,10 @@ When a remote URL is given to `Load()`:
    - The cache directory can be overridden at compile time with
      [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
+Instead of passing a URL directly to `Load()`, it is also possible to download a
+remote dataset manually to a specific local path with the
+[`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
+
 ```c++
 arma::mat dataset;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
@@ -778,10 +782,6 @@ std::cout << " - " << labels.n_elem << " labels." << std::endl;
 std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
 ```
-
-Instead of passing a URL directly to `Load()`, it is also possible to download a
-remote dataset manually to a specific local path with the
-[`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
 
 ### Downloading to a specific file with `DownloadFile()`
 
