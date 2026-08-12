@@ -67,7 +67,7 @@ using CacheManifest =
  * one is the system temp directory.
  *
  * This follows Bandicoot's kernel-cache pattern, defined in cache_meat.hpp
- *   1. MLPACK_REMOTE_CACHE_DIR (compile-time macro)
+ *   1. MLPACK_REMOTE_DATASET_CACHE_DIR (compile-time macro)
  *   2. $HOME/.mlpack/cache/  (POSIX) or %APPDATA%\mlpack\cache\ (Windows)
  *   3. system temp directory
  *

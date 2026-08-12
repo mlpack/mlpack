@@ -753,7 +753,7 @@ When a remote URL is given to `Load()`:
    - Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
      `%APPDATA%\mlpack\cache\` on Windows.
    - The cache directory can be overridden at compile time with
-     [`MLPACK_REMOTE_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
+     [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
 ```c++
 arma::mat dataset;

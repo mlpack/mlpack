@@ -154,9 +154,9 @@
   // #define MLPACK_DISABLE_REMOTE_DATASET_CACHE
 #endif
 
-// MLPACK_REMOTE_CACHE_DIR can be set to override the default cache directory.
-// If not set, the default is $HOME/.mlpack/cache/ on POSIX and
+// MLPACK_REMOTE_DATASET_CACHE_DIR can be set to override the default cache
+// directory.  If not set, the default is $HOME/.mlpack/cache/ on POSIX and
 // %APPDATA%\mlpack\cache\ on Windows.
-// #define MLPACK_REMOTE_CACHE_DIR "/custom/cache/path/"
+// #define MLPACK_REMOTE_DATASET_CACHE_DIR "/custom/cache/path/"
 
 #endif
