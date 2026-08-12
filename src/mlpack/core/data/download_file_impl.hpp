@@ -284,7 +284,12 @@ inline bool DownloadFileWithCache(const std::string& url,
 #ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   std::string cacheDir = GetCacheDir();
   CacheManifest manifest;
-  LoadManifest(cacheDir, manifest);
+  if (!LoadManifest(cacheDir, manifest))
+  {
+    Log::Debug << "LoadManifest(): could not open cache manifest in '"
+        << cacheDir << "'. This is expected on the first download or if the "
+        << "cache directory does not yet contain a manifest file." << std::endl;
+  }
 
   std::string dest =
       (std::filesystem::path(cacheDir) / filename).string();
