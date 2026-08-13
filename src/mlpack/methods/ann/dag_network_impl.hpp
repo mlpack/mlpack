@@ -1445,6 +1445,7 @@ typename MatType::elem_type DAGNetwork<
   const size_t lastLayer = sortedNetwork.back();
   networkOutput.set_size(network[lastLayer]->OutputSize(),
     predictors.n_cols);
+  error.set_size(network[lastLayer]->OutputSize(), predictors.n_cols);
 
   MatType predictorsBatch, responsesBatch;
   MakeAlias(predictorsBatch, predictors, predictors.n_rows,
