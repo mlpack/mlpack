@@ -22,9 +22,9 @@ class YOLOv3Loss
  public:
   using ElemType = typename MatType::elem_type;
   using CubeType = typename GetCubeType<MatType>::type;
-  using IndexType = typename GetUColType<MatType>::type;
+  using IndexType = typename GetUDenseMatType<MatType>::type;
 
-  YOLOv3Loss() { std::cout << "Default yolo loss.\n"; }
+  YOLOv3Loss() {}
   /**
    */
   YOLOv3Loss(size_t numBoxes,
@@ -56,9 +56,9 @@ class YOLOv3Loss
                 const MatType& numTargets,
                 MatType& loss);
 
-  //! Serialize the EmptyLossType.
+  // Serialize the YOLOv3Loss.
   template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
+  void serialize(Archive& /* ar */, const uint32_t /* version */);
  private:
   // Expected shapes for each input:
   // prediction: (numAttributes * numBoxes, batchSize)
@@ -69,7 +69,7 @@ class YOLOv3Loss
   // numTargets: (batchSize)
   void CheckShapes(const MatType& predictions,
                    const MatType& targets,
-                   const MatType& bestPredictionIndices,
+                   const IndexType& bestPredictionIndices,
                    const MatType& ignorePredictions,
                    const MatType& scales,
                    const MatType& numTargets);

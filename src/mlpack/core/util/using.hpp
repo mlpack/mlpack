@@ -47,6 +47,7 @@ using coot::pow;
 using coot::randi;
 using coot::randn;
 using coot::randu;
+using coot::regspace;
 using coot::repmat;
 using coot::sign;
 using coot::size;
