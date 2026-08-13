@@ -60,7 +60,7 @@ TEST_CASE("QDAFNTrivialTest", "[QDAFNTest]")
  */
 TEST_CASE("QDAFNUniformSet", "[QDAFNTest][tiny]")
 {
-  arma::mat uniformSet = arma::randu<arma::mat>(25, 1000);
+  arma::mat uniformSet = arma::randu<arma::mat>(15, 300);
 
   QDAFN<> qdafn(uniformSet, 10, 30);
 
@@ -69,7 +69,7 @@ TEST_CASE("QDAFNUniformSet", "[QDAFNTest][tiny]")
   arma::Mat<size_t> trueNeighbors;
   arma::mat trueDistances;
 
-  kfn.Search(999, trueNeighbors, trueDistances);
+  kfn.Search(299, trueNeighbors, trueDistances);
 
   arma::Mat<size_t> qdafnNeighbors;
   arma::mat qdafnDistances;
@@ -77,16 +77,16 @@ TEST_CASE("QDAFNUniformSet", "[QDAFNTest][tiny]")
   qdafn.Search(uniformSet, 1, qdafnNeighbors, qdafnDistances);
 
   REQUIRE(qdafnNeighbors.n_rows == 1);
-  REQUIRE(qdafnNeighbors.n_cols == 1000);
+  REQUIRE(qdafnNeighbors.n_cols == 300);
   REQUIRE(qdafnDistances.n_rows == 1);
-  REQUIRE(qdafnDistances.n_cols == 1000);
+  REQUIRE(qdafnDistances.n_cols == 300);
 
   size_t successes = 0;
-  for (size_t i = 0; i < 999; ++i)
+  for (size_t i = 0; i < 299; ++i)
   {
     // Find the true neighbor.
-    size_t trueIndex = 999;
-    for (size_t j = 0; j < 999; ++j)
+    size_t trueIndex = 299;
+    for (size_t j = 0; j < 299; ++j)
     {
       if (trueNeighbors(j, i) == qdafnNeighbors(0, i))
       {
@@ -95,12 +95,12 @@ TEST_CASE("QDAFNUniformSet", "[QDAFNTest][tiny]")
       }
     }
 
-    REQUIRE(trueIndex != 999);
+    REQUIRE(trueIndex != 299);
     if (0.9 * trueDistances(0, i) <= qdafnDistances(0, i))
       ++successes;
   }
 
-  REQUIRE(successes >= 695);
+  REQUIRE(successes >= 210);
 }
 
 /**

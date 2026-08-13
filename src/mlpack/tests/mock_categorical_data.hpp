@@ -19,7 +19,8 @@
  */
 inline void MockCategoricalData(arma::mat& d,
                                 arma::Row<size_t>& l,
-                                mlpack::DatasetInfo& datasetInfo)
+                                mlpack::DatasetInfo& datasetInfo,
+                                const size_t n = 4000)
 {
   // We'll build a spiral dataset plus two noisy categorical features.  We need
   // to build the distributions for the categorical features (they'll be
@@ -41,13 +42,13 @@ inline void MockCategoricalData(arma::mat& d,
     c2[i] = mlpack::DiscreteDistribution<>(probs);
   }
 
-  arma::mat spiralDataset(4, 4000);
-  arma::Row<size_t> labels(4000);
-  for (size_t i = 0; i < 4000; ++i)
+  arma::mat spiralDataset(4, n);
+  arma::Row<size_t> labels(n);
+  for (size_t i = 0; i < n; ++i)
   {
-    // One circle every 2000 samples.  Plus some noise.
-    const double magnitude = 2.0 + (double(i) / 200.0) + 0.5 * mlpack::Random();
-    const double angle = (i % 200) * (2 * M_PI) + mlpack::Random();
+    // One circle every (n/2) samples.  Plus some noise.
+    const double magnitude = 2.0 + (double(i) / (n / 20)) + 0.5 * mlpack::Random();
+    const double angle = (i % (n / 20)) * (2 * M_PI) + mlpack::Random();
 
     const double x = magnitude * cos(angle);
     const double y = magnitude * sin(angle);
@@ -56,25 +57,25 @@ inline void MockCategoricalData(arma::mat& d,
     spiralDataset(1, i) = y;
 
     // Set categorical features c1 and c2.
-    if (i < 800)
+    if (i < (n / 5))
     {
       spiralDataset(2, i) = c1[1].Random()[0];
       spiralDataset(3, i) = c2[1].Random()[0];
       labels[i] = 1;
     }
-    else if (i < 1600)
+    else if (i < ((2 * n) / 5))
     {
       spiralDataset(2, i) = c1[3].Random()[0];
       spiralDataset(3, i) = c2[3].Random()[0];
       labels[i] = 3;
     }
-    else if (i < 2400)
+    else if (i < ((3 * n) / 5))
     {
       spiralDataset(2, i) = c1[2].Random()[0];
       spiralDataset(3, i) = c2[2].Random()[0];
       labels[i] = 2;
     }
-    else if (i < 3200)
+    else if (i < ((4 * n) / 5))
     {
       spiralDataset(2, i) = c1[0].Random()[0];
       spiralDataset(3, i) = c2[0].Random()[0];
@@ -101,11 +102,10 @@ inline void MockCategoricalData(arma::mat& d,
   datasetInfo.MapString<double>("1", 3);
 
   // Now shuffle the dataset.
-  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, 3999,
-      4000));
-  d = arma::mat(4, 4000);
-  l = arma::Row<size_t>(4000);
-  for (size_t i = 0; i < 4000; ++i)
+  arma::uvec indices = arma::shuffle(arma::linspace<arma::uvec>(0, n - 1, n));
+  d = arma::mat(4, n);
+  l = arma::Row<size_t>(n);
+  for (size_t i = 0; i < n; ++i)
   {
     d.col(i) = spiralDataset.col(indices[i]);
     l[i] = labels[indices[i]];
@@ -117,13 +117,14 @@ inline void MockCategoricalData(arma::mat& d,
  */
 inline void MockCategoricalData(arma::mat& d,
                                 arma::Row<double>& l,
-                                mlpack::DatasetInfo& datasetInfo)
+                                mlpack::DatasetInfo& datasetInfo,
+                                const size_t n = 4000)
 {
-  // Dataset of size 4000.
-  d.set_size(5, 4000);
-  l.set_size(4000);
+  // Dataset of size n.
+  d.set_size(5, n);
+  l.set_size(n);
 
-  for (size_t i = 0; i < 4000; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     // Random numeric features.
     d(0, i) = mlpack::Random();
