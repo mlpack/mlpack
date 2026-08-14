@@ -70,6 +70,9 @@
 #                      dependencies (Armadillo, cereal, ensmallen)
 # MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
 #                   just OpenBLAS)
+# CROSS_COMPILE_SUPPORT_LIBRARIES: if cross-compiling, a list of support
+#                                  libraries specifically needed for
+#                                  cross-compilation
 #
 ##===================================================
 ##  INTERNAL FUNCTION DOCUMENTATION
@@ -344,8 +347,12 @@ macro(find_armadillo)
         HDF5
         )
       if(_ARMA_USE_${pkg})
-        find_package(${pkg})
-        list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
+        # If we already know where it is, skip.
+        if (NOT ${pkg}_FOUND)
+          find_package(${pkg})
+          list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
+        endif ()
+
         if(${pkg}_FOUND)
           list(APPEND _ARMA_SUPPORT_LIBRARIES ${${pkg}_LIBRARIES})
         endif()
@@ -355,6 +362,8 @@ macro(find_armadillo)
   if (ARMADILLO_FOUND)
     set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
     set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+    # Filter out any duplicates.
+    list(REMOVE_DUPLICATES ARMADILLO_LIBRARIES)
 
     find_package_handle_standard_args(armadillo
         REQUIRED_VARS ARMADILLO_INCLUDE_DIR ARMADILLO_LIBRARIES
@@ -624,6 +633,12 @@ macro(compile_OpenBLAS)
     message(FATAL_ERROR "Cannot compile OpenBLAS: OPENBLAS_TARGET is not set.  Either set that variable, or set BOARD_NAME correctly!")
   endif()
 
+  set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+  # These two are only relevant for Windows where we need a separate build
+  # directory for OpenBLAS since we use CMake for the build.
+  set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
+  set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
+
   # First check if OpenBLAS has already been compiled.
   if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
       EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
@@ -631,9 +646,9 @@ macro(compile_OpenBLAS)
     file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     set(OPENBLAS_LIB_FOUND TRUE)
   elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
-          EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
+          EXISTS "${OPENBLAS_SRC_DIR}/libopenblas.a")
     message(STATUS "OpenBLAS is already compiled.")
-    file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
+    file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_SRC_DIR}/libopenblas.a")
     set(OPENBLAS_LIB_FOUND TRUE)
   endif ()
 
@@ -646,6 +661,7 @@ macro(compile_OpenBLAS)
       endif ()
 
       foreach (patch ${OPENBLAS_PATCHES})
+        message(STATUS "Applying patch ${patch} to OpenBLAS...")
         execute_process(COMMAND ${Patch_EXECUTABLE} -p1 -i ${patch}
                         WORKING_DIRECTORY "${OPENBLAS_SRC_DIR}"
                         COMMAND_ERROR_IS_FATAL ANY)
@@ -656,9 +672,6 @@ macro(compile_OpenBLAS)
     # systems.
     message(STATUS "Compiling OpenBLAS...")
     if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-      set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-      set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
-      set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
       # Always compile BLAS as release.
       set(BLASS_BUILD_TYPE "Release")
 
@@ -683,7 +696,7 @@ macro(compile_OpenBLAS)
           WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
           COMMAND_ERROR_IS_FATAL ANY)
 
-      file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+      set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     else ()
       if (CMAKE_CROSSCOMPILING)
         # Update environment variables so that OpenBLAS compiles correctly.
@@ -727,14 +740,16 @@ macro(compile_OpenBLAS)
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
             COMMAND_ERROR_IS_FATAL ANY)
 
-        file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+        set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
       endif ()
     endif ()
   endif ()
 
-  set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-  set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+  # These will be used later by find_armadillo().
+  set(BLAS_LIBRARIES ${OPENBLAS_LIBRARIES})
+  set(LAPACK_LIBRARIES ${OPENBLAS_LIBRARIES})
   set(BLAS_FOUND ON)
+  set(LAPACK_FOUND ON)
 endmacro()
 
 macro(fetch_mlpack COMPILE_OPENBLAS)
