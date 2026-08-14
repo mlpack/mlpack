@@ -56,10 +56,14 @@ target_info = [
       'device_name': 'milkv-duo',
       'arch_type': 'riscv64-lp64d-musl',
       'arch_name': 'C906',
-      'test_filters': '[tiny]',
+      // Even the "tiny" LSTMReberGrammarTest is too much for the Milk-V Duo!
+      'test_filters': '[tiny] ~LSTMReberGrammarTest',
       'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',
       'scp_opts': '-O',
-      'extra_cmake_opts': '-DMLPACK_DISABLE_STB=ON -DMLPACK_DISABLE_DR_LIBS=ON -DMLPACK_DISABLE_HTTPLIB=ON'
+      // We need a special patch to decrease the size of the internal buffers
+      // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
+      // that we have.
+      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DOPENBLAS_PATCHES=".jenkins/cross-compilation/openblas-riscv64-low-memory.patch"'
   ]
 ]
 
