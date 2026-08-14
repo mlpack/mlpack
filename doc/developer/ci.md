@@ -193,4 +193,4 @@ Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
     - `cayenne.ratml.org`: [VoCore 2 Ultimate](https://vocore.io/), 128MB RAM,
       580 MHz MT7628 (MIPS 24k)
     - `manaeesh.ratml.org`: [Milk-V Duo](https://milkv.io/docs/duo/overview),
-      32MB RAM, 1 GHz C906 (RISC-V)
+      64MB RAM (only 28MB usable), 1 GHz C906 (RISC-V)
