@@ -62,8 +62,8 @@ target_info = [
       'scp_opts': '-O',
       // We need a special patch to decrease the size of the internal buffers
       // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
-      // that we have.
-      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DOPENBLAS_PATCHES=".jenkins/cross-compilation/openblas-riscv64-low-memory.patch"'
+      // that we have.  We also need to disable Armadillo's std::mutex support.
+      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DOPENBLAS_PATCHES=".jenkins/cross-compilation/openblas-riscv64-low-memory.patch" -DCMAKE_CXX_FLAGS="-DARMA_DONT_USE_STD_MUTEX"'
   ]
 ]
 
