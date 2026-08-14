@@ -643,12 +643,12 @@ macro(compile_OpenBLAS)
   if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
       EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     message(STATUS "OpenBLAS is already compiled.")
-    file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+    set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     set(OPENBLAS_LIB_FOUND TRUE)
   elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
           EXISTS "${OPENBLAS_SRC_DIR}/libopenblas.a")
     message(STATUS "OpenBLAS is already compiled.")
-    file(GLOB OPENBLAS_LIBRARIES "${OPENBLAS_SRC_DIR}/libopenblas.a")
+    set(OPENBLAS_LIBRARIES "${OPENBLAS_SRC_DIR}/libopenblas.a")
     set(OPENBLAS_LIB_FOUND TRUE)
   endif ()
 
@@ -740,8 +740,9 @@ macro(compile_OpenBLAS)
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
             COMMAND_ERROR_IS_FATAL ANY)
 
-        set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
       endif ()
+
+      set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
     endif ()
   endif ()
 
