@@ -141,24 +141,25 @@ inline std::string GetCacheDir()
     dir = std::filesystem::path(appdata) / "mlpack" / "cache";
   #else
   char* home = std::getenv("HOME");
-  // If we are running inside a Docker container, probably the home directory
-  // does not exist, therefore the following is added to check that we have a
-  // proper home directory in place.
-  if (home && home[0] != '\0' && std::string(home) != "/")
+  if (home && home[0] != '\0')
     dir = std::filesystem::path(home) / ".mlpack" / "cache";
   #endif
-
-  if (dir.empty())
-    dir = std::filesystem::temp_directory_path() / "mlpack_cache";
 #endif
+
+  // If we could not determine a cache directory (e.g. $HOME is unset or
+  // empty), return an empty string so the caller skips caching.
+  if (dir.empty())
+    return "";
 
   std::error_code ec;
   std::filesystem::create_directories(dir, ec);
 
   if (ec)
   {
-    Log::Fatal << "GetCacheDir(): cannot create cache directory '"
-        << dir.string() << "': " << ec.message() << std::endl;
+    Log::Warn << "GetCacheDir(): cannot create cache directory '"
+        << dir.string() << "': " << ec.message()
+        << "; caching will be disabled for this session." << std::endl;
+    return "";
   }
   return dir.string();
 }
@@ -286,65 +287,69 @@ inline bool DownloadFileWithCache(const std::string& url,
 
 #ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
   std::string cacheDir = GetCacheDir();
-  CacheManifest manifest;
-  if (!LoadManifest(cacheDir, manifest))
+
+  if (!cacheDir.empty())
   {
-    Log::Debug << "LoadManifest(): could not open cache manifest in '"
-        << cacheDir << "'. This is expected on the first download or if the "
-        << "cache directory does not yet contain a manifest file." << std::endl;
-  }
+    CacheManifest manifest;
+    if (!LoadManifest(cacheDir, manifest))
+    {
+      Log::Debug << "LoadManifest(): could not open cache manifest in '"
+          << cacheDir << "'. This is expected on the first download or if the "
+          << "cache directory does not yet contain a manifest file."
+          << std::endl;
+    }
 
-  std::string dest =
-      (std::filesystem::path(cacheDir) / filename).string();
+    std::string dest =
+        (std::filesystem::path(cacheDir) / filename).string();
 
-  // Do a head request to to get the cache info to compare it.
+    // Do a head request to get the cache info to compare it.
 #ifdef MLPACK_USE_HTTPS
-  if (port == -1)
-    port = 443;
-  httplib::SSLClient cli(host, port);
+    if (port == -1)
+      port = 443;
+    httplib::SSLClient cli(host, port);
 #else
-  if (port == -1)
-    port = 80;
-  httplib::Client cli(host, port);
+    if (port == -1)
+      port = 80;
+    httplib::Client cli(host, port);
 #endif
-  cli.set_connection_timeout(2);
+    cli.set_connection_timeout(2);
 
-  // Register in cache only if the head request has succeeded.
-  // If not just jump to download and do not cache the file, not enough
-  // information to cache.
-  std::string serverEtag;
-  size_t serverSize = 0;
-  bool headSucceeded = false;
-  httplib::Result headRes = cli.Head(url);
-  if (headRes && headRes->has_header("ETag"))
-  {
-    serverEtag = headRes->get_header_value("ETag");
-    if (headRes->has_header("Content-Length"))
-      serverSize = std::stoull(headRes->get_header_value("Content-Length"));
-    headSucceeded = true;
-  }
+    // Register in cache only if the head request has succeeded.
+    // If not just jump to download and do not cache the file, not enough
+    // information to cache.
+    std::string serverEtag;
+    size_t serverSize = 0;
+    bool headSucceeded = false;
+    httplib::Result headRes = cli.Head(url);
+    if (headRes && headRes->has_header("ETag"))
+    {
+      serverEtag = headRes->get_header_value("ETag");
+      if (headRes->has_header("Content-Length"))
+        serverSize = std::stoull(headRes->get_header_value("Content-Length"));
+      headSucceeded = true;
+    }
 
-  if (headSucceeded &&
-      manifest.count(url) > 0 &&
-      std::get<0>(manifest[url]) == serverEtag &&
-      std::get<1>(manifest[url]) == serverSize &&
-      std::filesystem::exists(dest))
-  {
+    if (headSucceeded &&
+        manifest.count(url) > 0 &&
+        std::get<0>(manifest[url]) == serverEtag &&
+        std::get<1>(manifest[url]) == serverSize &&
+        std::filesystem::exists(dest))
+    {
+      filename = dest;
+      return true;
+    }
+
+    DownloadFile(url, dest);
+
+    if (headSucceeded)
+    {
+      manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
+      SaveManifest(cacheDir, manifest);
+    }
     filename = dest;
     return true;
   }
-
-  DownloadFile(url, dest);
-
-  if (headSucceeded)
-  {
-    manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
-    SaveManifest(cacheDir, manifest);
-  }
-  filename = dest;
-  return true;
-
-#else
+#endif
 
   // Download to a temporary file if cache is disabled.
   std::filesystem::path dest = TempName();
@@ -352,8 +357,6 @@ inline bool DownloadFileWithCache(const std::string& url,
   DownloadFile(url, dest.string());
   filename = dest.generic_string();
   return true;
-
-#endif
 }
 
 #else
