@@ -59,9 +59,11 @@ they compile to ~150–170 KB static binaries; `train` and `infer` link mlpack.
 All four are built from one CMake project that uses the same cross-compilation
 infrastructure described in the [embedded example tutorial](../embedded/crosscompile_example.md).
 
-The pipeline is: `collect` writes one CSV file per recording (the file name
-is the label), `train` turns those CSVs into FFT features and fits a network,
-and `infer` reads the live sensor stream and prints the predicted movement.
+The pipeline is:
+
+ * `collect` writes one CSV file per recording (the file name is the label),
+ * `train` turns those CSVs into FFT features and fits a network, and
+ * `infer` reads the live sensor stream and prints the predicted movement.
 
 The figure below shows that feature pipeline on the real recorded data, from
 raw signal to the features the network learns from:
