@@ -39,10 +39,8 @@ Transform (FFT) in order to extract the features from each collected windows.
 Finally, we build a small `float32` neural network that learns to recognize the
 movements with the highest possible accuracy.
 
-The example is split into four small independent programs. Each one of them
-can be run by the user to do one specific task. It is up to the user to
-combine them or integrate such a functionality in their project. Our main
-target is to provide an example on how such a software can be built: 
+The example is split into four small independent programs, each of which
+performs a single task:
 
 | Program    | Built from         | Uses mlpack? | Purpose |
 |------------|--------------------|:------------:|---------|
