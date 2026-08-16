@@ -31,7 +31,7 @@ Contents:
 
 ### What are we building
 
-We are building a machine learning based human movement recognition pipline to detect
+We are building a machine learning based human movement recognition pipeline to detect
 movements such as walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into a Fast Fourier
