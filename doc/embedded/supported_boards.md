@@ -84,7 +84,7 @@ musl produces a smaller footprint, which can matter on very constrained devices.
 
 For a smaller footprint, Bootlin also provides a
 [musl libc toolchain](https://toolchains.bootlin.com/releases_armv6-eabihf.html);
-use these variables instead:
+if using that toolchain, use these variables instead:
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv6-eabihf--musl--stable-2025.08-1/bin/arm-buildroot-linux-musleabihf-
