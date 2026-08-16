@@ -3,8 +3,9 @@
 In this tutorial we build a complete, end-to-end human-movement / activity
 recognition pipeline that runs entirely on a tiny RISC-V Linux board. The
 pipeline consists of data collection, training, and inference all happen on the target device.
-The main target of this tutorial is to provide an end to end example of using mlpack
-on real resource-constrained embedded hardware.
+The main target of this tutorial is to provide an end-to-end example of using mlpack
+on real resource-constrained embedded hardware.  The tutorial can be followed
+step-by-step.
 
 If you have not cross-compiled mlpack before, read these first:
 
