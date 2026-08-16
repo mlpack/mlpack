@@ -144,9 +144,16 @@ void YOLOv3Layer<MatType>::ComputeOutputDimensions()
 template <typename MatType>
 void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 {
-  ElemType stride = imgSize / (ElemType)(gridSize);
   size_t batchSize = input.n_cols;
   output.set_size(input.n_rows, batchSize);
+
+  if (this->training)
+  {
+    output = input;
+    return;
+  }
+
+  ElemType stride = imgSize / (ElemType)(gridSize);
 
   CubeType inputCube;
   MakeAlias(inputCube, input, grid * numAttributes, predictionsPerCell,
@@ -189,7 +196,6 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
     1, predictionsPerCell, batchSize);
 #endif
 
-  // TODO: add if (this->training). Add check for different batchSize.
   const size_t cols = predictionsPerCell - 1;
 
   // x
@@ -229,10 +235,10 @@ template <typename MatType>
 void YOLOv3Layer<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
-    const MatType& /* gy */,
-    MatType& /* g */)
+    const MatType& gy,
+    MatType& g)
 {
-  throw std::runtime_error("YOLOv3Layer::Backward() not implemented.");
+  g = gy;
 }
 
 template <typename MatType>

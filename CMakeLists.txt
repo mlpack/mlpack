@@ -227,8 +227,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEBUG)
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
           ${LIBDL_LIBRARIES})
       set(BFD_DL_AVAILABLE "YES")
-    else()
-      message(WARNING "No libBFD and/or libDL has been found!")
     endif()
   endif()
 endif()
