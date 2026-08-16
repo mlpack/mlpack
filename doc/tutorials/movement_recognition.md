@@ -115,9 +115,8 @@ right (pin 1 sits opposite to pin 40, next to the USB-C connector).  The
 
 On the Duo those pads / pins default to a different function and must be muxed to I2C.
 This is done on the device with `duo-pinmux` and is shown in
-[Running it on the device](#running-it-on-the-device). Feel free to check
-pinmux software on the Duo to change the functionality of the pins and use a
-different interface.
+[Running it on the device](#running-it-on-the-device).  `duo-pinmux` can be used
+to change the functionality of each pin on the Duo.
 
 ### Setting up the cross-compilation toolchain
 
