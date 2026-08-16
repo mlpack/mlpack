@@ -68,9 +68,7 @@ bool Load(const std::string& src,
 
   if (CheckIfURL(src))
   {
-    // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
-    // the integration.
-#ifdef MLPACK_ENABLE_HTTPLIB
+#ifndef MLPACK_DISABLE_HTTPLIB
     success = DownloadFile(src, filename);
     if (!success)
     {
@@ -79,8 +77,9 @@ bool Load(const std::string& src,
           "Please check the link or the data format.", opts);
     }
 #else
-    return HandleError("HTTPLIB support is disabled, please define "
-        "MLPACK_ENABLE_HTTPLIB, to download dataset as URL.", opts);
+    return HandleError("httplib support was disabled at compile time "
+        "(MLPACK_DISABLE_HTTPLIB); rebuild without it to download a dataset from "
+        "a URL.", opts);
 #endif
   }
   else

@@ -71,7 +71,6 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@knn", "#knn");
-BINDING_SEE_ALSO("Range search tutorial", "@doc/tutorials/range_search.md");
 BINDING_SEE_ALSO("Range searching on Wikipedia",
     "https://en.wikipedia.org/wiki/Range_searching");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",

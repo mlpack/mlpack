@@ -57,9 +57,6 @@ else
   mode="file";
 fi
 
-# Enable httplib temporary
-CXXFLAGS="$CXXFLAGS -DMLPACK_ENABLE_HTTPLIB";
-
 # Extract the C++ code blocks from a particular file, creating
 # $output_prefix1.cpp, $output_prefix2.cpp, and so on and so forth.
 #

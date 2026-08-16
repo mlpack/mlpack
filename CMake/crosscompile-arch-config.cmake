@@ -84,7 +84,9 @@ elseif(ARCH STREQUAL "BCM2711")
 elseif(ARCH STREQUAL "BV")
   set(OPENBLAS_TARGET "RISCV64_GENERIC")
   set(OPENBLAS_BINARY "64")
-elseif(ARCH STREQUAL "C906")
+elseif(ARCH STREQUAL "RV64GCV")
+  # RV64GCV is the ISA (e.g. the T-Head C906 core); -mtune=thead-c906 is the
+  # matching GCC tuning flag (there is no -mtune=rv64gcv).
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mtune=thead-c906")
   set(OPENBLAS_TARGET "RISCV64_GENERIC")
   set(OPENBLAS_BINARY "64")

@@ -40,14 +40,14 @@ If you want to get a link directly to the toolchain and download it with `wget`
 use the following command:
 
 ```sh
-wget https://toolchains.bootlin.com/downloads/releases/toolchains/armv7-eabihf/tarballs/armv7-eabihf--glibc--stable-2024.02-1.tar.bz2
+wget https://toolchains.bootlin.com/downloads/releases/toolchains/armv7-eabihf/tarballs/armv7-eabihf--glibc--stable-2025.08-1.tar.xz
 ```
 
 Once we have downloaded the toolchain we can extract the content using the
 following command:
 
 ```sh
-tar -xvf armv7-eabihf--glibc--stable-2024.02-1.tar.bz2
+tar -xvf armv7-eabihf--glibc--stable-2025.08-1.tar.xz
 ```
 
 Once we have done that, now the toolchain is ready.  Feel free to explore inside
@@ -115,8 +115,8 @@ cmake \
     -DARCH_NAME="RPI2" \
     -DCMAKE_CROSSCOMPILING=ON \
     -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
-    -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/bin/arm-buildroot-linux-gnueabihf- \
-    -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2024.02-1/arm-buildroot-linux-gnueabihf/sysroot \
+    -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/bin/arm-buildroot-linux-gnueabihf- \
+    -DCMAKE_SYSROOT=/path/to/bootlin/toolchain/armv7-eabihf--glibc--stable-2025.08-1/arm-buildroot-linux-gnueabihf/sysroot \
     ../
 ```
 

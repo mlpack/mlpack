@@ -16,7 +16,7 @@
 
 namespace mlpack {
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#ifndef MLPACK_DISABLE_HTTPLIB
 
 inline bool CheckIfURL(const std::string& url)
 {
@@ -217,18 +217,18 @@ inline void ParseURL(const std::string& url, std::string& host,
   host = url;
   filename = "";
   port = -1;
-  throw std::runtime_error("ParseURL(): httplib support not enabled; cannot "
-      "check provided URL '" + url + "'.  Enable httplib by adding '#define "
-      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
+  throw std::runtime_error("ParseURL(): httplib support was disabled at compile "
+      "time (MLPACK_DISABLE_HTTPLIB); rebuild without it to check the provided "
+      "URL '" + url + "'.");
 }
 
 inline bool DownloadFile(const std::string& url,
                          std::string& filename)
 {
   filename = "";
-  throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
-      " check provided URL '" + url + "'.  Enable httplib by adding '#define "
-      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
+  throw std::runtime_error("DownloadFile(): httplib support was disabled at "
+      "compile time (MLPACK_DISABLE_HTTPLIB); rebuild without it to download the "
+      "provided URL '" + url + "'.");
   return false;
 }
 

@@ -3704,7 +3704,6 @@ Because the number of points returned for each query point may differ, the resul
 ### See also
 
  - [mlpack_knn](#knn)
- - [Range search tutorial](../../tutorials/range_search.md)
  - [Range searching on Wikipedia](https://en.wikipedia.org/wiki/Range_searching)
  - [Tree-independent dual-tree algorithms (pdf)](http://proceedings.mlr.press/v28/curtin13.pdf)
  - [RangeSearch C++ class documentation](https://github.com/mlpack/mlpack/blob/master/src/mlpack/methods/range_search/range_search.hpp)
