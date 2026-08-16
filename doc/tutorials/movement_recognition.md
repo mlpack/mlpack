@@ -36,8 +36,8 @@ movements such as walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into a Fast Fourier
 Transform (FFT) in order to extract the features from each collected windows.
-Finally, we build a small `float32` neural network, that learns to recognize the
-movements, with the highest possible accuracy. 
+Finally, we build a small `float32` neural network that learns to recognize the
+movements with the highest possible accuracy.
 
 The example is split into four small independent programs. Each one of them
 can be run by the user to do one specific task. It is up to the user to
