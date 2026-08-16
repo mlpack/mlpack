@@ -70,17 +70,22 @@ raw signal to the features the network learns from:
 <img src="../img/movement_fft_pipeline.png" width="720" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
 </center>
 
-We show in (a) a `raw recording` for the squat movement only using the accelerometer's three
-axes over a few seconds; the vertical axis (`az`) oscillates around 1 g with the movement's rhythm.
-(b) `sliding windows` cuts each recording into fixed-length windows that overlap by
-half a window (a sliding window with a 50% step): overlap generate more
-training windows, creating a higher exposure for each movement. Therefore
-increasing the accuracy. (c) `FFT power per movement`, in this figure we show
-how FFT is applied per-channel for each window on all the movements in order to
-extract the relevant power spectrum. As demonstrated, different movements can
-be identified with different frequencies. Note that, the gravity (DC) component
-is removed from this plot for clarity. However, is kept part of the features
-space used for training.
+In the figure, 
+
+ * `(a)` "raw recording" shows the accelerometer's three axes over a few seconds
+   for a squat movement; the vertical axis (`az`) oscillates around 1g with the
+   movement's rhythm.
+
+ * `(b)` "sliding windows" cuts each recording into fixed-length windows that
+   overlap by half a window (a sliding window with a 50% step): overlap
+   generates more training windows, creating a higher exposure for each
+   movement; this increases the accuracy.
+
+ * `(c)` "FFT power per movement" shows how the FFT is applied per-channel for
+   each window on all the movements in order to extract the relevant power
+   spectrum.  Different movements can be identified with different frequencies.
+   Note that, the gravity (DC) component is removed from this plot for clarity.
+   However, it is kept as part of the features used for training.
 
 ### Hardware
 
