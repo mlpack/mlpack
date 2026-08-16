@@ -122,7 +122,7 @@ different interface.
 ### Setting up the cross-compilation toolchain
 
 Since the device is resource constrained with only 28 MB available
-RAM, therefore, we cross-compile on a host `x86_64` machine and copy the static
+RAM, we cross-compile on a host `x86_64` machine and copy the static
 binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
 [Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
