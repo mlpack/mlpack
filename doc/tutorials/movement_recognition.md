@@ -42,18 +42,11 @@ movements with the highest possible accuracy.
 The example is split into four small independent programs, each of which
 performs a single task:
 
-| Program    | Built from         | Uses mlpack? | Purpose |
-|------------|--------------------|:------------:|---------|
-| `imu_test` | `driver/`          | no           | sensor check + magnetometer calibration |
-| `collect`  | `collect/`         | no           | record sensor data to CSV (small, exception-free) |
-| `train`    | `train/train.cpp`  | yes          | train a neural network from the CSVs |
-| `infer`    | `infer/infer.cpp`  | yes          | live inference from the IMU |
+ * `imu_test`: sensor check + magnetometer calibration
+ * `collect`: record sensor data to CSV (small, exception-free)
+ * `train`: train a neural network from the CSVs
+ * `infer`: live inference from the IMU
 
-All three sensor-reading programs share the self-contained driver under
-`driver/`, which wraps the whole GY-89 board behind one `SensorBoard` object:
-`collect` and `infer` just open it, bring up the selected sensors, and read
-whole samples.  `collect` and `imu_test` only need the Linux I2C headers, so
-they compile to ~150–170 KB static binaries; `train` and `infer` link mlpack.
 All four are built from one CMake project that uses the same cross-compilation
 infrastructure described in the [embedded example tutorial](../embedded/crosscompile_example.md).
 
@@ -100,28 +93,19 @@ GY-89 10-DOF breakout, which carries three separate I2C chips:
 | LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
 | BMP180  | barometric pressure + temperature   | `0x77`        |
 
-Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`):
-
-| GY-89 pin | Milk-V Duo |
-|-----------|------------|
-| VIN/VCC   | 3V3(OUT), pin 36 |
-| GND       | GND, pin 38 |
-| SCL       | IIC0_SCL (GP0), pin 1 |
-| SDA       | IIC0_SDA (GP1), pin 2 |
+Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`), as
+shown below:
 
 <center>
 <img src="../img/wiring_gy89_duo.png" width="760" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
 </center>
 
-The Duo is a DIP-style board, so its 40 pins run down the two long edges: pins
-1 to 20 top-to-bottom on the left, and pins 40 to 21 top-to-bottom on the
-right (pin 1 sits opposite to pin 40, next to the USB-C connector).  The
-3.3V output and a ground pin are the adjacent pair on the right edge.
-
-On the Duo those pads / pins default to a different function and must be muxed to I2C.
-This is done on the device with `duo-pinmux` and is shown in
-[Running it on the device](#running-it-on-the-device).  `duo-pinmux` can be used
-to change the functionality of each pin on the Duo.
+On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
+so we must mux them to the I2C0 controller (their `IIC0_SCL` and `IIC0_SDA`
+functions).  This is done on the device with `duo-pinmux` and is shown in
+[Running it on the device](#running-it-on-the-device). Feel free to check
+pinmux software on the Duo to change the functionality of the pins and use a
+different interface.
 
 ### Setting up the cross-compilation toolchain
 
