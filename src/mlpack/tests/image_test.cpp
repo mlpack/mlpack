@@ -18,6 +18,8 @@
 using namespace mlpack;
 using namespace std;
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -474,6 +476,8 @@ TEMPLATE_TEST_CASE("ResizeCropUpscaleTest", "[ImageTest]", uint8_t,
   REQUIRE(image.n_elem == opts.Height() * opts.Width() * opts.Channels());
 }
 
+#endif
+
 /**
  * Test that groups channels from interleaved channels.
  */
@@ -630,6 +634,8 @@ TEST_CASE("InterleaveChannelsOnePixel", "[ImageTest]")
   CheckMatrices(newLayout, expectedImage);
 }
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Test Letterbox returns image correctly sized.
  */
@@ -722,6 +728,8 @@ TEST_CASE("LetterboxImagesRectangularOutput", "[ImageTest]")
   REQUIRE(image.at(image.n_rows - 1, 1) == fillValue);
   REQUIRE(image.at(image.n_rows - 1, 2) == fillValue);
 }
+
+#endif
 
 TEST_CASE("BoundingBoxImageIncorrectDimensions", "[ImageTest]")
 {
