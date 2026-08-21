@@ -158,7 +158,7 @@ inline std::string GetCacheDir()
   {
     Log::Warn << "GetCacheDir(): cannot create cache directory '"
         << dir.string() << "': " << ec.message()
-        << "; caching will be disabled for this session." << std::endl;
+        << "; remote dataset caching disabled." << std::endl;
     return "";
   }
   return dir.string();
