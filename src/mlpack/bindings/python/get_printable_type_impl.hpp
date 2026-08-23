@@ -15,6 +15,8 @@
 
 #include "get_printable_type.hpp"
 
+#include <mlpack/bindings/util/strip_type.hpp>
+
 namespace mlpack {
 namespace bindings {
 namespace python {
@@ -141,7 +143,7 @@ inline std::string GetPrintableType(
     const std::enable_if_t<!std::is_same_v<T,
         std::tuple<DatasetInfo, arma::mat>>>*)
 {
-  return d.cppType + "Type";
+  return util::StripType(d.cppType) + "Type";
 }
 
 } // namespace python

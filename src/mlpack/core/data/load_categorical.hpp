@@ -73,24 +73,11 @@ class LoadCSV
   *
   * @param file path of the dataset.
   */
-  LoadCSV(const std::string& file, bool fatal) :
-      extension(Extension(file)),
-      filename(file),
-      inFile(file)
+  LoadCSV(const std::string& filename, bool fatal, char delimiter) :
+      filename(filename),
+      inFile(filename),
+      delim(delimiter)
   {
-    if (extension == "csv")
-    {
-      delim = ',';
-    }
-    else if (extension == "tsv")
-    {
-      delim = '\t';
-    }
-    else if (extension == "txt")
-    {
-      delim = ' ';
-    }
-
     CheckOpen(fatal);
   }
 
@@ -101,7 +88,8 @@ class LoadCSV
   *
   * @param inout Matrix to load into.
   * @param infoSet DatasetMapper to use while loading.
-  * @param transpose If true, the matrix should be transposed on loading(default).
+  * @param transpose If true, the matrix should be transposed on
+  *     loading(default).
   * @return false on errors.
   */
   template<typename MatType>
@@ -208,10 +196,10 @@ class LoadCSV
 
  private:
   /**
-  * Check whether or not the file has successfully opened; throw an exception
-  * if not.
-  * @return false on errors.
-  */
+   * Check whether or not the file has successfully opened; throw an exception
+   * if not.
+   * @return false on errors.
+   */
   inline bool CheckOpen(bool fatal)
   {
     // Check if the file is opening.
@@ -258,8 +246,6 @@ class LoadCSV
                       DatasetMapper<PolicyType>& infoSet,
                       bool fatal);
 
-  //! Extension (type) of file.
-  std::string extension;
   //! Name of file.
   std::string filename;
   //! Opened stream for reading.
@@ -267,6 +253,14 @@ class LoadCSV
   //! Delimiter char.
   char delim;
 };
+
+/**
+ * Load a categorical file into `matrix` using the given options.
+ */
+template<typename eT>
+bool LoadCategorical(const std::string& filename,
+                     arma::Mat<eT>& matrix,
+                     TextOptions& opts);
 
 } // namespace mlpack
 

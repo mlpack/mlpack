@@ -109,6 +109,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelValidityTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
   SetInputParam("reference", reference);
@@ -138,6 +143,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -146,6 +155,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
   SetInputParam("reference", reference);
@@ -175,6 +189,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -183,6 +201,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
   SetInputParam("reference", reference);
@@ -212,6 +235,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -220,6 +247,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
   arma::mat query = arma::randu<arma::mat>(5, 40);
 
@@ -227,6 +259,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
   SetInputParam("query", query);
   SetInputParam("k", (int) 6);
 
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -244,6 +277,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
   SetInputParam("num_probes", (int) 5);
   SetInputParam("k", (int) 6);
 
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
@@ -252,6 +286,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -260,6 +298,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
   SetInputParam("reference", reference);
@@ -289,6 +332,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -297,6 +344,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
 
   SetInputParam("reference", reference);
@@ -326,6 +378,10 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
       params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(accu(distances ==
       params.Get<arma::mat>("distances")) < distances.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -334,6 +390,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
 TEST_CASE_METHOD(LSHTestFixture, "LSHModelReuseTest",
                  "[LSHMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat reference = arma::randu<arma::mat>(5, 100);
   arma::mat query = arma::randu<arma::mat>(5, 40);
 
@@ -341,6 +402,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelReuseTest",
   SetInputParam("query", query);
   SetInputParam("k", (int) 6);
 
+  FixedRandomSeed();
   RUN_BINDING();
 
   arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
@@ -356,12 +418,17 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelReuseTest",
   SetInputParam("query", std::move(query));
   SetInputParam("k", (int) 6);
 
+  FixedRandomSeed();
   RUN_BINDING();
 
   // Check that initial query outputs and final outputs using saved model are
   // same.
   CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
   CheckMatrices(distances, params.Get<arma::mat>("distances"));
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**

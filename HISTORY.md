@@ -3,6 +3,60 @@
 ## mlpack ?.?.?
 
 _????-??-??_
+
+ * Add support for caching downloaded datasets to `Load()` (#4103).
+
+ * Templetize Scalar methods to allow using float types (#4229).
+
+ * Accelerated `LeakyReLU` ANN Layer (#4174).
+
+ * Update `LinearSVM` documentation: `Classify()` returns class scores, not
+   class probabilities (#4187).
+
+ * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
+
+ * Check that Julia models are trained when calling `predict()` (#4195).
+
+## mlpack 4.8.0
+
+_2026-06-07_
+
+ * Add Mel Filterbanks Energies (MFE) and Mel-frequency cepstral coefficients
+   (MFCC) as part of our signal processing utilities (#4144).
+
+ * Add support for audio data via dr_wav and dr_mp3 allowing to load these
+   file types (#4112, #4113).
+
+ * Add HTTP support via cpp-httplib to allow online dataset downloading (#4092, #4099).
+
+ * Fix header inclusion and warnings in R package (#4098).
+
+ * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
+
+ * Fix rendering of Python documentation (#4126).
+
+ * Add `TSVASCII` format for loading TSVs (#4127).
+
+ * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
+
+ * Add `EMD` and `EEMD` signal preprocessing utilities (#4044, #4146).
+
+ * Efficiency improvements for `MeanImputation` and `MedianImputation` with
+   newer Armadillo versions (#4149).
+
+ * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
+
+ * Refactor bindings for regression and classification methods providing a
+   unified class interface (#4122, #4132, #4161, #4170, #4171, #4180, #4182,
+   #4186, #4188, #4189, #4202, #4203)
+
+## mlpack 4.7.0
+
+_2026-01-30_
+
  * Allow batching when training RNN with ragged lengths (#4042).
 
  * Fixed generated artifiacts in resized float images by using clamping (#4030).

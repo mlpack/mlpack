@@ -20,6 +20,8 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Image resize/crop interfaces.
  */
@@ -168,8 +170,8 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   // This is required since STB only accept unsigned chars.
   // set the new matrix size for copy
   size_t newDimension = newWidth * newHeight * opts.Channels();
-  arma::Mat<unsigned char> resizedImages;
-  arma::Mat<unsigned char> originalImages;
+  arma::Mat<uint8_t> resizedImages;
+  arma::Mat<uint8_t> originalImages;
   if constexpr (std::is_same_v<eT, unsigned char>)
   {
     MakeAlias(originalImages, images, images.n_rows, images.n_cols);
@@ -177,7 +179,7 @@ void ResizeImages(arma::Mat<eT>& images, ImageOptions& opts,
   else
   {
     originalImages =
-        arma::conv_to<arma::Mat<unsigned char>>::from(std::move(images));
+        arma::conv_to<arma::Mat<uint8_t>>::from(std::move(images));
   }
 
   resizedImages.set_size(newDimension, images.n_cols);
@@ -274,6 +276,30 @@ void ResizeCropImages(arma::Mat<eT>& images, ImageOptions& opts,
   opts.Width() = newWidth;
   opts.Height() = newHeight;
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+void ResizeImages(arma::Mat<eT>& /* images */, ImageOptions& opts,
+    const size_t /* newWidth */ = 0, const size_t /* newHeight */ = 0)
+{
+  std::stringstream oss;
+  oss << "ResizeImages(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to resize images.";
+  HandleError(oss, opts);
+}
+
+template<typename eT>
+void ResizeCropImages(arma::Mat<eT>& /* images */, ImageOptions& opts,
+    const size_t /* newWidth */ = 0, const size_t /* newHeight */ = 0)
+{
+  std::stringstream oss;
+  oss << "ResizeCropImages(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to resize and crop images.";
+  HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

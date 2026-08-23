@@ -10,7 +10,7 @@ pipeline
     {
       image 'mlpack/jenkins-mlpack-docbuild:latest'
       alwaysPull true
-      args '-v /home/jenkins/ccache:/opt/ccache'
+      args '-v /home/jenkins/ccache:/opt/ccache -e HOME=/home/jenkins/'
     }
   }
 

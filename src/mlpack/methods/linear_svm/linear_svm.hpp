@@ -335,9 +335,8 @@ class LinearSVM
 
   /**
    * Classify the given points, returning the predicted labels for each point.
-   * The function calculates the probabilities for every class, given a data
-   * point. It then chooses the class which has the highest probability among
-   * all.
+   * The function calculates the scores for every class, given a data point. It
+   * then chooses the class which has the highest score among all.
    *
    * @param data Set of points to classify.
    * @param labels Predicted labels for each point.
@@ -348,14 +347,15 @@ class LinearSVM
 
   /**
    * Classify the given points, returning class scores and predicted
-   * class label for each point.
-   * The function calculates the scores for every class, given a data
-   * point. It then chooses the class which has the highest probability among
-   * all.
+   * class label for each point.  Note that class scores are not normalized to
+   * [0, 1] (they are not class probabilities); they can take any value.
+   *
+   * The function calculates the scores for every class, given a data point. It
+   * then chooses the class which has the highest score among all.
    *
    * @param data Matrix of data points to be classified.
    * @param labels Predicted labels for each point.
-   * @param scores Class probabilities for each point.
+   * @param scores Class scores for each point.
    */
   template<typename MatType>
   void Classify(const MatType& data,
@@ -376,7 +376,7 @@ class LinearSVM
   /**
    * Classify the given point. The predicted class label is returned.
    * The function calculates the scores for every class, given the point.
-   * It then chooses the class which has the highest probability among all.
+   * It then chooses the class which has the highest score among all.
    *
    * @param point Point to be classified.
    * @return Predicted class label of the point.
@@ -386,17 +386,19 @@ class LinearSVM
 
   /**
    * Classify the given point. The predicted class label is stored in `label`,
-   * and the probability of each class is stored in `probabilities`..
+   * and the score of each class is stored in `scores`.  Note that `scores` are
+   * class scores, not probabilities, and thus may take any value (they are not
+   * limited to the range [0, 1]).
    *
    * @param point Point to be classified.
    * @param label size_t to store predicted label into.
-   * @param probabilities Vector to store class probabilities into.
+   * @param scores Vector to store class scores into.
    * @return Predicted class label of the point.
    */
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& label,
-                DenseColType& probabilities) const;
+                DenseColType& scores) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the

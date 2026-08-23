@@ -424,7 +424,7 @@ used as drop-in replacements throughout this documentation page:
 
  * `ExtraTrees`
     - This is an implementation of the Extremely Randomized Trees algorithm
-      ([paper pdf](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=336a165c17c9c56160d332b9f4a2b403fccbdbfb)).
+      ([paper pdf](https://services.montefiore.uliege.be/stochastic/pubs/2006/GEW06a/geurts-mlj-advance.pdf)).
     - When training an `ExtraTrees` model, each individual decision tree chooses
       splits for numeric data randomly.
     - Training an `ExtraTrees` model is generally much faster than

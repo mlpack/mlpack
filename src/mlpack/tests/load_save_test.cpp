@@ -18,8 +18,6 @@
 using namespace mlpack;
 using namespace std;
 
-#define MLPACK_ENABLE_HTTPLIB
-
 /**
  * Make sure failure occurs when no extension given.
  */
@@ -263,9 +261,9 @@ TEST_CASE("LoadSparseAutodetectNotCoordinateListTest", "[LoadSaveTest][tiny]")
 }
 
 /**
- * Make sure a TSV is loaded correctly.
+ * Make sure a TSV is loaded correctly even when it is specified as a .csv.
  */
-TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+TEST_CASE("LoadTSVAutodetectCSVTest", "[LoadSaveTest][tiny]")
 {
   fstream f;
   f.open("test_file.csv", fstream::out);
@@ -2465,7 +2463,7 @@ TEST_CASE("BadDatasetInfoARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info(6);
 
-  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
 
   remove("test.arff");
 }
@@ -2478,7 +2476,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
   arma::mat dataset;
   DatasetInfo info;
 
-  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true));
+  REQUIRE_THROWS(LoadARFF("nonexistentfile.arff", dataset, info, true, true));
 }
 
 /**
@@ -2491,7 +2489,8 @@ TEST_CASE("CaseTest", "[LoadSaveTest][tiny]")
 
   DatasetMapper<IncrementPolicy> info;
 
-  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true);
+  LoadARFF<double, IncrementPolicy>("casecheck.arff", dataset, info, true,
+      true);
 
   REQUIRE(dataset.n_rows == 2);
   REQUIRE(dataset.n_cols == 3);
@@ -3450,18 +3449,1269 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
+#ifndef MLPACK_DISABLE_HTTPLIB
+#ifdef MLPACK_ENABLE_HTTPLIB
+
+TEST_CASE("URLTests", "[LoadSaveTest]")
+{
+  std::string host, filename, testUrl;
+  int port;
+
+  // 1.  Simple file
+  testUrl = "https://example.com/files/report.pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "report.pdf");
+
+  // 2.  Image file
+  testUrl = "http://cdn.server.org/images/photo.jpg";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.server.org");
+  REQUIRE(filename == "photo.jpg");
+
+  // 3.  With port + file"
+  testUrl = "https://example.com:8080/api/data/export.csv";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "export.csv");
+  REQUIRE(port == 8080);
+
+  // 4.  Compound extension
+  testUrl = "ftp://files.host.net:21/backup/archive.tar.gz";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 5.  File + query
+  testUrl = "https://example.com/docs/manual.html?page=3";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 6.  File + fragment
+  testUrl = "https://example.com/docs/manual.html#chapter2";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "manual.html");
+
+  // 7.  File + query + fragment// ---- No filename / path-only ----
+  testUrl = "https://example.com/dl/setup.exe?v=2.1&os=win#mirror";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "setup.exe");
+
+  // Our target here is to show that we are not modifying the filename.
+  filename = "";
+  // 8.  Basic URL
+  testUrl = "https://example.com";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 9.  Trailing slash only
+  testUrl = "https://example.com/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 10. Path with no extension// ---- Deep paths ----
+  testUrl = "https://example.com/api/v2/users";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "users");
+
+  // 11. Deeply nested file
+  testUrl = "https://cdn.example.com/a/b/c/d/e/f/deep_file.wasm";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "cdn.example.com");
+  REQUIRE(filename == "deep_file.wasm");
+
+  // 12. Trailing slash (no file)// ---- Special filenames ----
+  filename = "";
+  testUrl = "https://example.com/path/to/dir/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+
+  // 13. Dotfile (no extension)
+  filename = "";
+  testUrl = "https://example.com/.hidden";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".hidden");
+
+  // 14. Dotfile with extension
+  filename = "";
+  testUrl = "https://example.com/files/.env.production";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == ".env.production");
+
+  // 15. URL-encoded spaces + parens
+  filename = "";
+  testUrl = "https://example.com/files/my%20file%20(1).pdf";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "my%20file%20(1).pdf");
+
+  // 16. Unicode in filename// ---- Edge cases ----
+  filename = "";
+  testUrl = "https://example.com/files/résumé.docx";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "résumé.docx");
+
+  // 17. IP address as host
+  filename = "";
+  testUrl = "https://192.168.1.1:3000/logs/debug.log";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "192.168.1.1");
+  REQUIRE(filename == "debug.log");
+  REQUIRE(port == 3000);
+
+  // 18. Port, no path, no file
+  filename = "";
+  testUrl = "https://example.com:443";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "");
+  REQUIRE(port == 443);
+
+  // 19. Localhost
+  filename = "";
+  testUrl = "http://localhost:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 20. Many dots in filename
+  filename = "";
+  testUrl = "https://example.com/file.backup.2024.01.15.sql.gz";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "example.com");
+  REQUIRE(filename == "file.backup.2024.01.15.sql.gz");
+
+  // 21 Corrupt URL
+  testUrl = "https://";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 22 No URL
+  testUrl = "";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 23 Invalid host with special chars
+  testUrl = "https://!@#$%^*^&*.com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 24 Invalid host with trailing dots
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 25 invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 26 Invalid host with capital letter
+  testUrl = "https://examplesofinvalid..com/invalid";
+  REQUIRE_THROWS_AS(ParseURL(testUrl, host, filename, port),
+      std::runtime_error);
+
+  // 27. Double ltd at the end + port number
+  port = -1;
+  testUrl = "http://localhost.co.uk:8080/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost.co.uk");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 8080);
+
+  // 28. 3 number port number + https + a filename
+  port = -1;
+  testUrl = "https://localhost:330/index.html";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "localhost");
+  REQUIRE(filename == "index.html");
+  REQUIRE(port == 330);
+
+  port = -1;
+  testUrl = "http://www.mlpack.org/file_with_no_extension";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "file_with_no_extension");
+
+  filename = "something_random";
+  testUrl = "http://www.mlpack.org/";
+  ParseURL(testUrl, host, filename, port);
+  REQUIRE(host == "www.mlpack.org");
+  REQUIRE(filename == "");
+}
+
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
+  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
         dataset, Fatal + Transpose) == true);
 }
 
-TEST_CASE("DownLoadWrongURL", "[LoadSaveTest]")
+TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.csv",
-        dataset, NoFatal + Transpose) == false);
+  TextOptions opts = Fatal + Categorical;
+  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+        dataset, opts) == true);
+}
+
+TEST_CASE("DownLoad404File", "[LoadSaveTest]")
+{
+  arma::mat dataset;
+  REQUIRE_THROWS_AS(Load("http://datasets.mlpack.org/nonexistent_file.csv",
+        dataset, Fatal + Transpose), std::runtime_error);
+}
+
+#endif
+#endif
+
+#endif
+
+/**
+ * Test that the TSV format loads correctly.
+ */
+TEST_CASE("LoadTSVTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+  f << "9\t10\t11\t12" << std::endl;
+
+  arma::mat dataset;
+
+  Load("test.tsv", dataset, TSV);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  for (size_t i = 0; i < dataset.n_elem; ++i)
+    REQUIRE(dataset[i] == Approx(i + 1));
+
+  remove("test.tsv");
+}
+
+/**
+ * Test that the TSV format loads correctly for categorical data.
+ */
+TEST_CASE("LoadTSVCategoricalTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.tsv", fstream::out);
+  f << "1\t2\ta\t4" << std::endl;
+  f << "5\t6\tb\t8" << std::endl;
+  f << "9\t10\tc\t12" << std::endl;
+
+  arma::mat dataset;
+
+  TextOptions opts = TSV + Fatal + Categorical;
+  Load("test.tsv", dataset, opts);
+
+  REQUIRE(dataset.n_rows == 4);
+  REQUIRE(dataset.n_cols == 3);
+  REQUIRE(dataset[0] == Approx(1));
+  REQUIRE(dataset[1] == Approx(2));
+  REQUIRE(dataset[2] == Approx(0));
+  REQUIRE(dataset[3] == Approx(4));
+
+  remove("test.tsv");
+}
+
+/*
+ * Ensure that saving with HasHeaders() produces a file that has headers.
+ */
+TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
+{
+  arma::mat X = arma::randi<arma::mat>(3, 20, arma::distr_param(0, 100));
+  TextOptions opts;
+  opts.HasHeaders() = true;
+  opts.Headers() = { "a", "b", "c" };
+  Save("test.csv", X, opts);
+
+  arma::mat Y;
+  TextOptions opts2;
+  opts2.HasHeaders() = true;
+  Load("test.csv", Y, opts2);
+
+  REQUIRE(opts2.Headers().size() == 3);
+  REQUIRE(opts2.Headers()[0] == "a");
+  REQUIRE(opts2.Headers()[1] == "b");
+  REQUIRE(opts2.Headers()[2] == "c");
+  REQUIRE(arma::approx_equal(X, Y, "both", 1e-5, 1e-5));
+
+  remove("test.csv");
+}
+
+//
+// The audio files below are published under the CC-0 license.
+// https://github.com/pdx-cs-sound/wavs
+// MP3 versions generated manually from the original wav using ffmpeg.
+//
+TEST_CASE("LoadWAVFileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.wav", matrix) == true);
+}
+
+TEST_CASE("LoadWAVFileSubOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
+}
+
+TEST_CASE("LoadWAVFileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
+  REQUIRE(Load("voice.wav", matrix, WAV + Fatal) == true);
+}
+
+TEST_CASE("LoadWAVNoFile", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE_THROWS_AS(Load("nofile.wav", matrix, WAV + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadWAVFileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+}
+
+TEMPLATE_TEST_CASE("LoadWAVFileOptionsTypes", "[LoadSaveTest]", uint8_t,
+    uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t)
+{
+  typedef TestType eT;
+
+  arma::Mat<eT>  mat,  matMP3, mat2;
+
+  AudioOptions optsWAV = Fatal + WAV;
+  AudioOptions optsMP3 = Fatal + MP3;
+
+  REQUIRE(Load("voice.wav", mat,  optsWAV) == true);
+
+  REQUIRE(Load("voice.mp3", matMP3,  optsMP3) == true);
+
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
+
+  // MP3
+  REQUIRE(matMP3.n_cols == 1);
+  REQUIRE(matMP3.n_rows == 237568);
+
+  REQUIRE(Save("voice2.wav", mat,  optsWAV) == true);
+
+  REQUIRE(Load("voice2.wav", mat2,  optsWAV) == true);
+
+  REQUIRE(mat.n_cols == 1);
+  REQUIRE(mat.n_rows == 237568);
+
+  remove("voice2.wav");
+}
+
+TEST_CASE("LoadWAVFileOptionsStereo", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("collectathon_1_sec.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("SaveWAVFileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix, matrix2;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+
+  REQUIRE(Save("voice2.wav", matrix, opts) == true);
+
+  AudioOptions opts2 = Fatal + WAV;
+  REQUIRE(Load("voice2.wav", matrix2, opts2) == true);
+  REQUIRE(matrix.n_rows == matrix2.n_rows);
+  REQUIRE(matrix.n_cols == matrix2.n_cols);
+  REQUIRE(opts2.AudioDuration() == opts.AudioDuration());
+  REQUIRE(opts2.BitsPerSample() == opts.BitsPerSample());
+  REQUIRE(opts2.Channels() == opts.Channels());
+  REQUIRE(opts2.SampleRate() == opts.SampleRate());
+}
+
+TEST_CASE("SaveWAVFileOptionsPCM32", "[LoadSaveTest]")
+{
+  arma::mat matrix, matrix2;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE(Load("voice.wav", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 16);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+
+  // Force saving the file as 32 bit
+  opts.BitsPerSample() = 32;
+  REQUIRE(Save("voice2.wav", matrix, opts) == true);
+
+  AudioOptions opts2 = Fatal + WAV;
+  REQUIRE(Load("voice2.wav", matrix2, opts2) == true);
+  REQUIRE(matrix.n_rows == matrix2.n_rows);
+  REQUIRE(matrix.n_cols == matrix2.n_cols);
+  REQUIRE(opts2.AudioDuration() == opts.AudioDuration());
+  REQUIRE(opts2.BitsPerSample() == 32);
+  REQUIRE(opts2.Channels() == opts.Channels());
+  REQUIRE(opts2.SampleRate() == opts.SampleRate());
+
+  remove("voice2.wav");
+}
+
+TEST_CASE("SaveWAVFileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + WAV;
+  REQUIRE_THROWS_AS(Save("voice2.wav", matrix, opts), std::runtime_error);
+}
+
+TEST_CASE("LoadMP3FileNoOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.mp3", matrix) == true);
+}
+
+TEST_CASE("LoadMP3FileSubOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
+}
+
+TEST_CASE("LoadMP3FileSubOptionsSparse", "[LoadSaveTest]")
+{
+  arma::sp_mat matrix;
+  REQUIRE(Load("voice.mp3", matrix, MP3 + Fatal) == true);
+}
+
+TEST_CASE("LoadMP3NoFile", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  REQUIRE_THROWS_AS(Load("nofile.mp3", matrix, MP3 + Fatal),
+      std::runtime_error);
+}
+
+TEST_CASE("LoadMP3FileOptions", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("voice.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 237568);
+  REQUIRE(opts.AudioDuration() == 4);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 1);
+  REQUIRE(opts.SampleRate() == 48000);
+}
+
+TEST_CASE("LoadMP3FileOptionsStereoPCM16", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("LoadMP3FileOptionsStereo", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+}
+
+TEST_CASE("LoadMP3SaveWAV", "[LoadSaveTest]")
+{
+  arma::mat matrix;
+  AudioOptions opts = Fatal + MP3;
+  REQUIRE(Load("collectathon_1_sec.mp3", matrix, opts) == true);
+  REQUIRE(matrix.n_cols == 1);
+  REQUIRE(matrix.n_rows == 88200);
+  REQUIRE(opts.AudioDuration() == 1);
+  REQUIRE(opts.BitsPerSample() == 64);
+  REQUIRE(opts.Channels() == 2);
+  REQUIRE(opts.SampleRate() == 44100);
+
+  AudioOptions opts2 = Fatal + WAV;
+  opts2.Channels() = opts.Channels();
+  opts2.BitsPerSample() = opts.BitsPerSample();
+  opts2.SampleRate() = opts.SampleRate();
+  REQUIRE(Save("collectathon2_1_sec.wav", matrix, opts2) == true);
+
+  remove("collectathon2_1_sec.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck", "[LoadSaveTest]", float, double, int16_t,
+    int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t)
+{
+  typedef TestType eT;
+
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<eT> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    signal = arma::conv_to<arma::Mat<eT>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double halfMax = std::numeric_limits<eT>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<eT>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<eT>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<eT>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = 8 * sizeof(eT);
+  REQUIRE(Save("test_range.wav", signal, saveOpts) == true);
+
+  arma::Mat<eT> matrix;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_range.wav", matrix, loadOpts) == true);
+  REQUIRE(matrix.n_elem == sampleRate);
+
+  if constexpr (std::is_floating_point_v<eT>)
+  {
+    eT minVal = matrix.min();
+    eT maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= -0.52);
+    REQUIRE(maxVal <= 0.52);
+    REQUIRE(maxVal >= 0.475);
+    REQUIRE(minVal <= -0.475);
+    REQUIRE(std::abs(meanVal) < 0.02);
+  }
+  else if constexpr (std::is_signed_v<eT>)
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double halfRange = typeMax * 0.5;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(maxVal <= halfRange * 1.05);
+    REQUIRE(minVal >= -halfRange * 1.05);
+    REQUIRE(maxVal >= halfRange * 0.95);
+    REQUIRE(minVal <= -halfRange * 0.95);
+    REQUIRE(std::abs(meanVal) < typeMax * 0.02);
+  }
+  else
+  {
+    double typeMax = std::numeric_limits<eT>::max();
+    double mid = typeMax / 2.0;
+    double quarter = mid / 2.0;
+
+    double minVal = matrix.min();
+    double maxVal = matrix.max();
+    double meanVal = arma::as_scalar(arma::mean(
+        arma::conv_to<arma::mat>::from(matrix)));
+
+    REQUIRE(minVal >= (mid - quarter) * 0.90);
+    REQUIRE(maxVal <= (mid + quarter) * 1.10);
+    REQUIRE(maxVal >= (mid + quarter * 0.95));
+    REQUIRE(minVal <= (mid - quarter * 0.95));
+    REQUIRE(std::abs(meanVal - mid) < typeMax * 0.02);
+  }
+
+  remove("test_range.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck8bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 8;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.10;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck16bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 16;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck32bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 32;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
+    (std::tuple<float, float>),
+    (std::tuple<float, double>),
+    (std::tuple<float, int16_t>),
+    (std::tuple<float, int32_t>),
+    (std::tuple<float, int64_t>),
+    (std::tuple<float, uint8_t>),
+    (std::tuple<float, uint16_t>),
+    (std::tuple<float, uint32_t>),
+    (std::tuple<float, uint64_t>),
+    (std::tuple<double, float>),
+    (std::tuple<double, double>),
+    (std::tuple<double, int16_t>),
+    (std::tuple<double, int32_t>),
+    (std::tuple<double, int64_t>),
+    (std::tuple<double, uint8_t>),
+    (std::tuple<double, uint16_t>),
+    (std::tuple<double, uint32_t>),
+    (std::tuple<double, uint64_t>),
+    (std::tuple<int16_t, float>),
+    (std::tuple<int16_t, double>),
+    (std::tuple<int16_t, int16_t>),
+    (std::tuple<int16_t, uint8_t>),
+    (std::tuple<int32_t, float>),
+    (std::tuple<int32_t, double>),
+    (std::tuple<int32_t, int32_t>),
+    (std::tuple<int32_t, uint8_t>),
+    (std::tuple<int64_t, float>),
+    (std::tuple<int64_t, double>),
+    (std::tuple<int64_t, int64_t>),
+    (std::tuple<int64_t, uint8_t>),
+    (std::tuple<uint8_t, float>),
+    (std::tuple<uint8_t, double>),
+    (std::tuple<uint8_t, uint8_t>),
+    (std::tuple<uint16_t, float>),
+    (std::tuple<uint16_t, double>),
+    (std::tuple<uint16_t, uint16_t>),
+    (std::tuple<uint16_t, uint8_t>),
+    (std::tuple<uint32_t, float>),
+    (std::tuple<uint32_t, double>),
+    (std::tuple<uint32_t, uint32_t>),
+    (std::tuple<uint32_t, uint8_t>),
+    (std::tuple<uint64_t, float>),
+    (std::tuple<uint64_t, double>),
+    (std::tuple<uint64_t, uint64_t>),
+    (std::tuple<uint64_t, uint8_t>))
+{
+  typedef std::tuple_element_t<0, TestType> OutType;
+  typedef std::tuple_element_t<1, TestType> InType;
+
+  size_t bps = 64;
+  size_t sampleRate = 16000;
+  double frequency = 440.0;
+
+  arma::vec t = arma::linspace<arma::vec>(0, sampleRate - 1, sampleRate);
+  arma::vec sineWave = arma::sin(2.0 * M_PI * frequency * t / sampleRate);
+
+  arma::Mat<OutType> signal(sampleRate, 1);
+
+  if constexpr (std::is_floating_point_v<OutType>)
+  {
+    signal = arma::conv_to<arma::Mat<OutType>>::from(0.5 * sineWave);
+  }
+  else if constexpr (std::is_signed_v<OutType>)
+  {
+    double halfMax = std::numeric_limits<OutType>::max() * 0.5;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(halfMax * sineWave);
+  }
+  else
+  {
+    double mid = std::numeric_limits<OutType>::max() / 2.0;
+    double quarter = mid / 2.0;
+    signal = arma::conv_to<arma::Mat<OutType>>::from(mid + quarter * sineWave);
+  }
+
+  AudioOptions saveOpts;
+  saveOpts.Format() = FileType::WAV;
+  saveOpts.Channels() = 1;
+  saveOpts.SampleRate() = sampleRate;
+  saveOpts.BitsPerSample() = bps;
+  REQUIRE(Save("test_roundtrip.wav", signal, saveOpts) == true);
+
+  arma::Mat<InType> loaded;
+  AudioOptions loadOpts = Fatal + WAV;
+  REQUIRE(Load("test_roundtrip.wav", loaded, loadOpts) == true);
+  REQUIRE(loaded.n_elem == sampleRate);
+
+  // To make our life easier, it would be better to convert back any type that
+  // has been loaded to double, and then check if we are still within the range
+  // of a double. As long as the conversion is correct we should pass the test.
+  arma::mat normalized;
+  if constexpr (std::is_floating_point_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded);
+  }
+  else if constexpr (std::is_signed_v<InType>)
+  {
+    normalized = arma::conv_to<arma::mat>::from(loaded) /
+        std::numeric_limits<InType>::max();
+  }
+  else
+  {
+    double mid = std::numeric_limits<InType>::max() / 2.0;
+    normalized = (arma::conv_to<arma::mat>::from(loaded) - mid) / mid;
+  }
+
+  double meanVal = arma::as_scalar(arma::mean(normalized));
+  double minVal = normalized.min();
+  double maxVal = normalized.max();
+
+  double tol = 0.02;
+
+  REQUIRE(minVal >= -0.5 - tol);
+  REQUIRE(maxVal <= 0.5 + tol);
+  REQUIRE(maxVal >= 0.5 - tol);
+  REQUIRE(minVal <= -0.5 + tol);
+  REQUIRE(std::abs(meanVal) < tol);
+
+  remove("test_roundtrip.wav");
+}
+
+#ifdef MLPACK_ENABLE_HTTPLIB
+
+/**
+ * Test that DownloadFile() downloads a file to a user-specified destination.
+ */
+TEST_CASE("DownloadFileTest", "[LoadSaveTest]")
+{
+  std::string dest = "test_download_iris.csv";
+  remove(dest.c_str());
+
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/iris.csv", dest) == true);
+  REQUIRE(std::filesystem::exists(dest));
+  REQUIRE(std::filesystem::file_size(dest) > 0);
+
+  arma::mat data;
+  REQUIRE(Load(dest, data) == true);
+  REQUIRE(data.n_rows == 4);
+  REQUIRE(data.n_cols == 150);
+
+  remove(dest.c_str());
+}
+
+/**
+ * Test that Load() with a URL uses the cache, the first call downloads, the
+ * second call uses the cache.
+ */
+TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "iris.csv").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  // Download and cache.
+  arma::mat data1;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", data1, Fatal) == true);
+  REQUIRE(data1.n_rows == 4);
+  REQUIRE(data1.n_cols == 150);
+
+  REQUIRE(std::filesystem::exists(manifestPath));
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  auto mtime1 = std::filesystem::last_write_time(cachedFile);
+
+  // Use the cache instead of download.
+  arma::mat data2;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", data2, Fatal) == true);
+  REQUIRE(data2.n_rows == 4);
+  REQUIRE(data2.n_cols == 150);
+
+  auto mtime2 = std::filesystem::last_write_time(cachedFile);
+  REQUIRE(mtime1 == mtime2);
+
+  REQUIRE(arma::approx_equal(data1, data2, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test that GetCacheDir() creates the directory and returns a valid path.
+ */
+TEST_CASE("GetCacheDirTest", "[LoadSaveTest]")
+{
+  const std::string dir = GetCacheDir();
+  REQUIRE(!dir.empty());
+  REQUIRE(std::filesystem::is_directory(dir));
+}
+
+/**
+ * Test LoadManifest/SaveManifest.
+ */
+TEST_CASE("ManifestLoadSave", "[LoadSaveTest]")
+{
+  const std::string cacheDir = GetCacheDir();
+  const std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+
+  remove(manifestPath.c_str());
+
+  CacheManifest manifest;
+  manifest["https://example.com/a.csv"] =
+      std::make_tuple("\"etag-a\"", (size_t) 100, cacheDir + "/a.csv");
+  manifest["https://example.com/b.csv"] =
+      std::make_tuple("\"etag-b\"", (size_t) 200, cacheDir + "/b.csv");
+
+  REQUIRE(SaveManifest(cacheDir, manifest) == true);
+
+  CacheManifest loaded;
+  REQUIRE(LoadManifest(cacheDir, loaded) == true);
+  REQUIRE(loaded.size() == 2);
+
+  REQUIRE(loaded.count("https://example.com/a.csv") == 1);
+  REQUIRE(std::get<0>(loaded["https://example.com/a.csv"]) == "\"etag-a\"");
+  REQUIRE(std::get<1>(loaded["https://example.com/a.csv"]) == 100);
+
+  REQUIRE(loaded.count("https://example.com/b.csv") == 1);
+  REQUIRE(std::get<0>(loaded["https://example.com/b.csv"]) == "\"etag-b\"");
+  REQUIRE(std::get<1>(loaded["https://example.com/b.csv"]) == 200);
+
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test cache invalidation and tampering with the manifest (wrong ETag and size).
+ * The next Load() function call with the same URL must detect the mismatch
+ * therefore re-downloading the data.
+ */
+TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "iris.csv").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat originalData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", originalData,
+      Fatal) == true);
+  REQUIRE(originalData.n_rows == 4);
+  REQUIRE(originalData.n_cols == 150);
+  REQUIRE(std::filesystem::exists(manifestPath));
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  // Change the ETag and the size
+  CacheManifest manifest;
+  REQUIRE(LoadManifest(cacheDir, manifest) == true);
+  REQUIRE(manifest.count("https://datasets.mlpack.org/iris.csv") == 1);
+  manifest["https://datasets.mlpack.org/iris.csv"] =
+      std::make_tuple("\"fake-etag-corrupted\"", (size_t) 42, cachedFile);
+  REQUIRE(SaveManifest(cacheDir, manifest) == true);
+
+  // Also change the data, this might not be necessary.
+  std::ofstream out(cachedFile, std::ios::trunc);
+  REQUIRE(out.is_open());
+  out << "this,is,corrupted,data\n1,2,3,4\n";
+
+  arma::mat reloadedData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", reloadedData,
+      Fatal) == true);
+  REQUIRE(reloadedData.n_rows == 4);
+  REQUIRE(reloadedData.n_cols == 150);
+
+  // Check that the downloaded data is equal to the original loaded data.
+  REQUIRE(arma::approx_equal(originalData, reloadedData, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
 }
 
 #endif

@@ -17,9 +17,14 @@ option(DOWNLOAD_DEPENDENCIES "Automatically download dependencies if not availab
 option(BUILD_GO_SHLIB "Build Go shared library." OFF)
 option(USE_PRECOMPILED_HEADERS "Use precompiled headers for mlpack_test build." ON)
 option(USE_SYSTEM_STB "Use system STB instead of version bundled with mlpack." OFF)
-option(USE_SYSTEM_HTTPLIB "Use system HTTPLIB instead of version bundled with mlpack." OFF)
+option(DISABLE_STB "Disable STB support with mlpack." OFF)
+option(USE_SYSTEM_DR_LIBS "Use system dr_libs instead of version bundled with mlpack." OFF)
+option(DISABLE_DR_LIBS "Disable dr_libs (audio) support within mlpack." OFF)
+option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with mlpack." OFF)
 option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
 option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
+option(DISABLE_REMOTE_DATASET_CACHE "Disable caching of downloaded datasets." OFF)
+set(REMOTE_DATASET_CACHE_DIR "" CACHE STRING "Override the directory where cached datasets are stored.")
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -224,8 +229,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEBUG)
       set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${LIBBFD_LIBRARIES}
           ${LIBDL_LIBRARIES})
       set(BFD_DL_AVAILABLE "YES")
-    else()
-      message(WARNING "No libBFD and/or libDL has been found!")
     endif()
   endif()
 endif()
@@ -250,6 +253,20 @@ if (USE_SYSTEM_STB)
   set(MLPACK_USE_SYSTEM_STB ON)
 endif ()
 
+# If the user would like to disable STB for embedded system
+if (DISABLE_STB)
+  set(MLPACK_DISABLE_STB ON)
+endif ()
+
+if (USE_SYSTEM_DR_LIBS)
+  set(MLPACK_USE_SYSTEM_DR_LIBS ON)
+endif ()
+
+# If the user would like to disable dr_libs (audio) for embedded systems
+if (DISABLE_DR_LIBS)
+  set(MLPACK_DISABLE_DR_LIBS ON)
+endif ()
+
 if (USE_SYSTEM_HTTPLIB)
   set(MLPACK_USE_SYSTEM_HTTPLIB ON)
 endif ()
@@ -262,6 +279,14 @@ endif ()
 # If the user would like to disable httplib for embedded system
 if (DISABLE_HTTPLIB)
   set(MLPACK_DISABLE_HTTPLIB ON)
+endif ()
+
+if (DISABLE_REMOTE_DATASET_CACHE)
+  set(MLPACK_DISABLE_REMOTE_DATASET_CACHE ON)
+endif ()
+
+if (REMOTE_DATASET_CACHE_DIR)
+  set(MLPACK_REMOTE_DATASET_CACHE_DIR "${REMOTE_DATASET_CACHE_DIR}")
 endif ()
 
 set(MLPACK_DONT_FIND_MLPACK 1)
@@ -361,6 +386,60 @@ if (USE_SYSTEM_STB)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_STB\n"
       "#define MLPACK_USE_SYSTEM_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
+
+if (DISABLE_STB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_STB\n"
+      "#define MLPACK_DISABLE_STB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (USE_SYSTEM_DR_LIBS)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_DR_LIBS\n"
+      "#define MLPACK_USE_SYSTEM_DR_LIBS\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_DR_LIBS)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_DR_LIBS\n"
+      "#define MLPACK_DISABLE_DR_LIBS\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (USE_SYSTEM_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_HTTPLIB\n"
+      "#define MLPACK_USE_SYSTEM_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (ENABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_ENABLE_HTTPLIB\n"
+      "#define MLPACK_ENABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_HTTPLIB)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_HTTPLIB\n"
+      "#define MLPACK_DISABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (DISABLE_REMOTE_DATASET_CACHE)
+  string(REGEX REPLACE "// #define MLPACK_DISABLE_REMOTE_DATASET_CACHE\n"
+      "#define MLPACK_DISABLE_REMOTE_DATASET_CACHE\n" CONFIG_CONTENTS
+      "${CONFIG_CONTENTS}")
+endif()
+
+if (REMOTE_DATASET_CACHE_DIR)
+  string(REGEX REPLACE "// #define MLPACK_REMOTE_DATASET_CACHE_DIR.*$\n"
+      "#define MLPACK_REMOTE_DATASET_CACHE_DIR \"${REMOTE_DATASET_CACHE_DIR}\"\n" CONFIG_CONTENTS
+      "${CONFIG_CONTENTS}")
+endif()
+
+if (STB_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${STB_INCLUDE_DIR}")
+endif ()
+
+if (HTTPLIB_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${HTTPLIB_INCLUDE_DIR}")
+endif ()
+
+if (DR_LIBS_INCLUDE_DIR)
+  set(MLPACK_INCLUDE_DIRS "${MLPACK_INCLUDE_DIRS} ${DR_LIBS_INCLUDE_DIR}")
+endif ()
 
 file(WRITE ${CMAKE_BINARY_DIR}/include/mlpack/config-local.hpp "${CONFIG_CONTENTS}")
 include_directories(${CMAKE_BINARY_DIR}/include/)

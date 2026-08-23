@@ -29,6 +29,7 @@
 #include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
+#include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
@@ -56,6 +57,7 @@
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 #include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/repeat.hpp>
+#include <mlpack/methods/ann/layer/scale.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
 #include <mlpack/methods/ann/layer/sum_reduce.hpp>
@@ -72,10 +74,14 @@
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 
+// Custom layers for models
+#include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
+
 // Include definitions for polymorphic serialization.  Note that this can cause
 // significant compilation overhead, so we only do it if
 // MLPACK_ENABLE_ANN_SERIALIZATION is enabled.
-#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
+#if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+    defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT)
 #include <mlpack/methods/ann/layer/serialization.hpp>
 #endif
 

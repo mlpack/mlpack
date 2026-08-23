@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME test_R_binding

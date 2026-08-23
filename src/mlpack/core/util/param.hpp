@@ -552,6 +552,27 @@
     PARAM_ROW(ID, DESC, ALIAS, false, true, true)
 
 /**
+ * Define a required (signed) row vector input parameter (type arma::rowvec).
+ * From the command line, the user can specify the file that holds the vector, using
+ * the name of the vector parameter with "_file" appended (and the same alias).
+ * So for instance, if the name of the vector parameter was "vec", the user
+ * could specify that the "vec" vector was held in vec.csv by giving the
+ * parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_ROW_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_ROW(ID, DESC, ALIAS, true, true, true)
+
+/**
  * Define an unsigned vector input parameter (type arma::Col<size_t>).  From the
  * command line, the user can specify the file that holds the vector, using the
  * name of the vector parameter with "_file" appended (and the same alias).  So
@@ -591,6 +612,27 @@
  */
 #define PARAM_UROW_IN(ID, DESC, ALIAS) \
     PARAM_UROW(ID, DESC, ALIAS, false, true, true)
+
+/**
+ * Define a required unsigned row vector input parameter (type arma::Row<size_t>).
+ * From the command line, the user can specify the file that holds the vector, using
+ * the name of the vector parameter with "_file" appended (and the same alias).
+ * So for instance, if the name of the vector parameter was "vec", the user
+ * could specify that the "vec" vector was held in vec.csv by giving the
+ * parameter:
+ *
+ * @code
+ * --vec_file vector.csv
+ * @endcode
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Description of the parameter (1-2 sentences).  Don't use
+ *      printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others
+ *      here---it will cause problems.
+ * @param ALIAS An alias for the parameter (one letter).
+ */
+#define PARAM_UROW_IN_REQ(ID, DESC, ALIAS) \
+    PARAM_UROW(ID, DESC, ALIAS, true, true, true)
 
 /**
  * Define a vector output parameter (type arma::vec).  When the program

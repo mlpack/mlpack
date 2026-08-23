@@ -18,6 +18,7 @@
 // RegressionDistribution.  Therefore we have to include the prereqs first, and
 // include the core later.
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/conv_to.hpp>
 
 namespace mlpack {
 

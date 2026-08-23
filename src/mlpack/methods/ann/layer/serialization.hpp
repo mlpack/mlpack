@@ -50,6 +50,14 @@
         mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
         mlpack::NaiveConvolution<mlpack::FullConvolution>, \
         mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::TransposedConvolution<__VA_ARGS__, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>, \
+        mlpack::Im2ColConvolution<mlpack::ValidConvolution>>); \
+    CEREAL_REGISTER_TYPE(mlpack::TransposedConvolution<__VA_ARGS__, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>, \
+        mlpack::NaiveConvolution<mlpack::ValidConvolution>>); \
     CEREAL_REGISTER_TYPE(mlpack::CReLU<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::DropConnect<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Dropout<__VA_ARGS__>); \
@@ -83,12 +91,22 @@
     CEREAL_REGISTER_TYPE(mlpack::RBF<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ReLU6<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Repeat<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::Scale<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Softmax<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::Softmin<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::HardTanH<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::FTSwish<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::NearestInterpolation<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::YOLOv3Layer<__VA_ARGS__>); \
 
+#ifdef MLPACK_ENABLE_ANN_SERIALIZATION_FMAT
+#define MLPACK_ANN_FMAT_LAYERS_REGISTERED
+CEREAL_REGISTER_MLPACK_LAYERS(arma::fmat);
+#endif
+
+#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
+#define MLPACK_ANN_MAT_LAYERS_REGISTERED
 CEREAL_REGISTER_MLPACK_LAYERS(arma::mat);
+#endif
 
 #endif

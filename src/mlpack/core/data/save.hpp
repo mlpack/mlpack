@@ -23,6 +23,7 @@
 #include "save_numeric.hpp"
 #include "save_model.hpp"
 #include "save_image.hpp"
+#include "save_audio.hpp"
 
 namespace mlpack {
 

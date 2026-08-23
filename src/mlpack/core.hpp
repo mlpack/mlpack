@@ -35,6 +35,7 @@
 #include <mlpack/prereqs.hpp>
 
 // Now the core mlpack classes.
+#include <mlpack/core/audio/audio.hpp>
 #include <mlpack/core/stb/stb.hpp>
 #include <mlpack/core/httplib/httplib.hpp>
 #include <mlpack/core/util/arma_traits.hpp>
@@ -58,14 +59,13 @@
 #include <mlpack/core/kernels/kernels.hpp>
 #include <mlpack/core/metrics/metrics.hpp>
 #include <mlpack/core/tree/tree.hpp>
+#include <mlpack/core/transforms/emd.hpp>
+#include <mlpack/core/transforms/eemd.hpp>
+#include <mlpack/core/transforms/mfe.hpp>
+#include <mlpack/core/transforms/mfcc.hpp>
 
 // Include cross-validation and hyperparameter tuning framework.
 #include <mlpack/core/cv/cv.hpp>
 #include <mlpack/core/hpt/hpt.hpp>
-
-// Use OpenMP if available.
-#ifdef MLPACK_USE_OPENMP
-  #include <omp.h>
-#endif
 
 #endif

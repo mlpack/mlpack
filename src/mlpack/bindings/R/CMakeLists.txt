@@ -45,28 +45,24 @@ if (BUILD_R_BINDINGS)
   if (NOT R_RCPPENSMALLEN)
     set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - RcppEnsmallen")
   endif ()
-  find_r_module(testthat)
-  if (NOT R_TESTTHAT)
-    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - testthat")
-  endif ()
-  find_r_module(pkgbuild) # Required for roxygen2 with src/ directories.
-  if (NOT R_PKGBUILD)
-    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - pkgbuild")
+  find_r_module(tinytest)
+  if (NOT R_TINYTEST)
+    set(R_NOT_FOUND_MSG "${R_NOT_FOUND_MSG}\n    - tinytest")
   endif ()
 
   ## We need to check here if R and other dependencies is even available, as
   ## it is require to build R-bindings.
   if (FORCE_BUILD_R_BINDINGS)
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_PKGBUILD)
+        OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      message(FATAL_ERROR "Could not Build R Bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      message(FATAL_ERROR "Could not build R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   else ()
     if (NOT R_FOUND OR NOT R_RCPP OR NOT R_RCPPARMADILLO OR NOT R_RCPPENSMALLEN
-        OR NOT R_ROXYGEN2 OR NOT R_TESTTHAT OR NOT R_PKGBUILD)
+        OR NOT R_ROXYGEN2 OR NOT R_TINYTEST)
       unset(BUILD_R_BINDINGS CACHE)
-      not_found_return("Not building R bindings, Following modules are not available:${R_NOT_FOUND_MSG}")
+      not_found_return("Not building R bindings, the following modules are not available:${R_NOT_FOUND_MSG}")
     endif()
   endif ()
 
@@ -198,6 +194,8 @@ if (BUILD_R_BINDINGS)
   set(R_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/matrix_utils.R"
     "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/package.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/generics.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/R/inline.R"
   )
 
   set(BINDINGS_SOURCES
@@ -220,12 +218,13 @@ if (BUILD_R_BINDINGS)
     "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_r_binding_main.cpp"
   )
 
-  set(R_TESTTHAT_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat/test-R_binding.R"
+  set(R_TESTS_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/tinytest.R"
   )
 
-  set(R_TESTS_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/testthat.R"
+  set(R_TINYTEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test_binding_framework.R"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/inst/tinytest/test_refactored_bindings.R"
   )
 
   # Configure the license file.
@@ -240,9 +239,9 @@ if (BUILD_R_BINDINGS)
       COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/R/
       COMMAND ${CMAKE_COMMAND} -E make_directory
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/testthat
-      COMMAND ${CMAKE_COMMAND} -E make_directory
           ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R/tests
+      COMMAND ${CMAKE_COMMAND} -E make_directory
+          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest
    )
 
   if (BUILD_TESTS)
@@ -271,18 +270,17 @@ if (BUILD_R_BINDINGS)
             ${bindings_file}
             ${CMAKE_CURRENT_BINARY_DIR}/mlpack/src/mlpack/bindings/R)
   endforeach()
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TESTTHAT_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/testthat)
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-          ${R_TESTS_SOURCES}
-          ${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests)
-  # This file will take care of multiple definition of functions in .cpp files.
-  add_custom_command(TARGET r_copy PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E touch
-          "${CMAKE_CURRENT_BINARY_DIR}/mlpack/model.txt")
+  foreach(r_file ${R_TINYTEST_SOURCES})
+    add_custom_command(TARGET r_copy PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
+            ${r_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/mlpack/inst/tinytest/)
+  endforeach()
+
+  file(COPY
+       "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/tests/tinytest.R"
+       DESTINATION
+       "${CMAKE_CURRENT_BINARY_DIR}/mlpack/tests/")
 
   file(COPY
        "${CMAKE_CURRENT_SOURCE_DIR}/mlpack/cleanup"
@@ -296,13 +294,6 @@ if (BUILD_R_BINDINGS)
 
   # Do the actual build.
   add_custom_target(r_build ALL)
-
-  # "model.txt" is no longer useful, after generating src/.cpp files.
-  # Remove this file.
-  add_custom_command(TARGET r_build POST_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E remove -f "model.txt"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mlpack"
-  )
 
   # Build RcppExports.cpp/.R, NAMESPACE and man/ files.
   add_custom_command(TARGET r_build POST_BUILD
@@ -336,7 +327,10 @@ define_property(GLOBAL PROPERTY R_MODELS
 # Initialize list of models.
 set_property(GLOBAL PROPERTY R_MODELS "")
 
-macro (add_r_binding directory name)
+# Here 'directory' is eg 'naive_bayes'), 'name' is 'nbc' and 'model_ptr_impl' is one
+# of 'include' (when we create S3 dispatches) or 'skip'. In all but two cases
+# 'directory' and 'name' are equal.
+macro (add_r_binding directory name model_ptr_impl)
 if (BUILD_R_BINDINGS)
 
   # Append content to the list of models.
@@ -347,15 +341,15 @@ if (BUILD_R_BINDINGS)
   add_custom_command(OUTPUT
       ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
       COMMAND ${CMAKE_COMMAND}
-          -DMODEL_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/model.txt
           -DPROGRAM_NAME=${name}
           -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${name}_main.cpp
           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
           -DR_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
           -DR_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/src/${name}.cpp
-          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake
+          -DPROGRAM_MODEL_PTR_IMPL=${model_ptr_impl}
+          -P ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake
       DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/r_method.cpp.in
-              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRCPP.cmake)
+              ${CMAKE_SOURCE_DIR}/CMake/R/ConfigureRcpp.cmake)
 
   # 2. Generate ${name}.R.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/build/generate_r_${name}.cpp
@@ -394,6 +388,54 @@ if (BUILD_R_BINDINGS)
           -P ${CMAKE_SOURCE_DIR}/CMake/GenerateBinding.cmake)
   add_dependencies(generate_r_${name} r_copy)
   add_dependencies(r_build generate_r_${name})
+
+  # 3. Create the S3 dispatchers for the generic 'predict()' function
+  if ("${model_ptr_impl}" STREQUAL "include" AND NOT "${${name}_VALID_METHODS}" STREQUAL "")
+    set(GENERATED_GENERIC_PATH "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R")
+    if (${name}_VALID_METHODS MATCHES "probabilities")
+      SET(${name}_TYPES "c(\"predictions\", \"probabilities\")")
+      # 'else' branch. Different approaches to add newlines failed.
+      SET(${name}_ELSE "} else {")
+      string(APPEND ${name}_ELSE "   res <- ")
+      string(APPEND ${name}_ELSE ${name})
+      string(APPEND ${name}_ELSE "_probabilities(input_model=object, newdata, ...)")
+    elseif (${name}_VALID_METHODS MATCHES "scores")
+      SET(${name}_TYPES "c(\"predictions\", \"scores\")")
+      # 'else' branch. Different approaches to add newlines failed.
+      SET(${name}_ELSE "} else {")
+      string(APPEND ${name}_ELSE "   res <- ")
+      string(APPEND ${name}_ELSE ${name})
+      string(APPEND ${name}_ELSE "_scores(input_model=object, newdata, ...)")
+    else()
+      SET(${name}_TYPES "c(\"predictions\")")
+      SET(${name}_ELSE "")
+    endif()
+    if (${name}_CATEGORY STREQUAL "Regression")
+      SET(${name}_ACTION "predict")
+    elseif (${name}_CATEGORY STREQUAL "Classification")
+      SET(${name}_ACTION "classify")
+    else()
+      MESSAGE(FATAL_ERROR "Category '${name}_CATEGORY' is not supported")
+    endif()
+    add_custom_command(
+      OUTPUT "${GENERATED_GENERIC_PATH}"
+      COMMAND ${CMAKE_COMMAND}
+        -DNAME=${name}
+        -DR_GENERICS_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
+        -DR_GENERICS_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/R/${name}_generic.R
+        -DTYPES=${${name}_TYPES}
+        -DELSE=${${name}_ELSE}
+        -DACTION=${${name}_ACTION}
+        -P ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
+      DEPENDS ${CMAKE_SOURCE_DIR}/CMake/R/makeGenerics.cmake
+        ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/R/R_generics.R.in
+      VERBATIM
+      COMMENT "Creating ${GENERATED_GENERIC_PATH}")
+    add_custom_target(${name}_generic.R
+      ALL
+      DEPENDS ${GENERATED_GENERIC_PATH})
+    add_dependencies(R ${name}_generic.R)
+  endif()
 endif()
 endmacro()
 
@@ -427,6 +469,7 @@ macro (post_r_setup)
     "${CMAKE_CURRENT_SOURCE_DIR}/base.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/namespace_compat.hpp"
   )
 
   foreach(mlpack_sources ${MLPACK_SOURCES})
@@ -436,6 +479,12 @@ macro (post_r_setup)
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack
     )
   endforeach()
+
+  # Copy the main mlpack.hpp include.
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/../mlpack.hpp"
+        "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/")
 
   # Copy configured config.hpp.
   execute_process(
@@ -488,15 +537,29 @@ macro (post_r_setup)
       STB_IMAGE_WRITE_H_MOD "${STB_IMAGE_WRITE_H}")
   file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h" "${STB_IMAGE_WRITE_H_MOD}")
 
-  # NOTE: also for CRAN, the `static` definition of STBIRDEF causes a warning
-  # indicating that it should instead be `static inline`, so we make that
-  # replacement below.
+  # NOTE: also for CRAN, the `static` definition of STBIRDEF, STBIDEF, and
+  # STBIWDEF causes a warning indicating that it should instead be `static
+  # inline`, so we make that replacement below.
   file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h" STB_IMAGE_RESIZE2_H)
   string(REGEX REPLACE "#define STBIRDEF static"
       "#define STBIRDEF static inline" STB_IMAGE_RESIZE2_H_MOD
       "${STB_IMAGE_RESIZE2_H}")
   file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_resize2.h"
       "${STB_IMAGE_RESIZE2_H_MOD}")
+
+  file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image.h" STB_IMAGE_H)
+  string(REGEX REPLACE "#define STBIDEF static"
+      "#define STBIDEF static inline" STB_IMAGE_H_MOD
+      "${STB_IMAGE_H}")
+  file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image.h"
+      "${STB_IMAGE_H_MOD}")
+
+  file(READ "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h" STB_IMAGE_WRITE_H)
+  string(REGEX REPLACE "#define STBIWDEF static"
+      "#define STBIWDEF static inline" STB_IMAGE_WRITE_H_MOD
+      "${STB_IMAGE_WRITE_H}")
+  file(WRITE "${CMAKE_BINARY_DIR}/src/mlpack/bindings/R/mlpack/inst/include/mlpack/core/stb/bundled/stb_image_write.h"
+      "${STB_IMAGE_WRITE_H_MOD}")
 
   # Then configure 'mlpack.h.in' using ${R_SRC}.
   configure_file(

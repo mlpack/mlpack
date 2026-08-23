@@ -181,13 +181,13 @@ class FruitTreeNavigation
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          " being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          " being taken." << std::endl;
       return true;
     }
     else if (state.Row() == fruitTree.Depth())
     {
-      Log::Info << "Episode terminated due to reaching leaf node.";
+      Log::Info << "Episode terminated due to reaching leaf node." << std::endl;
       return true;
     }
     return false;

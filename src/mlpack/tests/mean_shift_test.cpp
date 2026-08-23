@@ -121,9 +121,12 @@ TEMPLATE_TEST_CASE("GaussianClustering", "[MeanShiftTest]", float, double)
       3 * arma::eye<MatType>(3, 3));
 
   // We may need to run this multiple times, because sometimes it may converge
-  // to the wrong number of clusters.
+  // to the wrong number of clusters.  The probability of an individual trial
+  // failing is about 15%, so allowing 8 trials gives a failure probability of
+  // 2.56e-5%.  (Yes, that is a huge number of trials, but we want the failure
+  // probability to be very low.)
   bool success = false;
-  for (size_t trial = 0; trial < 4; ++trial)
+  for (size_t trial = 0; trial < 8; ++trial)
   {
     MatType dataset(3, 4000);
     for (size_t i = 0; i < 1000; ++i)
@@ -200,9 +203,12 @@ TEMPLATE_TEST_CASE("GaussianClusteringCentroidsOnly", "[MeanShiftTest]", float,
       3 * arma::eye<MatType>(3, 3));
 
   // We may need to run this multiple times, because sometimes it may converge
-  // to the wrong number of clusters.
+  // to the wrong number of clusters.  The probability of an individual trial
+  // failing is about 15%, so allowing 8 trials gives a failure probability of
+  // 2.56e-5%.  (Yes, that is a huge number of trials, but we want the failure
+  // probability to be very low.)
   bool success = false;
-  for (size_t trial = 0; trial < 4; ++trial)
+  for (size_t trial = 0; trial < 8; ++trial)
   {
     MatType dataset(3, 4000);
     for (size_t i = 0; i < 1000; ++i)

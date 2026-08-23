@@ -65,6 +65,14 @@
 #endif
 
 //
+// MLPACK_DISABLE_STB is used to disable the bundled STB image loaders; use this
+// if your system does not need image processing (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_STB)
+  // #define MLPACK_DISABLE_STB
+#endif
+
+//
 // This is necessary if we would like to overwrite the default packaging
 // condition.
 //
@@ -73,11 +81,53 @@
 #endif
 
 //
+// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally
+// installed dr_mp3 and dr_wav.
+//
+#if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  // #define MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
+// MLPACK_DISABLE_DR_LIBS is used to disable the bundled dr_mp3 and dr_wav
+// audio loaders; use this if your system does not need audio processing
+// (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_DR_LIBS)
+  // #define MLPACK_DISABLE_DR_LIBS
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_DR_LIBS) \
+  && defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  #undef MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
 // MLPACK_USE_SYSTEM_HTTPLIB is used to enable usage of locally installed
 // cpp-httplib.
 //
 #if !defined(MLPACK_USE_SYSTEM_HTTPLIB)
   // #define MLPACK_USE_SYSTEM_HTTPLIB
+#endif
+
+//
+// MLPACK_ENABLE_HTTPLIB is used to enable usage of locally installed
+// cpp-httplib.
+//
+#if !defined(MLPACK_ENABLE_HTTPLIB)
+  // #define MLPACK_ENABLE_HTTPLIB
+#endif
+
+//
+// MLPACK_DISABLE_HTTPLIB is used to disable usage of locally installed
+// cpp-httplib.
+//
+#if !defined(MLPACK_DISABLE_HTTPLIB)
+  // #define MLPACK_DISABLE_HTTPLIB
 #endif
 
 //
@@ -92,5 +142,21 @@
 #ifdef MLPACK_DISABLE_BFD_DL
   #undef MLPACK_HAS_BFD_DL
 #endif
+
+#ifdef MLPACK_DISABLE_HTTPLIB
+  #undef MLPACK_ENABLE_HTTPLIB
+  #undef MLPACK_USE_SYSTEM_HTTPLIB
+#endif
+
+// MLPACK_DISABLE_REMOTE_DATASET_CACHE disables the download cache.
+// This feature is enabled by default.
+#if !defined(MLPACK_DISABLE_REMOTE_DATASET_CACHE)
+  // #define MLPACK_DISABLE_REMOTE_DATASET_CACHE
+#endif
+
+// MLPACK_REMOTE_DATASET_CACHE_DIR can be set to override the default cache
+// directory.  If not set, the default is $HOME/.mlpack/cache/ on POSIX and
+// %APPDATA%\mlpack\cache\ on Windows.
+// #define MLPACK_REMOTE_DATASET_CACHE_DIR "/custom/cache/path/"
 
 #endif

@@ -43,7 +43,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("X_output") + " would be"
     "\n\n" +
     PRINT_CALL("preprocess_one_hot_encoding", "input", "X", "output",
-        "X_ouput", "dimensions", 1 , "dimensions", 3));
+        "X_output", "dimensions", 1 , "dimensions", 3));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");

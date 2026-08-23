@@ -33,9 +33,23 @@ std::string DefaultParamImpl(
 {
   std::ostringstream oss;
   if (std::is_same_v<T, bool>)
+  {
     oss << "false";
+  }
+  else if (std::is_same_v<T, double>)
+  {
+    // For doubles, we must make sure they print with a decimal, otherwise Julia
+    // thinks they are ints.
+    double val = std::any_cast<double>(data.value);
+    oss << val;
+    double modval;
+    if (std::modf(val, &modval) == 0.0)
+      oss << ".0";
+  }
   else
+  {
     oss << std::any_cast<T>(data.value);
+  }
 
   return oss.str();
 }

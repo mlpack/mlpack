@@ -138,11 +138,12 @@ can be used to make class predictions for new data.
 
 ---
 
- * `svm.Classify(point, prediction, probabilitiesVec)`
+ * `svm.Classify(point, prediction, scoresVec)`
    - ***(Single-point)***
-   - Classify a single point and compute class probabilities.
+   - Classify a single point and compute class scores.
    - The predicted class is stored in `prediction`.
-   - The probability of class `i` can be accessed with `probabilitiesVec[i]`.
+   - The score of class `i` can be accessed with `scoresVec[i]`.  Scores are not
+     normalized to `[0, 1]`.
 
 ---
 
@@ -153,12 +154,12 @@ can be used to make class predictions for new data.
 
 ---
 
- * `svm.Classify(data, predictions, probabilities)`
+ * `svm.Classify(data, predictions, scores)`
    - ***(Multi-point)***
-   - Classify a set of points and compute class probabilities.
+   - Classify a set of points and compute class scores.
    - The prediction for data point `i` can be accessed with `predictions[i]`.
-   - The probability of class `j` for data point `i` can be accessed with
-     `probabilities(j, i)`.
+   - The score of class `j` for data point `i` can be accessed with
+     `scores(j, i)`.  Scores are not normalized to `[0, 1]`.
 
 ---
 
@@ -168,11 +169,11 @@ can be used to make class predictions for new data.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into; will have length 2. |
+| _single-point_ | `scoresVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class scores into; will have length `numClasses`. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
+| _multi-point_ | `scores` | [`arma::mat&`](../matrices.md) | Matrix to store class scores into (number of rows will be equal to `numClasses`; number of columns will be equal to `data.n_cols`). |
 
 ### Other Functionality
 
@@ -361,13 +362,12 @@ arma::sp_fvec point;
 point.sprandu(100, 1, 0.3);
 
 size_t prediction;
-arma::fvec probabilitiesVec;
-svm.Classify(point, prediction, probabilitiesVec);
+arma::fvec scoresVec;
+svm.Classify(point, prediction, scoresVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
-std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec.t();
+std::cout << "Class scores for random test point: " << scoresVec.t();
 ```
 
 ***Note:*** dense objects should be used for `ModelMatType`, since in general

@@ -144,9 +144,16 @@ void YOLOv3Layer<MatType>::ComputeOutputDimensions()
 template <typename MatType>
 void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
 {
-  ElemType stride = imgSize / (ElemType)(gridSize);
   size_t batchSize = input.n_cols;
   output.set_size(input.n_rows, batchSize);
+
+  if (this->training)
+  {
+    output = input;
+    return;
+  }
+
+  ElemType stride = imgSize / (ElemType)(gridSize);
 
   CubeType inputCube;
   MakeAlias(inputCube, input, grid * numAttributes, predictionsPerCell,
@@ -189,44 +196,36 @@ void YOLOv3Layer<MatType>::Forward(const MatType& input, MatType& output)
     1, predictionsPerCell, batchSize);
 #endif
 
-  // TODO: add if (this->training). Add check for different batchSize.
   const size_t cols = predictionsPerCell - 1;
 
-  // x1
+  // x
   outputCube.tube(0, 0, grid - 1, cols) =
-    (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
-    * stride
-    - anchorsWBS % arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols))
-    / 2;
+    (xOffset + 1 / (1 + exp(-inputCube.tube(0, 0, grid - 1, cols))))
+    * stride;
 
-  // y1
-  outputCube.tube(grid, 0, grid * 2 - 1, cols) = (yOffset + 1 /
-    (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride
-    - anchorsHBS % arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols))
-    / 2;
+  // y
+  outputCube.tube(grid, 0, grid * 2 - 1, cols) = (yOffset +
+    1 / (1 + exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride;
 
-  // x2
+  // w
   outputCube.tube(grid * 2, 0, grid * 3 - 1, cols) =
-    (xOffset + 1 / (1 + arma::exp(-inputCube.tube(0, 0, grid - 1, cols))))
-    * stride
-    + anchorsWBS % arma::exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols))
-    / 2;
+    anchorsWBS %
+    exp(inputCube.tube(grid * 2, 0, grid * 3 - 1, cols));
 
-  // y2
-  outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) = (yOffset + 1 /
-    (1 + arma::exp(-inputCube.tube(grid, 0, grid * 2 - 1, cols)))) * stride
-    + anchorsHBS % arma::exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols))
-    / 2;
+  // h
+  outputCube.tube(grid * 3, 0, grid * 4 - 1, cols) =
+    anchorsHBS %
+    exp(inputCube.tube(grid * 3, 0, grid * 4 - 1, cols));
 
   // apply logistic sigmoid to objectness and classification logits.
   outputCube.tube(grid * 4, 0, outputCube.n_rows - 1, cols) = 1. /
-    (1 + arma::exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
+    (1 + exp(-inputCube.tube(grid * 4, 0, inputCube.n_rows - 1, cols)));
 
   // Reshape, for each batch item.
   for (size_t i = 0; i < reshapedCube.n_slices; i++)
   {
-    reshapedCube.slice(i) = arma::reshape(
-      arma::reshape(
+    reshapedCube.slice(i) = reshape(
+      reshape(
         outputCube.slice(i), grid, numAttributes * predictionsPerCell).t(),
         numAttributes, predictionsPerCell * grid);
   }
@@ -236,10 +235,10 @@ template <typename MatType>
 void YOLOv3Layer<MatType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
-    const MatType& /* gy */,
-    MatType& /* g */)
+    const MatType& gy,
+    MatType& g)
 {
-  throw std::runtime_error("YOLOv3Layer::Backward() not implemented.");
+  g = gy;
 }
 
 template <typename MatType>

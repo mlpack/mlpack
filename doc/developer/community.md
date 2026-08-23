@@ -6,7 +6,7 @@ a part of the community and contribute.  There is no need to be a a machine
 learning expert to participate; often, there are many tasks to be done that
 don't require in-depth knowledge.
 
-Over the past several years, mlpack has participated in
+In the past, mlpack has participated in
 [Google Summer of Code](https://summerofcode.withgoogle.com/).  For more
 information, see [this page](gsoc.md).
 
@@ -24,17 +24,6 @@ via issues on GitHub, or via chat:
      [auto-inviter](http://slack-inviter.mlpack.org:4000).
    - The Slack workspace is a bridged version of the Matrix room and it is
      generally a better experience to use Matrix directly.
-
-## Video meetup
-
-On the first Monday of every month, at ***1530 UTC***, we have *casual video
-meetups* with no particular agenda.  Feel free to join up!  We often talk about
-code changes that we are working on, issues that people are having with mlpack,
-general design direction, and whatever else might be on our mind.
-
-We use [this Zoom room](https://zoom.us/j/3820896170).  For security, we use a
-password for the meeting to keep malicious bots out.  The password is simple:
-it's just the name of the library (in all lowercase).
 
 ## Getting involved
 

@@ -29,6 +29,7 @@ enum struct FileType
   ArmaASCII,  // Armadillo text format, with a header specifying matrix type and
               // size
   CSVASCII,   // comma separated values (CSV), without a header
+  TSVASCII,   // tab separated values (TSV), without a header
   RawBinary,  // raw binary format (machine dependent), without a header
   ArmaBinary, // Armadillo binary format (machine dependent), with a header
               // specifying matrix type and size
@@ -52,7 +53,9 @@ enum struct FileType
   PSD,        // PhotoShop image type.
   GIF,        // Graphics Interchange Format image type.
   PIC,        // PICtor image format.
-  PNM         // Portable Anymap format.
+  PNM,        // Portable Anymap format.
+  WAV,        // Wavform Audio File Format.
+  MP3         // MPEG Audio Layer 3 Format.
 };
 
 // This should be removed in mlpack 5.0.0. It is only here for backward
@@ -84,13 +87,13 @@ class DataOptionsBase
 
  public:
   template<typename Derived2>
-  explicit DataOptionsBase(const DataOptionsBase<Derived2>& opts)
+  DataOptionsBase(const DataOptionsBase<Derived2>& opts)
   {
     CopyOptions(opts);
   }
 
   template<typename Derived2>
-  explicit DataOptionsBase(DataOptionsBase<Derived2>&& opts)
+  DataOptionsBase(DataOptionsBase<Derived2>&& opts)
   {
     MoveOptions(std::move(opts));
   }
@@ -252,6 +255,10 @@ class DataOptionsBase
         return arma::csv_ascii;
         break;
 
+      case FileType::TSVASCII:
+        return arma::raw_ascii;
+        break;
+
       case FileType::RawBinary:
         return arma::raw_binary;
         break;
@@ -291,6 +298,7 @@ class DataOptionsBase
     switch (f)
     {
       case FileType::CSVASCII:    return "CSV data";
+      case FileType::TSVASCII:    return "TSV data";
       case FileType::RawASCII:    return "raw ASCII formatted data";
       case FileType::RawBinary:   return "raw binary formatted data";
       case FileType::ArmaASCII:   return "Armadillo ASCII formatted data";
@@ -304,9 +312,9 @@ class DataOptionsBase
       case FileType::XML:         return "XML model";
       case FileType::BIN:         return "binary model";
       case FileType::JSON:        return "JSON model";
-      case FileType::AutoDetect:  return "Detect automatically data type";
-      case FileType::FileTypeUnknown: return "Unknown data type";
-      case FileType::ImageType:   return "Any Image type";
+      case FileType::AutoDetect:  return "auto-detected data type";
+      case FileType::FileTypeUnknown: return "unknown data type";
+      case FileType::ImageType:   return "unspecified image type";
       case FileType::PNG:         return "Portable Network Graphics image data";
       case FileType::JPG:         return "JPEG image data";
       case FileType::TGA:         return "Truevision TGA image data";
@@ -315,6 +323,8 @@ class DataOptionsBase
       case FileType::GIF:         return "GIF image data";
       case FileType::PIC:         return "PICtor image data";
       case FileType::PNM:         return "Portable Anymap data";
+      case FileType::WAV:         return "Waveform Audio data";
+      case FileType::MP3:         return "MP3 Audio data";
       default:                    return "";
     }
   }
@@ -436,6 +446,7 @@ static const DataOptions NoFatal = DataOptions(false);
 
 //! File options
 static const DataOptions CSV = DataOptions(std::nullopt, FileType::CSVASCII);
+static const DataOptions TSV = DataOptions(std::nullopt, FileType::TSVASCII);
 static const DataOptions PGM = DataOptions(std::nullopt, FileType::PGMBinary);
 static const DataOptions PPM = DataOptions(std::nullopt, FileType::PPMBinary);
 static const DataOptions HDF5 = DataOptions(std::nullopt,
@@ -465,6 +476,8 @@ static const DataOptions PSD = DataOptions(std::nullopt, FileType::PSD);
 static const DataOptions GIF = DataOptions(std::nullopt, FileType::GIF);
 static const DataOptions PIC = DataOptions(std::nullopt, FileType::PIC);
 static const DataOptions PNM = DataOptions(std::nullopt, FileType::PNM);
+static const DataOptions WAV = DataOptions(std::nullopt, FileType::WAV);
+static const DataOptions MP3 = DataOptions(std::nullopt, FileType::MP3);
 static const DataOptions Image = DataOptions(std::nullopt,
     FileType::ImageType);
 

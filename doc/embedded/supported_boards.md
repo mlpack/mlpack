@@ -84,6 +84,7 @@ cmake \
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ULTRASPARC | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_sparc64.html)   | [Sysroot and toolchain prefix](#ultrasparc) |[UltraSPARC on Wikipedia](https://en.wikipedia.org/wiki/UltraSPARC)        |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
 If you didn't see your architecture in the table above, use the closest
 architecture with a similar word size, or, adapt the parameters directly in
 `CMake/crosscompile-arch-config.cmake` and feel free to open a pull request so we can get

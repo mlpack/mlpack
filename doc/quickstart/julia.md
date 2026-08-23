@@ -24,9 +24,9 @@ information on that, follow the instructions in the
 
 As a really simple example of how to use mlpack from Julia, let's do some
 simple classification on a subset of the standard machine learning `covertype`
-dataset.  We'll first split the dataset into a training set and a testing set,
-then we'll train an mlpack random forest on the training data, and finally we'll
-print the accuracy of the random forest on the test dataset.
+dataset.  We will first split the dataset into a training set and a testing set,
+then we will train an mlpack random forest on the training data, and finally we
+will print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into Julia to run it.  You may need to add
 some extra packages with, e.g., `using Pkg; Pkg.add("CSV");
@@ -80,10 +80,10 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's
+In this example, we will train a collaborative filtering model using mlpack's
 [`cf()`](../user/bindings/julia.md#cf) method.
-We'll train this on the
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+We will train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 You can copy-paste this code directly into Julia to run it.

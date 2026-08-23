@@ -20,6 +20,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "naive_bayes_classifier.hpp"
+#include "naive_bayes_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -88,23 +89,6 @@ BINDING_SEE_ALSO("Naive Bayes classifier on Wikipedia",
     "https://en.wikipedia.org/wiki/Naive_Bayes_classifier");
 BINDING_SEE_ALSO("NaiveBayesClassifier C++ class documentation",
     "@doc/user/methods/naive_bayes_classifier.md");
-
-// A struct for saving the model with mappings.
-struct NBCModel
-{
-  //! The model itself.
-  NaiveBayesClassifier<> nbc;
-  //! The mappings for labels.
-  Col<size_t> mappings;
-
-  //! Serialize the model.
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(nbc));
-    ar(CEREAL_NVP(mappings));
-  }
-};
 
 // Model loading/saving.
 PARAM_MODEL_IN(NBCModel, "input_model", "Input Naive Bayes "

@@ -22,6 +22,7 @@
 #include <mlpack/bindings/python/print_doc_functions.hpp>
 #include <mlpack/bindings/python/wrapper_functions.hpp>
 #include <mlpack/bindings/julia/print_doc_functions.hpp>
+#include <mlpack/bindings/julia/wrapper_functions.hpp>
 #include <mlpack/bindings/go/print_doc_functions.hpp>
 #include <mlpack/bindings/R/print_doc_functions.hpp>
 
@@ -71,6 +72,14 @@ inline std::string GetWrapperName(const std::string& bindingName)
   if (BindingInfo::Language() == "python")
   {
     return "class " + python::GetClassName(bindingName);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    return "class " + bindingName;
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return "struct " + julia::GetClassName(bindingName);
   }
   else
   {
@@ -767,6 +776,14 @@ inline std::string ImportExtLib()
   {
     s = python::ImportExtLib();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::ImportExtLib();
+  }
   else
   {
     throw std::invalid_argument("ImportExtLib(): unknown "
@@ -783,6 +800,14 @@ inline std::string ImportSplit()
   {
     s = python::ImportSplit();
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportExtLib();
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::ImportSplit();
+  }
   else
   {
     throw std::invalid_argument("ImportSplit(): unknown "
@@ -792,12 +817,22 @@ inline std::string ImportSplit()
   return s;
 }
 
-inline std::string ImportThis(const std::string& groupName)
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames)
 {
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::ImportThis(groupName);
+    s = python::ImportThis(groupName, methodNames...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::ImportThis(groupName, false, methodNames...);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::ImportThis(groupName, methodNames...);
   }
   else
   {
@@ -808,7 +843,8 @@ inline std::string ImportThis(const std::string& groupName)
   return s;
 }
 
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,
@@ -819,7 +855,17 @@ inline std::string SplitTrainTest(const std::string& datasetName,
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::SplitTrainTest(datasetName, labelName,
+    s = python::SplitTrainTest(integerLabels, datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::SplitTrainTest(integerLabels, datasetName, labelName,
+        trainDataset, trainLabels, testDataset, testLabels, splitRatio);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::SplitTrainTest(integerLabels, datasetName, labelName,
         trainDataset, trainLabels, testDataset, testLabels, splitRatio);
   }
   else
@@ -839,6 +885,14 @@ inline std::string GetDataset(const std::string& datasetName,
   {
     s = python::GetDataset(datasetName, url);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::GetDataset(datasetName, url);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::GetDataset(datasetName, url);
+  }
   else
   {
     throw std::invalid_argument("GetDataset(): unknown "
@@ -857,8 +911,15 @@ std::string CreateObject(const std::string& bindingName,
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::CreateObject(bindingName, objectName,
-        groupName, args...);
+    s = python::CreateObject(bindingName, objectName, groupName, args...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName, groupName, args...);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::CreateObject(bindingName, objectName, groupName, args...);
   }
   else
   {
@@ -878,6 +939,14 @@ inline std::string CreateObject(const std::string& bindingName,
   {
     s = python::CreateObject(bindingName, objectName, groupName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CreateObject(bindingName, objectName, groupName);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::CreateObject(bindingName, objectName, groupName);
+  }
   else
   {
     throw std::invalid_argument("CreateObject(): unknown "
@@ -896,8 +965,15 @@ std::string CallMethod(const std::string& bindingName,
   std::string s;
   if (BindingInfo::Language() == "python")
   {
-    s = python::CallMethod(bindingName, objectName,
-        methodName, args...);
+    s = python::CallMethod(bindingName, objectName, methodName, args...);
+  }
+  else if (BindingInfo::Language() == "r")
+  {
+    s = r::CallMethod(bindingName, objectName, methodName, false, args...);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    s = julia::CallMethod(bindingName, objectName, methodName, args...);
   }
   else
   {
@@ -944,22 +1020,17 @@ inline std::string GetMappedName(const std::string& methodName)
   {
     return python::GetMappedName(methodName);
   }
+  else if (BindingInfo::Language() == "r")
+  {
+    return r::GetMappedName(methodName);
+  }
+  else if (BindingInfo::Language() == "julia")
+  {
+    return julia::GetMappedName(methodName);
+  }
   else
   {
     throw std::invalid_argument("GetMappedName(): unknown "
-        "BindingInfo::Language(): " + BindingInfo::Language() + "!");
-  }
-}
-
-inline std::string GetWrapperLink(const std::string& bindingName)
-{
-  if (BindingInfo::Language() == "python")
-  {
-    return "class-" + bindingName;
-  }
-  else
-  {
-    throw std::invalid_argument("GetWrapperLink(): unknown "
         "BindingInfo::Language(): " + BindingInfo::Language() + "!");
   }
 }

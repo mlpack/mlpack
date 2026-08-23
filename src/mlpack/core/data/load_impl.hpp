@@ -66,23 +66,26 @@ bool Load(const std::string& src,
   std::string filename;
   bool success = false;
 
-  if (checkIfURL(src))
+  if (CheckIfURL(src))
   {
     // #ifdef to be changed to ifndef MLPACK_DISABLE_HTTPLIB the end of
     // the integration.
 #ifdef MLPACK_ENABLE_HTTPLIB
-    success = DownloadFile(src, filename, stream, opts);
+    success = DownloadFileWithCache(src, filename);
+    if (!success)
+    {
+      Timer::Stop("loading_data");
+      return HandleError("Cannot download the dataset from the provided link. "
+          "Please check the link or the data format.", opts);
+    }
 #else
     return HandleError("HTTPLIB support is disabled, please define "
         "MLPACK_ENABLE_HTTPLIB, to download dataset as URL.", opts);
 #endif
   }
-
-  if (!success)
+  else
   {
-    Timer::Stop("loading_data");
-    return HandleError("Cannot download the dataset from the provoided link. "
-        "Please check the link or the data format.", opts);
+    filename = src;
   }
 
   success = OpenFile(filename, opts, true, stream);
@@ -98,6 +101,8 @@ bool Load(const std::string& src,
     Timer::Stop("loading_data");
     return false;
   }
+  const bool isAudioFormat = opts.Format() == FileType::WAV ||
+      opts.Format() == FileType::MP3;
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -110,8 +115,16 @@ bool Load(const std::string& src,
     {
       if constexpr (isSparseMatrixType)
       {
-        return HandleError("Cannot load image data into a sparse matrix. "
-        "Please use dense matrix instead.", opts);
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, tmp, imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
       }
       else
       {
@@ -121,6 +134,27 @@ bool Load(const std::string& src,
         success = LoadImage(files, dest, imgOpts);
         if (copyBack)
           opts = std::move(imgOpts);
+      }
+    }
+    else if (isAudioFormat)
+    {
+      if constexpr (isSparseMatrixType)
+      {
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(src, tmp, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
+      }
+      else
+      {
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(src, dest, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
       }
     }
     else
@@ -178,6 +212,7 @@ bool Load(const std::vector<std::string>& files,
   }
 
   DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+
   const bool isImageFormat = (opts.Format() == FileType::PNG ||
       opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
       opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
@@ -199,62 +234,6 @@ bool Load(const std::vector<std::string>& files,
       opts = std::move(txtOpts);
   }
   return success;
-}
-
-template<typename eT>
-bool LoadCategorical(const std::string& filename,
-                     arma::Mat<eT>& matrix,
-                     TextOptions& opts)
-{
-  // Get the extension and load as necessary.
-  Timer::Start("loading_data");
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-  bool success = false;
-
-  if (extension == "csv" || extension == "tsv" || extension == "txt")
-  {
-    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    LoadCSV loader(filename, opts.Fatal());
-    success = loader.LoadCategoricalCSV(matrix, opts);
-    if (!success)
-    {
-      Timer::Stop("loading_data");
-      return false;
-    }
-  }
-  else if (extension == "arff")
-  {
-    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
-    success = LoadARFF(filename, matrix, opts.DatasetInfo(), opts.Fatal());
-    if (!success)
-    {
-      Timer::Stop("loading_data");
-      return false;
-    }
-    // Retranspose back as we are transposing by default
-    if (opts.NoTranspose())
-    {
-      inplace_trans(matrix);
-    }
-  }
-  else
-  {
-    // The type is unknown.
-    Timer::Stop("loading_data");
-    std::stringstream oss;
-    oss << "Unable to detect type of '" << filename << "'; "
-          << "Incorrect extension?";
-    return HandleError(oss, opts);
-  }
-
-  Log::Info << "Size is " << matrix.n_rows << " x " << matrix.n_cols << ".\n";
-
-  Timer::Stop("loading_data");
-
-  return true;
 }
 
 } // namespace mlpack

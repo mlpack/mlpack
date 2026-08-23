@@ -89,7 +89,7 @@ class PositiveDefiniteConstraint
     // large, we must project it back onto the cone of positive definite
     // matrices with reasonable condition number (I'm picking 1e5 here, not for
     // any particular reason).
-    ElemType maxEigval = -std::numeric_limits<ElemType>::lowest();
+    ElemType maxEigval = std::numeric_limits<ElemType>::lowest();
     for (size_t i = 0; i < diagCovariance.n_elem; ++i)
     {
       if (diagCovariance[i] > maxEigval)

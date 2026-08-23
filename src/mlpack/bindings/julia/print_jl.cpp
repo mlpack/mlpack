@@ -28,7 +28,8 @@ extern std::string programName;
  */
 void PrintJL(const string& bindingName,
              const string& functionName,
-             const string& mlpackJuliaLibSuffix)
+             const string& mlpackJuliaLibSuffix,
+             const bool isGroupBinding)
 {
   Params p = IO::Parameters(bindingName);
   const BindingDetails& doc = p.Doc();
@@ -66,20 +67,24 @@ void PrintJL(const string& bindingName,
   cout << "export " << functionName << endl;
   cout << endl;
 
-  // Now import any types we might need.
-  set<string> classNames;
-  for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
+  // Now import any types we might need.  If we are a group binding, we will be
+  // using bare pointers, so we don't need these types.
+  if (!isGroupBinding)
   {
-    ParamData& d = it->second;
-    if (classNames.count(d.cppType) == 0)
+    set<string> classNames;
+    for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
     {
-      p.functionMap[d.tname]["PrintModelTypeImport"](d, NULL, NULL);
+      ParamData& d = it->second;
+      if (classNames.count(d.cppType) == 0)
+      {
+        p.functionMap[d.tname]["PrintModelTypeImport"](d, NULL, NULL);
 
-      // Avoid adding this import again.
-      classNames.insert(d.cppType);
+        // Avoid adding this import again.
+        classNames.insert(d.cppType);
+      }
     }
+    cout << endl;
   }
-  cout << endl;
 
   // We need to include utility functions.
   cout << "using mlpack._Internal.params" << endl;
@@ -116,13 +121,15 @@ void PrintJL(const string& bindingName,
   cout << "  import .." << functionName << "Library" << endl;
   cout << endl;
 
-  classNames.clear();
+  set<string> classNames;
   for (ParamIter it = parameters.begin(); it != parameters.end(); ++it)
   {
     ParamData& d = it->second;
     if (classNames.count(d.cppType) == 0)
     {
-      p.functionMap[d.tname]["PrintParamDefn"](d, (void*) &functionName, NULL);
+      std::pair<std::string, bool> n = std::make_pair(functionName,
+          isGroupBinding /* use raw pointers if we are a group binding */);
+      p.functionMap[d.tname]["PrintParamDefn"](d, (void*) &n, NULL);
 
       // Avoid adding this definition again.
       classNames.insert(d.cppType);
@@ -230,7 +237,7 @@ void PrintJL(const string& bindingName,
       cout << "," << endl << string(indent, ' ');
     }
 
-    p.functionMap[d.tname]["PrintInputParam"](d, NULL, NULL);
+    p.functionMap[d.tname]["PrintInputParam"](d, (void*) &isGroupBinding, NULL);
   }
 
   // Print the 'points_are_rows' option.
@@ -271,7 +278,9 @@ void PrintJL(const string& bindingName,
     if (opt != "verbose")
     {
       ParamData& d = parameters.at(opt);
-      p.functionMap[d.tname]["PrintInputProcessing"](d, &functionName, NULL);
+      std::pair<std::string, bool> n = std::make_pair(functionName,
+          isGroupBinding);
+      p.functionMap[d.tname]["PrintInputProcessing"](d, &n, NULL);
     }
   }
 
@@ -301,7 +310,8 @@ void PrintJL(const string& bindingName,
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {
     ParamData& d = parameters.at(outputOptions[i]);
-    p.functionMap[d.tname]["PrintOutputProcessing"](d, &functionName, NULL);
+    p.functionMap[d.tname]["PrintOutputProcessing"](d, (void*) &functionName,
+        NULL);
 
     // Print newlines if we are returning multiple output options.
     if (i + 1 < outputOptions.size())

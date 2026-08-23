@@ -81,9 +81,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   Row<size_t> predictedLabels(testingData.n_cols);
   mat probabilities;
 
-  timers.Start("adaboost_classification");
+  timers.Start("adaboost_probabilities");
   m->Classify(testingData, predictedLabels, probabilities);
-  timers.Stop("adaboost_classification");
+  timers.Stop("adaboost_probabilities");
 
   params.Get<arma::mat>("probabilities") = std::move(probabilities);
 }

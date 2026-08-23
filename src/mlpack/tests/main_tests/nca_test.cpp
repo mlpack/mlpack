@@ -38,6 +38,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCAExplicitImplicitLabelsTest",
   x.randu(3, 6);
 
   SetInputParam("input", std::move(x));
+  SetInputParam("max_iterations", 100);
 
   RUN_BINDING();
 
@@ -58,6 +59,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCAExplicitImplicitLabelsTest",
 
   SetInputParam("input", std::move(y));
   SetInputParam("labels", std::move(labels));
+  SetInputParam("max_iterations", 100);
 
   RUN_BINDING();
 
@@ -116,6 +118,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCALabelSizeTest",
 TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
                 "[NCAMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat inputData;
   if (!Load("vc2.csv", inputData))
     FAIL("Cannot load vc2.csv!");
@@ -129,6 +136,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -152,11 +160,16 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
   SetInputParam("normalize", true);
   SetInputParam("linear_scan", true);
   SetInputParam("tolerance", 0.01);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
   // Check that the output matrices are different.
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -165,6 +178,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCANormalizationTest",
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
                 "[NCAMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Simple dataset with 6 points and two classes.
   arma::mat x              = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
@@ -175,6 +193,7 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("step_size", (double) 1.2);
   SetInputParam("linear_scan", true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -194,11 +213,16 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
   SetInputParam("labels", std::move(labels2));
   SetInputParam("step_size", (double) 20.5);
   SetInputParam("linear_scan", true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
   // Check that the output matrices are different.
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -207,54 +231,52 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentStepSizeTest",
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
                 "[NCAMainTest][BindingTests][long]")
 {
-  // We aren't guaranteed that the test will be successful, so we run it
-  // multiple times.
-  bool success = false;
-  size_t trial = 0;
-  while (trial < 5)
-  {
-    // Random dataset.
-    arma::mat x;
-    x.randu(3, 600);
-    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
-        DistrParam(0, 1));
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
 
-    arma::mat y = x;
-    arma::Row<size_t> labels2 = labels;
+  // Random dataset.
+  arma::mat x;
+  x.randu(3, 600);
+  arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+      DistrParam(0, 1));
 
-    // Set parameters with a small tolerance.
-    SetInputParam("input", std::move(x));
-    SetInputParam("labels", std::move(labels));
-    SetInputParam("optimizer", std::string("lbfgs"));
-    SetInputParam("max_iterations", (int) 0);
-    SetInputParam("tolerance", (double) 1e-8);
+  arma::mat y = x;
+  arma::Row<size_t> labels2 = labels;
 
-    RUN_BINDING();
+  // Set parameters with a small tolerance.
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 0);
+  SetInputParam("tolerance", (double) 0.1);
+  FixedRandomSeed();
 
-    arma::mat output = params.Get<arma::mat>("output");
+  RUN_BINDING();
 
-    // Reset settings.
-    CleanMemory();
-    ResetSettings();
+  arma::mat output = params.Get<arma::mat>("output");
 
-    // Set parameters using the same input but with a larger tolerance.
-    SetInputParam("input", std::move(y));
-    SetInputParam("labels", std::move(labels2));
-    SetInputParam("optimizer", std::string("lbfgs"));
-    SetInputParam("max_iterations", (int) 0);
-    SetInputParam("tolerance", (double) 100.0);
+  // Reset settings.
+  CleanMemory();
+  ResetSettings();
 
-    RUN_BINDING();
+  // Set parameters using the same input but with a larger tolerance.
+  SetInputParam("input", std::move(y));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("optimizer", std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 0);
+  SetInputParam("tolerance", (double) 100.0);
+  FixedRandomSeed();
 
-    // Check that the output matrices are different.
-    success = (accu(params.Get<arma::mat>("output") != output) > 0);
-    if (success)
-      break;
+  RUN_BINDING();
 
-    ++trial;
-  }
+  // Check that the output matrices are different.
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 
-  REQUIRE(success == true);
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -263,6 +285,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentToleranceTest",
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
                 "[NCAMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Simple dataset with 6 points and two classes.
   arma::mat x              = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                              " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
@@ -274,6 +301,8 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
   SetInputParam("optimizer", std::string("sgd"));
   SetInputParam("batch_size", (int) 2);
   SetInputParam("linear_scan", true);
+  SetInputParam("max_iterations", 1000);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -294,19 +323,30 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentBatchSizeTest",
   SetInputParam("optimizer", std::string("sgd"));
   SetInputParam("batch_size", (int) 3);
   SetInputParam("linear_scan", true);
+  SetInputParam("max_iterations", 1000);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
   // Check that the output matrices are different.
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
- * Ensure that output is different when setting linear_scan to false.
+ * Ensure that output is different when setting linear_scan to true.
  */
 TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
                 "[NCAMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Simple dataset with 6 points and two classes.
   arma::mat x               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
@@ -316,6 +356,8 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
   SetInputParam("input", std::move(x));
   SetInputParam("labels", labels);
   SetInputParam("optimizer", std::string("sgd"));
+  SetInputParam("max_iterations", 100);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -330,16 +372,23 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::Row<size_t> labels2 = " 0    0    0    1    1    1   ";
 
-  // Set parameters using the same input but set linear_scan flag to false.
+  // Set parameters using the same input but rely on linear_scan flag
+  // default value false.
   SetInputParam("input", std::move(y));
   SetInputParam("labels", labels2);
   SetInputParam("optimizer", std::string("sgd"));
-  SetInputParam("linear_scan", false);
+  SetInputParam("max_iterations", 100);
+  SetInputParam("linear_scan", true);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
   // Check that the output matrices are different.
   REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -348,6 +397,11 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest",
 TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
                 "[NCAMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   // Simple dataset with 6 points and two classes.
   arma::mat x               = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                               " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
@@ -357,6 +411,8 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
   SetInputParam("input", std::move(x));
   SetInputParam("labels", labels);
   SetInputParam("linear_scan", true);
+  SetInputParam("max_iterations", 1000);
+  FixedRandomSeed();
 
   RUN_BINDING();
 
@@ -374,10 +430,17 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
   SetInputParam("input", std::move(y));
   SetInputParam("labels", labels2);
   SetInputParam("linear_scan", true);
+  SetInputParam("max_iterations", 1000);
+  FixedRandomSeed();
+
   RUN_BINDING();
 
   // Check that the output matrices are equal.
   CheckMatrices(output, params.Get<arma::mat>("output"));
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -387,54 +450,52 @@ TEST_CASE_METHOD(NCATestFixture, "NCALinearScanTest2",
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
                 "[NCAMainTest][BindingTests]")
 {
-  // This test can randomly fail and it can be okay, so we run multiple times if
-  // necessary.
-  bool success = false;
-  size_t trial = 0;
-  while (trial < 5)
-  {
-    // Simple dataset.
-    arma::mat x;
-    x.randu(4, 100);
-    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(100,
-        DistrParam(0, 1));
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
 
-    arma::mat y = x;
-    arma::Row<size_t> labels2 = labels;
+  // Simple dataset.
+  arma::mat x;
+  x.randu(4, 100);
+  arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(100,
+      DistrParam(0, 1));
 
-    // Set parameters and use a larger num_basis.
-    SetInputParam("input", std::move(x));
-    SetInputParam("labels", std::move(labels));
-    SetInputParam("optimizer",  std::string("lbfgs"));
-    SetInputParam("num_basis", (int) 5);
-    SetInputParam("max_iterations", (int) 10);
+  arma::mat y = x;
+  arma::Row<size_t> labels2 = labels;
 
-    RUN_BINDING();
+  // Set parameters and use a larger num_basis.
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("optimizer",  std::string("lbfgs"));
+  SetInputParam("num_basis", (int) 5);
+  SetInputParam("max_iterations", (int) 10);
+  FixedRandomSeed();
 
-    arma::mat output = params.Get<arma::mat>("output");
+  RUN_BINDING();
 
-    // Reset Settings.
-    CleanMemory();
-    ResetSettings();
+  arma::mat output = params.Get<arma::mat>("output");
 
-    // Set parameters with a smaller num_basis.
-    SetInputParam("input", std::move(y));
-    SetInputParam("labels", std::move(labels2));
-    SetInputParam("optimizer",  std::string("lbfgs"));
-    SetInputParam("num_basis", (int) 1);
-    SetInputParam("max_iterations", (int) 10);
+  // Reset Settings.
+  CleanMemory();
+  ResetSettings();
 
-    RUN_BINDING();
+  // Set parameters with a smaller num_basis.
+  SetInputParam("input", std::move(y));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("optimizer",  std::string("lbfgs"));
+  SetInputParam("num_basis", (int) 1);
+  SetInputParam("max_iterations", (int) 10);
+  FixedRandomSeed();
 
-    // Check that the output matrices are different.
-    success = (accu(params.Get<arma::mat>("output") != output) > 0);
-    if (success)
-      break;
+  RUN_BINDING();
 
-    ++trial;
-  }
+  // Check that the output matrices are different.
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 
-  REQUIRE(success == true);
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -444,50 +505,48 @@ TEST_CASE_METHOD(NCATestFixture, "NCADifferentNumBasisTest",
 TEST_CASE_METHOD(NCATestFixture, "NCADifferentMaxIterationTest",
                 "[NCAMainTest][BindingTests][long]")
 {
-  // This test can randomly fail and it can be okay, so we run multiple times if
-  // necessary.
-  bool success = false;
-  size_t trial = 0;
-  while (trial < 5)
-  {
-    // Random dataset.
-    arma::mat x;
-    x.randu(3, 600);
-    arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
-        DistrParam(0, 1));
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
 
-    arma::mat y = x;
-    arma::Row<size_t> labels2 = labels;
+  // Random dataset.
+  arma::mat x;
+  x.randu(3, 600);
+  arma::Row<size_t> labels = arma::randi<arma::Row<size_t>>(600,
+      DistrParam(0, 1));
 
-    // Set parameters with a small max_iterations.
-    SetInputParam("input", std::move(x));
-    SetInputParam("labels", std::move(labels));
-    SetInputParam("optimizer",  std::string("lbfgs"));
-    SetInputParam("max_iterations", (int) 3);
+  arma::mat y = x;
+  arma::Row<size_t> labels2 = labels;
 
-    RUN_BINDING();
+  // Set parameters with a small max_iterations.
+  SetInputParam("input", std::move(x));
+  SetInputParam("labels", std::move(labels));
+  SetInputParam("optimizer",  std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 3);
+  FixedRandomSeed();
 
-    arma::mat output = params.Get<arma::mat>("output");
+  RUN_BINDING();
 
-    // Reset settings.
-    CleanMemory();
-    ResetSettings();
+  arma::mat output = params.Get<arma::mat>("output");
 
-    // Set parameters using the same input but with a larger max_iterations.
-    SetInputParam("input", std::move(y));
-    SetInputParam("labels", std::move(labels2));
-    SetInputParam("optimizer",  std::string("lbfgs"));
-    SetInputParam("max_iterations", (int) 500);
+  // Reset settings.
+  CleanMemory();
+  ResetSettings();
 
-    RUN_BINDING();
+  // Set parameters using the same input but with a larger max_iterations.
+  SetInputParam("input", std::move(y));
+  SetInputParam("labels", std::move(labels2));
+  SetInputParam("optimizer",  std::string("lbfgs"));
+  SetInputParam("max_iterations", (int) 20);
+  FixedRandomSeed();
 
-    // Check that the output matrices are different.
-    success = (accu(params.Get<arma::mat>("output") != output) > 0);
-    if (success)
-      break;
+  RUN_BINDING();
 
-    ++trial;
-  }
+  // Check that the output matrices are different.
+  REQUIRE(accu(params.Get<arma::mat>("output") != output) > 0);
 
-  REQUIRE(success == true);
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }

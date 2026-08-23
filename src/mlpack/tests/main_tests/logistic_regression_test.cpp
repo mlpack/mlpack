@@ -25,7 +25,7 @@ using namespace mlpack;
 BINDING_TEST_FIXTURE(LogisticRegressionTestFixture);
 
 /**
-  * Ensuring that absence of training data is checked.
+ * Ensuring that absence of training data is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture,
                  "LogisticRegressionLRNoTrainingData",
@@ -62,7 +62,8 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 /**
  * Checking that that size and dimensionality of prediction is correct.
  */
-TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPridictionSizeCheck",
+TEST_CASE_METHOD(LogisticRegressionTestFixture,
+                 "LogisticRegressionPredictionSizeCheck",
                  "[LogisticRegressionMainTest][BindingTests]")
 {
   constexpr int N = 10;
@@ -92,7 +93,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRPridictionSizeCheck",
 }
 
 /**
-  * Ensuring that the response size is checked.
+ * Ensuring that the response size is checked.
  **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture,
                  "LogisticRegressionLRWrongResponseSizeTest",
@@ -322,7 +323,7 @@ TEST_CASE_METHOD(LogisticRegressionTestFixture,
 
 /**
   * Ensuring that step size for optimizer is non negative.
- **/ 
+ **/
 TEST_CASE_METHOD(LogisticRegressionTestFixture, "LRNonNegativeStepSizeTest",
                  "[LogisticRegressionMainTest][BindingTests]")
 {

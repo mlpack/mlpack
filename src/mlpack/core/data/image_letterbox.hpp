@@ -20,15 +20,16 @@
 
 namespace mlpack {
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Resize an image to `imgSize` x `imgSize` while keeping the original
  * image's aspect ratio. Fill in white space with `fillValue`.
  *
  * @param src The source matrix that contains the images.
  * @param srcOpt Contains relevant information on each source image.
- * @param dest The destination matrix that will have the source image
-          embedded onto it
- * @param imgSize The width and height of each output image.
+ * @param width The width of each output image.
+ * @param height The height of each output image.
  * @param fillValue The whitespace value.
  */
 template<typename eT>
@@ -36,7 +37,7 @@ void LetterboxImages(arma::Mat<eT>& src,
                     ImageOptions& srcOpt,
                     const size_t width,
                     const size_t height,
-                    const eT fillValue)
+                    const double fillValue)
 {
   const size_t expectedRows =
     srcOpt.Width() * srcOpt.Height() * srcOpt.Channels();
@@ -98,7 +99,7 @@ void LetterboxImages(arma::Mat<eT>& src,
   const size_t dx = (width - newWidth) / 2;
   const size_t dy = (height - newHeight) / 2;
 
-  cubeDest.fill(fillValue);
+  cubeDest.fill(static_cast<eT>(fillValue));
   // Fill RGB
   cubeDest.subcube(dx * srcOpt.Channels(),
                    dy,
@@ -110,6 +111,23 @@ void LetterboxImages(arma::Mat<eT>& src,
   src = std::move(dest);
   srcOpt = ImageOptions(width, height, srcOpt.Channels());
 }
+
+#else // MLPACK_DISABLE_STB
+
+template<typename eT>
+void LetterboxImages(arma::Mat<eT>& /* src */,
+                     ImageOptions& opts,
+                     const size_t = 0,
+                     const size_t = 0,
+                     const double = 0.0)
+{
+  std::stringstream oss;
+  oss << "LetterboxImages(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to support images.";
+  HandleError(oss, opts);
+}
+
+#endif // MLPACK_DISABLE_STB
 
 } // namespace mlpack
 

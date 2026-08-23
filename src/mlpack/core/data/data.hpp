@@ -29,6 +29,7 @@
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
 #include "data_options.hpp"
+#include "download_file.hpp"
 #include "handle_files.hpp"
 #include "image_layout.hpp"
 #include "image_options.hpp"
