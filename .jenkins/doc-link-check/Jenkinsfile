@@ -16,7 +16,7 @@ pipeline
       image 'mlpack/jenkins-mlpack-docbuild:latest'
       label 'doc-check'
       alwaysPull true
-      args '-v /home/jenkins/link_cache/:/opt/link_cache/'
+      args '-v /home/jenkins/link_cache/:/opt/link_cache/ -e HOME=/home/jenkins/'
     }
   }
 
@@ -57,11 +57,6 @@ pipeline
         script { u.updateCheckStatus('Checking documentation links...') }
 
         sh '''
-          # Set $HOME because the Docker container may be running with a
-          # different uid.  Note that the container has /workspace/ as the
-          # working directory; we'll just reuse that as $HOME.
-          export HOME=/workspace/
-
           # Print the size of the link cache.
           if [ ! -f /opt/link_cache/link_cache.db ];
           then

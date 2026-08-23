@@ -4,6 +4,8 @@
 
 _????-??-??_
 
+ * Add support for caching downloaded datasets to `Load()` (#4103).
+
  * Templetize Scalar methods to allow using float types (#4229).
 
  * Accelerated `LeakyReLU` ANN Layer (#4174).

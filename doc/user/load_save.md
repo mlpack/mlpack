@@ -744,20 +744,35 @@ When a remote URL is given to `Load()`:
      including mlpack, and the program must be additionally
      [linked with `-lssl -lcrypto`](compile.md#linking-against-optional-mlpack-dependencies).
 
- * The downloaded file will be saved to the system temporary directory (e.g. `/tmp/` on
-    Linux systems).
+ * The dataset will be added to a cache to prevent a second download if the same
+   URL is loaded again.
+   - If the server reports the same `ETag` and `Content-Length` headers for the
+     URL, the cached version will be used.
+   - The cache can be disabled with the
+     [`MLPACK_DISABLE_REMOTE_DATASET_CACHE` compilation option](compile.md#configuring-mlpack-with-compile-time-definitions).
+   - Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
+     `%APPDATA%\mlpack\cache\` on Windows.
+   - The cache directory can be overridden at compile time with
+     [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
+
+Instead of passing a URL directly to `Load()`, it is also possible to download a
+remote dataset manually to a specific local path with the
+[`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
 
 ```c++
-// Throw an exception if loading fails with the Fatal option.
 arma::mat dataset;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
+
+// If a second call to
+//     mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", ...)
+// is made, the dataset does not need to be downloaded: the local cache will be
+// used (unless MLPACK_DISABLE_REMOTE_DATASET_CACHE is defined).
 
 arma::Row<size_t> labels;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv",
     labels, mlpack::Fatal);
 
-// Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
 std::cout << " - " << dataset.n_cols << " points." << std::endl;
 std::cout << " - " << dataset.n_rows << " dimensions." << std::endl;
@@ -766,6 +781,38 @@ std::cout << "The labels in 'satellite.train.labels.csv' have: " << std::endl;
 std::cout << " - " << labels.n_elem << " labels." << std::endl;
 std::cout << " - A maximum label of " << labels.max() << "." << std::endl;
 std::cout << " - A minimum label of " << labels.min() << "." << std::endl;
+```
+
+### Downloading to a specific file with `DownloadFile()`
+
+ * `DownloadFile(url, dest)`
+   - Download the file located at `url` (a `std::string`) and save it to the
+     path given with `dest` (a `std::string`).
+   - No cache is used; the file will always be downloaded.
+   - If permissions to write to `dest` are lacking, or any other failure while
+     writing is encountered, a fatal error will be reported.
+   - If the URL starts with `https://`, support must be enabled with
+     [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions)
+     before including mlpack, and the program must be additionally
+     [linked with `-lssl -lcrypto`](compile.md#linking-without-the-armadillo-wrapper).
+
+```c++
+arma::fmat dataset;
+mlpack::TextOptions opts;
+opts.Format() = mlpack::FileType::CSVASCII;
+opts.HasHeaders() = true;
+
+// Download and save as "myDataset.csv", then load it.
+mlpack::DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
+    "myDataset.csv");
+mlpack::Load("myDataset.csv", dataset, opts);
+
+std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
+for (size_t i = 0; i < opts.Headers().size(); ++i)
+{
+  std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
+      << std::endl;
+}
 ```
 
 ## Mixed categorical data

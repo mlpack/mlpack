@@ -4556,3 +4556,162 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
 
   remove("test_roundtrip.wav");
 }
+
+#ifdef MLPACK_ENABLE_HTTPLIB
+
+/**
+ * Test that DownloadFile() downloads a file to a user-specified destination.
+ */
+TEST_CASE("DownloadFileTest", "[LoadSaveTest]")
+{
+  std::string dest = "test_download_iris.csv";
+  remove(dest.c_str());
+
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/iris.csv", dest) == true);
+  REQUIRE(std::filesystem::exists(dest));
+  REQUIRE(std::filesystem::file_size(dest) > 0);
+
+  arma::mat data;
+  REQUIRE(Load(dest, data) == true);
+  REQUIRE(data.n_rows == 4);
+  REQUIRE(data.n_cols == 150);
+
+  remove(dest.c_str());
+}
+
+/**
+ * Test that Load() with a URL uses the cache, the first call downloads, the
+ * second call uses the cache.
+ */
+TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "iris.csv").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  // Download and cache.
+  arma::mat data1;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", data1, Fatal) == true);
+  REQUIRE(data1.n_rows == 4);
+  REQUIRE(data1.n_cols == 150);
+
+  REQUIRE(std::filesystem::exists(manifestPath));
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  auto mtime1 = std::filesystem::last_write_time(cachedFile);
+
+  // Use the cache instead of download.
+  arma::mat data2;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", data2, Fatal) == true);
+  REQUIRE(data2.n_rows == 4);
+  REQUIRE(data2.n_cols == 150);
+
+  auto mtime2 = std::filesystem::last_write_time(cachedFile);
+  REQUIRE(mtime1 == mtime2);
+
+  REQUIRE(arma::approx_equal(data1, data2, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test that GetCacheDir() creates the directory and returns a valid path.
+ */
+TEST_CASE("GetCacheDirTest", "[LoadSaveTest]")
+{
+  const std::string dir = GetCacheDir();
+  REQUIRE(!dir.empty());
+  REQUIRE(std::filesystem::is_directory(dir));
+}
+
+/**
+ * Test LoadManifest/SaveManifest.
+ */
+TEST_CASE("ManifestLoadSave", "[LoadSaveTest]")
+{
+  const std::string cacheDir = GetCacheDir();
+  const std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+
+  remove(manifestPath.c_str());
+
+  CacheManifest manifest;
+  manifest["https://example.com/a.csv"] =
+      std::make_tuple("\"etag-a\"", (size_t) 100, cacheDir + "/a.csv");
+  manifest["https://example.com/b.csv"] =
+      std::make_tuple("\"etag-b\"", (size_t) 200, cacheDir + "/b.csv");
+
+  REQUIRE(SaveManifest(cacheDir, manifest) == true);
+
+  CacheManifest loaded;
+  REQUIRE(LoadManifest(cacheDir, loaded) == true);
+  REQUIRE(loaded.size() == 2);
+
+  REQUIRE(loaded.count("https://example.com/a.csv") == 1);
+  REQUIRE(std::get<0>(loaded["https://example.com/a.csv"]) == "\"etag-a\"");
+  REQUIRE(std::get<1>(loaded["https://example.com/a.csv"]) == 100);
+
+  REQUIRE(loaded.count("https://example.com/b.csv") == 1);
+  REQUIRE(std::get<0>(loaded["https://example.com/b.csv"]) == "\"etag-b\"");
+  REQUIRE(std::get<1>(loaded["https://example.com/b.csv"]) == 200);
+
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test cache invalidation and tampering with the manifest (wrong ETag and size).
+ * The next Load() function call with the same URL must detect the mismatch
+ * therefore re-downloading the data.
+ */
+TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "iris.csv").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat originalData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", originalData,
+      Fatal) == true);
+  REQUIRE(originalData.n_rows == 4);
+  REQUIRE(originalData.n_cols == 150);
+  REQUIRE(std::filesystem::exists(manifestPath));
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  // Change the ETag and the size
+  CacheManifest manifest;
+  REQUIRE(LoadManifest(cacheDir, manifest) == true);
+  REQUIRE(manifest.count("https://datasets.mlpack.org/iris.csv") == 1);
+  manifest["https://datasets.mlpack.org/iris.csv"] =
+      std::make_tuple("\"fake-etag-corrupted\"", (size_t) 42, cachedFile);
+  REQUIRE(SaveManifest(cacheDir, manifest) == true);
+
+  // Also change the data, this might not be necessary.
+  std::ofstream out(cachedFile, std::ios::trunc);
+  REQUIRE(out.is_open());
+  out << "this,is,corrupted,data\n1,2,3,4\n";
+
+  arma::mat reloadedData;
+  REQUIRE(Load("https://datasets.mlpack.org/iris.csv", reloadedData,
+      Fatal) == true);
+  REQUIRE(reloadedData.n_rows == 4);
+  REQUIRE(reloadedData.n_cols == 150);
+
+  // Check that the downloaded data is equal to the original loaded data.
+  REQUIRE(arma::approx_equal(originalData, reloadedData, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
+#endif

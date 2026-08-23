@@ -204,6 +204,8 @@ The following options can be used when configuring mlpack.
 | `-DDISABLE_DR_LIBS=OFF` | Disable dr_libs (audio) support within mlpack; use this if you do not need audio processing (e.g., you are only using real-time sensor data). | `OFF` |
 | `-DUSE_SYSTEM_HTTPLIB=OFF` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. | `OFF` |
 | `-DDISABLE_HTTPLIB=OFF` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems). | `OFF` |
+| `-DDISABLE_REMOTE_DATASET_CACHE=OFF` | Disable caching of downloaded datasets.  When set to `ON`, files downloaded via `Load()` are saved to the system temporary directory instead of the cache directory. | `OFF` |
+| `-DREMOTE_DATASET_CACHE_DIR=/path/to/cache/` | Override the directory where cached datasets are stored.  Defaults to `$HOME/.mlpack/cache/` on Linux/macOS and `%APPDATA%\mlpack\cache\` on Windows. | |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||

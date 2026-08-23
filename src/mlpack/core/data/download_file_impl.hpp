@@ -2,7 +2,7 @@
  * @file core/data/download_file_impl.hpp
  * @author Omar Shrit
  *
- * mlpack Load function that download dataset from a URL.
+ * Implementation of DownloadFile() and the URL download cache.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -128,79 +128,234 @@ inline void ParseURL(const std::string& url, std::string& host,
   }
 }
 
-inline bool DownloadFile(const std::string& url,
-                         std::string& filename)
+inline std::string GetCacheDir()
+{
+  std::filesystem::path dir;
+
+#ifdef MLPACK_REMOTE_DATASET_CACHE_DIR
+  dir = MLPACK_REMOTE_DATASET_CACHE_DIR;
+#else
+  #ifdef _WIN32
+  char* appdata = std::getenv("APPDATA");
+  if (appdata)
+    dir = std::filesystem::path(appdata) / "mlpack" / "cache";
+  #else
+  char* home = std::getenv("HOME");
+  if (home && home[0] != '\0')
+    dir = std::filesystem::path(home) / ".mlpack" / "cache";
+  #endif
+#endif
+
+  // If we could not determine a cache directory (e.g. $HOME is unset or
+  // empty), return an empty string so the caller skips caching.
+  if (dir.empty())
+    return "";
+
+  std::error_code ec;
+  std::filesystem::create_directories(dir, ec);
+
+  if (ec)
+  {
+    Log::Warn << "GetCacheDir(): cannot create cache directory '"
+        << dir.string() << "': " << ec.message()
+        << "; remote dataset caching disabled." << std::endl;
+    return "";
+  }
+  return dir.string();
+}
+
+inline bool LoadManifest(const std::string& cacheDir,
+                         CacheManifest& manifest)
+{
+  std::string path =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::ifstream in(path);
+  if (!in)
+    return false;
+
+  // Each line: url,etag,content_length,local_path
+  std::string line;
+  while (std::getline(in, line))
+  {
+    std::istringstream ss(line);
+    std::string url, etag, sizeStr, localPath;
+    if (std::getline(ss, url, ',') &&
+        std::getline(ss, etag, ',') &&
+        std::getline(ss, sizeStr, ',') &&
+        std::getline(ss, localPath))
+    {
+      manifest[url] = std::make_tuple(etag, std::stoull(sizeStr), localPath);
+    }
+  }
+  return true;
+}
+
+inline bool SaveManifest(const std::string& cacheDir,
+                         const CacheManifest& manifest)
+{
+  std::string path =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::ofstream out(path, std::ios::trunc);
+
+  if (!out)
+  {
+    Log::Warn << "SaveManifest(): cannot write cache manifest '"
+        << path << "'." << std::endl;
+    return false;
+  }
+
+  for (auto it = manifest.begin(); it != manifest.end(); ++it)
+  {
+    out << it->first << ","
+        << std::get<0>(it->second) << ","
+        << std::get<1>(it->second) << ","
+        << std::get<2>(it->second) << "\n";
+  }
+  return true;
+}
+
+inline void WriteResponseToFile(const std::string& path,
+                                const httplib::Result& res)
 {
   std::fstream stream;
-  int port = -1;
-  std::string host;
-  ParseURL(url, host, filename, port);
-
-  // Sanity check if in case.
-  if (host.empty())
-  {
-    throw std::runtime_error("DownloadFile(): domain name could not be parsed"
-        " from URL '" + url + "'");
-  }
-#ifdef MLPACK_USE_HTTPS
-  if (port == -1)
-  {
-    port = 443;
-  }
-  httplib::SSLClient cli(host, port);
+#ifdef _WIN32
+  stream.open(path, std::fstream::out | std::fstream::binary);
 #else
-  if (port == -1)
-  {
-    port = 80;
-  }
-  httplib::Client cli(host, port);
-#endif
-  cli.set_connection_timeout(2);
-  httplib::Result res = cli.Get(url);
-  if (!res)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
-    throw std::runtime_error(oss.str());
-  }
-  if (res->status == 404)
-  {
-    std::stringstream oss;
-    oss << "DownloadFile(): httplib error: Page / File not found: "
-        << res->status << " returned.";
-    throw std::runtime_error(oss.str());
-  }
-
-  std::filesystem::path tmpFilename = TempName();
-  // This is necessary to get the extension.
-  tmpFilename +=  "." + Extension(filename);
-
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(tmpFilename, std::fstream::out
-      | std::fstream::binary);
-#else
-  stream.open(tmpFilename, std::fstream::out);
+  stream.open(path, std::fstream::out);
 #endif
 
   if (!stream.is_open())
   {
-    std::stringstream oss;
-    oss <<  "DownloadFile(): cannot open temporary file " << tmpFilename
-        << " for storing downloaded data. Please check the file path.";
-    throw std::runtime_error(oss.str());
+    Log::Fatal << "WriteResponseToFile(): cannot open file '" << path
+        << "' for writing." << std::endl;
   }
   errno = 0;
   stream.write(res->body.data(), res->body.size());
   stream.flush();
   if (!stream.good())
   {
-    std::stringstream oss;
-    oss << "Error writing to file " << tmpFilename << ": "
-        << std::strerror(errno);
-    throw std::runtime_error(oss.str());
+    Log::Fatal << "WriteResponseToFile(): error writing to '" << path
+        << "': " << std::strerror(errno) << std::endl;
   }
   stream.close();
-  filename = tmpFilename.generic_string();
+}
+
+inline bool DownloadFile(const std::string& url, const std::string& dest)
+{
+  std::string host, filename;
+  int port = -1;
+  ParseURL(url, host, filename, port);
+
+#ifdef MLPACK_USE_HTTPS
+  if (port == -1)
+    port = 443;
+  httplib::SSLClient cli(host, port);
+#else
+  if (port == -1)
+    port = 80;
+  httplib::Client cli(host, port);
+#endif
+  cli.set_connection_timeout(2);
+
+  httplib::Result res = cli.Get(url);
+
+  if (!res)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
+    throw std::runtime_error(oss.str());
+  }
+
+  if (res->status != 200)
+  {
+    std::stringstream oss;
+    oss << "DownloadFile(): HTTP request failed with status code "
+        << res->status << " for URL '" << url << "'.";
+    throw std::runtime_error(oss.str());
+  }
+
+  WriteResponseToFile(dest, res);
+  return true;
+}
+
+inline bool DownloadFileWithCache(const std::string& url,
+                                 std::string& filename)
+{
+  std::string host;
+  int port = -1;
+  ParseURL(url, host, filename, port);
+
+#ifndef MLPACK_DISABLE_REMOTE_DATASET_CACHE
+  std::string cacheDir = GetCacheDir();
+
+  if (!cacheDir.empty())
+  {
+    CacheManifest manifest;
+    if (!LoadManifest(cacheDir, manifest))
+    {
+      Log::Debug << "LoadManifest(): could not open cache manifest in '"
+          << cacheDir << "'. This is expected on the first download or if the "
+          << "cache directory does not yet contain a manifest file."
+          << std::endl;
+    }
+
+    std::string dest =
+        (std::filesystem::path(cacheDir) / filename).string();
+
+    // Do a head request to get the cache info to compare it.
+#ifdef MLPACK_USE_HTTPS
+    if (port == -1)
+      port = 443;
+    httplib::SSLClient cli(host, port);
+#else
+    if (port == -1)
+      port = 80;
+    httplib::Client cli(host, port);
+#endif
+    cli.set_connection_timeout(2);
+
+    // Register in cache only if the head request has succeeded.
+    // If not just jump to download and do not cache the file, not enough
+    // information to cache.
+    std::string serverEtag;
+    size_t serverSize = 0;
+    bool headSucceeded = false;
+    httplib::Result headRes = cli.Head(url);
+    if (headRes && headRes->has_header("ETag"))
+    {
+      serverEtag = headRes->get_header_value("ETag");
+      if (headRes->has_header("Content-Length"))
+        serverSize = std::stoull(headRes->get_header_value("Content-Length"));
+      headSucceeded = true;
+    }
+
+    if (headSucceeded &&
+        manifest.count(url) > 0 &&
+        std::get<0>(manifest[url]) == serverEtag &&
+        std::get<1>(manifest[url]) == serverSize &&
+        std::filesystem::exists(dest))
+    {
+      filename = dest;
+      return true;
+    }
+
+    DownloadFile(url, dest);
+
+    if (headSucceeded)
+    {
+      manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
+      SaveManifest(cacheDir, manifest);
+    }
+    filename = dest;
+    return true;
+  }
+#endif
+
+  // Download to a temporary file if cache is disabled.
+  std::filesystem::path dest = TempName();
+  dest += "." + Extension(filename);
+  DownloadFile(url, dest.string());
+  filename = dest.generic_string();
   return true;
 }
 
@@ -223,7 +378,16 @@ inline void ParseURL(const std::string& url, std::string& host,
 }
 
 inline bool DownloadFile(const std::string& url,
-                         std::string& filename)
+                         const std::string& /* dest */)
+{
+  throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
+      " download URL '" + url + "'.  Enable httplib by adding '#define "
+      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
+  return false;
+}
+
+inline bool DownloadFileWithCache(const std::string& url,
+                                 std::string& filename)
 {
   filename = "";
   throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
