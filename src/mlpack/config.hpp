@@ -148,6 +148,11 @@
   #undef MLPACK_USE_SYSTEM_HTTPLIB
 #endif
 
+// MLPACK_USE_ZLIB enables gzip decompression for downloaded datasets.
+#if !defined(MLPACK_USE_ZLIB)
+  // #define MLPACK_USE_ZLIB
+#endif
+
 // MLPACK_DISABLE_REMOTE_DATASET_CACHE disables the download cache.
 // This feature is enabled by default.
 #if !defined(MLPACK_DISABLE_REMOTE_DATASET_CACHE)
