@@ -41,6 +41,7 @@ TEST_CASE("HuberLossTest", "[LossFunctionsTest]")
       "-1.0000 0.7748 0.2580 1.0000 0.0976 1.0000");
   input.reshape(4, 3);
   target.reshape(4, 3);
+  output.reshape(4, 3);
   expectedOutput.reshape(4, 3);
 
   // Test the Forward function. Loss should be 6.36364.
@@ -95,6 +96,11 @@ TEST_CASE("PoissonNLLLossTest", "[LossFunctionsTest]")
   input4 = arma::mat("0.658502 0.445627 0.667651 0.310549 "
                      "0.589540 0.052568 0.549769 0.381504 ");
   target4 = arma::mat("1.0 3.0 1.0 2.0 1.0 4.0 2.0 1.0");
+
+  output1.reshape(2, 4);
+  output2.reshape(2, 4);
+  output3.reshape(2, 4);
+  output4.reshape(2, 4);
 
   double loss1 = module1.Forward(input, target);
   double loss2 = module2.Forward(input, target);
@@ -602,6 +608,7 @@ TEST_CASE("SimpleMeanBiasErrorTest", "[LossFunctionsTest]")
 
   input.reshape(4, 3);
   target.reshape(4, 3);
+  output.reshape(4, 3);
 
   // Test the forward function.
   // Loss should  be 0.1081.
@@ -782,6 +789,8 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
   input2.ones();
   y = arma::mat(1, 1);
   y.ones();
+  output.reshape(1, 10);
+
   loss = module.Forward(input1, input1);
   REQUIRE(loss == Approx(0.0).margin(1e-6));
 
@@ -806,6 +815,8 @@ TEST_CASE("CosineEmbeddingLossTest", "[LossFunctionsTest]")
   input2(0) = 2;
   input2(1) = 2;
   input2(2) = 2;
+  output.reshape(3, 2);
+
   loss = module.Forward(input1, input2);
   // Calculated using torch.nn.CosineEmbeddingLoss().
   REQUIRE(loss == Approx(2.897367).epsilon(1e-3));
@@ -878,6 +889,7 @@ TEST_CASE("SoftMarginLossTest", "[LossFunctionsTest]")
   target = arma::mat("1 1 -1 1 -1 1 -1 1 1");
   input.reshape(3, 3);
   target.reshape(3, 3);
+  output.reshape(3, 3);
 
   // Test for sum reduction.
 
@@ -1096,6 +1108,7 @@ TEST_CASE("MultiLabelSoftMarginLossTest", "[LossFunctionsTest]")
   target = arma::mat("0 1 0 1 0 0 0 0 1");
   input.reshape(3, 3);
   target.reshape(3, 3);
+  output.reshape(3, 3);
 
   // Test for sum reduction.
 
