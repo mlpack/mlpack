@@ -332,6 +332,7 @@ typename MatType::elem_type FFN<
       ElemType(network.Loss());
 
   // Compute the error of the output layer.
+  error.set_size(networkOutput.n_rows, networkOutput.n_cols);
   outputLayer.Backward(networkOutput, targets, error);
 
   // Perform the backward pass.
