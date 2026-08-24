@@ -1166,6 +1166,7 @@ TEST_CASE("MultiLabelSoftMarginLossWeightedTest", "[LossFunctionsTest]")
   target = arma::mat("0 1 0 1 1 0 0 0 0 0 1 0");
   input.reshape(4, 3);
   target.reshape(4, 3);
+  output.reshape(4, 3);
 
   // Test for sum reduction.
 
