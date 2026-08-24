@@ -55,7 +55,6 @@ void HuberLossType<MatType>::Backward(
 {
   using ElemType = typename MatType::elem_type;
 
-  loss.set_size(size(prediction));
   for (size_t i = 0; i < loss.n_elem; ++i)
   {
     const ElemType absError = std::abs(target[i] - prediction[i]);

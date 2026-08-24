@@ -45,7 +45,6 @@ void MeanBiasErrorType<MatType>::Backward(
     const MatType& /* target */,
     MatType& loss)
 {
-  loss.set_size(size(prediction));
   loss.fill(-1.0);
 
   if (!reduction)

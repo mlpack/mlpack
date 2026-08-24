@@ -77,7 +77,6 @@ void CosineEmbeddingLossType<MatType>::Backward(
 
   ColType inputTemp1 = vectorise(prediction);
   ColType inputTemp2 = vectorise(target);
-  loss.set_size(size(inputTemp1));
 
   ColType outputTemp;
   MakeAlias(outputTemp, loss, inputTemp1.n_elem, 0, false);

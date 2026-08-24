@@ -70,8 +70,6 @@ void PoissonNLLLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss.set_size(size(prediction));
-
   if (logInput)
     loss = (exp(prediction) - target);
   else
