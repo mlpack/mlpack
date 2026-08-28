@@ -29,19 +29,23 @@ BINDING_TEST_FIXTURE(RadicalTestFixture);
 TEST_CASE_METHOD(RadicalTestFixture, "RadicalOutputDimensionTest",
                 "[RadicalMainTest][BindingTests]")
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  // The number of points must be less than the number of dimensions, so that
+  // the covariance of input.t() (which is computed by RADICAL) is full-rank.
+  arma::mat input = arma::randu<arma::mat>(3, 5);
 
   SetInputParam("input", std::move(input));
 
   RUN_BINDING();
 
   // Check dimension of Y matrix.
-  REQUIRE(params.Get<arma::mat>("output_ic").n_rows == 5);
-  REQUIRE(params.Get<arma::mat>("output_ic").n_cols == 3);
+  REQUIRE(params.Get<arma::mat>("output_ic").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output_ic").n_cols == 5);
+  REQUIRE(params.Get<arma::mat>("output_ic").is_finite());
 
   // Check dimension of W matrix.
-  REQUIRE(params.Get<arma::mat>("output_unmixing").n_rows == 5);
-  REQUIRE(params.Get<arma::mat>("output_unmixing").n_cols == 5);
+  REQUIRE(params.Get<arma::mat>("output_unmixing").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output_unmixing").n_cols == 3);
+  REQUIRE(params.Get<arma::mat>("output_unmixing").is_finite());
 }
 
 /**
@@ -51,7 +55,9 @@ TEST_CASE_METHOD(RadicalTestFixture, "RadicalOutputDimensionTest",
 TEST_CASE_METHOD(RadicalTestFixture, "RadicalBoundsTest",
                 "[RadicalMainTest][BindingTests]")
 {
-  arma::mat input = arma::randu<arma::mat>(5, 3);
+  // The number of points must be less than the number of dimensions, so that
+  // the covariance of input.t() (which is computed by RADICAL) is full-rank.
+  arma::mat input = arma::randu<arma::mat>(3, 5);
 
   // Test for replicates.
 
