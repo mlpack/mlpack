@@ -143,7 +143,7 @@ bool Load(const std::string& src,
         // Assuming dest is a sparse matrix.
         arma::Mat<typename ObjectType::elem_type> tmp;
         AudioOptions audOpts(std::move(opts));
-        success = LoadAudio(src, tmp, audOpts);
+        success = LoadAudio(filename, tmp, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
 
@@ -152,7 +152,7 @@ bool Load(const std::string& src,
       else
       {
         AudioOptions audOpts(std::move(opts));
-        success = LoadAudio(src, dest, audOpts);
+        success = LoadAudio(filename, dest, audOpts);
         if (copyBack)
           opts = std::move(audOpts);
       }
