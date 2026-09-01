@@ -206,6 +206,7 @@ The following options can be used when configuring mlpack.
 | `-DDISABLE_HTTPLIB=OFF` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems). | `OFF` |
 | `-DDISABLE_REMOTE_DATASET_CACHE=OFF` | Disable caching of downloaded datasets.  When set to `ON`, files downloaded via `Load()` are saved to the system temporary directory instead of the cache directory. | `OFF` |
 | `-DREMOTE_DATASET_CACHE_DIR=/path/to/cache/` | Override the directory where cached datasets are stored.  Defaults to `$HOME/.mlpack/cache/` on Linux/macOS and `%APPDATA%\mlpack\cache\` on Windows. | |
+| `-DENABLE_ZLIB=OFF` | Enable zlib (gzip) support.  When enabled, `.gz` files downloaded via `Load()` are automatically decompressed.  Requires zlib to be installed. | `OFF` |
 |--------------|-------------------|---------------|
 | ***Dependency locations*** |||
 | `-DARMADILLO_INCLUDE_DIR=/path/to/arma/include/` | Path containing `armadillo` header file. ||

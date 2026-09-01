@@ -755,6 +755,11 @@ When a remote URL is given to `Load()`:
    - The cache directory can be overridden at compile time with
      [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
+ * If zlib is available (see
+   [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)),
+   gzip-compressed files (`.csv.gz`, `.arff.gz`, `.tar.gz`, etc.) are
+   automatically decompressed after download.
+
 Instead of passing a URL directly to `Load()`, it is also possible to download a
 remote dataset manually to a specific local path with the
 [`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
@@ -813,6 +818,23 @@ for (size_t i = 0; i < opts.Headers().size(); ++i)
   std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
       << std::endl;
 }
+```
+
+### Downloading gzip-compressed datasets
+
+When [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)
+is enabled, `DownloadFile()` automatically decompresses `.gz` and `.tar.gz` files
+after downloading.
+
+```c++
+// To use gzip decompression, enable MLPACK_USE_ZLIB and link with -lz,
+// or pass -DENABLE_ZLIB=ON to CMake.
+mlpack::DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+    "avocado.csv.gz");
+
+// The file is automatically decompressed to "avocado.csv".
+arma::mat data;
+mlpack::Load("avocado.csv", data);
 ```
 
 ## Mixed categorical data
