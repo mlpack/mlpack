@@ -47,13 +47,13 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest][tiny]")
   CheckMatrices(delta, input);
 
   // Test forward function for multiple filters.
-  // Here it's 3 filters with height = 224, width = 224
-  // the output should be [226 * 226 * 3, 1] with 1 padding.
+  // Here it's 3 filters with height = 64, width = 64
+  // the output should be [66 * 66 * 3, 1] with 1 padding.
   module = Padding(1, 1, 1, 1);
-  module.InputDimensions() = std::vector<size_t>({ 224, 224, 3 });
+  module.InputDimensions() = std::vector<size_t>({ 64, 64, 3 });
   module.ComputeOutputDimensions();
 
-  input = arma::randu(224 * 224 * 3, 1);
+  input = arma::randu(64 * 64 * 3, 1);
   totalOutputDimensions = module.OutputDimensions()[0];
   for (size_t i = 1; i < module.OutputDimensions().size(); ++i)
     totalOutputDimensions *= module.OutputDimensions()[i];
@@ -61,23 +61,23 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest][tiny]")
   output.randu();
   module.Forward(input, output);
   REQUIRE(accu(input) == Approx(accu(output)));
-  REQUIRE(output.n_rows == (226 * 226 * 3));
+  REQUIRE(output.n_rows == (66 * 66 * 3));
   REQUIRE(output.n_cols == 1);
 
   // Test forward function for multiple batches with multiple filters.
-  // Here it's 3 filters with height = 244, width = 244
-  // the output should be [246 * 246 * 3, 3] with 1 padding.
-  module.InputDimensions() = std::vector<size_t>({ 244, 244, 3 });
+  // Here it's 3 filters with height = 64, width = 64
+  // the output should be [66 * 66 * 3, 3] with 1 padding.
+  module.InputDimensions() = std::vector<size_t>({ 64, 64, 3 });
   module.ComputeOutputDimensions();
   totalOutputDimensions = module.OutputDimensions()[0];
   for (size_t i = 1; i < module.OutputDimensions().size(); ++i)
     totalOutputDimensions *= module.OutputDimensions()[i];
 
-  input = arma::randu(244 * 244 * 3, 3);
+  input = arma::randu(64 * 64 * 3, 3);
   output.set_size(totalOutputDimensions, input.n_cols);
   output.randu();
   module.Forward(input, output);
-  REQUIRE(output.n_rows == (246 * 246 * 3));
+  REQUIRE(output.n_rows == (66 * 66 * 3));
   REQUIRE(output.n_cols == 3);
   REQUIRE(accu(input) == Approx(accu(output)));
 }

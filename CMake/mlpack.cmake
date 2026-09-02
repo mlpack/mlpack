@@ -59,6 +59,9 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
+#   OPENBLAS_PATCHES: list of filepaths for patches to be applied to OpenBLAS;
+#       ignored if COMPILE_OPENBLAS is false.  Patches given will be applied
+#       with `-p1`.
 #
 # After all libraries are downloaded and set up, the macro will set the
 # following variables:
@@ -67,6 +70,9 @@
 #                      dependencies (Armadillo, cereal, ensmallen)
 # MLPACK_LIBRARIES: list of all dependency libraries to link against (typically
 #                   just OpenBLAS)
+# CROSS_COMPILE_SUPPORT_LIBRARIES: if cross-compiling, a list of support
+#                                  libraries specifically needed for
+#                                  cross-compilation
 #
 ##===================================================
 ##  INTERNAL FUNCTION DOCUMENTATION
@@ -182,6 +188,8 @@
 ##===================================================
 ##  MLPACK DEPENDENCIES SETTINGS.
 ##===================================================
+
+cmake_minimum_required(VERSION 3.19) # for COMMAND_ERROR_IS_FATAL in execute_process()
 
 # Set minimum library versions required by mlpack.
 #
@@ -339,8 +347,12 @@ macro(find_armadillo)
         HDF5
         )
       if(_ARMA_USE_${pkg})
-        find_package(${pkg})
-        list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
+        # If we already know where it is, skip.
+        if (NOT ${pkg}_FOUND)
+          find_package(${pkg})
+          list(APPEND _ARMA_REQUIRED_VARS "${pkg}_FOUND")
+        endif ()
+
         if(${pkg}_FOUND)
           list(APPEND _ARMA_SUPPORT_LIBRARIES ${${pkg}_LIBRARIES})
         endif()
@@ -350,6 +362,8 @@ macro(find_armadillo)
   if (ARMADILLO_FOUND)
     set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
     set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${_ARMA_SUPPORT_LIBRARIES})
+    # Filter out any duplicates.
+    list(REMOVE_DUPLICATES ARMADILLO_LIBRARIES)
 
     find_package_handle_standard_args(armadillo
         REQUIRED_VARS ARMADILLO_INCLUDE_DIR ARMADILLO_LIBRARIES
@@ -615,63 +629,136 @@ macro(find_mlpack_internal)
 endmacro()
 
 macro(compile_OpenBLAS)
-  if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-    set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
-    set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
-    # always compile BLAS as release.
-    set(BLASS_BUILD_TYPE "Release")
-
-    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
-      message(STATUS "Compiling OpenBLAS")
-      file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
-      # -G -A -T to pass settings from current cmake command.
-      execute_process(
-              COMMAND ${CMAKE_COMMAND}
-              -G "${CMAKE_GENERATOR}"
-              -A "${CMAKE_GENERATOR_PLATFORM}"
-              -T "${CMAKE_GENERATOR_TOOLSET}"
-              "-DCMAKE_BUILD_TYPE=${BLASS_BUILD_TYPE}"
-              "-DBUILD_SHARED_LIBS=OFF"
-              -S ${OPENBLAS_SRC_DIR} -B ${OPENBLAS_BUILD_DIR}
-
-              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-      )
-      execute_process(
-              COMMAND ${CMAKE_COMMAND} --build ${OPENBLAS_BUILD_DIR}
-              --config ${BLASS_BUILD_TYPE} --parallel
-              WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-      )
-    else()
-      message(STATUS "OpenBLAS is already compiled")
-    endif()
-    file(GLOB OPENBLAS_LIBRARIES ${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib)
-  else()
-    if (NOT EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/libopenblas.a")
-      # Set any extra variables for make that the user specified.
-      # First, turn OPENBLAS_EXTRA_ARGS into a list.
-      separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
-      execute_process(
-          COMMAND make NO_SHARED=1 ${ARG_LIST}
-          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
-
-      file(GLOB OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
-    endif ()
+  if(NOT OPENBLAS_TARGET)
+    message(FATAL_ERROR "Cannot compile OpenBLAS: OPENBLAS_TARGET is not set.  Either set that variable, or set BOARD_NAME correctly!")
   endif()
-  set(BLAS_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
-  set(LAPACK_openblas_LIBRARY ${OPENBLAS_LIBRARIES})
+
+  set(OPENBLAS_SRC_DIR ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION})
+  # These two are only relevant for Windows where we need a separate build
+  # directory for OpenBLAS since we use CMake for the build.
+  set(OPENBLAS_BUILD_DIR ${OPENBLAS_SRC_DIR}/build)
+  set(OPENBLAS_OUTPUT_LIB_DIR ${OPENBLAS_BUILD_DIR}/lib/Release)
+
+  # First check if OpenBLAS has already been compiled.
+  if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
+      EXISTS "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+    message(STATUS "OpenBLAS is already compiled.")
+    set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+    set(OPENBLAS_LIB_FOUND TRUE)
+  elseif (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
+          EXISTS "${OPENBLAS_SRC_DIR}/libopenblas.a")
+    message(STATUS "OpenBLAS is already compiled.")
+    set(OPENBLAS_LIBRARIES "${OPENBLAS_SRC_DIR}/libopenblas.a")
+    set(OPENBLAS_LIB_FOUND TRUE)
+  endif ()
+
+  if (NOT OPENBLAS_LIB_FOUND)
+    # Do we have any patches that we need to apply?
+    if (OPENBLAS_PATCHES)
+      find_package(Patch)
+      if (NOT Patch_FOUND)
+        message(FATAL_ERROR "Cannot find 'patch' to apply OPENBLAS_PATCHES (${OPENBLAS_PATCHES}).  Try setting Patch_EXECUTABLE!")
+      endif ()
+
+      foreach (patch ${OPENBLAS_PATCHES})
+        message(STATUS "Applying patch ${patch} to OpenBLAS...")
+        execute_process(COMMAND ${Patch_EXECUTABLE} -p1 -i ${patch}
+                        WORKING_DIRECTORY "${OPENBLAS_SRC_DIR}"
+                        COMMAND_ERROR_IS_FATAL ANY)
+      endforeach ()
+    endif ()
+
+    # Compilation has to be done through CMake on Windows, and make on other
+    # systems.
+    message(STATUS "Compiling OpenBLAS...")
+    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+      # Always compile BLAS as release.
+      set(BLASS_BUILD_TYPE "Release")
+
+      file(MAKE_DIRECTORY ${OPENBLAS_BUILD_DIR})
+
+      # -G -A -T to pass settings from current cmake command.
+      execute_process(COMMAND ${CMAKE_COMMAND}
+          -G "${CMAKE_GENERATOR}"
+          -A "${CMAKE_GENERATOR_PLATFORM}"
+          -T "${CMAKE_GENERATOR_TOOLSET}"
+          "-DCMAKE_BUILD_TYPE=${BLASS_BUILD_TYPE}"
+          "-DBUILD_SHARED_LIBS=OFF"
+          -S ${OPENBLAS_SRC_DIR} -B ${OPENBLAS_BUILD_DIR}
+
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+          COMMAND_ERROR_IS_FATAL ANY)
+
+      execute_process(COMMAND ${CMAKE_COMMAND}
+          --build ${OPENBLAS_BUILD_DIR}
+          --config ${BLASS_BUILD_TYPE}
+          --parallel
+          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+          COMMAND_ERROR_IS_FATAL ANY)
+
+      set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
+    else ()
+      if (CMAKE_CROSSCOMPILING)
+        # Update environment variables so that OpenBLAS compiles correctly.
+        set(OLD_CC $ENV{CC})
+        set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
+        set(ENV{CC} "${CMAKE_C_COMPILER}")
+        if (CCACHE_PROGRAM)
+          set (ENV{CC} "${CCACHE_PROGRAM} $ENV{CC}")
+        endif ()
+        # Turn OPENBLAS_EXTRA_ARGS into a list so that we can use them as
+        # parameters to make.
+        separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
+
+        # Now run the OpenBLAS build with all of the configuration variables set.
+        execute_process(
+            COMMAND make NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${ARG_LIST}
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
+            COMMAND_ERROR_IS_FATAL ANY)
+
+        # Don't leak the environment variables back into the rest of the
+        # configuration.
+        unset(ENV{COMMON_OPT})
+        set(ENV{CC} ${OLD_CC})
+
+        # For hand-cross-compiled OpenBLAS, we may need libgfortran and
+        # libpthread; link against them if we can find them.
+        find_library(GFORTRAN NAMES libgfortran.a)
+        if (GFORTRAN)
+          set(CROSS_COMPILE_SUPPORT_LIBRARIES ${CROSS_COMPILE_SUPPORT_LIBRARIES} ${GFORTRAN})
+        endif ()
+        find_library(PTHREAD NAMES libpthread.a)
+        if (PTHREAD)
+          set(CROSS_COMPILE_SUPPORT_LIBRARIES ${CROSS_COMPILE_SUPPORT_LIBRARIES} ${PTHREAD})
+        endif ()
+
+      else ()
+        # Set any extra variables for make that the user specified.
+        # First, turn OPENBLAS_EXTRA_ARGS into a list.
+        separate_arguments(ARG_LIST NATIVE_COMMAND ${OPENBLAS_EXTRA_ARGS})
+        execute_process(COMMAND make NO_SHARED=1 ${ARG_LIST}
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
+            COMMAND_ERROR_IS_FATAL ANY)
+
+      endif ()
+
+      set(OPENBLAS_LIBRARIES "${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}/libopenblas.a")
+    endif ()
+  endif ()
+
+  # These will be used later by find_armadillo().
+  set(BLAS_LIBRARIES ${OPENBLAS_LIBRARIES})
+  set(LAPACK_LIBRARIES ${OPENBLAS_LIBRARIES})
   set(BLAS_FOUND ON)
+  set(LAPACK_FOUND ON)
 endmacro()
 
 macro(fetch_mlpack COMPILE_OPENBLAS)
 
   if (CMAKE_CROSSCOMPILING)
-    search_openblas(${OPENBLAS_VERSION})
     # Set to cross compile openblas if the user forgot to do so.
     set(COMPILE_OPENBLAS ON)
-  endif()
-
-  if (NOT CMAKE_CROSSCOMPILING)
+  else()
     # Only search for system BLAS if we know we can use it (e.g. if OpenBLAS
     # doesn't need to be cross-compiled).
     find_package(BLAS QUIET)
@@ -686,8 +773,7 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     get_deps(https://github.com/xianyi/OpenBLAS/releases/download/v${OPENBLAS_VERSION}/OpenBLAS-${OPENBLAS_VERSION}.tar.gz
         OpenBLAS OpenBLAS-${OPENBLAS_VERSION}.tar.gz)
     if (NOT COMPILE_OPENBLAS)
-      message(WARNING "OpenBLAS is downloaded but not compiled. Please compile
-      OpenBLAS before compiling mlpack")
+      message(WARNING "OpenBLAS is downloaded but not compiled. Please compile OpenBLAS before compiling mlpack.")
     else()
       compile_OpenBLAS()
     endif()

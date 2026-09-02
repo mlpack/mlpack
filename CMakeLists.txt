@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.19)
 project(mlpack C CXX)
 
 include(CMake/CheckHash.cmake)
@@ -448,6 +448,7 @@ add_definitions(-DMLPACK_CUSTOM_CONFIG_FILE=mlpack/config-local.hpp)
 # Finally, add any cross-compilation support libraries (they may need to come
 # last).  If we are not cross-compiling, no changes will happen here.
 set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${CROSS_COMPILE_SUPPORT_LIBRARIES})
+list(REMOVE_DUPLICATES MLPACK_LIBRARIES)
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)

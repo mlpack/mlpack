@@ -18,6 +18,8 @@
 using namespace mlpack;
 using namespace std;
 
+#ifndef MLPACK_DISABLE_STB
+
 /**
  * Test if an image with an unsupported extension throws an expected
  * exception.
@@ -902,3 +904,5 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
   BoundingBoxImage(image, opt, bbox, color);
   CheckMatrices(image, expectedOutput);
 }
+
+#endif

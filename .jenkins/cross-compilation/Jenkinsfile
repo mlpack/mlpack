@@ -51,6 +51,19 @@ target_info = [
       // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
       // download a precompiled reference BLAS implementation.
       'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+  ],
+  'manaeesh': [
+      'device_name': 'milkv-duo',
+      'arch_type': 'riscv64-lp64d-musl',
+      'arch_name': 'C906',
+      // Even the "tiny" LSTMReberGrammarTest is too much for the Milk-V Duo!
+      'test_filters': '[tiny] ~LSTMReberGrammarTest',
+      'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',
+      'scp_opts': '-O',
+      // We need a special patch to decrease the size of the internal buffers
+      // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
+      // that we have.  We also need to disable Armadillo's std::mutex support.
+      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DOPENBLAS_PATCHES=".jenkins/cross-compilation/openblas-riscv64-low-memory.patch" -DCMAKE_CXX_FLAGS="-DARMA_DONT_USE_STD_MUTEX"'
   ]
 ]
 
@@ -103,7 +116,7 @@ pipeline
           {
             name 'target'
             values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
-                   'cayenne', 'laziji'
+                   'cayenne', 'laziji', 'manaeesh'
           }
         }
 
