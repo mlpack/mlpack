@@ -39,7 +39,7 @@ namespace mlpack {
  * concatenation over the last axis of that layer.
  *
  * A DAGNetwork cannot have any cycles. Creating a network with a cycle will
- * result in an error. A DAGNetwork can only have one input layer and one 
+ * result in an error. A DAGNetwork can only have one input layer and one
  * output layer.
  *
  * Although the actual types passed as input will be matrix objects with one
@@ -332,7 +332,7 @@ class DAGNetwork
   typename MatType::elem_type Evaluate(const MatType& predictors,
                                        const MatType& responses);
 
-  //! Serialize the model.
+  // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -518,7 +518,7 @@ class DAGNetwork
    * This computes the dimensions of each layer held by the network, and the
    * output dimensions are set to the output dimensions of the last layer.
    *
-   * Input dimensions of nodes that have multiple parents are also 
+   * Input dimensions of nodes that have multiple parents are also
    * calculated here, based on their connection type.
    */
   void ComputeOutputDimensions();
@@ -656,19 +656,20 @@ class DAGNetwork
   // Dimensions of input data.
   std::vector<size_t> inputDimensions;
 
-  //! The matrix of data points (predictors).  This member is empty, except
-  //! during training---we must store a local copy of the training data since
-  //! the ensmallen optimizer will not provide training data.
+  // The matrix of data points (predictors).  This member is empty, except
+  // during training---we must store a local copy of the training data since
+  // the ensmallen optimizer will not provide training data.
   MatType predictors;
 
-  //! The matrix of responses to the input data points.  This member is empty,
-  //! except during training.
+  // The matrix of responses to the input data points.  This member is empty,
+  // except during training.
   MatType responses;
 
   // Locally-stored output of the network from a forward pass; used by the
   // backward pass.
   MatType networkOutput;
-  //! Locally-stored output of the backward pass; used by the gradient pass.
+  // Locally-stored output of the backward pass of the loss function.
+  // Used by the gradient pass.
   MatType error;
 
   // This matrix stores all of the outputs of each layer when `Forward()` is

@@ -718,7 +718,7 @@ typename MatType::elem_type RNN<
 
     // Now backpropagate through time, starting with the current time step and
     // moving backwards.
-    MatType error;
+    MatType error(outputs.n_rows, activeBatchSize);
     for (size_t step = 0; step < std::min(t + 1, effectiveBPTTSteps); ++step)
     {
       SetCurrentStep(t - step, (step == 0), batchSize, activeBatchSize, true);
