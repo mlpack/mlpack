@@ -37,5 +37,6 @@
 #include "soft_margin_loss.hpp"
 #include "triplet_margin_loss.hpp"
 #include "vr_class_reward.hpp"
+#include "focal_loss.hpp" // added
 
 #endif
