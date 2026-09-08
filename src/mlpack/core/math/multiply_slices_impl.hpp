@@ -53,28 +53,38 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
   }
 
-  CubeType z(rows, cols, slices);
+  CubeType z;
 
-  if (aTranspose && bTranspose)
+  z.set_size(rows, cols, slices);
+
+  if(cubeA.is_empty() || cubeB.is_empty())
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = trans(cubeB.slice(i) * cubeA.slice(i));
-  }
-  else if (bTranspose && !aTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i) * cubeB.slice(i).t();
-  }
-  else if (aTranspose && !bTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i).t() * cubeB.slice(i);
+    z.zeros();
   }
   else
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i) * cubeB.slice(i);
+    if (aTranspose && bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = trans(cubeB.slice(i) * cubeA.slice(i));
+    }
+    else if (bTranspose && !aTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i) * cubeB.slice(i).t();
+    }
+    else if (aTranspose && !bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i).t() * cubeB.slice(i);
+    }
+    else
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i) * cubeB.slice(i);
+    }
   }
+
   return z;
 }
 
@@ -111,28 +121,38 @@ CubeType MultiplyMat2Cube(const MatType& matA,
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
   }
 
-  CubeType z(rows, cols, slices);
+  CubeType z;
+    
+  z.set_size(rows, cols, slices);
 
-  if (aTranspose && bTranspose)
+  if(matA.is_empty() || cubeB.is_empty())
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = trans(cubeB.slice(i) * matA);
-  }
-  else if (bTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = matA * cubeB.slice(i).t();
-  }
-  else if (aTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = matA.t() * cubeB.slice(i);
+    z.zeros();
   }
   else
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = matA * cubeB.slice(i);
+    if (aTranspose && bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = trans(cubeB.slice(i) * matA);
+    }
+    else if (bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = matA * cubeB.slice(i).t();
+    }
+    else if (aTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = matA.t() * cubeB.slice(i);
+    }
+    else
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = matA * cubeB.slice(i);
+    }
   }
+
   return z;
 }
 
@@ -167,28 +187,38 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
     if (cubeA.n_cols != matB.n_rows)
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
 
-  CubeType z(rows, cols, slices);
+  CubeType z;
 
-  if (aTranspose && bTranspose)
+  z.set_size(rows, cols, slices);
+
+  if(cubeA.is_empty() || matB.is_empty())
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = trans(matB * cubeA.slice(i));
-  }
-  else if (bTranspose && !aTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i) * matB.t();
-  }
-  else if (aTranspose && !bTranspose)
-  {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i).t() * matB;
+    z.zeros();
   }
   else
   {
-    for (size_t i = 0; i < slices; ++i)
-      z.slice(i) = cubeA.slice(i) * matB;
+    if (aTranspose && bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = trans(matB * cubeA.slice(i));
+    }
+    else if (bTranspose && !aTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i) * matB.t();
+    }
+    else if (aTranspose && !bTranspose)
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i).t() * matB;
+    }
+    else
+    {
+      for (size_t i = 0; i < slices; ++i)
+        z.slice(i) = cubeA.slice(i) * matB;
+    }
   }
+
   return z;
 }
 
