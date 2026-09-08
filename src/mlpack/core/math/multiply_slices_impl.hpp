@@ -53,9 +53,7 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
   }
 
-  CubeType z;
-
-  z.set_size(rows, cols, slices);
+  CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
   if(cubeA.is_empty() || cubeB.is_empty())
   {
@@ -121,9 +119,7 @@ CubeType MultiplyMat2Cube(const MatType& matA,
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
   }
 
-  CubeType z;
-    
-  z.set_size(rows, cols, slices);
+  CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
   if(matA.is_empty() || cubeB.is_empty())
   {
@@ -187,9 +183,7 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
     if (cubeA.n_cols != matB.n_rows)
       Log::Fatal << "Matrix multiplication invalid!" << std::endl;
 
-  CubeType z;
-
-  z.set_size(rows, cols, slices);
+  CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
   if(cubeA.is_empty() || matB.is_empty())
   {
