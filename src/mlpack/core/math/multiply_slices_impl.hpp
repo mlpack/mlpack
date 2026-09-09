@@ -55,7 +55,7 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
 
   CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
-  if(cubeA.is_empty() || cubeB.is_empty())
+  if (cubeA.is_empty() || cubeB.is_empty())
   {
     z.zeros();
   }
@@ -121,7 +121,7 @@ CubeType MultiplyMat2Cube(const MatType& matA,
 
   CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
-  if(matA.is_empty() || cubeB.is_empty())
+  if (matA.is_empty() || cubeB.is_empty())
   {
     z.zeros();
   }
@@ -185,7 +185,7 @@ CubeType MultiplyCube2Mat(const CubeType& cubeA,
 
   CubeType z(rows, cols, slices, GetFillType<CubeType>::none);
 
-  if(cubeA.is_empty() || matB.is_empty())
+  if (cubeA.is_empty() || matB.is_empty())
   {
     z.zeros();
   }
