@@ -17,6 +17,8 @@
 
 namespace mlpack {
 
+// TODO: when the minimum version of Armadillo is bumped to 15.6,
+// TODO: refactor all uses of MultiplyCube2Cube() to use arma::cubemul() instead
 template <typename CubeType>
 CubeType MultiplyCube2Cube(const CubeType& cubeA,
     const CubeType& cubeB,
@@ -86,6 +88,8 @@ CubeType MultiplyCube2Cube(const CubeType& cubeA,
   return z;
 }
 
+// TODO: when the minimum version of Armadillo is bumped to 15.6,
+// TODO refactor all uses of MultiplyMat2Cube() to use arma::cubemul() instead
 template <typename MatType, typename CubeType>
 CubeType MultiplyMat2Cube(const MatType& matA,
     const CubeType& cubeB,
@@ -152,6 +156,8 @@ CubeType MultiplyMat2Cube(const MatType& matA,
   return z;
 }
 
+// TODO: when the minimum version of Armadillo is bumped to 15.6,
+// TODO: refactor all uses of MultiplyCube2Mat() to use arma::cubemul() instead
 template <typename CubeType, typename MatType>
 CubeType MultiplyCube2Mat(const CubeType& cubeA,
     const MatType& matB,
