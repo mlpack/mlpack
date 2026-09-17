@@ -58,7 +58,7 @@ authors:
 - family-names: "Sanderson"
   given-names: "Conrad"
   orcid: "https://orcid.org/0000-0002-0049-4501"
-title: "mlpack"
+title: "mlpack 4: a fast, header-only C++ machine learning library"
 version: 4.8.0
 doi: 10.21105/joss.05026
 date-released: 2026-06-09
