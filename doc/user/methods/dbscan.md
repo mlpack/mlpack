@@ -62,6 +62,7 @@ std::cout << " * " << arma::accu(assignments == SIZE_MAX) << " points "
  * [mlpack clustering algorithms](../modeling.md#clustering)
  * [DBSCAN on Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
  * [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
+ * [`RangeSearch`](range_search.md)
 
 ### Constructors
 

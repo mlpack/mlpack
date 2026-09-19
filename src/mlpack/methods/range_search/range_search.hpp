@@ -26,6 +26,15 @@ template<template<typename TreeDistanceType,
                   typename TreeMatType> class TreeType>
 class LeafSizeRSWrapper;
 
+// RangeSearchStrategy represents the different range search strategies
+// available.
+enum RangeSearchStrategy
+{
+  NAIVE,
+  SINGLE_TREE,
+  DUAL_TREE
+};
+
 /**
  * The RangeSearch class is a template class for performing range searches.  It
  * is implemented in the style of a generalized tree-independent dual-tree
@@ -54,31 +63,36 @@ class RangeSearch
   /**
    * Initialize the RangeSearch object with a given reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
-   * naive mode or single-tree mode. Additionally, an instantiated distance
-   * metric can be given, for cases where the distance metric holds data.
+   * naive mode or single-tree mode depending on the setting of `strategy`.
+   * Additionally, an instantiated distance metric can be given, for cases where
+   * the distance metric holds data.
    *
    * This method will move the matrices to internal copies, which are
    * rearranged during tree-building.  You can avoid creating an extra copy by
    * pre-constructing the trees and passing them in using std::move.
    *
    * @param referenceSet Reference dataset.
-   * @param naive Whether the computation should be done in O(n^2) naive mode.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
+   * @param strategy Range search strategy.
    * @param distance Instantiated distance metric.
    */
   RangeSearch(MatType referenceSet,
-              const bool naive = false,
-              const bool singleMode = false,
+              const RangeSearchStrategy strategy = DUAL_TREE,
+              const DistanceType distance = DistanceType());
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a boolean for "
+               "'naive' and 'singleMode', pass a RangeSearchStrategy.")]]
+  RangeSearch(MatType referenceSet,
+              const bool naive,
+              const bool singleMode,
               const DistanceType distance = DistanceType());
 
   /**
    * Initialize the RangeSearch object with the given pre-constructed reference
    * tree (this is the tree built on the reference set, which is the set that is
    * searched).  Optionally, choose to use single-tree mode, which will not
-   * build a tree on query points.  Naive mode is not available as an option for
-   * this constructor.  Additionally, an instantiated distance metric can be
-   * given, for cases where the distance metric holds data.
+   * build a tree on query points by specifying `strategy` as `SINGLE_TREE`.
+   * Additionally, an instantiated distance metric can be given, for cases where
+   * the distance metric holds data.
    *
    * There is no copying of the data matrices in this constructor (because
    * tree-building is not necessary), so this is the constructor to use when
@@ -90,12 +104,17 @@ class RangeSearch
    * indices is not done when this constructor is used.
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
+   * @param strategy Range search strategy.
    * @param distance Instantiated distance metric.
    */
+  RangeSearch(Tree referenceTree,
+              const RangeSearchStrategy = DUAL_TREE,
+              const DistanceType distance = DistanceType());
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a boolean for "
+               "'singleMode', pass a RangeSearchStrategy.")]]
   RangeSearch(Tree* referenceTree,
-              const bool singleMode = false,
+              const bool singleMode,
               const DistanceType distance = DistanceType());
 
   /**
@@ -103,13 +122,14 @@ class RangeSearch
    * monochromatic Search() is called before a reference set is set with
    * Train(), no results will be returned (since the reference set is empty).
    *
-   * @param naive Whether to use naive search.
-   * @param singleMode Whether single-tree computation should be used (as
-   *      opposed to dual-tree computation).
+   * @param strategy Range search strategy.
    * @param distance Instantiated distance metric.
    */
-  RangeSearch(const bool naive = false,
-              const bool singleMode = false,
+  RangeSearch(const RangeSearchStrategy strategy = DUAL_TREE,
+              const DistanceType distance = DistanceType());
+
+  RangeSearch(const bool naive,
+              const bool singleMode,
               const DistanceType distance = DistanceType());
 
   /**
@@ -163,6 +183,11 @@ class RangeSearch
   /**
    * Set the reference tree to a new reference tree.
    */
+  void Train(Tree referenceTree);
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Pass a direct reference to "
+               "the tree instead (possibly with std::move() to transfer "
+               "ownership).")]]
   void Train(Tree* referenceTree);
 
   /**
@@ -233,6 +258,13 @@ class RangeSearch
    * @param distances Object which will hold the list of distances for each
    *      point which fell into the given range, for each query point.
    */
+  void Search(Tree& queryTree,
+              const RangeType<ElemType>& range,
+              std::vector<std::vector<size_t>>& neighbors,
+              std::vector<std::vector<ElemType>>& distances);
+
+  [[deprecated("Will be removed in mlpack 5.0.0.  Pass a reference to the query"
+               " tree instead.")]]
   void Search(Tree* queryTree,
               const RangeType<ElemType>& range,
               std::vector<std::vector<size_t>>& neighbors,
@@ -271,14 +303,23 @@ class RangeSearch
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<ElemType>>& distances);
 
+  // Get the search mode that will be used.
+  const RangeSearchStrategy& Strategy() const { return strategy; }
+  // Modify the range search strategy that will be used.
+  RangeSearchStrategy& Strategy() { return strategy; }
+
   //! Get whether single-tree search is being used.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Strategy() instead.")]]
   bool SingleMode() const { return singleMode; }
   //! Modify whether single-tree search is being used.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Strategy() instead.")]]
   bool& SingleMode() { return singleMode; }
 
   //! Get whether naive search is being used.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Strategy() instead.")]]
   bool Naive() const { return naive; }
   //! Modify whether naive search is being used.
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Strategy() instead.")]]
   bool& Naive() { return naive; }
 
   //! Get the number of base cases during the last search.
@@ -308,6 +349,8 @@ class RangeSearch
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
 
+  RangeSearchStrategy strategy;
+
   //! If true, O(n^2) naive computation is used.
   bool naive;
   //! If true, single-tree computation is used.
@@ -326,6 +369,34 @@ class RangeSearch
 };
 
 } // namespace mlpack
+
+// The CEREAL_TEMPLATE_CLASS_VERSION() macro does not work with template
+// template parameters so we write it manually.
+namespace cereal {
+namespace detail {
+
+template<typename DistanceType = EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = KDTree>
+struct Version<mlpack::RangeSearch<DistanceType, MatType, TreeType>
+{
+  static std::uint32_t registerVersion()
+  {
+    ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace(
+        std::type_index(typeid(mlpack::RangeSearch<DistanceType, MatType,
+        TreeType>)).hash_code(), 1);
+    return 1;
+  }
+
+  static inline const std::uint32_t version = registerVersion();
+
+  static void unused() { (void) version; }
+}; /* end Version */
+
+} // namespace detail
+} // namespace cereal
 
 // Include implementation.
 #include "range_search_impl.hpp"

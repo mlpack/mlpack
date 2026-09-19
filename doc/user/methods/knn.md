@@ -70,8 +70,8 @@ computing the nearest neighbors of points.
 ```c++
 // Compute the 5 exact nearest neighbors of every point of random numeric data.
 
-// All data is uniform random: 10-dimensional data.  Replace with a Load()
-// call or similar for a real application.
+// All data is uniform random in 10 dimensions.  Replace with a Load() call or
+// similar for a real application.
 arma::mat referenceSet(10, 1000, arma::fill::randu); // 1000 points.
 
 mlpack::KNN knn;                     // Step 1: create object.
@@ -117,6 +117,7 @@ std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
  * [Nearest neighbor search on Wikipedia](https://en.wikipedia.org/wiki/Nearest_neighbor_search)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
  * [`KFN` (k-furthest-neighbors)](kfn.md)
+ * [`RangeSearch`](range_search.md)
 
 ### Constructors
 
