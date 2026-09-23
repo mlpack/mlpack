@@ -256,8 +256,8 @@ mkdir data
 
 4. Train the network.  `train` groups the CSVs by label, cuts each into
 overlapping sliding windows of 256 samples spaced 128 apart (a 50% overlap),
-turns each window into features (the per-channel FFT power spectrum plus
-per-channel mean, standard deviation, and median), and trains a small
+turns each window into features (the FFT power spectrum, mean, standard
+deviation, and median for each accelerometer axis), and trains a small
 `float32` neural network.  The window size and step are hardcoded constants in
 `train.cpp` (and `infer.cpp`); edit them in the source if your movements are
 slower or faster.  Instead of a fixed epoch count it uses early stopping: the
