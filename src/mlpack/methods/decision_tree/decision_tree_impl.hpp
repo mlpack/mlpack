@@ -267,10 +267,12 @@ DecisionTree<FitnessFunction,
              NoRecursion>::DecisionTree(const size_t numClasses) :
     splitDimension(0),
     dimensionType(0),
-    classProbabilities(numClasses)
+    classProbabilities(numClasses),
+    nodeProbabilities(numClasses)
 {
   // Initialize utility vector.
   classProbabilities.fill(1.0 / (double) numClasses);
+  nodeProbabilities.fill(1.0 / (double) numClasses);
 }
 
 //! Copy another tree.
@@ -287,7 +289,8 @@ DecisionTree<FitnessFunction,
     NumericAuxiliarySplitInfo(other),
     CategoricalAuxiliarySplitInfo(other),
     splitDimension(other.splitDimension),
-    classProbabilities(other.classProbabilities)
+    classProbabilities(other.classProbabilities),
+    nodeProbabilities(other.nodeProbabilities)
 {
   // Copy each child.
   for (size_t i = 0; i < other.children.size(); ++i)
@@ -314,7 +317,8 @@ DecisionTree<FitnessFunction,
     CategoricalAuxiliarySplitInfo(std::move(other)),
     children(std::move(other.children)),
     splitDimension(other.splitDimension),
-    classProbabilities(std::move(other.classProbabilities))
+    classProbabilities(std::move(other.classProbabilities)),
+    nodeProbabilities(std::move(other.nodeProbabilities))
 {
   if (children.size() != 0)
     dimensionType = other.dimensionType;
@@ -352,6 +356,7 @@ DecisionTree<FitnessFunction,
 
   // Copy everything from the other tree.
   splitDimension = other.splitDimension;
+  nodeProbabilities = other.nodeProbabilities;
 
   if (children.size() != 0)
     dimensionType = other.dimensionType;
@@ -406,6 +411,7 @@ DecisionTree<FitnessFunction,
     majorityClass = other.majorityClass;
 
   classProbabilities = std::move(other.classProbabilities);
+  nodeProbabilities = std::move(other.nodeProbabilities);
 
   // Reset the class probabilities of the other object.
   other.classProbabilities.ones(1); // One class, P(1) = 1.
@@ -632,6 +638,16 @@ double DecisionTree<FitnessFunction,
     delete children[i];
   children.clear();
 
+  // Store the empirical class probabilities for this node.
+  nodeProbabilities.zeros(numClasses);
+
+  for (size_t i = begin; i < begin + count; ++i)
+    nodeProbabilities[labels[i]] += UseWeights ? weights[i] : 1.0;
+
+  nodeProbabilities /= UseWeights ?
+      arma::accu(weights.subvec(begin, begin + count - 1)) :
+      static_cast<double>(count);
+
   // Look through the list of dimensions and obtain the gain of the best split.
   // We'll cache the best numeric and categorical split auxiliary information in
   // numericAux and categoricalAux (and clear them later if we make no split),
@@ -814,6 +830,16 @@ double DecisionTree<FitnessFunction,
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
   children.clear();
+
+  // Store the empirical class probabilities for this node.
+  nodeProbabilities.zeros(numClasses);
+
+  for (size_t i = begin; i < begin + count; ++i)
+    nodeProbabilities[labels[i]] += UseWeights ? weights[i] : 1.0;
+
+  nodeProbabilities /= UseWeights ?
+      arma::accu(weights.subvec(begin, begin + count - 1)) :
+      static_cast<double>(count);
 
   // We won't be using these members, so reset them.
   CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
@@ -1085,6 +1111,7 @@ void DecisionTree<FitnessFunction,
   // serialize one.
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(classProbabilities));
+  ar(CEREAL_NVP(nodeProbabilities));
 }
 
 template<typename FitnessFunction,
@@ -1159,6 +1186,7 @@ void DecisionTree<FitnessFunction,
 
   // Now normalize into probabilities.
   classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
+  nodeProbabilities = classProbabilities;
   arma::uword maxIndex = classProbabilities.index_max();
   majorityClass = (size_t) maxIndex;
 }
