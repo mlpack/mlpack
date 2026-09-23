@@ -98,6 +98,11 @@ shown below:
 
 <center>
 <img src="../img/wiring_gy89_duo.png" width="760" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
+
+<em>GY-89 to Milk-V Duo wiring: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to
+pin 36 (3V3 out), and GND to pin 38.  See the
+<a href="https://milkv.io/docs/duo/getting-started/duo">Milk-V Duo pinout
+documentation</a> for the full pin map.</em>
 </center>
 
 On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
