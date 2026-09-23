@@ -221,10 +221,21 @@ duo-pinmux -p GP1 -f IIC0_SDA
 ```
 
 2. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
-their I2C function first:
+their I2C function first, you should get a similar output if you have the same
+IMU. If not, you need to check your specific sensors address in the datasheet,
+and verify that it matches the one detected on the bus.
 
 ```sh
-i2cdetect -y -r 0          # should show devices at 0x1d and 0x6b (and 0x77)
+i2cdetect -y -r 0
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- 1d -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- 56 -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- 6b -- -- -- -- 
+70: -- -- -- -- -- -- -- 77
 ```
 
 3. Collect labelled data.  Each recording is labelled according to executed
@@ -244,23 +255,25 @@ mkdir data
 ```
 
 4. Train the network.  `train` groups the CSVs by label, cuts each into
-overlapping sliding windows of `window` samples spaced `step` apart (a 50%
-overlap by default), turns each window into features (the per-channel FFT power
-spectrum plus per-channel mean, standard deviation, and median), and trains a
-small `float32` neural network.  Instead of a fixed epoch count it uses early
-stopping: the `patience` argument is how many epochs it keeps searching after
-the lowest validation loss before stopping.  The arguments are positional --
-`train <data-dir> [window] [out-prefix] [patience] [test-split] [step]`:
+overlapping sliding windows of 256 samples spaced 128 apart (a 50% overlap),
+turns each window into features (the per-channel FFT power spectrum plus
+per-channel mean, standard deviation, and median), and trains a small
+`float32` neural network.  The window size and step are hardcoded constants in
+`train.cpp` (and `infer.cpp`); edit them in the source if your movements are
+slower or faster.  Instead of a fixed epoch count it uses early stopping: the
+`patience` argument is how many epochs it keeps searching after the lowest
+validation loss before stopping. To use the `train` command
+
+`train <data-dir> [out-dir] [patience] [test-split]`:
 
 ```sh
-./train data 256 model 10
+./train data model 10
 ```
 
 It prints a per-epoch loss and a progress bar while training, then a held-out
 test accuracy, and writes `model.bin` (the trained network), `model.labels`
-(window size, window step, and class names), and `model_scaler.bin` (the
-feature scaler, so `infer` standardizes live features the same way training
-did).
+(the class names), and `scaler.bin` (the feature scaler, so `infer`
+standardizes live features the same way training did).
 
 5. Run live inference.  `infer` reads the IMU, slides the same window over
 the stream, extract features using FFT, and use the trained model for the inference.
@@ -269,7 +282,7 @@ To run the inference use the following command:
 `infer <sensors> <device> <model-dir>`
 
 ```sh
-./infer accel /dev/i2c-0 - model
+./infer accel /dev/i2c-0 model
 ```
 
 In this tutorial, we have demonstrated how you can simply build an entire
