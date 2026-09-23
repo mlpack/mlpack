@@ -4714,4 +4714,6 @@ TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
   remove(manifestPath.c_str());
 }
 
-#endif
+#endif  // MLPACK_ENABLE_HTTPLIB
+
+#endif  // MLPACK_DISABLE_DR_LIBS
