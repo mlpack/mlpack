@@ -43,7 +43,7 @@ The example is split into four small independent programs, each of which
 performs a single task:
 
  * `imu_test`: sensor check + magnetometer calibration
- * `collect`: record sensor data to CSV (small, exception-free)
+ * `collect`: record sensor data to CSV
  * `train`: train a neural network from the CSVs
  * `infer`: live inference from the IMU
 
@@ -85,7 +85,7 @@ In the figure,
 This tutorial uses a [Milk-V Duo](https://milkv.io/duo), a SOPHGO
 CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
 only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
-GY-89 10-DOF breakout, which carries three separate I2C chips:
+GY-89 9-DOF breakout, which carries three separate I2C chips:
 
 | Chip        | Function                            | 7-bit address |
 |-------------|-------------------------------------|---------------|
@@ -101,11 +101,11 @@ shown below:
 </center>
 
 On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
-so we must mux them to the I2C0 controller (their `IIC0_SCL` and `IIC0_SDA`
-functions).  This is done on the device with `duo-pinmux` and is shown in
-[Running it on the device](#running-it-on-the-device). Feel free to check
-pinmux software on the Duo to change the functionality of the pins and use a
-different interface.
+so we must mux them to the I2C0 controller. To use I2C there are two pins that
+are necessary, the first one is the clock pin labelled `IIC0_SCL` while the
+second one is the data link labelled `IIC0_SDA`.  This is done on the device with
+`duo-pinmux` and is shown in [Running it on the device](#running-it-on-the-device).
+`duo-pinmux` can be used to change the functionality of each pin on the Duo.
 
 ### Setting up the cross-compilation toolchain
 
@@ -207,26 +207,28 @@ ssh root@192.168.42.1 /root/imu_test /root/collect /root/train /root/infer
 
 SSH into the board.  All the commands below run on the Duo.
 
-1. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
+1. Mux the GP0 and GP1 pins to the I2C functionality using the following
+   commands:
+
+```sh
+duo-pinmux -p GP0 -f IIC0_SCL
+duo-pinmux -p GP1 -f IIC0_SDA
+```
+
+2. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
 their I2C function first:
 
 ```sh
 i2cdetect -y -r 0          # should show devices at 0x1d and 0x6b (and 0x77)
 ```
 
-This is the step most likely to be missing if the sensor does not respond.
-Therefore, you can mux the pins and change their functionality as follows:
-
-```sh
-duo-pinmux -p GP0 -f IIC0_SCL
-duo-pinmux -p GP1 -f IIC0_SDA
-i2cdetect -y -r 0          # Now it should show devices at 0x1d and 0x6b (and 0x77)
-```
-
-3. Collect labelled data.  Each recording is written to its own file named
-`<label>_<date>.csv`, so the label is the file name.  The arguments are
-positional -- `collect <label> [sensors] [out-dir] [device] [rate-hz]
-[duration-sec] [mag-cal]` -- so here we record accelerometer only, into `data`,
+3. Collect labelled data.  Each recording is labelled according to executed
+   movements with the following `<label>_<date>.csv` format.
+   To use the collect command
+   ``` 
+   collect <label> [sensors] [out-dir] [device] [rate-hz] duration-sec] [mag-cal]`
+   ```
+In the following example, we record accelerometer only, into `data`,
 on the default I2C bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
 
 ```sh
@@ -235,9 +237,6 @@ mkdir data
 ./collect sitting   accel data /dev/i2c-0 100 30
 ./collect squat     accel data /dev/i2c-0 100 30
 ```
-
-Collect several recordings per movement (more files means more training
-windows), keeping the same sensor selection across all of them.
 
 4. Train the network.  `train` groups the CSVs by label, cuts each into
 overlapping sliding windows of `window` samples spaced `step` apart (a 50%
@@ -259,20 +258,17 @@ feature scaler, so `infer` standardizes live features the same way training
 did).
 
 5. Run live inference.  `infer` reads the IMU, slides the same window over
-the stream, runs the same FFT, and prints the predicted movement.  The arguments
-are positional -- `infer <sensors> <device> <mag-cal> <model-prefix>
-[model-prefix ...]` -- and you must pass the same sensors you trained with (use
-`-` for the mag-cal file to skip it):
+the stream, extract features using FFT, and use the trained model for the inference.
+To run the inference use the following command:
+
+`infer <sensors> <device> <model-dir>`
 
 ```sh
-./infer accel /dev/i2c-0 - model                  # prints predictions to stdout
+./infer accel /dev/i2c-0 - model
 ```
 
-You can pass more than one model prefix to compare several trained networks on
-the same live stream.
-
-
-
-`USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0`:
+In this tutorial, we have demonstrated how you can simply build an entire
+machine learning pipeline with mlpack running on a resource constrained device
+such as Milk-Duo for data collection, training and model prediction.
 
 
