@@ -3652,7 +3652,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
+  REQUIRE(Load("https://datasets.mlpack.org/iris_centroids.csv",
         dataset, Fatal + Transpose) == true);
 }
 
@@ -3660,7 +3660,7 @@ TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
 {
   arma::mat dataset;
   TextOptions opts = Fatal + Categorical;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+  REQUIRE(Load("https://datasets.mlpack.org/iris.arff",
         dataset, opts) == true);
 }
 
