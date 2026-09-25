@@ -33,37 +33,32 @@ namespace mlpack {
 class RSWrapperBase
 {
  public:
-  //! Create the RSWrapperBase object.  The base class does not hold anything,
-  //! so this constructor does nothing.
+  // Create the RSWrapperBase object.  The base class does not hold anything,
+  // so this constructor does nothing.
   RSWrapperBase() { }
 
-  //! Create a new RSWrapperBase that is the same as this one.  This function
-  //! will properly handle polymorphism.
+  // Create a new RSWrapperBase that is the same as this one.  This function
+  // will properly handle polymorphism.
   virtual RSWrapperBase* Clone() const = 0;
 
-  //! Destruct the RSWrapperBase (nothing to do).
+  // Destruct the RSWrapperBase (nothing to do).
   virtual ~RSWrapperBase() { }
 
-  //! Get the dataset.
+  // Get the dataset.
   virtual const arma::mat& Dataset() const = 0;
 
-  //! Get whether single-tree search is being used.
-  virtual bool SingleMode() const = 0;
-  //! Modify whether single-tree search is being used.
-  virtual bool& SingleMode() = 0;
-
-  //! Get whether naive search is being used.
-  virtual bool Naive() const = 0;
-  //! Modify whether naive search is being used.
-  virtual bool& Naive() = 0;
+  // Get the search strategy that is being used.
+  virtual TreeSearchStrategy Strategy() const = 0;
+  // Modify the search strategy that is being used.
+  virtual TreeSearchStrategy& Strategy() = 0;
 
   //! Train the model (build the reference tree if needed).
   virtual void Train(util::Timers& timers,
                      arma::mat&& referenceSet,
                      const size_t leafSize) = 0;
 
-  //! Perform bichromatic range search (i.e. a search with a separate query
-  //! set).
+  // Perform bichromatic range search (i.e. a search with a separate query
+  // set).
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
                       const Range& range,
@@ -71,8 +66,8 @@ class RSWrapperBase
                       std::vector<std::vector<double>>& distances,
                       const size_t leafSize) = 0;
 
-  //! Perform monochromatic range search (i.e. a search with the reference set
-  //! as the query set).
+  // Perform monochromatic range search (i.e. a search with the reference set
+  // as the query set).
   virtual void Search(util::Timers& timers,
                       const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
@@ -88,41 +83,35 @@ template<template<typename TreeDistanceType,
 class RSWrapper : public RSWrapperBase
 {
  public:
-  //! Create the RSWrapper object.
-  RSWrapper(const bool singleMode, const bool naive) :
-      rs(singleMode, naive)
+  // Create the RSWrapper object.
+  RSWrapper(const TreeSearchStrategy strategy) : rs(strategy)
   {
     // Nothing else to do.
   }
 
-  //! Create a new RSWrapper that is the same as this one.  This function
-  //! will properly handle polymorphism.
+  // Create a new RSWrapper that is the same as this one.  This function
+  // will properly handle polymorphism.
   virtual RSWrapper* Clone() const { return new RSWrapper(*this); }
 
-  //! Destruct the RSWrapper (nothing to do).
+  // Destruct the RSWrapper (nothing to do).
   virtual ~RSWrapper() { }
 
-  //! Get the dataset.
+  // Get the dataset.
   const arma::mat& Dataset() const { return rs.ReferenceSet(); }
 
-  //! Get whether single-tree search is being used.
-  bool SingleMode() const { return rs.SingleMode(); }
-  //! Modify whether single-tree search is being used.
-  bool& SingleMode() { return rs.SingleMode(); }
+  // Get the search strategy that is being used.
+  TreeSearchStrategy Strategy() const { return rs.Strategy(); }
+  // Modify the search strategy that is being used.
+  TreeSearchStrategy& Strategy() { return rs.Strategy(); }
 
-  //! Get whether naive search is being used.
-  bool Naive() const { return rs.Naive(); }
-  //! Modify whether naive search is being used.
-  bool& Naive() { return rs.Naive(); }
-
-  //! Train the model (build the reference tree if needed).  This ignores the
-  //! leaf size.
+  // Train the model (build the reference tree if needed).  This ignores the
+  // leaf size.
   virtual void Train(util::Timers& timers,
                      arma::mat&& referenceSet,
                      const size_t /* leafSize */);
 
-  //! Perform bichromatic range search (i.e. a search with a separate query
-  //! set).  This ignores the leaf size.
+  // Perform bichromatic range search (i.e. a search with a separate query
+  // set).  This ignores the leaf size.
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
                       const Range& range,
@@ -130,14 +119,14 @@ class RSWrapper : public RSWrapperBase
                       std::vector<std::vector<double>>& distances,
                       const size_t /* leafSize */);
 
-  //! Perform monochromatic range search (i.e. a search with the reference set
-  //! as the query set).
+  // Perform monochromatic range search (i.e. a search with the reference set
+  // as the query set).
   virtual void Search(util::Timers& timers,
                       const Range& range,
                       std::vector<std::vector<size_t>>& neighbors,
                       std::vector<std::vector<double>>& distances);
 
-  //! Serialize the RangeSearch model.
+  // Serialize the RangeSearch model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
@@ -147,7 +136,7 @@ class RSWrapper : public RSWrapperBase
  protected:
   using RSType = RangeSearch<EuclideanDistance, arma::mat, TreeType>;
 
-  //! The instantiated RangeSearch object that we are wrapping.
+  // The instantiated RangeSearch object that we are wrapping.
   RSType rs;
 };
 
@@ -162,30 +151,30 @@ template<template<typename TreeDistanceType,
 class LeafSizeRSWrapper : public RSWrapper<TreeType>
 {
  public:
-  //! Construct the LeafSizeRSWrapper by delegating to the RSWrapper
-  //! constructor.
-  LeafSizeRSWrapper(const bool singleMode, const bool naive) :
-      RSWrapper<TreeType>(singleMode, naive)
+  // Construct the LeafSizeRSWrapper by delegating to the RSWrapper
+  // constructor.
+  LeafSizeRSWrapper(const TreeSearchStrategy strategy) :
+      RSWrapper<TreeType>(strategy)
   {
     // Nothing else to do.
   }
 
-  //! Delete the LeafSizeRSWrapper.
+  // Delete the LeafSizeRSWrapper.
   virtual ~LeafSizeRSWrapper() { }
 
-  //! Return a copy of the LeafSizeRSWrapper.
+  // Return a copy of the LeafSizeRSWrapper.
   virtual LeafSizeRSWrapper* Clone() const
   {
     return new LeafSizeRSWrapper(*this);
   }
 
-  //! Train a model with the given parameters.  This overload uses leafSize.
+  // Train a model with the given parameters.  This overload uses leafSize.
   virtual void Train(util::Timers& timers,
                      arma::mat&& referenceSet,
                      const size_t leafSize);
 
-  //! Perform bichromatic search (e.g. search with a separate query set).  This
-  //! overload takes the leaf size into account when building the query tree.
+  // Perform bichromatic search (e.g. search with a separate query set).  This
+  // overload takes the leaf size into account when building the query tree.
   virtual void Search(util::Timers& timers,
                       arma::mat&& querySet,
                       const Range& range,
@@ -193,7 +182,7 @@ class LeafSizeRSWrapper : public RSWrapper<TreeType>
                       std::vector<std::vector<double>>& distances,
                       const size_t leafSize);
 
-  //! Serialize the RangeSearch model.
+  // Serialize the RangeSearch model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
@@ -274,43 +263,38 @@ class RSModel
    */
   ~RSModel();
 
-  //! Serialize the range search model.
+  // Serialize the range search model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
-  //! Expose the dataset.
+  // Expose the dataset.
   const arma::mat& Dataset() const { return rSearch->Dataset(); }
 
-  //! Get whether the model is in single-tree search mode.
-  bool SingleMode() const { return rSearch->SingleMode(); }
-  //! Modify whether the model is in single-tree search mode.
-  bool& SingleMode() { return rSearch->SingleMode(); }
+  // Get the search strategy that is being used.
+  TreeSearchStrategy Strategy() const { return rSearch->Strategy(); }
+  // Modify the search strategy that is being used.
+  TreeSearchStrategy& Strategy() { return rSearch->Strategy(); }
 
-  //! Get whether the model is in naive search mode.
-  bool Naive() const { return rSearch->Naive(); }
-  //! Modify whether the model is in naive search mode.
-  bool& Naive() { return rSearch->Naive(); }
-
-  //! Get the leaf size (applicable to everything but the cover tree).
+  // Get the leaf size (applicable to everything but the cover tree).
   size_t LeafSize() const { return leafSize; }
-  //! Modify the leaf size (applicable to everything but the cover tree).
+  // Modify the leaf size (applicable to everything but the cover tree).
   size_t& LeafSize() { return leafSize; }
 
-  //! Get the type of tree.
+  // Get the type of tree.
   TreeTypes TreeType() const { return treeType; }
-  //! Modify the type of tree (don't do this after the model has been built).
+  // Modify the type of tree (don't do this after the model has been built).
   TreeTypes& TreeType() { return treeType; }
 
-  //! Get whether a random basis is used.
+  // Get whether a random basis is used.
   bool RandomBasis() const { return randomBasis; }
-  //! Modify whether a random basis is used (don't do this after the model has
-  //! been built).
+  // Modify whether a random basis is used (don't do this after the model has
+  // been built).
   bool& RandomBasis() { return randomBasis; }
 
   /**
    * Allocate the memory for the range search model.
    */
-  void InitializeModel(const bool naive, const bool singleMode);
+  void InitializeModel(const TreeSearchStrategy strategy);
 
   /**
    * Build the reference tree on the given dataset with the given parameters.
@@ -324,8 +308,7 @@ class RSModel
   void BuildModel(util::Timers& timers,
                   arma::mat&& referenceSet,
                   const size_t leafSize,
-                  const bool naive,
-                  const bool singleMode);
+                  const TreeSearchStrategy strategy);
 
   /**
    * Perform range search.  This takes possession of the query set, so the query
@@ -358,15 +341,15 @@ class RSModel
               std::vector<std::vector<double>>& distances);
 
  private:
-  //! The type of tree we are using.
+  // The type of tree we are using.
   TreeTypes treeType;
-  //! (Only used for some tree types.)  The leaf size to use when building a
-  //! tree.
+  // (Only used for some tree types.)  The leaf size to use when building a
+  // tree.
   size_t leafSize;
 
-  //! If true, we randomly project the data into a new basis before search.
+  // If true, we randomly project the data into a new basis before search.
   bool randomBasis;
-  //! Random projection matrix.
+  // Random projection matrix.
   arma::mat q;
 
   /**

@@ -101,8 +101,7 @@ inline RSModel::~RSModel()
   delete rSearch;
 }
 
-inline void RSModel::InitializeModel(const bool naive,
-                                     const bool singleMode)
+inline void RSModel::InitializeModel(const TreeSearchStrategy strategy)
 {
   // Clean memory, if necessary.
   delete rSearch;
@@ -110,59 +109,59 @@ inline void RSModel::InitializeModel(const bool naive,
   switch (treeType)
   {
     case KD_TREE:
-      rSearch = new LeafSizeRSWrapper<KDTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<KDTree>(strategy);
       break;
 
     case COVER_TREE:
-      rSearch = new RSWrapper<StandardCoverTree>(naive, singleMode);
+      rSearch = new RSWrapper<StandardCoverTree>(strategy);
       break;
 
     case R_TREE:
-      rSearch = new RSWrapper<RTree>(naive, singleMode);
+      rSearch = new RSWrapper<RTree>(strategy);
       break;
 
     case R_STAR_TREE:
-      rSearch = new RSWrapper<RStarTree>(naive, singleMode);
+      rSearch = new RSWrapper<RStarTree>(strategy);
       break;
 
     case BALL_TREE:
-      rSearch = new LeafSizeRSWrapper<BallTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<BallTree>(strategy);
       break;
 
     case X_TREE:
-      rSearch = new RSWrapper<XTree>(naive, singleMode);
+      rSearch = new RSWrapper<XTree>(strategy);
       break;
 
     case HILBERT_R_TREE:
-      rSearch = new RSWrapper<HilbertRTree>(naive, singleMode);
+      rSearch = new RSWrapper<HilbertRTree>(strategy);
       break;
 
     case R_PLUS_TREE:
-      rSearch = new RSWrapper<RPlusTree>(naive, singleMode);
+      rSearch = new RSWrapper<RPlusTree>(strategy);
       break;
 
     case R_PLUS_PLUS_TREE:
-      rSearch = new RSWrapper<RPlusPlusTree>(naive, singleMode);
+      rSearch = new RSWrapper<RPlusPlusTree>(strategy);
       break;
 
     case VP_TREE:
-      rSearch = new LeafSizeRSWrapper<VPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<VPTree>(strategy);
       break;
 
     case RP_TREE:
-      rSearch = new LeafSizeRSWrapper<RPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<RPTree>(strategy);
       break;
 
     case MAX_RP_TREE:
-      rSearch = new LeafSizeRSWrapper<MaxRPTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<MaxRPTree>(strategy);
       break;
 
     case UB_TREE:
-      rSearch = new LeafSizeRSWrapper<UBTree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<UBTree>(strategy);
       break;
 
     case OCTREE:
-      rSearch = new LeafSizeRSWrapper<Octree>(naive, singleMode);
+      rSearch = new LeafSizeRSWrapper<Octree>(strategy);
       break;
   }
 }
@@ -170,8 +169,7 @@ inline void RSModel::InitializeModel(const bool naive,
 inline void RSModel::BuildModel(util::Timers& timers,
                                 arma::mat&& referenceSet,
                                 const size_t leafSize,
-                                const bool naive,
-                                const bool singleMode)
+                                const TreeSearchStrategy strategy)
 {
   // Initialize random basis if necessary.
   if (randomBasis)
@@ -188,14 +186,14 @@ inline void RSModel::BuildModel(util::Timers& timers,
 
   this->leafSize = leafSize;
 
-  if (!naive)
+  if (strategy != NAIVE)
     Log::Info << "Building reference tree..." << std::endl;
 
-  InitializeModel(naive, singleMode);
+  InitializeModel(strategy);
 
   rSearch->Train(timers, std::move(referenceSet), leafSize);
 
-  if (!naive)
+  if (strategy != NAIVE)
     Log::Info << "Tree built." << std::endl;
 }
 
@@ -216,9 +214,9 @@ inline void RSModel::Search(util::Timers& timers,
 
   Log::Info << "Search for points in the range [" << range.Lo() << ", "
       << range.Hi() << "] with ";
-  if (!Naive() && !SingleMode())
+  if (Strategy() == DUAL_TREE)
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
+  else if (Strategy() == SINGLE_TREE)
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
@@ -235,9 +233,9 @@ inline void RSModel::Search(util::Timers& timers,
 {
   Log::Info << "Search for points in the range [" << range.Lo() << ", "
       << range.Hi() << "] with ";
-  if (!Naive() && !SingleMode())
+  if (Strategy() == DUAL_TREE)
     Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
-  else if (!Naive())
+  else if (Strategy() == SINGLE_TREE)
     Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
@@ -296,11 +294,11 @@ void RSWrapper<TreeType>::Train(util::Timers& timers,
                                 arma::mat&& referenceSet,
                                 const size_t /* leafSize */)
 {
-  if (!Naive())
+  if (Strategy() != NAIVE)
     timers.Start("tree_building");
 
   rs.Train(std::move(referenceSet));
-  if (!Naive())
+  if (Strategy() != NAIVE)
     timers.Stop("tree_building");
 }
 
@@ -314,7 +312,7 @@ void RSWrapper<TreeType>::Search(util::Timers& timers,
                                  std::vector<std::vector<double>>& distances,
                                  const size_t /* leafSize */)
 {
-  if (!Naive() && !SingleMode())
+  if (Strategy() == DUAL_TREE)
   {
     // We build the query tree manually, so that we can time how long it takes.
     timers.Start("tree_building");
@@ -322,7 +320,7 @@ void RSWrapper<TreeType>::Search(util::Timers& timers,
     timers.Stop("tree_building");
 
     timers.Start("computing_neighbors");
-    rs.Search(&queryTree, range, neighbors, distances);
+    rs.Search(queryTree, range, neighbors, distances);
     timers.Stop("computing_neighbors");
   }
   else
@@ -353,7 +351,7 @@ void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
                                         arma::mat&& referenceSet,
                                         const size_t leafSize)
 {
-  if (rs.Naive())
+  if (rs.Strategy() == NAIVE)
   {
     rs.Train(std::move(referenceSet));
   }
@@ -361,11 +359,9 @@ void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
   {
     timers.Start("tree_building");
     std::vector<size_t> oldFromNewReferences;
-    typename decltype(rs)::Tree* tree =
-        new typename decltype(rs)::Tree(std::move(referenceSet),
-                                        oldFromNewReferences,
-                                        leafSize);
-    rs.Train(tree);
+    typename decltype(rs)::Tree tree(std::move(referenceSet),
+        oldFromNewReferences, leafSize);
+    rs.Train(std::move(tree));
 
     // Give the model ownership of the tree and the mappings.
     rs.treeOwner = true;
@@ -385,7 +381,7 @@ void LeafSizeRSWrapper<TreeType>::Search(
     std::vector<std::vector<double>>& distances,
     const size_t leafSize)
 {
-  if (!rs.Naive() && !rs.SingleMode())
+  if (rs.Strategy() == DUAL_TREE)
   {
     // Build a second tree and search.
     timers.Start("tree_building");
@@ -400,7 +396,7 @@ void LeafSizeRSWrapper<TreeType>::Search(
     std::vector<std::vector<size_t>> neighborsOut;
     std::vector<std::vector<double>> distancesOut;
     timers.Start("computing_neighbors");
-    rs.Search(&queryTree, range, neighborsOut, distancesOut);
+    rs.Search(queryTree, range, neighborsOut, distancesOut);
     timers.Stop("computing_neighbors");
 
     // Remap the query points.
@@ -430,7 +426,7 @@ void RSModel::serialize(Archive& ar, const uint32_t /* version */)
 
   // This should never happen, but just in case...
   if (cereal::is_loading<Archive>())
-    InitializeModel(false, false); // Values will be overwritten.
+    InitializeModel(DUAL_TREE); // Values will be overwritten.
 
   // Avoid polymorphic serialization by explicitly serializing the correct type.
   switch (treeType)

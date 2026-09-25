@@ -30,16 +30,6 @@ template<typename SortPolicy,
          template<typename RuleType> class SingleTreeTraversalType>
 class LeafSizeNSWrapper;
 
-// NeighborSearchStrategy represents the different neighbor search strategies
-// available.
-enum NeighborSearchStrategy
-{
-  NAIVE,
-  SINGLE_TREE,
-  DUAL_TREE,
-  GREEDY_SINGLE_TREE
-};
-
 // This is for reverse compatibility and will be removed in mlpack 5.0.0.
 enum NeighborSearchMode
 {
@@ -50,7 +40,7 @@ enum NeighborSearchMode
 };
 
 // This is for reverse compatibility and will be removed in mlpack 5.0.0.
-inline NeighborSearchStrategy ModeToStrategy(const NeighborSearchMode& mode)
+inline TreeSearchStrategy ModeToStrategy(const NeighborSearchMode& mode)
 {
   switch (mode)
   {
@@ -65,7 +55,7 @@ inline NeighborSearchStrategy ModeToStrategy(const NeighborSearchMode& mode)
 }
 
 // This is for reverse compatibility and will be removed in mlpack 5.0.0.
-inline NeighborSearchMode StrategyToMode(const NeighborSearchStrategy& strategy)
+inline NeighborSearchMode StrategyToMode(const TreeSearchStrategy& strategy)
 {
   switch (strategy)
   {
@@ -140,12 +130,12 @@ class NeighborSearch
    * @param distance An optional instance of the DistanceType class.
    */
   NeighborSearch(MatType referenceSet,
-                 const NeighborSearchStrategy strategy = DUAL_TREE,
+                 const TreeSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0,
                  const DistanceType distance = DistanceType());
 
   [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
-               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+               "NeighborSearchMode, pass a TreeSearchStrategy.")]]
   NeighborSearch(MatType referenceSet,
                  const NeighborSearchMode mode,
                  const double epsilon = 0,
@@ -175,11 +165,11 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    */
   NeighborSearch(Tree referenceTree,
-                 const NeighborSearchStrategy strategy = DUAL_TREE,
+                 const TreeSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0);
 
   [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
-               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+               "NeighborSearchMode, pass a TreeSearchStrategy.")]]
   NeighborSearch(Tree referenceTree,
                  const NeighborSearchMode mode,
                  const double epsilon = 0) :
@@ -205,12 +195,12 @@ class NeighborSearch
    * @param epsilon Relative approximate error (non-negative).
    * @param distance Instantiated distance metric.
    */
-  NeighborSearch(const NeighborSearchStrategy strategy = DUAL_TREE,
+  NeighborSearch(const TreeSearchStrategy strategy = DUAL_TREE,
                  const double epsilon = 0,
                  const DistanceType distance = DistanceType());
 
   [[deprecated("Will be removed in mlpack 5.0.0.  Instead of a "
-               "NeighborSearchMode, pass a NeighborSearchStrategy.")]]
+               "NeighborSearchMode, pass a TreeSearchStrategy.")]]
   NeighborSearch(const NeighborSearchMode mode,
                  const double epsilon = 0,
                  const DistanceType distance = DistanceType()) :
@@ -402,9 +392,9 @@ class NeighborSearch
   NeighborSearchMode& SearchMode() { searchModeMod = true; return searchMode; }
 
   // Access the search strategy.
-  NeighborSearchStrategy SearchStrategy() const { return searchStrategy; }
+  TreeSearchStrategy SearchStrategy() const { return searchStrategy; }
   // Modify the search strategy.
-  NeighborSearchStrategy& SearchStrategy() { return searchStrategy; }
+  TreeSearchStrategy& SearchStrategy() { return searchStrategy; }
 
   //! Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
@@ -436,7 +426,7 @@ class NeighborSearch
   NeighborSearchMode searchMode;
   bool searchModeMod; // also for reverse compatibility
   // Indicates the neighbor search strategy.
-  NeighborSearchStrategy searchStrategy;
+  TreeSearchStrategy searchStrategy;
   // Indicates the relative error to be considered in approximate search.
   double epsilon;
 

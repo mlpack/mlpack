@@ -32,7 +32,7 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 NeighborSearch(MatType referenceSetIn,
-               const NeighborSearchStrategy strategy,
+               const TreeSearchStrategy strategy,
                const double epsilon,
                const DistanceType distance) :
     referenceTree(strategy == NAIVE ? NULL :
@@ -64,7 +64,7 @@ template<typename SortPolicy,
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
 NeighborSearch(Tree referenceTree,
-               const NeighborSearchStrategy strategy,
+               const TreeSearchStrategy strategy,
                const double epsilon) :
     referenceTree(new Tree(std::move(referenceTree))),
     referenceSet(&this->referenceTree->Dataset()),
@@ -121,7 +121,7 @@ template<typename SortPolicy,
          template<typename> class SingleTreeTraversalType>
 NeighborSearch<SortPolicy, DistanceType, MatType, TreeType,
     DualTreeTraversalType, SingleTreeTraversalType>::
-NeighborSearch(const NeighborSearchStrategy strategy,
+NeighborSearch(const TreeSearchStrategy strategy,
                const double epsilon,
                const DistanceType distance) :
     referenceTree(NULL),
