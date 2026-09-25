@@ -104,7 +104,7 @@ void RunDBSCAN(util::Params& params,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (params.Has("single_mode"))
-    rs.Strategy() = SINGLE_TREE;
+    rs.SearchStrategy() = SINGLE_TREE;
 
   // Load dataset.
   arma::mat dataset = std::move(params.Get<arma::mat>("input"));
