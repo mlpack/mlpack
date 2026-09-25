@@ -396,20 +396,18 @@ class NeighborSearch
   // Modify the search strategy.
   TreeSearchStrategy& SearchStrategy() { return searchStrategy; }
 
-  //! Access the relative error to be considered in approximate search.
+  // Access the relative error to be considered in approximate search.
   double Epsilon() const { return epsilon; }
-  //! Modify the relative error to be considered in approximate search.
+  // Modify the relative error to be considered in approximate search.
   double& Epsilon() { return epsilon; }
 
-  //! Access the reference dataset.
+  // Access the reference dataset.
   const MatType& ReferenceSet() const { return *referenceSet; }
 
-  //! Access the reference tree.
-  const Tree& ReferenceTree() const { return *referenceTree; }
-  //! Modify the reference tree.
-  Tree& ReferenceTree() { return *referenceTree; }
+  // Access or modify the reference tree.
+  Tree* ReferenceTree() { return referenceTree; }
 
-  //! Serialize the NeighborSearch model.
+  // Serialize the NeighborSearch model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
 
