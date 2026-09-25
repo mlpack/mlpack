@@ -248,11 +248,14 @@ class RangeSearch
    *      point which fell into the given range, for each query point.
    * @param distances Object which will hold the list of distances for each
    *      point which fell into the given range, for each query point.
+   * @param sameSet Denotes whether or not the reference and query sets are the
+   *      same.
    */
   void Search(Tree& queryTree,
               const RangeType<ElemType>& range,
               std::vector<std::vector<size_t>>& neighbors,
-              std::vector<std::vector<ElemType>>& distances);
+              std::vector<std::vector<ElemType>>& distances,
+              bool sameSet = false);
 
   [[deprecated("Will be removed in mlpack 5.0.0.  Pass a reference to the query"
                " tree instead.")]]
@@ -295,9 +298,9 @@ class RangeSearch
               std::vector<std::vector<ElemType>>& distances);
 
   // Get the search mode that will be used.
-  const TreeSearchStrategy& Strategy() const { return strategy; }
+  const TreeSearchStrategy& SearchStrategy() const { return strategy; }
   // Modify the range search strategy that will be used.
-  TreeSearchStrategy& Strategy() { needsSync = false; return strategy; }
+  TreeSearchStrategy& SearchStrategy() { needsSync = false; return strategy; }
 
   // Get whether single-tree search is being used.
   [[deprecated("Will be removed in mlpack 5.0.0.  Use Strategy() instead.")]]

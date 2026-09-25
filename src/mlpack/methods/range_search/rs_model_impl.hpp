@@ -351,7 +351,7 @@ void LeafSizeRSWrapper<TreeType>::Train(util::Timers& timers,
                                         arma::mat&& referenceSet,
                                         const size_t leafSize)
 {
-  if (rs.Strategy() == NAIVE)
+  if (rs.SearchStrategy() == NAIVE)
   {
     rs.Train(std::move(referenceSet));
   }
@@ -381,7 +381,7 @@ void LeafSizeRSWrapper<TreeType>::Search(
     std::vector<std::vector<double>>& distances,
     const size_t leafSize)
 {
-  if (rs.Strategy() == DUAL_TREE)
+  if (rs.SearchStrategy() == DUAL_TREE)
   {
     // Build a second tree and search.
     timers.Start("tree_building");

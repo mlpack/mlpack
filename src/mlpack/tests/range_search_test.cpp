@@ -1593,8 +1593,8 @@ TEST_CASE("CopyConstructorAndOperatorNaiveTest", "[RangeSearchTest]")
   RangeSearch<> rs2(rs);
   RangeSearch<> rs3 = rs;
 
-  REQUIRE(rs2.Strategy() == NAIVE);
-  REQUIRE(rs3.Strategy() == NAIVE);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
+  REQUIRE(rs3.SearchStrategy() == NAIVE);
 
   // Get results.
   vector<vector<double>> distances, distances2, distances3;
@@ -1645,7 +1645,7 @@ TEST_CASE("MoveConstructorNaiveTest", "[RangeSearchTest]")
 
   RangeSearch<> rs2(std::move(*rs));
 
-  REQUIRE(rs2.Strategy() == NAIVE);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
 
   delete rs;
 
@@ -1686,11 +1686,74 @@ TEST_CASE("MoveOperatorNaiveTest", "[RangeSearchTest]")
 
   RangeSearch<> rs2 = std::move(*rs);
 
-  REQUIRE(rs2.Strategy() == NAIVE);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
 
   delete rs;
 
   rs2.Search(Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  REQUIRE(distances.size() == distances2.size());
+  REQUIRE(neighbors.size() == neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    REQUIRE(distances[i].size() == distances2[i].size());
+    REQUIRE(neighbors[i].size() == neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      REQUIRE(neighbors[i][j] == neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      REQUIRE(distances[i][j] == Approx(distances2[i][j]).epsilon(1e-7));
+    }
+  }
+}
+
+/**
+ * Test that search with a prebuilt tree works correctly.
+ */
+TEST_CASE("RangeSearchPrebuiltTree", "[RangeSearchTest]")
+{
+  arma::mat dataset(5, 500, arma::fill::randu);
+  // We have to use a tree that does not rearrange points so that reverse
+  // mappings are correct when we call with *rs.ReferenceTree().
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
+      rs(std::move(dataset), DUAL_TREE);
+
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  // First check that a prebuilt query tree with `sameSet = true` matches when
+  // we call with no query set.
+  rs.Search(Range(0.0, 0.15), neighbors, distances);
+  rs.Search(*rs.ReferenceTree(), Range(0.0, 0.15), neighbors2, distances2,
+      true);
+
+  // Check results.
+  REQUIRE(distances.size() == distances2.size());
+  REQUIRE(neighbors.size() == neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    REQUIRE(distances[i].size() == distances2[i].size());
+    REQUIRE(neighbors[i].size() == neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      REQUIRE(neighbors[i][j] == neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      REQUIRE(distances[i][j] == Approx(distances2[i][j]).epsilon(1e-7));
+    }
+  }
+
+  // Now check that when we set sameSet = false, we get the same results as if
+  // we specified a separate query set.
+  rs.Search(rs.ReferenceSet(), Range(0.0, 0.15), neighbors, distances);
+  rs.Search(*rs.ReferenceTree(), Range(0.0, 0.15), neighbors2, distances2,
+      false);
 
   // Check results.
   REQUIRE(distances.size() == distances2.size());

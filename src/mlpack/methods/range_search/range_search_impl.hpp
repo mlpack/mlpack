@@ -584,7 +584,8 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     Tree& queryTree,
     const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
-    std::vector<std::vector<ElemType>>& distances)
+    std::vector<std::vector<ElemType>>& distances,
+    bool sameSet)
 {
   SyncStrategy();
 
@@ -624,7 +625,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   // Create the helper object for the traversal.
   using RuleType = RangeSearchRules<DistanceType, Tree>;
   RuleType rules(*referenceSet, queryTree.Dataset(), range, *neighborPtr,
-      distances, distance);
+      distances, distance, sameSet);
 
   // Create the traverser.
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);

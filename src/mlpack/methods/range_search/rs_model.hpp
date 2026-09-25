@@ -100,9 +100,9 @@ class RSWrapper : public RSWrapperBase
   const arma::mat& Dataset() const { return rs.ReferenceSet(); }
 
   // Get the search strategy that is being used.
-  TreeSearchStrategy Strategy() const { return rs.Strategy(); }
+  TreeSearchStrategy Strategy() const { return rs.SearchStrategy(); }
   // Modify the search strategy that is being used.
-  TreeSearchStrategy& Strategy() { return rs.Strategy(); }
+  TreeSearchStrategy& Strategy() { return rs.SearchStrategy(); }
 
   // Train the model (build the reference tree if needed).  This ignores the
   // leaf size.
