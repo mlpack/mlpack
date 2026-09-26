@@ -21,7 +21,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
@@ -59,7 +60,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
@@ -95,7 +97,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
@@ -137,7 +140,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
              NumericSplitType,
@@ -177,7 +181,8 @@ template<typename FitnessFunction,
         template<typename> class NumericSplitType,
         template<typename> class CategoricalSplitType,
         typename DimensionSelectionType,
-        bool NoRecursion>
+        bool NoRecursion,
+        bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
         NumericSplitType,
@@ -216,7 +221,8 @@ template<typename FitnessFunction,
         template<typename> class NumericSplitType,
         template<typename> class CategoricalSplitType,
         typename DimensionSelectionType,
-        bool NoRecursion>
+        bool NoRecursion,
+        bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 DecisionTree<FitnessFunction,
         NumericSplitType,
@@ -259,7 +265,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -280,7 +287,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -307,7 +315,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -334,7 +343,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -381,7 +391,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -428,7 +439,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 DecisionTree<FitnessFunction,
              NumericSplitType,
              CategoricalSplitType,
@@ -444,7 +456,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -485,7 +498,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -525,7 +539,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -570,7 +585,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType, typename LabelsType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -614,7 +630,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<bool UseWeights, typename MatType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -808,7 +825,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<bool UseWeights, typename MatType, typename WeightsType>
 double DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -975,7 +993,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -997,7 +1016,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename VecType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
@@ -1023,7 +1043,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
@@ -1049,7 +1070,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename MatType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
@@ -1086,7 +1108,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename Archive>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,
@@ -1118,7 +1141,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<typename VecType>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
@@ -1139,7 +1163,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 size_t DecisionTree<FitnessFunction,
                     NumericSplitType,
                     CategoricalSplitType,
@@ -1158,7 +1183,8 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType,
          typename DimensionSelectionType,
-         bool NoRecursion>
+         bool NoRecursion,
+         bool StoreNodeProbabilities>
 template<bool UseWeights, typename RowType, typename WeightsRowType>
 void DecisionTree<FitnessFunction,
                   NumericSplitType,

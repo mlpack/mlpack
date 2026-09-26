@@ -32,7 +32,8 @@ template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
          template<typename> class CategoricalSplitType = AllCategoricalSplit,
          typename DimensionSelectionType = AllDimensionSelect,
-         bool NoRecursion = false>
+         bool NoRecursion = false,
+         bool StoreNodeProbabilities = false>
 class DecisionTree :
     public NumericSplitType<FitnessFunction>::AuxiliarySplitInfo,
     public CategoricalSplitType<FitnessFunction>::AuxiliarySplitInfo
