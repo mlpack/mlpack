@@ -66,6 +66,8 @@ cmake \
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CORTEXA78 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa78) | [Cortex A78 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A78)  |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CORTEXA710 | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#cortexa710) | [Cortex A710 on Wikipedia](https://en.wikipedia.org/wiki/ARM_Cortex-A710)  |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | BCM2711   | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_aarch64.html)      | [Sysroot and toolchain prefix](#bcm2711) | [Raspberry Pi 4 on Wikipedia](https://en.wikipedia.org/wiki/Raspberry_Pi_4) |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | C906      | [Bootlin toolchain link](https://toolchains.bootlin.com/releases_riscv64-lp64d.html)| [Sysroot and toolchain prefix](#c906) | [C906 on riscv](https://www.riscvschool.com/2023/03/09/t-head-xuantie-c906-risc-v/) |
@@ -147,6 +149,13 @@ the new architecture added to this table.
 ```
 
 ### CORTEXA78
+
+```
+-DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnu-
+-DCMAKE_SYSROOT=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/aarch64-buildroot-linux-gnu/sysroot
+```
+
+### CORTEXA710
 
 ```
 -DTOOLCHAIN_PREFIX=/path/to/bootlin/toolchain/aarch64--glibc--stable-2024.02-1/bin/aarch64-buildroot-linux-gnu-

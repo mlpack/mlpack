@@ -195,3 +195,4 @@ your Github credentials.
       512MB RAM, 1-core 500 MHz UltraSparc IIe
     - `cayenne.ratml.org`: [VoCore 2 Ultimate](https://vocore.io/), 128MB RAM,
       580 MHz MT7628 (MIPS 24k)
+    - `laab.ratml.org`: [OrangePi 6+](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-6-Plus.html), 16GB RAM, 12-core CIX P1 (ARM Cortex-A720)

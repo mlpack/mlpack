@@ -51,6 +51,11 @@ target_info = [
       // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
       // download a precompiled reference BLAS implementation.
       'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+  ],
+  'laab': [
+      'device_name': 'orange-pi-6+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA710'
   ]
 ]
 
