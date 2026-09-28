@@ -898,7 +898,12 @@ DualTreeTraversalType, SingleTreeTraversalType>::Search(
 
       // Map each neighbor's index.
       for (size_t j = 0; j < distances.n_rows; ++j)
-        neighbors(j, refMapping) = oldFromNewReferences[(*neighborPtr)(j, i)];
+      {
+        if ((*neighborPtr)(j, i) != SIZE_MAX)
+          neighbors(j, refMapping) = oldFromNewReferences[(*neighborPtr)(j, i)];
+        else
+          neighbors(j, refMapping) = SIZE_MAX;
+      }
     }
 
     // Finished with temporary matrices.
