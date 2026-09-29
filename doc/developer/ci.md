@@ -100,13 +100,13 @@ Jenkins jobs in `.jenkins/doc-link-check/Jenkinsfile` and
 
 When writing new documentation, be sure to test it locally---going back and
 forth with the
-[link checker job on Jenkins](http://ci.mlpack.org/job/mlpack%20documentation%20link%20check/)
-and [snippet build job on Jenkins](http://ci.mlpack.org/job/mlpack%20documentation%20snippet%20build/)
+[link checker job on Jenkins](http://build.mlpack.org/job/mlpack%20documentation%20link%20check/)
+and [snippet build job on Jenkins](http://build.mlpack.org/job/mlpack%20documentation%20snippet%20build/)
 can be very tedious.
 
 ## Style checks
 
-The [style checker job](http://ci.mlpack.org/job/mlpack%20style%20checks/) runs
+The [style checker job](http://build.mlpack.org/job/mlpack%20style%20checks/) runs
 on Jenkins and is defined in `.jenkins/style-checks/Jenkinsfile`.
 
  * The [`lint.sh` script](https://github.com/mlpack/jenkins-conf/blob/master/linter/lint.sh) to check for C++ style issues.
@@ -119,7 +119,7 @@ on Jenkins and is defined in `.jenkins/style-checks/Jenkinsfile`.
 
 ## Cross-compilation checks
 
-The [cross-compilation checks](http://ci.mlpack.org/job/mlpack%20cross-compile%20tests/)
+The [cross-compilation checks](http://build.mlpack.org/job/mlpack%20cross-compile%20tests/)
 run on Jenkins and test cross-compilation of mlpack to a number of low-resource
 and embedded devices.  The job is defined in
 `.jenkins/cross-compilation/Jenkinsfile`.
@@ -136,7 +136,7 @@ and embedded devices.  The job is defined in
 
 ## Memory checks
 
-The [memory checks](http://ci.mlpack.org/job/mlpack%20memory%20checks/) run
+The [memory checks](http://build.mlpack.org/job/mlpack%20memory%20checks/) run
 valgrind on any tests that were detected to be changed.  This detection is
 performed via a heuristic and may not always be correct.  The job is defined in
 `.jenkins/memory-checks/Jenkinsfile`.
@@ -160,7 +160,10 @@ valgrind --leak-check=full --track-origins=yes bin/mlpack_test "TestName"
 Many physical systems are involved with testing mlpack and are hooked up to
 Jenkins.
 
-Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
+Link: [***Jenkins (`build.mlpack.org`)***](http://build.mlpack.org)
+
+In order to prevent excess load from scraping, you must log in to Jenkins using
+your Github credentials.
 
  * The 'specialized' build system.
 
@@ -168,7 +171,7 @@ Link: [***Jenkins (`ci.mlpack.org`)***](http://ci.mlpack.org)
    [`jenkins-conf` repository](https://github.com/mlpack/jenkins-conf/).
 
  * The list of workers (individual systems) can be found
-   [here](http://ci.mlpack.org/computer/).
+   [here](http://build.mlpack.org/computer/).
 
  * Adding or modifying jobs requires privileges; you can either ask an mlpack
    maintainer to make changes, or if you are on the Contributors team but still

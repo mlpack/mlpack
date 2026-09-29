@@ -8,7 +8,8 @@ have arbitrary shapes, and points far away from any high-density region will be
 separately classified as noise.
 
 DBSCAN does not require the user to guess the number of clusters, and
-does not make any assumptions on the shape of the data.
+does not make any assumptions on the shape of the data.  Arbitrary distance
+metrics are supported via template parameters.
 
 #### Simple usage example:
 
@@ -141,6 +142,11 @@ std::cout << " * " << arma::accu(assignments == SIZE_MAX) << " points "
 
  - Setting `batchMode` to `false` can keep memory usage lower, but at the
    potential cost of runtime slowdown.
+
+ - By default, clustering is performed using the Euclidean distance.  A
+   different or custom distance metric is specified by modifying the
+   [`RangeSearchType`](#advanced-functionality-template-parameters) template
+   parameter.  See also [an example](#custom-distance-metric-example).
 
 ### Clustering
 
@@ -282,6 +288,40 @@ mlpack::Save("wave_energy_centroids.csv", centroids);
 
 ---
 
+<a name="custom-distance-metric-example">
+Perform DBSCAN clustering on the cloud dataset using the Manhattan distance.
+
+```c++
+// See https://datasets.mlpack.org/cloud.csv.
+arma::mat dataset;
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+
+// Create the DBSCAN object using a custom distance type.
+// Because DBSCAN uses RangeSearch for all of its distance-related computations,
+// the distance metric is specified as part of the RangeSearchType template
+// parameter.
+mlpack::DBSCAN<mlpack::RangeSearch<mlpack::ManhattanDistance>> dbscan(
+    50.0 /* radius */, 10 /* minPoints */);
+
+// Perform clustering.
+arma::mat centroids;
+arma::Row<size_t> assignments;
+dbscan.Cluster(dataset, assignments, centroids);
+
+// Print the number of clusters and the number of points in each cluster.
+std::cout << "DBSCAN found " << centroids.n_cols << " clusters."
+    << std::endl;
+for (size_t i = 0; i < centroids.n_cols; ++i)
+{
+  std::cout << " - Cluster " << i << " has " << arma::accu(assignments == i)
+      << " points assigned to it." << std::endl;
+}
+std::cout << " - " << arma::accu(assignments == SIZE_MAX) << " points were "
+    << "classified as noise and not assigned to any cluster." << std::endl;
+```
+
+---
+
 Perform DBSCAN clustering on the cloud dataset, using 32-bit floating point
 matrices to represent the data via the
 [`RangeSearchType` template parameter](#advanced-functionality-template-parameters).
@@ -359,6 +399,10 @@ behavior.  The full signature of the class is:
 DBSCAN<RangeSearchType, PointSelectionPolicy>
 ```
 
+Arbitrary distance metrics are supported; as all distance-related computations
+are performed by the `RangeSearchType` class, the distance metric is specified
+as a part of that template parameter.
+
 ---
 
 <!-- TODO: elaborate here once RangeSearch is documented -->
@@ -388,6 +432,13 @@ RangeSearch<DistanceType, MatType, TreeType>
        [`Cluster()`](#clustering).
    - `TreeType` is the [tree type](../core/trees.md) used for tree-based
      searching.  By default, [`KDTree`](../core/trees/kdtree.md) is used.
+
+ * To use a custom distance metric with `DBSCAN` without modifying any other
+   template parameters, use `RangeSearch<DistanceType>`.
+   - A list of distance metrics included with mlpack can be found
+     [here](../core/distances.md).
+   - For example, using the Manhattan distance could be done by specifying
+     `RangeSearchType` as `RangeSearch<ManhattanDistance>`.
 
  * An entirely custom `RangeSearchType` must implement two typedefs and three
    member functions:
