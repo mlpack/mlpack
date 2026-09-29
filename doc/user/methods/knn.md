@@ -70,8 +70,8 @@ computing the nearest neighbors of points.
 ```c++
 // Compute the 5 exact nearest neighbors of every point of random numeric data.
 
-// All data is uniform random: 10-dimensional data.  Replace with a Load()
-// call or similar for a real application.
+// All data is uniform random in 10 dimensions.  Replace with a Load() call or
+// similar for a real application.
 arma::mat referenceSet(10, 1000, arma::fill::randu); // 1000 points.
 
 mlpack::KNN knn;                     // Step 1: create object.
@@ -117,6 +117,7 @@ std::cout << "Found " << neighbors.n_rows << " neighbors for each of "
  * [Nearest neighbor search on Wikipedia](https://en.wikipedia.org/wiki/Nearest_neighbor_search)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
  * [`KFN` (k-furthest-neighbors)](kfn.md)
+ * [`RangeSearch`](range_search.md)
 
 ### Constructors
 
@@ -166,7 +167,7 @@ to use `std::move()` if possible.
 |----------|----------|-----------------|-------------|
 | `referenceSet` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix containing dataset to search for nearest neighbors in. | _(N/A)_ |
 | `referenceTree` | `KNN::Tree` (a [`KDTree`](../core/trees/kdtree.md)) | Pre-built kd-tree on reference data. | _(N/A)_ |
-| `strategy` | `enum NeighborSearchStrategy` | The search strategy that will be used when `Search()` is called.  Must be one of `NAIVE`, `SINGLE_TREE`, `DUAL_TREE`, or `GREEDY_SINGLE_TREE`.  [More details.](#search-strategies) | `DUAL_TREE` |
+| `strategy` | `enum TreeSearchStrategy` | The search strategy that will be used when `Search()` is called.  Must be one of `NAIVE`, `SINGLE_TREE`, `DUAL_TREE`, or `GREEDY_SINGLE_TREE`.  [More details.](#search-strategies) | `DUAL_TREE` |
 | `epsilon` | `double` | Allowed relative approximation error.  `0` means exact search.  Must be non-negative. | `0.0` |
 
 ***Notes:***
@@ -339,10 +340,12 @@ can be done with the `Search()` method.
 | **name** | **type** | **description** |
 |----------|----------|-----------------|
 | `querySet` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix of query points for which the nearest neighbors in the reference set should be found. |
+| `queryTree` | `KNN::Tree` | Pre-built tree on query points to use for dual-tree search. |
 | `k` | `size_t` | Number of nearest neighbors to search for. |
 | `neighbors` | [`arma::Mat<size_t>`](../matrices.md) | Matrix to store indices of nearest neighbors into.  Will be set to size `k` x `N`, where `N` is the number of points in the query set (if specified), or the reference set (if not). |
 | `distances` | [`arma::mat`](../matrices.md) | Matrix to store distances to nearest neighbors into.  Will be set to the same size as `neighbors`. |
 | `sameSet` | `bool` | *(Only for `Search()` with a query set.)* If `true`, then `querySet` is the same set as the reference set. |
+<!-- TODO: query tree -->
 
 ### Computing quality metrics
 
@@ -419,8 +422,8 @@ compute quality metrics of the approximate search.
  - A `KNN` object can be serialized with
    [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).  Note
    that for large reference sets, this will also serialize the dataset
-   (`knn.ReferenceSet()`) and the tree (`knn.Tree()`), and so the resulting file
-   may be quite large.
+   (`knn.ReferenceSet()`) and the tree (`knn.ReferenceTree()`), and so the
+   resulting file may be quite large.
 
  - `KNN::Tree` is a convenience typedef representing the type of the tree that
    is used for searching.
@@ -429,7 +432,7 @@ compute quality metrics of the approximate search.
    * If a
      [custom `TreeType`, `DistanceType`, and/or `MatType`](#advanced-functionality-template-parameters)
      are specified, then
-     `KNNType<DistanceType, TreeType, MatType>::Tree = TreeType<DistanceType, NearestNeighborStat, MatType>`.
+     `KNNType<DistanceType, MatType, TreeType>::Tree = TreeType<DistanceType, NearestNeighborStat, MatType>`.
    * A custom tree can be built and passed to
      [`Train()`](#setting-the-reference-set-train) or the
      [constructor](#constructors) with, e.g., `tree = KNN::Tree(referenceSet)`
@@ -622,16 +625,16 @@ mlpack::Load("knn.bin", knn);
 
 // Inspect the KDTree held by the KNN object.
 std::cout << "The KDTree in the KNN object in 'knn.bin' holds "
-    << knn.ReferenceTree().NumDescendants() << " points." << std::endl;
-std::cout << "The root of the tree has " << knn.ReferenceTree().NumChildren()
+    << knn.ReferenceTree()->NumDescendants() << " points." << std::endl;
+std::cout << "The root of the tree has " << knn.ReferenceTree()->NumChildren()
     << " children." << std::endl;
-if (knn.ReferenceTree().NumChildren() == 2)
+if (knn.ReferenceTree()->NumChildren() == 2)
 {
   std::cout << " - The left child holds "
-      << knn.ReferenceTree().Child(0).NumDescendants() << " points."
+      << knn.ReferenceTree()->Child(0).NumDescendants() << " points."
       << std::endl;
   std::cout << " - The right child holds "
-      << knn.ReferenceTree().Child(1).NumDescendants() << " points."
+      << knn.ReferenceTree()->Child(1).NumDescendants() << " points."
       << std::endl;
 }
 ```
@@ -693,17 +696,17 @@ the class is:
 
 ```
 KNNType<DistanceType,
-        TreeType,
         MatType,
+        TreeType,
         DualTreeTraversalType,
         SingleTreeTraversalType>
 ```
 
  * `DistanceType`: specifies the [distance metric](../core/distances.md) to be
    used for finding nearest neighbors.
+ * `MatType`: specifies the type of matrix used for representation of data.
  * `TreeType`: specifies the type of [tree](../core/trees.md) to be used for
    indexing points for fast tree-based search.
- * `MatType`: specifies the type of matrix used for representation of data.
  * `DualTreeTraversalType`: specifies the
    [traversal](../../developer/trees.md#traversals) strategy that will be used
    when searching with the dual-tree strategy.
@@ -724,7 +727,7 @@ When custom template parameters are specified:
    [`Search()`](#searching-for-neighbors), the corresponding returned distance
    will be the maximum value supported by the element type of `MatType` (e.g.
    `DBL_MAX` for `double`, `FLT_MAX` for `float`, etc.).
- * The convenience typedef `Tree` (e.g. `KNNType<DistanceType, TreeType, MatType, DualTreeTraversalType, SingleTreeTraversalType>::Tree`) will be equivalent to
+ * The convenience typedef `Tree` (e.g. `KNNType<DistanceType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType>::Tree`) will be equivalent to
    `TreeType<DistanceType, NearestNeighborStat, MatType>`.
  * All tree parameters (`referenceTree` and `queryTree`) should have type
    `TreeType<DistanceType, NearestNeighborStat, MatType>`.
@@ -754,6 +757,18 @@ When custom template parameters are specified:
 
 ---
 
+#### `MatType`
+
+ * Specifies the type of matrix to use for representing data (the reference set
+   and the query set).
+
+ * The default `MatType` is `arma::mat` (dense 64-bit precision matrix).
+
+ * Any matrix type implementing the Armadillo API will work; so, for instance,
+   `arma::fmat` or `arma::sp_mat` can also be used.
+
+---
+
 #### `TreeType`
 
  * Specifies the tree type that will be built on the reference set (and
@@ -768,18 +783,6 @@ When custom template parameters are specified:
    it is possible if desired.
    - If you have implemented a fully-working `TreeType` yourself, please
      contribute it upstream if possible!
-
----
-
-#### `MatType`
-
- * Specifies the type of matrix to use for representing data (the reference set
-   and the query set).
-
- * The default `MatType` is `arma::mat` (dense 64-bit precision matrix).
-
- * Any matrix type implementing the Armadillo API will work; so, for instance,
-   `arma::fmat` or `arma::sp_mat` can also be used.
 
 ---
 

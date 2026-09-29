@@ -77,7 +77,7 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
   // calculation.
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
-  TreeType* tree = new TreeType(data, oldFromNew, newFromOld, 1);
+  TreeType tree(data, oldFromNew, newFromOld, 1);
   for (int i = 0; i < 3; ++i)
   {
     RangeSearch<>* rs;
@@ -85,10 +85,10 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
     switch (i)
     {
       case 0: // Use the naive method.
-        rs = new RangeSearch<>(tree->Dataset(), true);
+        rs = new RangeSearch<>(tree.Dataset(), NAIVE);
         break;
       case 1: // Use the single-tree method.
-        rs = new RangeSearch<>(tree, true);
+        rs = new RangeSearch<>(tree, SINGLE_TREE);
         break;
       case 2: // Use the dual-tree method.
         rs = new RangeSearch<>(tree);
@@ -454,8 +454,6 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
     // Clean the memory.
     delete rs;
   }
-
-  delete tree;
 }
 
 /**
@@ -480,7 +478,7 @@ TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest][tiny]")
 
   RangeSearch<> rs(dualReferences);
 
-  RangeSearch<> naive(naiveReferences, true);
+  RangeSearch<> naive(naiveReferences, NAIVE);
 
   vector<vector<size_t>> neighborsTree;
   vector<vector<double>> distancesTree;
@@ -529,7 +527,7 @@ TEST_CASE("DualTreeVsNaive2", "[RangeSearchTest]")
   RangeSearch<> rs(dualQuery);
 
   // Set naive mode.
-  RangeSearch<> naive(naiveQuery, true);
+  RangeSearch<> naive(naiveQuery, NAIVE);
 
   vector<vector<size_t>> neighborsTree;
   vector<vector<double>> distancesTree;
@@ -575,10 +573,10 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
   arma::mat singleQuery(dataForTree);
   arma::mat naiveQuery(dataForTree);
 
-  RangeSearch<> single(singleQuery, false, true);
+  RangeSearch<> single(singleQuery, SINGLE_TREE);
 
   // Set up computation for naive mode.
-  RangeSearch<> naive(naiveQuery, true);
+  RangeSearch<> naive(naiveQuery, NAIVE);
 
   vector<vector<size_t>> neighborsSingle;
   vector<vector<double>> distancesSingle;
@@ -768,7 +766,7 @@ TEST_CASE("CoverTreeSingleTreeTest", "[RangeSearchTest]")
 
   // Set up cover tree range search.
   RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(data, false, true);
+      coversearch(data, SINGLE_TREE);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -841,8 +839,8 @@ TEST_CASE("SingleBallTreeTest", "[RangeSearchTest]")
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up ball tree range search.
-  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data, false,
-      true);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data,
+      SINGLE_TREE);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -1136,7 +1134,7 @@ TEST_CASE("TrainTreeTest", "[RangeSearchTest]")
   vector<vector<double>> distances, baselineDistances;
 
   RSType::Tree tree(dataset);
-  empty.Train(&tree);
+  empty.Train(std::move(tree));
 
   empty.Search(Range(0.5, 0.7), neighbors, distances);
   baseline.Search(Range(0.5, 0.7), baselineNeighbors, baselineDistances);
@@ -1172,7 +1170,7 @@ TEST_CASE("NaiveTrainTreeTest", "[RangeSearchTest]")
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   RangeSearch<>::Tree tree(dataset);
 
-  REQUIRE_THROWS_AS(empty.Train(&tree), std::invalid_argument);
+  REQUIRE_THROWS_AS(empty.Train(std::move(tree)), std::invalid_argument);
 }
 
 /**
@@ -1317,11 +1315,11 @@ TEST_CASE("RSModelTest", "[RangeSearchTest]")
       arma::mat referenceCopy(referenceData);
       arma::mat queryCopy(queryData);
       if (j == 0)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, DUAL_TREE);
       else if (j == 1)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, true);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, SINGLE_TREE);
       else if (j == 2)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, true, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, NAIVE);
 
       vector<vector<size_t>> neighbors;
       vector<vector<double>> distances;
@@ -1403,11 +1401,11 @@ TEST_CASE("RSModelMonochromaticTest", "[RangeSearchTest]")
       // We only have std::move() cosntructors, so make a copy of our data.
       arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, DUAL_TREE);
       else if (j == 1)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, false, true);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, SINGLE_TREE);
       else if (j == 2)
-        models[i].BuildModel(timers, std::move(referenceCopy), 5, true, false);
+        models[i].BuildModel(timers, std::move(referenceCopy), 5, NAIVE);
 
       vector<vector<size_t>> neighbors;
       vector<vector<double>> distances;
@@ -1445,7 +1443,7 @@ TEST_CASE("NeighborPtrDeleteTest", "[RangeSearchTest]")
   // Build the tree ourselves.
   vector<size_t> oldFromNewReferences;
   RangeSearch<>::Tree tree(dataset);
-  RangeSearch<> ra(&tree);
+  RangeSearch<> ra(std::move(tree));
 
   // Now make a query set.
   arma::mat queryset = arma::randu<arma::mat>(5, 50);
@@ -1589,14 +1587,14 @@ TEST_CASE("RangeSearchMoveOperatorTest", "[RangeSearchTest]")
 TEST_CASE("CopyConstructorAndOperatorNaiveTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  RangeSearch<> rs(std::move(dataset), true);
+  RangeSearch<> rs(std::move(dataset), NAIVE);
 
   // Copy constructor and operator.
   RangeSearch<> rs2(rs);
   RangeSearch<> rs3 = rs;
 
-  REQUIRE(rs2.Naive() == true);
-  REQUIRE(rs3.Naive() == true);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
+  REQUIRE(rs3.SearchStrategy() == NAIVE);
 
   // Get results.
   vector<vector<double>> distances, distances2, distances3;
@@ -1637,7 +1635,7 @@ TEST_CASE("CopyConstructorAndOperatorNaiveTest", "[RangeSearchTest]")
 TEST_CASE("MoveConstructorNaiveTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), NAIVE);
 
   // Get results.
   vector<vector<double>> distances, distances2;
@@ -1647,7 +1645,7 @@ TEST_CASE("MoveConstructorNaiveTest", "[RangeSearchTest]")
 
   RangeSearch<> rs2(std::move(*rs));
 
-  REQUIRE(rs2.Naive() == true);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
 
   delete rs;
 
@@ -1678,7 +1676,7 @@ TEST_CASE("MoveConstructorNaiveTest", "[RangeSearchTest]")
 TEST_CASE("MoveOperatorNaiveTest", "[RangeSearchTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), true);
+  RangeSearch<>* rs = new RangeSearch<>(std::move(dataset), NAIVE);
 
   // Get results.
   vector<vector<double>> distances, distances2;
@@ -1688,11 +1686,74 @@ TEST_CASE("MoveOperatorNaiveTest", "[RangeSearchTest]")
 
   RangeSearch<> rs2 = std::move(*rs);
 
-  REQUIRE(rs2.Naive() == true);
+  REQUIRE(rs2.SearchStrategy() == NAIVE);
 
   delete rs;
 
   rs2.Search(Range(0.2, 0.3), neighbors2, distances2);
+
+  // Check results.
+  REQUIRE(distances.size() == distances2.size());
+  REQUIRE(neighbors.size() == neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    REQUIRE(distances[i].size() == distances2[i].size());
+    REQUIRE(neighbors[i].size() == neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      REQUIRE(neighbors[i][j] == neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      REQUIRE(distances[i][j] == Approx(distances2[i][j]).epsilon(1e-7));
+    }
+  }
+}
+
+/**
+ * Test that search with a prebuilt tree works correctly.
+ */
+TEST_CASE("RangeSearchPrebuiltTree", "[RangeSearchTest]")
+{
+  arma::mat dataset(5, 500, arma::fill::randu);
+  // We have to use a tree that does not rearrange points so that reverse
+  // mappings are correct when we call with *rs.ReferenceTree().
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
+      rs(std::move(dataset), DUAL_TREE);
+
+  vector<vector<double>> distances, distances2;
+  vector<vector<size_t>> neighbors, neighbors2;
+
+  // First check that a prebuilt query tree with `sameSet = true` matches when
+  // we call with no query set.
+  rs.Search(Range(0.0, 0.15), neighbors, distances);
+  rs.Search(*rs.ReferenceTree(), Range(0.0, 0.15), neighbors2, distances2,
+      true);
+
+  // Check results.
+  REQUIRE(distances.size() == distances2.size());
+  REQUIRE(neighbors.size() == neighbors2.size());
+
+  for (size_t i = 0; i < neighbors.size(); ++i)
+  {
+    REQUIRE(distances[i].size() == distances2[i].size());
+    REQUIRE(neighbors[i].size() == neighbors2[i].size());
+
+    for (size_t j = 0; j < neighbors[i].size(); ++j)
+    {
+      REQUIRE(neighbors[i][j] == neighbors2[i][j]);
+
+      // Distances will always be between 0.2 and 0.3.
+      REQUIRE(distances[i][j] == Approx(distances2[i][j]).epsilon(1e-7));
+    }
+  }
+
+  // Now check that when we set sameSet = false, we get the same results as if
+  // we specified a separate query set.
+  rs.Search(rs.ReferenceSet(), Range(0.0, 0.15), neighbors, distances);
+  rs.Search(*rs.ReferenceTree(), Range(0.0, 0.15), neighbors2, distances2,
+      false);
 
   // Check results.
   REQUIRE(distances.size() == distances2.size());
