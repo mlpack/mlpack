@@ -41,7 +41,7 @@ typename MatType::elem_type MeanBiasErrorType<MatType>::Forward(
 
 template<typename MatType>
 void MeanBiasErrorType<MatType>::Backward(
-    const MatType& prediction,
+    const MatType& /* prediction */,
     const MatType& /* target */,
     MatType& loss)
 {
