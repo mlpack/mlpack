@@ -111,20 +111,24 @@ class MeanShift
                bool forceConvergence = false,
                bool useSeeds = true);
 
-  //! Get the maximum number of iterations.
+  // Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
-  //! Set the maximum number of iterations.
+  // Set the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Get the radius.
+  // Get the radius.
   double Radius() const { return radius; }
-  //! Set the radius.
+  // Set the radius.
   void Radius(double radius);
 
-  //! Get the kernel.
+  // Get the kernel.
   const KernelType& Kernel() const { return kernel; }
-  //! Modify the kernel.
+  // Modify the kernel.
   KernelType& Kernel() { return kernel; }
+
+  // Serialize the MeanShift object.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /**

@@ -333,6 +333,7 @@ one function (`Gradient()`):
 ```c++
 class CustomKernel
 {
+ public:
   // Evaluate the gradient of the kernel function given the distance between two
   // points.  Specifically, given that the kernel function is K(t) (where t is
   // the distance between the two points), this function should return K'(t).

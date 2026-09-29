@@ -447,8 +447,8 @@ julia> recommendations, _ = cf(input_model=model, query=users,
 
 ```julia
 julia> using mlpack: dbscan
-julia> assignments, centroids = dbscan(input; epsilon=1.0, min_size=5,
-          naive=false, selection_type="ordered", single_mode=false,
+julia> assignments, centroids = dbscan(input; epsilon=0.5, min_size=5,
+          naive=false, radius=0.5, selection_type="ordered", single_mode=false,
           tree_type="kd", verbose=false)
 ```
 
@@ -461,10 +461,11 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`Bool`](#doc_Bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `epsilon` | [`Float64`](#doc_Float64) | Radius of each range search. | `1.0` |
+| `epsilon` | [`Float64`](#doc_Float64) | Radius of each range search. (Deprecated: use 'radius' parameter instead!) | `0.5` |
 | `input` | [`Float64 matrix-like`](#doc_Float64_matrix_like) | Input dataset to cluster. | `**--**` |
 | `min_size` | [`Int`](#doc_Int) | Minimum number of points for a cluster. | `5` |
 | `naive` | [`Bool`](#doc_Bool) | If set, brute-force range search (not tree-based) will be used. | `false` |
+| `radius` | [`Float64`](#doc_Float64) | Radius of each range search. | `0.5` |
 | `selection_type` | [`String`](#doc_String) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `"ordered"` |
 | `single_mode` | [`Bool`](#doc_Bool) | If set, single-tree range search (not dual-tree) will be used. | `false` |
 | `tree_type` | [`String`](#doc_String) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `"kd"` |
@@ -484,7 +485,7 @@ Results are returned as a tuple, and can be unpacked directly into return values
 
 This program implements the DBSCAN algorithm for clustering using accelerated tree-based range search.  The type of tree that is used may be parameterized, or brute-force range search may also be used.
 
-The input dataset to be clustered may be specified with the `input` parameter; the radius of each range search may be specified with the `epsilon` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
+The input dataset to be clustered may be specified with the `input` parameter; the radius of each range search may be specified with the `radius` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
 
 The `assignments` and `centroids` output parameters may be used to save the output of the clustering. `assignments` contains the cluster assignments of each point, and `centroids` contains the centroids of each cluster.
 
@@ -496,7 +497,7 @@ An example usage to run DBSCAN on the dataset in ``input`` with a radius of 0.5 
 ```julia
 julia> using CSV
 julia> input = CSV.read("input.csv")
-julia> _, _ = dbscan(input; epsilon=0.5, min_size=5)
+julia> _, _ = dbscan(input; min_size=5, radius=0.5)
 ```
 
 ### See also

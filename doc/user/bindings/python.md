@@ -453,8 +453,8 @@ Then, to use this model to generate recommendations for the list of users in the
 ```python
 >>> from mlpack import dbscan
 >>> d = dbscan(check_input_matrices=False, copy_all_inputs=False,
-        epsilon=1, input_=np.empty([0, 0]), min_size=5, naive=False,
-        selection_type='ordered', single_mode=False, tree_type='kd',
+        epsilon=0.5, input_=np.empty([0, 0]), min_size=5, naive=False,
+        radius=0.5, selection_type='ordered', single_mode=False, tree_type='kd',
         verbose=False)
 >>> assignments = d['assignments']
 >>> centroids = d['centroids']
@@ -470,10 +470,11 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `False` |
 | `copy_all_inputs` | [`bool`](#doc_bool) | If specified, all input parameters will be deep copied before the method is run.  This is useful for debugging problems where the input parameters are being modified by the algorithm, but can slow down the code.  <span class="special">Only exists in Python binding.</span> | `False` |
-| `epsilon` | [`float`](#doc_float) | Radius of each range search. | `1` |
+| `epsilon` | [`float`](#doc_float) | Radius of each range search. (Deprecated: use 'radius' parameter instead!) | `0.5` |
 | `input_` | [`matrix`](#doc_matrix) | Input dataset to cluster. | `**--**` |
 | `min_size` | [`int`](#doc_int) | Minimum number of points for a cluster. | `5` |
 | `naive` | [`bool`](#doc_bool) | If set, brute-force range search (not tree-based) will be used. | `False` |
+| `radius` | [`float`](#doc_float) | Radius of each range search. | `0.5` |
 | `selection_type` | [`str`](#doc_str) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `'ordered'` |
 | `single_mode` | [`bool`](#doc_bool) | If set, single-tree range search (not dual-tree) will be used. | `False` |
 | `tree_type` | [`str`](#doc_str) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `'kd'` |
@@ -493,7 +494,7 @@ Results are returned in a Python dictionary.  The keys of the dictionary are the
 
 This program implements the DBSCAN algorithm for clustering using accelerated tree-based range search.  The type of tree that is used may be parameterized, or brute-force range search may also be used.
 
-The input dataset to be clustered may be specified with the `input_` parameter; the radius of each range search may be specified with the `epsilon` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
+The input dataset to be clustered may be specified with the `input_` parameter; the radius of each range search may be specified with the `radius` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
 
 The `assignments` and `centroids` output parameters may be used to save the output of the clustering. `assignments` contains the cluster assignments of each point, and `centroids` contains the centroids of each cluster.
 
@@ -503,7 +504,7 @@ The range search may be controlled with the `tree_type`, `single_mode`, and `nai
 An example usage to run DBSCAN on the dataset in `'input'` with a radius of 0.5 and a minimum cluster size of 5 is given below:
 
 ```python
->>> dbscan(input_=input, epsilon=0.5, min_size=5)
+>>> dbscan(input_=input, radius=0.5, min_size=5)
 ```
 
 ### See also
