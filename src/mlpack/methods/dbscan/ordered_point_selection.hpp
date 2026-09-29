@@ -17,7 +17,8 @@
 namespace mlpack {
 
 /**
- * This class can be used to sequentially select the next point to use for DBSCAN.
+ * This class can be used to sequentially select the next point to use for
+ * DBSCAN.
  */
 class OrderedPointSelection
 {
@@ -25,11 +26,13 @@ class OrderedPointSelection
   /**
    * Select the next point to use, sequentially.
    *
-   * @param point unvisited Bitset indicating which points are unvisited.
+   * @param point Default index of point to use.
+   * @param visited Bitset indicating which points have already been visited.
    * @param * (data) Unused data.
    */
   template<typename MatType>
   static size_t Select(const size_t point,
+                       const std::vector<bool>& /* visited */,
                        const MatType& /* data */)
   {
     return point; // Just return point.

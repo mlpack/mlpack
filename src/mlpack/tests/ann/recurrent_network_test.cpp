@@ -918,13 +918,12 @@ void ReberGrammarTestNetwork(ModelType& model,
 
     for (size_t epoch = 0; epoch < maxEpochs; epoch++)
     {
-      double loss = 0.0;
       for (size_t j = 0; j < trainSize; ++j)
       {
         // Each input sequence may have a different length, so we need to train
         // them differently.
         model.BPTTSteps() = trainInput[j].n_slices;
-        loss += model.Train(trainInput[j], trainLabels[j], opt);
+        model.Train(trainInput[j], trainLabels[j], opt);
       }
 
 

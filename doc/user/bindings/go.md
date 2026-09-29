@@ -527,9 +527,10 @@ import (
 
 // Initialize optional parameters for Dbscan().
 param := mlpack.DbscanOptions()
-param.Epsilon = 1
+param.Epsilon = 0.5
 param.MinSize = 5
 param.Naive = false
+param.Radius = 0.5
 param.SelectionType = "ordered"
 param.SingleMode = false
 param.TreeType = "kd"
@@ -548,10 +549,11 @@ There are two types of input options: required options, which are passed directl
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `CheckInputMatrices` | [`bool`](#doc_bool) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `false` |
-| `Epsilon` | [`float64`](#doc_float64) | Radius of each range search. | `1` |
+| `Epsilon` | [`float64`](#doc_float64) | Radius of each range search. (Deprecated: use 'radius' parameter instead!) | `0.5` |
 | `input` | [`*mat.Dense`](#doc_a__mat_Dense) | Input dataset to cluster. | `**--**` |
 | `MinSize` | [`int`](#doc_int) | Minimum number of points for a cluster. | `5` |
 | `Naive` | [`bool`](#doc_bool) | If set, brute-force range search (not tree-based) will be used. | `false` |
+| `Radius` | [`float64`](#doc_float64) | Radius of each range search. | `0.5` |
 | `SelectionType` | [`string`](#doc_string) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `"ordered"` |
 | `SingleMode` | [`bool`](#doc_bool) | If set, single-tree range search (not dual-tree) will be used. | `false` |
 | `TreeType` | [`string`](#doc_string) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `"kd"` |
@@ -571,7 +573,7 @@ Output options are returned via Go's support for multiple return values, in the 
 
 This program implements the DBSCAN algorithm for clustering using accelerated tree-based range search.  The type of tree that is used may be parameterized, or brute-force range search may also be used.
 
-The input dataset to be clustered may be specified with the `Input` parameter; the radius of each range search may be specified with the `Epsilon` parameters, and the minimum number of points in a cluster may be specified with the `MinSize` parameter.
+The input dataset to be clustered may be specified with the `Input` parameter; the radius of each range search may be specified with the `Radius` parameters, and the minimum number of points in a cluster may be specified with the `MinSize` parameter.
 
 The `Assignments` and `Centroids` output parameters may be used to save the output of the clustering. `Assignments` contains the cluster assignments of each point, and `Centroids` contains the centroids of each cluster.
 
@@ -583,7 +585,7 @@ An example usage to run DBSCAN on the dataset in `input` with a radius of 0.5 an
 ```go
 // Initialize optional parameters for Dbscan().
 param := mlpack.DbscanOptions()
-param.Epsilon = 0.5
+param.Radius = 0.5
 param.MinSize = 5
 
 _, _ := mlpack.Dbscan(input, param)

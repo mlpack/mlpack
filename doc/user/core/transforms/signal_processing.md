@@ -105,7 +105,7 @@ for (size_t k = 0; k < numToShow; ++k)
 #### See also:
 
  * [Empirical Mode Decomposition on Wikipedia](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Empirical_mode_decomposition)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://hal.science/hal-04014501/file/huang1998.pdf) (original EMD paper)
 
 
 ## EEMD
@@ -167,7 +167,7 @@ mlpack::EEMD(signal, imfs, residue, 100, 0.15, 10, 50, 1e-2);
 #### See also:
 
  * [Ensemble Empirical Mode Decomposition](https://perso.ens-lyon.fr/patrick.flandrin/EEMD.pdf) (original EEMD paper)
- * [EMD for nonlinear and non-stationary time series analysis](https://ui.adsabs.harvard.edu/abs/1998RSPSA.454..903H/abstract) (original EMD paper)
+ * [EMD for nonlinear and non-stationary time series analysis](https://hal.science/hal-04014501/file/huang1998.pdf) (original EMD paper)
 
 ## MFE
 

@@ -621,6 +621,22 @@ then
   num_links=`cat links_to_check.txt | wc -l`;
   if [ $num_links -gt 0 ];
   then
+    # Filter out any links to check that expired, but no longer exist in doc/.
+    touch links_to_check.filtered.txt;
+    while read link;
+    do
+      link_found=`grep --exclude-dir="doc/html/" -r "$link" doc/ | wc -l`;
+      if [ $link_found -gt 0 ]; then
+        echo $link >> links_to_check.filtered.txt;
+      else
+        echo "Expired cached link '$link' not found in doc/; not re-checking.";
+      fi
+    done < links_to_check.txt;
+    mv links_to_check.filtered.txt links_to_check.txt;
+  fi
+
+  if [ $num_links -gt 0 ];
+  then
     echo "Second check for the following URLs that failed the first time:";
     cat links_to_check.txt | sed 's/^/  /';
 
@@ -710,6 +726,22 @@ then
              result = 'syntax OK');" |\
       sqlite3 "$output_dir/all_links.db" > links_to_check.txt;
   num_links=`cat links_to_check.txt | wc -l`;
+  if [ $num_links -gt 0 ];
+  then
+    # Filter out any links to check that expired, but no longer exist in doc/.
+    touch links_to_check.filtered.txt;
+    while read link;
+    do
+      link_found=`grep --exclude-dir="doc/html/" -r "$link" doc/ | wc -l`;
+      if [ $link_found -gt 0 ]; then
+        echo $link >> links_to_check.filtered.txt;
+      else
+        echo "Expired cached link '$link' not found in doc/; not re-checking.";
+      fi
+    done < links_to_check.txt;
+    mv links_to_check.filtered.txt links_to_check.txt;
+  fi
+
   if [ $num_links -gt 0 ];
   then
     echo "Checking $num_links links before their cache entry expires...";

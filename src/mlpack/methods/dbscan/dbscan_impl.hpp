@@ -21,12 +21,12 @@ namespace mlpack {
  */
 template<typename RangeSearchType, typename PointSelectionPolicy>
 DBSCAN<RangeSearchType, PointSelectionPolicy>::DBSCAN(
-    const ElemType epsilon,
+    const ElemType radius,
     const size_t minPoints,
     const bool batchMode,
     RangeSearchType rangeSearch,
     PointSelectionPolicy pointSelector) :
-    epsilon(epsilon),
+    radius(radius),
     minPoints(minPoints),
     batchMode(batchMode),
     rangeSearch(rangeSearch),
@@ -166,6 +166,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 
   std::vector<bool> visited(data.n_cols, false);
   std::vector<bool> nonCorePoints(data.n_cols, false);
+  std::vector<bool> everVisited(data.n_cols, false);
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -173,12 +174,13 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
 
     // Get the next index.
-    const size_t index = pointSelector.Select(i, data);
+    const size_t index = pointSelector.Select(i, everVisited, data);
     visited[index] = true;
+    everVisited[index] = true;
 
     // Do the range search for only this point.
     rangeSearch.Search(data.col(index),
-        RangeType<ElemType>(ElemType(0.0), epsilon), neighbors, distances);
+        RangeType<ElemType>(ElemType(0.0), radius), neighbors, distances);
 
     // Union to all neighbors if the point is not noise.
     //
@@ -188,6 +190,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     {
       for (size_t j = 0; j < neighbors[0].size(); ++j)
       {
+        everVisited[neighbors[0][j]] = true;
+
         // Union to all neighbors that either do not have a label, or are core
         // points of other clusters.  (When we union to another core point, we
         // are merging clusters.)
@@ -225,13 +229,13 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
     UnionFind& uf)
 {
-  // For each point, find the points in epsilon-neighborhood and their
+  // For each point, find the points in radius-neighborhood and their
   // distances.
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
   rangeSearch.Train(data);
-  rangeSearch.Search(RangeType<ElemType>(ElemType(0.0), epsilon), neighbors,
+  rangeSearch.Search(RangeType<ElemType>(ElemType(0.0), radius), neighbors,
       distances);
   Log::Info << "Range search complete." << std::endl;
 
@@ -239,19 +243,25 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   // is the same here, but we have cached all range search results already.
   // That means we already have computed whether each point is or is not a core
   // point, just based on the size of its neighbors; so we don't need an
-  // auxiliary std::vector<bool> for that.
+  // auxiliary std::vector<bool> for that.  We do need a std::vector<bool> to
+  // track which points have ever been visited for the point selector, though.
+  std::vector<bool> visited(data.n_cols, false);
 
   // Now loop over all points.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Get the next index.
-    const size_t index = pointSelector.Select(i, data);
+    const size_t index = pointSelector.Select(i, visited, data);
+    visited[index] = true;
+
     // Monochromatic dual-tree range search does not return the point as its own
     // neighbor, so we are looking for `minPoints - 1` instead.
     if (neighbors[index].size() >= minPoints - 1)
     {
       for (size_t j = 0; j < neighbors[index].size(); ++j)
       {
+        visited[neighbors[index][j]] = true;
+
         if (uf.Find(neighbors[index][j]) == neighbors[index][j])
         {
           // This unions unlabeled points.
@@ -265,6 +275,19 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
       }
     }
   }
+}
+
+// Serialize the DBSCAN object.
+template<typename RangeSearchType, typename PointSelectionPolicy>
+template<typename Archive>
+void DBSCAN<RangeSearchType, PointSelectionPolicy>::serialize(
+    Archive& ar, const unsigned int /* version */)
+{
+  ar(CEREAL_NVP(radius));
+  ar(CEREAL_NVP(minPoints));
+  ar(CEREAL_NVP(batchMode));
+  ar(CEREAL_NVP(rangeSearch));
+  ar(CEREAL_NVP(pointSelector));
 }
 
 } // namespace mlpack
