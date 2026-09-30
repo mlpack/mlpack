@@ -35,7 +35,7 @@ and [format detection/selection](#formats).
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
-   * gzip-compressed local or remote files (`.csv.gz`, `.arff.gz`, etc.) can also be
+   * [gzip-compressed](#loading-gzip-compressed-files) local or remote files (`.csv.gz`, `.arff.gz`, etc.) can also be
      decompressed.
 
  - `Load(path, X, Option1 + Option2 + ...)`
@@ -100,7 +100,8 @@ if (!success)
 ```
 
 Loading a compressed gzip file (requires
-[`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)):
+[`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions);
+see [Loading gzip-compressed files](#loading-gzip-compressed-files)):
 
 ```c++
 // Make sure MLPACK_USE_ZLIB is defined before including mlpack!
@@ -557,7 +558,9 @@ given in the table.
 |---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
 | `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect`  | _(n/a)_                   | All [data types](#types). | The format of the file is autodetected as one of the formats below. |
 |---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
-|`gzip`                     | `N/A (Required to link with -lz)`               | `.gz`                     | All [data types](#types). | gzipped format, decompress the file into any intermediate supported format such as CSV, TSV, etc.|
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| _(N/A)_                   | _(N/A)_                                         | `.gz`                     | All [data types](#types). | gzip-compressed format.  Requires [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions) and linking with `-lz`.  The file is decompressed into any intermediate supported format such as CSV, TSV, etc.  See [Loading gzip-compressed files](#loading-gzip-compressed-files). |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
 | `CSV`                      | `opts.Format() = mlpack::FileType::CSVASCII;`   | `.csv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
 | `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;`   | `.tsv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
 | `ArmaASCII`               | `opts.Format() = mlpack::FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
