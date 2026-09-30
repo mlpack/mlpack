@@ -199,7 +199,7 @@ cmake_minimum_required(VERSION 3.19) # for COMMAND_ERROR_IS_FATAL in execute_pro
 set(ARMADILLO_VERSION "10.8.2")
 set(ENSMALLEN_VERSION "2.10.0")
 set(CEREAL_VERSION "1.1.2")
-set(OPENBLAS_VERSION "0.3.34")
+set(OPENBLAS_VERSION "0.3.33")
 
 # Set library version to be used when fetching them from the source.
 set(ARMADILLO_FETCH_VERSION "12.6.5")
