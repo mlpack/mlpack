@@ -782,7 +782,7 @@ When a remote URL is given to `Load()`:
    [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)),
    gzip-compressed files (`.csv.gz`, `.arff.gz`, etc.) are automatically
    decompressed after download.  Local `.gz` files can also be loaded directly
-   with `Load()` (see [Loading local gzip-compressed files](#loading-local-gzip-compressed-files)).
+   with `Load()` (see [Loading gzip-compressed files](#loading-gzip-compressed-files)).
 
 Instead of passing a URL directly to `Load()`, it is also possible to download a
 remote dataset manually to a specific local path with the
@@ -879,7 +879,8 @@ format (e.g. `data.csv.gz` is loaded as CSV, `data.arff.gz` as ARFF).
 #endif
 
 arma::mat data;
-mlpack::Load("my_dataset.csv.gz", data, mlpack::Fatal);
+// See https://datasets.mlpack.org/avocado.csv.gz.
+mlpack::Load("avocado.csv.gz", data, mlpack::Fatal);
 
 std::cout << "Loaded " << data.n_cols << " points with "
     << data.n_rows << " dimensions." << std::endl;
