@@ -42,7 +42,7 @@ movements with the highest possible accuracy.
 The example is split into four small independent programs, each of which
 performs a single task:
 
- * `imu_test`: sensor check + magnetometer calibration
+ * `imu_test`: sensor check
  * `collect`: record sensor data to CSV
  * `train`: train a neural network from the CSVs
  * `infer`: live inference from the IMU
@@ -241,9 +241,11 @@ i2cdetect -y -r 0
 3. Collect labelled data.  Each recording is labelled according to executed
    movements with the following `<label>_<date>.csv` format.
    To use the collect command
-   ``` 
-   collect <label> [sensors] [out-dir] [device] [rate-hz] duration-sec] [mag-cal]`
    ```
+   collect <label> [sensors] [out-dir] [device] [rate-hz] <duration-sec>
+   ```
+   `collect` records for the given `duration-sec` and then stops on its own, so
+   `duration-sec` is required and must be greater than zero.
 In the following example, we record accelerometer only, into `data`,
 on the default I2C bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
 
