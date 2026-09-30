@@ -859,7 +859,7 @@ mlpack::Load("avocado.csv", data);
 ### Loading gzip-compressed files
 
 When [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)
-is enabled, `Load()` can directly load local `.gz` files.  If the file has a
+is enabled, `Load()` can directly load `.gz` files.  If the file or URL has a
 `.gz` extension and contains valid gzip data, it is decompressed to a
 temporary file before loading.  The inner extension determines the file
 format (e.g. `data.csv.gz` is loaded as CSV, `data.arff.gz` as ARFF).
