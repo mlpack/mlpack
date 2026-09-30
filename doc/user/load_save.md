@@ -103,16 +103,17 @@ Loading a compressed gzip file (requires
 [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)):
 
 ```c++
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
 // See https://datasets.mlpack.org/avocado.csv.gz.
 arma::mat data;
-#ifdef MLPACK_USE_ZLIB
 mlpack::Load("avocado.csv.gz", data);
 
 std::cout << "Loaded avocado.csv.gz: " << data.n_rows << " x " << data.n_cols
     << "." << std::endl;
-#else
-std::cout << "zlib not enabled; skipping gzip example." << std::endl;
-#endif
 ```
 
 See also the other examples for each [supported load type](#types):
@@ -847,7 +848,11 @@ is enabled, `DownloadFile()` automatically decompresses `.gz` files after
 downloading.
 
 ```c++
-// To use gzip decompression, enable MLPACK_USE_ZLIB and link with -lz.
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
 mlpack::DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
     "avocado.csv.gz");
 
@@ -865,8 +870,11 @@ temporary file before loading.  The inner extension determines the file
 format (e.g. `data.csv.gz` is loaded as CSV, `data.arff.gz` as ARFF).
 
 ```c++
-// Load a local gzip-compressed CSV file directly.
-// Requires MLPACK_USE_ZLIB to be enabled.
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
 arma::mat data;
 mlpack::Load("my_dataset.csv.gz", data, mlpack::Fatal);
 
