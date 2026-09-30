@@ -334,6 +334,7 @@ jobs:
           # The .dlls are stored in the bin/ directory, and those are the ones
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
+          cp -v '${{ env.VCPKG_INSTALLATION_ROOT }}'/installed/x64-windows/bin/zlib1.dll build/
           cd build/
           ./mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           # Remove version numbers and other non-xml from the output.
