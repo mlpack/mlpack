@@ -856,7 +856,7 @@ arma::mat data;
 mlpack::Load("avocado.csv", data);
 ```
 
-### Loading local gzip-compressed files
+### Loading gzip-compressed files
 
 When [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)
 is enabled, `Load()` can directly load local `.gz` files.  If the file has a
