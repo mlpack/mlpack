@@ -85,13 +85,13 @@ template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
-         typename MatType>
+         typename DeprecatedMatType>
 KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 KMeans(const size_t maxIterations,
        const DistanceType distance,
        const InitialPartitionPolicy partitioner,
@@ -114,13 +114,14 @@ template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
-         typename MatType>
+         typename DeprecatedMatType>
+template<typename MatType>
 inline void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Row<size_t>& assignments,
@@ -138,16 +139,17 @@ template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
-         typename MatType>
+         typename DeprecatedMatType>
+template<typename MatType>
 void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
-        arma::mat& centroids,
+        MatType& centroids,
         const bool initialGuess)
 {
   // Make sure we have more points than clusters.
@@ -264,17 +266,18 @@ template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
-         typename MatType>
+         typename DeprecatedMatType>
+template<typename MatType>
 void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Row<size_t>& assignments,
-        arma::mat& centroids,
+        MatType& centroids,
         const bool initialAssignmentGuess,
         const bool initialCentroidGuess)
 {
@@ -331,13 +334,14 @@ template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType,
-         typename MatType>
+         typename DeprecatedMatType>
 template<typename Archive>
 void KMeans<DistanceType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::serialize(Archive& ar, const uint32_t /* version */)
+            DeprecatedMatType>::serialize(Archive& ar,
+                                          const uint32_t /* version */)
 {
   ar(CEREAL_NVP(maxIterations));
   ar(CEREAL_NVP(distance));

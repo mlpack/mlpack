@@ -78,7 +78,8 @@ template<typename DistanceType = EuclideanDistance,
          typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
          template<class, class> class LloydStepType = NaiveKMeans,
-         typename MatType = arma::mat>
+         // This parameter is deprecated and will be removed in mlpack 5.0.0.
+         typename DeprecatedMatType = arma::mat>
 class KMeans
 {
  public:
@@ -114,6 +115,7 @@ class KMeans
    * @param initialGuess If true, then it is assumed that assignments has a list
    *      of initial cluster assignments.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Row<size_t>& assignments,
@@ -132,9 +134,10 @@ class KMeans
    * @param initialGuess If true, then it is assumed that centroids contains the
    *      initial cluster centroids.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                size_t clusters,
-               arma::mat& centroids,
+               MatType& centroids,
                const bool initialGuess = false);
 
   /**
@@ -157,10 +160,11 @@ class KMeans
    * @param initialCentroidGuess If true, then it is assumed that centroids
    *      contains the initial centroids of each cluster.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Row<size_t>& assignments,
-               arma::mat& centroids,
+               MatType& centroids,
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);
 
