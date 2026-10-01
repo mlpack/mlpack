@@ -244,17 +244,7 @@ jobs:
           nuget install OpenBLAS -o deps
           nuget install ensmallen -o deps -Version 2.17.0
           vcpkg install zlib:x64-windows
-          # Show exactly where vcpkg installed zlib (lib + headers).
-          Write-Host "VCPKG_INSTALLATION_ROOT = $env:VCPKG_INSTALLATION_ROOT"
-          Write-Host "=== lib directory ==="
-          ls "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\"
-          Write-Host "=== include directory ==="
-          ls "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include\"
-          Write-Host "=== zlib.h location ==="
-          Get-ChildItem -Path "$env:VCPKG_INSTALLATION_ROOT\installed" -Recurse -Filter "zlib.h" | ForEach-Object { $_.FullName }
-          Write-Host "=== z.lib location ==="
-          Get-ChildItem -Path "$env:VCPKG_INSTALLATION_ROOT\installed" -Recurse -Filter "z.lib" | ForEach-Object { $_.FullName }
-          # Verify both the library and header exist.
+          # Verify the zlib library, header, and DLL exist.
           if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib")) {
             Write-Error "z.lib not found after vcpkg install!"
             exit 1
@@ -263,14 +253,16 @@ jobs:
             Write-Error "zlib.h not found after vcpkg install!"
             exit 1
           }
-          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\zlib1.dll")) {
-            Write-Error "zlib1.dll not found after vcpkg install!"
+          # The zlib DLL name depends on the vcpkg port version (zlib1.dll,
+          # z.dll, ...), so copy whatever DLLs vcpkg put in bin/.
+          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\*.dll")) {
+            Write-Error "zlib DLL not found after vcpkg install!"
             exit 1
           }
           # Export the actual paths so later bash steps can use them.
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_LIB_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib"
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_INCLUDE_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include"
-          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_DLL_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\zlib1.dll"
+          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_BIN_DIR=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin"
           # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\share -Force -Recurse
           Remove-Item deps\ensmallen.2.17.0\installed\x64-linux\include\armadillo_bits -Force -Recurse
@@ -310,9 +302,6 @@ jobs:
       - name: Configure mlpack with CMake
         shell: bash
         run: |
-          echo "=== ZLIB paths from powershell step ==="
-          echo "ZLIB_LIB_PATH=${ZLIB_LIB_PATH}"
-          echo "ZLIB_INCLUDE_PATH=${ZLIB_INCLUDE_PATH}"
           mkdir build && cd build
           cmake -G "Ninja" -DUSE_PRECOMPILED_HEADERS=OFF -DBUILD_TESTS=ON \
               -DCMAKE_BUILD_TYPE=Release \
@@ -339,7 +328,7 @@ jobs:
           # The .dlls are stored in the bin/ directory, and those are the ones
           # we need to run with.
           cp -v '${{ github.workspace }}'/deps/OpenBLAS.0.2.14.1/lib/native/bin/x64/* build/
-          cp -v "${ZLIB_DLL_PATH}" build/
+          cp -v "${ZLIB_BIN_DIR}"/*.dll build/
           cd build/
           ./mlpack_test.exe -r junit > mlpack_test.junit.xml || true
           # Remove version numbers and other non-xml from the output.
