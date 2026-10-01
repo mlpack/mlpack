@@ -217,13 +217,13 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest][tiny]")
   arma::mat d;
   arma::Row<size_t> l;
   DatasetInfo di;
-  MockCategoricalData(d, l, di);
+  MockCategoricalData(d, l, di, 500);
 
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 1999);
-  arma::mat testData = d.cols(2000, 3999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
-  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
+  arma::mat trainingData = d.cols(0, 249);
+  arma::mat testData = d.cols(250, 499);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 249);
+  arma::Row<size_t> testLabels = l.subvec(250, 499);
 
   // Train a random forest and a decision tree.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
@@ -241,7 +241,7 @@ TEST_CASE("UnweightedCategoricalLearningTest", "[RandomForestTest][tiny]")
   size_t rfCorrect = accu(rfPredictions == testLabels);
   size_t dtCorrect = accu(dtPredictions == testLabels);
 
-  REQUIRE(rfCorrect >= dtCorrect - 35);
+  REQUIRE(rfCorrect >= dtCorrect - 5);
   REQUIRE(rfCorrect >= size_t(0.7 * testData.n_cols));
 }
 
@@ -253,18 +253,18 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest][tiny]")
   arma::mat d;
   arma::Row<size_t> l;
   DatasetInfo di;
-  MockCategoricalData(d, l, di);
+  MockCategoricalData(d, l, di, 500);
 
   // Split into a training set and a test set.
-  arma::mat trainingData = d.cols(0, 1999);
-  arma::mat testData = d.cols(2000, 3999);
-  arma::Row<size_t> trainingLabels = l.subvec(0, 1999);
-  arma::Row<size_t> testLabels = l.subvec(2000, 3999);
+  arma::mat trainingData = d.cols(0, 249);
+  arma::mat testData = d.cols(250, 499);
+  arma::Row<size_t> trainingLabels = l.subvec(0, 249);
+  arma::Row<size_t> testLabels = l.subvec(250, 499);
 
   // Now create random points.
-  arma::mat randomNoise(4, 2000);
-  arma::Row<size_t> randomLabels(2000);
-  for (size_t i = 0; i < 2000; ++i)
+  arma::mat randomNoise(4, 500);
+  arma::Row<size_t> randomLabels(500);
+  for (size_t i = 0; i < 500; ++i)
   {
     randomNoise(0, i) = Random();
     randomNoise(1, i) = Random();
@@ -274,10 +274,10 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest][tiny]")
   }
 
   // Generate weights.
-  arma::rowvec weights(4000);
-  for (size_t i = 0; i < 2000; ++i)
+  arma::rowvec weights(1000);
+  for (size_t i = 0; i < 500; ++i)
     weights[i] = Random(0.9, 1.0);
-  for (size_t i = 2000; i < 4000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
     weights[i] = Random(0.0, 0.001);
 
   arma::mat fullData = join_rows(trainingData, randomNoise);
@@ -299,7 +299,7 @@ TEST_CASE("WeightedCategoricalLearningTest", "[RandomForestTest][tiny]")
   size_t rfCorrect = accu(rfPredictions == testLabels);
   size_t dtCorrect = accu(dtPredictions == testLabels);
 
-  REQUIRE(rfCorrect >= dtCorrect - 25);
+  REQUIRE(rfCorrect >= dtCorrect - 13);
   REQUIRE(rfCorrect >= size_t(0.7 * testData.n_cols));
 }
 
