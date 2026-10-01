@@ -15,5 +15,6 @@
 // YOLOv3 object detection models
 #include "yolov3/yolov3.hpp"
 #include "yolov3/yolov3_tiny.hpp"
+#include "yolov3/yolov3_loss_fn.hpp"
 
 #endif
