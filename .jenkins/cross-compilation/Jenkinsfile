@@ -65,6 +65,11 @@ target_info = [
       // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
       // that we have.  We also need to disable Armadillo's std::mutex support.
       'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DCMAKE_CXX_FLAGS="-DARMA_DONT_USE_STD_MUTEX"'
+  ],
+  'laab': [
+      'device_name': 'orange-pi-6+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA710'
   ]
 ]
 
@@ -117,7 +122,7 @@ pipeline
           {
             name 'target'
             values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
-                   'cayenne', 'laziji', 'manaeesh'
+                   'cayenne', 'laziji', 'manaeesh', 'laab'
           }
         }
 
