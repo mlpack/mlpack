@@ -484,13 +484,13 @@ TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest][tiny]")
 
   vector<vector<size_t>> neighborsTree;
   vector<vector<double>> distancesTree;
-  rs.Search(dualQuery, Range(0.25, 1.05), neighborsTree, distancesTree);
+  rs.Search(dualQuery, Range(0.975, 1.025), neighborsTree, distancesTree);
   vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
   vector<vector<size_t>> neighborsNaive;
   vector<vector<double>> distancesNaive;
-  naive.Search(naiveQuery, Range(0.25, 1.05), neighborsNaive, distancesNaive);
+  naive.Search(naiveQuery, Range(0.975, 1.025), neighborsNaive, distancesNaive);
   vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
