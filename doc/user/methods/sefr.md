@@ -216,8 +216,9 @@ take any value.  The predicted class is the one with the highest score.
  * `s.Reset()` will set all weights, biases, sums, and counts to zero, keeping
    the number of classes and dimensionality.
 
-For complete functionality, the [source code](/src/mlpack/methods/sefr/sefr.hpp)
-can be consulted.  Each method is fully documented.
+For complete functionality, the source code in
+`src/mlpack/methods/sefr/sefr.hpp` can be consulted.  Each method is fully
+documented.
 
 ### Simple Examples
 
