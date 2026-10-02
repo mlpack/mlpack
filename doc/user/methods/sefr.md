@@ -137,8 +137,8 @@ Types of each argument are the same as in the table for constructors
    proportional to `dimensionality * numClasses`.
 
  * SEFR is designed for non-negative data.  If your data can be negative,
-   scale it first, for instance with
-   [`MinMaxScaler`](/src/mlpack/core/data/scaler_methods/min_max_scaler.hpp).
+   scale it first, for instance with `mlpack::MinMaxScaler` (as in the
+   [iris example](#simple-examples) below).
 
 ### Classification
 
