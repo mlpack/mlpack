@@ -125,6 +125,7 @@ add_executable(mlpack_test
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
   scaling_test.cpp
+  sefr_test.cpp
   size_checks_test.cpp
   serialization.cpp
   serialization.hpp

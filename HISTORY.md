@@ -17,6 +17,9 @@ _????-??-??_
 
  * Check that Julia models are trained when calling `predict()` (#4195).
 
+ * Add `SEFR` classifier, a hyperparameter-free linear classifier with
+   linear-time and incremental training (#????).
+
 ## mlpack 4.8.0
 
 _2026-06-07_
