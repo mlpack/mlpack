@@ -43,8 +43,7 @@ class KMeansPlusPlusInitialization
   KMeansPlusPlusInitialization() { }
 
   /**
-   * Initialize the centroids matrix by randomly sampling points from the data
-   * matrix.
+   * Initialize the centroids matrix by the kmeans++ algorithm.
    *
    * @param data Dataset.
    * @param clusters Number of clusters.
