@@ -71,6 +71,7 @@
 #include "mlpack/methods/rann.hpp"
 #include "mlpack/methods/regularized_svd.hpp"
 #include "mlpack/methods/reinforcement_learning.hpp"
+#include "mlpack/methods/sefr.hpp"
 #include "mlpack/methods/softmax_regression.hpp"
 #include "mlpack/methods/sparse_autoencoder.hpp"
 #include "mlpack/methods/sparse_coding.hpp"
