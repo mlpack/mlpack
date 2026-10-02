@@ -129,6 +129,8 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    - If `initialAssignmentGuess` is `true`, then `assignments` is expected to
      have length `data.n_cols` when `Cluster()` is called, and those assignments
      are used as the initial clustering.
+   - Clustering will continue for up to `maxIterations` iterations, or until the
+     cluster distortion (see notes below) drops below `1e-5`.
 
  * `km.Cluster(data, k, centroids, initialCentroidGuess=false)`
    - Cluster the given data into `k` clusters, storing computed centroids into
@@ -138,6 +140,8 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    - If `initialCentroidGuess` is `true`, then `centroids` is expected to have
      size `data.n_rows` x `k` when `Cluster()` is called, and those centroids
      are used as the initial clustering.
+   - Clustering will continue for up to `maxIterations` iterations, or until the
+     cluster distortion (see notes below) drops below `1e-5`.
 
  * `km.Cluster(data.k, assignments, centroids, initialAssignmentGuess=false, initialCentroidGuess=false)`
    - Cluster the given data into `k` clusters, storing point assignments into
@@ -154,6 +158,8 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
      `false`, then `centroids` is expected to have size `data.n_rows` x `k` when
      `Cluster()` is called, and those centroids are used as the initial
      clustering.
+   - Clustering will continue for up to `maxIterations` iterations, or until the
+     cluster distortion (see notes below) drops below `1e-5`.
 
 ---
 
@@ -185,6 +191,11 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    allows specification of a different initialization algorithm and mlpack
    offers ready-to-use implementations of a few strategies other than the
    default [`SampleInitialization`](#initialpartitionpolicy).
+
+ * `Cluster()` will terminate early if the cluster distortion drops below `1e-5`
+   in a single iteration.
+   - Cluster distortion is defined as the square root of the sum of distances
+     between each centroids and its value in the previous iteration.
 
 ### Simple Examples
 
@@ -324,33 +335,305 @@ KMeans<DistanceType,
 
  * [`InitialPartitionPolicy`](#initialpartitionpolicy) is the strategy to use to
    assign points to clusters before the first iteration (if no initial guess is
-   provided).  The default is `SampleInitialization`, which takes 
+   provided).  The default is `SampleInitialization`, which takes `k` random
+   points from the dataset as initial centroids.
+   - mlpack also provides `KMeansPlusPlusInitialization`, `RefinedStart`, and
+     `RandomPartition`; see the
+     [`InitialPartitionPolicy`](#initialpartitionpolicy) documentation for
+     details.
 
  * [`EmptyClusterPolicy`](#emptyclusterpolicy) is the strategy to use when, at
    the end of an iteration, a cluster has no points assigned to it.  The default
-   is `MaxVarianceNewCluster`, which 
+   is `MaxVarianceNewCluster`, which finds the point furthest from any centroid
+   and sets that to the centroid of the empty cluster.
+   - mlpack also provides `KillEmptyClusters` and `AllowEmptyClusters`; see the
+     [`EmptyClusterPolicy`](#emptyclusterpolicy) documentation for details.
 
  * [`LloydStepType`](#lloydsteptype) is the strategy used to actually compute
    the centroids and assignments during the iteration, and this is what should
    be modified to use an accelerated variant of k-means.  The default is
    `NaiveKMeans`, which is the standard algorithmic strategy from the original
    paper.
+   - mlpack also provides `ElkanKMeans`, `PellegMooreKMeans`, `HamerlyKMeans`,
+     and `DualTreeKMeans`; see the [`LloydStepType`](#lloydsteptype)
+     documentation for details.
 
 ---
 
 #### `DistanceType`
 
+ * Specifies the distance metric that will be used when clustering.
+
+ * The default distance type is
+   [`EuclideanDistance`](../core/distances.md#lmetric).
+
+ * Many [pre-implemented distance metrics](../core/distances.md) are available
+   for use, such as [`ManhattanDistance`](../core/distances.md#lmetric) and
+   [`ChebyshevDistance`](../core/distances.md#lmetric) and others.
+
+ * [Custom distance metrics](../../developer/distances.md) are easy to
+   implement, but *must* satisfy the triangle inequality to provide correct
+   results when using an accelerated [`LloydStepType`](#lloydsteptype)
+   (e.g. anything other than `NaiveKMeans`), since those accelerations depend on
+   the triangle inequality.
+   - ***NOTE:*** the cosine distance ***does not*** satisfy the triangle
+     inequality.
+
 ---
 
 #### `InitialPartitionPolicy`
+
+ * Specifies the strategy to use for initializing clusters, if
+   `initialAssignmentGuess` and `initialCentroidGuess` are set to `false` when
+   calling [`Cluster()`](#clustering).
+
+ * `SampleInitialization` (the default) selects `k` points randomly from the
+   dataset and uses those as initial centroids.
+   - This technique is extremely fast and tends to work acceptably in practice.
+
+ * The `KMeansPlusPlusInitialization` class is available for drop-in usage and
+   implements the
+   [k-means++ algorithm (pdf)](https://courses.cs.duke.edu/spring07/cps296.2/papers/kMeansPlusPlus.pdf).
+   - k-means++ uses data points for initial cluster centroids, much like
+     `SampleInitialization`, but selects them in a way that prioritizes
+     far-apart points.
+   - The algorithm takes longer than the trivial `SampleInitialization` but
+     tends to provide better clusterings in practice.
+
+ * The `RefinedStart` class is available for drop-in usage and implements the
+   [refined start technique (pdf)](https://static.aminer.org/pdf/PDF/000/334/561/refining_initial_points_for_k_means_clustering.pdf).
+   - This approach runs k-means several times on small subsamplings of the data,
+     and then clusters those results to provide initial seeds.
+   - This algorithm can take significantly longer than either
+     `SampleInitialization` or `KMeansPlusPlusInitialization`.
+   - In general it will provide better results than `SampleInitialization` but
+     it may not provide better results than `KMeansPlusPlusInitialization`.
+
+ * The `RandomPartition` class is available for drop-in usage and assigns each
+   point randomly to a cluster, then uses the centroids of those random
+   assignments as initial centroids.
+   - This approach is fast, but often results in centroids near the overall
+     centroid of the data, and this may not lead to good results.
+
+ * A custom `InitialPartitionPolicy` must implement only one of two possible
+   functions:
+
+```c++
+class CustomInitialPartitionPolicy
+{
+ public:
+  // NOTE: only one of the functions below is required.  The KMeans class will
+  // select whichever overload is available (preferring the version that gives
+  // centroids, if both are available).
+
+  // Initialize the centroids using the given data and number of clusters.
+  //
+  //  - `data` is the dataset that `Cluster()` was called with.
+  //  - `k` is the number of centroids that `Cluster()` was called with.
+  //  - `centroids` should be filled with the initial centroids to use.
+  //
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t k,
+               MatType& centroids);
+
+  // Initialize the point assignments using the given data and number of
+  // clusters.
+  //
+  //  - `data` is the dataset that `Cluster()` was called with.
+  //  - `k` is the number of centroids that `Cluster()` was called with.
+  //  - `assignments` should be set to size `data.n_cols` and filled with values
+  //    between `0` and `k - 1` (inclusive) that represent the cluster
+  //    assignment of each point.
+  //
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t k,
+               arma::Row<size_t>& assignments);
+};
+```
 
 ---
 
 #### `EmptyClusterPolicy`
 
+ * Specifies the action to make when, at the end of an iteration, a cluster has
+   no points assigned to it.
+
+ * `MaxVarianceNewCluster` (the default) will find the point that is furthest
+   from the cluster centroid with maximum variance, and assign that point to the
+   empty cluster.
+   - This is computationally expensive and will perform distance calculations
+     between every point and every centroid.
+   - However, unless `k` is set very high, the occurrence of an empty cluster at
+     the end of an iteration is a rare occurrence.
+
+ * The `KillEmptyClusters` class is available for drop-in usage.
+   - This will set a centroid to have all values `DBL_MAX`, and no points will
+     be assigned to it in future iterations.
+   - Unlike `MaxVarianceNewCluster`, there is effectively no runtime cost for
+     `KillEmptyClusters` in the event that an empty cluster is encountered.
+
+ * The `AllowEmptyClusters` class is available for drop-in usage.
+   - This leaves a centroid at its previous iteration's value when no points are
+     assigned to it.
+   - The empty cluster could have points assigned to it in subsequent
+     iterations.
+   - Unlike `MaxVarianceNewCluster`, there is effectively no runtime cost for
+     `AllowEmptyClusters` in the event that an empty cluster is encountered.
+
+ * A custom `EmptyClusterPolicy` must implement only one method that takes the
+   [`DistanceType`](#distancetype) and matrix type as template parameters:
+
+```c++
+class CustomEmptyClusterPolicy
+{
+ public:
+  // When an empty cluster is encountered, this function will be called, and
+  // should make any necessary modifications to `newCentroids`.  If multiple
+  // empty clusters are found at the end of an iteration, this function will be
+  // called once for every empty cluster that is encountered at the end of an
+  // iteration, with different values for `emptyCluster`.
+  //
+  // - `data`: the dataset that is being clustered.
+  // - `emptyCluster`: the index of the cluster that was empty at the end of the
+  //     iteration.
+  // - `oldCentroids`: the centroids at the beginning of the iteration (i.e.
+  //     before the cluster became empty).
+  // - `newCentroids`: the centroids at the end of the iteration; any
+  //     modifications to the state of the clustering should be made to this
+  //     matrix.
+  // - `clusterCounts`: number of points assigned to each cluster at the *end*
+  //     of the iteration.
+  // - `distance`: instantiated DistanceType object to use for distance
+  //     computation.
+  // - `iteration`: iteration number of the clustering when the empty cluster
+  //     was encountered.
+  //
+  template<typename DistanceType, typename MatType>
+  void EmptyCluster(const MatType& data,
+                    const size_t emptyCluster,
+                    const arma::mat& oldCentroids,
+                    arma::mat& newCentroids,
+                    arma::Col<size_t>& clusterCounts,
+                    DistanceType& distance,
+                    const size_t iteration);
+}
+```
+
 ---
 
 #### `LloydStepType`
+
+ * Specifies the strategy to be used during iteration, to recompute the point
+   assignments and centroids.
+
+ * `NaiveKMeans` (the default) is the standard k-means algorithm implementation,
+   and recomputes assignments by finding the closest centroid of each point with
+   brute-force computation, and then recomputes the centroids from those
+   assignments.
+   - This approach is not accelerated!  At each iteration, it computes
+     `data.n_cols` * `k` distances, which can be very slow for large datasets!
+   - It is *strongly recommended* to use a different step type, such as one of
+     the accelerated variants below, depending on the data.
+   - The `NaiveKMeans` strategy is the only strategy mlpack has implemented that
+     does *not* rely on the triangle inequality---thus, this is the only
+     `LloydStepType` that can be used with a [`DistanceType`](#distancetype)
+     that does not satisfy the triangle inequality (such as the cosine
+     distance).
+
+ * The `ElkanKMeans` class is available for drop-in usage and implements the
+   [accelerated strategy proposed by Charles Elkan (pdf)](https://cdn.aaai.org/ICML/2003/ICML03-022.pdf).
+   - This strategy computes how far centroids have moved each iteration, and
+     uses the triangle inequality to rule out points that could not possibly
+     have changed assignments between iterations.
+   - No auxiliary data structures (such as trees) are built for this strategy.
+   - This strategy performs well with most datasets, including high-dimensional
+     data, although it may not always be the fastest strategy.
+
+ * The `PellegMooreKMeans` class is available for drop-in usage and implements
+   a [single-tree kd-tree search strategy for k-means (pdf)](http://reports-archive.adm.cs.cmu.edu/anon/anon/usr/ftp/usr0/ftp/2000/CMU-CS-00-105.pdf).
+   - This strategy builds a [`KDTree`](../core/trees/kdtree.md) on the data and
+     uses a single-tree traversal much like [`KNN`](knn.md) to find the centroid
+     closest to each point in the dataset.
+   - The tree only needs to be built at the first iteration; so, the first
+     iteration will be slow (because of the tree building) but subsequent
+     iterations will be much faster---and continue to get faster as the tree is
+     able to prune more.
+   - This strategy performs exceedingly well on data in low dimensions (e.g.
+     roughly less than 100, but that is just a rule of thumb).
+
+ * The `HamerlyKMeans` class is available for drop-in usage and implements the
+   [accelerated strategy proposed by Greg Hamerly (pdf)](https://cs.baylor.edu/~hamerly/papers/sdm_2010.pdf).
+   - This strategy is also based on the triangle inequality and uses
+     cluster-to-cluster distances to prune points whose assignments cannot
+     change between iterations.
+   - Although closely related to `ElkanKMeans`, it is not precisely the same,
+     and performance between the two strategies differs depending on the
+     dataset.
+   - This strategy performs well with most datasets, including high-dimensional
+     data, although (like `ElkanKMeans`) it may not always be the fastest
+     strategy.
+
+ * The `DualTreeKMeans` class is available for drop-in usage and implements a
+   [dual-tree algorithm for k-means (pdf)](https://www.ratml.org/pub/pdf/2017dual.pdf).
+   - This strategy builds a [`KDTree`](../core/trees/kdtree.md) on both the
+     dataset and the centroids, and much like [`KNN`](knn.md) uses a dual-tree
+     algorithm to find the closest centroid for each point in the dataset.
+   - The tree on the dataset only needs to be built at the first iteration and
+     can be reused; however, the tree on the centroids must be rebuilt at every
+     iteration.
+   - This strategy benefits from a large value of `k` (e.g. hundreds or
+     thousands or more): the cost to build the tree on the centroids must be
+     outweighed by the pruning that that tree can do during iteration.
+   - This strategy performs best when `k` is very large, and the dataset is
+     large and low-dimensional.
+
+ * A custom `LloydStepType` needs accept two template parameters and implement a
+   constructor and two methods:
+
+```c++
+//
+// `DistanceType` is the distance metric that is used during iteration (e.g.
+// `EuclideanDistance`), and `MatType` is the matrix type of the data (e.g.
+// `arma::mat`).
+//
+template<typename DistanceType, typename MatType>
+class CustomLloydStepType
+{
+ public:
+  //
+  // Construct the CustomLloydStepType object with the given dataset and
+  // instantiated distance metric.  This should perform any preprocessing that
+  // needs to be done before the first iteration.
+  //
+  CustomLloydStepType(const MatType& dataset, DistanceType& distance);
+
+  //
+  // Run a single iteration of k-means, updating the given `centroids` into the
+  // `newCentroids` matrix.  If any cluster is empty (that is, if any cluster
+  // has no points assigned to it), then the centroid associated with that
+  // cluster may be filled with invalid or arbitrary data (it will be corrected
+  // later).
+  //
+  // In addition to updating the centroids, this method should also update
+  // `counts` with the number of points assigned to each cluster at the end of
+  // the iteration.
+  //
+  // This function should return the cluster distortion (e.g. the square root of
+  // the sum of distances between each centroids and its updated centroid in
+  // `newCentroids`).
+  //
+  double Iterate(const MatType& centroids,
+                 MatType& newCentroids,
+                 arma::Col<size_t>& counts);
+
+  //
+  // Return the number of distance computations performed (so far).
+  //
+  size_t DistanceCalculations() const;
+};
+```
 
 ---
 
