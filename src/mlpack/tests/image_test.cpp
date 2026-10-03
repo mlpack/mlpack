@@ -911,4 +911,3 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
   CheckMatrices(image, expectedOutput);
 }
 
-#endif
