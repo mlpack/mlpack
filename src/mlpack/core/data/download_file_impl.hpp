@@ -380,9 +380,9 @@ inline void ParseURL(const std::string& url, std::string& host,
 inline bool DownloadFile(const std::string& url,
                          const std::string& /* dest */)
 {
-  throw std::runtime_error("DownloadFile(): httplib support not enabled; cannot"
-      " download URL '" + url + "'.  Enable httplib by adding '#define "
-      "MLPACK_ENABLE_HTTPLIB' before including mlpack.");
+  throw std::runtime_error("DownloadFile(): httplib support was disabled at "
+      "compile time (MLPACK_DISABLE_HTTPLIB); rebuild without it to download "
+      "the provided URL '" + url + "'.");
   return false;
 }
 

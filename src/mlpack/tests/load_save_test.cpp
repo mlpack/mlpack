@@ -4557,7 +4557,7 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
   remove("test_roundtrip.wav");
 }
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#ifndef MLPACK_DISABLE_HTTPLIB
 
 /**
  * Test that DownloadFile() downloads a file to a user-specified destination.
@@ -4714,6 +4714,6 @@ TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
   remove(manifestPath.c_str());
 }
 
-#endif  // MLPACK_ENABLE_HTTPLIB
+#endif  // MLPACK_DISABLE_HTTPLIB
 
 #endif  // MLPACK_DISABLE_DR_LIBS
