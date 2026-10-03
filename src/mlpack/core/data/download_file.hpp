@@ -59,7 +59,7 @@ using CacheManifest =
     std::unordered_map<std::string,
                        std::tuple<std::string, size_t, std::string>>;
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#ifndef MLPACK_DISABLE_HTTPLIB
 
 /*
  * The idea is to allow three cache pattern, the first one, user defined
