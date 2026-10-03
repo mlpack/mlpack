@@ -52,6 +52,8 @@ for a full list of algorithms.
 
 Group points into clusters.
 
+ * [`DBSCAN`](methods/dbscan.md): clustering with the density-based DBSCAN
+   algorithm; supports noisy data
  * [`MeanShift`](methods/mean_shift.md): clustering with the density-based mean
    shift algorithm
 

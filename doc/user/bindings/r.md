@@ -450,8 +450,8 @@ R> recommendations <- output$output
 
 ```R
 R> library(mlpack)
-R> d <- dbscan(epsilon=1, input=matrix(numeric(), 0, 0), min_size=5,
-        naive=FALSE, selection_type="ordered", single_mode=FALSE,
+R> d <- dbscan(epsilon=0.5, input=matrix(numeric(), 0, 0), min_size=5,
+        naive=FALSE, radius=0.5, selection_type="ordered", single_mode=FALSE,
         tree_type="kd", verbose=getOption("mlpack.verbose", FALSE))
 R> assignments <- d$assignments
 R> centroids <- d$centroids
@@ -466,10 +466,11 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `check_input_matrices` | [`logical`](#doc_logical) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. | `FALSE` |
-| `epsilon` | [`numeric`](#doc_numeric) | Radius of each range search. | `1` |
+| `epsilon` | [`numeric`](#doc_numeric) | Radius of each range search. (Deprecated: use 'radius' parameter instead!) | `0.5` |
 | `input` | [`numeric matrix`](#doc_numeric_matrix) | Input dataset to cluster. | `**--**` |
 | `min_size` | [`integer`](#doc_integer) | Minimum number of points for a cluster. | `5` |
 | `naive` | [`logical`](#doc_logical) | If set, brute-force range search (not tree-based) will be used. | `FALSE` |
+| `radius` | [`numeric`](#doc_numeric) | Radius of each range search. | `0.5` |
 | `selection_type` | [`character`](#doc_character) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `"ordered"` |
 | `single_mode` | [`logical`](#doc_logical) | If set, single-tree range search (not dual-tree) will be used. | `FALSE` |
 | `tree_type` | [`character`](#doc_character) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `"kd"` |
@@ -489,7 +490,7 @@ Results are returned in a R list.  The keys of the list are the names of the out
 
 This program implements the DBSCAN algorithm for clustering using accelerated tree-based range search.  The type of tree that is used may be parameterized, or brute-force range search may also be used.
 
-The input dataset to be clustered may be specified with the `input` parameter; the radius of each range search may be specified with the `epsilon` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
+The input dataset to be clustered may be specified with the `input` parameter; the radius of each range search may be specified with the `radius` parameters, and the minimum number of points in a cluster may be specified with the `min_size` parameter.
 
 The `assignments` and `centroids` output parameters may be used to save the output of the clustering. `assignments` contains the cluster assignments of each point, and `centroids` contains the centroids of each cluster.
 
@@ -499,7 +500,7 @@ The range search may be controlled with the `tree_type`, `single_mode`, and `nai
 An example usage to run DBSCAN on the dataset in `"input"` with a radius of 0.5 and a minimum cluster size of 5 is given below:
 
 ```R
-R> dbscan(input=input, epsilon=0.5, min_size=5)
+R> dbscan(input=input, radius=0.5, min_size=5)
 ```
 
 ### See also

@@ -427,9 +427,9 @@ $ mlpack_cf --input_model_file model.bin --query_file users.csv
 {: #dbscan_descr }
 
 ```bash
-$ mlpack_dbscan [--epsilon 1] [--help] [--info <string>] --input_file
-        <string> [--min_size 5] [--naive] [--selection_type 'ordered']
-        [--single_mode] [--tree_type 'kd'] [--verbose] [--version]
+$ mlpack_dbscan [--epsilon 0.5] [--help] [--info <string>] --input_file
+        <string> [--min_size 5] [--naive] [--radius 0.5] [--selection_type
+        'ordered'] [--single_mode] [--tree_type 'kd'] [--verbose] [--version]
         [--assignments_file <string>] [--centroids_file <string>]
 ```
 
@@ -442,12 +442,13 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 | ***name*** | ***type*** | ***description*** | ***default*** |
 |------------|------------|-------------------|---------------|
 | `--check_input_matrices` | [`flag`](#doc_flag) | If specified, the input matrix is checked for NaN and inf values; an exception is thrown if any are found. |  |
-| `--epsilon (-e)` | [`double`](#doc_double) | Radius of each range search. | `1` |
+| `--epsilon (-e)` | [`double`](#doc_double) | Radius of each range search. (Deprecated: use 'radius' parameter instead!) | `0.5` |
 | `--help (-h)` | [`flag`](#doc_flag) | Default help info.  <span class="special">Only exists in CLI binding.</span> |  |
 | `--info` | [`string`](#doc_string) | Print help on a specific option.  <span class="special">Only exists in CLI binding.</span> | `''` |
 | `--input_file (-i)` | [`2-d matrix file`](#doc_a_2_d_matrix_file) | Input dataset to cluster. | `**--**` |
 | `--min_size (-m)` | [`int`](#doc_int) | Minimum number of points for a cluster. | `5` |
 | `--naive (-N)` | [`flag`](#doc_flag) | If set, brute-force range search (not tree-based) will be used. |  |
+| `--radius (-r)` | [`double`](#doc_double) | Radius of each range search. | `0.5` |
 | `--selection_type (-s)` | [`string`](#doc_string) | If using point selection policy, the type of selection to use ('ordered', 'random'). | `'ordered'` |
 | `--single_mode (-S)` | [`flag`](#doc_flag) | If set, single-tree range search (not dual-tree) will be used. |  |
 | `--tree_type (-t)` | [`string`](#doc_string) | If using single-tree or dual-tree search, the type of tree to use ('kd', 'r', 'r-star', 'x', 'hilbert-r', 'r-plus', 'r-plus-plus', 'cover', 'ball'). | `'kd'` |
@@ -467,7 +468,7 @@ An implementation of DBSCAN clustering.  Given a dataset, this can compute and r
 
 This program implements the DBSCAN algorithm for clustering using accelerated tree-based range search.  The type of tree that is used may be parameterized, or brute-force range search may also be used.
 
-The input dataset to be clustered may be specified with the `--input_file (-i)` parameter; the radius of each range search may be specified with the `--epsilon (-e)` parameters, and the minimum number of points in a cluster may be specified with the `--min_size (-m)` parameter.
+The input dataset to be clustered may be specified with the `--input_file (-i)` parameter; the radius of each range search may be specified with the `--radius (-r)` parameters, and the minimum number of points in a cluster may be specified with the `--min_size (-m)` parameter.
 
 The `--assignments_file (-a)` and `--centroids_file (-C)` output parameters may be used to save the output of the clustering. `--assignments_file (-a)` contains the cluster assignments of each point, and `--centroids_file (-C)` contains the centroids of each cluster.
 
@@ -477,7 +478,7 @@ The range search may be controlled with the `--tree_type (-t)`, `--single_mode (
 An example usage to run DBSCAN on the dataset in `'input.csv'` with a radius of 0.5 and a minimum cluster size of 5 is given below:
 
 ```bash
-$ mlpack_dbscan --input_file input.csv --epsilon 0.5 --min_size 5
+$ mlpack_dbscan --input_file input.csv --radius 0.5 --min_size 5
 ```
 
 ### See also

@@ -910,3 +910,5 @@ TEST_CASE("BoundingBoxImageOutOfBoundsBottomLeftCorner", "[ImageTest]")
   BoundingBoxImage(image, opt, bbox, color);
   CheckMatrices(image, expectedOutput);
 }
+
+#endif

@@ -30,36 +30,25 @@ class RandomPointSelection
    */
   template<typename MatType>
   size_t Select(const size_t /* point */,
-                const MatType& data)
+                const std::vector<bool>& visited,
+                const MatType& /* data */)
   {
-    // Initialize the length of the unvisited bitset.
-    size_t size = data.n_cols; // Get the size of points.
-    if (unvisited.size() != size)
-      unvisited.resize(size, true); // Resize & Set bitset to one.
-
     // Count the unvisited points and generate nth index randomly.
-    const size_t max = std::count(unvisited.begin(), unvisited.end(), true);
+    const size_t max = std::count(visited.begin(), visited.end(), false);
     const size_t index = RandInt(max);
 
     // Select the index'th unvisited point.
     size_t found = 0;
-    for (size_t i = 0; i < unvisited.size(); ++i)
+    for (size_t i = 0; i < visited.size(); ++i)
     {
-      if (unvisited[i])
+      if (!visited[i])
         ++found;
 
       if (found > index)
-      {
-        unvisited[i].flip(); // Set unvisited point to visited point.
         return i;
-      }
     }
     return 0; // Not sure if it is possible to get here.
   }
-
- private:
-  // Bitset for unvisited points. If true, mean unvisited.
-  std::vector<bool> unvisited;
 };
 
 } // namespace mlpack
