@@ -372,9 +372,9 @@ inline void ParseURL(const std::string& url, std::string& host,
   host = url;
   filename = "";
   port = -1;
-  throw std::runtime_error("ParseURL(): httplib support was disabled at compile "
-      "time (MLPACK_DISABLE_HTTPLIB); rebuild without it to check the provided "
-      "URL '" + url + "'.");
+  throw std::runtime_error("ParseURL(): httplib support was disabled at "
+      "compile time (MLPACK_DISABLE_HTTPLIB); rebuild without it to check "
+      "the provided URL '" + url + "'.");
 }
 
 inline bool DownloadFile(const std::string& url,
@@ -391,8 +391,8 @@ inline bool DownloadFileWithCache(const std::string& url,
 {
   filename = "";
   throw std::runtime_error("DownloadFile(): httplib support was disabled at "
-      "compile time (MLPACK_DISABLE_HTTPLIB); rebuild without it to download the "
-      "provided URL '" + url + "'.");
+      "compile time (MLPACK_DISABLE_HTTPLIB); rebuild without it to download "
+      "the provided URL '" + url + "'.");
   return false;
 }
 

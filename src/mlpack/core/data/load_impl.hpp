@@ -80,8 +80,8 @@ bool Load(const std::string& src,
     }
 #else
     return HandleError("httplib support was disabled at compile time "
-        "(MLPACK_DISABLE_HTTPLIB); rebuild without it to download a dataset from "
-        "a URL.", opts);
+        "(MLPACK_DISABLE_HTTPLIB); rebuild without it to download a dataset "
+        "from a URL.", opts);
 #endif
   }
   else
