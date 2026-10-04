@@ -1,8 +1,8 @@
 ## On-device movement recognition with an IMU
 
 In this tutorial we build a complete, end-to-end human-movement / activity
-recognition pipeline that runs entirely on a tiny RISC-V Linux board. The
-pipeline consists of data collection, training, and inference all happen on the target device.
+recognition pipeline that runs entirely on a tiny RISC-V Linux board. Data
+collection, training, and inference all happen on the target device.
 The main target of this tutorial is to provide an end-to-end example of using mlpack
 on real resource-constrained embedded hardware.  The tutorial can be followed
 step-by-step.
@@ -24,10 +24,8 @@ Contents:
  * [Setting up the cross-compilation toolchain](#setting-up-the-cross-compilation-toolchain)
  * [Getting the example](#getting-the-example)
  * [Building the programs](#building-the-programs)
- * [Copying everything to the device](#copying-everything-to-the-device)
+ * [Copying binaries to the device](#copying-binaries-to-the-device)
  * [Running it on the device](#running-it-on-the-device)
- * [Annex A: shrinking the binary (image and audio support)](#annex-a-shrinking-the-binary-image-and-audio-support)
- * [Annex B: making OpenBLAS fit (so training runs on the device)](#annex-b-making-openblas-fit-so-training-runs-on-the-device)
 
 ### What are we building
 
@@ -35,7 +33,7 @@ We are building a machine learning based human movement recognition pipeline to 
 movements such as walking, sitting, squats, and climbing stairs. This
 is enabled by using a 9 Degree of Freedom inertial sensor that is read over an I2C bus.
 The collected data is cut into windows, and then fed into an FFT in order to
-extract the features from each collected windows.
+extract the features from each collected window.
 Finally, we build a small `float32` neural network that learns to recognize the
 movements with the highest possible accuracy.
 
@@ -63,7 +61,7 @@ raw signal to the features the network learns from:
 <img src="../img/movement_fft_pipeline.png" width="720" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
 </center>
 
-In the figure, 
+In the figure,
 
  * `(a)` "raw recording" shows the accelerometer's three axes over a few seconds
    for a squat movement; the vertical axis (`az`) oscillates around 1g with the
@@ -77,7 +75,7 @@ In the figure,
  * `(c)` "FFT power per movement" shows how the FFT is applied per-channel for
    each window on all the movements in order to extract the relevant power
    spectrum.  Different movements can be identified with different frequencies.
-   Note that, the gravity (DC) component is removed from this plot for clarity.
+   Note that the gravity (DC) component is removed from this plot for clarity.
    However, it is kept as part of the features used for training.
 
 ### Hardware
@@ -107,18 +105,18 @@ documentation</a> for the full pin map.</em>
 
 On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
 so we must mux them to the I2C0 controller. To use I2C there are two pins that
-are necessary, the first one is the clock pin labelled `IIC0_SCL` while the
-second one is the data link labelled `IIC0_SDA`.  This is done on the device with
+are necessary: the first one is the clock pin labelled `IIC0_SCL`, while the
+second one is the data line labelled `IIC0_SDA`.  This is done on the device with
 `duo-pinmux` and is shown in [Running it on the device](#running-it-on-the-device).
 `duo-pinmux` can be used to change the functionality of each pin on the Duo.
 
 ### Setting up the cross-compilation toolchain
 
-Since the device is resource constrained with only 28 MB available
+Since the device is resource-constrained with only 28 MB available
 RAM, we cross-compile on a host `x86_64` machine and copy the static
-binaries on the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
+binaries to the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
-[Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial to produce
+[Bootlin](https://toolchains.bootlin.com/) toolchain.  Our target in this tutorial is to produce
 a small static binary; therefore, we use the musl variant:
 
 ```sh
@@ -148,23 +146,23 @@ cd examples/cpp/movement_recognition
 ### Building the programs
 
 Please note that in order to run mlpack on the Milk-V, we need first to disable
-OpenMP since the board had one core. Second, we need to modify the underlying
-OpenBlas library. The latter is necessary because the Milk-V has 28MB of usable 
+OpenMP since the board has one core. Second, we need to modify the underlying
+OpenBLAS library. The latter is necessary because the Milk-V has 28MB of usable
 RAM.  Without this modification, the `train` program will not run; this is because the matrix
-multiplication functionality in OpenBLAS allocates an internal buffer of size 
+multiplication functionality in OpenBLAS allocates an internal buffer of size
 32MB---larger than the available RAM.  Therefore, we have to reduce this, along
 with the block sizes used during matrix multiplication.
 
-Both of these changes are a part of the example repository, in the file 
-[CMake/patches/openblas-riscv64-low-memory.patch]().
+Both of these changes are a part of the example repository, in the file
+[CMake/patches/openblas-riscv64-low-memory.patch](../../.jenkins/cross-compilation/openblas-riscv64-low-memory.patch).
 
-The example applies this patch automatically when it calls `mlpack.cmake` to 
+The example applies this patch automatically when it calls `mlpack.cmake` to
 download mlpack's dependencies and cross-compile OpenBLAS.
 
-We are also disabling STB, dr_libs and also httplibs. These dependencies
+We are also disabling STB, dr_libs, and httplib. These dependencies
 support loading images, audio files, and downloading from a server. However,
-they are adding a dead footprint that can be avoided for low resource devices.
-For more information please check [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions)
+they add a dead footprint that can be avoided for low-resource devices.
+For more information please check [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions).
 
 At this stage, we need to define the architecture of the target device with
 the `ARCH_NAME=RV64GCV` variable (the ISA of the board's C906 core):
@@ -186,7 +184,7 @@ make            # builds imu_test, collect, train, and infer
 ```
 
 `ARCH_NAME=RV64GCV` selects C906 tuning (`-mtune=thead-c906`) and a scalar
-`RISCV64_GENERIC`
+`RISCV64_GENERIC` OpenBLAS target.
 
 When the build finishes you will have `imu_test`, `collect`, `train`, and
 `infer` in the build directory, all static RISC-V binaries:
@@ -198,9 +196,9 @@ file train
 
 ### Copying binaries to the device
 
-We can use `scp` to copy the programs to the Milk-V, but, we have to use the 
+We can use `scp` to copy the programs to the Milk-V, but we have to use the
 `-O` option for the legacy SCP protocol since the Milk-V does not support SFTP.
-If you have plugged in your Milk-V via USB, the board should be reachable at 
+If you have plugged in your Milk-V via USB, the board should be reachable at
 `192.168.42.1`; you can check that by doing a local ping.  The default password
 for the Duo is `milkv`:
 ```sh
@@ -222,19 +220,19 @@ duo-pinmux -p GP1 -f IIC0_SDA
 
 2. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
 their I2C function first, you should get a similar output if you have the same
-IMU. If not, you need to check your specific sensors address in the datasheet,
+IMU. If not, you need to check your specific sensor's address in the datasheet,
 and verify that it matches the one detected on the bus.
 
 ```sh
 i2cdetect -y -r 0
      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- 1d -- -- 
-20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-50: -- -- -- -- -- -- 56 -- -- -- -- -- -- -- -- -- 
-60: -- -- -- -- -- -- -- -- -- -- -- 6b -- -- -- -- 
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- 1d -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- 56 -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- 6b -- -- -- --
 70: -- -- -- -- -- -- -- 77
 ```
 
@@ -278,7 +276,7 @@ test accuracy, and writes `model.bin` (the trained network), `model.labels`
 standardizes live features the same way training did).
 
 5. Run live inference.  `infer` reads the IMU, slides the same window over
-the stream, extract features using FFT, and use the trained model for the inference.
+the stream, extracts features using FFT, and uses the trained model for the inference.
 To run the inference use the following command:
 
 `infer <sensors> <device> <model-dir>`
@@ -289,6 +287,6 @@ To run the inference use the following command:
 
 In this tutorial, we have demonstrated how you can simply build an entire
 machine learning pipeline with mlpack running on a resource constrained device
-such as Milk-Duo for data collection, training and model prediction.
+such as the Milk-V Duo for data collection, training, and model prediction.
 
 
