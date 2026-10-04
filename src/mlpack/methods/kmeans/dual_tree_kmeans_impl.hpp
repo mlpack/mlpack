@@ -201,12 +201,13 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::UpdateTree(
     Tree& node,
-    const MatType& centroids,
+    const CentroidsType& centroids,
     const double parentUpperBound,
     const double adjustedParentUpperBound,
     const double parentLowerBound,
@@ -414,12 +415,14 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::ExtractCentroids(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+ExtractCentroids(
     Tree& node,
-    MatType& newCentroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& newCounts,
     const MatType& centroids)
 {
@@ -453,10 +456,12 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::ExtractCentroids(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::CoalesceTree(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+CoalesceTree(
     Tree& node,
     const size_t child /* Which child are we? */)
 {
@@ -502,10 +507,12 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::CoalesceTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::DecoalesceTree(Tree& node)
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+DecoalesceTree(Tree& node)
 {
   node.Parent() = (Tree*) node.Stat().TrueParent();
   RestoreChildren(node);

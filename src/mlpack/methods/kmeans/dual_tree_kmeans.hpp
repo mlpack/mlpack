@@ -168,14 +168,15 @@ void RestoreChildren(TreeType& node,
 
 // A template typedef for the DualTreeKMeans algorithm with the default tree
 // type (a kd-tree).
-template<typename DistanceType, typename MatType>
-using DefaultDualTreeKMeans = DualTreeKMeans<DistanceType, MatType>;
+template<typename DistanceType, typename MatType, typename CentroidsType>
+using DefaultDualTreeKMeans = DualTreeKMeans<DistanceType, MatType,
+    CentroidsType>;
 
 // A template typedef for the DualTreeKMeans algorithm with the cover tree
 // type.
-template<typename DistanceType, typename MatType>
+template<typename DistanceType, typename MatType, typename CentroidsType>
 using CoverTreeDualTreeKMeans = DualTreeKMeans<DistanceType, MatType,
-    StandardCoverTree>;
+    CentroidsType, StandardCoverTree>;
 
 } // namespace mlpack
 

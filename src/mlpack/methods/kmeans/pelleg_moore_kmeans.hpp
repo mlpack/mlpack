@@ -59,7 +59,7 @@ class PellegMooreKMeans
    * @param newCentroids New cluster centroids.
    * @param counts Current counts, to be overwritten with new counts.
    */
-  double Iterate(const MatType& centroids,
+  double Iterate(const CentroidsType& centroids,
                  CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 

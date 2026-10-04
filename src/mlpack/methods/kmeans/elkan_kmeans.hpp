@@ -55,9 +55,9 @@ class ElkanKMeans
   arma::Col<size_t> assignments;
 
   // Upper bounds on the distance between each point and its closest cluster.
-  ColType upperBounds;
+  CentroidsType upperBounds;
   // Lower bounds on the distance between each point and each cluster.
-  ColType lowerBounds;
+  CentroidsType lowerBounds;
 
   // Track distance calculations.
   size_t distanceCalculations;

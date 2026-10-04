@@ -19,11 +19,12 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename TreeType>
-PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::
+PellegMooreKMeansRules(
     const MatType& dataset,
-    const MatType& centroids,
-    MatType& newCentroids,
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& counts,
     DistanceType& distance) :
     dataset(dataset),
@@ -36,17 +37,17 @@ PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
   // Nothing to do.
 }
 
-template<typename DistanceType, typename TreeType>
+template<typename DistanceType, typename TreeType, typename CentroidsType>
 inline mlpack_force_inline
-double PellegMooreKMeansRules<DistanceType, TreeType>::BaseCase(
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::BaseCase(
     const size_t /* queryIndex */,
     const size_t /* referenceIndex */)
 {
   return 0.0;
 }
 
-template<typename DistanceType, typename TreeType>
-double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Score(
     const size_t /* queryIndex */,
     TreeType& referenceNode)
 {
@@ -165,8 +166,8 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
   return 0.0;
 }
 
-template<typename DistanceType, typename TreeType>
-double PellegMooreKMeansRules<DistanceType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore)

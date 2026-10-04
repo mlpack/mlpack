@@ -54,6 +54,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
  * [mlpack kernels](../core/kernels.md)
  * [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  * [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
+ * [`KMeans`](kmeans.md)
 
 ### Constructors
 

@@ -86,7 +86,7 @@ bool GetInitialAssignmentsOrCentroids(
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
+         template<class, class, class> class LloydStepType,
          typename DeprecatedMatType>
 KMeans<
     DistanceType,
@@ -117,7 +117,7 @@ KMeans(const size_t maxIterations,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
+         template<class, class, class> class LloydStepType,
          typename DeprecatedMatType>
 template<typename MatType>
 inline void KMeans<
@@ -131,7 +131,7 @@ Cluster(const MatType& data,
         arma::Row<size_t>& assignments,
         const bool initialGuess)
 {
-  MatType centroids(data.n_rows, clusters);
+  typename GetDenseMatType<MatType>::type centroids(data.n_rows, clusters);
   Cluster(data, clusters, assignments, centroids, initialGuess);
 }
 
@@ -142,7 +142,7 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
+         template<class, class, class> class LloydStepType,
          typename DeprecatedMatType>
 template<typename MatType>
 void KMeans<
@@ -273,7 +273,7 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
+         template<class, class, class> class LloydStepType,
          typename DeprecatedMatType>
 template<typename MatType>
 void KMeans<
@@ -343,7 +343,7 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
+         template<class, class, class> class LloydStepType,
          typename DeprecatedMatType>
 template<typename Archive>
 void KMeans<DistanceType,

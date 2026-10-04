@@ -177,7 +177,7 @@ void FindLloydStepType(util::Params& params,
 // Given the template parameters, sanitize/load input and run k-means.
 template<typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType>
+         template<class, class, class> class LloydStepType>
 void RunKMeans(util::Params& params,
                util::Timers& timers,
                const InitialPartitionPolicy& ipp);
@@ -299,7 +299,7 @@ void FindLloydStepType(util::Params& params,
 // Given the template parameters, sanitize/load input and run k-means.
 template<typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType>
+         template<class, class, class> class LloydStepType>
 void RunKMeans(util::Params& params,
                util::Timers& timers,
                const InitialPartitionPolicy& ipp)

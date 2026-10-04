@@ -30,7 +30,7 @@ ElkanKMeans<DistanceType, MatType, CentroidsType>::ElkanKMeans(
 
 // Run a single iteration of Elkan's algorithm for Lloyd iterations.
 template<typename DistanceType, typename MatType, typename CentroidsType>
-double ElkanKMeans<DistanceType, MatType>::Iterate(
+double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
     const CentroidsType& centroids,
     CentroidsType& newCentroids,
     arma::Col<size_t>& counts)

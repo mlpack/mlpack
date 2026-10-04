@@ -77,7 +77,7 @@ namespace mlpack {
 template<typename DistanceType = EuclideanDistance,
          typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
-         template<class, class> class LloydStepType = NaiveKMeans,
+         template<class, class, class> class LloydStepType = NaiveKMeans,
          // This parameter is deprecated and will be removed in mlpack 5.0.0.
          typename DeprecatedMatType = arma::mat>
 class KMeans
@@ -137,7 +137,7 @@ class KMeans
   template<typename MatType>
   void Cluster(const MatType& data,
                size_t clusters,
-               MatType& centroids,
+               typename GetDenseMatType<MatType>::type& centroids,
                const bool initialGuess = false);
 
   /**
@@ -164,7 +164,7 @@ class KMeans
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Row<size_t>& assignments,
-               MatType& centroids,
+               typename GetDenseMatType<MatType>::type& centroids,
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);
 
