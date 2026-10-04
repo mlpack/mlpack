@@ -61,13 +61,13 @@ namespace mlpack {
  * @tparam DistanceType The distance metric to use for this KMeans; see LMetric
  *     for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
- *     default constructor and either 'void Cluster(const arma::mat&, const
- *     size_t, arma::Row<size_t>&)' or 'void Cluster(const arma::mat&, const
- *     size_t, arma::mat&)'.
+ *     default constructor and either 'void Cluster(const MatType&, const
+ *     size_t, arma::Row<size_t>&)' or 'void Cluster(const MatType&, const
+ *     size_t, MatType&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
- *     implement a default constructor and 'void EmptyCluster(const arma::mat&
- *     data, const size_t emptyCluster, const arma::mat& oldCentroids,
- *     arma::mat& newCentroids, arma::Col<size_t>& counts,
+ *     implement a default constructor and 'void EmptyCluster(const MatType&
+ *     data, const size_t emptyCluster, const MatType& oldCentroids,
+ *     MatType& newCentroids, arma::Col<size_t>& counts,
  *     DistanceType& distance, const size_t iteration)'.
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
@@ -173,41 +173,52 @@ class KMeans
   //! Set the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Get the distance metric.
+  // Get the distance metric.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
-  //! Modify the distance metric.
+  // Modify the distance metric.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   DistanceType& Metric() { return distance; }
 
-  //! Get the distance metric.
+  // Get the distance metric.
   const DistanceType& Distance() const { return distance; }
-  //! Modify the distance metric.
+  // Modify the distance metric.
   DistanceType& Distance() { return distance; }
 
-  //! Get the initial partitioning policy.
+  // Get the initial partitioning policy.
   const InitialPartitionPolicy& Partitioner() const { return partitioner; }
-  //! Modify the initial partitioning policy.
+  // Modify the initial partitioning policy.
   InitialPartitionPolicy& Partitioner() { return partitioner; }
 
-  //! Get the empty cluster policy.
+  // Get the empty cluster policy.
   const EmptyClusterPolicy& EmptyClusterAction() const
   { return emptyClusterAction; }
-  //! Modify the empty cluster policy.
+  // Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
-  //! Serialize the k-means object.
+  // Get the number of iterations used during the last call to Cluster().
+  size_t Iterations() const { return iterations; }
+
+  // Get the number of distance computations performed during the last call to
+  // Cluster().
+  size_t DistanceComputations() const { return distanceComputations; }
+
+  // Serialize the k-means object.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  //! Maximum number of iterations before giving up.
+  // Maximum number of iterations before giving up.
   size_t maxIterations;
-  //! Instantiated distance metric.
+  // Number of iterations used during the last Cluster() call.
+  size_t iterations;
+  // Number of distance computations used during the last Cluster() call.
+  size_t distanceComputations;
+  // Instantiated distance metric.
   DistanceType distance;
-  //! Instantiated initial partitioning policy.
+  // Instantiated initial partitioning policy.
   InitialPartitionPolicy partitioner;
-  //! Instantiated empty cluster policy.
+  // Instantiated empty cluster policy.
   EmptyClusterPolicy emptyClusterAction;
 };
 

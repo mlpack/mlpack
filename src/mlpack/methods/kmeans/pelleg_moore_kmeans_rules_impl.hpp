@@ -21,9 +21,9 @@ namespace mlpack {
 
 template<typename DistanceType, typename TreeType>
 PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
-    const typename TreeType::Mat& dataset,
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
+    const MatType& dataset,
+    const MatType& centroids,
+    MatType& newCentroids,
     arma::Col<size_t>& counts,
     DistanceType& distance) :
     dataset(dataset),
@@ -70,12 +70,12 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
 
   // Which cluster has minimum distance to the node?
   size_t closestCluster = centroids.n_cols;
-  double minMinDistance = DBL_MAX;
+  ElemType minMinDistance = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     if (referenceNode.Stat().Blacklist()[i] == 0)
     {
-      const double minDistance = referenceNode.MinDistance(centroids.col(i));
+      const ElemType minDistance = referenceNode.MinDistance(centroids.col(i));
       if (minDistance < minMinDistance)
       {
         minMinDistance = minDistance;
@@ -107,9 +107,9 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
         cornerPoint(d) = referenceNode.Bound()[d].Lo();
     }
 
-    const double closestDist = distance.Evaluate(cornerPoint,
+    const ElemType closestDist = distance.Evaluate(cornerPoint,
         centroids.col(closestCluster));
-    const double otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
+    const ElemType otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
 
     distanceCalculations += 3; // One for cornerPoint, then two distances.
 
@@ -136,7 +136,7 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
   for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
   {
     size_t bestCluster = centroids.n_cols;
-    double bestDistance = DBL_MAX;
+    ElemType bestDistance = std::numeric_limits<ElemType>::max();
     for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (referenceNode.Stat().Blacklist()[c] == 1)
@@ -145,7 +145,7 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
       ++distanceCalculations;
 
       // The reference index is the index of the data point.
-      const double dist = distance.Evaluate(centroids.col(c),
+      const ElemType dist = distance.Evaluate(centroids.col(c),
           dataset.col(referenceNode.Point(i)));
 
       if (dist < bestDistance)

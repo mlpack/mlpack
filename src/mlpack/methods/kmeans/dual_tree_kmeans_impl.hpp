@@ -46,10 +46,11 @@ TreeType* BuildForcedLeafSizeTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-DualTreeKMeans<DistanceType, MatType, TreeType>::DualTreeKMeans(
+DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::DualTreeKMeans(
     const MatType& dataset,
     DistanceType& distance) :
     datasetOrig(dataset),
@@ -70,16 +71,18 @@ DualTreeKMeans<DistanceType, MatType, TreeType>::DualTreeKMeans(
     visited[i] = false;
   }
   assignments.fill(size_t(-1));
-  upperBounds.fill(DBL_MAX);
-  lowerBounds.fill(DBL_MAX);
+  upperBounds.fill(std::numeric_limits<ElemType>::max());
+  lowerBounds.fill(std::numeric_limits<ElemType>::max());
 }
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-DualTreeKMeans<DistanceType, MatType, TreeType>::~DualTreeKMeans()
+DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+~DualTreeKMeans()
 {
   if (tree)
     delete tree;
@@ -88,12 +91,13 @@ DualTreeKMeans<DistanceType, MatType, TreeType>::~DualTreeKMeans()
 // Run a single iteration.
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
+double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& counts)
 {
   // Build a tree on the centroids.  This will make a copy if necessary, which
@@ -112,8 +116,8 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
   if (iteration > 0)
   {
     // If the tree maps points, we need an intermediate result matrix.
-    arma::mat* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
-        new arma::mat(1, centroids.n_elem) : &interclusterDistances;
+    MatType* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
+        new MatType(1, centroids.n_elem) : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, *interclusterDistancesTemp);
@@ -202,7 +206,7 @@ template<typename DistanceType,
                   typename TreeMatType> class TreeType>
 void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
     Tree& node,
-    const arma::mat& centroids,
+    const MatType& centroids,
     const double parentUpperBound,
     const double adjustedParentUpperBound,
     const double parentLowerBound,
@@ -415,9 +419,9 @@ template<typename DistanceType,
                   typename TreeMatType> class TreeType>
 void DualTreeKMeans<DistanceType, MatType, TreeType>::ExtractCentroids(
     Tree& node,
-    arma::mat& newCentroids,
+    MatType& newCentroids,
     arma::Col<size_t>& newCounts,
-    const arma::mat& centroids)
+    const MatType& centroids)
 {
   // Does this node own points?
   if ((node.Stat().Pruned() == newCentroids.n_cols) ||

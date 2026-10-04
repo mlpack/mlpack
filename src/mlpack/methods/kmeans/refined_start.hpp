@@ -57,10 +57,10 @@ class RefinedStart
    * @param clusters Number of clusters to split dataset into.
    * @param centroids Matrix to store centroids into.
    */
-  template<typename MatType>
+  template<typename MatType, typename CentroidsType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::mat& centroids) const;
+               CentroidsType& centroids) const;
 
   /**
    * Partition the given dataset into the given number of clusters according to

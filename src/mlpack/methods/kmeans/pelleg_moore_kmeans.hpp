@@ -37,7 +37,7 @@ namespace mlpack {
  * }
  * @endcode
  */
-template<typename DistanceType, typename MatType>
+template<typename DistanceType, typename MatType, typename CentroidsType>
 class PellegMooreKMeans
 {
  public:
@@ -59,29 +59,29 @@ class PellegMooreKMeans
    * @param newCentroids New cluster centroids.
    * @param counts Current counts, to be overwritten with new counts.
    */
-  double Iterate(const arma::mat& centroids,
-                 arma::mat& newCentroids,
+  double Iterate(const MatType& centroids,
+                 CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 
-  //! Return the number of distance calculations.
+  // Return the number of distance calculations.
   size_t DistanceCalculations() const { return distanceCalculations; }
-  //! Modify the number of distance calculations.
+  // Modify the number of distance calculations.
   size_t& DistanceCalculations() { return distanceCalculations; }
 
-  //! Convenience typedef for the tree.
+  // Convenience typedef for the tree.
   using TreeType = KDTree<DistanceType, PellegMooreKMeansStatistic, MatType>;
 
  private:
-  //! The original dataset reference.
+  // The original dataset reference.
   const MatType& datasetOrig; // Maybe not necessary.
-  //! The tree built on the points.
+  // The tree built on the points.
   TreeType* tree;
-  //! The dataset we are using.
+  // The dataset we are using.
   const MatType& dataset;
-  //! The distance metric.
+  // The distance metric.
   DistanceType& distance;
 
-  //! Track distance calculations.
+  // Track distance calculations.
   size_t distanceCalculations;
 };
 

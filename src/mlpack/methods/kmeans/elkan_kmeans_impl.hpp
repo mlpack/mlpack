@@ -17,9 +17,10 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename MatType>
-ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
-                                                DistanceType& distance) :
+template<typename DistanceType, typename MatType, typename CentroidsType>
+ElkanKMeans<DistanceType, MatType, CentroidsType>::ElkanKMeans(
+    const MatType& dataset,
+    DistanceType& distance) :
     dataset(dataset),
     distance(distance),
     distanceCalculations(0)
@@ -28,10 +29,11 @@ ElkanKMeans<DistanceType, MatType>::ElkanKMeans(const MatType& dataset,
 }
 
 // Run a single iteration of Elkan's algorithm for Lloyd iterations.
-template<typename DistanceType, typename MatType>
-double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
-                                                   arma::mat& newCentroids,
-                                                   arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType, typename CentroidsType>
+double ElkanKMeans<DistanceType, MatType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
+    arma::Col<size_t>& counts)
 {
   // Clear new centroids.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -43,7 +45,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   // Self-distances are always 0, but we set them to DBL_MAX to avoid the self
   // being the closest cluster centroid.
-  clusterDistances.diag().fill(DBL_MAX);
+  clusterDistances.diag().fill(std::numeric_limits<ElemType>::max());
 
   // Initially set r(x) to true.
   std::vector<bool> mustRecalculate(dataset.n_cols, true);
@@ -56,7 +58,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     upperBounds.set_size(dataset.n_cols);
 
     lowerBounds.fill(0);
-    upperBounds.fill(DBL_MAX);
+    upperBounds.fill(std::numeric_limits<ElemType>::max());
     assignments.fill(0);
   }
 
@@ -67,8 +69,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double dist = distance.Evaluate(centroids.col(i),
-                                            centroids.col(j));
+      const ElemType dist = distance.Evaluate(centroids.col(i),
+                                              centroids.col(j));
       distanceCalculations++;
       clusterDistances(i, j) = dist;
       clusterDistances(j, i) = dist;
@@ -89,7 +91,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     {
       // No change needed.  This point must still belong to that cluster.
       counts(assignments[i])++;
-      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      newCentroids.col(assignments[i]) += dataset.col(i);
     }
     else
     {
@@ -135,8 +137,8 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
             dist > 0.5 * clusterDistances(assignments[i], c))
         {
           // Compute d(x, c).  If d(x, c) < d(x, c(x)) then assign c(x) = c.
-          const double pointDist = distance.Evaluate(dataset.col(i),
-                                                     centroids.col(c));
+          const ElemType pointDist = distance.Evaluate(dataset.col(i),
+                                                       centroids.col(c));
           lowerBounds(c, i) = pointDist;
           distanceCalculations++;
           if (pointDist < dist)
@@ -156,7 +158,7 @@ double ElkanKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   }
 
   // Now, normalize and calculate the distance each cluster has moved.
-  arma::vec moveDistances(centroids.n_cols);
+  ColType moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
   #pragma omp parallel for reduction(+: cNorm, distanceCalculations)
   for (size_t c = 0; c < centroids.n_cols; ++c)

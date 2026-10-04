@@ -28,10 +28,13 @@ namespace mlpack {
  * this case we consider all clusters at once---so the query point is entirely
  * ignored during in BaseCase() and Score().
  */
-template<typename DistanceType, typename TreeType>
+template<typename DistanceType, typename TreeType, typename CentroidsType>
 class PellegMooreKMeansRules
 {
  public:
+  typedef typename TreeType::Mat MatType;
+  typedef typename MatType::elem_type ElemType;
+
   /**
    * Create the PellegMooreKMeansRules object.
    *
@@ -42,9 +45,9 @@ class PellegMooreKMeansRules
    *      counts.
    * @param distance Instantiated distance metric.
    */
-  PellegMooreKMeansRules(const typename TreeType::Mat& dataset,
-                         const arma::mat& centroids,
-                         arma::mat& newCentroids,
+  PellegMooreKMeansRules(const MatType& dataset,
+                         const CentroidsType& centroids,
+                         CentroidsType& newCentroids,
                          arma::Col<size_t>& counts,
                          DistanceType& distance);
 
@@ -85,18 +88,18 @@ class PellegMooreKMeansRules
   size_t& DistanceCalculations() { return distanceCalculations; }
 
  private:
-  //! The dataset.
-  const typename TreeType::Mat& dataset;
-  //! The clusters.
-  const arma::mat& centroids;
-  //! The new centroids.
-  arma::mat& newCentroids;
-  //! The counts of points in each cluster.
+  // The dataset.
+  const MatType& dataset;
+  // The clusters.
+  const CentroidsType& centroids;
+  // The new centroids.
+  CentroidsType& newCentroids;
+  // The counts of points in each cluster.
   arma::Col<size_t>& counts;
-  //! Instantiated distance metric.
+  // Instantiated distance metric.
   DistanceType& distance;
 
-  //! The number of O(d) distance calculations that have been performed.
+  // The number of O(d) distance calculations that have been performed.
   size_t distanceCalculations;
 };
 

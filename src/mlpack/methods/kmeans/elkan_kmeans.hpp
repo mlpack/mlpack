@@ -14,10 +14,13 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename MatType>
+template<typename DistanceType, typename MatType, typename CentroidsType>
 class ElkanKMeans
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetDenseColType<MatType>::type ColType;
+
   /**
    * Construct the ElkanKMeans object, which must store several sets of bounds.
    */
@@ -31,32 +34,32 @@ class ElkanKMeans
    * @param newCentroids New cluster centroids.
    * @param counts Current counts, to be overwritten with new counts.
    */
-  double Iterate(const arma::mat& centroids,
-                 arma::mat& newCentroids,
+  double Iterate(const CentroidsType& centroids,
+                 CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 
   size_t DistanceCalculations() const { return distanceCalculations; }
 
  private:
-  //! The dataset.
+  // The dataset.
   const MatType& dataset;
-  //! The instantiated distance metric.
+  // The instantiated distance metric.
   DistanceType& distance;
 
-  //! Holds intra-cluster distances.
-  arma::mat clusterDistances;
-  //! Half the distance from a cluster to its nearest cluster (s(c)).
-  arma::vec minClusterDistances;
+  // Holds intra-cluster distances.
+  CentroidsType clusterDistances;
+  // Half the distance from a cluster to its nearest cluster (s(c)).
+  ColType minClusterDistances;
 
-  //! Holds the index of the cluster that owns each point.
+  // Holds the index of the cluster that owns each point.
   arma::Col<size_t> assignments;
 
-  //! Upper bounds on the distance between each point and its closest cluster.
-  arma::vec upperBounds;
-  //! Lower bounds on the distance between each point and each cluster.
-  arma::mat lowerBounds;
+  // Upper bounds on the distance between each point and its closest cluster.
+  ColType upperBounds;
+  // Lower bounds on the distance between each point and each cluster.
+  ColType lowerBounds;
 
-  //! Track distance calculations.
+  // Track distance calculations.
   size_t distanceCalculations;
 };
 
