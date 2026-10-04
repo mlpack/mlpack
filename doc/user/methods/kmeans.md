@@ -182,9 +182,11 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    [other strategies](https://en.wikipedia.org/wiki/K-means_clustering#Optimal_number_of_clusters)
    can be used.
 
- * Different types can be used for `data` and `centroids` (e.g. `arma::fmat` or
-   any dense matrix type implementing the Armadillo API).  The types of `data`
-   and `centroids` must be the same.
+ * Different types can be used for `data` and `centroids` (e.g. `arma::fmat`,
+   `arma::sp_mat`, or any matrix type implementing the Armadillo API).  The
+   element types of `data` and `centroids` must be the same; `centroids` must be
+   the dense equivalent of `data` (e.g. `arma::mat` when `data` is
+   `arma::sp_mat`).
 
  * As an alternative to providing an initial clustering guess, the
    [`InitialPartitionPolicy`](#advanced-functionality-template-parameters)
@@ -196,6 +198,38 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    in a single iteration.
    - Cluster distortion is defined as the square root of the sum of distances
      between each centroids and its value in the previous iteration.
+
+### Other Functionality
+
+ - `km.DistanceComputations()` will return the number of distance computations
+   that were performed during the most recent call to `Cluster()` as a `size_t`,
+   or `0` if `Cluster()` has not been called yet.
+
+ - `km.Iterations()` will return the number of iterations performed during the
+   most recent call to `Cluster()` as a `size_t`, or `0` if `Cluster()` has not
+   been called yet.
+
+ - `km.MaxIterations()` returns a `size_t` holding the maximum number of
+   iterations to perform during clustering.  `km.MaxIterations() = m` sets the
+   maximum number of iterations to `m`.
+
+ - `km.Distance()` returns an instantiated [`DistanceType`](#distancetype) (by
+   default, a [`EuclideanDistance`](../core/distances.md#lmetric)).
+
+ - `km.Partitioner()` returns an instantiated
+   [`InitialPartitionPolicy`](#initialpartitionpolicy) (by default, a
+   [`SampleInitialization`](#initialpartitionpolicy)).
+
+ - `km.EmptyClusterAction()` returns an instantiated
+   [`EmptyClusterPolicy`](#emptyclusterpolicy) (by default, a
+   [`MaxVarianceNewCluster`](#emptyclusterpolicy)).
+
+ - There is no function to return an instantiated
+   [`LloydStepType`](#lloydsteptype), as those are created and destroyed during
+   the call to [`Cluster()`](#clustering).
+
+ - A `KMeans` object can be serialized with
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
 ### Simple Examples
 
@@ -302,7 +336,7 @@ clustering.
 arma::fmat dataset;
 mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
-KMeans km;
+mlpack::KMeans km;
 arma::Row<size_t> assignments;
 arma::mat centroids;
 km.Cluster(dataset, 10 /* clusters */, assignments, centroids);
@@ -315,6 +349,30 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
       centroids.col(assignments[i]));
 }
 std::cout << "SSE of clustering: " << sse << "." << std::endl;
+```
+
+---
+
+Perform k-means clustering on the sparse MovieLens dataset, clustering into a
+dense matrix.
+
+```c++
+// See https://datasets.mlpack.org/movielens-100k.csv.
+arma::sp_mat dataset;
+mlpack::Load("movielens-100k.csv", dataset, mlpack::Fatal);
+
+// Create the KMeans object.
+mlpack::KMeans km;
+
+// Cluster into 5 clusters.  Note that the centroids are dense!
+arma::mat centroids;
+km.Cluster(dataset, 5, centroids);
+
+// Print the number of iterations and distance computations during clustering.
+std::cout << "Clustering took " << km.Iterations() << " iterations."
+    << std::endl;
+std::cout << "During clustering, " << km.DistanceComputations() << " were "
+    << "computed." << std::endl;
 ```
 
 ### Advanced Functionality: Template Parameters
@@ -404,6 +462,12 @@ KMeans<DistanceType,
    [refined start technique (pdf)](https://static.aminer.org/pdf/PDF/000/334/561/refining_initial_points_for_k_means_clustering.pdf).
    - This approach runs k-means several times on small subsamplings of the data,
      and then clusters those results to provide initial seeds.
+   - A `RefinedStart` object can be created with the constructor
+     `RefinedStart(samplings=100, percentage=0.02)` and passed to the
+     [`KMeans` constructor](#constructors).
+     * `samplings` represents the number of subsamples of the data to take.
+     * `percentage` (between 0 and 1) represents the percentage of data to use
+       for each subsample.
    - This algorithm can take significantly longer than either
      `SampleInitialization` or `KMeansPlusPlusInitialization`.
    - In general it will provide better results than `SampleInitialization` but
@@ -431,11 +495,13 @@ class CustomInitialPartitionPolicy
   //  - `data` is the dataset that `Cluster()` was called with.
   //  - `k` is the number of centroids that `Cluster()` was called with.
   //  - `centroids` should be filled with the initial centroids to use.
+  //  - `CentroidsType` will always be a dense matrix type, with the same
+  //    element type as `MatType`.
   //
-  template<typename MatType>
+  template<typename MatType, typename CentroidsType>
   void Cluster(const MatType& data,
                const size_t k,
-               MatType& centroids);
+               CentroidsType& centroids);
 
   // Initialize the point assignments using the given data and number of
   // clusters.
@@ -471,6 +537,9 @@ class CustomInitialPartitionPolicy
  * The `KillEmptyClusters` class is available for drop-in usage.
    - This will set a centroid to have all values `DBL_MAX`, and no points will
      be assigned to it in future iterations.
+   - If a different `MatType` than `arma::mat` is being used for clustering,
+     then the maximum numeric value for that element type will be used instead
+     of `DBL_MAX`.
    - Unlike `MaxVarianceNewCluster`, there is effectively no runtime cost for
      `KillEmptyClusters` in the event that an empty cluster is encountered.
 
@@ -509,12 +578,14 @@ class CustomEmptyClusterPolicy
   //     computation.
   // - `iteration`: iteration number of the clustering when the empty cluster
   //     was encountered.
+  //  - `CentroidsType` will always be a dense matrix type, with the same
+  //    element type as `MatType`.
   //
-  template<typename DistanceType, typename MatType>
+  template<typename DistanceType, typename MatType, typename CentroidsType>
   void EmptyCluster(const MatType& data,
                     const size_t emptyCluster,
-                    const arma::mat& oldCentroids,
-                    arma::mat& newCentroids,
+                    const CentroidsType& oldCentroids,
+                    CentroidsType& newCentroids,
                     arma::Col<size_t>& clusterCounts,
                     DistanceType& distance,
                     const size_t iteration);
@@ -589,16 +660,35 @@ class CustomEmptyClusterPolicy
    - This strategy performs best when `k` is very large, and the dataset is
      large and low-dimensional.
 
- * A custom `LloydStepType` needs accept two template parameters and implement a
-   constructor and two methods:
+ * The `CoverTreeDualTreeKMeans` class is available for drop-in usage and
+   implements a [dual-tree algorithm for k-means (pdf)](https://www.ratml.org/pub/pdf/2017dual.pdf).
+   - This is the same as `DualTreeKMeans`, except it uses
+     [`CoverTree`](../core/trees/cover_tree.md)s instead of
+     [`KDTree`](../core/trees/kdtree.md)s.
+
+ * The `DualTreeKMeans` class itself has four template parameters, with the last
+   one, `TreeType`, controlling the tree type; this means a custom
+   [tree type](../core/trees.md) can be used via a `using` declaration like
+   follows:
+
+```c++
+template<typename DistanceType, typename MatType, typename CentroidsType>
+using OctreeDualTreeKMeans = DualTreeKMeans<DistanceType, MatType,
+                                            CentroidsType, Octree>;
+```
+
+ * A fully custom `LloydStepType` needs to accept three template parameters and
+   implement a constructor and two methods:
 
 ```c++
 //
 // `DistanceType` is the distance metric that is used during iteration (e.g.
-// `EuclideanDistance`), and `MatType` is the matrix type of the data (e.g.
-// `arma::mat`).
+// `EuclideanDistance`), `MatType` is the matrix type of the data (e.g.
+// `arma::mat`), and `CentroidsType` is the matrix type of the centroids (e.g.
+// `arma::mat`).  `CentroidsType` will always be the dense matrix equivalent of
+// `MatType`.
 //
-template<typename DistanceType, typename MatType>
+template<typename DistanceType, typename MatType, typename CentroidsType>
 class CustomLloydStepType
 {
  public:
@@ -606,6 +696,9 @@ class CustomLloydStepType
   // Construct the CustomLloydStepType object with the given dataset and
   // instantiated distance metric.  This should perform any preprocessing that
   // needs to be done before the first iteration.
+  //
+  // The dataset and distance are not passed in Iterate(), so it is a good idea
+  // to keep a reference to what is passed here.
   //
   CustomLloydStepType(const MatType& dataset, DistanceType& distance);
 
@@ -624,8 +717,8 @@ class CustomLloydStepType
   // the sum of distances between each centroids and its updated centroid in
   // `newCentroids`).
   //
-  double Iterate(const MatType& centroids,
-                 MatType& newCentroids,
+  double Iterate(const CentroidsType& centroids,
+                 CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 
   //
@@ -643,7 +736,27 @@ Perform k-means clustering on the satellite dataset using the Manhattan
 distance.
 
 ```c++
+// See https://datasets.mlpack.org/satellite.train.csv.
+arma::mat dataset;
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
+// Create KMeans object with default parameters and the Manhattan distance.
+mlpack::KMeans<mlpack::ManhattanDistance> km;
+arma::mat centroids;
+arma::Row<size_t> assignments;
+km.Cluster(dataset, 5 /* clusters */, assignments, centroids);
+
+// Compute the average distance from each point to its assigned centroid.
+double sumDist = 0.0;
+for (size_t i = 0; i < dataset.n_cols; ++i)
+{
+  sumDist += mlpack::ManhattanDistance::Evaluate(
+      dataset.col(i), centroids.col(assignments[i]));
+}
+const double avgDist = sumDist / (double) dataset.n_cols;
+
+std::cout << "Average Manhattan distance from a point to its assigned centroid:"
+    << " " << avgDist << "." << std::endl;
 ```
 
 ---
@@ -652,7 +765,26 @@ Perform k-means clustering on the wave energy farm dataset, using k-means++ as
 the initialization strategy.
 
 ```c++
+// See https://datasets.mlpack.org/wave_energy_farm_100.csv.
+arma::mat dataset;
+mlpack::Load("wave_energy_farm_100.csv", dataset, mlpack::Fatal);
 
+// Create KMeans object with k-means++ as the initialization strategy.
+mlpack::KMeans<mlpack::EuclideanDistance,
+               mlpack::KMeansPlusPlusInitialization> km;
+
+// Perform the clustering using k-means++ for initialization.
+arma::mat centroids;
+km.Cluster(dataset,
+           6 /* clusters */,
+           assignments,
+           centroids);
+
+for (size_t i = 0; i < 6; ++i)
+{
+  std::cout << " - Cluster " << i << " has " << arma::accu(assignments == i)
+      << " points assigned to it." << std::endl;
+}
 ```
 
 ---
@@ -661,7 +793,30 @@ Perform k-means clustering on the satellite dataset, killing any empty clusters
 at the end of an iteration.
 
 ```c++
+// See https://datasets.mlpack.org/satellite.train.csv.
+arma::mat dataset;
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
+// Create KMeans object with default parameters, using `KillEmptyClusters` to
+// remove any empty clusters when they are encountered.
+mlpack::KMeans<mlpack::ManhattanDistance,
+               mlpack::SampleInitialization,
+               mlpack::KillEmptyClusters> km;
+arma::mat centroids;
+arma::Row<size_t> assignments;
+
+// Intentionally cluster with very many clusters, so that some will be empty.
+km.Cluster(dataset, 500 /* clusters */, assignments, centroids);
+
+// Now compute the number of clusters that are empty.  Since empty clusters have
+// their centroids set to DBL_MAX, we only need to look for that.
+size_t numEmpty = 0;
+for (size_t i = 0; i < centroids.n_cols; ++i)
+  if (centroids(0, i) == DBL_MAX)
+    ++numEmpty;
+
+std::cout << "After clustering, " << numEmpty << " clusters are empty."
+    << std::endl;
 ```
 
 ---
@@ -671,7 +826,27 @@ Pelleg-Moore tree-based strategy for each iteration.  This provides significant
 speedup in low dimensions.
 
 ```c++
+// See https://datasets.mlpack.org/lcdm_tiny.csv.
+arma::mat dataset;
+mlpack::Load("lcdm_tiny.csv", dataset);
 
+// Create k-means object with the Pelleg-Moore single-tree strategy for
+// clustering.
+mlpack::KMeans<mlpack::EuclideanDistance,
+               mlpack::SampleInitialization,
+               mlpack::MaxVarianceNewCluster,
+               mlpack::PellegMooreKMeans> km;
+
+// Perform clustering with 5 clusters.
+arma::mat centroids;
+arma::Mat<size_t> assignments;
+km.Cluster(dataset, 5, assignments, centroids);
+
+// Print statistics about the clustering.
+std::cout << "Clustering took " << km.Iterations() << " iterations."
+    << std::endl;
+std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
+    << "calculations were performed." << std::endl;
 ```
 
 ---
@@ -681,15 +856,52 @@ algorithm for acceleration and the Manhattan distance.  This provides
 significant speedup in higher dimensions.
 
 ```c++
+// See https://datasets.mlpack.org/corel-histogram.csv.
+arma::mat dataset;
+mlpack::Load("corel-histogram.csv", dataset);
 
+// Create k-means object with the Manhattan distance and Elkan's algorithm.
+mlpack::KMeans<mlpack::ManhattanDistance,
+               mlpack::SampleInitialization,
+               mlpack::MaxVarianceNewCluster,
+               mlpack::ElkanKMeans> km;
+
+// Perform clustering with 10 clusters.
+arma::mat centroids;
+km.Cluster(dataset, 10, assignments, centroids);
+
+// Print statistics about the clustering.
+std::cout << "Clustering took " << km.Iterations() << " iterations."
+    << std::endl;
+std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
+    << "calculations were performed." << std::endl;
 ```
 
 ---
 
 Perform k-means clustering on the satellite dataset using 32-bit floating point
-data, using refined start initialization, allowing empty clusters to persist at
-each iteration, and using the Hamerly algorithm for acceleration.
+data, using refined start initialization with custom parameters, allowing empty
+clusters to persist at each iteration, and using the Hamerly algorithm for
+acceleration.
 
 ```c++
+// See https://datasets.mlpack.org/satellite.train.csv.
+arma::fmat dataset;
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
+// Create KMeans object with default parameters, using `KillEmptyClusters` to
+// remove any empty clusters when they are encountered.
+mlpack::KMeans<mlpack::ManhattanDistance,
+               mlpack::RefinedStart,
+               mlpack::KillEmptyClusters> km;
+
+// Perform clustering with 6 clusters.
+arma::fmat centroids;
+km.Cluster(dataset, 6, assignments, centroids);
+
+// Print statistics about the clustering.
+std::cout << "Clustering took " << km.Iterations() << " iterations."
+    << std::endl;
+std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
+    << "calculations were performed." << std::endl;
 ```
