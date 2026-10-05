@@ -197,3 +197,4 @@ your Github credentials.
       580 MHz MT7628 (MIPS 24k)
     - `manaeesh.ratml.org`: [Milk-V Duo](https://milkv.io/docs/duo/overview),
       64MB RAM (only 28MB usable), 1 GHz C906 (RISC-V)
+    - `laab.ratml.org`: [OrangePi 6+](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-6-Plus.html), 16GB RAM, 12-core CIX P1 (ARM Cortex-A720)
