@@ -2547,9 +2547,9 @@ TEST_CASE("ARFFTrailingNewlineTest", "[LoadSaveTest][tiny]")
     f << "@relation test\n";
     f << "@attribute a numeric\n";
     f << "@attribute b numeric\n";
-    f << "@data\n"
-    f << "1, 2\n"
-    f << "3, 4\n"
+    f << "@data\n";
+    f << "1, 2\n";
+    f << "3, 4\n";
     f << "5, 6";
     if (trailingNewline)
       f << "\n";
