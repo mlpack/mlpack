@@ -48,9 +48,28 @@ target_info = [
       'arch_type': 'sparc64',
       'arch_name': 'ULTRASPARC',
       'test_filters': '~[long]',
-      // OpenBLAS doesn't compile and run successfully on SPARC64 so we manually
-      // download a precompiled reference BLAS implementation.
+      // OpenBLAS doesn't run correctly on SPARC64 so we manually download a
+      // precompiled reference BLAS implementation.
       'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+  ],
+  'manaeesh': [
+      'device_name': 'milkv-duo',
+      'arch_type': 'riscv64-lp64d-musl',
+      'arch_name': 'C906',
+      // Even the "tiny" LSTMReberGrammarTest is too much for the Milk-V Duo!
+      'test_filters': '[tiny] ~LSTMReberGrammarTest',
+      'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',
+      'openblas_patches': '.jenkins/cross-compilation/openblas-riscv64-low-memory.patch',
+      'scp_opts': '-O',
+      // We need a special patch to decrease the size of the internal buffers
+      // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
+      // that we have.  We also need to disable Armadillo's std::mutex support.
+      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DCMAKE_CXX_FLAGS="-DARMA_DONT_USE_STD_MUTEX"'
+  ],
+  'laab': [
+      'device_name': 'orange-pi-6+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA710'
   ]
 ]
 
@@ -103,7 +122,7 @@ pipeline
           {
             name 'target'
             values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
-                   'cayenne', 'laziji'
+                   'cayenne', 'laziji', 'manaeesh', 'laab'
           }
         }
 
@@ -133,9 +152,11 @@ pipeline
               TEST_FILTERS = "${target_info[env.target]['test_filters'] ?: ''}"
               JUMP_HOST = "${target_info[env.target]['jump_host'] ?: ''}"
               OPENBLAS_EXTRA_FLAGS = "${target_info[env.target]['openblas_extra_flags'] ?: ''}"
+              OPENBLAS_PATCHES = "${target_info[env.target]['openblas_patches'] ?: ''}"
               SCP_OPTS = "${target_info[env.target]['scp_opts'] ?: ''}"
               BLAS_URL = "${target_info[env.target]['blas_url'] ?: ''}"
               EXTRA_CXXFLAGS = "${target_info[env.target]['extra_cxxflags'] ?: ''}"
+              EXTRA_CMAKE_OPTS = "${target_info[env.target]['extra_cmake_opts'] ?: '' }"
             }
 
             steps
@@ -160,6 +181,15 @@ pipeline
                 ccache --set-config "max_size=10G";
                 ccache --zero-stats;
 
+                # This only supports one patch.  Later, it may be necessary to
+                # support more.
+                if [ ! -z "$OPENBLAS_PATCHES" ];
+                then
+                  OPENBLAS_PATCH_LIST="-DOPENBLAS_PATCHES=\"$PWD/$OPENBLAS_PATCHES\"";
+                else
+                  OPENBLAS_PATCH_LIST=;
+                fi
+
                 rm -rf build-${target}/
                 mkdir build-${target}/
                 cd build-${target}/
@@ -174,12 +204,12 @@ pipeline
                     -DDOWNLOAD_DEPENDENCIES=ON \
                     -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
                     -DCMAKE_CXX_FLAGS="$EXTRA_CXXFLAGS" \
+                    $OPENBLAS_PATCH_LIST \
                     $EXTRA_CMAKE_OPTS \
                     ../
                 # If we have a custom BLAS library move it into place...
                 if [ ! -z "$BLAS_URL" ]; then
                     curl $BLAS_URL > deps/OpenBLAS*/libopenblas_*.a;
-                    ls -l deps/OpenBLAS*/
                 fi
                 time make mlpack_test;
 
