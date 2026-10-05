@@ -114,10 +114,10 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `maxIterations` | `size_t` | Maximum number of iterations of the mean shift algorithm to run. | `1000` |
+| `maxIterations` | `size_t` | Maximum number of iterations of the `k`-means algorithm to run. | `1000` |
 | `distance` | `DistanceType` | Instantiated distance metric to use (only when specifying a [custom `DistanceType`](#advanced-functionality-template-parameters). | `DistanceType()` |
 | `partitioner` | `InitialPartitionPolicy` | Instantiated object that computes initial cluster assignments (only for when specifying a [custom `InitialPartitionPolicy`](#advanced-functionality-template-parameters)). | `InitialPartitionPolicy()` |
-| `emptyClusterAction` | `EmptyClusterPolicy` | Instantiated object that specifies the action to take when a cluster is empty at the end of an iteration (only for when specifying a [custom `EmptyClusterPolicy`](#advanced-functionality-template-parameters)). |
+| `emptyClusterAction` | `EmptyClusterPolicy` | Instantiated object that specifies the action to take when a cluster is empty at the end of an iteration (only for when specifying a [custom `EmptyClusterPolicy`](#advanced-functionality-template-parameters)). | `EmptyClusterPolicy()` |
 
 ### Clustering
 
@@ -171,14 +171,15 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 | `k` | `size_t` | The number of clusters to find.  Tuning this parameter is very important; see notes below. | _(N/A)_ |
 | `assignments` | [`arma::Row<size_t>`](../matrices.md) | Vector to store cluster assignments for each point into. | _(N/A)_ |
 | `centroids` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix that centroids will be stored into. | _(N/A)_ |
-| `initialAssignmentGuess` | `bool` | If `true`, then the values in `assignments` when `Cluster()` is called will be used as the initial clustering. | `false` | | `initialCentroidGuess` | `bool` | If `true`, then the values in `centroids` when `Cluster()` is called will be used as the initial clustering.  Ignored if `initialAssignmentGuess` is also `true`. | `false` |
+| `initialAssignmentGuess` | `bool` | If `true`, then the values in `assignments` when `Cluster()` is called will be used as the initial clustering. | `false` |
+| `initialCentroidGuess` | `bool` | If `true`, then the values in `centroids` when `Cluster()` is called will be used as the initial clustering.  Ignored if `initialAssignmentGuess` is also `true`. | `false` |
 
 ***Notes***:
 
  * Selecting the right value of `k` for k-means is very important to ensure
    high-quality results.  If it is not already known how many clusters the data
    contain, heuristics such as the
-   [elbow method](https://en.wikipedia.org/wiki/Elbow_method_(clustering)] or
+   [elbow method](https://en.wikipedia.org/wiki/Elbow_method_(clustering)) or
    [other strategies](https://en.wikipedia.org/wiki/K-means_clustering#Optimal_number_of_clusters)
    can be used.
 
@@ -403,8 +404,9 @@ KMeans<DistanceType,
 
  * [`EmptyClusterPolicy`](#emptyclusterpolicy) is the strategy to use when, at
    the end of an iteration, a cluster has no points assigned to it.  The default
-   is `MaxVarianceNewCluster`, which finds the point furthest from any centroid
-   and sets that to the centroid of the empty cluster.
+   is `MaxVarianceNewCluster`, which finds the point furthest from the centroid
+   with maximum variance, and sets the centroid of the empty cluster to that
+   point.
    - mlpack also provides `KillEmptyClusters` and `AllowEmptyClusters`; see the
      [`EmptyClusterPolicy`](#emptyclusterpolicy) documentation for details.
 
@@ -524,7 +526,7 @@ class CustomInitialPartitionPolicy
 
 #### `EmptyClusterPolicy`
 
- * Specifies the action to make when, at the end of an iteration, a cluster has
+ * Specifies the action to take when, at the end of an iteration, a cluster has
    no points assigned to it.
 
  * `MaxVarianceNewCluster` (the default) will find the point that is furthest
@@ -540,9 +542,6 @@ class CustomInitialPartitionPolicy
      from the `centroids` matrix.
    - This means that `centroids.n_cols` (i.e. the number of clusters) may be
      less than `k` when `Cluster()` completes.
-   - If a different `MatType` than `arma::mat` is being used for clustering,
-     then the maximum numeric value for that element type will be used instead
-     of `DBL_MAX`.
    - Unlike `MaxVarianceNewCluster`, there is effectively no runtime cost for
      `KillEmptyClusters` in the event that an empty cluster is encountered.
 
@@ -550,7 +549,7 @@ class CustomInitialPartitionPolicy
    - This leaves a centroid at its previous iteration's value when no points are
      assigned to it.
    - The empty cluster could have points assigned to it in subsequent
-     iterations.
+     iterations, and thus become non-empty again.
    - Unlike `MaxVarianceNewCluster`, there is effectively no runtime cost for
      `AllowEmptyClusters` in the event that an empty cluster is encountered.
 
@@ -576,7 +575,8 @@ class CustomEmptyClusterPolicy
   //     modifications to the state of the clustering should be made to this
   //     matrix.
   // - `clusterCounts`: number of points assigned to each cluster at the *end*
-  //     of the iteration.
+  //     of the iteration.  Changes to `newCentroids` should also be reflected
+  //     here.
   // - `distance`: instantiated DistanceType object to use for distance
   //     computation.
   // - `iteration`: iteration number of the clustering when the empty cluster
@@ -599,17 +599,17 @@ class CustomEmptyClusterPolicy
 
 #### `LloydStepType`
 
- * Specifies the strategy to be used during iteration, to recompute the point
+ * Specifies the strategy to be used during iteration to recompute the point
    assignments and centroids.
 
  * `NaiveKMeans` (the default) is the standard k-means algorithm implementation,
    and recomputes assignments by finding the closest centroid of each point with
    brute-force computation, and then recomputes the centroids from those
    assignments.
-   - This approach is not accelerated!  At each iteration, it computes
+   - ***This approach is not accelerated!***  At each iteration, it computes
      `data.n_cols` * `k` distances, which can be very slow for large datasets!
-   - It is *strongly recommended* to use a different step type, such as one of
-     the accelerated variants below, depending on the data.
+   - It is ***strongly recommended*** to use a different step type, such as one
+     of the accelerated variants below, depending on the data.
    - The `NaiveKMeans` strategy is the only strategy mlpack has implemented that
      does *not* rely on the triangle inequality---thus, this is the only
      `LloydStepType` that can be used with a [`DistanceType`](#distancetype)
