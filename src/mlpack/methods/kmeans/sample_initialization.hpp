@@ -22,7 +22,7 @@ namespace mlpack {
 class SampleInitialization
 {
  public:
-  //! Empty constructor, required by the InitialPartitionPolicy type definition.
+  // Empty constructor, required by the InitialPartitionPolicy type definition.
   SampleInitialization() { }
 
   /**
@@ -46,6 +46,10 @@ class SampleInitialization
       centroids.col(i) = data.col(index);
     }
   }
+
+  // Serialize the partitioner (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace mlpack

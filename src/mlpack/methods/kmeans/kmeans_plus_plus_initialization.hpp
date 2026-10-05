@@ -39,7 +39,7 @@ namespace mlpack {
 class KMeansPlusPlusInitialization
 {
  public:
-  //! Empty constructor, required by the InitialPartitionPolicy type definition.
+  // Empty constructor, required by the InitialPartitionPolicy type definition.
   KMeansPlusPlusInitialization() { }
 
   /**
@@ -106,6 +106,10 @@ class KMeansPlusPlusInitialization
       centroids.col(i) = data.col(position);
     }
   }
+
+  // Serialize the partitioner (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace mlpack

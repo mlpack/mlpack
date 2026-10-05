@@ -24,7 +24,7 @@ namespace mlpack {
 class AllowEmptyClusters
 {
  public:
-  //! Default constructor required by EmptyClusterPolicy policy.
+  // Default constructor required by EmptyClusterPolicy policy.
   AllowEmptyClusters() { }
 
   /**
@@ -58,7 +58,7 @@ class AllowEmptyClusters
     newCentroids.col(emptyCluster) = oldCentroids.col(emptyCluster);
   }
 
-  //! Serialize the empty cluster policy (nothing to do).
+  // Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };

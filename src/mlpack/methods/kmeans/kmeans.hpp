@@ -224,6 +224,36 @@ class KMeans
 
 } // namespace mlpack
 
+// The CEREAL_TEMPLATE_CLASS_VERSION() macro does not work with template
+// template parameters so we write it manually.
+namespace cereal {
+namespace detail {
+
+template<typename DistanceType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy,
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
+struct Version<mlpack::KMeans<DistanceType, InitialPartitionPolicy,
+    EmptyClusterPolicy, LloydStepType, DeprecatedMatType>>
+{
+  static std::uint32_t registerVersion()
+  {
+    ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace(
+        std::type_index(typeid(mlpack::KMeans<DistanceType,
+        InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType,
+        DeprecatedMatType>)).hash_code(), 1);
+    return 1;
+  }
+
+  static inline const std::uint32_t version = registerVersion();
+
+  static void unused() { (void) version; }
+}; /* end Version */
+
+} // namespace detail
+} // namespace cereal
+
 // Include implementation.
 #include "kmeans_impl.hpp"
 
