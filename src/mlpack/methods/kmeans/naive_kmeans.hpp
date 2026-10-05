@@ -56,7 +56,7 @@ class NaiveKMeans
                  CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 
-  size_t DistanceCalculations() const { return distanceCalculations; }
+  size_t DistanceComputations() const { return distanceComputations; }
 
  private:
   //! The dataset.
@@ -65,7 +65,7 @@ class NaiveKMeans
   DistanceType& distance;
 
   //! Number of distance calculations.
-  size_t distanceCalculations;
+  size_t distanceComputations;
 };
 
 } // namespace mlpack

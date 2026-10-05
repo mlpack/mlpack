@@ -311,6 +311,7 @@ for (size_t i = 0; i < 6; ++i)
   centroids.col(i) = dataset.col(i);
 
 // Perform the clustering using the initial centroids as a starting point.
+arma::Row<size_t> assignments;
 km.Cluster(dataset,
            6 /* clusters */,
            assignments,
@@ -338,14 +339,14 @@ mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 
 mlpack::KMeans km;
 arma::Row<size_t> assignments;
-arma::mat centroids;
+arma::fmat centroids;
 km.Cluster(dataset, 10 /* clusters */, assignments, centroids);
 
 // Compute the sum-of-squared-errors of the clustering.
 double sse = 0.0;
 for (size_t i = 0; i < dataset.n_cols; ++i)
 {
-  sse += mlpack::EuclideanDistance::Evaluate(dataset.col(i),
+  sse += mlpack::SquaredEuclideanDistance::Evaluate(dataset.col(i),
       centroids.col(assignments[i]));
 }
 std::cout << "SSE of clustering: " << sse << "." << std::endl;
@@ -371,8 +372,8 @@ km.Cluster(dataset, 5, centroids);
 // Print the number of iterations and distance computations during clustering.
 std::cout << "Clustering took " << km.Iterations() << " iterations."
     << std::endl;
-std::cout << "During clustering, " << km.DistanceComputations() << " were "
-    << "computed." << std::endl;
+std::cout << "During clustering, " << km.DistanceComputations() << " distance "
+    << "computations were performed." << std::endl;
 ```
 
 ### Advanced Functionality: Template Parameters
@@ -535,8 +536,10 @@ class CustomInitialPartitionPolicy
      the end of an iteration is a rare occurrence.
 
  * The `KillEmptyClusters` class is available for drop-in usage.
-   - This will set a centroid to have all values `DBL_MAX`, and no points will
-     be assigned to it in future iterations.
+   - At the end of every iteration, any empty centroids are entirely removed
+     from the `centroids` matrix.
+   - This means that `centroids.n_cols` (i.e. the number of clusters) may be
+     less than `k` when `Cluster()` completes.
    - If a different `MatType` than `arma::mat` is being used for clustering,
      then the maximum numeric value for that element type will be used instead
      of `DBL_MAX`.
@@ -589,7 +592,7 @@ class CustomEmptyClusterPolicy
                     arma::Col<size_t>& clusterCounts,
                     DistanceType& distance,
                     const size_t iteration);
-}
+};
 ```
 
 ---
@@ -671,7 +674,7 @@ class CustomEmptyClusterPolicy
    [tree type](../core/trees.md) can be used via a `using` declaration like
    follows:
 
-```c++
+```
 template<typename DistanceType, typename MatType, typename CentroidsType>
 using OctreeDualTreeKMeans = DualTreeKMeans<DistanceType, MatType,
                                             CentroidsType, Octree>;
@@ -724,7 +727,7 @@ class CustomLloydStepType
   //
   // Return the number of distance computations performed (so far).
   //
-  size_t DistanceCalculations() const;
+  size_t DistanceComputations() const;
 };
 ```
 
@@ -774,6 +777,7 @@ mlpack::KMeans<mlpack::EuclideanDistance,
                mlpack::KMeansPlusPlusInitialization> km;
 
 // Perform the clustering using k-means++ for initialization.
+arma::Row<size_t> assignments;
 arma::mat centroids;
 km.Cluster(dataset,
            6 /* clusters */,
@@ -789,34 +793,30 @@ for (size_t i = 0; i < 6; ++i)
 
 ---
 
-Perform k-means clustering on the satellite dataset, killing any empty clusters
-at the end of an iteration.
+Perform k-means clustering on the cloud dataset, killing any empty clusters at
+the end of an iteration.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
+// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
 
 // Create KMeans object with default parameters, using `KillEmptyClusters` to
 // remove any empty clusters when they are encountered.
 mlpack::KMeans<mlpack::ManhattanDistance,
-               mlpack::SampleInitialization,
-               mlpack::KillEmptyClusters> km;
+               mlpack::RandomPartition,
+               mlpack::KillEmptyClusters> km(50 /* iterations */);
 arma::mat centroids;
 arma::Row<size_t> assignments;
 
 // Intentionally cluster with very many clusters, so that some will be empty.
 km.Cluster(dataset, 500 /* clusters */, assignments, centroids);
 
-// Now compute the number of clusters that are empty.  Since empty clusters have
-// their centroids set to DBL_MAX, we only need to look for that.
-size_t numEmpty = 0;
-for (size_t i = 0; i < centroids.n_cols; ++i)
-  if (centroids(0, i) == DBL_MAX)
-    ++numEmpty;
-
-std::cout << "After clustering, " << numEmpty << " clusters are empty."
-    << std::endl;
+// Now compute the number of clusters that are empty.  With `KillEmptyClusters`,
+// `centroids` will only have columns for non-empty clusters, so we can use
+// `centroids.n_cols` to get the number of non-empty clusters.
+std::cout << "After clustering, " << (500 - centroids.n_cols)
+    << " clusters were empty." << std::endl;
 ```
 
 ---
@@ -839,14 +839,14 @@ mlpack::KMeans<mlpack::EuclideanDistance,
 
 // Perform clustering with 5 clusters.
 arma::mat centroids;
-arma::Mat<size_t> assignments;
+arma::Row<size_t> assignments;
 km.Cluster(dataset, 5, assignments, centroids);
 
 // Print statistics about the clustering.
 std::cout << "Clustering took " << km.Iterations() << " iterations."
     << std::endl;
-std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
-    << "calculations were performed." << std::endl;
+std::cout << "During clustering, " << km.DistanceComputations() << " distance "
+    << "computations were performed." << std::endl;
 ```
 
 ---
@@ -868,13 +868,13 @@ mlpack::KMeans<mlpack::ManhattanDistance,
 
 // Perform clustering with 10 clusters.
 arma::mat centroids;
-km.Cluster(dataset, 10, assignments, centroids);
+km.Cluster(dataset, 10, centroids);
 
 // Print statistics about the clustering.
 std::cout << "Clustering took " << km.Iterations() << " iterations."
     << std::endl;
-std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
-    << "calculations were performed." << std::endl;
+std::cout << "During clustering, " << km.DistanceComputations() << " distance "
+    << "computations were performed." << std::endl;
 ```
 
 ---
@@ -896,12 +896,13 @@ mlpack::KMeans<mlpack::ManhattanDistance,
                mlpack::KillEmptyClusters> km;
 
 // Perform clustering with 6 clusters.
+arma::Row<size_t> assignments;
 arma::fmat centroids;
 km.Cluster(dataset, 6, assignments, centroids);
 
 // Print statistics about the clustering.
 std::cout << "Clustering took " << km.Iterations() << " iterations."
     << std::endl;
-std::cout << "During clustering, " << km.DistanceCalculations() << " distance "
-    << "calculations were performed." << std::endl;
+std::cout << "During clustering, " << km.DistanceComputations() << " distance "
+    << "computations were performed." << std::endl;
 ```

@@ -81,9 +81,9 @@ class DualTreeKMeans
                  arma::Col<size_t>& counts);
 
   //! Return the number of distance calculations.
-  size_t DistanceCalculations() const { return distanceCalculations; }
+  size_t DistanceComputations() const { return distanceComputations; }
   //! Modify the number of distance calculations.
-  size_t& DistanceCalculations() { return distanceCalculations; }
+  size_t& DistanceComputations() { return distanceComputations; }
 
  private:
   //! The original dataset reference.
@@ -96,7 +96,7 @@ class DualTreeKMeans
   DistanceType distance;
 
   //! Track distance calculations.
-  size_t distanceCalculations;
+  size_t distanceComputations;
   //! Track iteration number.
   size_t iteration;
 

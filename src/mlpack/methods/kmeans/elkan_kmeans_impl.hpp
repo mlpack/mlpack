@@ -23,7 +23,7 @@ ElkanKMeans<DistanceType, MatType, CentroidsType>::ElkanKMeans(
     DistanceType& distance) :
     dataset(dataset),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do here.
 }
@@ -64,14 +64,14 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
 
   // Step 1: for all centers, compute between-cluster distances.  For all
   // centers, compute s(c) = 1/2 min d(c, c').
-  #pragma omp parallel for schedule(dynamic) reduction(+:distanceCalculations)
+  #pragma omp parallel for schedule(dynamic) reduction(+:distanceComputations)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
       const ElemType dist = distance.Evaluate(centroids.col(i),
                                               centroids.col(j));
-      distanceCalculations++;
+      distanceComputations++;
       clusterDistances(i, j) = dist;
       clusterDistances(j, i) = dist;
     }
@@ -83,7 +83,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
 
   // Now loop over all points, and see which ones need to be updated.
   #pragma omp parallel for schedule(dynamic) reduction(matAdd: newCentroids) \
-      reduction(colAdd: counts) reduction(+: distanceCalculations)
+      reduction(colAdd: counts) reduction(+: distanceComputations)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     // Step 2: identify all points such that u(x) <= s(c(x)).
@@ -118,7 +118,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
                                    centroids.col(assignments[i]));
           lowerBounds(assignments[i], i) = dist;
           upperBounds(i) = dist;
-          distanceCalculations++;
+          distanceComputations++;
 
           // Check if we can prune again.
           if (upperBounds(i) <= lowerBounds(c, i))
@@ -140,7 +140,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
           const ElemType pointDist = distance.Evaluate(dataset.col(i),
                                                        centroids.col(c));
           lowerBounds(c, i) = pointDist;
-          distanceCalculations++;
+          distanceComputations++;
           if (pointDist < dist)
           {
             upperBounds(i) = pointDist;
@@ -160,7 +160,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
   // Now, normalize and calculate the distance each cluster has moved.
   ColType moveDistances(centroids.n_cols);
   double cNorm = 0.0; // Cluster movement for residual.
-  #pragma omp parallel for reduction(+: cNorm, distanceCalculations)
+  #pragma omp parallel for reduction(+: cNorm, distanceComputations)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
@@ -168,7 +168,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
 
     moveDistances(c) = distance.Evaluate(newCentroids.col(c), centroids.col(c));
     cNorm += std::pow(moveDistances(c), 2.0);
-    distanceCalculations++;
+    distanceComputations++;
   }
 
   #pragma omp parallel for

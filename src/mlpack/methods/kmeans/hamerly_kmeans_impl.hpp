@@ -23,7 +23,7 @@ HamerlyKMeans<DistanceType, MatType, CentroidsType>::HamerlyKMeans(
     DistanceType& distance) :
     dataset(dataset),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
@@ -52,14 +52,14 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
 
   // Calculate minimum intra-cluster distance for each cluster.
   minClusterDistances.fill(std::numeric_limits<ElemType>::max());
-  #pragma omp parallel for reduction(+:distanceCalculations) schedule(static)
+  #pragma omp parallel for reduction(+:distanceComputations) schedule(static)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
       const ElemType dist = distance.Evaluate(centroids.col(i),
                                               centroids.col(j)) / 2.0;
-      ++distanceCalculations;
+      ++distanceComputations;
 
       // Update bounds, if this intra-cluster distance is smaller.
       minClusterDistances(i) = std::min(minClusterDistances(i), dist);
@@ -67,7 +67,7 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
     }
   }
 
-  #pragma omp parallel for reduction(+:hamerlyPruned, distanceCalculations) \
+  #pragma omp parallel for reduction(+:hamerlyPruned, distanceComputations) \
       reduction(matAdd:newCentroids) reduction(colAdd:counts) schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
@@ -86,7 +86,7 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
     // Tighten upper bound.
     upperBounds(i) = distance.Evaluate(dataset.col(i),
                                        centroids.col(assignments[i]));
-    ++distanceCalculations;
+    ++distanceComputations;
 
     // Second bound test.
     if (upperBounds(i) <= m)
@@ -121,7 +121,7 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
         lowerBounds(i) = dist;
       }
     }
-    distanceCalculations += centroids.n_cols - 1;
+    distanceComputations += centroids.n_cols - 1;
 
     // Update new centroids.
     newCentroids.col(assignments[i]) += dataset.col(i);
@@ -136,7 +136,7 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
   ColType centroidMovements(centroids.n_cols);
   ElemType centroidMovement = 0.0;
   #pragma omp parallel for \
-      reduction(+: distanceCalculations, centroidMovement) schedule(static)
+      reduction(+: distanceComputations, centroidMovement) schedule(static)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
@@ -147,7 +147,7 @@ double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
                                                 newCentroids.col(c));
     centroidMovements(c) = movement;
     centroidMovement += std::pow(movement, 2.0);
-    ++distanceCalculations;
+    ++distanceComputations;
 
     #pragma omp critical
     {

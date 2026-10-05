@@ -83,9 +83,9 @@ class PellegMooreKMeansRules
                  const double oldScore);
 
   //! Get the number of distance calculations that have been performed.
-  size_t DistanceCalculations() const { return distanceCalculations; }
+  size_t DistanceComputations() const { return distanceComputations; }
   //! Modify the number of distance calculations that have been performed.
-  size_t& DistanceCalculations() { return distanceCalculations; }
+  size_t& DistanceComputations() { return distanceComputations; }
 
  private:
   // The dataset.
@@ -100,7 +100,7 @@ class PellegMooreKMeansRules
   DistanceType& distance;
 
   // The number of O(d) distance calculations that have been performed.
-  size_t distanceCalculations;
+  size_t distanceComputations;
 };
 
 } // namespace mlpack

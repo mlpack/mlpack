@@ -57,7 +57,7 @@ DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::DualTreeKMeans(
     tree(new Tree(const_cast<MatType&>(dataset))),
     dataset(tree->Dataset()),
     distance(distance),
-    distanceCalculations(0),
+    distanceComputations(0),
     iteration(0),
     upperBounds(dataset.n_cols),
     lowerBounds(dataset.n_cols),
@@ -121,7 +121,7 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, *interclusterDistancesTemp);
-    distanceCalculations += nns.BaseCases() + nns.Scores();
+    distanceComputations += nns.BaseCases() + nns.Scores();
 
     // We need to do the unmapping ourselves, if the tree does mapping.
     if (TreeTraits<Tree>::RearrangesDataset)
@@ -160,7 +160,7 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
   traverser.Traverse(*tree, nns.ReferenceTree());
-  distanceCalculations += rules.BaseCases() + rules.Scores();
+  distanceComputations += rules.BaseCases() + rules.Scores();
 
   DecoalesceTree(*tree);
 
@@ -190,7 +190,7 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
         clusterDistances[centroids.n_cols] = movement;
     }
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   delete centroidTree;
 
@@ -270,7 +270,7 @@ void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::UpdateTree(
                    node.MaxDistance(centroids.col(node.Stat().Owner())));
       adjustedUpperBound = node.Stat().UpperBound();
 
-      ++distanceCalculations;
+      ++distanceComputations;
       if (node.Stat().UpperBound() < node.Stat().LowerBound())
         node.Stat().StaticPruned() = true;
     }
@@ -342,7 +342,7 @@ void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::UpdateTree(
         // Attempt to tighten the bound.
         upperBounds[index] = distance.Evaluate(dataset.col(index),
                                                centroids.col(owner));
-        ++distanceCalculations;
+        ++distanceComputations;
         if (upperBounds[index] < pruningLowerBound)
         {
           prunedPoints[index] = true;

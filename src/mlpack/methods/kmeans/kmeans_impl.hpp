@@ -193,7 +193,7 @@ Cluster(const MatType& data,
       centroids.zeros(data.n_rows, clusters);
       for (size_t i = 0; i < data.n_cols; ++i)
       {
-        centroids.col(assignments[i]) += arma::vec(data.col(i));
+        centroids.col(assignments[i]) += data.col(i);
         counts[assignments[i]]++;
       }
 
@@ -261,8 +261,8 @@ Cluster(const MatType& data,
     Log::Info << "KMeans::Cluster(): terminated after limit of " << iteration
         << " iterations." << std::endl;
   }
-  distanceComputations = lloydStep.DistanceCalculations();
-  Log::Info << lloydStep.DistanceCalculations() << " distance calculations."
+  distanceComputations = lloydStep.DistanceComputations();
+  Log::Info << lloydStep.DistanceComputations() << " distance calculations."
       << std::endl;
 }
 
@@ -302,7 +302,7 @@ Cluster(const MatType& data,
     centroids.zeros(data.n_rows, clusters);
     for (size_t i = 0; i < data.n_cols; ++i)
     {
-      centroids.col(assignments[i]) += arma::vec(data.col(i));
+      centroids.col(assignments[i]) += data.col(i);
       counts[assignments[i]]++;
     }
 

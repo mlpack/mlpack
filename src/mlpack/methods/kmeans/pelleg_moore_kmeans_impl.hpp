@@ -26,7 +26,7 @@ PellegMooreKMeans<DistanceType, MatType, CentroidsType>::PellegMooreKMeans(
     tree(new TreeType(const_cast<MatType&>(datasetOrig))),
     dataset(tree->Dataset()),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
@@ -60,7 +60,7 @@ double PellegMooreKMeans<DistanceType, MatType, CentroidsType>::Iterate(
   // irrelevant; we are checking each node with all clusters.
   traverser.Traverse(0, *tree);
 
-  distanceCalculations += rules.DistanceCalculations();
+  distanceComputations += rules.DistanceComputations();
 
   // Now, calculate how far the clusters moved, after normalizing them.
   typename MatType::elem_type residual = 0;
@@ -73,7 +73,7 @@ double PellegMooreKMeans<DistanceType, MatType, CentroidsType>::Iterate(
                                              newCentroids.col(c)), 2.0);
     }
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   return std::sqrt(residual);
 }

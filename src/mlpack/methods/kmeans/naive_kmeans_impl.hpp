@@ -29,7 +29,7 @@ NaiveKMeans<DistanceType, MatType, CentroidsType>::NaiveKMeans(
     DistanceType& distance) :
     dataset(dataset),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 { /* Nothing to do. */ }
 
 // Run a single iteration.
@@ -90,7 +90,7 @@ double NaiveKMeans<DistanceType, MatType, CentroidsType>::Iterate(
     if (counts(i) != 0)
       newCentroids.col(i) /= counts(i);
 
-  distanceCalculations += centroids.n_cols * dataset.n_cols;
+  distanceComputations += centroids.n_cols * dataset.n_cols;
 
   // Calculate cluster distortion for this iteration.
   ElemType cNorm = 0;
@@ -100,7 +100,7 @@ double NaiveKMeans<DistanceType, MatType, CentroidsType>::Iterate(
     cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)),
         2.0);
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   return std::sqrt(cNorm);
 }

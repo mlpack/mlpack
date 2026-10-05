@@ -64,9 +64,9 @@ class PellegMooreKMeans
                  arma::Col<size_t>& counts);
 
   // Return the number of distance calculations.
-  size_t DistanceCalculations() const { return distanceCalculations; }
+  size_t DistanceComputations() const { return distanceComputations; }
   // Modify the number of distance calculations.
-  size_t& DistanceCalculations() { return distanceCalculations; }
+  size_t& DistanceComputations() { return distanceComputations; }
 
   // Convenience typedef for the tree.
   using TreeType = KDTree<DistanceType, PellegMooreKMeansStatistic, MatType>;
@@ -82,7 +82,7 @@ class PellegMooreKMeans
   DistanceType& distance;
 
   // Track distance calculations.
-  size_t distanceCalculations;
+  size_t distanceComputations;
 };
 
 } // namespace mlpack

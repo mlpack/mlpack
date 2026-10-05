@@ -32,7 +32,7 @@ PellegMooreKMeansRules(
     newCentroids(newCentroids),
     counts(counts),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
@@ -67,7 +67,7 @@ double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Score(
   const size_t whitelisted = centroids.n_cols -
       accu(referenceNode.Stat().Blacklist());
 
-  distanceCalculations += whitelisted;
+  distanceComputations += whitelisted;
 
   // Which cluster has minimum distance to the node?
   size_t closestCluster = centroids.n_cols;
@@ -112,7 +112,7 @@ double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Score(
         centroids.col(closestCluster));
     const ElemType otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
 
-    distanceCalculations += 3; // One for cornerPoint, then two distances.
+    distanceComputations += 3; // One for cornerPoint, then two distances.
 
     if (closestDist < otherDist)
     {
@@ -143,7 +143,7 @@ double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Score(
       if (referenceNode.Stat().Blacklist()[c] == 1)
         continue;
 
-      ++distanceCalculations;
+      ++distanceComputations;
 
       // The reference index is the index of the data point.
       const ElemType dist = distance.Evaluate(centroids.col(c),
