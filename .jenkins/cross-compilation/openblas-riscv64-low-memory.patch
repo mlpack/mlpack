@@ -1,0 +1,39 @@
+Shrink OpenBLAS' RISCV64_GENERIC GEMM memory footprint so f32 neural-network
+training fits on a ~28 MB device (e.g. the Milk-V Duo).
+
+OpenBLAS lazily allocates a per-GEMM scratch buffer (BUFFER_SIZE, 32 MB on
+riscv64) sized for its default N-block (SGEMM_DEFAULT_R = 12288).  That single
+32 MB allocation does not fit on the device, so the first f32 matrix-multiply
+is OOM-killed at startup. Our matrices are tiny (e.g. 64 x 297), so shrinking
+the N-block to 2048 and the buffer to 8 MB costs no measurable speed.
+See the example README / BINARY_SIZE.md and the
+movement-recognition tutorial for the full investigation.
+
+Applied with `patch -p1` against an OpenBLAS source tree (tested with 0.3.29).
+--- a/common_riscv64.h
++++ b/common_riscv64.h
+@@ -86,7 +86,7 @@
+
+
+
+-#define BUFFER_SIZE     ( 32 << 20)
++#define BUFFER_SIZE     (  8 << 20)
+ #define SEEK_ADDRESS
+
+ #if defined(C910V) || defined(RISCV64_ZVL256B) || defined(RISCV64_ZVL128B) || defined(x280)
+--- a/param.h
++++ b/param.h
+@@ -3040,10 +3040,10 @@
+ #define CGEMM_DEFAULT_Q 120
+ #define ZGEMM_DEFAULT_Q 120
+
+-#define SGEMM_DEFAULT_R 12288
+-#define DGEMM_DEFAULT_R 8192
+-#define CGEMM_DEFAULT_R 4096
+-#define ZGEMM_DEFAULT_R 4096
++#define SGEMM_DEFAULT_R 2048
++#define DGEMM_DEFAULT_R 2048
++#define CGEMM_DEFAULT_R 2048
++#define ZGEMM_DEFAULT_R 2048
+
+ #define SYMV_P	16
