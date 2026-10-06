@@ -29,4 +29,6 @@
 #include "traversal_info.hpp"
 #include "greedy_single_tree_traverser.hpp"
 
+#include "tree_search_strategy.hpp"
+
 #endif
