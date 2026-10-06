@@ -14,6 +14,7 @@
 
 // In case if it is not included
 #include "../httplib/httplib.hpp"
+#include "decompress_gz.hpp"
 
 namespace mlpack {
 
@@ -118,6 +119,19 @@ inline bool DownloadFile(const std::string& url,
  */
 inline bool DownloadFileWithCache(const std::string& url,
                                  std::string& filename);
+
+/**
+ * If the file at `filePath` has a .gz extension and contains gzip data,
+ * decompress it to `destPath` and return `destPath`.  If the decompressed file
+ * already exists, return it without re-doing work.  For non-.gz files the input
+ * path is returned unchanged.  Throws if MLPACK_USE_ZLIB is not enabled.
+ *
+ * @param filePath Path to the (possibly compressed) file.
+ * @param destPath Where to write the decompressed output.
+ * @return The path to the usable (decompressed or original) file.
+ */
+inline std::string DecompressDownloadedIfNeeded(const std::string& filePath,
+                                                const std::string& destPath);
 
 #endif
 

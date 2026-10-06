@@ -4714,4 +4714,257 @@ TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
   remove(manifestPath.c_str());
 }
 
+#ifdef MLPACK_USE_ZLIB
+
+/**
+ * Test IsGzipFile() with a real .gz file and a plain .csv file.
+ */
+TEST_CASE("IsGzipFileTest", "[LoadSaveTest]")
+{
+  std::string gzDest = "test_gzip_detect.csv.gz";
+  remove(gzDest.c_str());
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+      gzDest) == true);
+  REQUIRE(IsGzipFile(gzDest) == true);
+  remove(gzDest.c_str());
+
+  std::string csvDest = "test_gzip_detect.csv";
+  remove(csvDest.c_str());
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/iris.csv",
+      csvDest) == true);
+  REQUIRE(IsGzipFile(csvDest) == false);
+  remove(csvDest.c_str());
+}
+
+/**
+ * Test DecompressGzFile() on a downloaded .gz file.
+ */
+TEST_CASE("DecompressGzFileDownloadTest", "[LoadSaveTest]")
+{
+  std::string gzFile = "test_decompress.csv.gz";
+  std::string csvFile = "test_decompress.csv";
+  remove(gzFile.c_str());
+  remove(csvFile.c_str());
+
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+      gzFile) == true);
+  REQUIRE(IsGzipFile(gzFile) == true);
+
+  REQUIRE_NOTHROW(DecompressGzFile(gzFile, csvFile));
+  REQUIRE(std::filesystem::exists(csvFile));
+  REQUIRE(std::filesystem::file_size(csvFile) > 0);
+
+  arma::mat data;
+  REQUIRE(Load(csvFile, data) == true);
+  REQUIRE(data.n_rows > 0);
+  REQUIRE(data.n_cols > 0);
+
+  remove(gzFile.c_str());
+  remove(csvFile.c_str());
+}
+
+/**
+ * Test that Load() with a .csv.gz URL works transparently.
+ */
+TEST_CASE("LoadGzipCSVFromURL", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+  std::string cachedGz =
+      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+  remove(cachedFile.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat data;
+  REQUIRE(Load("https://datasets.mlpack.org/avocado.csv.gz", data,
+      Fatal) == true);
+  REQUIRE(data.n_rows > 0);
+  REQUIRE(data.n_cols > 0);
+
+  REQUIRE(std::filesystem::exists(cachedFile));
+  REQUIRE(std::filesystem::exists(cachedGz));
+
+  remove(cachedFile.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Download a .gz file, decompress it manually, load the result, then load the
+ * same .gz URL through Load() (full auto-decompress pipeline), and verify that
+ * both produce identical matrices.
+ */
+TEST_CASE("GzipVsUncompressedDownloadTest", "[LoadSaveTest]")
+{
+  std::string gzFile = "test_gz_vs_csv.csv.gz";
+  std::string csvFile = "test_gz_vs_csv.csv";
+  remove(gzFile.c_str());
+  remove(csvFile.c_str());
+
+  REQUIRE(DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+      gzFile) == true);
+  REQUIRE_NOTHROW(DecompressGzFile(gzFile, csvFile));
+
+  arma::mat dataFromManual;
+  REQUIRE(Load(csvFile, dataFromManual) == true);
+  REQUIRE(dataFromManual.n_rows > 0);
+  REQUIRE(dataFromManual.n_cols > 0);
+
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedCsv =
+      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+  std::string cachedGz =
+      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+  remove(cachedCsv.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat dataFromPipeline;
+  REQUIRE(Load("https://datasets.mlpack.org/avocado.csv.gz", dataFromPipeline,
+      Fatal) == true);
+
+  REQUIRE(dataFromManual.n_rows == dataFromPipeline.n_rows);
+  REQUIRE(dataFromManual.n_cols == dataFromPipeline.n_cols);
+  REQUIRE(arma::approx_equal(dataFromManual, dataFromPipeline,
+      "absdiff", 1e-10));
+
+  remove(gzFile.c_str());
+  remove(csvFile.c_str());
+  remove(cachedCsv.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test that caching works with .gz files: second load uses the cache.
+ */
+TEST_CASE("GzipCacheTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+  std::string cachedGz =
+      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+  remove(cachedFile.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+
+  arma::mat data1;
+  REQUIRE(Load("https://datasets.mlpack.org/avocado.csv.gz", data1,
+      Fatal) == true);
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  auto mtime1 = std::filesystem::last_write_time(cachedFile);
+  auto mtimeGz1 = std::filesystem::last_write_time(cachedGz);
+
+  arma::mat data2;
+  REQUIRE(Load("https://datasets.mlpack.org/avocado.csv.gz", data2,
+      Fatal) == true);
+
+  auto mtime2 = std::filesystem::last_write_time(cachedFile);
+  auto mtimeGz2 = std::filesystem::last_write_time(cachedGz);
+  REQUIRE(mtime1 == mtime2);
+  REQUIRE(mtimeGz1 == mtimeGz2);
+
+  REQUIRE(arma::approx_equal(data1, data2, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(cachedGz.c_str());
+  remove(manifestPath.c_str());
+}
+
+
+/**
+ * Helper: create a CSV string and compress it to a .gz file using zlib.
+ */
+inline void CreateGzipCSV(const std::string& gzPath, const std::string& csv)
+{
+  gzFile gz = gzopen(gzPath.c_str(), "wb");
+  REQUIRE(gz != nullptr);
+  int written = gzwrite(gz, csv.data(), csv.size());
+  REQUIRE(written == (int) csv.size());
+  gzclose(gz);
+}
+
+/**
+ * Test DecompressGzFile() (the standalone zlib-based decompressor).
+ */
+TEST_CASE("DecompressGzFileTest", "[LoadSaveTest][tiny]")
+{
+  std::string csv = "1,2,3\n4,5,6\n7,8,9\n";
+  std::string gzPath = "test_decompress_gz.csv.gz";
+  std::string csvPath = "test_decompress_gz.csv";
+  remove(gzPath.c_str());
+  remove(csvPath.c_str());
+
+  CreateGzipCSV(gzPath, csv);
+  REQUIRE(IsGzipFile(gzPath));
+  REQUIRE_NOTHROW(DecompressGzFile(gzPath, csvPath));
+
+  REQUIRE(std::filesystem::exists(csvPath));
+  std::ifstream in(csvPath);
+  std::string content((std::istreambuf_iterator<char>(in)),
+                       std::istreambuf_iterator<char>());
+  REQUIRE(content == csv);
+
+  remove(gzPath.c_str());
+  remove(csvPath.c_str());
+}
+
+/**
+ * Test that Load() can transparently load a local .csv.gz file.
+ */
+TEST_CASE("LoadLocalGzipCSVTest", "[LoadSaveTest][tiny]")
+{
+  std::string csv = "1,2,3\n4,5,6\n7,8,9\n";
+  std::string gzPath = "test_load_local.csv.gz";
+  remove(gzPath.c_str());
+
+  CreateGzipCSV(gzPath, csv);
+
+  arma::mat data;
+  REQUIRE(Load(gzPath, data) == true);
+  REQUIRE(data.n_rows == 3);
+  REQUIRE(data.n_cols == 3);
+  REQUIRE(data(0, 0) == Approx(1.0));
+  REQUIRE(data(2, 2) == Approx(9.0));
+
+  remove(gzPath.c_str());
+}
+
+/**
+ * Test that IsGzipFile() returns false for a plain (non-gzip) file.
+ */
+TEST_CASE("IsGzipFilePlainFileTest", "[LoadSaveTest][tiny]")
+{
+  std::string path = "test_plain.csv";
+  remove(path.c_str());
+
+  std::ofstream out(path);
+  out << "1,2,3\n4,5,6\n";
+  out.close();
+
+  REQUIRE(IsGzipFile(path) == false);
+
+  remove(path.c_str());
+}
+
+/**
+ * Test that IsGzipFile() returns false for a non-existent file.
+ */
+TEST_CASE("IsGzipFileMissingFileTest", "[LoadSaveTest][tiny]")
+{
+  REQUIRE(IsGzipFile("does_not_exist.csv.gz") == false);
+}
+
+#endif // MLPACK_USE_ZLIB
+
 #endif

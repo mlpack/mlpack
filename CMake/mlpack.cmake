@@ -879,7 +879,7 @@ macro(find_mlpack)
 
   find_armadillo()
   if (ARMADILLO_FOUND)
-    set(MLPACK_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIRS})
+    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
   else()
     message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
