@@ -1,4 +1,4 @@
-## `Radical`
+## `RADICAL`: ***R***obust, ***A**ccurate, ***D***irect ***I***ndependent ***C***omponents ***A***nalysis a***L***gorithm
 
 The `Radical` class implements RADICAL, the ***R***obust, ***A***ccurate,
 ***D***irect ***I***ndependent ***C***omponents ***A***nalysis (ICA)
