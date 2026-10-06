@@ -34,8 +34,8 @@ class KillEmptyClusters
    * @tparam MatType Type of data (arma::mat or arma::spmat).
    * @param * (data) Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
-   * @param * (oldCentroids) Centroids of each cluster (one per column) at the start
-   *      of the iteration.
+   * @param * (oldCentroids) Centroids of each cluster (one per column) at the
+   *      start of the iteration.
    * @param newCentroids Centroids of each cluster (one per column) at the end
    *      of the iteration.
    * @param clusterCounts Number of points in each cluster.
@@ -44,25 +44,25 @@ class KillEmptyClusters
    *
    * @return Number of points changed (0).
    */
-  template<typename DistanceType, typename MatType>
+  template<typename DistanceType, typename MatType, typename CentroidsType>
   static inline mlpack_force_inline void EmptyCluster(
       const MatType& /* data */,
       const size_t emptyCluster,
-      const arma::mat& /* oldCentroids */,
-      arma::mat& newCentroids,
+      const CentroidsType& /* oldCentroids */,
+      CentroidsType& newCentroids,
       arma::Col<size_t>& clusterCounts,
       DistanceType& /* distance */,
       const size_t /* iteration */)
-{
-  // Remove the empty cluster.
-  if (emptyCluster < newCentroids.n_cols)
   {
-    newCentroids.shed_col(emptyCluster);
-    clusterCounts.shed_row(emptyCluster);
+    // Remove the empty cluster.
+    if (emptyCluster < newCentroids.n_cols)
+    {
+      newCentroids.shed_col(emptyCluster);
+      clusterCounts.shed_row(emptyCluster);
+    }
   }
-}
 
-  //! Serialize the empty cluster policy (nothing to do).
+  // Serialize the empty cluster policy (nothing to do).
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };

@@ -18,11 +18,11 @@ namespace mlpack {
 
 template<typename DistanceType, typename TreeType>
 DualTreeKMeansRules<DistanceType, TreeType>::DualTreeKMeansRules(
-    const arma::mat& centroids,
-    const arma::mat& dataset,
+    const MatType& centroids,
+    const MatType& dataset,
     arma::Row<size_t>& assignments,
-    arma::vec& upperBounds,
-    arma::vec& lowerBounds,
+    ColType& upperBounds,
+    ColType& lowerBounds,
     DistanceType& distance,
     const std::vector<bool>& prunedPoints,
     const std::vector<size_t>& oldFromNewCentroids,
@@ -67,8 +67,8 @@ double DualTreeKMeansRules<DistanceType, TreeType>::BaseCase(
 
   // Calculate the distance.
   ++baseCases;
-  const double dist = distance.Evaluate(dataset.col(queryIndex),
-                                        centroids.col(referenceIndex));
+  const ElemType dist = distance.Evaluate(dataset.col(queryIndex),
+                                          centroids.col(referenceIndex));
 
   if (dist < upperBounds[queryIndex])
   {
@@ -126,10 +126,10 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
   // This looks a lot like the hackery used in NeighborSearchRules to avoid
   // distance computations.  We'll use the traversal info to see if a
   // parent-child or parent-parent prune is possible.
-  const double queryParentDist = queryNode.ParentDistance();
-  const double queryDescDist = queryNode.FurthestDescendantDistance();
-  const double refParentDist = referenceNode.ParentDistance();
-  const double refDescDist = referenceNode.FurthestDescendantDistance();
+  const ElemType queryParentDist = queryNode.ParentDistance();
+  const ElemType queryDescDist = queryNode.FurthestDescendantDistance();
+  const ElemType refParentDist = referenceNode.ParentDistance();
+  const ElemType refDescDist = referenceNode.FurthestDescendantDistance();
   const double lastScore = traversalInfo.LastScore();
   double adjustedScore;
   double score = 0.0;
@@ -153,9 +153,9 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
     // furthest descendant distances, but that is not always true.  It would
     // take too long to calculate the exact radii, so we are forced to use
     // MinimumBoundDistance() as a lower-bound approximation.
-    const double lastQueryDescDist =
+    const ElemType lastQueryDescDist =
         traversalInfo.LastQueryNode()->MinimumBoundDistance();
-    const double lastRefDescDist =
+    const ElemType lastRefDescDist =
         traversalInfo.LastReferenceNode()->MinimumBoundDistance();
     adjustedScore = lastScore + lastQueryDescDist + lastRefDescDist;
   }
@@ -168,7 +168,7 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
   // then the node should not be pruned by this.
   if (traversalInfo.LastQueryNode() == queryNode.Parent())
   {
-    const double queryAdjust = queryParentDist + queryDescDist;
+    const ElemType queryAdjust = queryParentDist + queryDescDist;
     adjustedScore -= queryAdjust;
   }
   else if (traversalInfo.LastQueryNode() == &queryNode)
@@ -189,7 +189,7 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
   }
   if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
   {
-    const double refAdjust = refParentDist + refDescDist;
+    const ElemType refAdjust = refParentDist + refDescDist;
     adjustedScore -= refAdjust;
   }
   else if (traversalInfo.LastReferenceNode() == &referenceNode)
@@ -233,7 +233,8 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-    const Range distances = queryNode.RangeDistance(referenceNode);
+    const RangeType<ElemType> distances =
+        queryNode.RangeDistance(referenceNode);
 
     score = distances.Lo();
     ++scores;
@@ -252,7 +253,7 @@ inline double DualTreeKMeansRules<DistanceType, TreeType>::Score(
     else if (distances.Hi() < queryNode.Stat().UpperBound())
     {
       // Tighten upper bound.
-      const double tighterBound =
+      const ElemType tighterBound =
           queryNode.MaxDistance(centroids.col(referenceNode.Descendant(0)));
       ++scores; // Count extra distance calculation.
 

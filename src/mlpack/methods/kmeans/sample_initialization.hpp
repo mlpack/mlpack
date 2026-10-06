@@ -22,7 +22,7 @@ namespace mlpack {
 class SampleInitialization
 {
  public:
-  //! Empty constructor, required by the InitialPartitionPolicy type definition.
+  // Empty constructor, required by the InitialPartitionPolicy type definition.
   SampleInitialization() { }
 
   /**
@@ -33,10 +33,10 @@ class SampleInitialization
    * @param clusters Number of clusters.
    * @param centroids Matrix to put initial centroids into.
    */
-  template<typename MatType>
+  template<typename MatType, typename CentroidsType>
   inline static void Cluster(const MatType& data,
                              const size_t clusters,
-                             arma::mat& centroids)
+                             CentroidsType& centroids)
   {
     centroids.set_size(data.n_rows, clusters);
     for (size_t i = 0; i < clusters; ++i)
@@ -46,6 +46,10 @@ class SampleInitialization
       centroids.col(i) = data.col(index);
     }
   }
+
+  // Serialize the partitioner (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace mlpack

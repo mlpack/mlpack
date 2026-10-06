@@ -39,22 +39,24 @@ namespace mlpack {
 class KMeansPlusPlusInitialization
 {
  public:
-  //! Empty constructor, required by the InitialPartitionPolicy type definition.
+  // Empty constructor, required by the InitialPartitionPolicy type definition.
   KMeansPlusPlusInitialization() { }
 
   /**
-   * Initialize the centroids matrix by randomly sampling points from the data
-   * matrix.
+   * Initialize the centroids matrix by the kmeans++ algorithm.
    *
    * @param data Dataset.
    * @param clusters Number of clusters.
    * @param centroids Matrix to put initial centroids into.
    */
-  template<typename MatType>
-  inline static void Cluster(const MatType& data,
+  template<typename MatType, typename CentroidsType>
+  inline static void Cluster(const CentroidsType& data,
                              const size_t clusters,
-                             arma::mat& centroids)
+                             MatType& centroids)
   {
+    typedef typename MatType::elem_type ElemType;
+    typedef typename GetColType<MatType>::type ColType;
+
     centroids.set_size(data.n_rows, clusters);
 
     // We'll sample our first point fully randomly.
@@ -62,7 +64,7 @@ class KMeansPlusPlusInitialization
     centroids.col(0) = data.col(firstPoint);
 
     // Utility variable.
-    arma::vec distribution(data.n_cols);
+    ColType distribution(data.n_cols);
 
     // Now, sample other points...
     for (size_t i = 1; i < clusters; ++i)
@@ -76,10 +78,10 @@ class KMeansPlusPlusInitialization
       // without breaking the O(log k)-competitive guarantee (I think).
       for (size_t p = 0; p < data.n_cols; ++p)
       {
-        double minDistance = std::numeric_limits<double>::max();
+        ElemType minDistance = std::numeric_limits<ElemType>::max();
         for (size_t j = 0; j < i; ++j)
         {
-          const double distance = SquaredEuclideanDistance::Evaluate(
+          const ElemType distance = SquaredEuclideanDistance::Evaluate(
               data.col(p), centroids.col(j));
           minDistance = std::min(distance, minDistance);
         }
@@ -104,6 +106,10 @@ class KMeansPlusPlusInitialization
       centroids.col(i) = data.col(position);
     }
   }
+
+  // Serialize the partitioner (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };
 
 } // namespace mlpack

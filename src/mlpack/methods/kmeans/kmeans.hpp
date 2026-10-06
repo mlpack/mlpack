@@ -61,13 +61,13 @@ namespace mlpack {
  * @tparam DistanceType The distance metric to use for this KMeans; see LMetric
  *     for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
- *     default constructor and either 'void Cluster(const arma::mat&, const
- *     size_t, arma::Row<size_t>&)' or 'void Cluster(const arma::mat&, const
- *     size_t, arma::mat&)'.
+ *     default constructor and either 'void Cluster(const MatType&, const
+ *     size_t, arma::Row<size_t>&)' or 'void Cluster(const MatType&, const
+ *     size_t, MatType&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
- *     implement a default constructor and 'void EmptyCluster(const arma::mat&
- *     data, const size_t emptyCluster, const arma::mat& oldCentroids,
- *     arma::mat& newCentroids, arma::Col<size_t>& counts,
+ *     implement a default constructor and 'void EmptyCluster(const MatType&
+ *     data, const size_t emptyCluster, const MatType& oldCentroids,
+ *     MatType& newCentroids, arma::Col<size_t>& counts,
  *     DistanceType& distance, const size_t iteration)'.
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
@@ -77,8 +77,9 @@ namespace mlpack {
 template<typename DistanceType = EuclideanDistance,
          typename InitialPartitionPolicy = SampleInitialization,
          typename EmptyClusterPolicy = MaxVarianceNewCluster,
-         template<class, class> class LloydStepType = NaiveKMeans,
-         typename MatType = arma::mat>
+         template<class, class, class> class LloydStepType = NaiveKMeans,
+         // This parameter is deprecated and will be removed in mlpack 5.0.0.
+         typename DeprecatedMatType = arma::mat>
 class KMeans
 {
  public:
@@ -114,6 +115,7 @@ class KMeans
    * @param initialGuess If true, then it is assumed that assignments has a list
    *      of initial cluster assignments.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Row<size_t>& assignments,
@@ -132,9 +134,10 @@ class KMeans
    * @param initialGuess If true, then it is assumed that centroids contains the
    *      initial cluster centroids.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                size_t clusters,
-               arma::mat& centroids,
+               typename GetDenseMatType<MatType>::type& centroids,
                const bool initialGuess = false);
 
   /**
@@ -157,10 +160,11 @@ class KMeans
    * @param initialCentroidGuess If true, then it is assumed that centroids
    *      contains the initial centroids of each cluster.
    */
+  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Row<size_t>& assignments,
-               arma::mat& centroids,
+               typename GetDenseMatType<MatType>::type& centroids,
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);
 
@@ -169,45 +173,86 @@ class KMeans
   //! Set the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
 
-  //! Get the distance metric.
+  // Get the distance metric.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
-  //! Modify the distance metric.
+  // Modify the distance metric.
   [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   DistanceType& Metric() { return distance; }
 
-  //! Get the distance metric.
+  // Get the distance metric.
   const DistanceType& Distance() const { return distance; }
-  //! Modify the distance metric.
+  // Modify the distance metric.
   DistanceType& Distance() { return distance; }
 
-  //! Get the initial partitioning policy.
+  // Get the initial partitioning policy.
   const InitialPartitionPolicy& Partitioner() const { return partitioner; }
-  //! Modify the initial partitioning policy.
+  // Modify the initial partitioning policy.
   InitialPartitionPolicy& Partitioner() { return partitioner; }
 
-  //! Get the empty cluster policy.
+  // Get the empty cluster policy.
   const EmptyClusterPolicy& EmptyClusterAction() const
   { return emptyClusterAction; }
-  //! Modify the empty cluster policy.
+  // Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
-  //! Serialize the k-means object.
+  // Get the number of iterations used during the last call to Cluster().
+  size_t Iterations() const { return iterations; }
+
+  // Get the number of distance computations performed during the last call to
+  // Cluster().
+  size_t DistanceComputations() const { return distanceComputations; }
+
+  // Serialize the k-means object.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  //! Maximum number of iterations before giving up.
+  // Maximum number of iterations before giving up.
   size_t maxIterations;
-  //! Instantiated distance metric.
+  // Number of iterations used during the last Cluster() call.
+  size_t iterations;
+  // Number of distance computations used during the last Cluster() call.
+  size_t distanceComputations;
+  // Instantiated distance metric.
   DistanceType distance;
-  //! Instantiated initial partitioning policy.
+  // Instantiated initial partitioning policy.
   InitialPartitionPolicy partitioner;
-  //! Instantiated empty cluster policy.
+  // Instantiated empty cluster policy.
   EmptyClusterPolicy emptyClusterAction;
 };
 
 } // namespace mlpack
+
+// The CEREAL_TEMPLATE_CLASS_VERSION() macro does not work with template
+// template parameters so we write it manually.
+namespace cereal {
+namespace detail {
+
+template<typename DistanceType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy,
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
+struct Version<mlpack::KMeans<DistanceType, InitialPartitionPolicy,
+    EmptyClusterPolicy, LloydStepType, DeprecatedMatType>>
+{
+  static std::uint32_t registerVersion()
+  {
+    ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace(
+        std::type_index(typeid(mlpack::KMeans<DistanceType,
+        InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType,
+        DeprecatedMatType>)).hash_code(), 1);
+    return 1;
+  }
+
+  static inline const std::uint32_t version = registerVersion();
+
+  static void unused() { (void) version; }
+}; /* end Version */
+
+} // namespace detail
+} // namespace cereal
 
 // Include implementation.
 #include "kmeans_impl.hpp"
