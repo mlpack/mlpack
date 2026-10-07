@@ -11,9 +11,9 @@ Multi-class problems are handled one-vs-all.
 SEFR is useful for classifying points with _discrete labels_ (i.e., `0`, `1`,
 `2`) when training must be very cheap, for instance on low-resource or embedded
 hardware, or when the model must be updated incrementally as new points arrive.
-It performs best on non-negative data such as counts, TF-IDF features, or data
-scaled to `[0, 1]`.  Because it supports instance weights, it can also be used
-as a weak learner for [`AdaBoost`](adaboost.md).
+It accepts any numeric data, and works well on sparse non-negative data such
+as counts or TF-IDF features.  Because it supports instance weights, it can also
+be used as a weak learner for [`AdaBoost`](adaboost.md).
 
 #### Simple usage example:
 
@@ -93,7 +93,7 @@ section below.
 
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix.  Should be non-negative. | _(N/A)_ |
+| `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, between [`0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset.  Must be at least 2. | _(N/A)_ |
@@ -136,9 +136,17 @@ Types of each argument are the same as in the table for constructors
    a single pass over the data; the cost of the single-point form is
    proportional to `dimensionality * numClasses`.
 
- * SEFR is designed for non-negative data.  If your data can be negative,
-   scale it first, for instance with `mlpack::MinMaxScaler` (as in the
-   [iris example](#simple-examples) below).
+ * SEFR's weight formula assumes non-negative features.  Data with negative
+   values is handled automatically: before computing the weights, each feature
+   is shifted by its minimum over the training data when that minimum is
+   negative.  The shift is computed in the same single pass, is folded into the
+   biases (so prediction is unaffected), and keeps sparse data sparse.
+   Features that are already non-negative are not shifted, so results on
+   non-negative data are the same as in the SEFR paper.
+
+ * SEFR uses the features as given, so their scales still matter; scaling the
+   data, for instance with `mlpack::MinMaxScaler` as in the
+   [iris example](#simple-examples) below, can improve accuracy.
 
 ### Classification
 
@@ -224,8 +232,12 @@ instead.
    training points of each class, and `s.ClassCounts()` will return an
    `arma::vec` with the (weighted) number of training points of each class.
 
- * `s.Reset()` will set all weights, biases, sums, and counts to zero, keeping
-   the number of classes and dimensionality.
+ * `s.Offsets()` will return an `arma::vec` with the shift applied to each
+   feature before computing the weights: the minimum of that feature over the
+   training data if it is negative, and `0` otherwise.
+
+ * `s.Reset()` will set all weights, biases, sums, counts, and offsets to zero,
+   keeping the number of classes and dimensionality.
 
 For complete functionality, the source code in
 `src/mlpack/methods/sefr/sefr.hpp` can be consulted.  Each method is fully

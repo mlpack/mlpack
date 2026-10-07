@@ -23,7 +23,8 @@ SEFR<ModelMatType>::SEFR(const size_t numClasses,
     weights(dimensionality, numClasses, arma::fill::zeros),
     biases(numClasses, arma::fill::zeros),
     classSums(dimensionality, numClasses, arma::fill::zeros),
-    classCounts(numClasses, arma::fill::zeros)
+    classCounts(numClasses, arma::fill::zeros),
+    offsets(dimensionality, arma::fill::zeros)
 {
   // Nothing to do.
 }
@@ -59,6 +60,7 @@ void SEFR<ModelMatType>::Train(const MatType& data,
 
   classSums.zeros(data.n_rows, numClasses);
   classCounts.zeros(numClasses);
+  ComputeOffsets(data);
   Accumulate(data, labels, arma::Row<ElemType>(labels.n_elem,
       arma::fill::ones));
   ComputeModel();
@@ -79,6 +81,7 @@ void SEFR<ModelMatType>::Train(
 
   classSums.zeros(data.n_rows, numClasses);
   classCounts.zeros(numClasses);
+  ComputeOffsets(data);
   Accumulate(data, labels,
       arma::conv_to<arma::Row<ElemType>>::from(instanceWeights));
   ComputeModel();
@@ -100,6 +103,7 @@ void SEFR<ModelMatType>::Train(const VecType& point, const size_t label)
 
   classSums.col(label) += point;
   classCounts[label] += 1;
+  offsets = arma::min(offsets, DenseColType(point));
   ComputeModel();
 }
 
@@ -160,6 +164,7 @@ void SEFR<ModelMatType>::Reset()
   biases.zeros();
   classSums.zeros();
   classCounts.zeros();
+  offsets.zeros();
 }
 
 template<typename ModelMatType>
@@ -170,6 +175,7 @@ void SEFR<ModelMatType>::serialize(Archive& ar, const uint32_t /* version */)
   ar(CEREAL_NVP(biases));
   ar(CEREAL_NVP(classSums));
   ar(CEREAL_NVP(classCounts));
+  ar(CEREAL_NVP(offsets));
 }
 
 template<typename ModelMatType>
@@ -191,6 +197,19 @@ void SEFR<ModelMatType>::CheckTrainingData(const MatType& data,
         << numClasses << ")!";
     throw std::invalid_argument(oss.str());
   }
+}
+
+template<typename ModelMatType>
+template<typename MatType>
+void SEFR<ModelMatType>::ComputeOffsets(const MatType& data)
+{
+  offsets.zeros(data.n_rows);
+  if (data.n_cols == 0)
+    return;
+
+  // For sparse data the implicit zeros count, so a non-negative sparse
+  // feature gets an offset of 0 and the data stays sparse.
+  offsets = arma::min(offsets, DenseColType(arma::min(data, 1)));
 }
 
 template<typename ModelMatType>
@@ -246,11 +265,17 @@ void SEFR<ModelMatType>::ComputeModel()
       continue;
     }
 
-    const DenseColType posMean = classSums.col(c) / posCount;
-    const DenseColType negMean = (totalSum - classSums.col(c)) / negCount;
+    // Means of the shifted data x - offsets, which is non-negative.
+    const DenseColType posMean = classSums.col(c) / posCount - offsets;
+    const DenseColType negMean = (totalSum - classSums.col(c)) / negCount -
+        offsets;
     weights.col(c) = (posMean - negMean) / (posMean + negMean + eps);
+    // The bias is computed for shifted data; subtracting w' * offsets lets the
+    // model score unshifted data: w' * (x - offsets) + b = w' * x + (b - w' *
+    // offsets).
     biases[c] = -(negCount * arma::dot(weights.col(c), posMean) +
-        posCount * arma::dot(weights.col(c), negMean)) / totalCount;
+        posCount * arma::dot(weights.col(c), negMean)) / totalCount -
+        arma::dot(weights.col(c), offsets);
   }
 }
 

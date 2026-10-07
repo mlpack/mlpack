@@ -377,3 +377,154 @@ TEST_CASE("SEFRKFoldCVTest", "[SEFRTest]")
   REQUIRE(cv.Evaluate() == Approx(1.0).epsilon(1e-7));
   REQUIRE_NOTHROW(cv.Model());
 }
+
+TEST_CASE("SEFRNonNegativeDataHasNoOffsetTest", "[SEFRTest]")
+{
+  arma::mat data(4, 100, arma::fill::randu);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (data(0, i) > 0.5) ? 1 : 0;
+
+  SEFR<> sefr(data, labels, 2);
+
+  REQUIRE(arma::all(sefr.Offsets() == 0.0));
+}
+
+TEST_CASE("SEFROffsetsAreClampedMinimumsTest", "[SEFRTest]")
+{
+  arma::mat data("-2.0  1.0  0.5;"
+                 " 3.0  4.0  5.0;"
+                 " 0.0 -1.5 -0.5");
+  arma::Row<size_t> labels("0 1 1");
+
+  SEFR<> sefr(data, labels, 2);
+
+  REQUIRE(sefr.Offsets()[0] == Approx(-2.0));
+  REQUIRE(sefr.Offsets()[1] == 0.0);
+  REQUIRE(sefr.Offsets()[2] == Approx(-1.5));
+}
+
+TEST_CASE("SEFRShiftInvarianceTest", "[SEFRTest]")
+{
+  // Every feature has a minimum of exactly 0, so shifting the data down by 3
+  // makes it negative and the offsets move it back to the same place: the
+  // model must be the same up to the bias, and predictions must not change.
+  arma::mat data(5, 300, arma::fill::randu);
+  data.col(0).zeros();
+  arma::Row<size_t> labels(300);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (data(0, i) + data(1, i) > 1.0) ? (data(2, i) > 0.5 ? 2 : 1)
+        : 0;
+  arma::mat test(5, 100, arma::fill::randu);
+
+  const arma::mat shiftedData = data - 3.0;
+  const arma::mat shiftedTest = test - 3.0;
+
+  SEFR<> original(data, labels, 3);
+  SEFR<> shifted(shiftedData, labels, 3);
+
+  arma::vec expectedOffsets(5);
+  expectedOffsets.fill(-3.0);
+  REQUIRE(arma::approx_equal(shifted.Offsets(), expectedOffsets, "absdiff",
+      1e-12));
+  REQUIRE(arma::approx_equal(original.Weights(), shifted.Weights(), "absdiff",
+      1e-10));
+
+  arma::Row<size_t> originalPredictions, shiftedPredictions;
+  arma::mat originalScores, shiftedScores;
+  original.Classify(test, originalPredictions, originalScores);
+  shifted.Classify(shiftedTest, shiftedPredictions, shiftedScores);
+  REQUIRE(arma::all(originalPredictions == shiftedPredictions));
+  REQUIRE(arma::approx_equal(originalScores, shiftedScores, "absdiff", 1e-10));
+}
+
+TEST_CASE("SEFRNegativeDataAccuracyTest", "[SEFRTest]")
+{
+  // Two Gaussian blobs centered at -2 and +2: separable, and impossible to use
+  // without the offsets because the features are negative.
+  arma::mat data(3, 400, arma::fill::randn);
+  arma::Row<size_t> labels(400);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+  {
+    labels[i] = i % 2;
+    data.col(i) += (labels[i] == 1) ? 2.0 : -2.0;
+  }
+
+  SEFR<> sefr(data, labels, 2);
+  arma::Row<size_t> predictions;
+  sefr.Classify(data, predictions);
+
+  REQUIRE(arma::all(sefr.Offsets() < 0.0));
+  const double accuracy = arma::accu(predictions == labels) /
+      (double) labels.n_elem;
+  REQUIRE(accuracy >= 0.95);
+}
+
+TEMPLATE_TEST_CASE("SEFRNegativeDataIncrementalTest", "[SEFRTest]",
+    arma::fmat, arma::mat)
+{
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
+
+  MatType data(4, 200, arma::fill::randn);
+  arma::Row<size_t> labels(200);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (data(0, i) > 0.0) ? 1 : 0;
+
+  SEFR<MatType> batch(data, labels, 2);
+  SEFR<MatType> incremental(2, 4);
+  for (size_t i = 0; i < data.n_cols; ++i)
+    incremental.Train(data.col(i), labels[i]);
+
+  const ElemType tol = std::is_same_v<ElemType, float> ? 1e-3 : 1e-10;
+  REQUIRE(arma::approx_equal(batch.Offsets(), incremental.Offsets(),
+      "absdiff", tol));
+  REQUIRE(arma::approx_equal(batch.Weights(), incremental.Weights(), "absdiff",
+      tol));
+  REQUIRE(arma::approx_equal(batch.Biases(), incremental.Biases(), "absdiff",
+      tol));
+}
+
+TEST_CASE("SEFRNegativeSparseTest", "[SEFRTest]")
+{
+  arma::sp_mat sparseData;
+  sparseData.sprandn(30, 200, 0.1);
+  const arma::mat denseData(sparseData);
+  arma::Row<size_t> labels(200);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (denseData(0, i) + denseData(1, i) > 0.0) ? 1 : 0;
+
+  SEFR<> sparseModel(sparseData, labels, 2);
+  SEFR<> denseModel(denseData, labels, 2);
+
+  REQUIRE(arma::approx_equal(sparseModel.Offsets(), denseModel.Offsets(),
+      "absdiff", 1e-12));
+  REQUIRE(arma::approx_equal(sparseModel.Weights(), denseModel.Weights(),
+      "absdiff", 1e-10));
+  REQUIRE(arma::approx_equal(sparseModel.Biases(), denseModel.Biases(),
+      "absdiff", 1e-10));
+}
+
+TEST_CASE("SEFRNegativeDataSerializationTest", "[SEFRTest]")
+{
+  arma::mat data(3, 100, arma::fill::randn);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (data(1, i) > 0.0) ? 1 : 0;
+
+  SEFR<> sefr(data, labels, 2);
+  SEFR<> xmlSefr, jsonSefr, binarySefr;
+  SerializeObjectAll(sefr, xmlSefr, jsonSefr, binarySefr);
+
+  CheckMatrices(sefr.Offsets(), xmlSefr.Offsets(), jsonSefr.Offsets(),
+      binarySefr.Offsets());
+
+  // A point below the training minimum moves the offsets after loading too.
+  const arma::vec point("-10.0 -10.0 -10.0");
+  sefr.Train(point, 0);
+  binarySefr.Train(point, 0);
+  REQUIRE(arma::approx_equal(sefr.Offsets(), binarySefr.Offsets(), "absdiff",
+      1e-12));
+  REQUIRE(arma::approx_equal(sefr.Weights(), binarySefr.Weights(), "absdiff",
+      1e-10));
+}

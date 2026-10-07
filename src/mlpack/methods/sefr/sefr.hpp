@@ -22,8 +22,12 @@ namespace mlpack {
  * that class and the mean of the points outside of it; each feature's weight is
  * the normalized difference of those two means, and the bias is a weighted
  * average of the mean scores of the two groups.  Multiclass problems are
- * handled one-vs-all.  The data is expected to be non-negative (e.g. scaled to
- * [0, 1]).
+ * handled one-vs-all.
+ *
+ * The weight formula assumes non-negative features.  To accept any data, each
+ * feature is shifted by its minimum over the training data when that minimum
+ * is negative (see Offsets()); the shift is folded into the biases, so it costs
+ * nothing at prediction time, and non-negative data is unaffected.
  *
  * Only per-class sums of points and per-class counts are stored, so the model
  * can be updated incrementally one point at a time, and training with instance
@@ -200,6 +204,10 @@ class SEFR
   const DenseMatType& ClassSums() const { return classSums; }
   //! Get the (weighted) number of training points of each class.
   const DenseColType& ClassCounts() const { return classCounts; }
+  //! Get the per-feature offsets subtracted from the data before computing
+  //! the weights: the minimum of each feature over the training data, or 0
+  //! when that minimum is non-negative.
+  const DenseColType& Offsets() const { return offsets; }
 
   //! Serialize the model.
   template<typename Archive>
@@ -211,6 +219,10 @@ class SEFR
   void CheckTrainingData(const MatType& data,
                          const arma::Row<size_t>& labels,
                          const size_t numClasses) const;
+
+  //! Set the offsets from the minimum of each feature of the given data.
+  template<typename MatType>
+  void ComputeOffsets(const MatType& data);
 
   //! Accumulate class sums and counts from the given data.
   template<typename MatType, typename WeightsType>
@@ -229,6 +241,8 @@ class SEFR
   DenseMatType classSums;
   //! (Weighted) number of training points of each class.
   DenseColType classCounts;
+  //! Per-feature offsets: min(0, minimum of the feature over training data).
+  DenseColType offsets;
 };
 
 } // namespace mlpack
