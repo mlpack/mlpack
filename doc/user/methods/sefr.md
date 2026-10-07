@@ -175,8 +175,19 @@ make class predictions for new data.
 
 ---
 
-***Note***: the scores returned by `Classify()` are not probabilities, and can
-take any value.  The predicted class is the one with the highest score.
+***Note***: scores are not probabilities and are not normalized to `[0, 1]`.
+The score of class `j` for a point `x` is `s.Weights().col(j)' * x +
+s.Biases()[j]`: it is positive on class `j`'s side of that class's
+one-vs-rest hyperplane, and it equals the signed distance from that hyperplane
+multiplied by the norm of `s.Weights().col(j)`.  Its magnitude therefore
+depends on the scale of the features, and scores of different classes are not
+calibrated against each other.  The predicted class is the one with the highest
+score.  For two classes, the scores of the two classes are negatives of each
+other.  This is the same kind of score that [`LinearSVM`](linear_svm.md)
+returns; classifiers such as
+[`LogisticRegression`](logistic_regression.md) and
+[`NaiveBayesClassifier`](naive_bayes_classifier.md) return class probabilities
+instead.
 
 #### Classification Parameters:
 
