@@ -59,6 +59,16 @@ class SEFR
   //! The dense column vector type used to store the model.
   using DenseColType = typename GetDenseColType<ModelMatType>::type;
 
+  //! The element type of the training statistics (per-class sums and counts,
+  //! and offsets): at least single precision, so that a half-precision model
+  //! still counts and sums its training points exactly enough.
+  using StatElemType = std::conditional_t<(sizeof(ElemType) < sizeof(float)),
+      float, ElemType>;
+  //! The matrix type used to store the training statistics.
+  using StatMatType = arma::Mat<StatElemType>;
+  //! The column vector type used to store the training statistics.
+  using StatColType = arma::Col<StatElemType>;
+
   /**
    * Create an untrained SEFR model with the given number of classes and
    * dimensionality.  All weights and biases are zero.
@@ -201,13 +211,13 @@ class SEFR
   const DenseColType& Biases() const { return biases; }
 
   //! Get the sum of the (weighted) training points of each class.
-  const DenseMatType& ClassSums() const { return classSums; }
+  const StatMatType& ClassSums() const { return classSums; }
   //! Get the (weighted) number of training points of each class.
-  const DenseColType& ClassCounts() const { return classCounts; }
+  const StatColType& ClassCounts() const { return classCounts; }
   //! Get the per-feature offsets subtracted from the data before computing
   //! the weights: the minimum of each feature over the training data, or 0
   //! when that minimum is non-negative.
-  const DenseColType& Offsets() const { return offsets; }
+  const StatColType& Offsets() const { return offsets; }
 
   //! Serialize the model.
   template<typename Archive>
@@ -238,11 +248,11 @@ class SEFR
   //! Biases; one per class.
   DenseColType biases;
   //! Sum of the (weighted) training points of each class.
-  DenseMatType classSums;
+  StatMatType classSums;
   //! (Weighted) number of training points of each class.
-  DenseColType classCounts;
+  StatColType classCounts;
   //! Per-feature offsets: min(0, minimum of the feature over training data).
-  DenseColType offsets;
+  StatColType offsets;
 };
 
 } // namespace mlpack

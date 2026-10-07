@@ -231,6 +231,8 @@ instead.
  * `s.ClassSums()` will return an `arma::mat` with the (weighted) sum of the
    training points of each class, and `s.ClassCounts()` will return an
    `arma::vec` with the (weighted) number of training points of each class.
+   (For an `arma::hmat` model these are `arma::fmat` and `arma::fvec`; see
+   [`ModelMatType`](#modelmattype).)
 
  * `s.Offsets()` will return an `arma::vec` with the shift applied to each
    feature before computing the weights: the minimum of that feature over the
@@ -387,15 +389,23 @@ SEFR<ModelMatType>
 
 #### `ModelMatType`
 
- * Specifies the matrix type used for the weights, biases, and per-class
-   statistics of the model.
+ * Specifies the matrix type of the data, and the element type of the model's
+   weights and biases.
  * By default, `ModelMatType` is `arma::mat` (dense 64-bit precision matrix).
- * Any dense or sparse matrix type implementing the Armadillo API will work; so,
-   for instance, `arma::fmat` or `arma::sp_fmat` can be used.  The model itself
-   is always stored densely.
+ * Dense and sparse Armadillo matrix types work: for instance `arma::fmat`
+   (32-bit), `arma::sp_mat` or `arma::sp_fmat` (sparse), and `arma::hmat`
+   (16-bit half precision, available when Armadillo is built with FP16
+   support, which requires C++23).  The weights and biases are always stored
+   densely.
+ * The per-class sums and counts and the offsets (`ClassSums()`,
+   `ClassCounts()` and `Offsets()`) are stored in at least 32-bit precision,
+   even for an `arma::hmat` model, because 16-bit floating point numbers cannot
+   count past 2048 exactly.
  * The element type of the data given to `Train()` and `Classify()` must match
    the element type of `ModelMatType` (e.g. `arma::fmat` data for an
    `SEFR<arma::fmat>` model).
+ * Bandicoot (GPU) matrix types are not currently supported, because training
+   uses Armadillo sparse matrices.
 
 ### Advanced Functionality Examples
 

@@ -528,3 +528,40 @@ TEST_CASE("SEFRNegativeDataSerializationTest", "[SEFRTest]")
   REQUIRE(arma::approx_equal(sefr.Weights(), binarySefr.Weights(), "absdiff",
       1e-10));
 }
+
+#ifdef ARMA_HAVE_FP16
+
+TEST_CASE("SEFRHalfPrecisionTest", "[SEFRTest]")
+{
+  // More points per class than fp16 can count exactly (2048), so this fails if
+  // the statistics are accumulated in half precision.
+  arma::mat data(4, 6000, arma::fill::randu);
+  arma::Row<size_t> labels(6000);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    labels[i] = (data(0, i) > 0.5) ? 1 : 0;
+  const arma::hmat halfData = arma::conv_to<arma::hmat>::from(data);
+
+  SEFR<arma::hmat> half(halfData, labels, 2);
+  SEFR<> full(data, labels, 2);
+
+  REQUIRE(half.ClassCounts()[0] == Approx(arma::accu(labels == 0)));
+  REQUIRE(half.ClassCounts()[1] == Approx(arma::accu(labels == 1)));
+
+  arma::Row<size_t> halfPredictions, fullPredictions;
+  half.Classify(halfData, halfPredictions);
+  full.Classify(data, fullPredictions);
+  const double halfAccuracy = arma::accu(halfPredictions == labels) /
+      (double) labels.n_elem;
+  const double fullAccuracy = arma::accu(fullPredictions == labels) /
+      (double) labels.n_elem;
+  REQUIRE(halfAccuracy >= fullAccuracy - 0.02);
+
+  // Incremental training with half-precision points must match batch training.
+  SEFR<arma::hmat> incremental(2, 4);
+  for (size_t i = 0; i < halfData.n_cols; ++i)
+    incremental.Train(halfData.col(i), labels[i]);
+  REQUIRE(arma::approx_equal(incremental.ClassCounts(), half.ClassCounts(),
+      "absdiff", 1e-3));
+}
+
+#endif

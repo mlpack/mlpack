@@ -61,7 +61,7 @@ void SEFR<ModelMatType>::Train(const MatType& data,
   classSums.zeros(data.n_rows, numClasses);
   classCounts.zeros(numClasses);
   ComputeOffsets(data);
-  Accumulate(data, labels, arma::Row<ElemType>(labels.n_elem,
+  Accumulate(data, labels, arma::Row<StatElemType>(labels.n_elem,
       arma::fill::ones));
   ComputeModel();
 }
@@ -83,7 +83,7 @@ void SEFR<ModelMatType>::Train(
   classCounts.zeros(numClasses);
   ComputeOffsets(data);
   Accumulate(data, labels,
-      arma::conv_to<arma::Row<ElemType>>::from(instanceWeights));
+      arma::conv_to<arma::Row<StatElemType>>::from(instanceWeights));
   ComputeModel();
 }
 
@@ -101,9 +101,11 @@ void SEFR<ModelMatType>::Train(const VecType& point, const size_t label)
     throw std::invalid_argument(oss.str());
   }
 
-  classSums.col(label) += point;
+  const StatColType statPoint = arma::conv_to<StatColType>::from(
+      DenseColType(point));
+  classSums.col(label) += statPoint;
   classCounts[label] += 1;
-  offsets = arma::min(offsets, DenseColType(point));
+  offsets = arma::min(offsets, statPoint);
   ComputeModel();
 }
 
@@ -209,7 +211,8 @@ void SEFR<ModelMatType>::ComputeOffsets(const MatType& data)
 
   // For sparse data the implicit zeros count, so a non-negative sparse
   // feature gets an offset of 0 and the data stays sparse.
-  offsets = arma::min(offsets, DenseColType(arma::min(data, 1)));
+  offsets = arma::min(offsets, arma::conv_to<StatColType>::from(
+      DenseColType(arma::min(data, 1))));
 }
 
 template<typename ModelMatType>
@@ -228,11 +231,20 @@ void SEFR<ModelMatType>::Accumulate(const MatType& data,
   arma::umat locations(2, labels.n_elem);
   locations.row(0) = arma::regspace<arma::urowvec>(0, labels.n_elem - 1);
   locations.row(1) = arma::conv_to<arma::urowvec>::from(labels);
-  const arma::SpMat<ElemType> indicator(locations,
-      arma::conv_to<arma::Col<ElemType>>::from(instanceWeights),
+  const arma::SpMat<StatElemType> indicator(locations,
+      arma::conv_to<arma::Col<StatElemType>>::from(instanceWeights),
       data.n_cols, classSums.n_cols);
 
-  classSums += DenseMatType(data * indicator);
+  if constexpr (std::is_same_v<ElemType, StatElemType>)
+  {
+    classSums += StatMatType(data * indicator);
+  }
+  else
+  {
+    // Low-precision data is widened before summing.
+    classSums += arma::conv_to<StatMatType>::from(DenseMatType(data)) *
+        indicator;
+  }
   for (size_t i = 0; i < labels.n_elem; ++i)
     classCounts[labels[i]] += instanceWeights[i];
 }
@@ -240,42 +252,49 @@ void SEFR<ModelMatType>::Accumulate(const MatType& data,
 template<typename ModelMatType>
 void SEFR<ModelMatType>::ComputeModel()
 {
+  // The model is computed in the precision of the statistics and converted to
+  // ElemType at the end.
   const size_t numClasses = classSums.n_cols;
-  weights.set_size(classSums.n_rows, numClasses);
-  biases.set_size(numClasses);
+  StatMatType statWeights(classSums.n_rows, numClasses);
+  StatColType statBiases(numClasses);
 
-  const DenseColType totalSum = arma::sum(classSums, 1);
-  const ElemType totalCount = arma::accu(classCounts);
-  const ElemType eps = ElemType(1e-7);
+  const StatColType totalSum = arma::sum(classSums, 1);
+  const StatElemType totalCount = arma::accu(classCounts);
+  const StatElemType eps = StatElemType(1e-7);
 
   for (size_t c = 0; c < numClasses; ++c)
   {
-    const ElemType posCount = classCounts[c];
-    const ElemType negCount = totalCount - posCount;
-    if (posCount <= 0)
+    const StatElemType posCount = classCounts[c];
+    const StatElemType negCount = totalCount - posCount;
+    if (posCount <= 0 || negCount <= 0)
     {
-      weights.col(c).zeros();
-      biases[c] = std::numeric_limits<ElemType>::lowest();
-      continue;
-    }
-    if (negCount <= 0)
-    {
-      weights.col(c).zeros();
-      biases[c] = 0;
+      statWeights.col(c).zeros();
+      statBiases[c] = 0;
       continue;
     }
 
     // Means of the shifted data x - offsets, which is non-negative.
-    const DenseColType posMean = classSums.col(c) / posCount - offsets;
-    const DenseColType negMean = (totalSum - classSums.col(c)) / negCount -
+    const StatColType posMean = classSums.col(c) / posCount - offsets;
+    const StatColType negMean = (totalSum - classSums.col(c)) / negCount -
         offsets;
-    weights.col(c) = (posMean - negMean) / (posMean + negMean + eps);
+    statWeights.col(c) = (posMean - negMean) / (posMean + negMean + eps);
     // The bias is computed for shifted data; subtracting w' * offsets lets the
     // model score unshifted data: w' * (x - offsets) + b = w' * x + (b - w' *
     // offsets).
-    biases[c] = -(negCount * arma::dot(weights.col(c), posMean) +
-        posCount * arma::dot(weights.col(c), negMean)) / totalCount -
-        arma::dot(weights.col(c), offsets);
+    statBiases[c] = -(negCount * arma::dot(statWeights.col(c), posMean) +
+        posCount * arma::dot(statWeights.col(c), negMean)) / totalCount -
+        arma::dot(statWeights.col(c), offsets);
+  }
+
+  weights = arma::conv_to<DenseMatType>::from(statWeights);
+  biases = arma::conv_to<DenseColType>::from(statBiases);
+
+  // A class with no training points can never be predicted.  This is set in
+  // ElemType so that it stays finite for low-precision models.
+  for (size_t c = 0; c < numClasses; ++c)
+  {
+    if (classCounts[c] <= 0)
+      biases[c] = std::numeric_limits<ElemType>::lowest();
   }
 }
 
