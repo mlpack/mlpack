@@ -46,17 +46,18 @@ TreeType* BuildForcedLeafSizeTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-DualTreeKMeans<DistanceType, MatType, TreeType>::DualTreeKMeans(
+DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::DualTreeKMeans(
     const MatType& dataset,
     DistanceType& distance) :
     datasetOrig(dataset),
     tree(new Tree(const_cast<MatType&>(dataset))),
     dataset(tree->Dataset()),
     distance(distance),
-    distanceCalculations(0),
+    distanceComputations(0),
     iteration(0),
     upperBounds(dataset.n_cols),
     lowerBounds(dataset.n_cols),
@@ -70,16 +71,18 @@ DualTreeKMeans<DistanceType, MatType, TreeType>::DualTreeKMeans(
     visited[i] = false;
   }
   assignments.fill(size_t(-1));
-  upperBounds.fill(DBL_MAX);
-  lowerBounds.fill(DBL_MAX);
+  upperBounds.fill(std::numeric_limits<ElemType>::max());
+  lowerBounds.fill(std::numeric_limits<ElemType>::max());
 }
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-DualTreeKMeans<DistanceType, MatType, TreeType>::~DualTreeKMeans()
+DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+~DualTreeKMeans()
 {
   if (tree)
     delete tree;
@@ -88,12 +91,13 @@ DualTreeKMeans<DistanceType, MatType, TreeType>::~DualTreeKMeans()
 // Run a single iteration.
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
+double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& counts)
 {
   // Build a tree on the centroids.  This will make a copy if necessary, which
@@ -112,12 +116,12 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
   if (iteration > 0)
   {
     // If the tree maps points, we need an intermediate result matrix.
-    arma::mat* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
-        new arma::mat(1, centroids.n_elem) : &interclusterDistances;
+    MatType* interclusterDistancesTemp = TreeTraits<Tree>::RearrangesDataset ?
+        new MatType(1, centroids.n_elem) : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, *interclusterDistancesTemp);
-    distanceCalculations += nns.BaseCases() + nns.Scores();
+    distanceComputations += nns.BaseCases() + nns.Scores();
 
     // We need to do the unmapping ourselves, if the tree does mapping.
     if (TreeTraits<Tree>::RearrangesDataset)
@@ -156,7 +160,7 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
   traverser.Traverse(*tree, nns.ReferenceTree());
-  distanceCalculations += rules.BaseCases() + rules.Scores();
+  distanceComputations += rules.BaseCases() + rules.Scores();
 
   DecoalesceTree(*tree);
 
@@ -186,7 +190,7 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
         clusterDistances[centroids.n_cols] = movement;
     }
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   delete centroidTree;
 
@@ -197,12 +201,13 @@ double DualTreeKMeans<DistanceType, MatType, TreeType>::Iterate(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::UpdateTree(
     Tree& node,
-    const arma::mat& centroids,
+    const CentroidsType& centroids,
     const double parentUpperBound,
     const double adjustedParentUpperBound,
     const double parentLowerBound,
@@ -265,7 +270,7 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
                    node.MaxDistance(centroids.col(node.Stat().Owner())));
       adjustedUpperBound = node.Stat().UpperBound();
 
-      ++distanceCalculations;
+      ++distanceComputations;
       if (node.Stat().UpperBound() < node.Stat().LowerBound())
         node.Stat().StaticPruned() = true;
     }
@@ -337,7 +342,7 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
         // Attempt to tighten the bound.
         upperBounds[index] = distance.Evaluate(dataset.col(index),
                                                centroids.col(owner));
-        ++distanceCalculations;
+        ++distanceComputations;
         if (upperBounds[index] < pruningLowerBound)
         {
           prunedPoints[index] = true;
@@ -410,14 +415,16 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::UpdateTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::ExtractCentroids(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+ExtractCentroids(
     Tree& node,
-    arma::mat& newCentroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& newCounts,
-    const arma::mat& centroids)
+    const MatType& centroids)
 {
   // Does this node own points?
   if ((node.Stat().Pruned() == newCentroids.n_cols) ||
@@ -449,10 +456,12 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::ExtractCentroids(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::CoalesceTree(
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+CoalesceTree(
     Tree& node,
     const size_t child /* Which child are we? */)
 {
@@ -498,10 +507,12 @@ void DualTreeKMeans<DistanceType, MatType, TreeType>::CoalesceTree(
 
 template<typename DistanceType,
          typename MatType,
+         typename CentroidsType,
          template<typename TreeDistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void DualTreeKMeans<DistanceType, MatType, TreeType>::DecoalesceTree(Tree& node)
+void DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::
+DecoalesceTree(Tree& node)
 {
   node.Parent() = (Tree*) node.Stat().TrueParent();
   RestoreChildren(node);
