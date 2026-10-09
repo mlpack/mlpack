@@ -237,7 +237,7 @@ i2cdetect -y -r 0
 70: -- -- -- -- -- -- -- 77
 ```
 
-3. Collect labelled data.  Each recording is labelled according to executed
+3. Collect labeled data.  Each recording is labeled according to executed
    movements with the following `<label>_<date>.csv` format.
    To use the collect command
    ```
