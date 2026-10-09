@@ -50,7 +50,7 @@ infrastructure described in the [embedded example tutorial](../embedded/crosscom
 
 The pipeline is:
 
- * `collect` writes one CSV file per recording (the file name is the label),
+ * `collect` writes one CSV file per recording,
  * `train` turns those CSVs into FFT features and fits a network, and
  * `infer` reads the live sensor stream and prints the predicted movement.
 
