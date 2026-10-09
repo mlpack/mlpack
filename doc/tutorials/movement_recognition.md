@@ -145,7 +145,7 @@ cd examples/cpp/movement_recognition
 
 ### Building the programs
 
-Please note that in order to run mlpack on the Milk-V, we need first to disable
+In order to run mlpack on the Milk-V, we first need to disable
 OpenMP since the board has one core. Second, we need to modify the underlying
 OpenBLAS library. The latter is necessary because the Milk-V has 28MB of usable
 RAM.  Without this modification, the `train` program will not run; this is because the matrix
