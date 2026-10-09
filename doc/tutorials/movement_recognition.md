@@ -103,12 +103,11 @@ pin 36 (3V3 out), and GND to pin 38.  See the
 documentation</a> for the full pin map.</em>
 </center>
 
-On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
-so we must mux them to the I2C0 controller. To use I2C there are two pins that
-are necessary: the first one is the clock pin labelled `IIC0_SCL`, while the
-second one is the data line labelled `IIC0_SDA`.  This is done on the device with
-`duo-pinmux` and is shown in [Running it on the device](#running-it-on-the-device).
-`duo-pinmux` can be used to change the functionality of each pin on the Duo.
+To use I2C there are two pins that are necessary: the first one is the clock pin
+labelled `IIC0_SCL`, while the second one is the data line labelled `IIC0_SDA`.
+On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,so we must mux them to the I2C0 controller.  This is done on the device with
+`duo-pinmux` and is shown in
+[Running it on the device](#running-it-on-the-device).  `duo-pinmux` can be usedto change the functionality of each pin.
 
 ### Setting up the cross-compilation toolchain
 
