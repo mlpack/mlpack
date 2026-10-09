@@ -102,6 +102,7 @@ pin 36 (3V3 out), and GND to pin 38.  See the
 <a href="https://milkv.io/docs/duo/getting-started/duo">Milk-V Duo pinout
 documentation</a> for the full pin map.</em>
 </center>
+<br /><br />
 
 To use I2C there are two pins that are necessary: the first one is the clock pin
 labelled `IIC0_SCL`, while the second one is the data line labelled `IIC0_SDA`.
