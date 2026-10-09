@@ -242,17 +242,15 @@ i2cdetect -y -r 0
 ```
 
 3.    Collect labeled data.  Each recording is labeled according to executed
-      movements with the following `<label>_<date>.csv` format.
-      To use the collect command
-      ```
-      collect <label> [sensors] [out-dir] [device] [rate-hz] <duration-sec>
-      ```
-      `collect` records for the given `duration-sec` and then stops on its own, so
+      movements with the following `<label>_<date>.csv` format.  `collect`
+      records for the given `duration-sec` and then stops on its own, so
       `duration-sec` is required and must be greater than zero.
-In the following example, we record accelerometer only, into `data`,
-on the default I2C bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
+      In the following example, we record accelerometer only, into `data`, on
+      the default I2C bus, at 100 Hz, for 30 seconds.  Run `collect` once per
+      movement:
 
 ```sh
+# Usage: ./collect <label> [sensors] [out-dir] [device] [rate-hz] <duration-sec>
 mkdir data
 ./collect walking   accel data /dev/i2c-0 100 30
 ./collect sitting   accel data /dev/i2c-0 100 30
@@ -266,11 +264,10 @@ mkdir data
       `float32` neural network.  The window size and step are hardcoded constants in
       `train.cpp` (and `infer.cpp`).  Instead of a fixed epoch count it uses
       early stopping: the patience` argument is how many epochs it keeps searching
-      after the lowest validation loss before stopping. To use the `train` command
-
-`train <data-dir> [out-dir] [patience] [test-split]`:
+      after the lowest validation loss before stopping.
 
 ```sh
+# Usage: ./train <data-dir> [out-dir] [patience] [test-split]
 ./train data model 10
 ```
 
@@ -279,13 +276,12 @@ test accuracy, and writes a single `model.bin` holding the trained network, the
 class names, and the feature scaler (so `infer` standardizes live features the
 same way training did).
 
-5.    Run live inference.  `infer` reads the IMU, slides the same window over
-      the stream, extracts features using FFT, and uses the trained model for the inference.
-      To run the inference use the following command:
-
-`infer <sensors> <device> <model-dir>`
+5.    Run live inference.  `infer` reads the IMU, runs the same feature extraction
+      process as `train`, and uses the trained model for inference to predict the
+      movement being performed.
 
 ```sh
+# Usage: ./infer <sensors> <device> <model-dir>
 ./infer accel /dev/i2c-0 model
 ```
 
