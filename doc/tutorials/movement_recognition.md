@@ -58,7 +58,7 @@ The figure below shows that feature pipeline on the real recorded data, from
 raw signal to the features the network learns from:
 
 <center>
-<img src="../img/movement_fft_pipeline.png" width="720" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
+<img src="../img/movement_fft_pipeline.svg" width="720" alt="Movement-recognition FFT feature pipeline: raw recording, overlapping sliding windows, and per-movement FFT power spectra" />
 </center>
 
 In the figure,
@@ -83,9 +83,9 @@ In the figure,
 This tutorial uses a [Milk-V Duo](https://milkv.io/duo), a SOPHGO
 CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
 only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
-GY-89 9-DOF breakout, which carries three separate I2C chips:
+GY-89 9-DOF board, which carries three separate I2C chips:
 
-| Chip        | Function                            | 7-bit address |
+| Chip        | Function                            | I2C address |
 |-------------|-------------------------------------|---------------|
 | L3GD20H | 3-axis gyroscope                    | `0x6B`        |
 | LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
@@ -95,7 +95,7 @@ Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`), as
 shown below:
 
 <center>
-<img src="../img/wiring_gy89_duo.png" width="760" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
+<img src="../img/wiring_gy89_duo.svg" width="760" alt="Wiring the GY-89 IMU breakout to the Milk-V Duo over I2C0: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to pin 36 (3V3 out), and GND to pin 38" />
 <br />
 <em>GY-89 to Milk-V Duo wiring: SCL to pin 1 (GP0), SDA to pin 2 (GP1), VIN to
 pin 36 (3V3 out), and GND to pin 38.  See the
@@ -153,16 +153,21 @@ multiplication functionality in OpenBLAS allocates an internal buffer of size
 32MB---larger than the available RAM.  Therefore, we have to reduce this, along
 with the block sizes used during matrix multiplication.
 
-Both of these changes are a part of the example repository, in the file
-[CMake/patches/openblas-riscv64-low-memory.patch](../../.jenkins/cross-compilation/openblas-riscv64-low-memory.patch).
+To solve this, we can use the OpenBLAS patching functionality that is built into
+the `mlpack.cmake` file that is used by the example to download mlpack's
+dependencies and cross-compile OpenBLAS.  To do this, we just need to specify 
+the `OPENBLAS_PATCHES` CMake configuration parameter with the relevant patch 
+file.  The examples repository has the file 
+[CMake/patches/openblas-riscv64-low-memory.patch](../../.jenkins/cross-compilation/openblas-riscv64-low-memory.patch),
+which contains the changes necessary to make OpenBLAS's internal buffers 
+small enough for the Milk-V Duo.
 
-The example applies this patch automatically when it calls `mlpack.cmake` to
-download mlpack's dependencies and cross-compile OpenBLAS.
-
-We are also disabling STB, dr_libs, and httplib. These dependencies
-support loading images, audio files, and downloading from a server. However,
-they add a dead footprint that can be avoided for low-resource devices.
-For more information please check [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions).
+mlpack also has other functionality we can disable to reduce the footprint of 
+the compiled program.  Specifically, the STB, dr_libs, and httplib dependencies
+can be disabled; these support image loading, audio files, and downloading 
+remote datasets---but we do not need that support in this example.  For more 
+information see the [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions)
+documentation.
 
 At this stage, we need to define the architecture of the target device with
 the `ARCH_NAME=RV64GCV` variable (the ISA of the board's C906 core):
@@ -211,18 +216,17 @@ ssh root@192.168.42.1 /root/imu_test /root/collect /root/train /root/infer
 
 SSH into the board.  All the commands below run on the Duo.
 
-1. Mux the GP0 and GP1 pins to the I2C functionality using the following
-   commands:
+1.    Mux the GP0 and GP1 pins to the I2C functionality using the following
+      commands:
 
 ```sh
 duo-pinmux -p GP0 -f IIC0_SCL
 duo-pinmux -p GP1 -f IIC0_SDA
 ```
 
-2. Check the I2C0 pins and the sensor. The GP0/GP1 pads must be set to
-their I2C function first, you should get a similar output if you have the same
-IMU. If not, you need to check your specific sensor's address in the datasheet,
-and verify that it matches the one detected on the bus.
+2.    Check the I2C0 pins and the sensor, you should get a similar output if you have the same
+      IMU. If not, you need to check your specific sensor's address in the datasheet,
+      and verify that it matches the one detected on the bus.
 
 ```sh
 i2cdetect -y -r 0
@@ -237,14 +241,14 @@ i2cdetect -y -r 0
 70: -- -- -- -- -- -- -- 77
 ```
 
-3. Collect labeled data.  Each recording is labeled according to executed
-   movements with the following `<label>_<date>.csv` format.
-   To use the collect command
-   ```
-   collect <label> [sensors] [out-dir] [device] [rate-hz] <duration-sec>
-   ```
-   `collect` records for the given `duration-sec` and then stops on its own, so
-   `duration-sec` is required and must be greater than zero.
+3.    Collect labeled data.  Each recording is labeled according to executed
+      movements with the following `<label>_<date>.csv` format.
+      To use the collect command
+      ```
+      collect <label> [sensors] [out-dir] [device] [rate-hz] <duration-sec>
+      ```
+      `collect` records for the given `duration-sec` and then stops on its own, so
+      `duration-sec` is required and must be greater than zero.
 In the following example, we record accelerometer only, into `data`,
 on the default I2C bus, at 100 Hz, for 30 seconds.  Run `collect` once per movement:
 
@@ -255,15 +259,14 @@ mkdir data
 ./collect squat     accel data /dev/i2c-0 100 30
 ```
 
-4. Train the network.  `train` groups the CSVs by label, cuts each into
-overlapping sliding windows of 256 samples spaced 128 apart (a 50% overlap),
-turns each window into features (the FFT power spectrum, mean, standard
-deviation, and median for each accelerometer axis), and trains a small
-`float32` neural network.  The window size and step are hardcoded constants in
-`train.cpp` (and `infer.cpp`); edit them in the source if your movements are
-slower or faster.  Instead of a fixed epoch count it uses early stopping: the
-`patience` argument is how many epochs it keeps searching after the lowest
-validation loss before stopping. To use the `train` command
+4.    Train the network.  `train` groups the CSVs by label, cuts each into
+      overlapping sliding windows of 256 samples spaced 128 apart (a 50% overlap),
+      turns each window into features (the FFT power spectrum, mean, standard
+      deviation, and median for each accelerometer axis), and trains a small
+      `float32` neural network.  The window size and step are hardcoded constants in
+      `train.cpp` (and `infer.cpp`).  Instead of a fixed epoch count it uses
+      early stopping: the patience` argument is how many epochs it keeps searching
+      after the lowest validation loss before stopping. To use the `train` command
 
 `train <data-dir> [out-dir] [patience] [test-split]`:
 
@@ -276,9 +279,9 @@ test accuracy, and writes `model.bin` (the trained network), `model.labels`
 (the class names), and `scaler.bin` (the feature scaler, so `infer`
 standardizes live features the same way training did).
 
-5. Run live inference.  `infer` reads the IMU, slides the same window over
-the stream, extracts features using FFT, and uses the trained model for the inference.
-To run the inference use the following command:
+5.    Run live inference.  `infer` reads the IMU, slides the same window over
+      the stream, extracts features using FFT, and uses the trained model for the inference.
+      To run the inference use the following command:
 
 `infer <sensors> <device> <model-dir>`
 
