@@ -59,9 +59,9 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
-#   MLPACK_DISABLE_STB: if set, mlpack image (STB) support is compiled out.
-#   MLPACK_DISABLE_DR_LIBS: if set, mlpack audio (dr_libs) support is compiled out.
-#   MLPACK_DISABLE_HTTPLIB: if set, mlpack httplib support is compiled out.
+#   MLPACK_DISABLE_STB: if set, mlpack image (STB) support is disabled.
+#   MLPACK_DISABLE_DR_LIBS: if set, mlpack audio (dr_libs) support is disabled.
+#   MLPACK_DISABLE_HTTPLIB: if set, mlpack httplib support is disabled.
 #   OPENBLAS_PATCHES: list of filepaths for patches to be applied to OpenBLAS;
 #       ignored if COMPILE_OPENBLAS is false.  Patches given will be applied
 #       with `-p1`.
