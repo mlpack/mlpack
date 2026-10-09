@@ -2536,6 +2536,37 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
 }
 
 /**
+ * Ensure that ARFF files with or without a trailing newline can be loaded correctly.
+ */
+TEST_CASE("ARFFTrailingNewlineTest", "[LoadSaveTest][tiny]")
+{
+  for (const bool trailingNewline : { true, false })
+  {
+    fstream f;
+    f.open("test.arff", fstream::out | fstream::binary);
+    f << "@relation test\n";
+    f << "@attribute a numeric\n";
+    f << "@attribute b numeric\n";
+    f << "@data\n";
+    f << "1, 2\n";
+    f << "3, 4\n";
+    f << "5, 6";
+    if (trailingNewline)
+      f << "\n";
+    f.close();
+
+    arma::mat dataset;
+    TextOptions opts;
+
+    REQUIRE(Load("test.arff", dataset, opts) == true);
+    REQUIRE(dataset.n_rows == 2);
+    REQUIRE(dataset.n_cols == 3);
+
+    remove("test.arff");
+  }
+}
+
+/**
  * Test that a CSV with the wrong number of columns fails.
  */
 TEST_CASE("MalformedCSVTest", "[LoadSaveTest][tiny]")
