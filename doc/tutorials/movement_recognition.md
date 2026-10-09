@@ -293,4 +293,10 @@ In this tutorial, we have demonstrated how you can simply build an entire
 machine learning pipeline with mlpack running on a resource constrained device
 such as the Milk-V Duo for data collection, training, and model prediction.
 
+Use it as a starting point.  From here you could:
+
+ * add more movement types,
+ * try a different network structure, or
+ * use a different sensor.
+
 
