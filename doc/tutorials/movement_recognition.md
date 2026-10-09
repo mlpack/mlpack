@@ -275,9 +275,9 @@ mkdir data
 ```
 
 It prints a per-epoch loss and a progress bar while training, then a held-out
-test accuracy, and writes `model.bin` (the trained network), `model.labels`
-(the class names), and `scaler.bin` (the feature scaler, so `infer`
-standardizes live features the same way training did).
+test accuracy, and writes a single `model.bin` holding the trained network, the
+class names, and the feature scaler (so `infer` standardizes live features the
+same way training did).
 
 5.    Run live inference.  `infer` reads the IMU, slides the same window over
       the stream, extracts features using FFT, and uses the trained model for the inference.
