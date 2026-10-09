@@ -552,6 +552,8 @@ TEST_CASE("DilationAndStrideConvolutionTest", "[ConvolutionTest]")
       filterCube, outputCube, 2, 2, 2, 2);
 }
 
+#ifndef MLPACK_DISABLE_STB
+
 // Test that the Convolution layer processes an image correctly when stride
 // is unequal.
 TEMPLATE_TEST_CASE("UnequalStrideImageTest", "[ConvolutionTest]",
@@ -663,3 +665,5 @@ TEMPLATE_TEST_CASE("UnequalDilationImageTest", "[ConvolutionTest]",
   // Check that the images are similar.
   CheckMatrices(output, convOutput);
 }
+
+#endif

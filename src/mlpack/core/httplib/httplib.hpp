@@ -30,7 +30,7 @@
 
 #else
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#ifndef MLPACK_DISABLE_HTTPLIB
   // Now include httplib headers
   #include "bundled/httplib.h"
 #endif

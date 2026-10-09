@@ -21,7 +21,6 @@ option(DISABLE_STB "Disable STB support with mlpack." OFF)
 option(USE_SYSTEM_DR_LIBS "Use system dr_libs instead of version bundled with mlpack." OFF)
 option(DISABLE_DR_LIBS "Disable dr_libs (audio) support within mlpack." OFF)
 option(USE_SYSTEM_HTTPLIB "Use system httplib instead of version bundled with mlpack." OFF)
-option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
 option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
 option(DISABLE_REMOTE_DATASET_CACHE "Disable caching of downloaded datasets." OFF)
 set(REMOTE_DATASET_CACHE_DIR "" CACHE STRING "Override the directory where cached datasets are stored.")
@@ -271,11 +270,6 @@ if (USE_SYSTEM_HTTPLIB)
   set(MLPACK_USE_SYSTEM_HTTPLIB ON)
 endif ()
 
-# Flag to be removed after release
-if (ENABLE_HTTPLIB)
-  set(MLPACK_ENABLE_HTTPLIB ON)
-endif ()
-
 # If the user would like to disable httplib for embedded system
 if (DISABLE_HTTPLIB)
   set(MLPACK_DISABLE_HTTPLIB ON)
@@ -405,11 +399,6 @@ endif()
 if (USE_SYSTEM_HTTPLIB)
   string(REGEX REPLACE "// #define MLPACK_USE_SYSTEM_HTTPLIB\n"
       "#define MLPACK_USE_SYSTEM_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
-endif()
-
-if (ENABLE_HTTPLIB)
-  string(REGEX REPLACE "// #define MLPACK_ENABLE_HTTPLIB\n"
-      "#define MLPACK_ENABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
 if (DISABLE_HTTPLIB)
