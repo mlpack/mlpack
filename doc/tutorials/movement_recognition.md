@@ -112,7 +112,7 @@ On the Duo, pins 1 and 2 (GP0 and GP1) are general-purpose GPIO pins by default,
 
 ### Setting up the cross-compilation toolchain
 
-Since the device is resource-constrained with only 28 MB available
+Since the device is resource-constrained with only 28 MB of available
 RAM, we cross-compile on a host `x86_64` machine and copy the static
 binaries to the target machine, exactly as we did in the [Raspberry Pi tutorial](../embedded/crosscompile_armv7.md).
 The board uses a RISC-V C906 core, so we need a `riscv64-lp64d`
