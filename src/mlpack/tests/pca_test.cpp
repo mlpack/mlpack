@@ -507,3 +507,21 @@ TEMPLATE_TEST_CASE("PCASparseToDenseTest", "[PCATest]", float, double)
 
   REQUIRE(denseData2.n_rows == transformedDataset2.n_rows);
 }
+
+/**
+ * Check that PCA handles degenerate data with constant columns without crashing.
+ */
+TEST_CASE("PCAConstantFeatureTest", "[PCATest]")
+{
+  // 5 features, 20 samples with identical constant values
+  arma::mat constantData(5, 20);
+  constantData.fill(3.14159);
+
+  mlpack::PCA pca;
+  arma::mat transformed;
+
+  // Ensure reducing to 1 dimension executes cleanly without throwing an unhandled exception
+  REQUIRE_NOTHROW(pca.Apply(constantData, transformed, 1));
+  REQUIRE(transformed.n_rows == 1);
+  REQUIRE(transformed.n_cols == 20);
+}
