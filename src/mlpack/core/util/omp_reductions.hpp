@@ -17,6 +17,8 @@ namespace mlpack {
 // Custom reduction for arma::mat
 #pragma omp declare reduction(matAdd : arma::mat : omp_out += omp_in) \
     initializer(omp_priv = arma::mat(omp_orig.n_rows, omp_orig.n_cols))
+#pragma omp declare reduction(matAdd : arma::fmat : omp_out += omp_in) \
+    initializer(omp_priv = arma::fmat(omp_orig.n_rows, omp_orig.n_cols))
 
 // Custom reduction for arma::Col<size_t>
 #pragma omp declare reduction(colAdd : arma::Col<size_t> : omp_out += omp_in) \

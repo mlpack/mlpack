@@ -16,48 +16,52 @@
 using namespace mlpack;
 
 // Generate dataset; written transposed because it's easier to read.
-arma::mat kMeansData("  0.0   0.0;" // Class 1.
-                     "  0.3   0.4;"
-                     "  0.1   0.0;"
-                     "  0.1   0.3;"
-                     " -0.2  -0.2;"
-                     " -0.1   0.3;"
-                     " -0.4   0.1;"
-                     "  0.2  -0.1;"
-                     "  0.3   0.0;"
-                     " -0.3  -0.3;"
-                     "  0.1  -0.1;"
-                     "  0.2  -0.3;"
-                     " -0.3   0.2;"
-                     " 10.0  10.0;" // Class 2.
-                     " 10.1   9.9;"
-                     "  9.9  10.0;"
-                     " 10.2   9.7;"
-                     " 10.2   9.8;"
-                     "  9.7  10.3;"
-                     "  9.9  10.1;"
-                     "-10.0   5.0;" // Class 3.
-                     " -9.8   5.1;"
-                     " -9.9   4.9;"
-                     "-10.0   4.9;"
-                     "-10.2   5.2;"
-                     "-10.1   5.1;"
-                     "-10.3   5.3;"
-                     "-10.0   4.8;"
-                     " -9.6   5.0;"
-                     " -9.8   5.1;");
+arma::mat kMeansInputData("  0.0   0.0;" // Class 1.
+                          "  0.3   0.4;"
+                          "  0.1   0.0;"
+                          "  0.1   0.3;"
+                          " -0.2  -0.2;"
+                          " -0.1   0.3;"
+                          " -0.4   0.1;"
+                          "  0.2  -0.1;"
+                          "  0.3   0.0;"
+                          " -0.3  -0.3;"
+                          "  0.1  -0.1;"
+                          "  0.2  -0.3;"
+                          " -0.3   0.2;"
+                          " 10.0  10.0;" // Class 2.
+                          " 10.1   9.9;"
+                          "  9.9  10.0;"
+                          " 10.2   9.7;"
+                          " 10.2   9.8;"
+                          "  9.7  10.3;"
+                          "  9.9  10.1;"
+                          "-10.0   5.0;" // Class 3.
+                          " -9.8   5.1;"
+                          " -9.9   4.9;"
+                          "-10.0   4.9;"
+                          "-10.2   5.2;"
+                          "-10.1   5.1;"
+                          "-10.3   5.3;"
+                          "-10.0   4.8;"
+                          " -9.6   5.0;"
+                          " -9.8   5.1;");
 
 /**
  * 30-point 3-class test case for K-Means.
  */
-TEST_CASE("KMeansSimpleTest", "[KMeansTest]")
+TEMPLATE_TEST_CASE("KMeansSimpleTest", "[KMeansTest]", double, float)
 {
+  typedef TestType eT;
+  arma::Mat<eT> kMeansData =
+      arma::conv_to<arma::Mat<eT>>::from(kMeansInputData);
+
   // This test was originally written to use RandomPartition, and is left that
   // way because RandomPartition gives better initializations here.
   KMeans<EuclideanDistance, RandomPartition> kmeans;
 
   arma::Row<size_t> assignments;
-  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
+  kmeans.Cluster((arma::Mat<eT>) trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
@@ -105,8 +109,8 @@ TEST_CASE("AllowEmptyClusterTest", "[KMeansTest]")
   // Make sure the method doesn't modify any points.
   LMetric<2, true> distance;
 
-  AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      distance, 0);
+  AllowEmptyClusters::EmptyCluster(kMeansInputData, 2, centroids, centroids,
+      counts, distance, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -138,8 +142,8 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
   // Make sure the method modify the specified point.
   LMetric<2, true> distance;
 
-  KillEmptyClusters::EmptyCluster(kMeansData, 2, centroids, centroids, counts,
-      distance, 0);
+  KillEmptyClusters::EmptyCluster(kMeansInputData, 2, centroids, centroids,
+      counts, distance, 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; ++i)
@@ -156,20 +160,22 @@ TEST_CASE("KillEmptyClusterTest", "[KMeansTest]")
 /**
  * Make sure the max variance method finds the correct point.
  */
-TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
+TEMPLATE_TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]", double, float)
 {
+  typedef TestType eT;
+
   // Five points.
-  arma::mat data("0.4 1.0 5.0 -2.0 -2.5;"
-                 "1.0 0.8 0.7  5.1  5.2;");
+  arma::Mat<eT> data("0.4 1.0 5.0 -2.0 -2.5;"
+                     "1.0 0.8 0.7  5.1  5.2;");
 
   // Point 2 is the mis-clustered point we're looking for to be moved.
   arma::Row<size_t> assignments("0 0 0 1 1");
 
-  arma::mat centroids(2, 3);
+  arma::Mat<eT> centroids(2, 3);
   centroids.col(0) = (1.0 / 3.0) * (data.col(0) + data.col(1) + data.col(2));
   centroids.col(1) = 0.5 * (data.col(3) + data.col(4));
-  centroids(0, 2) = DBL_MAX;
-  centroids(1, 2) = DBL_MAX;
+  centroids(0, 2) = std::numeric_limits<eT>::max();
+  centroids(1, 2) = std::numeric_limits<eT>::max();
 
   arma::Col<size_t> counts("3 2 0");
 
@@ -216,9 +222,11 @@ TEST_CASE("MaxVarianceNewClusterTest", "[KMeansTest]")
 /**
  * Make sure the random partitioner seems to return valid results.
  */
-TEST_CASE("RandomPartitionTest", "[KMeansTest]")
+TEMPLATE_TEST_CASE("RandomPartitionTest", "[KMeansTest]", double, float)
 {
-  arma::mat data;
+  typedef TestType eT;
+
+  arma::Mat<eT> data;
   data.randu(2, 1000); // One thousand points.
 
   arma::Row<size_t> assignments;
@@ -408,12 +416,14 @@ TEST_CASE("InitialAssignmentOverrideTest", "[KMeansTest]")
  * Test that the refined starting policy returns decent initial cluster
  * estimates.
  */
-TEST_CASE("RefinedStartTest", "[KMeansTest]")
+TEMPLATE_TEST_CASE("RefinedStartTest", "[KMeansTest]", double, float)
 {
+  typedef TestType eT;
+
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
-  arma::mat data(3, 3000);
+  arma::Mat<eT> data(3, 3000);
   data.randn();
 
   // First Gaussian: 10000 points, centered at (0, 0, 0).
@@ -421,9 +431,9 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // Third Gaussian: 5000 points, centered at (-2, -2, -2).
   // Fourth Gaussian: 1000 points, centered at (-6, 8, 8).
   // Fifth Gaussian: 12000 points, centered at (1, 6, 1).
-  arma::mat centroids(" 0  5 -2 -6  1;"
-                      " 0  0 -2  8  6;"
-                      " 0 -2 -2  8  1");
+  arma::Mat<eT> centroids(" 0  5 -2 -6  1;"
+                          " 0  0 -2  8  6;"
+                          " 0 -2 -2  8  1");
 
   for (size_t i = 1000; i < 1200; ++i)
     data.col(i) += centroids.col(1);
@@ -438,7 +448,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // much from the actual solution.
   RefinedStart rs;
   arma::Row<size_t> assignments;
-  arma::mat resultingCentroids;
+  arma::Mat<eT> resultingCentroids;
   rs.Cluster(data, 5, assignments);
 
   // Calculate resulting centroids.
@@ -457,7 +467,7 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
       resultingCentroids /= counts[i];
 
   // Calculate sum of distances from centroid means.
-  double distortion = 0;
+  eT distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
     distortion += EuclideanDistance::Evaluate(data.col(i),
         resultingCentroids.col(assignments[i]));
@@ -467,19 +477,21 @@ TEST_CASE("RefinedStartTest", "[KMeansTest]")
   // figure is a corner case which actually does not give good clusters), and
   // random initial starts give distortion around 22000.  So we'll require that
   // our distortion is less than 14000.
-  REQUIRE(distortion < 14000.0);
+  REQUIRE(distortion < eT(14000));
 }
 
 /**
  * Test that the k-means++ initialization strategy returns decent initial
  * cluster estimates.
  */
-TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]", double, float)
 {
+  typedef TestType eT;
+
   // Our dataset will be five Gaussians of largely varying numbers of points and
   // we expect that the refined starting policy should return good guesses at
   // what these Gaussians are.
-  arma::mat data(3, 3000);
+  arma::Mat<eT> data(3, 3000);
   data.randn();
 
   // First Gaussian: 10000 points, centered at (0, 0, 0).
@@ -487,9 +499,9 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
   // Third Gaussian: 5000 points, centered at (-2, -2, -2).
   // Fourth Gaussian: 1000 points, centered at (-6, 8, 8).
   // Fifth Gaussian: 12000 points, centered at (1, 6, 1).
-  arma::mat centroids(" 0  5 -2 -6  1;"
-                      " 0  0 -2  8  6;"
-                      " 0 -2 -2  8  1");
+  arma::Mat<eT> centroids(" 0  5 -2 -6  1;"
+                          " 0  0 -2  8  6;"
+                          " 0 -2 -2  8  1");
 
   for (size_t i = 1000; i < 1200; ++i)
     data.col(i) += centroids.col(1);
@@ -501,17 +513,17 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
     data.col(i) += centroids.col(4);
 
   KMeansPlusPlusInitialization k;
-  arma::mat resultingCentroids;
+  arma::Mat<eT> resultingCentroids;
   k.Cluster(data, 5, resultingCentroids);
 
   // Calculate resulting assignments.
   arma::Row<size_t> assignments(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    double bestDist = DBL_MAX;
+    eT bestDist = std::numeric_limits<eT>::max();
     for (size_t j = 0; j < 5; ++j)
     {
-      const double dist = EuclideanDistance::Evaluate(data.col(i),
+      const eT dist = EuclideanDistance::Evaluate(data.col(i),
           resultingCentroids.col(j));
       if (dist < bestDist)
       {
@@ -522,7 +534,7 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
   }
 
   // Calculate sum of distances from centroid means.
-  double distortion = 0;
+  eT distortion = 0;
   for (size_t i = 0; i < 3000; ++i)
     distortion += EuclideanDistance::Evaluate(data.col(i),
         resultingCentroids.col(assignments[i]));
@@ -533,34 +545,35 @@ TEST_CASE("KMeansPlusPlusTest", "[KMeansTest][tiny]")
   // random initial starts give distortion around 22000.  So we'll require that
   // our distortion is less than 14500.  (It seems like there is a lot of noise
   // in the result.)
-  REQUIRE(distortion < 14500.0);
+  REQUIRE(distortion < eT(14500));
 }
 
-#ifdef ARMA_HAS_SPMAT
 /**
  * Make sure sparse k-means works okay.
  */
-TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]", float, double)
 {
+  typedef TestType eT;
+
   // Huge dimensionality, few points.
-  arma::SpMat<double> data(5000, 12);
-  data(14, 0) = 6.4;
-  data(14, 1) = 6.3;
-  data(14, 2) = 6.5;
-  data(14, 3) = 6.2;
-  data(14, 4) = 6.1;
-  data(14, 5) = 6.6;
-  data(1402, 6) = -3.2;
-  data(1402, 7) = -3.3;
-  data(1402, 8) = -3.1;
-  data(1402, 9) = -3.4;
-  data(1402, 10) = -3.5;
-  data(1402, 11) = -3.0;
+  arma::SpMat<eT> data(5000, 12);
+  data(14, 0) = eT(6.4);
+  data(14, 1) = eT(6.3);
+  data(14, 2) = eT(6.5);
+  data(14, 3) = eT(6.2);
+  data(14, 4) = eT(6.1);
+  data(14, 5) = eT(6.6);
+  data(1402, 6) = eT(-3.2);
+  data(1402, 7) = eT(-3.3);
+  data(1402, 8) = eT(-3.1);
+  data(1402, 9) = eT(-3.4);
+  data(1402, 10) = eT(-3.5);
+  data(1402, 11) = eT(-3.0);
 
   arma::Row<size_t> assignments;
 
   KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster, NaiveKMeans,
-         arma::sp_mat> kmeans; // Default options.
+         arma::SpMat<eT>> kmeans; // Default options.
 
   kmeans.Cluster(data, 2, assignments);
 
@@ -581,24 +594,24 @@ TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]")
   REQUIRE(assignments[11] == clusterTwo);
 }
 
-#endif // ARMA_HAS_SPMAT
-
-TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("ElkanTest", "[KMeansTest][tiny]", float, double)
 {
+  typedef TestType eT;
+
   const size_t trials = 5;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::Mat<eT> dataset(10, 1000);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
-    arma::mat centroids(10, k);
+    arma::Mat<eT> centroids(10, k);
     centroids.randu();
 
     // Make sure Elkan's algorithm and the naive method return the same
     // clusters.
-    arma::mat naiveCentroids(centroids);
+    arma::Mat<eT> naiveCentroids(centroids);
     KMeans<> km;
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
@@ -606,33 +619,36 @@ TEST_CASE("ElkanTest", "[KMeansTest][tiny]")
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         ElkanKMeans> elkan;
     arma::Row<size_t> elkanAssignments;
-    arma::mat elkanCentroids(centroids);
+    arma::Mat<eT> elkanCentroids(centroids);
     elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == elkanAssignments[i]);
 
+    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(1e-7));
+      REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(eps));
   }
 }
 
-TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("HamerlyTest", "[KMeansTest][tiny]", double, float)
 {
+  typedef TestType eT;
+
   const size_t trials = 5;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::Mat<eT> dataset(10, 1000);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
-    arma::mat centroids(10, k);
+    arma::Mat<eT> centroids(10, k);
     centroids.randu();
 
     // Make sure Hamerly's algorithm and the naive method return the same
     // clusters.
-    arma::mat naiveCentroids(centroids);
+    arma::Mat<eT> naiveCentroids(centroids);
     KMeans<> km;
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
@@ -640,34 +656,37 @@ TEST_CASE("HamerlyTest", "[KMeansTest][tiny]")
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         HamerlyKMeans> hamerly;
     arma::Row<size_t> hamerlyAssignments;
-    arma::mat hamerlyCentroids(centroids);
+    arma::Mat<eT> hamerlyCentroids(centroids);
     hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
         true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == hamerlyAssignments[i]);
 
+    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(1e-7));
+      REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(eps));
   }
 }
 
-TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]", double, float)
 {
+  typedef TestType eT;
+
   const size_t trials = 5;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 1000);
+    arma::Mat<eT> dataset(10, 1000);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
-    arma::mat centroids(10, k);
+    arma::Mat<eT> centroids(10, k);
     centroids.randu();
 
     // Make sure the Pelleg-Moore algorithm and the naive method return the same
     // clusters.
-    arma::mat naiveCentroids(centroids);
+    arma::Mat<eT> naiveCentroids(centroids);
     KMeans<> km;
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
@@ -675,31 +694,34 @@ TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]")
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         PellegMooreKMeans> pellegMoore;
     arma::Row<size_t> pmAssignments;
-    arma::mat pmCentroids(centroids);
+    arma::Mat<eT> pmCentroids(centroids);
     pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == pmAssignments[i]);
 
+    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(1e-7));
+      REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(eps));
   }
 }
 
-TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("DTNNTest", "[KMeansTest][tiny]", double, float)
 {
+  typedef TestType eT;
+
   const size_t trials = 5;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 300);
+    arma::Mat<eT> dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5 * (t + 1);
-    arma::mat centroids(10, k);
+    arma::Mat<eT> centroids(10, k);
     centroids.randu();
 
-    arma::mat naiveCentroids(centroids);
+    arma::Mat<eT> naiveCentroids(centroids);
     KMeans<> km;
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
@@ -707,31 +729,34 @@ TEST_CASE("DTNNTest", "[KMeansTest][tiny]")
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         DefaultDualTreeKMeans> dtnn;
     arma::Row<size_t> dtnnAssignments;
-    arma::mat dtnnCentroids(centroids);
+    arma::Mat<eT> dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == dtnnAssignments[i]);
 
+    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(1e-7));
+      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
   }
 }
 
-TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
+TEMPLATE_TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]", double, float)
 {
+  typedef TestType eT;
+
   const size_t trials = 5;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::mat dataset(10, 300);
+    arma::Mat<eT> dataset(10, 300);
     dataset.randu();
 
     const size_t k = 5;
-    arma::mat centroids(10, k);
+    arma::Mat<eT> centroids(10, k);
     centroids.randu();
 
-    arma::mat naiveCentroids(centroids);
+    arma::Mat<eT> naiveCentroids(centroids);
     KMeans<> km;
     arma::Row<size_t> assignments;
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
@@ -739,14 +764,15 @@ TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]")
     KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         CoverTreeDualTreeKMeans> dtnn;
     arma::Row<size_t> dtnnAssignments;
-    arma::mat dtnnCentroids(centroids);
+    arma::Mat<eT> dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       REQUIRE(assignments[i] == dtnnAssignments[i]);
 
+    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
     for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(1e-7));
+      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
   }
 }
 
