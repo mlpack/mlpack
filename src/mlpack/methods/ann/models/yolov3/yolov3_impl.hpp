@@ -143,7 +143,7 @@ YOLOv3<MatType, OutputLayerType, InitializationRuleType>
   model.Connect(layer90, detection1);
   model.Connect(layer99, detection2);
 
-  // Concat outputs.
+  // Concat outputs. Order matters for training.
   size_t lastLayer = model.template Add<mlpack::Identity>();
   model.Connect(detection0, lastLayer);
   model.Connect(detection1, lastLayer);

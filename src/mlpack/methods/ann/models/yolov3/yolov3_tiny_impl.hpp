@@ -120,7 +120,7 @@ YOLOv3Tiny<MatType, OutputLayerType, InitializationRuleType>
   model.Connect(convolution20, detections21);
   // Again, set axis not necessary, since default is concat along channels.
 
-  // Concatenation order shouldn't matter.
+  // Concatenation order matters for training.
   model.Connect(detections16, concatLayer22);
   model.Connect(detections21, concatLayer22);
 
