@@ -57,6 +57,9 @@ else
   mode="file";
 fi
 
+# Enable zlib support for doc examples.
+CXXFLAGS="$CXXFLAGS -DMLPACK_USE_ZLIB";
+
 # Extract the C++ code blocks from a particular file, creating
 # $output_prefix1.cpp, $output_prefix2.cpp, and so on and so forth.
 #
@@ -222,7 +225,7 @@ compile_code_blocks()
       exit 1;
     fi
 
-    if ! $CXX -o $lf $of $LDFLAGS -larmadillo 2>$lf.tmp;
+    if ! $CXX -o $lf $of $LDFLAGS -larmadillo -lz 2>$lf.tmp;
     then
       echo "Linking of the following program failed:"
       echo "";
