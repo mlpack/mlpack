@@ -283,6 +283,44 @@ same way training did).
 ```sh
 # Usage: ./infer <sensors> <device> <model-dir>
 ./infer accel /dev/i2c-0 model
+
+# Possible output according to your movement.
+[root@milkv-duo]~# ./infer accel /dev/i2c-0 model
+loaded model from 'model' (window 256, 8 classes)
+Proceeding despite the IMU warning(s) above.
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: stairs_up
+predict: stairs_up
+predict: stairs_up
+predict: stairs_up
+predict: walking_fast
+predict: walking_fast
+predict: walking_fast
+predict: walking_fast
+predict: stairs_up
+predict: stairs_up
+predict: stairs_up
+predict: stairs_up
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+predict: sitting
+[root@milkv-duo]~# 
 ```
 
 In this tutorial, we have demonstrated how you can simply build an entire
