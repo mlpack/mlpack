@@ -196,12 +196,12 @@ Train a Naive Bayes classifier incrementally, one point at a time, then compute
 accuracy on a test set and save the model to disk.
 
 ```c++
-// See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/mnist.train.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+    mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+    mlpack::Fatal);
 
 mlpack::NaiveBayesClassifier nbc(dataset.n_rows /* dimensionality */,
                                  10 /* numClasses */);
@@ -212,12 +212,12 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 
 // Now compute the accuracy of the fully trained model on a test set.
 
-// See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/mnist.test.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/mnist.test.csv", testDataset,
+    mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
+    mlpack::Fatal);
 
 arma::Row<size_t> predictions;
 nbc.Classify(dataset, predictions);

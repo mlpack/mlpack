@@ -139,9 +139,9 @@ Apply PCA to a dataset, keeping dimensions that capture 90% of the data
 variance.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat data;
-mlpack::Load("satellite.train.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", data,
+    mlpack::Fatal);
 const size_t origDim = data.n_rows;
 
 mlpack::PCA pca;
@@ -160,9 +160,8 @@ dimensions, and printing the 5 largest eigenvalues of the covariance matrix of
 the transformed data.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::fmat data;
-mlpack::Load("iris.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", data, mlpack::Fatal);
 
 mlpack::PCA pca(true /* scale data when transforming */);
 
@@ -238,8 +237,8 @@ MNIST data, timing how long each decomposition takes.
 
 ```c++
 arma::mat data;
-// See https://datasets.mlpack.org/mnist.train.csv.
-mlpack::Load("mnist.train.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", data,
+    mlpack::Fatal);
 
 arma::mat output1, output2, output3, output4;
 

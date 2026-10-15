@@ -271,9 +271,9 @@ Train a LARS model in the constructor, and print the MSE on training and
 test data for each set of weights in the path.
 
 ```c++
-// See https://datasets.mlpack.org/wave_energy_farm_100.csv.
 arma::mat data;
-mlpack::Load("wave_energy_farm_100.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/wave_energy_farm_100.csv", data,
+    mlpack::Fatal);
 
 // Split the last row off: it is the responses.  Also, normalize the responses
 // to [0, 1].
@@ -315,13 +315,13 @@ for (size_t i = 0; i < pathLength; ++i)
 Train a LARS model, print predictions for a random point, and save to a file.
 
 ```c++
-// See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+    mlpack::Fatal);
 
-// See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+    responses, mlpack::Fatal);
 
 // Train a LARS model with only L2 regularization.
 mlpack::LARS lars(data, responses, true, true, 0.0, 0.1 /* lambda2 */);
@@ -383,13 +383,13 @@ Train several models with different L2 regularization penalty parameters, using
 a precomputed Gram matrix.
 
 ```c++
-// See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+    mlpack::Fatal);
 
-// See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+    responses, mlpack::Fatal);
 
 // Precompute Gram matrix.
 arma::mat gramMatrix = data * data.t();

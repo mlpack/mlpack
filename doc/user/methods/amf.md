@@ -506,9 +506,9 @@ Decompose the sparse MovieLens dataset using batch SVD learning, a rank-12
 decomposition, and `float` element type.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 // Create the AMF object.  Use default parameters for the termination policy,
 // initialization rule, and update rules.
@@ -534,9 +534,9 @@ std::cout << "RMSE of decomposition: " << rmse << "." << std::endl;
 Compare quality of decompositions of MovieLens with different update rules.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 // Create four AMF objects using different update rules:
 //  - SVDBatchLearning
@@ -613,9 +613,9 @@ std::cout << "RMSE for NMF with ALS update rules: " << nmfRMSE << "."
 Use a pre-specified initialization for `W` and `H`.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -643,9 +643,9 @@ Use `MergeInitialization` to specify different strategies to initialize the `W`
 and `H` matrices.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -682,9 +682,9 @@ Use `ValidationRMSETermination` to decompose the MovieLens dataset until the
 RMSE of the held-out validation set is sufficiently low.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -830,9 +830,9 @@ class CustomTimeTermination
 Then we can use it in a program:
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::AMF<CustomTimeTermination,

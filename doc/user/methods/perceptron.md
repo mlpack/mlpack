@@ -193,12 +193,11 @@ Train a perceptron multiple times, incrementally, with custom hyperparameters,
 and save the resulting model to disk.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/iris.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.labels.csv", labels,
+    mlpack::Fatal);
 
 // Create a Perceptron object.
 mlpack::Perceptron p;
