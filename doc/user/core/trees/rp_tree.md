@@ -416,9 +416,8 @@ Build an `RPTree` on the `cloud` dataset and print basic statistics about the
 tree.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Build the random projection tree with a leaf size of 10.  (This means that
 // nodes are split until they contain 10 or fewer points.)
@@ -461,9 +460,9 @@ Build two `RPTree`s on subsets of the corel dataset and compute minimum and
 maximum distances between different nodes in the tree.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset,
+    mlpack::Fatal);
 
 // Build rp-trees on the first half and the second half of points.
 mlpack::RPTree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -527,9 +526,8 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 Build an `RPTree` on 32-bit floating point data and save it to disk.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
-mlpack::Load("corel-histogram.csv", dataset);
+mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Build the RPTree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -601,9 +599,8 @@ std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
 Build an `RPTree` and map between original points and new points.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;

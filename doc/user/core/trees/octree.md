@@ -402,9 +402,8 @@ Build an `Octree` on the `iris` dataset and print basic statistics about the
 tree.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
 
 // Build the octree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -449,9 +448,9 @@ astronomical data) and compute minimum and maximum distances between different
 nodes in the tree.
 
 ```c++
-// See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset,
+    mlpack::Fatal);
 
 // Build octrees on the first half and the second half of points.
 mlpack::Octree<> tree1(dataset.cols(0, dataset.n_cols / 2));
@@ -515,9 +514,8 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 Build an `Octree` on 32-bit floating point data and save it to disk.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::fmat dataset;
-mlpack::Load("iris.csv", dataset);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
 
 // Build the Octree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -589,9 +587,9 @@ std::cout << leafCount << " out of " << totalLeafCount << " leaves have fewer "
 Build an `Octree` and map between original points and new points.
 
 ```c++
-// See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset,
+    mlpack::Fatal);
 
 // Build the tree.
 std::vector<size_t> oldFromNew, newFromOld;
