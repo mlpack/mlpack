@@ -20,7 +20,35 @@ template<typename MatType>
 bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
                                  TextOptions& opts)
 {
-  CheckOpen(opts.Fatal());
+  if (!CheckOpen(opts.Fatal()))
+    return false;
+
+  // Keep headers out of both the mapping and data passes.
+  inFile.clear();
+  inFile.seekg(0, std::ios::beg);
+  dataStart = 0;
+  if (opts.HasHeaders())
+  {
+    std::string line;
+    if (!std::getline(inFile, line))
+      return HandleError("LoadCSV(): cannot read CSV header.", opts);
+
+    std::vector<std::string> headers = Tokenize(line, delim, '"');
+    opts.Headers().set_size(1, headers.size());
+    for (size_t i = 0; i < headers.size(); ++i)
+    {
+      Trim(headers[i]);
+      if (headers[i].size() >= 2 && headers[i].front() == '"' &&
+          headers[i].back() == '"')
+      {
+        headers[i] = headers[i].substr(1, headers[i].size() - 2);
+      }
+      opts.Headers()[i] = std::move(headers[i]);
+    }
+
+    inFile.clear();
+    dataStart = inFile.tellg();
+  }
 
   if (!opts.NoTranspose())
     return TransposeParse(matrix, opts.DatasetInfo(), opts.Fatal());
@@ -57,9 +85,9 @@ bool LoadCSV::InitializeTransposeMapper(size_t& rows, size_t& cols,
   // useful if, e.g., the MapPolicy needs to find which dimensions are numeric
   // or categorical.
 
-  // Reset to the start of the file.
+  // Reset to the first data row.
   inFile.clear();
-  inFile.seekg(0, std::ios::beg);
+  inFile.seekg(dataStart);
   rows = 0;
   cols = 0;
 
@@ -147,9 +175,9 @@ bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
   // if, e.g., the MapPolicy needs to find which dimensions are numeric or
   // categorical.
 
-  // Reset to the start of the file.
+  // Reset to the first data row.
   inFile.clear();
-  inFile.seekg(0, std::ios::beg);
+  inFile.seekg(dataStart);
   rows = 0;
   cols = 0;
 
@@ -176,9 +204,9 @@ bool LoadCSV::InitializeMapper(size_t& rows, size_t& cols,
     return false;
   }
 
-  // Now, jump back to the beginning of the file.
+  // Now, jump back to the first data row.
   inFile.clear();
-  inFile.seekg(0, std::ios::beg);
+  inFile.seekg(dataStart);
   rows = 0;
 
   while (std::getline(inFile, line))
@@ -245,7 +273,7 @@ bool LoadCSV::TransposeParse(arma::Mat<T>& inout,
   size_t col = 0;
   std::string line;
   inFile.clear();
-  inFile.seekg(0, std::ios::beg);
+  inFile.seekg(dataStart);
 
   while (std::getline(inFile, line))
   {
@@ -317,7 +345,7 @@ bool LoadCSV::NonTransposeParse(arma::Mat<T>& inout,
   // Reset file position.
   std::string line;
   inFile.clear();
-  inFile.seekg(0, std::ios::beg);
+  inFile.seekg(dataStart);
 
   while (std::getline(inFile, line))
   {
