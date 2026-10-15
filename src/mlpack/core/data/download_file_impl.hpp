@@ -240,6 +240,33 @@ inline void WriteResponseToFile(const std::string& path,
   stream.close();
 }
 
+inline std::string DecompressDownloadedIfNeeded(const std::string& filePath,
+                                                const std::string& destPath)
+{
+  std::string ext = Extension(filePath);
+  if (ext != "gz")
+    return filePath;
+
+#ifdef MLPACK_USE_ZLIB
+  if (std::filesystem::exists(destPath) && !IsGzipFile(destPath))
+    return destPath;
+
+  // httplib may have already decompressed the file via Content-Encoding.
+  // It tells the server that it accepts gzip and deflate the content when
+  // they arrive.
+  if (!IsGzipFile(filePath))
+    return filePath;
+
+  DecompressGzFile(filePath, destPath);
+  return destPath;
+#else
+  throw std::runtime_error("The file '" + filePath + "' is gzip-compressed "
+      "but MLPACK_USE_ZLIB is not enabled.  Enable zlib support by adding "
+      "'#define MLPACK_USE_ZLIB' before including mlpack and linking with "
+      "-lz.");
+#endif
+}
+
 inline bool DownloadFile(const std::string& url, const std::string& dest)
 {
   std::string host, filename;
@@ -275,6 +302,15 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
   }
 
   WriteResponseToFile(dest, res);
+
+  std::string ext = Extension(dest);
+  if (ext == "gz")
+  {
+    std::string decompressedDest =
+        dest.substr(0, dest.size() - ext.size() - 1);
+    DecompressDownloadedIfNeeded(dest, decompressedDest);
+  }
+
   return true;
 }
 
@@ -329,13 +365,24 @@ inline bool DownloadFileWithCache(const std::string& url,
       headSucceeded = true;
     }
 
+    // Compute the decompressed path once (used by both cache-hit and miss).
+    std::string ext = Extension(filename);
+    std::string decompressedDest;
+    if (ext == "gz")
+    {
+      std::string decompressedName =
+          filename.substr(0, filename.size() - ext.size() - 1);
+      decompressedDest =
+          (std::filesystem::path(cacheDir) / decompressedName).string();
+    }
+
     if (headSucceeded &&
         manifest.count(url) > 0 &&
         std::get<0>(manifest[url]) == serverEtag &&
         std::get<1>(manifest[url]) == serverSize &&
         std::filesystem::exists(dest))
     {
-      filename = dest;
+      filename = DecompressDownloadedIfNeeded(dest, decompressedDest);
       return true;
     }
 
@@ -346,7 +393,8 @@ inline bool DownloadFileWithCache(const std::string& url,
       manifest[url] = std::make_tuple(serverEtag, serverSize, dest);
       SaveManifest(cacheDir, manifest);
     }
-    filename = dest;
+
+    filename = DecompressDownloadedIfNeeded(dest, decompressedDest);
     return true;
   }
 #endif
@@ -355,7 +403,24 @@ inline bool DownloadFileWithCache(const std::string& url,
   std::filesystem::path dest = TempName();
   dest += "." + Extension(filename);
   DownloadFile(url, dest.string());
-  filename = dest.generic_string();
+
+  std::string ext = Extension(filename);
+  if (ext == "gz")
+  {
+    std::string decompressedName =
+        filename.substr(0, filename.size() - ext.size() - 1);
+    std::filesystem::path decompDest = TempName();
+    decompDest += "." + Extension(decompressedName);
+    filename = DecompressDownloadedIfNeeded(dest.string(), decompDest.string());
+    // Clean up the compressed temp file if we decompressed successfully.
+    if (filename != dest.string())
+      std::filesystem::remove(dest);
+  }
+  else
+  {
+    filename = dest.string();
+  }
+
   return true;
 }
 
