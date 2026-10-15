@@ -4588,6 +4588,8 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
   remove("test_roundtrip.wav");
 }
 
+#endif // MLPACK_DISABLE_DR_LIBS
+
 #ifndef MLPACK_DISABLE_HTTPLIB
 
 /**
