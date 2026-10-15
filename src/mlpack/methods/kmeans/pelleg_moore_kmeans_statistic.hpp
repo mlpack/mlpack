@@ -20,6 +20,7 @@ namespace mlpack {
  * clustering (which represents the clusters that cannot possibly own any points
  * in a node).
  */
+template<typename CentroidType>
 class PellegMooreKMeansStatistic
 {
  public:
@@ -47,26 +48,32 @@ class PellegMooreKMeansStatistic
     }
 
     if (node.NumDescendants() > 0)
+    {
       centroid /= node.NumDescendants();
+    }
     else
-      centroid.fill(DBL_MAX); // Invalid centroid.  What else can we do?
+    {
+      // Invalid centroid.  What else can we do?
+      centroid.fill(
+          std::numeric_limits<typename CentroidType::elem_type>::max());
+    }
   }
 
-  //! Get the cluster blacklist.
+  // Get the cluster blacklist.
   const arma::uvec& Blacklist() const { return blacklist; }
-  //! Modify the cluster blacklist.
+  // Modify the cluster blacklist.
   arma::uvec& Blacklist() { return blacklist; }
 
-  //! Get the node's centroid.
-  const arma::vec& Centroid() const { return centroid; }
-  //! Modify the node's centroid (be careful!).
-  arma::vec& Centroid() { return centroid; }
+  // Get the node's centroid.
+  const CentroidType& Centroid() const { return centroid; }
+  // Modify the node's centroid (be careful!).
+  CentroidType& Centroid() { return centroid; }
 
  private:
-  //! The cluster blacklist for the node.
+  // The cluster blacklist for the node.
   arma::uvec blacklist;
-  //! The centroid of the node, cached for use during prunes.
-  arma::vec centroid;
+  // The centroid of the node, cached for use during prunes.
+  CentroidType centroid;
 };
 
 } // namespace mlpack

@@ -25,7 +25,7 @@ namespace mlpack {
 class MaxVarianceNewCluster
 {
  public:
-  //! Default constructor required by EmptyClusterPolicy.
+  // Default constructor required by EmptyClusterPolicy.
   MaxVarianceNewCluster() : iteration(size_t(-1)) { }
 
   /**
@@ -44,31 +44,31 @@ class MaxVarianceNewCluster
    * @param iteration Number of iteration.
    *
    */
-  template<typename DistanceType, typename MatType>
+  template<typename DistanceType, typename MatType, typename CentroidsType>
   void EmptyCluster(const MatType& data,
                     const size_t emptyCluster,
-                    const arma::mat& oldCentroids,
-                    arma::mat& newCentroids,
+                    const CentroidsType& oldCentroids,
+                    CentroidsType& newCentroids,
                     arma::Col<size_t>& clusterCounts,
                     DistanceType& distance,
                     const size_t iteration);
 
-  //! Serialize the object.
+  // Serialize the object.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
 
  private:
-  //! Index of iteration for which variance is cached.
+  // Index of iteration for which variance is cached.
   size_t iteration;
-  //! Cached variances for each cluster.
+  // Cached variances for each cluster.
   arma::vec variances;
-  //! Cached assignments for each point.
+  // Cached assignments for each point.
   arma::Row<size_t> assignments;
 
   //! Called when we are on a new iteration.
-  template<typename DistanceType, typename MatType>
+  template<typename DistanceType, typename MatType, typename CentroidsType>
   void Precalculate(const MatType& data,
-                    const arma::mat& oldCentroids,
+                    const CentroidsType& oldCentroids,
                     arma::Col<size_t>& clusterCounts,
                     DistanceType& distance);
 };

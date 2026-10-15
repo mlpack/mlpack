@@ -185,7 +185,7 @@ your Github credentials.
       4GB RAM, 4-core ARM Cortex-A76
     - `tofu.ratml.org`: [Raspberry Pi 3 B+](https://pip-assets.raspberrypi.com/categories/532-raspberry-pi-3-model-b/documents/RP-008338-DS-2-raspberry-pi-3-b-plus-product-brief.pdf),
       1GB RAM, 4-core ARM Cortex-A53
-    - `chorizo.ratml.org`: [Jetson Orin Nano](https://nvdam.widen.net/s/zkfqjmtds2/jetson-orin-datasheet-nano-developer-kit-3575392-r2),
+    - `chorizo.ratml.org`: [Jetson Orin Nano](https://www.mouser.com/pdfDocs/Jetson_Orin_Nano_Series_DS-11105-001_v11.pdf),
       8GB RAM, 6-core ARM Cortex-A78AE, NVIDIA Ampere GPU
     - `tatertot.ratml.org`: [BeagleBone AI-64](https://www.beagleboard.org/boards/beaglebone-ai-64),
       4GB RAM, 2-core ARM Cortex-A72
