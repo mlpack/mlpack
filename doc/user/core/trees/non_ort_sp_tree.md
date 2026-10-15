@@ -412,9 +412,8 @@ Build an `NonOrtSPTree` on the `cloud` dataset and print basic statistics about
 the tree.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Build the spill tree with a tau (margin) of 0.2 and a leaf size of 10.
 // (This means that nodes are split until they contain 10 or fewer points.)
@@ -456,9 +455,9 @@ Build two `NonOrtSPTree`s on subsets of the corel dataset and compute minimum
 and maximum distances between different nodes in the tree.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset,
+    mlpack::Fatal);
 
 // Build trees on the first half and the second half of points.  Use a tau
 // (overlap) parameter of 0.3, which is tuned to this dataset, and a rho value
@@ -524,9 +523,8 @@ if (!tree1.IsLeaf() && !tree1.Child(0).IsLeaf())
 Build a `NonOrtSPTree` on 32-bit floating point data and save it to disk.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::fmat dataset;
-mlpack::Load("corel-histogram.csv", dataset);
+mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Build the NonOrtSPTree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -696,9 +694,9 @@ class SpillNearestNeighborRule
 ```
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset,
+    mlpack::Fatal);
 
 // Build two trees, one with a lot of overlap, and one with no overlap
 // (e.g. tau = 0).

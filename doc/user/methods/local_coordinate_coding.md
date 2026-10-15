@@ -176,9 +176,8 @@ Train a local coordinate coding model on the cloud dataset and print the
 reconstruction error.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::LocalCoordinateCoding lcc;
 lcc.Atoms() = 50;
@@ -207,9 +206,9 @@ Train a local coordinate coding model on the iris dataset and save the model to
 disk.
 
 ```c++
-// See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::Load("iris.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.train.csv", dataset,
+    mlpack::Fatal);
 
 // Train the model in the constructor.
 mlpack::LocalCoordinateCoding lcc(dataset,
@@ -227,12 +226,12 @@ different regularization parameters and checking the objective value on a
 held-out test dataset.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
-// See https://datasets.mlpack.org/satellite.test.csv.
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+    mlpack::Fatal);
 arma::mat testData;
-mlpack::Load("satellite.test.csv", testData, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.test.csv", testData,
+    mlpack::Fatal);
 
 for (double lambdaPow = -6; lambdaPow <= -2; lambdaPow += 1)
 {
@@ -284,9 +283,8 @@ API can be used.  The example below trains a local coordinate coding model on
 32-bit floating point data.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::LocalCoordinateCoding<arma::fmat> lcc;
 lcc.Atoms() = 30;
@@ -336,9 +334,9 @@ The example below uses `NothingInitializer` to set a specific initial
 dictionary.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+    mlpack::Fatal);
 
 const size_t atoms = 25;
 const double lambda = 1e-5;

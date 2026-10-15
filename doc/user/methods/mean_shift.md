@@ -181,9 +181,9 @@ Perform mean shift clustering on the satellite dataset and print the average
 distance from each point to its assigned centroid.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
 
 // Create MeanShift object with default parameters and perform clustering.
 mlpack::MeanShift ms;
@@ -215,9 +215,9 @@ Perform mean shift clustering with custom settings of `radius` and
 to set the initial radius.
 
 ```c++
-// See https://datasets.mlpack.org/wave_energy_farm_100.csv.
 arma::mat dataset;
-mlpack::Load("wave_energy_farm_100.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/wave_energy_farm_100.csv", dataset,
+    mlpack::Fatal);
 
 // Create MeanShift object and set parameters.
 mlpack::MeanShift ms;
@@ -245,9 +245,8 @@ Perform mean shift clustering with no kernel (e.g. unit weighting of points in a
 centroid) on the cloud dataset.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Don't use a kernel for clustering.  This means all points within the radius
 // are weighted equally.  Use a custom radius of 25.
@@ -273,9 +272,8 @@ Perform mean shift clustering with the triangular kernel on the cloud dataset,
 using 32-bit floating point matrices to represent the data.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Create the MeanShift object using a TriangularKernel.
 mlpack::TriangularKernel tk;

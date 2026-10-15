@@ -220,12 +220,12 @@ Train a logistic regression model using a custom SGD-like optimizer with
 callbacks.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/satellite.train.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("satellite.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+    mlpack::Fatal);
 
 mlpack::LogisticRegression lr;
 lr.Lambda() = 0.1;
@@ -239,12 +239,12 @@ lr.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
 
 // Now predict on test labels and compute accuracy.
 
-// See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-mlpack::Load("satellite.test.csv", testDataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/satellite.test.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/satellite.test.csv", testDataset,
+    mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("satellite.test.labels.csv", testLabels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.test.labels.csv",
+    testLabels, mlpack::Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -290,12 +290,12 @@ class ModelCheckpoint
 With that callback available, the code to train the model is below:
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/satellite.train.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("satellite.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+    mlpack::Fatal);
 
 mlpack::LogisticRegression lr;
 

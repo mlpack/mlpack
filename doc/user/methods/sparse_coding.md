@@ -177,9 +177,8 @@ Train a sparse coding model on the cloud dataset and print the reconstruction
 error.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::SparseCoding sc;
 sc.Atoms() = 50;
@@ -208,9 +207,9 @@ std::cout << "RMSE of reconstructed matrix: " << error << "." << std::endl;
 Train a sparse coding model on the iris dataset and save the model to disk.
 
 ```c++
-// See https://datasets.mlpack.org/iris.train.csv.
 arma::mat dataset;
-mlpack::Load("iris.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.train.csv", dataset,
+    mlpack::Fatal);
 
 // Train the model in the constructor.
 mlpack::SparseCoding sc(dataset, 10 /* atoms */, 0.1 /* L1 penalty */);
@@ -229,9 +228,9 @@ iris dataset.
 mlpack::SparseCoding sc;
 mlpack::Load("sc.bin", sc);
 
-// See https://datasets.mlpack.org/iris.test.csv.
 arma::mat dataset;
-mlpack::Load("iris.test.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.test.csv", dataset,
+    mlpack::Fatal);
 
 // Encode the test points.
 arma::mat codes;
@@ -248,12 +247,12 @@ Train a sparse coding model on the satellite dataset, trying several different
 dictionary sizes and checking the objective value on a held-out test dataset.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
-// See https://datasets.mlpack.org/satellite.test.csv.
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+    mlpack::Fatal);
 arma::mat testData;
-mlpack::Load("satellite.test.csv", testData, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.test.csv", testData,
+    mlpack::Fatal);
 
 for (size_t atoms = 20; atoms < 100; atoms += 10)
 {
@@ -303,9 +302,8 @@ API can be used.  The example below trains a sparse coding model on 32-bit
 floating point data.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::SparseCoding<arma::fmat> sc;
 sc.Atoms() = 30;
@@ -359,9 +357,9 @@ The example below uses `NothingInitializer` to set a specific initial
 dictionary.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat trainData;
-mlpack::Load("satellite.train.csv", trainData, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+    mlpack::Fatal);
 
 const size_t atoms = 25;
 const double lambda1 = 0.1;
