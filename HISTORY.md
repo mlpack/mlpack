@@ -17,6 +17,10 @@ _????-??-??_
 
  * Check that Julia models are trained when calling `predict()` (#4195).
 
+ * Update `RangeSearch` API to match `NeighborSearch` API and use the
+   `TreeSearchStrategy` enum to control search behavior; old functions are
+   deprecated and will be removed in mlpack 5.0.0 (#TODO).
+
 ## mlpack 4.8.0
 
 _2026-06-07_

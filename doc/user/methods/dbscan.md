@@ -63,6 +63,7 @@ std::cout << " * " << arma::accu(assignments == SIZE_MAX) << " points "
  * [mlpack clustering algorithms](../modeling.md#clustering)
  * [DBSCAN on Wikipedia](https://en.wikipedia.org/wiki/DBSCAN)
  * [A density-based algorithm for discovering clusters in large spatial databases with noise (pdf)](https://cdn.aaai.org/KDD/1996/KDD96-037.pdf)
+ * [`RangeSearch`](range_search.md)
 
 ### Constructors
 
@@ -404,24 +405,24 @@ as a part of that template parameter.
 
 ---
 
-<!-- TODO: elaborate here once RangeSearch is documented -->
-
  * `RangeSearchType` specifies the algorithm to be used when performing range
    searches.
-   - By default, the `RangeSearch` class is used, which uses an efficient
-     dual-tree [`KDTree`](../core/trees/kdtree.md)-based search.
+   - By default, the [`RangeSearch`](range_search.md) class is used, which uses
+     an efficient dual-tree [`KDTree`](../core/trees/kdtree.md)-based search.
 
    - When `batchMode` is set to `false`, then single-tree search is used.
 
-   - The `RangeSearch` class is itself configurable with template parameters;
+   - The `RangeSearch` class is itself
+     [configurable with template parameters](range_search.md#advanced-functionality-template-parameters);
      its full signature is:
 
 ```
 RangeSearch<DistanceType, MatType, TreeType>
 ```
 
- * When using mlpack's `RangeSearch` class as `RangeSearchType`, each of its
-   individual template parameters can be specified:
+ * When using mlpack's [`RangeSearch`](range_search.md) class as
+   `RangeSearchType`, each of its individual template parameters can be
+   specified:
    - `DistanceType` can be any valid [distance metric](../core/distances.md);
      the default is [`EuclideanDistance`](../core/distances.md#lmetric).
    - `MatType` should be any matrix type implementing the Armadillo API; the
@@ -431,6 +432,8 @@ RangeSearch<DistanceType, MatType, TreeType>
        [`Cluster()`](#clustering).
    - `TreeType` is the [tree type](../core/trees.md) used for tree-based
      searching.  By default, [`KDTree`](../core/trees/kdtree.md) is used.
+   - See the [`RangeSearch` class documentation](range_search.md) for more
+     information.
 
  * To use a custom distance metric with `DBSCAN` without modifying any other
    template parameters, use `RangeSearch<DistanceType>`.

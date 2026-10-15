@@ -162,6 +162,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RSModel* rs;
   const bool naive = params.Has("naive");
   const bool singleMode = params.Has("single_mode");
+  const TreeSearchStrategy strategy =
+      singleMode ? SINGLE_TREE : (naive ? NAIVE : DUAL_TREE);
   if (params.Has("reference"))
   {
     // Get all the parameters.
@@ -213,8 +215,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     const size_t leafSize = size_t(lsInt);
 
-    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive,
-        singleMode);
+    rs->BuildModel(timers, std::move(referenceSet), leafSize, strategy);
   }
   else
   {
@@ -226,9 +227,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         << "trained on " << rs->Dataset().n_rows << "x" << rs->Dataset().n_cols
         << " dataset)." << endl;
 
-    // Adjust singleMode and naive if necessary.
-    rs->SingleMode() = params.Has("single_mode");
-    rs->Naive() = params.Has("naive");
+    // Adjust parameters if necessary.
+    rs->Strategy() = strategy;
     rs->LeafSize() = size_t(lsInt);
   }
 

@@ -49,9 +49,9 @@ class NSWrapperBase
   virtual const arma::mat& Dataset() const = 0;
 
   //! Get the search mode.
-  virtual NeighborSearchStrategy SearchStrategy() const = 0;
+  virtual TreeSearchStrategy SearchStrategy() const = 0;
   //! Modify the search modem
-  virtual NeighborSearchStrategy& SearchStrategy() = 0;
+  virtual TreeSearchStrategy& SearchStrategy() = 0;
 
   //! Get the approximation parameter epsilon.
   virtual double Epsilon() const = 0;
@@ -103,7 +103,7 @@ class NSWrapper : public NSWrapperBase
  public:
   //! Construct the NSWrapper object, initializing the internally-held
   //! NeighborSearch object.
-  NSWrapper(const NeighborSearchStrategy searchStrategy,
+  NSWrapper(const TreeSearchStrategy searchStrategy,
             const double epsilon) :
       ns(searchStrategy, epsilon)
   {
@@ -121,9 +121,9 @@ class NSWrapper : public NSWrapperBase
   const arma::mat& Dataset() const { return ns.ReferenceSet(); }
 
   //! Get the search mode.
-  NeighborSearchStrategy SearchStrategy() const { return ns.SearchStrategy(); }
+  TreeSearchStrategy SearchStrategy() const { return ns.SearchStrategy(); }
   //! Modify the search mode.
-  NeighborSearchStrategy& SearchStrategy() { return ns.SearchStrategy(); }
+  TreeSearchStrategy& SearchStrategy() { return ns.SearchStrategy(); }
 
   //! Get epsilon, the approximation parameter.
   double Epsilon() const { return ns.Epsilon(); }
@@ -201,7 +201,7 @@ class LeafSizeNSWrapper :
  public:
   //! Construct the LeafSizeNSWrapper by delegating to the NSWrapper
   //! constructor.
-  LeafSizeNSWrapper(const NeighborSearchStrategy searchStrategy,
+  LeafSizeNSWrapper(const TreeSearchStrategy searchStrategy,
                     const double epsilon) :
       NSWrapper<SortPolicy,
                 TreeType,
@@ -270,7 +270,7 @@ class SpillNSWrapper :
 {
  public:
   //! Construct the SpillNSWrapper.
-  SpillNSWrapper(const NeighborSearchStrategy searchStrategy,
+  SpillNSWrapper(const TreeSearchStrategy searchStrategy,
                  const double epsilon) :
       NSWrapper<
           SortPolicy,
@@ -431,8 +431,8 @@ class NSModel
   const arma::mat& Dataset() const;
 
   //! Expose search strategy..
-  NeighborSearchStrategy SearchStrategy() const;
-  NeighborSearchStrategy& SearchStrategy();
+  TreeSearchStrategy SearchStrategy() const;
+  TreeSearchStrategy& SearchStrategy();
 
   //! Expose LeafSize.
   size_t LeafSize() const { return leafSize; }
@@ -459,13 +459,13 @@ class NSModel
   bool& RandomBasis() { return randomBasis; }
 
   //! Initialize the model type.  (This does not perform any training.)
-  void InitializeModel(const NeighborSearchStrategy searchStrategy,
+  void InitializeModel(const TreeSearchStrategy searchStrategy,
                        const double epsilon);
 
   //! Build the reference tree.
   void BuildModel(util::Timers& timers,
                   arma::mat&& referenceSet,
-                  const NeighborSearchStrategy searchStrategy,
+                  const TreeSearchStrategy searchStrategy,
                   const double epsilon = 0);
 
   //! Perform neighbor search.  The query set will be reordered.
