@@ -224,18 +224,6 @@ endif ()
 # cross-compilation, the user will use the autodownloader to download mlpack
 # will be able to apply these options using the following
 # apply_mlpack_compile_options macros when using fetch_mlpack().
-if (NOT MLPACK_DISABLE_STB)
-  set(MLPACK_DISABLE_STB OFF)
-endif ()
-
-if (NOT MLPACK_DISABLE_DR_LIBS)
-  set(MLPACK_DISABLE_DR_LIBS OFF)
-endif ()
-
-if (NOT MLPACK_DISABLE_HTTPLIB)
-  set(MLPACK_DISABLE_HTTPLIB OFF)
-endif ()
-
 macro(apply_mlpack_compile_options)
   foreach(_mlpack_opt MLPACK_DISABLE_STB MLPACK_DISABLE_DR_LIBS
                       MLPACK_DISABLE_HTTPLIB)
