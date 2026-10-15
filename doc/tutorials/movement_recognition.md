@@ -169,8 +169,11 @@ remote datasets---but we do not need that support in this example.  For more
 information see the [compile-time options](../user/compile.md#configuring-mlpack-with-compile-time-definitions)
 documentation.
 
-At this stage, we need to define the architecture of the target device with
-the `ARCH_NAME=RV64GCV` variable (the ISA of the board's C906 core):
+Lastly, we need to define the architecture of the target device with the
+`ARCH_NAME=RV64GCV` variable.
+
+All of these options can then be assembled into a single CMake configuration
+command, and we can build the example as follows:
 
 ```sh
 mkdir build && cd build
