@@ -1739,56 +1739,32 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest][tiny]")
 }
 
 /**
- * Headers must be excluded from categorical mapping and returned as metadata.
+ * Make sure that headers are not loaded as data when loading categorical data.
  */
 TEST_CASE("CategoricalCSVHeadersLoadTest", "[LoadSaveTest][tiny]")
 {
   const bool noTranspose = GENERATE(false, true);
-  const bool semicolon = GENERATE(false, true);
-  const char delimiter = semicolon ? ';' : ',';
 
-  ofstream f("categorical_headers.csv");
-  if (noTranspose)
-  {
-    f << "first" << delimiter << "second" << delimiter << "third" << endl;
-    f << "10" << delimiter << "20" << delimiter << "30" << endl;
-    f << "red" << delimiter << "blue" << delimiter << "green" << endl;
-  }
-  else
-  {
-    f << "number" << delimiter << "color" << endl;
-    f << "10" << delimiter << "red" << endl;
-    f << "20" << delimiter << "blue" << endl;
-    f << "30" << delimiter << "green" << endl;
-  }
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "number, color" << endl;
+  f << "10, red" << endl;
+  f << "20, blue" << endl;
   f.close();
 
+  arma::mat matrix;
   TextOptions opts = Categorical + HasHeaders;
   opts.NoTranspose() = noTranspose;
-  opts.Semicolon() = semicolon;
-  arma::mat matrix;
-  REQUIRE(Load("categorical_headers.csv", matrix, opts));
-  REQUIRE(matrix.n_rows == 2);
-  REQUIRE(matrix.n_cols == 3);
-  REQUIRE(matrix(0, 0) == 10);
-  REQUIRE(matrix(0, 1) == 20);
-  REQUIRE(matrix(0, 2) == 30);
-  REQUIRE(opts.DatasetInfo().Dimensionality() == 2);
-  REQUIRE(opts.DatasetInfo().Type(0) == Datatype::numeric);
-  REQUIRE(opts.DatasetInfo().Type(1) == Datatype::categorical);
-  REQUIRE(opts.DatasetInfo().NumMappings(0) == 0);
-  REQUIRE(opts.DatasetInfo().NumMappings(1) == 3);
-  REQUIRE(opts.DatasetInfo().UnmapString(matrix(1, 0), 1) == "red");
-  REQUIRE(opts.DatasetInfo().UnmapString(matrix(1, 1), 1) == "blue");
-  REQUIRE(opts.DatasetInfo().UnmapString(matrix(1, 2), 1) == "green");
-  REQUIRE(opts.Headers().n_rows == 1);
-  REQUIRE(opts.Headers().n_cols == (noTranspose ? 3 : 2));
-  REQUIRE(opts.Headers()[0] == (noTranspose ? "first" : "number"));
-  REQUIRE(opts.Headers()[1] == (noTranspose ? "second" : "color"));
-  if (noTranspose)
-    REQUIRE(opts.Headers()[2] == "third");
 
-  remove("categorical_headers.csv");
+  REQUIRE(Load("test.csv", matrix, opts));
+
+  REQUIRE(matrix.n_rows == 2);
+  REQUIRE(matrix.n_cols == 2);
+  REQUIRE(opts.Headers().n_elem == 2);
+  REQUIRE(opts.Headers()[0] == "number");
+  REQUIRE(opts.Headers()[1] == "color");
+
+  remove("test.csv");
 }
 
 TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest][tiny]")

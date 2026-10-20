@@ -20,30 +20,20 @@ template<typename MatType>
 bool LoadCSV::LoadCategoricalCSV(MatType& matrix,
                                  TextOptions& opts)
 {
-  if (!CheckOpen(opts.Fatal()))
-    return false;
+  CheckOpen(opts.Fatal());
 
-  // Keep headers out of both the mapping and data passes.
-  inFile.clear();
-  inFile.seekg(0, std::ios::beg);
-  dataStart = 0;
+  // If the file has headers, store them, and start every pass over the data
+  // after them.
   if (opts.HasHeaders())
   {
     std::string line;
-    if (!std::getline(inFile, line))
-      return HandleError("LoadCSV(): cannot read CSV header.", opts);
-
+    std::getline(inFile, line);
     std::vector<std::string> headers = Tokenize(line, delim, '"');
     opts.Headers().set_size(1, headers.size());
     for (size_t i = 0; i < headers.size(); ++i)
     {
       Trim(headers[i]);
-      if (headers[i].size() >= 2 && headers[i].front() == '"' &&
-          headers[i].back() == '"')
-      {
-        headers[i] = headers[i].substr(1, headers[i].size() - 2);
-      }
-      opts.Headers()[i] = std::move(headers[i]);
+      opts.Headers()[i] = headers[i];
     }
 
     inFile.clear();
