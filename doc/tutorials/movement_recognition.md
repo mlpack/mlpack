@@ -286,8 +286,11 @@ same way training did).
 ```sh
 # Usage: ./infer <sensors> <device> <model-dir>
 ./infer accel /dev/i2c-0 model
+```
 
-# Possible output according to your movement.
+Here is possible output, depending on your movements.
+
+```
 [root@milkv-duo]~# ./infer accel /dev/i2c-0 model
 loaded model from 'model' (window 256, 8 classes)
 Proceeding despite the IMU warning(s) above.
