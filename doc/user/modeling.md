@@ -27,6 +27,7 @@ Classify points as discrete labels (`0`, `1`, `2`, ...).
  * [`Perceptron`](methods/perceptron.md): simple Perceptron classifier
  * [`RandomForest`](methods/random_forest.md): parallelized random forest
    classifier
+ * [`SEFR`](methods/sefr.md): fast, hyperparameter-free linear classifier
  * [`SoftmaxRegression`](methods/softmax_regression.md): L2-regularized
    softmax regression (i.e. multi-class logistic regression)
 
