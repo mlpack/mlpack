@@ -1852,3 +1852,54 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
   REQUIRE(d2.Child(0).NumChildren() == 2);
   REQUIRE(d2.Child(1).NumChildren() == 2);
 }
+
+/**
+ * Test that TreeInterpreter-style path decomposition holds mathematically:
+ * Prediction Probability == Root Probability + Sum(Feature Path Deltas)
+ */
+TEST_CASE("TreeInterpreterFeatureDecompositionVerification",
+          "[DecisionTreeTest]")
+{
+  arma::mat data = { {1.0, 2.0, 3.0, 7.0, 8.0, 9.0} };
+  arma::Row<size_t> labels = { 0, 0, 0, 1, 1, 1 };
+  size_t classes = 2;
+
+  mlpack::DecisionTree<> verificationTree(data, labels, classes, 1, 1e-7);
+
+  arma::vec point = { 1.5 };
+  size_t prediction;
+  arma::vec finalProbabilities;
+  verificationTree.Classify(point, prediction, finalProbabilities);
+
+  const arma::vec& rootProbabilities = verificationTree.NodeProbabilities();
+
+  REQUIRE(rootProbabilities.n_elem == classes);
+  REQUIRE(rootProbabilities[0] == Approx(0.5).margin(1e-5));
+  REQUIRE(rootProbabilities[1] == Approx(0.5).margin(1e-5));
+
+  // Safe check: Only evaluate children paths if a split occurred
+  if (verificationTree.NumChildren() > 0)
+  {
+    size_t pathIndex = verificationTree.CalculateDirection(point);
+    const arma::vec& childProbabilities =
+        verificationTree.Child(pathIndex).NodeProbabilities();
+
+    arma::vec pathContribution = childProbabilities - rootProbabilities;
+    arma::vec reconstruction = rootProbabilities + pathContribution;
+
+    for (size_t c = 0; c < classes; ++c)
+    {
+      REQUIRE(reconstruction[c] ==
+          Approx(finalProbabilities[c]).margin(1e-5));
+    }
+  }
+  else
+  {
+    for (size_t c = 0; c < classes; ++c)
+    {
+      REQUIRE(rootProbabilities[c] ==
+          Approx(finalProbabilities[c]).margin(1e-5));
+    }
+  }
+}
+
