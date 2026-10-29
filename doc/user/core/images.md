@@ -267,11 +267,11 @@ grouped together in preparation for a convolutional neural network. Then, the
 image is converted back to interleaved channels and saved.
 
 ```c++
-// Download: https://datasets.mlpack.org/images/mlpack-favicon.png
 arma::mat image;
 mlpack::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::Load("mlpack-favicon.png", image, opts);
+mlpack::Load("https://datasets.mlpack.org/images/mlpack-favicon.png", image,
+    opts);
 
 std::vector<std::string> colors =
      { "\033[31m", "\033[32m", "\033[34m", "\033[37m" };
@@ -362,11 +362,10 @@ An example that loads an image, resizes the image to some square image
 while keeping the aspect ratio using `LetterboxImages()`.
 
 ```c++
-// Download: https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
 mlpack::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::Load("jurassic-park.png", image, opts);
+mlpack::Load("https://datasets.mlpack.org/jurassic-park.png", image, opts);
 mlpack::LetterboxImages(image, opts, 416, 416, 127.0);
 // Image dimensions are now 416x416.
 mlpack::Save("jurassic-park-letterbox.png", image, opts);
@@ -435,11 +434,11 @@ An example that draws a red bounding box onto an image, with the class
 name `Jurassic Park Logo`.
 
 ```c++
-// See https://datasets.mlpack.org/jurassic-park.png
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::data::Load("jurassic-park.png", image, opts);
+mlpack::data::Load("https://datasets.mlpack.org/jurassic-park.png", image,
+    opts);
 
 arma::vec bbox({90, 80, 510, 370});
 arma::vec color({255, 0, 0}); // Use red for the border.

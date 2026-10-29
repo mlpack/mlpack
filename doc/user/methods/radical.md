@@ -120,9 +120,8 @@ Apply RADICAL to the `iris` dataset.  Print the reconstruction error and
 magnitude of each dimension of the RADICAL-ized matrix.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::Load("iris.csv", dataset);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
 
 // Create RADICAL object with default options and apply to data.
 mlpack::Radical r;
@@ -162,9 +161,8 @@ representation, and confirm that the independent components are actually
 independent.
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::fmat dataset;
-mlpack::Load("iris.csv", dataset);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
 
 // Create RADICAL object with custom options and apply to data.
 mlpack::Radical r(0.1 /* noise standard deviation */,
@@ -192,12 +190,12 @@ Apply RADICAL to a subset of the `iris` dataset, and then use the unmixing
 matrix to apply the same transformation to a test set.
 
 ```c++
-// See https://datasets.mlpack.org/iris.train.csv.
 arma::mat trainSet;
-mlpack::Load("iris.train.csv", trainSet, mlpack::Fatal);
-// See https://datasets.mlpack.org/iris.test.csv.
+mlpack::Load("https://datasets.mlpack.org/iris.train.csv", trainSet,
+    mlpack::Fatal);
 arma::mat testSet;
-mlpack::Load("iris.test.csv", testSet, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/iris.test.csv", testSet,
+    mlpack::Fatal);
 
 // Create RADICAL object with custom options.  Here we optimize for speed, but
 // at the potential loss of quality!  A real-world application may want to use

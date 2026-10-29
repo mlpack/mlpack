@@ -155,9 +155,9 @@ Decompose the sparse MovieLens dataset using a rank-12 decomposition and `float`
 element type.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -180,9 +180,9 @@ std::cout << "RMSE of decomposition: " << rmse << "." << std::endl;
 Compare quality of decompositions of MovieLens with different ranks.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -466,9 +466,9 @@ class CustomInitialization
 Use a pre-specified initialization for `W` and `H`.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -493,9 +493,9 @@ Use `ValidationRMSETermination` to decompose the MovieLens dataset until the
 RMSE of the held-out validation set is sufficiently low.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -521,9 +521,9 @@ Use all three sets of NMF update rules and compare the RMSE on a held-out
 validation set.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 arma::mat W1, W2, W3;
 arma::mat H1, H2, H3;
@@ -600,9 +600,9 @@ class CustomTimeTermination
 Then we can use it in the test program:
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+    mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::NMF<CustomTimeTermination> nmf(t);

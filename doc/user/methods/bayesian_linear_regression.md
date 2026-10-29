@@ -194,13 +194,13 @@ Train a Bayesian linear regression model in the constructor,
 compute the RMSE with `RMSE()`, and save the model.
 
 ```c++
-// See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+    mlpack::Fatal);
 
-// See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+    responses, mlpack::Fatal);
 
 // Train Bayesian linear regression model.  The data will be both centered and
 // scaled to have unit variance.

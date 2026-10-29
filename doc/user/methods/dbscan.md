@@ -221,9 +221,9 @@ noise point, as well as the average distance from each point to its assigned
 centroid.
 
 ```c++
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
 
 // Create DBSCAN object with parameters tuned to the satellite dataset and
 // perform clustering.
@@ -262,9 +262,9 @@ Perform DBSCAN clustering on the wave energy farm dataset, setting `batchMode`
 to `false` to save RAM usage during range searching.
 
 ```c++
-// See https://datasets.mlpack.org/wave_energy_farm_100.csv.
 arma::mat dataset;
-mlpack::Load("wave_energy_farm_100.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/wave_energy_farm_100.csv", dataset,
+    mlpack::Fatal);
 
 // Create DBSCAN object and set parameters.
 mlpack::DBSCAN dbscan(10000.0 /* radius */,
@@ -291,9 +291,8 @@ mlpack::Save("wave_energy_centroids.csv", centroids);
 Perform DBSCAN clustering on the cloud dataset using the Manhattan distance.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Create the DBSCAN object using a custom distance type.
 // Because DBSCAN uses RangeSearch for all of its distance-related computations,
@@ -326,9 +325,8 @@ matrices to represent the data via the
 [`RangeSearchType` template parameter](#advanced-functionality-template-parameters).
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Create the DBSCAN object using a custom `RangeSearch` that uses `arma::fmat`
 // as the matrix type.
@@ -361,9 +359,8 @@ using mlpack's `RangeSearch` class with the
 [`CoverTree`](../core/trees/cover_tree.md) for range search operations.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Create the DBSCAN object using a custom `RangeSearch` that uses `arma::fmat`
 // as the matrix type and `CoverTree` as the tree type.

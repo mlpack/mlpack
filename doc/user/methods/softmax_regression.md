@@ -219,12 +219,12 @@ Train a softmax regression model using a custom SGD-like optimizer with
 callbacks.
 
 ```c++
-// See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/mnist.train.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+    mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+    mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 
@@ -239,12 +239,12 @@ sr.Train(dataset, labels, 10 /* numClasses */, optimizer,
 
 // Now predict on test labels and compute accuracy.
 
-// See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/mnist.test.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/mnist.test.csv", testDataset,
+    mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
+    mlpack::Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -286,12 +286,12 @@ class ModelCheckpoint
 With that callback available, the code to train the model is below:
 
 ```c++
-// See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
-// See https://datasets.mlpack.org/mnist.train.labels.csv.
+mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+    mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+    mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 

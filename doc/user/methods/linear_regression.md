@@ -161,13 +161,13 @@ Train a linear regression model in the constructor on weighted data, compute the
 objective function with `ComputeError()`, and save the model.
 
 ```c++
-// See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::Load("admission_predict.csv", data, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+    mlpack::Fatal);
 
-// See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+    responses, mlpack::Fatal);
 
 // Generate random instance weights for each point, in the range 0.5 to 1.5.
 arma::rowvec weights(data.n_cols, arma::fill::randu);

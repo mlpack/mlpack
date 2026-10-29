@@ -278,12 +278,11 @@ Train a Hoeffding tree incrementally on mixed categorical data:
 // Load a categorical dataset.
 arma::mat dataset;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
-// See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
-// See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+    mlpack::Fatal);
 
 // Create the tree.
 mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* classes */);
@@ -294,8 +293,8 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 
 // Load categorical test data.
 arma::mat testDataset;
-// See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+    opts);
 
 // Predict class of first test point.
 const size_t firstPrediction = tree.Classify(testDataset.col(0));
@@ -320,22 +319,21 @@ set during training, and save the model to disk.
 arma::mat dataset;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 mlpack::DatasetInfo info;
-// See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
-// See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+    mlpack::Fatal);
 
 // Also load test data.
 
-// See https://datasets.mlpack.org/covertype.test.arff.
 arma::mat testDataset;
-mlpack::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+    opts);
 
-// See https://datasets.mlpack.org/covertype.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/covertype.test.labels.csv",
+    testLabels, mlpack::Fatal);
 
 // Create the tree with custom parameters.
 mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* number of classes */);
@@ -390,20 +388,17 @@ else
 Train a tree, reset a tree, and train again.
 
 ```c++
-// See the following files:
-//  - https://datasets.mlpack.org/covertype.train.arff.
-//  - https://datasets.mlpack.org/covertype.train.labels.csv.
-//  - https://datasets.mlpack.org/covertype.test.arff.
-//  - https://datasets.mlpack.org/covertype.test.labels.arff.
-
 arma::mat dataset, testDataset;
 arma::Row<size_t> labels, testLabels;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 
-mlpack::Load("covertype.train.arff", dataset, opts);
-mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
-mlpack::Load("covertype.test.arff", testDataset, opts);
-mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+    mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+    opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.test.labels.csv",
+    testLabels, mlpack::Fatal);
 
 // Create a tree, and train on the training data.
 mlpack::HoeffdingTree tree(opts.DatasetInfo(), 7 /* number of classes */, 0.98);

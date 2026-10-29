@@ -70,9 +70,8 @@ For some types of data, it is also possible to load multiple images at once from
 *Simple example:*
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::mat x;
-mlpack::Load("iris.csv", x);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", x);
 
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
@@ -81,9 +80,8 @@ std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
 Among other things, the file format can be easily specified:
 
 ```c++
-// See https://datasets.mlpack.org/iris.csv.
 arma::mat x;
-mlpack::Load("iris.csv", x, mlpack::CSV);
+mlpack::Load("https://datasets.mlpack.org/iris.csv", x, mlpack::CSV);
 
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
@@ -621,13 +619,13 @@ to disk.
 ```c++
 // Throw an exception if loading fails with the Fatal option.
 
-// See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+    mlpack::Fatal);
 
-// See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::Load("satellite.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+    mlpack::Fatal);
 
 // Print information about the data.
 std::cout << "The data in 'satellite.train.csv' has: " << std::endl;
@@ -655,9 +653,8 @@ mlpack::Save("satellite.train.labels.mod.csv", labels, mlpack::NoFatal);
 Load a dataset stored in a binary format and save it as a CSV.
 
 ```c++
-// See https://datasets.mlpack.org/iris.bin.
 arma::mat dataset;
-mlpack::Load("iris.bin",
+mlpack::Load("https://datasets.mlpack.org/iris.bin",
     dataset, mlpack::Fatal + mlpack::ArmaBin);
 
 // Save it back to disk as a CSV.
@@ -720,13 +717,13 @@ std::cout << dataset;
 Load a CSV into a 32-bit floating point matrix and print the headers (column names).
 
 ```c++
-// See https://datasets.mlpack.org/Admission_Predict.csv.
 arma::fmat dataset;
 // We have to make a TextOptions object so that we can recover the headers.
 mlpack::TextOptions opts;
 opts.Format() = mlpack::FileType::CSVASCII;
 opts.HasHeaders() = true;
-mlpack::Load("Admission_Predict.csv", dataset, opts);
+mlpack::Load("https://datasets.mlpack.org/Admission_Predict.csv", dataset,
+    opts);
 
 std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
 for (size_t i = 0; i < opts.Headers().size(); ++i)
@@ -742,10 +739,10 @@ Load a CSV containing a coordinate list into a sparse matrix and print the
 overall size of the loaded matrix.
 
 ```c++
-// See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat dataset;
 // A 3-column CSV into a sparse matrix is interpreted as a coordinate list.
-mlpack::Load("movielens-100k.csv", dataset, mlpack::CSV);
+mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", dataset,
+    mlpack::CSV);
 
 std::cout << "Loaded data from movielens-100k.csv; matrix size: "
     << dataset.n_rows << " x " << dataset.n_cols << "." << std::endl;
@@ -766,6 +763,10 @@ When a remote URL is given to `Load()`:
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
      including mlpack, and the program must be additionally
      [linked with `-lssl -lcrypto`](compile.md#linking-against-optional-mlpack-dependencies).
+   - If HTTPS support is not enabled, any `https://` URL is instead fetched over
+     plain `http://` (port 80).  This works for servers reachable over HTTP, but
+     fails if the server requires HTTPS or redirects `http://` to `https://`; in
+     that case, enable `MLPACK_USE_HTTPS`.
 
  * The dataset will be added to a cache to prevent a second download if the same
    URL is loaded again.
@@ -1002,8 +1003,7 @@ mlpack::TextOptions opts;
 opts.Fatal() = true;
 opts.Categorical() = true;
 
-// See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 // Print information about the data.
 std::cout << "The data in 'covertype.train.arff' has: " << std::endl;
@@ -1016,8 +1016,8 @@ arma::Row<size_t> labels;
 // data types and extension.
 mlpack::TextOptions labelOpts;
 labelOpts.Fatal() = true;
-// See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::Load("covertype.train.labels.csv", labels, labelOpts);
+mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+    labelOpts);
 
 
 // Print information about each dimension.
@@ -1215,9 +1215,9 @@ Load a single image, but don't store the metadata (so, e.g., height, width, and
 number of channels are unavailable after loading!).
 
 ```c++
-// See https://www.mlpack.org/static/img/numfocus-logo.png.
 arma::mat image;
-mlpack::Load("numfocus-logo.png", image, mlpack::PNG);
+mlpack::Load("https://www.mlpack.org/static/img/numfocus-logo.png", image,
+    mlpack::PNG);
 
 // If we wanted image metadata, we would need to pass an ImageOptions.  See the
 // next example.
@@ -1234,11 +1234,11 @@ std::cout << "The image in 'numfocus-logo.png' has " << image.n_rows
 Load and save a single image:
 
 ```c++
-// See https://www.mlpack.org/static/img/numfocus-logo.png.
 mlpack::ImageOptions opts;
 opts.Fatal() = true;
 arma::mat matrix;
-mlpack::Load("numfocus-logo.png", matrix, opts /* format autodetected */);
+mlpack::Load("https://www.mlpack.org/static/img/numfocus-logo.png", matrix,
+    opts /* format autodetected */);
 
 // `matrix` should now contain one column.
 
@@ -1387,9 +1387,8 @@ Load a single audio file, but don't store the metadata
 (note that this means the number of channels are unavailable after loading!).
 
 ```c++
-// See https://datasets.mlpack.org/sine.wav
 arma::mat audio;
-mlpack::Load("sine.wav", audio, mlpack::WAV);
+mlpack::Load("https://datasets.mlpack.org/sine.wav", audio, mlpack::WAV);
 
 // If we wanted audio metadata, we would need to pass an AudioOptions.  See the
 // next example.
@@ -1402,11 +1401,11 @@ std::cout << "The audio file in 'file.wav' contains " << audio.n_rows
 Load and save a single audio file:
 
 ```c++
-// See https://datasets.mlpack.org/fifths.mp3
 mlpack::AudioOptions opts, opts2;
 opts.Fatal() = true;
 arma::mat matrix;
-mlpack::Load("fifths.mp3", matrix, opts /* format autodetected */);
+mlpack::Load("https://datasets.mlpack.org/fifths.mp3", matrix,
+    opts /* format autodetected */);
 
 // `matrix` contains one column.
 
@@ -1492,13 +1491,13 @@ Train a [`LinearRegression`](methods/linear_regression.md) model and save it to
 disk, then reload it.
 
 ```c++
-// See https://datasets.mlpack.org/admission_predict.csv.
 arma::mat data;
-mlpack::Load("admission_predict.csv", data, mlpack::NoFatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+    mlpack::NoFatal);
 
-// See https://datasets.mlpack.org/admission_predict.responses.csv.
 arma::rowvec responses;
-mlpack::Load("admission_predict.responses.csv", responses, mlpack::Fatal);
+mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+    responses, mlpack::Fatal);
 
 // Train a linear regression model, fitting an intercept term and using an L2
 // regularization parameter of 0.3.
