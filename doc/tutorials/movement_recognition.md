@@ -85,11 +85,11 @@ CV1800B board with a dual-core RISC-V C906 CPU and 64 MB of RAM (of which
 only ~28 MB is usable from Linux), running a musl-based Linux.  The sensor is a
 GY-89 9-DOF board, which carries three separate I2C chips:
 
-| Chip        | Function                            | I2C address |
-|-------------|-------------------------------------|---------------|
-| L3GD20H | 3-axis gyroscope                    | `0x6B`        |
-| LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
-| BMP180  | barometric pressure + temperature   | `0x77`        |
+| Chip    | Function                            | I2C address |
+|---------|-------------------------------------|-------------|
+| L3GD20H | 3-axis gyroscope                    | `0x6B`      |
+| LSM303D | 3-axis accelerometer + magnetometer | `0x1D`      |
+| BMP180  | barometric pressure + temperature   | `0x77`      |
 
 Some clone GY-89 boards carry the older L3GD20 (non-H) gyroscope instead of the
 L3GD20H.  It is register-compatible but reports a different `WHO_AM_I` (`0xD4`
