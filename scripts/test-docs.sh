@@ -57,8 +57,8 @@ else
   mode="file";
 fi
 
-# Enable httplib and zlib support for doc examples.
-CXXFLAGS="$CXXFLAGS -DMLPACK_ENABLE_HTTPLIB -DMLPACK_USE_ZLIB";
+# Enable zlib support for doc examples.
+CXXFLAGS="$CXXFLAGS -DMLPACK_USE_ZLIB";
 
 # Extract the C++ code blocks from a particular file, creating
 # $output_prefix1.cpp, $output_prefix2.cpp, and so on and so forth.
