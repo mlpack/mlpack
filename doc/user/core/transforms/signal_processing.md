@@ -258,7 +258,7 @@ A detailed example showing the average extracted energy per frequency bin:
 ```c++
 arma::mat signal;
 mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
-mlpack::Load("sine.wav", signal, opts);
+mlpack::Load("https://datasets.mlpack.org/sine.wav", signal, opts);
 
 std::cout << "Loaded: " << signal.n_rows << " samples, "
   << opts.SampleRate() << " Hz, "
@@ -419,7 +419,7 @@ what each one captures:
 ```c++
 arma::mat signal;
 mlpack::AudioOptions opts = mlpack::Fatal + mlpack::WAV;
-mlpack::Load("sine.wav", signal, opts);
+mlpack::Load("https://datasets.mlpack.org/sine.wav", signal, opts);
 
 std::cout << "Loaded: " << signal.n_rows << " samples, "
   << opts.SampleRate() << " Hz, "
