@@ -763,6 +763,10 @@ When a remote URL is given to `Load()`:
      [`#define MLPACK_USE_HTTPS`](compile.md#configuring-mlpack-with-compile-time-definitions) before
      including mlpack, and the program must be additionally
      [linked with `-lssl -lcrypto`](compile.md#linking-against-optional-mlpack-dependencies).
+   - If HTTPS support is not enabled, any `https://` URL is instead fetched over
+     plain `http://` (port 80).  This works for servers reachable over HTTP, but
+     fails if the server requires HTTPS or redirects `http://` to `https://`; in
+     that case, enable `MLPACK_USE_HTTPS`.
 
  * The dataset will be added to a cache to prevent a second download if the same
    URL is loaded again.
