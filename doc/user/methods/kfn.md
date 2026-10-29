@@ -580,16 +580,16 @@ mlpack::Load("kfn.bin", kfn);
 
 // Inspect the KDTree held by the KFN object.
 std::cout << "The KDTree in the KFN object in 'kfn.bin' holds "
-    << kfn.ReferenceTree().NumDescendants() << " points." << std::endl;
-std::cout << "The root of the tree has " << kfn.ReferenceTree().NumChildren()
+    << kfn.ReferenceTree()->NumDescendants() << " points." << std::endl;
+std::cout << "The root of the tree has " << kfn.ReferenceTree()->NumChildren()
     << " children." << std::endl;
-if (kfn.ReferenceTree().NumChildren() == 2)
+if (kfn.ReferenceTree()->NumChildren() == 2)
 {
   std::cout << " - The left child holds "
-      << kfn.ReferenceTree().Child(0).NumDescendants() << " points."
+      << kfn.ReferenceTree()->Child(0).NumDescendants() << " points."
       << std::endl;
   std::cout << " - The right child holds "
-      << kfn.ReferenceTree().Child(1).NumDescendants() << " points."
+      << kfn.ReferenceTree()->Child(1).NumDescendants() << " points."
       << std::endl;
 }
 ```

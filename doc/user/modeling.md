@@ -70,6 +70,8 @@ Computations based on distance metrics.
    with tree-based algorithms.
  * [`KFN`](methods/kfn.md): `k`-furthest-neighbor search (exact and approximate)
    with tree-based algorithms.
+ * [`RangeSearch`](methods/range_search.md): range search with tree-based
+   algorithms.
 
 ## Object Detection
 
