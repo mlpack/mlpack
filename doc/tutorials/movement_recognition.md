@@ -91,6 +91,11 @@ GY-89 9-DOF board, which carries three separate I2C chips:
 | LSM303D | 3-axis accelerometer + magnetometer | `0x1D`        |
 | BMP180  | barometric pressure + temperature   | `0x77`        |
 
+Some clone GY-89 boards carry the older L3GD20 (non-H) gyroscope instead of the
+L3GD20H.  It is register-compatible but reports a different `WHO_AM_I` (`0xD4`
+rather than `0xD7`), so `imu_test` accepts both; the gyro works the same either
+way.
+
 Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`), as
 shown below:
 
