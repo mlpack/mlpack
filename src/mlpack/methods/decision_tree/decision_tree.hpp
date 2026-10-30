@@ -465,6 +465,8 @@ class DecisionTree :
   //! Note that if this is not a leaf, then this may contain arbitrary
   //! information used by the split in the tree!
   const arma::vec& ClassProbabilities() const { return classProbabilities; }
+  //! Get the persistent empirical class probabilities calculated at this node.
+  const arma::vec& NodeProbabilities() const { return nodeProbabilities; }
 
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
@@ -503,6 +505,8 @@ class DecisionTree :
    * probabilities.
    */
   arma::vec classProbabilities;
+  //! The persistent empirical class probabilities calculated at this node.
+  arma::vec nodeProbabilities;
 
   //! Note that this class will also hold the members of the NumericSplit and
   //! CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them.
