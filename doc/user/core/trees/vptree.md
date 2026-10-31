@@ -31,7 +31,7 @@ additional functionality specific to vantage point trees.
  * [mlpack geometric algorithms](../../modeling.md#geometric-algorithms)
  * [Vantage point tree on Wikipedia](https://en.wikipedia.org/wiki/Vantage-point_tree)
  * [Binary space partitioning on Wikipedia](https://en.wikipedia.org/wiki/Binary_space_partitioning)
- * [Data structures and algorithms for nearest neighbor search in general metric spaces (pdf)](http://algorithmics.lsi.upc.edu/docs/practicas/p311-yianilos.pdf)
+ * [Data structures and algorithms for nearest neighbor search in general metric spaces (pdf)](https://web.archive.org/web/20220717195019id_/https://dl.acm.org/doi/pdf/10.5555/313559.313789)
  * [Satisfying General Proximity/Similarity Queries with Metric Trees (pdf)](https://www.mlpack.org/papers/uhlmann91.pdf)
  * [Tree-Independent Dual-Tree Algorithms (pdf)](https://www.ratml.org/pub/pdf/2013tree.pdf)
 

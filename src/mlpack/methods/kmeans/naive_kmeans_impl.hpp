@@ -23,20 +23,24 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename MatType>
-NaiveKMeans<DistanceType, MatType>::NaiveKMeans(const MatType& dataset,
-                                                DistanceType& distance) :
+template<typename DistanceType, typename MatType, typename CentroidsType>
+NaiveKMeans<DistanceType, MatType, CentroidsType>::NaiveKMeans(
+    const MatType& dataset,
+    DistanceType& distance) :
     dataset(dataset),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 { /* Nothing to do. */ }
 
 // Run a single iteration.
-template<typename DistanceType, typename MatType>
-double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
-                                                   arma::mat& newCentroids,
-                                                   arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType, typename CentroidsType>
+double NaiveKMeans<DistanceType, MatType, CentroidsType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
+    arma::Col<size_t>& counts)
 {
+  typedef typename MatType::elem_type ElemType;
+
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
@@ -45,19 +49,19 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   #pragma omp parallel
   {
     // The current state of the K-means is private for each thread
-    arma::mat localCentroids(centroids.n_rows, centroids.n_cols);
+    CentroidsType localCentroids(centroids.n_rows, centroids.n_cols);
     arma::Col<size_t> localCounts(centroids.n_cols);
 
     #pragma omp for schedule(static) nowait
     for (size_t i = 0; i < (size_t) dataset.n_cols; ++i)
     {
       // Find the closest centroid to this point.
-      double minDistance = std::numeric_limits<double>::infinity();
+      ElemType minDistance = std::numeric_limits<ElemType>::infinity();
       size_t closestCluster = centroids.n_cols; // Invalid value.
 
       for (size_t j = 0; j < centroids.n_cols; ++j)
       {
-        const double dist = distance.Evaluate(dataset.col(i),
+        const ElemType dist = distance.Evaluate(dataset.col(i),
             centroids.col(j));
         if (dist < minDistance)
         {
@@ -86,17 +90,17 @@ double NaiveKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     if (counts(i) != 0)
       newCentroids.col(i) /= counts(i);
 
-  distanceCalculations += centroids.n_cols * dataset.n_cols;
+  distanceComputations += centroids.n_cols * dataset.n_cols;
 
   // Calculate cluster distortion for this iteration.
-  double cNorm = 0.0;
+  ElemType cNorm = 0;
   #pragma omp parallel for reduction(+:cNorm) schedule(static)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     cNorm += std::pow(distance.Evaluate(centroids.col(i), newCentroids.col(i)),
         2.0);
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   return std::sqrt(cNorm);
 }

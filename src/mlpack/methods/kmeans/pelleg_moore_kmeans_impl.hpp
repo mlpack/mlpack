@@ -18,38 +18,39 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename MatType>
-PellegMooreKMeans<DistanceType, MatType>::PellegMooreKMeans(
+template<typename DistanceType, typename MatType, typename CentroidsType>
+PellegMooreKMeans<DistanceType, MatType, CentroidsType>::PellegMooreKMeans(
     const MatType& dataset,
     DistanceType& distance) :
     datasetOrig(dataset),
     tree(new TreeType(const_cast<MatType&>(datasetOrig))),
     dataset(tree->Dataset()),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
 
-template<typename DistanceType, typename MatType>
-PellegMooreKMeans<DistanceType, MatType>::~PellegMooreKMeans()
+template<typename DistanceType, typename MatType, typename CentroidsType>
+PellegMooreKMeans<DistanceType, MatType, CentroidsType>::~PellegMooreKMeans()
 {
   if (tree)
     delete tree;
 }
 
 // Run a single iteration.
-template<typename DistanceType, typename MatType>
-double PellegMooreKMeans<DistanceType, MatType>::Iterate(
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
+template<typename DistanceType, typename MatType, typename CentroidsType>
+double PellegMooreKMeans<DistanceType, MatType, CentroidsType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& counts)
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
 
   // Create rules object.
-  using RulesType = PellegMooreKMeansRules<DistanceType, TreeType>;
+  using RulesType = PellegMooreKMeansRules<DistanceType, TreeType,
+      CentroidsType>;
   RulesType rules(dataset, centroids, newCentroids, counts, distance);
 
   // Use single-tree traverser.
@@ -59,10 +60,10 @@ double PellegMooreKMeans<DistanceType, MatType>::Iterate(
   // irrelevant; we are checking each node with all clusters.
   traverser.Traverse(0, *tree);
 
-  distanceCalculations += rules.DistanceCalculations();
+  distanceComputations += rules.DistanceComputations();
 
   // Now, calculate how far the clusters moved, after normalizing them.
-  double residual = 0.0;
+  typename MatType::elem_type residual = 0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts[c] > 0)
@@ -72,7 +73,7 @@ double PellegMooreKMeans<DistanceType, MatType>::Iterate(
                                              newCentroids.col(c)), 2.0);
     }
   }
-  distanceCalculations += centroids.n_cols;
+  distanceComputations += centroids.n_cols;
 
   return std::sqrt(residual);
 }
