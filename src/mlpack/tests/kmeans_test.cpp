@@ -725,8 +725,8 @@ TEMPLATE_TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]", double, float)
       arma::Mat<eT> centroids(10, k);
       centroids.randu();
 
-      // Make sure the Pelleg-Moore algorithm and the naive method return the same
-      // clusters.
+      // Make sure the Pelleg-Moore algorithm and the naive method return the
+      // same clusters.
       arma::Mat<eT> naiveCentroids(centroids);
       KMeans<> km;
       arma::Row<size_t> assignments;
