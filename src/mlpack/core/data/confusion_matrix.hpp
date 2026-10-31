@@ -44,6 +44,9 @@ namespace mlpack {
  * represents the predicted classes and column index represents the actual
  * class.
  *
+ * The function assumes that predictors and responses have the same length, and 
+ * that all labels must be less than numClasses.
+ * 
  * @param predictors Vector of data points.
  * @param responses The measured data for each point.
  * @param output Matrix which is represented as confusion matrix.
