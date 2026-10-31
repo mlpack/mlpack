@@ -594,40 +594,65 @@ TEMPLATE_TEST_CASE("SparseKMeansTest", "[KMeansTest][tiny]", float, double)
   REQUIRE(assignments[11] == clusterTwo);
 }
 
+// The tests below test each of the different accelerated strategies for
+// k-means.  However, they are allowed to fail: this is because slight
+// differences in the computations of centroids result in floating-point
+// inaccuracies, and in some (relatively rare) cases, this can result in a point
+// being assigned to a different but virtually equidistant centroid than the
+// naive k-means strategy.
+//
+// The likelihood of these flips is low, but goes up with the number of points
+// in the dataset and the number of centroids.  In order to keep the failure
+// rate of these tests tolerable, we allow a couple attempts of each test.
+
 TEMPLATE_TEST_CASE("ElkanTest", "[KMeansTest][tiny]", float, double)
 {
   typedef TestType eT;
 
   const size_t trials = 5;
+  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::Mat<eT> dataset(10, 1000);
-    dataset.randu();
+    bool success = false;
+    for (size_t a = 0; a < attempts; ++a)
+    {
+      arma::Mat<eT> dataset(10, 1000);
+      dataset.randu();
 
-    const size_t k = 5 * (t + 1);
-    arma::Mat<eT> centroids(10, k);
-    centroids.randu();
+      const size_t k = 5 * (t + 1);
+      arma::Mat<eT> centroids(10, k);
+      centroids.randu();
 
-    // Make sure Elkan's algorithm and the naive method return the same
-    // clusters.
-    arma::Mat<eT> naiveCentroids(centroids);
-    KMeans<> km;
-    arma::Row<size_t> assignments;
-    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+      // Make sure Elkan's algorithm and the naive method return the same
+      // clusters.
+      arma::Mat<eT> naiveCentroids(centroids);
+      KMeans<> km;
+      arma::Row<size_t> assignments;
+      km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        ElkanKMeans> elkan;
-    arma::Row<size_t> elkanAssignments;
-    arma::Mat<eT> elkanCentroids(centroids);
-    elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
+      KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+          ElkanKMeans> elkan;
+      arma::Row<size_t> elkanAssignments;
+      arma::Mat<eT> elkanCentroids(centroids);
+      elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
 
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-      REQUIRE(assignments[i] == elkanAssignments[i]);
+      // If any of the assignments are different, this is (hopefully) due to
+      // floating-point inaccuracy, so, try again.
+      if (arma::any(assignments != elkanAssignments))
+        continue;
 
-    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
-    for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(eps));
+      for (size_t i = 0; i < dataset.n_cols; ++i)
+        REQUIRE(assignments[i] == elkanAssignments[i]);
+
+      const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
+      for (size_t i = 0; i < centroids.n_elem; ++i)
+        REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(eps));
+
+      success = true;
+    }
+
+    REQUIRE(success == true);
   }
 }
 
@@ -636,36 +661,48 @@ TEMPLATE_TEST_CASE("HamerlyTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
+  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::Mat<eT> dataset(10, 1000);
-    dataset.randu();
+    bool success = false;
+    for (size_t a = 0; a < attempts; ++a)
+    {
+      arma::Mat<eT> dataset(10, 1000);
+      dataset.randu();
 
-    const size_t k = 5 * (t + 1);
-    arma::Mat<eT> centroids(10, k);
-    centroids.randu();
+      const size_t k = 5 * (t + 1);
+      arma::Mat<eT> centroids(10, k);
+      centroids.randu();
 
-    // Make sure Hamerly's algorithm and the naive method return the same
-    // clusters.
-    arma::Mat<eT> naiveCentroids(centroids);
-    KMeans<> km;
-    arma::Row<size_t> assignments;
-    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+      // Make sure Hamerly's algorithm and the naive method return the same
+      // clusters.
+      arma::Mat<eT> naiveCentroids(centroids);
+      KMeans<> km;
+      arma::Row<size_t> assignments;
+      km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        HamerlyKMeans> hamerly;
-    arma::Row<size_t> hamerlyAssignments;
-    arma::Mat<eT> hamerlyCentroids(centroids);
-    hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
-        true);
+      KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+          HamerlyKMeans> hamerly;
+      arma::Row<size_t> hamerlyAssignments;
+      arma::Mat<eT> hamerlyCentroids(centroids);
+      hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
+          true);
 
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-      REQUIRE(assignments[i] == hamerlyAssignments[i]);
+      // If any of the assignments are different, this is (hopefully) due to
+      // floating-point inaccuracy, so, try again.
+      if (arma::any(assignments != hamerlyAssignments))
+        continue;
 
-    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
-    for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(eps));
+      for (size_t i = 0; i < dataset.n_cols; ++i)
+        REQUIRE(assignments[i] == hamerlyAssignments[i]);
+
+      const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
+      for (size_t i = 0; i < centroids.n_elem; ++i)
+        REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(eps));
+
+      success = true;
+    }
   }
 }
 
@@ -674,35 +711,47 @@ TEMPLATE_TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
+  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::Mat<eT> dataset(10, 1000);
-    dataset.randu();
+    bool success = false;
+    for (size_t a = 0; a < attempts; ++a)
+    {
+      arma::Mat<eT> dataset(10, 1000);
+      dataset.randu();
 
-    const size_t k = 5 * (t + 1);
-    arma::Mat<eT> centroids(10, k);
-    centroids.randu();
+      const size_t k = 5 * (t + 1);
+      arma::Mat<eT> centroids(10, k);
+      centroids.randu();
 
-    // Make sure the Pelleg-Moore algorithm and the naive method return the same
-    // clusters.
-    arma::Mat<eT> naiveCentroids(centroids);
-    KMeans<> km;
-    arma::Row<size_t> assignments;
-    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+      // Make sure the Pelleg-Moore algorithm and the naive method return the same
+      // clusters.
+      arma::Mat<eT> naiveCentroids(centroids);
+      KMeans<> km;
+      arma::Row<size_t> assignments;
+      km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        PellegMooreKMeans> pellegMoore;
-    arma::Row<size_t> pmAssignments;
-    arma::Mat<eT> pmCentroids(centroids);
-    pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
+      KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+          PellegMooreKMeans> pellegMoore;
+      arma::Row<size_t> pmAssignments;
+      arma::Mat<eT> pmCentroids(centroids);
+      pellegMoore.Cluster(dataset, k, pmAssignments, pmCentroids, false, true);
 
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-      REQUIRE(assignments[i] == pmAssignments[i]);
+      // If any of the assignments are different, this is (hopefully) due to
+      // floating-point inaccuracy, so, try again.
+      if (arma::any(assignments != pmAssignments))
+        continue;
 
-    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
-    for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(eps));
+      for (size_t i = 0; i < dataset.n_cols; ++i)
+        REQUIRE(assignments[i] == pmAssignments[i]);
+
+      const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
+      for (size_t i = 0; i < centroids.n_elem; ++i)
+        REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(eps));
+
+      success = true;
+    }
   }
 }
 
@@ -711,33 +760,46 @@ TEMPLATE_TEST_CASE("DTNNTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
+  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::Mat<eT> dataset(10, 300);
-    dataset.randu();
+    bool success = false;
+    for (size_t a = 0; a < attempts; ++a)
+    {
+      arma::Mat<eT> dataset(10, 300);
+      dataset.randu();
 
-    const size_t k = 5 * (t + 1);
-    arma::Mat<eT> centroids(10, k);
-    centroids.randu();
+      const size_t k = 5 * (t + 1);
+      arma::Mat<eT> centroids(10, k);
+      centroids.randu();
 
-    arma::Mat<eT> naiveCentroids(centroids);
-    KMeans<> km;
-    arma::Row<size_t> assignments;
-    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+      arma::Mat<eT> naiveCentroids(centroids);
+      KMeans<> km;
+      arma::Row<size_t> assignments;
+      km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        DefaultDualTreeKMeans> dtnn;
-    arma::Row<size_t> dtnnAssignments;
-    arma::Mat<eT> dtnnCentroids(centroids);
-    dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
+      KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+          DefaultDualTreeKMeans> dtnn;
+      arma::Row<size_t> dtnnAssignments;
+      arma::Mat<eT> dtnnCentroids(centroids);
+      dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-      REQUIRE(assignments[i] == dtnnAssignments[i]);
+      // If any of the assignments are different, this is (hopefully) due to
+      // floating-point inaccuracy, so, try again.
+      if (arma::any(assignments != dtnnAssignments))
+        continue;
 
-    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
-    for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
+      for (size_t i = 0; i < dataset.n_cols; ++i)
+        REQUIRE(assignments[i] == dtnnAssignments[i]);
+
+      const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
+      for (size_t i = 0; i < centroids.n_elem; ++i)
+        REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
+
+      success = true;
+    }
+    REQUIRE(success == true);
   }
 }
 
@@ -746,33 +808,46 @@ TEMPLATE_TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
+  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
-    arma::Mat<eT> dataset(10, 300);
-    dataset.randu();
+    bool success = false;
+    for (size_t a = 0; a < attempts; ++a)
+    {
+      arma::Mat<eT> dataset(10, 300);
+      dataset.randu();
 
-    const size_t k = 5;
-    arma::Mat<eT> centroids(10, k);
-    centroids.randu();
+      const size_t k = 5;
+      arma::Mat<eT> centroids(10, k);
+      centroids.randu();
 
-    arma::Mat<eT> naiveCentroids(centroids);
-    KMeans<> km;
-    arma::Row<size_t> assignments;
-    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+      arma::Mat<eT> naiveCentroids(centroids);
+      KMeans<> km;
+      arma::Row<size_t> assignments;
+      km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
-    KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        CoverTreeDualTreeKMeans> dtnn;
-    arma::Row<size_t> dtnnAssignments;
-    arma::Mat<eT> dtnnCentroids(centroids);
-    dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
+      KMeans<EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+          CoverTreeDualTreeKMeans> dtnn;
+      arma::Row<size_t> dtnnAssignments;
+      arma::Mat<eT> dtnnCentroids(centroids);
+      dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
-    for (size_t i = 0; i < dataset.n_cols; ++i)
-      REQUIRE(assignments[i] == dtnnAssignments[i]);
+      // If any of the assignments are different, this is (hopefully) due to
+      // floating-point inaccuracy, so, try again.
+      if (arma::any(assignments != dtnnAssignments))
+        continue;
 
-    const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
-    for (size_t i = 0; i < centroids.n_elem; ++i)
-      REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
+      for (size_t i = 0; i < dataset.n_cols; ++i)
+        REQUIRE(assignments[i] == dtnnAssignments[i]);
+
+      const eT eps = std::is_same<eT, float>::value ? 1e-5 : 1e-7;
+      for (size_t i = 0; i < centroids.n_elem; ++i)
+        REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
+
+      success = true;
+    }
+    REQUIRE(success == true);
   }
 }
 

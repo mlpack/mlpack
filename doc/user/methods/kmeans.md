@@ -143,7 +143,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    - Clustering will continue for up to `maxIterations` iterations, or until the
      cluster distortion (see notes below) drops below `1e-5`.
 
- * `km.Cluster(data.k, assignments, centroids, initialAssignmentGuess=false, initialCentroidGuess=false)`
+ * `km.Cluster(data, k, assignments, centroids, initialAssignmentGuess=false, initialCentroidGuess=false)`
    - Cluster the given data into `k` clusters, storing point assignments into
      the given `assignments` vector, and computed centroids into the `centroids`
      matrix.
@@ -418,6 +418,10 @@ KMeans<DistanceType,
    - mlpack also provides `ElkanKMeans`, `PellegMooreKMeans`, `HamerlyKMeans`,
      and `DualTreeKMeans`; see the [`LloydStepType`](#lloydsteptype)
      documentation for details.
+   - *Note:* different strategies, even with the same initializations, compute
+     centroids differently and thus can, in rare situations, produce different
+     clusterings due to
+     [floating-point inaccuracies](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 
 ---
 
@@ -601,6 +605,10 @@ class CustomEmptyClusterPolicy
 
  * Specifies the strategy to be used during iteration to recompute the point
    assignments and centroids.
+   - *Note:* different strategies, even with the same initializations, compute
+     centroids differently and thus can, in rare situations, produce different
+     clusterings due to
+     [floating-point inaccuracies](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 
  * `NaiveKMeans` (the default) is the standard k-means algorithm implementation,
    and recomputes assignments by finding the closest centroid of each point with
