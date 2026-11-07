@@ -77,6 +77,22 @@ using CacheManifest =
 inline std::string GetCacheDir();
 
 /*
+ * Compute the name (not the full path) under which a downloaded URL is stored
+ * in the cache directory.  The name is the original file name from the URL,
+ * prefixed with a hash of the *full* URL, so that two different URLs that end
+ * in the same file name (e.g. https://a.org/x/data.csv and
+ * https://b.org/data.csv) never share a cache entry.  The original file name
+ * (and so its extension) is kept at the end, since it is used to detect the
+ * file type.
+ *
+ * @param url The full URL of the dataset.
+ * @param filename The file name extracted from the URL by ParseURL().
+ * @return The file name to use inside the cache directory.
+ */
+inline std::string CacheFileName(const std::string& url,
+                                 const std::string& filename);
+
+/*
  * Load the cache manifest (cache_manifest.csv) from disk. This allow to use
  * previous cached dataset from previous sessions
  *
