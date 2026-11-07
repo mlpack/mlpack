@@ -1020,7 +1020,7 @@ TEST_CASE("NamedLayersMultiInputTest", "[DAGNetworkTest]")
   model.Add<Linear>("branch", 4);
   model.Add<AddMerge>("merge");
 
-  REQUIRE_NOTHROW(model.SetConnection("merge", Add));
+  REQUIRE_NOTHROW(model.SetConnection("merge", ADDITION));
   REQUIRE_NOTHROW(model.SetAxis("merge", 0));
 
   REQUIRE_NOTHROW(model.Connect("in", "branch"));
@@ -1053,7 +1053,7 @@ TEST_CASE("NamedLayersExceptionsTest", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Connect("conv1", "ghost"), std::invalid_argument);
 
   // Setting connection/axis on nonexistent layers.
-  REQUIRE_THROWS_AS(model.SetConnection("ghost", Add), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.SetConnection("ghost", ADDITION), std::invalid_argument);
   REQUIRE_THROWS_AS(model.SetAxis("ghost", 0), std::invalid_argument);
 }
 
