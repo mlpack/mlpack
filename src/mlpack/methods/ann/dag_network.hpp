@@ -296,17 +296,35 @@ class DAGNetwork
    * @param name Name of the layer.
    * @return Pointer to the layer.
    */
-  Layer<MatType>* Layer(const std::string& name) const
+  Layer<MatType>* GetLayer(const std::string& name) const
   {
     auto it = layerNames.find(name);
     if (it == layerNames.end())
     {
       std::ostringstream errMessage;
-      errMessage << "DAGNetwork::Layer(): Layer '" << name
+      errMessage << "DAGNetwork::GetLayer(): Layer '" << name
           << "' does not exist in the network.";
       throw std::invalid_argument(errMessage.str());
     }
     return network[it->second];
+  }
+
+  /**
+   * Get a pointer to the layer with the given network index.
+   *
+   * @param id Index of the layer in the network.
+   * @return Pointer to the layer.
+   */
+  Layer<MatType>* GetLayer(const size_t id) const
+  {
+    if (id >= network.size())
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::GetLayer(): ID " << id
+          << " is out of range.";
+      throw std::out_of_range(errMessage.str());
+    }
+    return network[id];
   }
 
   /**

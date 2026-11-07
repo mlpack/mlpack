@@ -971,10 +971,14 @@ TEST_CASE("NamedLayersBasicTest", "[DAGNetworkTest]")
   REQUIRE(model.LayerName(2) == "linear2");
   REQUIRE(model.LayerName(3) == "softmax");
 
-  REQUIRE(model.Layer("linear1") == model.Network()[0]);
-  REQUIRE(model.Layer("sigmoid1") == model.Network()[1]);
-  REQUIRE(model.Layer("linear2") == model.Network()[2]);
-  REQUIRE(model.Layer("softmax") == model.Network()[3]);
+  REQUIRE(model.GetLayer("linear1") == model.Network()[0]);
+  REQUIRE(model.GetLayer("sigmoid1") == model.Network()[1]);
+  REQUIRE(model.GetLayer("linear2") == model.Network()[2]);
+  REQUIRE(model.GetLayer("softmax") == model.Network()[3]);
+  REQUIRE(model.GetLayer(0) == model.Network()[0]);
+  REQUIRE(model.GetLayer(1) == model.Network()[1]);
+  REQUIRE(model.GetLayer(2) == model.Network()[2]);
+  REQUIRE(model.GetLayer(3) == model.Network()[3]);
 
   REQUIRE_NOTHROW(model.Connect("linear1", "sigmoid1"));
   REQUIRE_NOTHROW(model.Connect("sigmoid1", "linear2"));
@@ -1039,7 +1043,8 @@ TEST_CASE("NamedLayersExceptionsTest", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Add<Linear>("", 4), std::invalid_argument);
 
   // Nonexistent layer queries.
-  REQUIRE_THROWS_AS(model.Layer("ghost"), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.GetLayer("ghost"), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.GetLayer(100), std::out_of_range);
   REQUIRE_THROWS_AS(model.LayerId("ghost"), std::invalid_argument);
   REQUIRE_THROWS_AS(model.LayerName(100), std::out_of_range);
 
