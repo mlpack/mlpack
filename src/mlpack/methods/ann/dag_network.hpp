@@ -21,6 +21,11 @@
 
 #include <ensmallen.hpp>
 
+#include <string>
+#include <type_traits>
+#include <unordered_map>
+#include <vector>
+
 namespace mlpack {
 
 /**
@@ -104,16 +109,26 @@ class DAGNetwork
 
   using CubeType = typename GetCubeType<MatType>::type;
 
+ private:
+  // Helper trait to determine if the first variadic argument is convertible to std::string.
+  template <typename... T>
+  struct FirstArgIsString : std::false_type {};
+
+  template <typename First, typename... Rest>
+  struct FirstArgIsString<First, Rest...> :
+      std::is_convertible<std::decay_t<First>, std::string> {};
+
+ public:
   /**
-   * Add a new layer to the model.  Note that any trainable weights of this
-   * layer will be reset!  (Any constant parameters are kept.) This layer
+   * Add a new layer to the model. Note that any trainable weights of this
+   * layer will be reset! (Any constant parameters are kept.) This layer
    * should only receive input from one layer.
    *
-   * @param layer The Layer to be added to the model.
-   *
-   * returns the index of the layer in `network`, to be used in `Connect()`
+   * @param args Arguments to be forwarded to the layer constructor.
+   * @return The index of the layer in `network`, to be used in `Connect()`.
    */
-  template <typename LayerType, typename... Args>
+  template <typename LayerType, typename... Args,
+            typename = std::enable_if_t<!FirstArgIsString<Args...>::value>>
   size_t Add(Args&&... args)
   {
     size_t id = network.size();
@@ -123,7 +138,28 @@ class DAGNetwork
     return id;
   }
 
-  template <template<typename...> typename LayerType, typename... Args>
+  /**
+   * Add a new layer with a string identifier to the model. Note that any
+   * trainable weights of this layer will be reset! (Any constant parameters
+   * are kept.) This layer should only receive input from one layer.
+   *
+   * @param name Unique string identifier for the layer.
+   * @param args Arguments to be forwarded to the layer constructor.
+   * @return The index of the layer in `network`, to be used in `Connect()`.
+   */
+  template <typename LayerType, typename... Args>
+  size_t Add(const std::string& name, Args&&... args)
+  {
+    CheckLayerName(name);
+    size_t id = network.size();
+    network.push_back(new LayerType(std::forward<Args>(args)...));
+    AddLayer(id, name);
+
+    return id;
+  }
+
+  template <template<typename...> typename LayerType, typename... Args,
+            typename = std::enable_if_t<!FirstArgIsString<Args...>::value>>
   size_t Add(Args&&... args)
   {
     size_t id = network.size();
@@ -133,10 +169,29 @@ class DAGNetwork
     return id;
   }
 
+  /**
+   * Add a new layer with a template MatType and a string identifier.
+   *
+   * @param name Unique string identifier for the layer.
+   * @param args Arguments to be forwarded to the layer constructor.
+   * @return The index of the layer in `network`, to be used in `Connect()`.
+   */
+  template <template<typename...> typename LayerType, typename... Args>
+  size_t Add(const std::string& name, Args&&... args)
+  {
+    CheckLayerName(name);
+    size_t id = network.size();
+    network.push_back(new LayerType<MatType>(std::forward<Args>(args)...));
+    AddLayer(id, name);
+
+    return id;
+  }
+
   template <typename LayerType>
   size_t Add(LayerType&& layer,
              typename std::enable_if_t<
-                 !std::is_pointer_v<std::remove_reference_t<LayerType>>>* = 0)
+                 !std::is_pointer_v<std::remove_reference_t<LayerType>> &&
+                 !std::is_convertible_v<std::decay_t<LayerType>, std::string>>* = 0)
   {
     using NewLayerType =
         typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
@@ -144,6 +199,31 @@ class DAGNetwork
     size_t id = network.size();
     network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
     AddLayer(id);
+
+    return id;
+  }
+
+  /**
+   * Add an existing layer object with a string identifier to the model.
+   *
+   * @param name Unique string identifier for the layer.
+   * @param layer The layer object to be added.
+   * @return The index of the layer in `network`, to be used in `Connect()`.
+   */
+  template <typename LayerType>
+  size_t Add(const std::string& name,
+             LayerType&& layer,
+             typename std::enable_if_t<
+                 !std::is_pointer_v<std::remove_reference_t<LayerType>> &&
+                 !std::is_convertible_v<std::decay_t<LayerType>, std::string>>* = 0)
+  {
+    using NewLayerType =
+        typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
+
+    CheckLayerName(name);
+    size_t id = network.size();
+    network.push_back(new NewLayerType(std::forward<LayerType>(layer)));
+    AddLayer(id, name);
 
     return id;
   }
@@ -157,6 +237,14 @@ class DAGNetwork
   void SetConnection(size_t layerId, ConnectionTypes connection);
 
   /**
+   * Set the connection type for a layer that expects multiple parents.
+   *
+   * @param layerName The name of the layer.
+   * @param connection The connection type.
+   */
+  void SetConnection(const std::string& layerName, ConnectionTypes connection);
+
+  /**
    * Set the axis to concatenate along for some layer that expects multiple
    * parent.
    *
@@ -166,13 +254,105 @@ class DAGNetwork
   void SetAxis(size_t layerId, size_t concatAxis);
 
   /**
+   * Set the axis to concatenate along for some layer that expects multiple
+   * parents.
+   *
+   * @param layerName The name of the layer.
+   * @param concatAxis The axis to concatenate parent node outputs along.
+   */
+  void SetAxis(const std::string& layerName, size_t concatAxis);
+
+  /**
    * Create an edge between two layers. If the child node expects multiple
    * parents, the child must have been added to the network with an axis.
    *
-   * @param inputLayer The parent node whose output is the input to `outputLayer`
-   * @param outputLayer The child node whose input will come from `inputLayer`
+   * @param parentNodeId The parent node whose output is the input to `childNodeId`.
+   * @param childNodeId The child node whose input will come from `parentNodeId`.
    */
   void Connect(size_t parentNodeId, size_t childNodeId);
+
+  /**
+   * Create an edge between two layers using their string names.
+   *
+   * @param parentName The parent node whose output is the input to `childName`.
+   * @param childName The child node whose input will come from `parentName`.
+   */
+  void Connect(const std::string& parentName, const std::string& childName);
+
+  /**
+   * Check whether a layer with the given name exists in the network.
+   *
+   * @param name Name of the layer.
+   * @return true if the layer exists, false otherwise.
+   */
+  bool HasLayer(const std::string& name) const
+  {
+    return layerNames.find(name) != layerNames.end();
+  }
+
+  /**
+   * Get a pointer to the layer with the given name.
+   *
+   * @param name Name of the layer.
+   * @return Pointer to the layer.
+   */
+  Layer<MatType>* Layer(const std::string& name) const
+  {
+    auto it = layerNames.find(name);
+    if (it == layerNames.end())
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::Layer(): Layer '" << name
+          << "' does not exist in the network.";
+      throw std::invalid_argument(errMessage.str());
+    }
+    return network[it->second];
+  }
+
+  /**
+   * Get the network index of the layer with the given name.
+   *
+   * @param name Name of the layer.
+   * @return Index of the layer in the network.
+   */
+  size_t LayerId(const std::string& name) const
+  {
+    auto it = layerNames.find(name);
+    if (it == layerNames.end())
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::LayerId(): Layer '" << name
+          << "' does not exist in the network.";
+      throw std::invalid_argument(errMessage.str());
+    }
+    return it->second;
+  }
+
+  /**
+   * Get the name of the layer with the given network index.
+   *
+   * @param id Index of the layer in the network.
+   * @return Name of the layer, or empty string if unnamed.
+   */
+  const std::string& LayerName(const size_t id) const
+  {
+    if (id >= layerIndexNames.size())
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::LayerName(): ID " << id
+          << " is out of range.";
+      throw std::out_of_range(errMessage.str());
+    }
+    return layerIndexNames[id];
+  }
+
+  /**
+   * Get the list of all layer names in the network.
+   */
+  const std::vector<std::string>& LayerNames() const
+  {
+    return layerIndexNames;
+  }
 
   // Get the layers of the network, in the order the user specified.
   const std::vector<Layer<MatType>*>& Network() const
@@ -460,11 +640,30 @@ class DAGNetwork
  private:
   // Helper functions.
 
-  void AddLayer(size_t nodeId)
+  void CheckLayerName(const std::string& name) const
+  {
+    if (name.empty())
+    {
+      throw std::invalid_argument("DAGNetwork::Add(): Layer name cannot be empty.");
+    }
+    if (layerNames.find(name) != layerNames.end())
+    {
+      std::ostringstream errMessage;
+      errMessage << "DAGNetwork::Add(): A layer with name '" << name
+          << "' already exists in the network.";
+      throw std::invalid_argument(errMessage.str());
+    }
+  }
+
+  void AddLayer(size_t nodeId, const std::string& name = "")
   {
     layerGradients.push_back(MatType());
     childrenList.insert({ nodeId, {} });
     parentsList.insert({ nodeId, {} });
+
+    if (!name.empty())
+      layerNames[name] = nodeId;
+    layerIndexNames.push_back(name);
 
     if (network.size() > 1)
     {
@@ -640,6 +839,12 @@ class DAGNetwork
   // Map layer index in network to layer index in sortedNetwork
   // Uses network indices as keys.
   std::unordered_map<size_t, size_t> sortedIndices;
+
+  // Map of layer names to their index in the network.
+  std::unordered_map<std::string, size_t> layerNames;
+
+  // Names of all layers in the network indexed by their network position.
+  std::vector<std::string> layerIndexNames;
 
   /**
    * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
