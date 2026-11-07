@@ -532,7 +532,7 @@ class DAGNetwork
 
   // Serialize the model.
   template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t version);
 
   //
   // Only ensmallen utility functions for training are found below here.
@@ -947,6 +947,10 @@ class DAGNetwork
 };
 
 } // namespace mlpack
+
+CEREAL_TEMPLATE_CLASS_VERSION(
+    (typename OutputLayerType, typename InitializationRuleType, typename MatType),
+    (mlpack::DAGNetwork<OutputLayerType, InitializationRuleType, MatType>), (1));
 
 #include "dag_network_impl.hpp"
 

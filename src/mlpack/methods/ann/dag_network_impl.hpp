@@ -1671,7 +1671,7 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::serialize(Archive& ar, const uint32_t /* version */)
+>::serialize(Archive& ar, const uint32_t version)
 {
   // Note: if you define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING, you had
   // better ensure that every layer you are serializing has had
@@ -1687,6 +1687,7 @@ void DAGNetwork<
     }
 
     (void) ar;
+    (void) version;
   #endif
 
   #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
@@ -1699,6 +1700,7 @@ void DAGNetwork<
     }
 
     (void) ar;
+    (void) version;
   #endif
 
   #if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
@@ -1715,11 +1717,20 @@ void DAGNetwork<
     ar(CEREAL_NVP(parentsList));
     ar(CEREAL_NVP(layerAxes));
     ar(CEREAL_NVP(layerConnections));
-    ar(CEREAL_NVP(layerNames));
-    ar(CEREAL_NVP(layerIndexNames));
     ar(CEREAL_NVP(parameters));
 
     ar(CEREAL_NVP(inputDimensions));
+
+    if (version > 0)
+    {
+      ar(CEREAL_NVP(layerNames));
+      ar(CEREAL_NVP(layerIndexNames));
+    }
+    else if (cereal::is_loading<Archive>())
+    {
+      layerNames.clear();
+      layerIndexNames.assign(network.size(), "");
+    }
 
     // If we are loading, we need to initialize the weights.
     if (cereal::is_loading<Archive>())
