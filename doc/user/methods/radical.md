@@ -121,7 +121,7 @@ magnitude of each dimension of the RADICAL-ized matrix.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset);
 
 // Create RADICAL object with default options and apply to data.
 mlpack::Radical r;
@@ -162,7 +162,7 @@ independent.
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset);
 
 // Create RADICAL object with custom options and apply to data.
 mlpack::Radical r(0.1 /* noise standard deviation */,
@@ -191,10 +191,10 @@ matrix to apply the same transformation to a test set.
 
 ```c++
 arma::mat trainSet;
-mlpack::Load("https://datasets.mlpack.org/iris.train.csv", trainSet,
+mlpack::Load("http://datasets.mlpack.org/iris.train.csv", trainSet,
     mlpack::Fatal);
 arma::mat testSet;
-mlpack::Load("https://datasets.mlpack.org/iris.test.csv", testSet,
+mlpack::Load("http://datasets.mlpack.org/iris.test.csv", testSet,
     mlpack::Fatal);
 
 // Create RADICAL object with custom options.  Here we optimize for speed, but

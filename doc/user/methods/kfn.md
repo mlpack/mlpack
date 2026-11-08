@@ -410,7 +410,7 @@ Find the exact furthest neighbor of every point in the `cloud` dataset.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KFN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -438,7 +438,7 @@ neighbor in the first set of every point in the second set.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Split the dataset into two equal-sized sets randomly with `Split()`.
 arma::mat referenceSet, querySet;
@@ -482,7 +482,7 @@ point in a subset of the `LCDM` dataset.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Build a KFN object on the LCDM dataset, and pass with `std::move()` so that
 // we can avoid copying the dataset.  Set the search strategy to single-tree.
@@ -515,7 +515,7 @@ does exactly that.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build a tree on the dataset and set the search strategy to the greedy single
 // tree strategy.
@@ -552,7 +552,7 @@ Build a `KFN` object on the `cloud` dataset and save it to disk.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build the reference tree.
 mlpack::KFN kfn(std::move(dataset));
@@ -597,7 +597,7 @@ tree to compute the exact neighbors and compute the effective error.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/corel-histogram.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Split the covertype dataset into two parts of equal size.
 arma::mat referenceSet, querySet;
@@ -780,7 +780,7 @@ point in the `cloud` dataset, using 32-bit floats to represent the data.
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KFN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -809,7 +809,7 @@ Perform approximate single-tree furthest neighbor search using the Chebyshev
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KFN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -839,7 +839,7 @@ subset of the 3-dimensional LCDM dataset.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Construct the KFN object with Octrees.
 mlpack::KFNType<mlpack::EuclideanDistance, mlpack::Octree> kfn(
@@ -871,7 +871,7 @@ recall.
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Split the dataset into a query set and a reference set (each with the same
 // size).
@@ -937,7 +937,7 @@ better for greedy search!
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build a spill tree on the dataset and set the search strategy to the greedy
 // single tree strategy.  We will build the tree manually, so that we can

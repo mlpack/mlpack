@@ -233,10 +233,10 @@ to disk:
 // Load a categorical dataset.
 arma::mat dataset;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
-mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
+mlpack::Load("http://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/covertype.train.labels.csv", labels,
     mlpack::Fatal);
 
 // Create the random forest.
@@ -247,11 +247,11 @@ rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
 
 // Now load categorical test data.
 arma::mat testDataset;
-mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+mlpack::Load("http://datasets.mlpack.org/covertype.test.arff", testDataset,
     opts);
 
 arma::Row<size_t> testLabels;
-mlpack::Load("https://datasets.mlpack.org/covertype.test.labels.csv",
+mlpack::Load("http://datasets.mlpack.org/covertype.test.labels.csv",
     testLabels, mlpack::Fatal);
 
 // Compute test set accuracy.
@@ -307,12 +307,12 @@ arma::mat dataset, testDataset;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 arma::Row<size_t> labels, testLabels;
 
-mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
-mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/covertype.train.arff", dataset, opts);
+mlpack::Load("http://datasets.mlpack.org/covertype.train.labels.csv", labels,
     mlpack::Fatal);
-mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+mlpack::Load("http://datasets.mlpack.org/covertype.test.arff", testDataset,
     opts);
-mlpack::Load("https://datasets.mlpack.org/covertype.test.labels.csv",
+mlpack::Load("http://datasets.mlpack.org/covertype.test.labels.csv",
     testLabels, mlpack::Fatal);
 
 // Create the random forest.

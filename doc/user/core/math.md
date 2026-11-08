@@ -364,7 +364,7 @@ std::vector<std::string> images;
 // See the following files:
 // - https://datasets.mlpack.org/images/mlpack-favicon.png
 // - https://datasets.mlpack.org/images/ensmallen-favicon.png
-// - https://datasets.mlpack.org/images/armadillo-favicon.png
+// - http://datasets.mlpack.org/images/armadillo-favicon.png
 // - https://datasets.mlpack.org/images/bandicoot-favicon.png
 images.push_back("mlpack-favicon.png");
 images.push_back("ensmallen-favicon.png");
@@ -765,9 +765,9 @@ columns of the cube will be shuffled.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/iris.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/iris.labels.csv", labels,
     mlpack::Fatal);
 
 // Now shuffle the points in the iris dataset.

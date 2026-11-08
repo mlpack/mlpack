@@ -221,10 +221,10 @@ callbacks.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv", labels,
     mlpack::Fatal);
 
 mlpack::LogisticRegression lr;
@@ -240,10 +240,10 @@ lr.Train(dataset, labels, optimizer, ens::ProgressBar(), ens::Report());
 // Now predict on test labels and compute accuracy.
 
 arma::mat testDataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.test.csv", testDataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.test.csv", testDataset,
     mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("https://datasets.mlpack.org/satellite.test.labels.csv",
+mlpack::Load("http://datasets.mlpack.org/satellite.test.labels.csv",
     testLabels, mlpack::Fatal);
 
 std::cout << std::endl;
@@ -291,10 +291,10 @@ With that callback available, the code to train the model is below:
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv", labels,
     mlpack::Fatal);
 
 mlpack::LogisticRegression lr;

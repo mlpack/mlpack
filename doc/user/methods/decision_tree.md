@@ -211,10 +211,10 @@ Train a decision tree on mixed categorical data and save it:
 // Load a categorical dataset.
 arma::mat dataset;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
-mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
+mlpack::Load("http://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/covertype.train.labels.csv", labels,
     mlpack::Fatal);
 
 // Create the tree.
@@ -225,7 +225,7 @@ tree.Train(dataset, opts.DatasetInfo(), labels,
 
 // Load categorical test data.
 arma::mat testDataset;
-mlpack::Load("https://datasets.mlpack.org/covertype.test.arff", testDataset,
+mlpack::Load("http://datasets.mlpack.org/covertype.test.arff", testDataset,
     opts);
 
 // Predict class of first test point.

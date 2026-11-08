@@ -220,10 +220,10 @@ callbacks.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.csv", dataset,
     mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.labels.csv", labels,
     mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
@@ -240,10 +240,10 @@ sr.Train(dataset, labels, 10 /* numClasses */, optimizer,
 // Now predict on test labels and compute accuracy.
 
 arma::mat testDataset;
-mlpack::Load("https://datasets.mlpack.org/mnist.test.csv", testDataset,
+mlpack::Load("http://datasets.mlpack.org/mnist.test.csv", testDataset,
     mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("https://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
+mlpack::Load("http://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
     mlpack::Fatal);
 
 std::cout << std::endl;
@@ -287,10 +287,10 @@ With that callback available, the code to train the model is below:
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.csv", dataset,
     mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.labels.csv", labels,
     mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;

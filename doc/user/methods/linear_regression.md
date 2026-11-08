@@ -162,11 +162,11 @@ objective function with `ComputeError()`, and save the model.
 
 ```c++
 arma::mat data;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+mlpack::Load("http://datasets.mlpack.org/admission_predict.csv", data,
     mlpack::Fatal);
 
 arma::rowvec responses;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+mlpack::Load("http://datasets.mlpack.org/admission_predict.responses.csv",
     responses, mlpack::Fatal);
 
 // Generate random instance weights for each point, in the range 0.5 to 1.5.

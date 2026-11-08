@@ -201,10 +201,10 @@ disk.
 // Load a categorical dataset.
 arma::mat data;
 mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
-mlpack::Load("https://datasets.mlpack.org/telecom_churn.arff", data, opts);
+mlpack::Load("http://datasets.mlpack.org/telecom_churn.arff", data, opts);
 
 arma::rowvec responses;
-mlpack::Load("https://datasets.mlpack.org/telecom_churn.responses.csv",
+mlpack::Load("http://datasets.mlpack.org/telecom_churn.responses.csv",
     responses, mlpack::Fatal);
 
 // Split data into training set (80%) and test set (20%).

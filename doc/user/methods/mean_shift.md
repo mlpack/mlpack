@@ -182,7 +182,7 @@ distance from each point to its assigned centroid.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
 // Create MeanShift object with default parameters and perform clustering.
@@ -216,7 +216,7 @@ to set the initial radius.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/wave_energy_farm_100.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/wave_energy_farm_100.csv", dataset,
     mlpack::Fatal);
 
 // Create MeanShift object and set parameters.
@@ -246,7 +246,7 @@ centroid) on the cloud dataset.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Don't use a kernel for clustering.  This means all points within the radius
 // are weighted equally.  Use a custom radius of 25.
@@ -273,7 +273,7 @@ using 32-bit floating point matrices to represent the data.
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 // Create the MeanShift object using a TriangularKernel.
 mlpack::TriangularKernel tk;

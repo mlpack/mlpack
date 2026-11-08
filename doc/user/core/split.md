@@ -96,7 +96,7 @@ Split the unlabeled `cloud` dataset, using 20% of the dataset for the test set.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 arma::mat trainData, testData;
 
@@ -122,10 +122,10 @@ point elements to represent both the data and responses.
 ```c++
 arma::fmat dataset;
 mlpack::TextOptions opts = mlpack::Fatal + mlpack::Categorical;
-mlpack::Load("https://datasets.mlpack.org/telecom_churn.arff", dataset, opts);
+mlpack::Load("http://datasets.mlpack.org/telecom_churn.arff", dataset, opts);
 
 arma::frowvec labels;
-mlpack::Load("https://datasets.mlpack.org/telecom_churn.responses.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/telecom_churn.responses.csv", labels,
     mlpack::Fatal);
 
 arma::fmat trainData, testData;
@@ -159,7 +159,7 @@ splitting.
 
 ```c++
 arma::sp_mat dataset;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", dataset,
     mlpack::Fatal);
 
 arma::sp_mat trainData, testData;
@@ -192,11 +192,11 @@ percentage of each class in the original dataset and in the split datasets.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/covertype.data.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/covertype.data.csv", dataset,
     mlpack::Fatal);
 
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/covertype.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/covertype.labels.csv", labels,
     mlpack::Fatal);
 
 arma::mat trainData, testData;

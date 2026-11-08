@@ -177,7 +177,7 @@ reconstruction error.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::LocalCoordinateCoding lcc;
 lcc.Atoms() = 50;
@@ -207,7 +207,7 @@ disk.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/iris.train.csv", dataset,
     mlpack::Fatal);
 
 // Train the model in the constructor.
@@ -227,10 +227,10 @@ held-out test dataset.
 
 ```c++
 arma::mat trainData;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", trainData,
     mlpack::Fatal);
 arma::mat testData;
-mlpack::Load("https://datasets.mlpack.org/satellite.test.csv", testData,
+mlpack::Load("http://datasets.mlpack.org/satellite.test.csv", testData,
     mlpack::Fatal);
 
 for (double lambdaPow = -6; lambdaPow <= -2; lambdaPow += 1)
@@ -284,7 +284,7 @@ API can be used.  The example below trains a local coordinate coding model on
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset, mlpack::Fatal);
 
 mlpack::LocalCoordinateCoding<arma::fmat> lcc;
 lcc.Atoms() = 30;
@@ -335,7 +335,7 @@ dictionary.
 
 ```c++
 arma::mat trainData;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", trainData,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", trainData,
     mlpack::Fatal);
 
 const size_t atoms = 25;

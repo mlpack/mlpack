@@ -71,7 +71,7 @@ For some types of data, it is also possible to load multiple images at once from
 
 ```c++
 arma::mat x;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", x);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", x);
 
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
@@ -81,7 +81,7 @@ Among other things, the file format can be easily specified:
 
 ```c++
 arma::mat x;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", x, mlpack::CSV);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", x, mlpack::CSV);
 
 std::cout << "Loaded iris.csv; size " << x.n_rows << " x " << x.n_cols << "."
     << std::endl;
@@ -620,11 +620,11 @@ to disk.
 // Throw an exception if loading fails with the Fatal option.
 
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", dataset,
     mlpack::Fatal);
 
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/satellite.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/satellite.train.labels.csv", labels,
     mlpack::Fatal);
 
 // Print information about the data.
@@ -654,7 +654,7 @@ Load a dataset stored in a binary format and save it as a CSV.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.bin",
+mlpack::Load("http://datasets.mlpack.org/iris.bin",
     dataset, mlpack::Fatal + mlpack::ArmaBin);
 
 // Save it back to disk as a CSV.
@@ -722,7 +722,7 @@ arma::fmat dataset;
 mlpack::TextOptions opts;
 opts.Format() = mlpack::FileType::CSVASCII;
 opts.HasHeaders() = true;
-mlpack::Load("https://datasets.mlpack.org/Admission_Predict.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/Admission_Predict.csv", dataset,
     opts);
 
 std::cout << "Found " << opts.Headers().size() << " columns." << std::endl;
@@ -741,7 +741,7 @@ overall size of the loaded matrix.
 ```c++
 arma::sp_mat dataset;
 // A 3-column CSV into a sparse matrix is interpreted as a coordinate list.
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", dataset,
     mlpack::CSV);
 
 std::cout << "Loaded data from movielens-100k.csv; matrix size: "
@@ -1003,7 +1003,7 @@ mlpack::TextOptions opts;
 opts.Fatal() = true;
 opts.Categorical() = true;
 
-mlpack::Load("https://datasets.mlpack.org/covertype.train.arff", dataset, opts);
+mlpack::Load("http://datasets.mlpack.org/covertype.train.arff", dataset, opts);
 
 // Print information about the data.
 std::cout << "The data in 'covertype.train.arff' has: " << std::endl;
@@ -1016,7 +1016,7 @@ arma::Row<size_t> labels;
 // data types and extension.
 mlpack::TextOptions labelOpts;
 labelOpts.Fatal() = true;
-mlpack::Load("https://datasets.mlpack.org/covertype.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/covertype.train.labels.csv", labels,
     labelOpts);
 
 
@@ -1388,7 +1388,7 @@ Load a single audio file, but don't store the metadata
 
 ```c++
 arma::mat audio;
-mlpack::Load("https://datasets.mlpack.org/sine.wav", audio, mlpack::WAV);
+mlpack::Load("http://datasets.mlpack.org/sine.wav", audio, mlpack::WAV);
 
 // If we wanted audio metadata, we would need to pass an AudioOptions.  See the
 // next example.
@@ -1404,7 +1404,7 @@ Load and save a single audio file:
 mlpack::AudioOptions opts, opts2;
 opts.Fatal() = true;
 arma::mat matrix;
-mlpack::Load("https://datasets.mlpack.org/fifths.mp3", matrix,
+mlpack::Load("http://datasets.mlpack.org/fifths.mp3", matrix,
     opts /* format autodetected */);
 
 // `matrix` contains one column.
@@ -1492,11 +1492,11 @@ disk, then reload it.
 
 ```c++
 arma::mat data;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+mlpack::Load("http://datasets.mlpack.org/admission_predict.csv", data,
     mlpack::NoFatal);
 
 arma::rowvec responses;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+mlpack::Load("http://datasets.mlpack.org/admission_predict.responses.csv",
     responses, mlpack::Fatal);
 
 // Train a linear regression model, fitting an intercept term and using an L2

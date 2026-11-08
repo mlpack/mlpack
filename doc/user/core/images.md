@@ -270,7 +270,7 @@ image is converted back to interleaved channels and saved.
 arma::mat image;
 mlpack::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::Load("https://datasets.mlpack.org/images/mlpack-favicon.png", image,
+mlpack::Load("http://datasets.mlpack.org/images/mlpack-favicon.png", image,
     opts);
 
 std::vector<std::string> colors =
@@ -365,7 +365,7 @@ while keeping the aspect ratio using `LetterboxImages()`.
 arma::mat image;
 mlpack::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::Load("https://datasets.mlpack.org/jurassic-park.png", image, opts);
+mlpack::Load("http://datasets.mlpack.org/jurassic-park.png", image, opts);
 mlpack::LetterboxImages(image, opts, 416, 416, 127.0);
 // Image dimensions are now 416x416.
 mlpack::Save("jurassic-park-letterbox.png", image, opts);
@@ -437,7 +437,7 @@ name `Jurassic Park Logo`.
 arma::mat image;
 mlpack::data::ImageOptions opts;
 opts.Fatal() = true;
-mlpack::data::Load("https://datasets.mlpack.org/jurassic-park.png", image,
+mlpack::data::Load("http://datasets.mlpack.org/jurassic-park.png", image,
     opts);
 
 arma::vec bbox({90, 80, 510, 370});

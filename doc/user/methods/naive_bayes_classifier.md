@@ -197,10 +197,10 @@ accuracy on a test set and save the model to disk.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.csv", dataset,
     mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/mnist.train.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/mnist.train.labels.csv", labels,
     mlpack::Fatal);
 
 mlpack::NaiveBayesClassifier nbc(dataset.n_rows /* dimensionality */,
@@ -213,10 +213,10 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 // Now compute the accuracy of the fully trained model on a test set.
 
 arma::mat testDataset;
-mlpack::Load("https://datasets.mlpack.org/mnist.test.csv", testDataset,
+mlpack::Load("http://datasets.mlpack.org/mnist.test.csv", testDataset,
     mlpack::Fatal);
 arma::Row<size_t> testLabels;
-mlpack::Load("https://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
+mlpack::Load("http://datasets.mlpack.org/mnist.test.labels.csv", testLabels,
     mlpack::Fatal);
 
 arma::Row<size_t> predictions;

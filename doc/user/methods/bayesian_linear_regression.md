@@ -195,11 +195,11 @@ compute the RMSE with `RMSE()`, and save the model.
 
 ```c++
 arma::mat data;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.csv", data,
+mlpack::Load("http://datasets.mlpack.org/admission_predict.csv", data,
     mlpack::Fatal);
 
 arma::rowvec responses;
-mlpack::Load("https://datasets.mlpack.org/admission_predict.responses.csv",
+mlpack::Load("http://datasets.mlpack.org/admission_predict.responses.csv",
     responses, mlpack::Fatal);
 
 // Train Bayesian linear regression model.  The data will be both centered and

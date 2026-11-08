@@ -403,7 +403,7 @@ tree.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
 
 // Build the octree with a leaf size of 10.  (This means that nodes are split
 // until they contain 10 or fewer points.)
@@ -449,7 +449,7 @@ nodes in the tree.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset,
     mlpack::Fatal);
 
 // Build octrees on the first half and the second half of points.
@@ -515,7 +515,7 @@ Build an `Octree` on 32-bit floating point data and save it to disk.
 
 ```c++
 arma::fmat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset);
 
 // Build the Octree using 32-bit floating point data as the matrix type.
 // We will still use the default EmptyStatistic and EuclideanDistance
@@ -588,7 +588,7 @@ Build an `Octree` and map between original points and new points.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/lcdm_tiny.csv", dataset,
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset,
     mlpack::Fatal);
 
 // Build the tree.

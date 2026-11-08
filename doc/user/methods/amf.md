@@ -507,7 +507,7 @@ decomposition, and `float` element type.
 
 ```c++
 arma::sp_fmat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 // Create the AMF object.  Use default parameters for the termination policy,
@@ -535,7 +535,7 @@ Compare quality of decompositions of MovieLens with different update rules.
 
 ```c++
 arma::sp_mat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 // Create four AMF objects using different update rules:
@@ -614,7 +614,7 @@ Use a pre-specified initialization for `W` and `H`.
 
 ```c++
 arma::sp_mat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 arma::mat W, H;
@@ -644,7 +644,7 @@ and `H` matrices.
 
 ```c++
 arma::sp_mat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 arma::mat W, H;
@@ -683,7 +683,7 @@ RMSE of the held-out validation set is sufficiently low.
 
 ```c++
 arma::sp_mat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 arma::mat W, H;
@@ -831,7 +831,7 @@ Then we can use it in a program:
 
 ```c++
 arma::sp_fmat V;
-mlpack::Load("https://datasets.mlpack.org/movielens-100k.csv", V,
+mlpack::Load("http://datasets.mlpack.org/movielens-100k.csv", V,
     mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);

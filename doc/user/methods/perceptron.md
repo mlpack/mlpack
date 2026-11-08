@@ -194,9 +194,9 @@ and save the resulting model to disk.
 
 ```c++
 arma::mat dataset;
-mlpack::Load("https://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/iris.csv", dataset, mlpack::Fatal);
 arma::Row<size_t> labels;
-mlpack::Load("https://datasets.mlpack.org/iris.labels.csv", labels,
+mlpack::Load("http://datasets.mlpack.org/iris.labels.csv", labels,
     mlpack::Fatal);
 
 // Create a Perceptron object.
