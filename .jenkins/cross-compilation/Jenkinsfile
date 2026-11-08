@@ -55,7 +55,7 @@ target_info = [
   'manaeesh': [
       'device_name': 'milkv-duo',
       'arch_type': 'riscv64-lp64d-musl',
-      'arch_name': 'C906',
+      'arch_name': 'RV64GCV',
       // Even the "tiny" LSTMReberGrammarTest is too much for the Milk-V Duo!
       'test_filters': '[tiny] ~LSTMReberGrammarTest',
       'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',

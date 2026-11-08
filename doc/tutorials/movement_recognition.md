@@ -92,9 +92,9 @@ GY-89 9-DOF board, which carries three separate I2C chips:
 | BMP180  | barometric pressure + temperature   | `0x77`      |
 
 Some clone GY-89 boards carry the older L3GD20 (non-H) gyroscope instead of the
-L3GD20H.  It is register-compatible but reports a different `WHO_AM_I` (`0xD4`
-rather than `0xD7`), so `imu_test` accepts both; the gyro works the same either
-way.
+L3GD20H.  It uses the same I2C address and registers, but its `WHO_AM_I` chip ID
+register reads `0xD4` rather than `0xD7`, so `imu_test` accepts both; the gyro
+works the same either way.
 
 Wire the GY-89 to the Duo's I2C0 bus (the example defaults to `/dev/i2c-0`), as
 shown below:
@@ -163,7 +163,7 @@ the `mlpack.cmake` file that is used by the example to download mlpack's
 dependencies and cross-compile OpenBLAS.  To do this, we just need to specify 
 the `OPENBLAS_PATCHES` CMake configuration parameter with the relevant patch 
 file.  The examples repository has the file 
-[CMake/patches/openblas-riscv64-low-memory.patch](../../.jenkins/cross-compilation/openblas-riscv64-low-memory.patch),
+[CMake/patches/openblas-riscv64-low-memory.patch](/.jenkins/cross-compilation/openblas-riscv64-low-memory.patch),
 which contains the changes necessary to make OpenBLAS's internal buffers 
 small enough for the Milk-V Duo.
 
