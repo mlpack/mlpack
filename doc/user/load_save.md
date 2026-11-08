@@ -774,7 +774,9 @@ When a remote URL is given to `Load()`:
    - The cache can be disabled with the
      [`MLPACK_DISABLE_REMOTE_DATASET_CACHE` compilation option](compile.md#configuring-mlpack-with-compile-time-definitions).
    - Cached files are stored under `~/.mlpack/cache/` on Linux/macOS and
-     `%APPDATA%\mlpack\cache\` on Windows.
+     `%APPDATA%\mlpack\cache\` on Windows, in one directory per host: for
+     example, `https://datasets.mlpack.org/iris.csv` is stored as
+     `datasets.mlpack.org/iris.csv`.
    - The cache directory can be overridden at compile time with
      [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 

@@ -335,8 +335,10 @@ inline bool DownloadFileWithCache(const std::string& url,
           << std::endl;
     }
 
-    std::string dest =
-        (std::filesystem::path(cacheDir) / filename).string();
+    const std::filesystem::path hostDir =
+        std::filesystem::path(cacheDir) / host;
+    std::filesystem::create_directories(hostDir);
+    const std::string dest = (hostDir / filename).string();
 
     // Do a head request to get the cache info to compare it.
 #ifdef MLPACK_USE_HTTPS
@@ -372,8 +374,7 @@ inline bool DownloadFileWithCache(const std::string& url,
     {
       std::string decompressedName =
           filename.substr(0, filename.size() - ext.size() - 1);
-      decompressedDest =
-          (std::filesystem::path(cacheDir) / decompressedName).string();
+      decompressedDest = (hostDir / decompressedName).string();
     }
 
     if (headSucceeded &&
