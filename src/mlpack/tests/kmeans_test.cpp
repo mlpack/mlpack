@@ -610,7 +610,7 @@ TEMPLATE_TEST_CASE("ElkanTest", "[KMeansTest][tiny]", float, double)
   typedef TestType eT;
 
   const size_t trials = 5;
-  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
+  const size_t attempts = std::is_same<eT, float>::value ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
@@ -650,6 +650,8 @@ TEMPLATE_TEST_CASE("ElkanTest", "[KMeansTest][tiny]", float, double)
         REQUIRE(naiveCentroids[i] == Approx(elkanCentroids[i]).epsilon(eps));
 
       success = true;
+      if (success)
+        break;
     }
 
     REQUIRE(success == true);
@@ -661,7 +663,7 @@ TEMPLATE_TEST_CASE("HamerlyTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
-  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
+  const size_t attempts = std::is_same<eT, float>::value ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
@@ -702,7 +704,11 @@ TEMPLATE_TEST_CASE("HamerlyTest", "[KMeansTest][tiny]", double, float)
         REQUIRE(naiveCentroids[i] == Approx(hamerlyCentroids[i]).epsilon(eps));
 
       success = true;
+      if (success)
+        break;
     }
+
+    REQUIRE(success == true);
   }
 }
 
@@ -711,7 +717,7 @@ TEMPLATE_TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
-  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
+  const size_t attempts = std::is_same<eT, float>::value ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
@@ -751,7 +757,11 @@ TEMPLATE_TEST_CASE("PellegMooreTest", "[KMeansTest][tiny]", double, float)
         REQUIRE(naiveCentroids[i] == Approx(pmCentroids[i]).epsilon(eps));
 
       success = true;
+      if (success)
+        break;
     }
+
+    REQUIRE(success == true);
   }
 }
 
@@ -760,7 +770,7 @@ TEMPLATE_TEST_CASE("DTNNTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
-  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
+  const size_t attempts = std::is_same<eT, float>::value ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
@@ -798,7 +808,10 @@ TEMPLATE_TEST_CASE("DTNNTest", "[KMeansTest][tiny]", double, float)
         REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
 
       success = true;
+      if (success)
+        break;
     }
+
     REQUIRE(success == true);
   }
 }
@@ -808,7 +821,7 @@ TEMPLATE_TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]", double, float)
   typedef TestType eT;
 
   const size_t trials = 5;
-  const size_t attempts = std::is_same<eT, float> ? 3 : 2;
+  const size_t attempts = std::is_same<eT, float>::value ? 3 : 2;
 
   for (size_t t = 0; t < trials; ++t)
   {
@@ -846,7 +859,10 @@ TEMPLATE_TEST_CASE("DTNNCoverTreeTest", "[KMeansTest][tiny]", double, float)
         REQUIRE(naiveCentroids[i] == Approx(dtnnCentroids[i]).epsilon(eps));
 
       success = true;
+      if (success)
+        break;
     }
+
     REQUIRE(success == true);
   }
 }
