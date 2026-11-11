@@ -25,7 +25,7 @@ namespace mlpack {
 class RandomPartition
 {
  public:
-  //! Empty constructor, required by the InitialPartitionPolicy policy.
+  // Empty constructor, required by the InitialPartitionPolicy policy.
   RandomPartition() { }
 
   /**
@@ -49,7 +49,7 @@ class RandomPartition
         (clusters - 1), data.n_cols));
   }
 
-  //! Serialize the partitioner (nothing to do).
+  // Serialize the partitioner (nothing to do).
   template<typename Archive>
   void serialize(Archive& /* ar */, const uint32_t /* version */) { }
 };

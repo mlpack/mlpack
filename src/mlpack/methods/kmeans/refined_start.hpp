@@ -57,10 +57,10 @@ class RefinedStart
    * @param clusters Number of clusters to split dataset into.
    * @param centroids Matrix to store centroids into.
    */
-  template<typename MatType>
+  template<typename MatType, typename CentroidsType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::mat& centroids) const;
+               CentroidsType& centroids) const;
 
   /**
    * Partition the given dataset into the given number of clusters according to
@@ -78,17 +78,17 @@ class RefinedStart
                const size_t clusters,
                arma::Row<size_t>& assignments) const;
 
-  //! Get the number of samplings that will be performed.
+  // Get the number of samplings that will be performed.
   size_t Samplings() const { return samplings; }
-  //! Modify the number of samplings that will be performed.
+  // Modify the number of samplings that will be performed.
   size_t& Samplings() { return samplings; }
 
-  //! Get the percentage of the data used by each subsampling.
+  // Get the percentage of the data used by each subsampling.
   double Percentage() const { return percentage; }
-  //! Modify the percentage of the data used by each subsampling.
+  // Modify the percentage of the data used by each subsampling.
   double& Percentage() { return percentage; }
 
-  //! Serialize the object.
+  // Serialize the object.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
@@ -97,9 +97,9 @@ class RefinedStart
   }
 
  private:
-  //! The number of samplings to perform.
+  // The number of samplings to perform.
   size_t samplings;
-  //! The percentage of the data to use for each subsampling.
+  // The percentage of the data to use for each subsampling.
   double percentage;
 };
 

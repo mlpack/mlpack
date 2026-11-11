@@ -19,11 +19,12 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename TreeType>
-PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
-    const typename TreeType::Mat& dataset,
-    const arma::mat& centroids,
-    arma::mat& newCentroids,
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::
+PellegMooreKMeansRules(
+    const MatType& dataset,
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
     arma::Col<size_t>& counts,
     DistanceType& distance) :
     dataset(dataset),
@@ -31,22 +32,22 @@ PellegMooreKMeansRules<DistanceType, TreeType>::PellegMooreKMeansRules(
     newCentroids(newCentroids),
     counts(counts),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
 
-template<typename DistanceType, typename TreeType>
+template<typename DistanceType, typename TreeType, typename CentroidsType>
 inline mlpack_force_inline
-double PellegMooreKMeansRules<DistanceType, TreeType>::BaseCase(
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::BaseCase(
     const size_t /* queryIndex */,
     const size_t /* referenceIndex */)
 {
   return 0.0;
 }
 
-template<typename DistanceType, typename TreeType>
-double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Score(
     const size_t /* queryIndex */,
     TreeType& referenceNode)
 {
@@ -66,16 +67,16 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
   const size_t whitelisted = centroids.n_cols -
       accu(referenceNode.Stat().Blacklist());
 
-  distanceCalculations += whitelisted;
+  distanceComputations += whitelisted;
 
   // Which cluster has minimum distance to the node?
   size_t closestCluster = centroids.n_cols;
-  double minMinDistance = DBL_MAX;
+  ElemType minMinDistance = std::numeric_limits<ElemType>::max();
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     if (referenceNode.Stat().Blacklist()[i] == 0)
     {
-      const double minDistance = referenceNode.MinDistance(centroids.col(i));
+      const ElemType minDistance = referenceNode.MinDistance(centroids.col(i));
       if (minDistance < minMinDistance)
       {
         minMinDistance = minDistance;
@@ -107,11 +108,11 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
         cornerPoint(d) = referenceNode.Bound()[d].Lo();
     }
 
-    const double closestDist = distance.Evaluate(cornerPoint,
+    const ElemType closestDist = distance.Evaluate(cornerPoint,
         centroids.col(closestCluster));
-    const double otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
+    const ElemType otherDist = distance.Evaluate(cornerPoint, centroids.col(c));
 
-    distanceCalculations += 3; // One for cornerPoint, then two distances.
+    distanceComputations += 3; // One for cornerPoint, then two distances.
 
     if (closestDist < otherDist)
     {
@@ -136,16 +137,16 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
   for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
   {
     size_t bestCluster = centroids.n_cols;
-    double bestDistance = DBL_MAX;
+    ElemType bestDistance = std::numeric_limits<ElemType>::max();
     for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (referenceNode.Stat().Blacklist()[c] == 1)
         continue;
 
-      ++distanceCalculations;
+      ++distanceComputations;
 
       // The reference index is the index of the data point.
-      const double dist = distance.Evaluate(centroids.col(c),
+      const ElemType dist = distance.Evaluate(centroids.col(c),
           dataset.col(referenceNode.Point(i)));
 
       if (dist < bestDistance)
@@ -165,8 +166,8 @@ double PellegMooreKMeansRules<DistanceType, TreeType>::Score(
   return 0.0;
 }
 
-template<typename DistanceType, typename TreeType>
-double PellegMooreKMeansRules<DistanceType, TreeType>::Rescore(
+template<typename DistanceType, typename TreeType, typename CentroidsType>
+double PellegMooreKMeansRules<DistanceType, TreeType, CentroidsType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore)

@@ -523,6 +523,8 @@ then
   echo "  ^https://github.com/mlpack/mlpack/issues/[0-9]*$" >> "$output_dir/linkcheckerrc.in";
   echo "  ^https://github.com/mlpack/mlpack/issues[?]q.*$" >> "$output_dir/linkcheckerrc.in";
   echo "  ^https://github.com/mlpack/mlpack/pulls[?]q.*$" >> "$output_dir/linkcheckerrc.in";
+  # Slack now doesn't allow itself to be crawled, but we know this URL works.
+  echo "  ^https://mlpack.slack.com*$" >> "$output_dir/linkcheckerrc.in";
 
   # Initialize our cache or take the current version of it.
   if [ ! -z ${LINK_CACHE_FILE+x} ];
