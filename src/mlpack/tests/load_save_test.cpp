@@ -4620,7 +4620,8 @@ TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "iris.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "iris.csv").string();
 
   remove(cachedFile.c_str());
   remove(manifestPath.c_str());
@@ -4706,7 +4707,8 @@ TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "iris.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "iris.csv").string();
 
   remove(cachedFile.c_str());
   remove(manifestPath.c_str());
@@ -4803,9 +4805,11 @@ TEST_CASE("LoadGzipCSVFromURL", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedFile.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
@@ -4849,9 +4853,11 @@ TEST_CASE("GzipVsUncompressedDownloadTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedCsv =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedCsv.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
@@ -4881,9 +4887,11 @@ TEST_CASE("GzipCacheTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedFile.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
