@@ -938,3 +938,154 @@ TEST_CASE("DAGNetworkSerializationTest", "[DAGNetworkTest]")
   CheckMatrices(predictions, xmlPredictions, jsonPredictions,
       binaryPredictions);
 }
+
+/**
+ * Test adding and connecting layers using string identifiers.
+ */
+TEST_CASE("NamedLayersBasicTest", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  size_t id1 = model.Add<Linear>("linear1", 8);
+  size_t id2 = model.Add<Sigmoid>("sigmoid1");
+  size_t id3 = model.Add<Linear>("linear2", 3);
+  size_t id4 = model.Add<LogSoftMax>("softmax");
+
+  REQUIRE(id1 == 0);
+  REQUIRE(id2 == 1);
+  REQUIRE(id3 == 2);
+  REQUIRE(id4 == 3);
+
+  REQUIRE(model.HasLayer("linear1"));
+  REQUIRE(model.HasLayer("sigmoid1"));
+  REQUIRE(model.HasLayer("linear2"));
+  REQUIRE(model.HasLayer("softmax"));
+  REQUIRE(!model.HasLayer("nonexistent"));
+
+  REQUIRE(model.LayerId("linear1") == 0);
+  REQUIRE(model.LayerId("sigmoid1") == 1);
+  REQUIRE(model.LayerId("linear2") == 2);
+  REQUIRE(model.LayerId("softmax") == 3);
+
+  REQUIRE(model.LayerName(0) == "linear1");
+  REQUIRE(model.LayerName(1) == "sigmoid1");
+  REQUIRE(model.LayerName(2) == "linear2");
+  REQUIRE(model.LayerName(3) == "softmax");
+
+  REQUIRE(model.GetLayer("linear1") == model.Network()[0]);
+  REQUIRE(model.GetLayer("sigmoid1") == model.Network()[1]);
+  REQUIRE(model.GetLayer("linear2") == model.Network()[2]);
+  REQUIRE(model.GetLayer("softmax") == model.Network()[3]);
+  REQUIRE(model.GetLayer(0) == model.Network()[0]);
+  REQUIRE(model.GetLayer(1) == model.Network()[1]);
+  REQUIRE(model.GetLayer(2) == model.Network()[2]);
+  REQUIRE(model.GetLayer(3) == model.Network()[3]);
+
+  REQUIRE_NOTHROW(model.Connect("linear1", "sigmoid1"));
+  REQUIRE_NOTHROW(model.Connect("sigmoid1", "linear2"));
+  REQUIRE_NOTHROW(model.Connect("linear2", "softmax"));
+}
+
+/**
+ * Test mixing named and unnamed layers in DAGNetwork.
+ */
+TEST_CASE("NamedLayersMixedTest", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.Add<Linear>("first", 4);
+  model.Add<Sigmoid>(); // Unnamed
+  model.Add<Linear>("last", 2);
+
+  REQUIRE(model.HasLayer("first"));
+  REQUIRE(model.HasLayer("last"));
+  REQUIRE(!model.HasLayer(""));
+
+  REQUIRE(model.LayerName(0) == "first");
+  REQUIRE(model.LayerName(1) == "");
+  REQUIRE(model.LayerName(2) == "last");
+
+  REQUIRE(model.LayerId("first") == 0);
+  REQUIRE(model.LayerId("last") == 2);
+
+  REQUIRE_NOTHROW(model.Connect(0, 1));
+  REQUIRE_NOTHROW(model.Connect(1, 2));
+}
+
+/**
+ * Test SetConnection and SetAxis by string name.
+ */
+TEST_CASE("NamedLayersMultiInputTest", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.Add<Identity>("in");
+  model.Add<Linear>("branch", 4);
+  model.Add<AddMerge>("merge");
+
+  REQUIRE_NOTHROW(model.SetConnection("merge", ADDITION));
+  REQUIRE_NOTHROW(model.SetAxis("merge", 0));
+
+  REQUIRE_NOTHROW(model.Connect("in", "branch"));
+  REQUIRE_NOTHROW(model.Connect("in", "merge"));
+  REQUIRE_NOTHROW(model.Connect("branch", "merge"));
+}
+
+/**
+ * Test error handling and exception throwing for named layers.
+ */
+TEST_CASE("NamedLayersExceptionsTest", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.Add<Linear>("conv1", 4);
+
+  // Duplicate layer name.
+  REQUIRE_THROWS_AS(model.Add<Linear>("conv1", 4), std::invalid_argument);
+
+  // Empty layer name.
+  REQUIRE_THROWS_AS(model.Add<Linear>("", 4), std::invalid_argument);
+
+  // Nonexistent layer queries.
+  REQUIRE_THROWS_AS(model.GetLayer("ghost"), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.GetLayer(100), std::out_of_range);
+  REQUIRE_THROWS_AS(model.LayerId("ghost"), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.LayerName(100), std::out_of_range);
+
+  // Connecting nonexistent layers.
+  REQUIRE_THROWS_AS(model.Connect("ghost", "conv1"), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.Connect("conv1", "ghost"), std::invalid_argument);
+
+  // Setting connection/axis on nonexistent layers.
+  REQUIRE_THROWS_AS(model.SetConnection("ghost", ADDITION), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.SetAxis("ghost", 0), std::invalid_argument);
+}
+
+/**
+ * Test serialization of named layers in DAGNetwork.
+ */
+TEST_CASE("NamedLayersSerializationTest", "[DAGNetworkTest]")
+{
+  DAGNetwork model;
+  model.Add<Linear>("input_fc", 8);
+  model.Add<Sigmoid>("act");
+  model.Add<Linear>("output_fc", 2);
+  model.Connect("input_fc", "act");
+  model.Connect("act", "output_fc");
+
+  DAGNetwork xmlModel, jsonModel, binaryModel;
+
+  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
+
+  for (auto* m : { &xmlModel, &jsonModel, &binaryModel })
+  {
+    REQUIRE(m->HasLayer("input_fc"));
+    REQUIRE(m->HasLayer("act"));
+    REQUIRE(m->HasLayer("output_fc"));
+    REQUIRE(!m->HasLayer("unknown"));
+
+    REQUIRE(m->LayerId("input_fc") == 0);
+    REQUIRE(m->LayerId("act") == 1);
+    REQUIRE(m->LayerId("output_fc") == 2);
+
+    REQUIRE(m->LayerName(0) == "input_fc");
+    REQUIRE(m->LayerName(1) == "act");
+    REQUIRE(m->LayerName(2) == "output_fc");
+  }
+}
