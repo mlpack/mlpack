@@ -23,10 +23,13 @@ using namespace arma;
  * If KernelPCA is working right, then it should turn a circle dataset into a
  * linearly separable dataset in one dimension (which is easy to check).
  */
-TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
+TEMPLATE_TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]", float,
+    double)
 {
+  typedef TestType eT;
+
   // The dataset, which will have three concentric rings in three dimensions.
-  arma::mat dataset;
+  arma::Mat<eT> dataset;
 
   // Now, there are 750 points centered at the origin with unit variance.
   dataset.randn(3, 750);
@@ -36,7 +39,7 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
   for (size_t i = 250; i < 500; ++i)
   {
     // Push the point away from the origin by 2.
-    const double pointNorm = norm(dataset.col(i), 2);
+    const eT pointNorm = norm(dataset.col(i), 2);
 
     dataset(0, i) += 2.0 * (dataset(0, i) / pointNorm);
     dataset(1, i) += 2.0 * (dataset(1, i) / pointNorm);
@@ -47,7 +50,7 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
   for (size_t i = 500; i < 750; ++i)
   {
     // Push the point away from the origin by 5.
-    const double pointNorm = norm(dataset.col(i), 2);
+    const eT pointNorm = norm(dataset.col(i), 2);
 
     dataset(0, i) += 5.0 * (dataset(0, i) / pointNorm);
     dataset(1, i) += 5.0 * (dataset(1, i) / pointNorm);
@@ -57,7 +60,8 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
   // Now we have a dataset; we will use the GaussianKernel to perform KernelPCA
   // using the naive method to take it down to one dimension.
   KernelPCA<GaussianKernel> p;
-  p.Apply(dataset, 1);
+  arma::Mat<eT> transformedDataset;
+  p.Apply(dataset, transformedDataset, 1);
 
   // Get the ranges of each "class".  These are all initialized as empty ranges
   // containing no points.
@@ -68,11 +72,11 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
 
   // Expand the ranges to hold all of the points in the class.
   for (size_t i = 0; i < 250; ++i)
-    ranges[0] |= dataset(0, i);
+    ranges[0] |= transformedDataset(0, i);
   for (size_t i = 250; i < 500; ++i)
-    ranges[1] |= dataset(0, i);
+    ranges[1] |= transformedDataset(0, i);
   for (size_t i = 500; i < 750; ++i)
-    ranges[2] |= dataset(0, i);
+    ranges[2] |= transformedDataset(0, i);
 
   // None of these ranges should overlap -- the classes should be linearly
   // separable.
@@ -85,10 +89,13 @@ TEST_CASE("CircleTransformationTestNaive", "[KernelPCATest]")
  * If KernelPCA is working right, then it should turn a circle dataset into a
  * linearly separable dataset in one dimension (which is easy to check).
  */
-TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
+TEMPLATE_TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]",
+    float, double)
 {
+  typedef TestType eT;
+
   // The dataset, which will have three concentric rings in three dimensions.
-  arma::mat dataset;
+  arma::Mat<eT> dataset;
 
   // Now, there are 750 points centered at the origin with unit variance.
   dataset.randn(3, 750);
@@ -98,7 +105,7 @@ TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
   for (size_t i = 250; i < 500; ++i)
   {
     // Push the point away from the origin by 2.
-    const double pointNorm = norm(dataset.col(i), 2);
+    const eT pointNorm = norm(dataset.col(i), 2);
 
     dataset(0, i) += 2.0 * (dataset(0, i) / pointNorm);
     dataset(1, i) += 2.0 * (dataset(1, i) / pointNorm);
@@ -109,7 +116,7 @@ TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
   for (size_t i = 500; i < 750; ++i)
   {
     // Push the point away from the origin by 5.
-    const double pointNorm = norm(dataset.col(i), 2);
+    const eT pointNorm = norm(dataset.col(i), 2);
 
     dataset(0, i) += 5.0 * (dataset(0, i) / pointNorm);
     dataset(1, i) += 5.0 * (dataset(1, i) / pointNorm);
@@ -119,7 +126,8 @@ TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
   // Now we have a dataset; we will use the GaussianKernel to perform KernelPCA
   // using the nytroem method to take it down to one dimension.
   KernelPCA<GaussianKernel, NystroemKernelRule<GaussianKernel> > p;
-  p.Apply(dataset, 1);
+  arma::Mat<eT> transformedDataset;
+  p.Apply(dataset, transformedDataset, 1);
 
   // Get the ranges of each "class".  These are all initialized as empty ranges
   // containing no points.
@@ -130,11 +138,11 @@ TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]")
 
   // Expand the ranges to hold all of the points in the class.
   for (size_t i = 0; i < 250; ++i)
-    ranges[0] |= dataset(0, i);
+    ranges[0] |= transformedDataset(0, i);
   for (size_t i = 250; i < 500; ++i)
-    ranges[1] |= dataset(0, i);
+    ranges[1] |= transformedDataset(0, i);
   for (size_t i = 500; i < 750; ++i)
-    ranges[2] |= dataset(0, i);
+    ranges[2] |= transformedDataset(0, i);
 
   // None of these ranges should overlap -- the classes should be linearly
   // separable.

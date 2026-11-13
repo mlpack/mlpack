@@ -135,6 +135,7 @@ void RunKPCA(arma::mat& dataset,
              const string& sampling,
              KernelType& kernel)
 {
+  arma::mat newDataset;
   if (nystroem)
   {
     // Make sure the sampling scheme is valid.
@@ -142,19 +143,19 @@ void RunKPCA(arma::mat& dataset,
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
           KMeansSelection<> > > kpca(kernel, centerTransformedData);
-      kpca.Apply(dataset, newDim);
+      kpca.Apply(dataset, newDataset, newDim);
     }
     else if (sampling == "random")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
           RandomSelection> > kpca(kernel, centerTransformedData);
-      kpca.Apply(dataset, newDim);
+      kpca.Apply(dataset, newDataset, newDim);
     }
     else if (sampling == "ordered")
     {
       KernelPCA<KernelType, NystroemKernelRule<KernelType,
           OrderedSelection> > kpca(kernel, centerTransformedData);
-      kpca.Apply(dataset, newDim);
+      kpca.Apply(dataset, newDataset, newDim);
     }
     else
     {
@@ -166,8 +167,10 @@ void RunKPCA(arma::mat& dataset,
   else
   {
     KernelPCA<KernelType> kpca(kernel, centerTransformedData);
-    kpca.Apply(dataset, newDim);
+    kpca.Apply(dataset, newDataset, newDim);
   }
+
+  dataset = std::move(newDataset);
 }
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)

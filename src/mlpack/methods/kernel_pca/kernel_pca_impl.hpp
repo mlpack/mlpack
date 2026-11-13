@@ -19,20 +19,23 @@
 
 namespace mlpack {
 
-template <typename KernelType, typename KernelRule>
-KernelPCA<KernelType, KernelRule>::KernelPCA(const KernelType kernel,
-                                 const bool centerTransformedData) :
-      kernel(kernel),
-      centerTransformedData(centerTransformedData)
+template<typename KernelType, typename KernelRule>
+KernelPCA<KernelType, KernelRule>::KernelPCA(
+    const KernelType kernel,
+    const bool centerTransformedData) :
+    kernel(kernel),
+    centerTransformedData(centerTransformedData)
 { }
 
-//! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec,
-                                  const size_t newDimension)
+// Apply Kernel Principal Component Analysis to the provided data set.
+template<typename KernelType, typename KernelRule>
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(
+    const MatType& data,
+    MatType& transformedData,
+    typename GetColType<MatType>::type& eigval,
+    MatType& eigvec,
+    const size_t newDimension)
 {
   KernelRule::ApplyKernelMatrix(data, transformedData, eigval,
                                 eigvec, newDimension, kernel);
@@ -40,44 +43,77 @@ void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
   {
-    arma::colvec transformedDataMean = arma::mean(transformedData, 1);
+    typename GetColType<MatType>::type transformedDataMean =
+        mean(transformedData, 1);
     transformedData = transformedData - (transformedDataMean *
-        ones<arma::rowvec>(transformedData.n_cols));
+        ones<typename GetRowType<MatType>::type>(transformedData.n_cols));
   }
 }
 
-//! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec)
+// Apply Kernel Principal Component Analysis to the provided data set.
+template<typename KernelType, typename KernelRule>
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(
+    const MatType& data,
+    MatType& transformedData,
+    typename GetColType<MatType>::type& eigval,
+    MatType& eigvec)
 {
   Apply(data, transformedData, eigval, eigvec, data.n_cols);
 }
 
-//! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigVal)
+// Apply Kernel Principal Component Analysis to the provided data set.
+template<typename KernelType, typename KernelRule>
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(
+    const MatType& data,
+    MatType& transformedData,
+    typename GetColType<MatType>::type& eigVal)
 {
-  arma::mat coeffs;
+  MatType coeffs;
   Apply(data, transformedData, eigVal, coeffs, data.n_cols);
 }
 
-//! Use KPCA for dimensionality reduction.
-template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
-                                    const size_t newDimension)
+// Use KPCA for dimensionality reduction.
+template<typename KernelType, typename KernelRule>
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(
+    const MatType& data,
+    MatType& transformedData,
+    const size_t newDimension)
 {
-  arma::mat coeffs;
-  arma::vec eigVal;
+  MatType coeffs;
+  typename GetColType<MatType>::type eigVal;
+
+  Apply(data, transformedData, eigVal, coeffs, newDimension);
+
+  if (newDimension < coeffs.n_rows && newDimension > 0)
+    transformedData.shed_rows(newDimension, data.n_rows - 1);
+}
+
+// Use KPCA for dimensionality reduction.
+template<typename KernelType, typename KernelRule>
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(
+    MatType& data,
+    const size_t newDimension)
+{
+  MatType coeffs;
+  typename GetColType<MatType>::type eigVal;
 
   Apply(data, data, eigVal, coeffs, newDimension);
 
   if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
+}
+
+template<typename KernelType, typename KernelRule>
+template<typename Archive>
+void KernelPCA<KernelType, KernelRule>::serialize(
+    Archive& ar, const unsigned int /* version */)
+{
+  ar(CEREAL_NVP(kernel));
+  ar(CEREAL_NVP(centerTransformedData));
 }
 
 } // namespace mlpack

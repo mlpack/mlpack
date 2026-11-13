@@ -36,34 +36,36 @@ class NystroemKernelRule
    * @param rank Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
-  static void ApplyKernelMatrix(const arma::mat& data,
-                                arma::mat& transformedData,
-                                arma::vec& eigval,
-                                arma::mat& eigvec,
+  template<typename MatType, typename VecType>
+  static void ApplyKernelMatrix(const MatType& data,
+                                MatType& transformedData,
+                                VecType& eigval,
+                                MatType& eigvec,
                                 const size_t rank,
                                 KernelType kernel = KernelType())
   {
-    arma::mat G, v;
-    NystroemMethod<KernelType, PointSelectionPolicy> nm(data, kernel, rank);
+    MatType G, v;
+    NystroemMethod<KernelType, PointSelectionPolicy, MatType> nm(data, kernel,
+        rank);
     nm.Apply(G);
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.
-    transformedData.each_col() -= arma::mean(transformedData, 1);
+    transformedData.each_col() -= mean(transformedData, 1);
 
     // For PCA the data has to be centered, even if the data is centered. But
     // it is not guaranteed that the data, when mapped to the kernel space, is
     // also centered. Since we actually never work in the feature space we
     // cannot center the data. So, we perform a "psuedo-centering" using the
     // kernel matrix.
-    arma::colvec colMean = sum(G, 1) / G.n_rows;
+    typename GetColType<MatType>::type colMean = sum(G, 1) / G.n_rows;
     G.each_row() -= sum(G, 0) / G.n_rows;
     G.each_col() -= colMean;
     G += sum(colMean) / G.n_rows;
 
     // Eigendecompose the centered kernel matrix.
-    transformedData = arma::symmatu(transformedData);
-    if (!arma::eig_sym(eigval, eigvec, transformedData))
+    transformedData = symmatu(transformedData);
+    if (!eig_sym(eigval, eigvec, transformedData))
     {
       Log::Fatal << "Failed to construct the kernel matrix." << std::endl;
     }
@@ -74,7 +76,7 @@ class NystroemKernelRule
       eigval.swap_rows(i, (eigval.n_elem - 1) - i);
 
     // Flip the coefficients to produce the same effect.
-    eigvec = arma::fliplr(eigvec);
+    eigvec = fliplr(eigvec);
 
     transformedData = eigvec.t() * G.t();
   }

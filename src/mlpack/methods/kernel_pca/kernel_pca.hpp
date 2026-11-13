@@ -62,10 +62,11 @@ class KernelPCA
    * @param eigvec KPCA eigenvectors will be written to this matrix.
    * @param newDimension New dimension for the dataset.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval,
-             arma::mat& eigvec,
+  template<typename MatType>
+  void Apply(const MatType& data,
+             MatType& transformedData,
+             typename GetColType<MatType>::type& eigval,
+             MatType& eigvec,
              const size_t newDimension);
 
   /**
@@ -76,10 +77,11 @@ class KernelPCA
    * @param eigval KPCA eigenvalues will be written to this vector.
    * @param eigvec KPCA eigenvectors will be written to this matrix.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval,
-             arma::mat& eigvec);
+  template<typename MatType>
+  void Apply(const MatType& data,
+             MatType& transformedData,
+             typename GetColType<MatType>::type& eigval,
+             MatType& eigvec);
 
   /**
    * Apply Kernel Principal Component Analysis to the provided data set.
@@ -88,9 +90,23 @@ class KernelPCA
    * @param transformedData Matrix to output results into.
    * @param eigval KPCA eigenvalues will be written to this vector.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval);
+  template<typename MatType>
+  void Apply(const MatType& data,
+             MatType& transformedData,
+             typename GetColType<MatType>::type& eigval);
+
+  /**
+   * Apply Kernel Principal Component Analysis to the provided data set, keeping
+   * only the top `newDimension` dimensions.
+   *
+   * @param data Data matrix.
+   * @param transformedData Matrix to output results into.
+   * @param newDimensions Number of dimensions to keep.
+   */
+  template<typename MatType>
+  void Apply(const MatType& data,
+             MatType& transformedData,
+             const size_t newDimension);
 
   /**
    * Apply dimensionality reduction using Kernel Principal Component Analysis
@@ -105,23 +121,30 @@ class KernelPCA
    * @param data Data matrix.
    * @param newDimension New dimension for the dataset.
    */
-  void Apply(arma::mat& data, const size_t newDimension);
+  template<typename MatType>
+  [[deprecated("Will be removed in mlpack 5.0.0. "
+               "Use the version with 'transformedData' instead.")]]
+  void Apply(MatType& data, const size_t newDimension);
 
-  //! Get the kernel.
+  // Get the kernel.
   const KernelType& Kernel() const { return kernel; }
-  //! Modify the kernel.
+  // Modify the kernel.
   KernelType& Kernel() { return kernel; }
 
-  //! Return whether or not the transformed data is centered.
+  // Return whether or not the transformed data is centered.
   bool CenterTransformedData() const { return centerTransformedData; }
-  //! Return whether or not the transformed data is centered.
+  // Return whether or not the transformed data is centered.
   bool& CenterTransformedData() { return centerTransformedData; }
 
+  // Serialize the KernelPCA object.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
  private:
-  //! The instantiated kernel.
+  // The instantiated kernel.
   KernelType kernel;
-  //! If true, the data will be scaled (by standard deviation) when Apply() is
-  //! run.
+  // If true, the data will be scaled (by standard deviation) when Apply() is
+  // run.
   bool centerTransformedData;
 }; // class KernelPCA
 
