@@ -60,6 +60,58 @@ TEST_CASE("FullRankTest", "[NystroemMethodTest]")
 }
 
 /**
+ * Make sure that NystroemMethod works with different matrix types, using each
+ * point selection policy.
+ */
+TEMPLATE_TEST_CASE("NystroemMethodMatTypeTest", "[NystroemMethodTest]",
+    arma::mat, arma::fmat)
+{
+  using MatType = TestType;
+  using ElemType = typename MatType::elem_type;
+
+  const size_t n = 100;
+  MatType data;
+  data.randu(5, n);
+
+  GaussianKernel gk;
+
+  // Construct exact kernel matrix.
+  MatType kernel(n, n);
+  for (size_t i = 0; i < n; ++i)
+    for (size_t j = 0; j < n; ++j)
+      kernel(i, j) = gk.Evaluate(data.col(i), data.col(j));
+
+  // A full-rank approximation with OrderedSelection should be very close to the
+  // exact kernel matrix.
+  NystroemMethod<GaussianKernel, OrderedSelection, MatType> nm(data, gk, n);
+  MatType g;
+  nm.Apply(g);
+
+  REQUIRE(g.n_rows == n);
+  REQUIRE(g.n_cols == n);
+  const ElemType tolerance = std::is_same_v<ElemType, float> ? 1e-3 : 1e-7;
+  REQUIRE(arma::norm(kernel - g * g.t(), "fro") / arma::norm(kernel, "fro") <
+      tolerance);
+
+  // The other selection policies should also compile and produce output of the
+  // right size.
+  const size_t rank = 10;
+  NystroemMethod<GaussianKernel, RandomSelection, MatType> nm2(data, gk, rank);
+  MatType g2;
+  nm2.Apply(g2);
+  REQUIRE(g2.n_rows == n);
+  REQUIRE(g2.n_cols == rank);
+
+  NystroemMethod<GaussianKernel, KMeansSelection<>, MatType> nm3(data, gk,
+      rank);
+  MatType g3;
+  nm3.Apply(g3);
+  REQUIRE(g3.n_rows == n);
+  REQUIRE(g3.n_cols == rank);
+  REQUIRE(g3.is_finite());
+}
+
+/**
  * Can we accurately represent a rank-10 matrix?
  */
 TEST_CASE("Rank10Test", "[NystroemMethodTest]")

@@ -18,9 +18,9 @@
 
 namespace mlpack {
 
-template<typename KernelType, typename PointSelectionPolicy>
-NystroemMethod<KernelType, PointSelectionPolicy>::NystroemMethod(
-    const arma::mat& data,
+template<typename KernelType, typename PointSelectionPolicy, typename MatType>
+NystroemMethod<KernelType, PointSelectionPolicy, MatType>::NystroemMethod(
+    const MatType& data,
     KernelType& kernel,
     const size_t rank) :
     data(data),
@@ -28,11 +28,11 @@ NystroemMethod<KernelType, PointSelectionPolicy>::NystroemMethod(
     rank(rank)
 { }
 
-template<typename KernelType, typename PointSelectionPolicy>
-void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
-    const arma::mat* selectedData,
-    arma::mat& miniKernel,
-    arma::mat& semiKernel)
+template<typename KernelType, typename PointSelectionPolicy, typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
+    const MatType* selectedData,
+    MatType& miniKernel,
+    MatType& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
@@ -50,11 +50,11 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
   delete selectedData;
 }
 
-template<typename KernelType, typename PointSelectionPolicy>
-void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
+template<typename KernelType, typename PointSelectionPolicy, typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
     const arma::Col<size_t>& selectedPoints,
-    arma::mat& miniKernel,
-    arma::mat& semiKernel)
+    MatType& miniKernel,
+    MatType& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
@@ -74,23 +74,26 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
                                          data.col(selectedPoints(j)));
 }
 
-template<typename KernelType, typename PointSelectionPolicy>
-void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
+template<typename KernelType, typename PointSelectionPolicy, typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::Apply(
+    MatType& output)
 {
-  arma::mat miniKernel(rank, rank);
-  arma::mat semiKernel(data.n_cols, rank);
+  using VecType = typename GetColType<MatType>::type;
+
+  MatType miniKernel(rank, rank);
+  MatType semiKernel(data.n_cols, rank);
 
   GetKernelMatrix(PointSelectionPolicy::Select(data, rank), miniKernel,
                   semiKernel);
 
   // Singular value decomposition mini-kernel matrix.
-  arma::mat U, V;
-  arma::vec s;
+  MatType U, V;
+  VecType s;
   arma::svd(U, s, V, miniKernel);
 
   // Construct the output matrix.  We need to have special handling when
   // miniKernel ended up being low-rank.
-  arma::mat normalization = arma::diagmat(1.0 / sqrt(s));
+  MatType normalization = arma::diagmat(1 / sqrt(s));
   for (size_t i = 0; i < s.n_elem; ++i)
     if (std::abs(s[i]) <= 1e-20)
       normalization(i, i) = 0.0;

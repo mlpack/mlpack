@@ -23,13 +23,30 @@
 
 namespace mlpack {
 
+/**
+ * Use the Nystroem method to compute a low-rank approximation of a kernel
+ * matrix.
+ *
+ * @tparam KernelType Kernel to use for computing kernel evaluations.
+ * @tparam PointSelectionPolicy Strategy for selecting the points used to build
+ *     the approximation (e.g. KMeansSelection, RandomSelection,
+ *     OrderedSelection).  Note that when using KMeansSelection with a MatType
+ *     other than arma::mat, the given ClusteringType must use the same MatType
+ *     (e.g. KMeansSelection<KMeans<EuclideanDistance, SampleInitialization,
+ *     MaxVarianceNewCluster, NaiveKMeans, arma::fmat>>).
+ * @tparam MatType Type of matrix to use for the data and the output (e.g.
+ *     arma::mat or arma::fmat).
+ */
 template<
   typename KernelType,
-  typename PointSelectionPolicy = KMeansSelection<>
+  typename PointSelectionPolicy = KMeansSelection<>,
+  typename MatType = arma::mat
 >
 class NystroemMethod
 {
  public:
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the NystroemMethod object. The constructor here does not really do
    * anything.
@@ -38,7 +55,7 @@ class NystroemMethod
    * @param kernel Kernel to be used for computation.
    * @param rank Rank to be used for matrix approximation.
    */
-  NystroemMethod(const arma::mat& data, KernelType& kernel, const size_t rank);
+  NystroemMethod(const MatType& data, KernelType& kernel, const size_t rank);
 
   /**
    * Apply the low-rank factorization to obtain an output matrix G such that
@@ -46,7 +63,7 @@ class NystroemMethod
    *
    * @param output Matrix to store kernel approximation into.
    */
-  void Apply(arma::mat& output);
+  void Apply(MatType& output);
 
   /**
    * Construct the kernel matrix with matrix that contains the selected points.
@@ -55,9 +72,9 @@ class NystroemMethod
    * @param miniKernel to store the constructed mini-kernel matrix in.
    * @param semiKernel to store the constructed semi-kernel matrix in.
    */
-  void GetKernelMatrix(const arma::mat* data,
-                       arma::mat& miniKernel,
-                       arma::mat& semiKernel);
+  void GetKernelMatrix(const MatType* data,
+                       MatType& miniKernel,
+                       MatType& semiKernel);
 
   /**
    * Construct the kernel matrix with the selected points.
@@ -67,12 +84,12 @@ class NystroemMethod
    * @param semiKernel to store the constructed semi-kernel matrix in.
    */
   void GetKernelMatrix(const arma::Col<size_t>& selectedPoints,
-                       arma::mat& miniKernel,
-                       arma::mat& semiKernel);
+                       MatType& miniKernel,
+                       MatType& semiKernel);
 
  private:
   //! The reference dataset.
-  const arma::mat& data;
+  const MatType& data;
   //! The locally stored kernel, if it is necessary.
   KernelType& kernel;
   //! Rank used for matrix approximation.
