@@ -2480,6 +2480,44 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
 }
 
 /**
+ * An @attribute declaration without a name and a type should be rejected,
+ * instead of reading past the end of the token list.
+ */
+TEST_CASE("ARFFMissingAttributeTypeTest", "[LoadSaveTest][tiny]")
+{
+  // No name and no type.
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute" << endl;
+  f << "@data" << endl;
+  f << "1" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
+
+  // When fatal is false, LoadARFF() should fail without throwing.
+  DatasetInfo info2;
+  REQUIRE(LoadARFF("test.arff", dataset, info2, false, true) == false);
+
+  // A name but no type.
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute a numeric" << endl;
+  f << "@attribute b" << endl;
+  f << "@data" << endl;
+  f << "1, 2" << endl;
+  f.close();
+
+  DatasetInfo info3;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info3, true, true));
+
+  remove("test.arff");
+}
+
+/**
  * A test to check whether the arff loader is case insensitive to declarations:
  * @relation, @attribute, @data.
  */
