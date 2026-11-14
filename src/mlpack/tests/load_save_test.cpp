@@ -2536,8 +2536,7 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
 }
 
 /**
- * A categorical attribute with an empty set of categories should be rejected,
- * instead of crashing when the error message for an unknown category is built.
+ * A categorical attribute with an empty set of categories should be rejected.
  */
 TEST_CASE("ARFFEmptyCategoriesTest", "[LoadSaveTest][tiny]")
 {
