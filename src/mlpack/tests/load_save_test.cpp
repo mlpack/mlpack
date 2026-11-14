@@ -2480,8 +2480,7 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
 }
 
 /**
- * An @attribute declaration without a name and a type should be rejected,
- * instead of reading past the end of the token list.
+ * An @attribute declaration without a name and a type should be rejected.
  */
 TEST_CASE("ARFFMissingAttributeTypeTest", "[LoadSaveTest][tiny]")
 {
