@@ -104,7 +104,7 @@ void RunDBSCAN(util::Params& params,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (params.Has("single_mode"))
-    rs.SingleMode() = true;
+    rs.SearchStrategy() = SINGLE_TREE;
 
   // Load dataset.
   arma::mat dataset = std::move(params.Get<arma::mat>("input"));
@@ -183,7 +183,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   // Fire off naive search if needed.
   if (params.Has("naive"))
   {
-    RangeSearch<> rs(true);
+    RangeSearch<> rs(NAIVE);
     ChoosePointSelectionPolicy(params, rs);
   }
   else

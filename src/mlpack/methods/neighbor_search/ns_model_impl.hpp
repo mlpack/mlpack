@@ -473,14 +473,14 @@ const arma::mat& NSModel<SortPolicy>::Dataset() const
 
 //! Access the search mode.
 template<typename SortPolicy>
-NeighborSearchStrategy NSModel<SortPolicy>::SearchStrategy() const
+TreeSearchStrategy NSModel<SortPolicy>::SearchStrategy() const
 {
   return nSearch->SearchStrategy();
 }
 
 //! Modify the search mode.
 template<typename SortPolicy>
-NeighborSearchStrategy& NSModel<SortPolicy>::SearchStrategy()
+TreeSearchStrategy& NSModel<SortPolicy>::SearchStrategy()
 {
   return nSearch->SearchStrategy();
 }
@@ -500,7 +500,7 @@ double& NSModel<SortPolicy>::Epsilon()
 //! Initialize a model given the tree type.  (No training happens here.)
 template<typename SortPolicy>
 void NSModel<SortPolicy>::InitializeModel(
-    const NeighborSearchStrategy searchStrategy,
+    const TreeSearchStrategy searchStrategy,
     const double epsilon)
 {
   // Clear existing memory.
@@ -572,7 +572,7 @@ template<typename SortPolicy>
 void NSModel<SortPolicy>::BuildModel(
     util::Timers& timers,
     arma::mat&& referenceSet,
-    const NeighborSearchStrategy searchStrategy,
+    const TreeSearchStrategy searchStrategy,
     const double epsilon)
 {
   // Initialize random basis if necessary.
