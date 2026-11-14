@@ -119,6 +119,20 @@ bool LoadARFF(const std::string& filename,
             ++it;
           }
 
+          // A categorical attribute must have at least one category.
+          if (categories.empty())
+          {
+            std::stringstream error;
+            error << "LoadARFF(): line " << headerLines << ": categorical "
+                << "attribute has no categories.";
+            if (fatal)
+              Log::Fatal << error.str() << std::endl;
+            else
+              Log::Warn << error.str() << std::endl;
+
+            return false;
+          }
+
           categoryStrings[dimensionality - 1] = std::move(categories);
         }
       }

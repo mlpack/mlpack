@@ -2536,6 +2536,42 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
 }
 
 /**
+ * A categorical attribute with an empty set of categories should be rejected.
+ */
+TEST_CASE("ARFFEmptyCategoriesTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute a numeric" << endl;
+  f << "@attribute b {}" << endl;
+  f << "@data" << endl;
+  f << "1, x" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
+
+  // When fatal is false, LoadARFF() should fail without throwing.
+  DatasetInfo info2;
+  REQUIRE(LoadARFF("test.arff", dataset, info2, false, true) == false);
+
+  // Whitespace inside the braces is still an empty set.
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute b { }" << endl;
+  f << "@data" << endl;
+  f << "x" << endl;
+  f.close();
+
+  DatasetInfo info3;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info3, true, true));
+
+  remove("test.arff");
+}
+
+/**
  * Ensure that ARFF files with or without a trailing newline can be loaded correctly.
  */
 TEST_CASE("ARFFTrailingNewlineTest", "[LoadSaveTest][tiny]")
