@@ -66,10 +66,13 @@ class RangeSearchRules
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
    *
+   * Scores use double so the DBL_MAX traversal sentinel is not narrowed
+   * to infinity for float-valued datasets.
+   *
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    */
-  ElemType Score(const size_t queryIndex, TreeType& referenceNode);
+  double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -82,9 +85,9 @@ class RangeSearchRules
    * @param referenceNode Candidate node to be recursed into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
-  ElemType Rescore(const size_t queryIndex,
-                   TreeType& referenceNode,
-                   const ElemType oldScore) const;
+  double Rescore(const size_t queryIndex,
+                 TreeType& referenceNode,
+                 const double oldScore) const;
 
   /**
    * Get the score for recursion order.  A low score indicates priority for
@@ -94,7 +97,7 @@ class RangeSearchRules
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    */
-  ElemType Score(TreeType& queryNode, TreeType& referenceNode);
+  double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -107,9 +110,9 @@ class RangeSearchRules
    * @param referenceNode Candidate reference node to recurse into.
    * @param oldScore Old score produced by Score() (or Rescore()).
    */
-  ElemType Rescore(TreeType& queryNode,
-                   TreeType& referenceNode,
-                   const ElemType oldScore) const;
+  double Rescore(TreeType& queryNode,
+                 TreeType& referenceNode,
+                 const double oldScore) const;
 
   using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 

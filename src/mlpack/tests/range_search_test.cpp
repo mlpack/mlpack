@@ -1712,3 +1712,27 @@ TEST_CASE("MoveOperatorNaiveTest", "[RangeSearchTest]")
     }
   }
 }
+
+TEST_CASE("Float32RangeSearchUniqueNeighborsTest", "[RangeSearchTest]")
+{
+  RandomSeed(0);
+  arma::fmat points(3, 120, arma::fill::randu);
+  points.col(15) = arma::fvec({10.3f, 1.6f, 5.0f});
+  for (const bool single : {false, true})
+  {
+    RangeSearch<EuclideanDistance, arma::fmat, KDTree> search(points, false,
+        single);
+    std::vector<std::vector<size_t>> neighbors;
+    std::vector<std::vector<float>> distances;
+    search.Search(points, RangeType<float>(0.0f, 0.1f), neighbors, distances);
+    for (size_t i = 0; i < points.n_cols; ++i)
+    {
+      std::vector<size_t> expected;
+      for (size_t j = 0; j < points.n_cols; ++j)
+        if (arma::norm(points.col(i) - points.col(j)) <= 0.1f)
+          expected.push_back(j);
+      std::sort(neighbors[i].begin(), neighbors[i].end());
+      REQUIRE(neighbors[i] == expected);
+    }
+  }
+}

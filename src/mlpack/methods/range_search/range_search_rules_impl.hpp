@@ -77,7 +77,7 @@ RangeSearchRules<DistanceType, TreeType>::BaseCase(
 
 //! Single-tree scoring function.
 template<typename DistanceType, typename TreeType>
-typename RangeSearchRules<DistanceType, TreeType>::ElemType
+double
 RangeSearchRules<DistanceType, TreeType>::Score(const size_t queryIndex,
                                                 TreeType& referenceNode)
 {
@@ -138,11 +138,11 @@ RangeSearchRules<DistanceType, TreeType>::Score(const size_t queryIndex,
 
 //! Single-tree rescoring function.
 template<typename DistanceType, typename TreeType>
-typename RangeSearchRules<DistanceType, TreeType>::ElemType
+double
 RangeSearchRules<DistanceType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
-    const ElemType oldScore) const
+    const double oldScore) const
 {
   // If it wasn't pruned before, it isn't pruned now.
   return oldScore;
@@ -150,7 +150,7 @@ RangeSearchRules<DistanceType, TreeType>::Rescore(
 
 //! Dual-tree scoring function.
 template<typename DistanceType, typename TreeType>
-typename RangeSearchRules<DistanceType, TreeType>::ElemType
+double
 RangeSearchRules<DistanceType, TreeType>::Score(TreeType& queryNode,
                                                 TreeType& referenceNode)
 {
@@ -213,11 +213,11 @@ RangeSearchRules<DistanceType, TreeType>::Score(TreeType& queryNode,
 
 //! Dual-tree rescoring function.
 template<typename DistanceType, typename TreeType>
-typename RangeSearchRules<DistanceType, TreeType>::ElemType
+double
 RangeSearchRules<DistanceType, TreeType>::Rescore(
     TreeType& /* queryNode */,
     TreeType& /* referenceNode */,
-    const ElemType oldScore) const
+    const double oldScore) const
 {
   // If it wasn't pruned before, it isn't pruned now.
   return oldScore;
