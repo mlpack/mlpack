@@ -432,7 +432,9 @@ TEST_CASE("NBCResetTest", "[NBCTest]")
   nbc2.Reset();
   nbc2.Train(trainData, labels, 2);
 
-  REQUIRE(!approx_equal(nbc1.Probabilities(), nbc2.Probabilities(), "absdiff",
+  // Both datasets have the same class frequencies, even though the number of
+  // observations and the conditional distributions differ.
+  REQUIRE(approx_equal(nbc1.Probabilities(), nbc2.Probabilities(), "absdiff",
       1e-5));
   REQUIRE(!approx_equal(nbc1.Means(), nbc2.Means(), "absdiff", 1e-5));
   REQUIRE(!approx_equal(nbc1.Variances(), nbc2.Variances(), "absdiff", 1e-5));
@@ -497,4 +499,138 @@ TEMPLATE_TEST_CASE("NBCModelMatTypeTest", "[NBCTest]", float, double)
   REQUIRE(nbc.Means().n_cols == 4);
   REQUIRE(nbc.Variances().n_rows == data.n_rows);
   REQUIRE(nbc.Variances().n_cols == 4);
+}
+
+/**
+ * Splitting a dataset into batches must preserve its sufficient statistics.
+ */
+TEMPLATE_TEST_CASE("NBCBatchPartitionTest", "[NBCTest]", arma::fmat, arma::mat)
+{
+  using MatType = TestType;
+  const MatType data = {{0, 2, 4, 10, 12, 14, 1, 3, 11, 13, 20, 22},
+                       {5, 5, 5,  1,  2,  3, 5, 5,  4,  5,  6,  6}};
+  const arma::Row<size_t> labels = {0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 2, 2};
+  const double epsilon = 0.25;
+  const NaiveBayesClassifier<MatType> expected(data, labels, 4, false, epsilon);
+
+  for (size_t split = 1; split < data.n_cols; ++split)
+  {
+    for (const bool incremental : {false, true})
+    {
+      NaiveBayesClassifier<MatType> nbc(data.cols(0, split - 1),
+          labels.cols(0, split - 1), 4, incremental, epsilon);
+      nbc.Train(data.cols(split, data.n_cols - 1),
+          labels.cols(split, data.n_cols - 1), 4);
+
+      REQUIRE(nbc.TrainingPoints() == data.n_cols);
+      REQUIRE(approx_equal(nbc.Probabilities(), expected.Probabilities(),
+          "absdiff", 1e-6));
+      REQUIRE(approx_equal(nbc.Means(), expected.Means(),
+          "absdiff", 1e-5));
+      REQUIRE(approx_equal(nbc.Variances(), expected.Variances(),
+          "absdiff", 1e-5));
+
+      arma::Row<size_t> predictions, expectedPredictions;
+      MatType probabilities, expectedProbabilities;
+      nbc.Classify(data, predictions, probabilities);
+      expected.Classify(data, expectedPredictions, expectedProbabilities);
+      REQUIRE(arma::all(predictions == expectedPredictions));
+      REQUIRE(approx_equal(probabilities, expectedProbabilities,
+          "absdiff", 1e-5));
+    }
+  }
+}
+
+/**
+ * Batch and point updates must use the same regularized variance convention.
+ */
+TEMPLATE_TEST_CASE("NBCMixedIncrementalTest", "[NBCTest]",
+    arma::fmat, arma::mat)
+{
+  using MatType = TestType;
+  const MatType data = {{0, 2, 4, 10, 12, 14, 1, 3, 11, 13},
+                       {5, 5, 5,  1,  2,  3, 5, 5,  4,  5}};
+  const arma::Row<size_t> labels = {0, 0, 0, 1, 1, 1, 0, 0, 1, 1};
+  const double epsilon = 0.25;
+  NaiveBayesClassifier<MatType> nbc(data.n_rows, 3, epsilon);
+
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    if (i % 2 == 0)
+      nbc.Train(data.col(i), labels[i]);
+    else
+      nbc.Train(data.cols(i, i), labels.cols(i, i), 3);
+
+    const NaiveBayesClassifier<MatType> expected(data.cols(0, i),
+        labels.cols(0, i), 3, false, epsilon);
+    REQUIRE(nbc.TrainingPoints() == i + 1);
+    REQUIRE(approx_equal(nbc.Probabilities(), expected.Probabilities(),
+        "absdiff", 1e-6));
+    REQUIRE(approx_equal(nbc.Means(), expected.Means(), "absdiff", 1e-5));
+    REQUIRE(approx_equal(nbc.Variances(), expected.Variances(),
+        "absdiff", 1e-5));
+  }
+
+  // An empty incremental batch is a no-op, including for regularization.
+  const MatType variances = nbc.Variances();
+  nbc.Train(MatType(data.n_rows, 0), arma::Row<size_t>(), 3);
+  REQUIRE(nbc.TrainingPoints() == data.n_cols);
+  REQUIRE(approx_equal(nbc.Variances(), variances, "absdiff", 0.0));
+  REQUIRE(arma::accu(nbc.Probabilities()) == Approx(1.0));
+}
+
+/**
+ * Non-incremental training must replace, rather than accumulate, sample counts.
+ */
+TEMPLATE_TEST_CASE("NBCRetrainThenIncrementTest", "[NBCTest]",
+    arma::fmat, arma::mat)
+{
+  using MatType = TestType;
+  const MatType data = {{0, 2, 4, 10, 12, 14}, {5, 5, 5, 1, 2, 3}};
+  const arma::Row<size_t> labels = {0, 0, 0, 1, 1, 1};
+  NaiveBayesClassifier<MatType> nbc(data, labels, 2);
+  nbc.Train(data.cols(0, 3), labels.cols(0, 3), 2, false);
+  REQUIRE(nbc.TrainingPoints() == 4);
+  nbc.Train(data.cols(4, 5), labels.cols(4, 5), 2);
+  const NaiveBayesClassifier<MatType> expected(data, labels, 2);
+  REQUIRE(nbc.TrainingPoints() == data.n_cols);
+  REQUIRE(approx_equal(nbc.Probabilities(), expected.Probabilities(),
+      "absdiff", 1e-6));
+  REQUIRE(approx_equal(nbc.Means(), expected.Means(), "absdiff", 1e-5));
+  REQUIRE(approx_equal(nbc.Variances(), expected.Variances(), "absdiff", 1e-5));
+}
+
+/**
+ * Resizing must preserve epsilon, and incremental training must not replace it.
+ */
+TEMPLATE_TEST_CASE("NBCIncrementalEpsilonTest", "[NBCTest]",
+    arma::fmat, arma::mat)
+{
+  using MatType = TestType;
+  const MatType data = {{2, 2, 2, 4, 4, 4}, {5, 5, 5, 6, 6, 6}};
+  const arma::Row<size_t> labels = {0, 0, 0, 1, 1, 1};
+  NaiveBayesClassifier<MatType> nbc(0, 0, 0.25);
+  nbc.Train(data.cols(0, 2), labels.cols(0, 2), 2);
+  // As documented, epsilon is ignored for incremental updates.
+  nbc.Train(data.cols(3, 5), labels.cols(3, 5), 2, true, 0.5);
+  REQUIRE(approx_equal(nbc.Variances(), MatType(2, 2, arma::fill::value(0.25)),
+      "absdiff", 1e-6));
+}
+
+/**
+ * Rebatching must not change a prediction near a class decision boundary.
+ */
+TEST_CASE("NBCIncrementalPredictionTest", "[NBCTest]")
+{
+  const arma::mat data = {{0, 2, 4, 10, 12, 14}};
+  const arma::Row<size_t> labels = {0, 0, 0, 1, 1, 1};
+  NaiveBayesClassifier<> nbc;
+  nbc.Train(data.cols(0, 2), labels.cols(0, 2), 2);
+  nbc.Train(data.cols(3, 5), labels.cols(3, 5), 2);
+  size_t prediction;
+  arma::vec probabilities;
+  nbc.Classify(arma::vec({6.5}), prediction, probabilities);
+  REQUIRE(prediction == 0);
+  REQUIRE(probabilities[0] == Approx(0.7772998612));
+  REQUIRE(arma::accu(probabilities) == Approx(1.0));
 }

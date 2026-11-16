@@ -92,11 +92,24 @@ void NaiveBayesClassifier<ModelMatType>::Train(
   {
     // Do we need to resize the model?
     if (probabilities.n_elem != numClasses || data.n_rows != means.n_rows)
-      Reset(data.n_rows, numClasses);
+      Reset(data.n_rows, numClasses, epsilon);
 
-    // Use incremental algorithm.
-    // Fist, de-normalize probabilities.
+    // An empty batch must not change an existing model.
+    if (data.n_cols == 0)
+      return;
+
+    // Recover class counts and unnormalized sums of squared deviations.
     probabilities *= trainingPoints;
+    for (size_t i = 0; i < probabilities.n_elem; ++i)
+    {
+      if (probabilities[i] > 1)
+      {
+        variances.col(i) = (variances.col(i) - epsilon) *
+            (probabilities[i] - 1);
+      }
+      else
+        variances.col(i).zeros();
+    }
 
     for (size_t j = 0; j < data.n_cols; ++j)
     {
@@ -110,13 +123,14 @@ void NaiveBayesClassifier<ModelMatType>::Train(
 
     for (size_t i = 0; i < probabilities.n_elem; ++i)
     {
-      if (probabilities[i] > 2)
+      if (probabilities[i] > 1)
         variances.col(i) /= (probabilities[i] - 1);
     }
   }
   else
   {
-    // Set all parameters to zero.
+    // Non-incremental training replaces all previous observations.
+    trainingPoints = 0;
     probabilities.zeros(numClasses);
     means.zeros(data.n_rows, numClasses);
     variances.zeros(data.n_rows, numClasses);
@@ -156,8 +170,9 @@ void NaiveBayesClassifier<ModelMatType>::Train(
   // Add epsilon to prevent log of zero.
   variances += epsilon;
 
-  probabilities /= data.n_cols;
   trainingPoints += data.n_cols;
+  if (trainingPoints != 0)
+    probabilities /= trainingPoints;
 }
 
 template<typename ModelMatType>
@@ -169,7 +184,9 @@ void NaiveBayesClassifier<ModelMatType>::Train(
     const bool incremental,
     const double epsilon)
 {
-  this->epsilon = epsilon;
+  // Incremental updates must keep the existing variance regularization.
+  if (!incremental)
+    this->epsilon = epsilon;
   Train(data, labels, numClasses, incremental);
 }
 
@@ -197,11 +214,20 @@ void NaiveBayesClassifier<ModelMatType>::Train(const VecType& point,
 
   arma::Col<ElemType> delta = point - means.col(label);
   means.col(label) += delta / probabilities[label];
-  if (probabilities[label] > 2)
-    variances.col(label) *= (probabilities[label] - 2);
-  variances.col(label) += (delta % (point - means.col(label)));
+  // Remove regularization before updating the sum of squared deviations,
+  // then restore it after normalizing the new sample variance.
   if (probabilities[label] > 1)
-    variances.col(label) /= probabilities[label] - 1;
+  {
+    const ElemType oldScale = (probabilities[label] > 2) ?
+        probabilities[label] - 2 : 0;
+    variances.col(label) = ((variances.col(label) - epsilon) * oldScale +
+        delta % (point - means.col(label))) / (probabilities[label] - 1) +
+        epsilon;
+  }
+  else
+  {
+    variances.col(label).fill(epsilon);
+  }
 
   trainingPoints++;
   probabilities /= trainingPoints;
