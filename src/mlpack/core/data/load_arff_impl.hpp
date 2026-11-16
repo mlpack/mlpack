@@ -191,13 +191,10 @@ bool LoadARFF(const std::string& filename,
   // We need to find out how many lines of data are in the file.
   std::streampos pos = ifs.tellg();
   size_t row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     ++row;
   }
-  // Uncount the EOF row.
-  --row;
 
   // Since we've hit the EOF, we have to call clear() so we can seek again.
   ifs.clear();
@@ -211,9 +208,8 @@ bool LoadARFF(const std::string& filename,
 
   // Now we are looking at the @data section.
   row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     Trim(line);
     // Each line of the @data section must be a CSV (except sparse data, which
     // we will handle later).  So now we can tokenize the

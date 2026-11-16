@@ -25,6 +25,7 @@ option(ENABLE_HTTPLIB "Enable httplib support with mlpack." OFF)
 option(DISABLE_HTTPLIB "Disable httplib support with mlpack." OFF)
 option(DISABLE_REMOTE_DATASET_CACHE "Disable caching of downloaded datasets." OFF)
 set(REMOTE_DATASET_CACHE_DIR "" CACHE STRING "Override the directory where cached datasets are stored.")
+option(ENABLE_ZLIB "Enable zlib (gzip) support for dataset loading." OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -285,6 +286,15 @@ if (DISABLE_REMOTE_DATASET_CACHE)
   set(MLPACK_DISABLE_REMOTE_DATASET_CACHE ON)
 endif ()
 
+if (ENABLE_ZLIB)
+  find_package(ZLIB REQUIRED)
+  if (ZLIB_FOUND)
+    set(USE_ZLIB ON)
+    set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
+  endif ()
+endif ()
+
 if (REMOTE_DATASET_CACHE_DIR)
   set(MLPACK_REMOTE_DATASET_CACHE_DIR "${REMOTE_DATASET_CACHE_DIR}")
 endif ()
@@ -415,6 +425,11 @@ endif()
 if (DISABLE_HTTPLIB)
   string(REGEX REPLACE "// #define MLPACK_DISABLE_HTTPLIB\n"
       "#define MLPACK_DISABLE_HTTPLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
+endif()
+
+if (USE_ZLIB)
+  string(REGEX REPLACE "// #define MLPACK_USE_ZLIB\n"
+      "#define MLPACK_USE_ZLIB\n" CONFIG_CONTENTS "${CONFIG_CONTENTS}")
 endif()
 
 if (DISABLE_REMOTE_DATASET_CACHE)

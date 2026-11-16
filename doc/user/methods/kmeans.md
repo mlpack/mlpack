@@ -143,7 +143,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
    - Clustering will continue for up to `maxIterations` iterations, or until the
      cluster distortion (see notes below) drops below `1e-5`.
 
- * `km.Cluster(data.k, assignments, centroids, initialAssignmentGuess=false, initialCentroidGuess=false)`
+ * `km.Cluster(data, k, assignments, centroids, initialAssignmentGuess=false, initialCentroidGuess=false)`
    - Cluster the given data into `k` clusters, storing point assignments into
      the given `assignments` vector, and computed centroids into the `centroids`
      matrix.
@@ -394,30 +394,34 @@ KMeans<DistanceType,
    [`EuclideanDistance`](../core/distances.md#lmetric)).
 
  * [`InitialPartitionPolicy`](#initialpartitionpolicy) is the strategy to use to
-   assign points to clusters before the first iteration (if no initial guess is
-   provided).  The default is `SampleInitialization`, which takes `k` random
-   points from the dataset as initial centroids.
+   set initial cluster assignments before the first iteration.  (It is not used
+   if an initial guess is provided to [`Cluster()`](#clustering).)  The default
+   is `SampleInitialization`, which takes `k` random points from the dataset as
+   initial centroids.
    - mlpack also provides `KMeansPlusPlusInitialization`, `RefinedStart`, and
      `RandomPartition`; see the
      [`InitialPartitionPolicy`](#initialpartitionpolicy) documentation for
      details.
 
- * [`EmptyClusterPolicy`](#emptyclusterpolicy) is the strategy to use when, at
-   the end of an iteration, a cluster has no points assigned to it.  The default
-   is `MaxVarianceNewCluster`, which finds the point furthest from the centroid
+ * [`EmptyClusterPolicy`](#emptyclusterpolicy) defines the action to perform
+   when a cluster is empty at the end of an iteration.  The default is
+   `MaxVarianceNewCluster`, which finds the point furthest from the centroid
    with maximum variance, and sets the centroid of the empty cluster to that
    point.
    - mlpack also provides `KillEmptyClusters` and `AllowEmptyClusters`; see the
      [`EmptyClusterPolicy`](#emptyclusterpolicy) documentation for details.
 
- * [`LloydStepType`](#lloydsteptype) is the strategy used to actually compute
-   the centroids and assignments during the iteration, and this is what should
-   be modified to use an accelerated variant of k-means.  The default is
-   `NaiveKMeans`, which is the standard algorithmic strategy from the original
-   paper.
+ * [`LloydStepType`](#lloydsteptype) is the strategy used to compute centroid
+   updates each iterations.  This template parameter should be modified when an
+   accelerated variant of k-means is desired.  The default is `NaiveKMeans`,
+   which is the standard algorithmic strategy from the original paper.
    - mlpack also provides `ElkanKMeans`, `PellegMooreKMeans`, `HamerlyKMeans`,
      and `DualTreeKMeans`; see the [`LloydStepType`](#lloydsteptype)
      documentation for details.
+   - *Note:* different strategies, even with the same initializations, compute
+     centroids differently and thus can, in rare situations, produce different
+     clusterings due to
+     [floating-point inaccuracies](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 
 ---
 
@@ -601,6 +605,10 @@ class CustomEmptyClusterPolicy
 
  * Specifies the strategy to be used during iteration to recompute the point
    assignments and centroids.
+   - *Note:* different strategies, even with the same initializations, compute
+     centroids differently and thus can, in rare situations, produce different
+     clusterings due to
+     [floating-point inaccuracies](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 
  * `NaiveKMeans` (the default) is the standard k-means algorithm implementation,
    and recomputes assignments by finding the closest centroid of each point with

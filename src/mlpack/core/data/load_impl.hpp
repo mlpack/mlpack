@@ -88,6 +88,9 @@ bool Load(const std::string& src,
     filename = src;
   }
 
+  // If the file has a .gz extension, decompress it to a temporary file first.
+  DecompressGzipIfNeeded(filename);
+
   success = OpenFile(filename, opts, true, stream);
   if (!success)
   {

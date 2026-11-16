@@ -98,11 +98,11 @@ class KMeansPlusPlusInitialization
         distribution[j] += distribution[j - 1];
 
       // Sample a point...
-      const double sampleValue = Random();
-      const double* elem = std::lower_bound(distribution.begin(),
+      const ElemType sampleValue = Random();
+      const ElemType* elem = std::lower_bound(distribution.begin(),
           distribution.end(), sampleValue);
       const size_t position = (size_t)
-          (elem - distribution.begin()) / sizeof(double);
+          (elem - distribution.begin()) / sizeof(ElemType);
       centroids.col(i) = data.col(position);
     }
   }

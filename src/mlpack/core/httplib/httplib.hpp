@@ -18,6 +18,10 @@
   #define CPPHTTPLIB_OPENSSL_SUPPORT
 #endif
 
+#ifdef MLPACK_USE_ZLIB
+  #define CPPHTTPLIB_ZLIB_SUPPORT
+#endif
+
 #if defined(MLPACK_USE_SYSTEM_HTTPLIB)
 #if defined __has_include
   #if __has_include(<httplib.h>)

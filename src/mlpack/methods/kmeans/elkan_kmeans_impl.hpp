@@ -152,7 +152,7 @@ double ElkanKMeans<DistanceType, MatType, CentroidsType>::Iterate(
       // At this point, we know the new cluster assignment.
       // Step 4: for each center c, let m(c) be the mean of the points
       // assigned to c.
-      newCentroids.col(assignments[i]) += arma::vec(dataset.col(i));
+      newCentroids.col(assignments[i]) += dataset.col(i);
       counts[assignments[i]]++;
     }
   }
