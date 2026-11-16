@@ -54,6 +54,9 @@ Group points into clusters.
 
  * [`DBSCAN`](methods/dbscan.md): clustering with the density-based DBSCAN
    algorithm; supports noisy data
+ * [`EMeans`](methods/e_means.md): `k`-means clustering with mini-batch
+   exponential moving averages; usually needs far fewer passes than Lloyd's
+   algorithm
  * [`MeanShift`](methods/mean_shift.md): clustering with the density-based mean
    shift algorithm
 

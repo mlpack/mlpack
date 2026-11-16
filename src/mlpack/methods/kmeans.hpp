@@ -12,5 +12,6 @@
 #define MLPACK_KMEANS_HPP
 
 #include "kmeans/kmeans.hpp"
+#include "kmeans/e_means.hpp"
 
 #endif

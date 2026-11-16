@@ -4,6 +4,10 @@
 
 _????-??-??_
 
+ * Add `EMeans`, mini-batch `k`-means with exponential moving averages
+   (Bessa et al., 2026), ported from the reference implementation in Faiss
+   (#4279).
+
  * Add support for caching downloaded datasets to `Load()` (#4103).
 
  * Templetize Scalar methods to allow using float types (#4229).

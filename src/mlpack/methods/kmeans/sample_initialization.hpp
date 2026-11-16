@@ -33,10 +33,10 @@ class SampleInitialization
    * @param clusters Number of clusters.
    * @param centroids Matrix to put initial centroids into.
    */
-  template<typename MatType>
+  template<typename MatType, typename CentroidsType>
   inline static void Cluster(const MatType& data,
                              const size_t clusters,
-                             arma::mat& centroids)
+                             CentroidsType& centroids)
   {
     centroids.set_size(data.n_rows, clusters);
     for (size_t i = 0; i < clusters; ++i)
