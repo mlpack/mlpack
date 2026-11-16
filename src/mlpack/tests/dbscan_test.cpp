@@ -364,3 +364,45 @@ TEST_CASE("NoiseConnectionTest", "[DBSCANTest]")
 
   REQUIRE(numClusters == 2);
 }
+
+TEST_CASE("RandomPointSelectionConnectedCoreChainTest", "[DBSCANTest]")
+{
+  // Every point is density-connected, but a single neighborhood does not
+  // contain the entire cluster.  Discovering a neighbor must not prevent
+  // that neighbor from later being expanded.
+  arma::mat points(1, 7);
+  points.row(0) = arma::rowvec({0.0, 0.1, 0.2, 1.0, 1.1, 1.2, 2.0});
+  for (const bool batch : {false, true})
+  {
+    for (size_t seed = 0; seed < 50; ++seed)
+    {
+      RandomSeed(seed);
+      DBSCAN<RangeSearch<>, RandomPointSelection> dbscan(0.95, 3, batch);
+      arma::Row<size_t> labels;
+      REQUIRE(dbscan.Cluster(points, labels) == 1);
+      REQUIRE(arma::all(labels == labels[0]));
+      REQUIRE(labels[0] != SIZE_MAX);
+    }
+  }
+}
+
+TEST_CASE("SharedBorderPointsDoNotDiscardCoreClusterTest", "[DBSCANTest]")
+{
+  // The first two points are core points, but are not neighbors.  Each has
+  // the same three border neighbors; these are not neighbors of each other.
+  // A valid cluster can therefore be assigned fewer than minPoints members.
+  arma::mat points({{-0.6, 0.6, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.79, -0.395, -0.395},
+                    {0.0, 0.0, 0.0, 0.684, -0.684}});
+  for (const bool batch : {false, true})
+  {
+    DBSCAN<> dbscan(1.0, 4, batch);
+    arma::Row<size_t> labels;
+    REQUIRE(dbscan.Cluster(points, labels) == 2);
+    REQUIRE(labels[0] != SIZE_MAX);
+    REQUIRE(labels[1] != SIZE_MAX);
+    REQUIRE(labels[0] != labels[1]);
+    for (size_t i = 2; i < points.n_cols; ++i)
+      REQUIRE(labels[i] != SIZE_MAX);
+  }
+}

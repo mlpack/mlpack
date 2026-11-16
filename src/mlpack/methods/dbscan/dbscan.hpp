@@ -166,8 +166,10 @@ class DBSCAN
    * @param data Dataset to cluster.
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
+   * @param core Marks points whose neighborhoods satisfy minPoints.
    */
-  void PointwiseCluster(const MatType& data, UnionFind& uf);
+  void PointwiseCluster(const MatType& data, UnionFind& uf,
+      std::vector<bool>& core);
 
   /**
    * Performs DBSCAN clustering on the data, returning number of clusters and
@@ -177,8 +179,10 @@ class DBSCAN
    * @param data Dataset to cluster.
    * @param assignments Assignments for each point.
    * @param uf UnionFind structure that will be modified.
+   * @param core Marks points whose neighborhoods satisfy minPoints.
    */
-  void BatchCluster(const MatType& data, UnionFind& uf);
+  void BatchCluster(const MatType& data, UnionFind& uf,
+      std::vector<bool>& core);
 };
 
 } // namespace mlpack

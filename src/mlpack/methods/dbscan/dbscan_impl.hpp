@@ -100,28 +100,31 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
   UnionFind uf(data.n_cols);
   rangeSearch.Train(data);
 
+  std::vector<bool> core(data.n_cols, false);
   if (batchMode)
-    BatchCluster(data, uf);
+    BatchCluster(data, uf, core);
   else
-    PointwiseCluster(data, uf);
+    PointwiseCluster(data, uf, core);
 
   // Now set assignments.
   assignments.set_size(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
     assignments[i] = uf.Find(i);
 
-  // Get a count of all clusters.
+  // Retain components containing a core point, even if shared border points
+  // were assigned to a different component.
   const size_t numClusters = max(assignments) + 1;
-  arma::Col<size_t> counts(numClusters);
+  std::vector<bool> hasCore(numClusters, false);
   for (size_t i = 0; i < assignments.n_elem; ++i)
-    counts[assignments[i]]++;
+    if (core[i])
+      hasCore[assignments[i]] = true;
 
   // Now assign clusters to new indices.
   size_t currentCluster = 0;
   arma::Col<size_t> newAssignments(numClusters);
-  for (size_t i = 0; i < counts.n_elem; ++i)
+  for (size_t i = 0; i < numClusters; ++i)
   {
-    if (counts[i] >= minPoints)
+    if (hasCore[i])
       newAssignments[i] = currentCluster++;
     else
       newAssignments[i] = SIZE_MAX;
@@ -145,7 +148,8 @@ size_t DBSCAN<RangeSearchType, PointSelectionPolicy>::Cluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     const MatType& data,
-    UnionFind& uf)
+    UnionFind& uf,
+    std::vector<bool>& core)
 {
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
@@ -161,12 +165,10 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
   // the first core point cluster that encounters them; if they are not included
   // by anything, they are labeled as noise.
   //
-  // We maintain a list of non-core points so that we can handle that logic
-  // correctly.
-
+  // Selection tracks expansion, not discovery: every point must be checked
+  // once, including neighbors discovered by an earlier core point.
   std::vector<bool> visited(data.n_cols, false);
-  std::vector<bool> nonCorePoints(data.n_cols, false);
-  std::vector<bool> everVisited(data.n_cols, false);
+  std::vector<bool> assigned(data.n_cols, false);
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -174,9 +176,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
       Log::Info << "DBSCAN clustering on point " << i << "..." << std::endl;
 
     // Get the next index.
-    const size_t index = pointSelector.Select(i, everVisited, data);
+    const size_t index = pointSelector.Select(i, visited, data);
     visited[index] = true;
-    everVisited[index] = true;
 
     // Do the range search for only this point.
     rangeSearch.Search(data.col(index),
@@ -188,19 +189,19 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
     // unioning).
     if (neighbors[0].size() >= minPoints)
     {
+      core[index] = true;
       for (size_t j = 0; j < neighbors[0].size(); ++j)
       {
-        everVisited[neighbors[0][j]] = true;
-
         // Union to all neighbors that either do not have a label, or are core
         // points of other clusters.  (When we union to another core point, we
         // are merging clusters.)
-        if (uf.Find(neighbors[0][j]) == neighbors[0][j])
+        if (!assigned[neighbors[0][j]])
         {
           // This unions unlabeled points.
           uf.Union(index, neighbors[0][j]);
+          assigned[index] = assigned[neighbors[0][j]] = true;
         }
-        else if (!nonCorePoints[neighbors[0][j]] && visited[neighbors[0][j]])
+        else if (core[neighbors[0][j]])
         {
           // This unions core points of other clusters.  Note that we only union
           // with other clusters that have already been visited---this is
@@ -210,11 +211,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
           uf.Union(index, neighbors[0][j]);
         }
       }
-    }
-    else
-    {
-      // This is not a core point---it does not have enough neighbors.
-      nonCorePoints[index] = true;
     }
   }
 }
@@ -227,7 +223,8 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::PointwiseCluster(
 template<typename RangeSearchType, typename PointSelectionPolicy>
 void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     const MatType& data,
-    UnionFind& uf)
+    UnionFind& uf,
+    std::vector<bool>& core)
 {
   // For each point, find the points in radius-neighborhood and their
   // distances.
@@ -246,6 +243,7 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   // auxiliary std::vector<bool> for that.  We do need a std::vector<bool> to
   // track which points have ever been visited for the point selector, though.
   std::vector<bool> visited(data.n_cols, false);
+  std::vector<bool> assigned(data.n_cols, false);
 
   // Now loop over all points.
   for (size_t i = 0; i < data.n_cols; ++i)
@@ -258,14 +256,14 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
     // neighbor, so we are looking for `minPoints - 1` instead.
     if (neighbors[index].size() >= minPoints - 1)
     {
+      core[index] = true;
       for (size_t j = 0; j < neighbors[index].size(); ++j)
       {
-        visited[neighbors[index][j]] = true;
-
-        if (uf.Find(neighbors[index][j]) == neighbors[index][j])
+        if (!assigned[neighbors[index][j]])
         {
           // This unions unlabeled points.
           uf.Union(index, neighbors[index][j]);
+          assigned[index] = assigned[neighbors[index][j]] = true;
         }
         else if (neighbors[neighbors[index][j]].size() >= (minPoints - 1))
         {
