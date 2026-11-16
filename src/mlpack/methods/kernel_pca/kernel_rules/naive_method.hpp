@@ -10,14 +10,13 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
-#define MLPACK_METHODS_KERNEL_PCA_NAIVE_METHOD_HPP
+#ifndef MLPACK_METHODS_KERNEL_PCA_KERNEL_RULES_NAIVE_METHOD_HPP
+#define MLPACK_METHODS_KERNEL_PCA_KERNEL_RULES_NAIVE_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 
-template<typename KernelType>
 class NaiveKernelRule
 {
  public:
@@ -31,13 +30,12 @@ class NaiveKernelRule
    * @param * (rank) Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
-  template<typename MatType, typename VecType>
+  template<typename MatType, typename VecType, typename KernelType>
   static void ApplyKernelMatrix(const MatType& data,
                                 MatType& transformedData,
                                 VecType& eigval,
                                 MatType& eigvec,
-                                const size_t /* rank */,
-                                KernelType kernel = KernelType())
+                                KernelType kernel)
   {
     // Construct the kernel matrix.
     MatType kernelMatrix(data.n_cols, data.n_cols, GetFillType<MatType>::none);;
@@ -50,15 +48,12 @@ class NaiveKernelRule
       for (size_t j = i; j < data.n_cols; ++j)
       {
         // Evaluate the kernel on these two points.
-        kernelMatrix(i, j) = kernel.Evaluate(data.unsafe_col(i),
-                                             data.unsafe_col(j));
+        kernelMatrix(i, j) = kernel.Evaluate(data.col(i), data.col(j));
       }
     }
 
     // Copy to the lower triangular part of the matrix.
-    for (size_t i = 1; i < data.n_cols; ++i)
-      for (size_t j = 0; j < i; ++j)
-        kernelMatrix(i, j) = kernelMatrix(j, i);
+    kernelMatrix = symmatu(kernelMatrix);
 
     // For PCA the data has to be centered, even if the data is centered. But it
     // is not guaranteed that the data, when mapped to the kernel space, is also
@@ -89,6 +84,10 @@ class NaiveKernelRule
     transformedData = eigvec.t() * kernelMatrix;
     transformedData.each_col() /= sqrt(eigval);
   }
+
+  // Serialize the object (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace mlpack

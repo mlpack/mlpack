@@ -36,7 +36,7 @@ namespace mlpack {
  */
 template <
   typename KernelType,
-  typename KernelRule = NaiveKernelRule<KernelType>
+  typename KernelRule = NaiveKernelRule
 >
 class KernelPCA
 {
@@ -51,7 +51,8 @@ class KernelPCA
    * @param centerTransformedData Center transformed data.
    */
   KernelPCA(const KernelType kernel = KernelType(),
-            const bool centerTransformedData = false);
+            const bool centerTransformedData = false,
+            const KernelRule rule = KernelRule());
 
   /**
    * Apply Kernel Principal Components Analysis to the provided data set.
@@ -146,6 +147,9 @@ class KernelPCA
   // If true, the data will be scaled (by standard deviation) when Apply() is
   // run.
   bool centerTransformedData;
+  // The instantiated kernel matrix computation rule.
+  KernelRule rule;
+
 }; // class KernelPCA
 
 } // namespace mlpack

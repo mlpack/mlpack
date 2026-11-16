@@ -22,9 +22,11 @@ namespace mlpack {
 template<typename KernelType, typename KernelRule>
 KernelPCA<KernelType, KernelRule>::KernelPCA(
     const KernelType kernel,
-    const bool centerTransformedData) :
+    const bool centerTransformedData,
+    const KernelRule rule) :
     kernel(kernel),
-    centerTransformedData(centerTransformedData)
+    centerTransformedData(centerTransformedData),
+    rule(rule)
 { }
 
 // Apply Kernel Principal Component Analysis to the provided data set.
@@ -37,8 +39,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(
     MatType& eigvec,
     const size_t newDimension)
 {
-  KernelRule::ApplyKernelMatrix(data, transformedData, eigval,
-                                eigvec, newDimension, kernel);
+  rule.ApplyKernelMatrix(data, transformedData, eigval, eigvec, kernel);
 
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
@@ -48,6 +49,10 @@ void KernelPCA<KernelType, KernelRule>::Apply(
     transformedData = transformedData - (transformedDataMean *
         ones<typename GetRowType<MatType>::type>(transformedData.n_cols));
   }
+
+  // Drop extra dimensions.
+  if (newDimension < transformedData.n_rows && newDimension > 0)
+    transformedData.shed_rows(newDimension, transformedData.n_rows - 1);
 }
 
 // Apply Kernel Principal Component Analysis to the provided data set.
@@ -86,9 +91,6 @@ void KernelPCA<KernelType, KernelRule>::Apply(
   typename GetColType<MatType>::type eigVal;
 
   Apply(data, transformedData, eigVal, coeffs, newDimension);
-
-  if (newDimension < coeffs.n_rows && newDimension > 0)
-    transformedData.shed_rows(newDimension, data.n_rows - 1);
 }
 
 // Use KPCA for dimensionality reduction.
@@ -102,9 +104,6 @@ void KernelPCA<KernelType, KernelRule>::Apply(
   typename GetColType<MatType>::type eigVal;
 
   Apply(data, data, eigVal, coeffs, newDimension);
-
-  if (newDimension < coeffs.n_rows && newDimension > 0)
-    data.shed_rows(newDimension, data.n_rows - 1);
 }
 
 template<typename KernelType, typename KernelRule>
@@ -114,6 +113,7 @@ void KernelPCA<KernelType, KernelRule>::serialize(
 {
   ar(CEREAL_NVP(kernel));
   ar(CEREAL_NVP(centerTransformedData));
+  ar(CEREAL_NVP(rule));
 }
 
 } // namespace mlpack

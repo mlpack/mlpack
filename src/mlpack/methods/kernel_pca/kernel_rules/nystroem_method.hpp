@@ -10,8 +10,8 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 
-#ifndef MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
-#define MLPACK_METHODS_KERNEL_PCA_NYSTROEM_METHOD_HPP
+#ifndef MLPACK_METHODS_KERNEL_PCA_KERNEL_RULES_NYSTROEM_METHOD_HPP
+#define MLPACK_METHODS_KERNEL_PCA_KERNEL_RULES_NYSTROEM_METHOD_HPP
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/nystroem_method/kmeans_selection.hpp>
@@ -20,12 +20,47 @@
 namespace mlpack {
 
 template<
-  typename KernelType,
   typename PointSelectionPolicy = KMeansSelection<>
 >
 class NystroemKernelRule
 {
  public:
+  /**
+   * Construct the NystroemKernelRule object, using the given percentage of the
+   * dataset size as the number of samples.
+   */
+  template<typename T = double>
+  NystroemKernelRule(
+      const T datasetPctIn = T(0.1),
+      const typename std::enable_if_t<std::is_floating_point_v<T>>* = 0) :
+      numPoints(0),
+      datasetPct(double(datasetPctIn)),
+      usingNumPoints(false)
+  {
+    if (datasetPct <= 0.0)
+    {
+      throw std::invalid_argument("NystroemKernelRule::NystroemKernelRule(): "
+          "dataset percentage must be greater than 0!");
+    }
+    else if (datasetPct > 1.0)
+    {
+      throw std::invalid_argument("NystroemKernelRule::NystroemKernelRule(): "
+          "dataset percentage must be less than or equal to 1!");
+    }
+  }
+
+  /*
+   * Construct the NystroemKernelRule object, using `numPoints` points to sample
+   * the dataset.
+   */
+  template<typename T>
+  NystroemKernelRule(
+      const T numPoints,
+      const typename std::enable_if_t<std::is_integral_v<T>>* = 0) :
+      numPoints(numPoints),
+      datasetPct(0.0),
+      usingNumPoints(true) { }
+
   /**
    * Construct the kernel matrix approximation using the nystroem method.
    *
@@ -36,17 +71,20 @@ class NystroemKernelRule
    * @param rank Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
-  template<typename MatType, typename VecType>
-  static void ApplyKernelMatrix(const MatType& data,
-                                MatType& transformedData,
-                                VecType& eigval,
-                                MatType& eigvec,
-                                const size_t rank,
-                                KernelType kernel = KernelType())
+  template<typename MatType, typename VecType, typename KernelType>
+  void ApplyKernelMatrix(const MatType& data,
+                         MatType& transformedData,
+                         VecType& eigval,
+                         MatType& eigvec,
+                         KernelType kernel = KernelType())
   {
+    const size_t points = usingNumPoints ?
+        std::min(numPoints, size_t(data.n_cols)) :
+        size_t(datasetPct * data.n_cols);
+
     MatType G, v;
     NystroemMethod<KernelType, PointSelectionPolicy, MatType> nm(data, kernel,
-        rank);
+        points);
     nm.Apply(G);
     transformedData = G.t() * G;
 
@@ -80,6 +118,23 @@ class NystroemKernelRule
 
     transformedData = eigvec.t() * G.t();
   }
+
+  // Serialize the NystroemKernelRule.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar(CEREAL_NVP(numPoints));
+    ar(CEREAL_NVP(datasetPct));
+    ar(CEREAL_NVP(usingNumPoints));
+  }
+
+ private:
+  // The number of points to use from the dataset.
+  size_t numPoints;
+  // The percentage of the dataset to use as the sample.
+  double datasetPct;
+  // Whether we are using the number of points or dataset percentage.
+  bool usingNumPoints;
 };
 
 } // namespace mlpack

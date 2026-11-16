@@ -141,20 +141,20 @@ void RunKPCA(arma::mat& dataset,
     // Make sure the sampling scheme is valid.
     if (sampling == "kmeans")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          KMeansSelection<> > > kpca(kernel, centerTransformedData);
+      KernelPCA<KernelType, NystroemKernelRule<KMeansSelection<>>>
+          kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDataset, newDim);
     }
     else if (sampling == "random")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          RandomSelection> > kpca(kernel, centerTransformedData);
+      KernelPCA<KernelType, NystroemKernelRule<RandomSelection>>
+          kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDataset, newDim);
     }
     else if (sampling == "ordered")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType,
-          OrderedSelection> > kpca(kernel, centerTransformedData);
+      KernelPCA<KernelType, NystroemKernelRule<OrderedSelection>>
+          kpca(kernel, centerTransformedData);
       kpca.Apply(dataset, newDataset, newDim);
     }
     else

@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE("CircleTransformationTestNystroem", "[KernelPCATest][tiny]",
 
   // Now we have a dataset; we will use the GaussianKernel to perform KernelPCA
   // using the nytroem method to take it down to one dimension.
-  KernelPCA<GaussianKernel, NystroemKernelRule<GaussianKernel> > p;
+  KernelPCA<GaussianKernel, NystroemKernelRule<>> p;
   arma::Mat<eT> transformedDataset;
   p.Apply(dataset, transformedDataset, 1);
 
