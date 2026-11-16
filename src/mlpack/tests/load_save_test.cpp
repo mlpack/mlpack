@@ -3518,7 +3518,6 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 }
 
 #ifndef MLPACK_DISABLE_HTTPLIB
-#ifdef MLPACK_ENABLE_HTTPLIB
 
 TEST_CASE("URLTests", "[LoadSaveTest]")
 {
@@ -3721,7 +3720,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
+  REQUIRE(Load("https://datasets.mlpack.org/iris_centroids.csv",
         dataset, Fatal + Transpose) == true);
 }
 
@@ -3729,7 +3728,7 @@ TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
 {
   arma::mat dataset;
   TextOptions opts = Fatal + Categorical;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+  REQUIRE(Load("https://datasets.mlpack.org/iris.arff",
         dataset, opts) == true);
 }
 
@@ -3740,7 +3739,6 @@ TEST_CASE("DownLoad404File", "[LoadSaveTest]")
         dataset, Fatal + Transpose), std::runtime_error);
 }
 
-#endif
 #endif
 
 #endif
@@ -3818,6 +3816,8 @@ TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
 
   remove("test.csv");
 }
+
+#ifndef MLPACK_DISABLE_DR_LIBS
 
 //
 // The audio files below are published under the CC-0 license.
@@ -4625,7 +4625,9 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
   remove("test_roundtrip.wav");
 }
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#endif // MLPACK_DISABLE_DR_LIBS
+
+#ifndef MLPACK_DISABLE_HTTPLIB
 
 /**
  * Test that DownloadFile() downloads a file to a user-specified destination.
