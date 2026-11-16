@@ -70,11 +70,10 @@ class EigenvalueRatioConstraint
           << std::endl;
     }
 
-    // Change the eigenvalues to what we are forcing them to be.  There
-    // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we
-    // are suddenly forcing them to be positive.  If the first eigenvalue is
-    // negative, well, there are going to be some problems later...
-    eigenvalues = (eigenvalues[0] * ratios);
+    // eig_sym() orders eigenvalues from smallest to largest, but ratios are
+    // relative to the largest eigenvalue and start with 1.  Keep the largest
+    // eigenvalue and match each ratio to the corresponding principal axis.
+    eigenvalues = eigenvalues[eigenvalues.n_elem - 1] * arma::reverse(ratios);
 
     // Reassemble the matrix.
     covariance = eigenvectors * arma::diagmat(eigenvalues) * eigenvectors.t();
@@ -87,13 +86,11 @@ class EigenvalueRatioConstraint
   void ApplyConstraint(arma::vec& diagCovariance) const
   {
     // The matrix is already eigendecomposed but we need to sort the elements.
-    arma::uvec eigvalOrder = arma::sort_index(diagCovariance);
+    arma::uvec eigvalOrder = arma::sort_index(diagCovariance, "descend");
     arma::vec eigvals = diagCovariance(eigvalOrder);
 
-    // Change the eigenvalues to what we are forcing them to be.  There
-    // shouldn't be any negative eigenvalues anyway, so it doesn't matter if we
-    // are suddenly forcing them to be positive.  If the first eigenvalue is
-    // negative, well, there are going to be some problems later...
+    // Ratios are relative to the largest eigenvalue.  Since eigvalOrder is
+    // descending, each ratio applies to the matching principal axis.
     eigvals = eigvals[0] * ratios;
 
     // Reassemble the matrix.

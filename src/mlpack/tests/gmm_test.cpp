@@ -648,24 +648,51 @@ TEST_CASE("DiagonalConstraintTest", "[GMMTest]")
 
 TEST_CASE("EigenvalueRatioConstraintTest", "[GMMTest]")
 {
-  // Generate a list of eigenvalue ratios.
   arma::vec ratios("1.0 0.7 0.4 0.2 0.1 0.1 0.05 0.01");
   EigenvalueRatioConstraint erc(ratios);
 
-  // Now make some random matrices and see if the constraint works.
+  // Covariance matrices are positive semidefinite.  Retain the largest
+  // eigenvalue and the association between eigenvalues and principal axes.
   for (size_t i = 0; i < 30; ++i)
   {
-    arma::mat cov(8, 8);
-    cov.randu();
+    arma::mat cov = arma::randn<arma::mat>(8, 8);
+    cov = cov * cov.t();
+    arma::vec originalEigenvalues;
+    arma::mat eigenvectors;
+    arma::eig_sym(originalEigenvalues, eigenvectors, cov);
+    const double largest = originalEigenvalues.max();
+    arma::mat expected = eigenvectors *
+        arma::diagmat(largest * arma::reverse(ratios)) * eigenvectors.t();
 
     erc.ApplyConstraint(cov);
+    REQUIRE(arma::norm(cov - expected, "fro") < 1e-10 * largest);
 
-    // Decompose the matrix and make sure things are right.
-    arma::vec eigenvalues = arma::eig_sym(cov);
+    // Applying the same constraint to an already constrained covariance must
+    // not shrink it again or exchange its principal axes.
+    erc.ApplyConstraint(cov);
+    REQUIRE(arma::norm(cov - expected, "fro") < 1e-10 * largest);
+  }
+}
 
-    for (size_t i = 0; i < eigenvalues.n_elem; ++i)
-      REQUIRE(eigenvalues[i] / eigenvalues[0] ==
-          Approx(ratios[i]).epsilon(1e-7));
+TEST_CASE("EigenvalueRatioConstraintDiagonalTest", "[GMMTest]")
+{
+  arma::vec ratios("1.0 0.5 0.1");
+  EigenvalueRatioConstraint erc(ratios);
+  for (const double scale : { 1e-12, 1.0, 1e12 })
+  {
+    // Use an unsorted diagonal to ensure that the constraint keeps the
+    // association with the original coordinates.
+    arma::vec diagonal = scale * arma::vec("4.0 9.0 1.0");
+    arma::mat covariance = arma::diagmat(diagonal);
+    arma::vec expected = scale * arma::vec("4.5 9.0 0.9");
+    erc.ApplyConstraint(diagonal);
+    erc.ApplyConstraint(covariance);
+    REQUIRE(arma::norm(diagonal - expected) < 1e-10 * scale);
+    REQUIRE(arma::norm(covariance - arma::diagmat(expected), "fro") <
+        1e-10 * scale);
+
+    erc.ApplyConstraint(diagonal);
+    REQUIRE(arma::norm(diagonal - expected) < 1e-10 * scale);
   }
 }
 
