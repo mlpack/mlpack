@@ -83,9 +83,9 @@ class NystroemKernelRule
         size_t(datasetPct * data.n_cols);
 
     MatType G, v;
-    NystroemMethod<KernelType, PointSelectionPolicy, MatType> nm(data, kernel,
-        points);
-    nm.Apply(G);
+    NystroemMethod<KernelType, PointSelectionPolicy, MatType> nm(points,
+        kernel);
+    nm.Apply(data, G);
     transformedData = G.t() * G;
 
     // Center the reconstructed approximation.

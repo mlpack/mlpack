@@ -18,21 +18,40 @@
 
 namespace mlpack {
 
-template<typename KernelType, typename PointSelectionPolicy, typename MatType>
-NystroemMethod<KernelType, PointSelectionPolicy, MatType>::NystroemMethod(
-    const MatType& data,
-    KernelType& kernel,
-    const size_t rank) :
-    data(data),
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::
+NystroemMethod(const DeprecatedMatType& data,
+               KernelType& kernel,
+               const size_t rank) :
+    deprecatedData(&data),
     kernel(kernel),
     rank(rank)
 { }
 
-template<typename KernelType, typename PointSelectionPolicy, typename MatType>
-void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
-    const MatType& selectedData,
-    MatType& miniKernel,
-    MatType& semiKernel)
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::
+NystroemMethod(const size_t rank,
+               KernelType kernel,
+               PointSelectionPolicy pointSelector) :
+    deprecatedData(NULL),
+    kernel(std::move(kernel)),
+    pointSelector(std::move(pointSelector)),
+    rank(rank)
+{ }
+
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+template<typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::
+GetKernelMatrix(const MatType& data,
+                const MatType& selectedData,
+                MatType& miniKernel,
+                MatType& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
@@ -44,15 +63,18 @@ void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
   // all points.
   for (size_t i = 0; i < data.n_cols; ++i)
     for (size_t j = 0; j < rank; ++j)
-      semiKernel(i, j) = kernel.Evaluate(data.col(i),
-                                         selectedData.col(j));
+      semiKernel(i, j) = kernel.Evaluate(data.col(i), selectedData.col(j));
 }
 
-template<typename KernelType, typename PointSelectionPolicy, typename MatType>
-void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
-    const arma::Col<size_t>& selectedPoints,
-    MatType& miniKernel,
-    MatType& semiKernel)
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+template<typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::
+GetKernelMatrix(const MatType& data,
+                const arma::Col<size_t>& selectedPoints,
+                MatType& miniKernel,
+                MatType& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
@@ -72,15 +94,35 @@ void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::GetKernelMatrix(
                                          data.col(selectedPoints(j)));
 }
 
-template<typename KernelType, typename PointSelectionPolicy, typename MatType>
-void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::Apply(
-    MatType& output)
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::Apply(
+    DeprecatedMatType& output)
+{
+  if (deprecatedData != NULL)
+  {
+    Apply(*deprecatedData, output);
+  }
+  else
+  {
+    throw std::invalid_argument("NystroemMethod::Apply(): cannot call "
+        "deprecated Apply() without having called deprecated constructor!");
+  }
+}
+
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+template<typename MatType>
+void NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::Apply(
+    const MatType& data, MatType& output)
 {
   MatType miniKernel(rank, rank);
   MatType semiKernel(data.n_cols, rank);
 
-  GetKernelMatrix(PointSelectionPolicy::Select(data, rank), miniKernel,
-                  semiKernel);
+  GetKernelMatrix(data, pointSelector.Select(data, rank), miniKernel,
+      semiKernel);
 
   // Singular value decomposition mini-kernel matrix.
   MatType U, V;
@@ -95,6 +137,18 @@ void NystroemMethod<KernelType, PointSelectionPolicy, MatType>::Apply(
       normalization(i, i) = 0.0;
 
   output = semiKernel * U * normalization * V;
+}
+
+template<typename KernelType,
+         typename PointSelectionPolicy,
+         typename DeprecatedMatType>
+template<typename Archive>
+void NystroemMethod<KernelType, PointSelectionPolicy, DeprecatedMatType>::
+serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar(CEREAL_NVP(kernel));
+  ar(CEREAL_NVP(pointSelector));
+  ar(CEREAL_NVP(rank));
 }
 
 } // namespace mlpack

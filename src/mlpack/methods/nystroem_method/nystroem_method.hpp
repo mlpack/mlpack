@@ -26,7 +26,8 @@ namespace mlpack {
 template<
   typename KernelType,
   typename PointSelectionPolicy = KMeansSelection<>,
-  typename MatType = arma::mat
+  // This parameter will be removed in mlpack 5.0.0!
+  typename DeprecatedMatType = arma::mat
 >
 class NystroemMethod
 {
@@ -39,7 +40,25 @@ class NystroemMethod
    * @param kernel Kernel to be used for computation.
    * @param rank Rank to be used for matrix approximation.
    */
-  NystroemMethod(const MatType& data, KernelType& kernel, const size_t rank);
+  [[deprecated("Will be removed in mlpack 5.0.0; use constructor that does not "
+               "take data as a parameter instead, then pass the data to "
+               "Apply().")]]
+  NystroemMethod(const DeprecatedMatType& data,
+                 KernelType& kernel,
+                 const size_t rank);
+
+  /**
+   * Create the NystroemMethod object with the given kernel, rank, and point
+   * selection policy.
+   *
+   * @param rank Rank to be used for matrix approximation.
+   * @param kernel Kernel to be used for computation.
+   * @param pointSelector Optional instantiated object to use for point
+   *     selection.
+   */
+  NystroemMethod(const size_t rank,
+                 KernelType kernel = KernelType(),
+                 PointSelectionPolicy pointSelector = PointSelectionPolicy());
 
   /**
    * Apply the low-rank factorization to obtain an output matrix G such that
@@ -47,35 +66,58 @@ class NystroemMethod
    *
    * @param output Matrix to store kernel approximation into.
    */
-  void Apply(MatType& output);
+  [[deprecated("Will be removed in mlpack 5.0.0; use other Apply() overload.")]]
+  void Apply(DeprecatedMatType& output);
+
+  /**
+   * Apply the low-rank factorization to obtain an output matrix G such that
+   * K' = G * G^T.
+   *
+   * @param data Matrix of data points.
+   * @param output Matrix to store kernel approximation into.
+   */
+  template<typename MatType>
+  void Apply(const MatType& data, MatType& output);
 
   /**
    * Construct the kernel matrix with matrix that contains the selected points.
    *
-   * @param data Data matrix pointer.
+   * @param data Full data matrix.
+   * @param selectedData Data matrix of points selected for the sample.
    * @param miniKernel to store the constructed mini-kernel matrix in.
    * @param semiKernel to store the constructed semi-kernel matrix in.
    */
+  template<typename MatType>
   void GetKernelMatrix(const MatType& data,
+                       const MatType& selectedData,
                        MatType& miniKernel,
                        MatType& semiKernel);
 
   /**
    * Construct the kernel matrix with the selected points.
    *
+   * @param data Full data matrix.
    * @param selectedPoints Indices of selected points.
    * @param miniKernel to store the constructed mini-kernel matrix in.
    * @param semiKernel to store the constructed semi-kernel matrix in.
    */
-  void GetKernelMatrix(const arma::Col<size_t>& selectedPoints,
+  template<typename MatType>
+  void GetKernelMatrix(const MatType& data,
+                       const arma::Col<size_t>& selectedPoints,
                        MatType& miniKernel,
                        MatType& semiKernel);
 
+  // Serialize the object.
+  template<typename Archive>
+  void serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   // The reference dataset.
-  const MatType& data;
+  const DeprecatedMatType* deprecatedData;
   // The locally stored kernel, if it is necessary.
-  KernelType& kernel;
+  KernelType kernel;
+  // Instantiated policy for point selection.
+  PointSelectionPolicy pointSelector;
   // Rank used for matrix approximation.
   const size_t rank;
 };

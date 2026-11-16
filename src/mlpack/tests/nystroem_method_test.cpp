@@ -31,10 +31,10 @@ TEST_CASE("FullRankTest", "[NystroemMethodTest]")
     data.randu(5, trial * 200);
 
     GaussianKernel gk;
-    NystroemMethod<GaussianKernel, OrderedSelection> nm(data, gk, trial * 200);
+    NystroemMethod<GaussianKernel, OrderedSelection> nm(trial * 200, gk);
 
     arma::mat g;
-    nm.Apply(g);
+    nm.Apply(data, g);
 
     // Construct exact kernel matrix.
     arma::mat kernel(trial * 200, trial * 200);
@@ -95,10 +95,10 @@ TEST_CASE("Rank10Test", "[NystroemMethodTest]")
       while (true)
       {
         LinearKernel lk;
-        NystroemMethod<LinearKernel, RandomSelection> nm(dataMod, lk, 10);
+        NystroemMethod<LinearKernel, RandomSelection> nm(10, lk);
 
         arma::mat g;
-        nm.Apply(g);
+        nm.Apply(dataMod, g);
 
         arma::mat approximation = g * g.t();
 
@@ -164,10 +164,10 @@ TEST_CASE("GermanTest", "[NystroemMethodTest][long]")
     double avgError = 0.0;
     for (size_t z = 1; z < 6; ++z)
     {
-      NystroemMethod<GaussianKernel, KMeansSelection<> > nm(dataset, gk,
-          size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols));
+      NystroemMethod<GaussianKernel, KMeansSelection<> > nm(
+          size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols), gk);
       arma::mat g;
-      nm.Apply(g);
+      nm.Apply(dataset, g);
 
       // Reconstruct kernel matrix.
       arma::mat approximation = g * g.t();
