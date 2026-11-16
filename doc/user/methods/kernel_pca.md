@@ -45,8 +45,9 @@ std::cout << "Bounding box of new data: [["
  * [Constructors](#constructors): create `KernelPCA` objects.
  * [`Apply()`](#applying-transformations): apply kernel PCA transformation to
    data.
- * [Examples](#simple-examples) of simple usage and links to detailed example
-   projects.
+ * [Other functionality](#other-functionality) for loading, saving, and
+   inspecting.
+ * [Examples](#simple-examples) of simple usage.
  * [Template parameters](#advanced-functionality-different-kernel-rules) for
    using different approximation strategies.
  * [Advanced examples](#advances-examples) that use the Nystroem method to
@@ -292,7 +293,8 @@ custom bandwidth, and using 32-bit floating point values to represent the data.
 
 ```c++
 arma::fmat data;
-mlpack::Load("http://datasets.mlpack.org/satellite.csv", data, mlpack::Fatal);
+mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", data,
+    mlpack::Fatal);
 
 // Create a KernelPCA object with the LaplacianKernel, then modify its
 // bandwidth.
@@ -456,6 +458,7 @@ mlpack::Load("http://datasets.mlpack.org/cloud.csv", data, mlpack::Fatal);
 // Use the Nystroem method with default parameters to approximate the kernel
 // matrix.
 mlpack::KernelPCA<mlpack::GaussianKernel, mlpack::NystroemKernelRule<> > kpca;
+kpca.Kernel().Bandwidth(250.0);
 
 arma::mat transformedData;
 kpca.Apply(data, transformedData, 3 /* dimensions */);

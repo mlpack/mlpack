@@ -52,7 +52,11 @@ void KernelPCA<KernelType, KernelRule>::Apply(
 
   // Drop extra dimensions.
   if (newDimension < transformedData.n_rows && newDimension > 0)
+  {
+    eigval.shed_rows(newDimension, transformedData.n_rows - 1);
+    eigvec.shed_cols(newDimension, transformedData.n_rows - 1);
     transformedData.shed_rows(newDimension, transformedData.n_rows - 1);
+  }
 }
 
 // Apply Kernel Principal Component Analysis to the provided data set.
