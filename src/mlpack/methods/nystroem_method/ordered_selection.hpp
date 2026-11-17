@@ -35,6 +35,10 @@ class OrderedSelection
     // This generates [0 1 2 3 ... (m - 1)].
     return arma::linspace<arma::Col<size_t> >(0, m - 1, m);
   }
+
+  // Serialize the object (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace mlpack

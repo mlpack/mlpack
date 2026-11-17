@@ -56,7 +56,7 @@ class NystroemMethod
    * @param pointSelector Optional instantiated object to use for point
    *     selection.
    */
-  NystroemMethod(const size_t rank,
+  NystroemMethod(const size_t rank = 100,
                  KernelType kernel = KernelType(),
                  PointSelectionPolicy pointSelector = PointSelectionPolicy());
 
@@ -107,6 +107,21 @@ class NystroemMethod
                        MatType& miniKernel,
                        MatType& semiKernel);
 
+  // Get the number of samples used for approximation.
+  size_t Samples() const { return rank; }
+  // Set the number of samples to use for approximation.
+  void Samples(const size_t newSamples) { rank = newSamples; }
+
+  // Get the kernel object.
+  const KernelType& Kernel() const { return kernel; }
+  // Modify the kernel object.
+  KernelType& Kernel() { return kernel; }
+
+  // Get the point selection policy.
+  const PointSelectionPolicy& PointSelector() const { return pointSelector; }
+  // Modify the point selection policy.
+  PointSelectionPolicy& PointSelector() { return pointSelector; }
+
   // Serialize the object.
   template<typename Archive>
   void serialize(Archive& ar, const unsigned int /* version */);
@@ -119,7 +134,7 @@ class NystroemMethod
   // Instantiated policy for point selection.
   PointSelectionPolicy pointSelector;
   // Rank used for matrix approximation.
-  const size_t rank;
+  size_t rank;
 };
 
 } // namespace mlpack

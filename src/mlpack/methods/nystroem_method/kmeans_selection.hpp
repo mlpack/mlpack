@@ -48,6 +48,10 @@ class KMeansSelection
 
     return centroids;
   }
+
+  // Serialize the object (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace mlpack

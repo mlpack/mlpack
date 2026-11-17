@@ -1117,25 +1117,48 @@ std::cout << "Bounding box of new data: [["
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `KernelType` | [kernel class](../core/kernels.md) | Template parameter specifying which kernel to use for kernel PCA. | _(N/A)_ |
+| `KernelRule` | [kernel rule class](#advanced-functionality-different-kernel-rules) | Template parameter specifying the strategy to use for computing the kernel matrix. | [`NaiveKernelRule`](#advanced-functionality-different-kernel-rules) |
 |----------|----------|-----------------|-------------|
 | `kernel` | [`KernelType`](../core/kernels.md) | Instantiated kernel object to use when applying kernel PCA. | `KernelType()` |
-| `centerTransformedData` | `bool` | If `true`, then transformed data will be centered around the origin such that `mean(X)` is the origin. | `false` |
+| `centerTransformedData` | `bool` | If `true`, then transformed data will be centered around the origin such that `mean(transformedData)` is the origin. | `false` |
 | `rule` | [`KernelRule`](#advanced-functionality-different-kernel-rules) | Instantiated strategy to use to compute or approximate the kernel matrix. | `KernelRule()` |
 
 ***Notes:***
 
  * Selecting the correct `KernelType` depends strongly on the data.  A decent
    default is the [`GaussianKernel`](../core/kernels.md#gaussiankernel),
-   although its bandwidth needs to be tuned to the data.  But---depending on the
-   distribution and shape of the data, different kernels may yield extremely
-   different results---so [`GaussianKernel`](../core/kernels.md) may not always
-   be the best.
+   although its bandwidth needs to be tuned to the data.  But
+   [`GaussianKernel`](../core/kernels.md#gaussiankernel) may not always be the
+   best: depending on the distribution and shape of the data, different kernels
+   may yield extremely different results.
 
  * If [`LinearKernel`](../core/kernels.md#linearkernel) is used, then kernel PCA
    is equivalent to regular PCA and the [`PCA`](pca.md) class can be used
    instead for more efficient results.
 
 ### Applying transformations
+
+ * `k,Apply(data, transformedData, newDimension)`
+   - Apply kernel PCA to `data`, keeping only the top `newDimension`
+     kernel eigendimensions.
+   - The resulting transformed data is stored in `transformedData`, and will
+     have size `newDimension` x `data.n_cols`.
+
+ * `k.Apply(data, transformedData, eigval, eigvec, newDimension)`
+   - Apply kernel PCA to the given `data`, keeping only the top `newDimension`
+     kernel eigendimensions.
+   - The resulting transformed data is stored in `transformedData`, and will
+     have size `newDimension` x `data.n_cols`.
+   - The top `newDimension` eigenvalues of the kernel matrix are stored
+     descending order in the `eigval` vector, which will be set to length
+     `newDimension`.
+   - The top `newDimension` kernel eigenvectors associated with each kernel
+     eigenvalue are stored in the matrix `eigvec`, which will be set to size
+     `newDimension` x `data.n_cols`.
+   - The `i`th kernel eigenvector can be obtained with `eigvec.col(i)` and its
+     corresponding kernel eigenvalue is `eigval[i]`.
+
+---
 
  * `k.Apply(data, transformedData, eigval)`
    - Apply kernel PCA to the given `data`, storing the result in
@@ -1160,35 +1183,15 @@ std::cout << "Bounding box of new data: [["
      that takes a `newDimension` parameter, which results in a much smaller
      transformed data matrix.
 
- * `k.Apply(data, transformedData, eigval, eigvec, newDimension)`
-   - Apply kernel PCA to the given `data`, keeping only the top `newDimension`
-     kernel eigendimensions.
-   - The resulting transformed data is stored in `transformedData`, and will
-     have size `newDimension` x `data.n_cols`.
-   - The top `newDimension` eigenvalues of the kernel matrix are stored
-     descending order in the `eigval` vector, which will be set to length
-     `newDimension`.
-   - The top `newDimension` kernel eigenvectors associated with each kernel
-     eigenvalue are stored in the matrix `eigvec`, which will be set to size
-     `newDimension` x `data.n_cols`.
-   - The `i`th kernel eigenvector can be obtained with `eigvec.col(i)` and its
-     corresponding kernel eigenvalue is `eigval[i]`.
-
- * `k,Apply(data, newDimension)`
-   - Apply kernel PCA in-place to `data`, keeping only the top `newDimension`
-     kernel eigendimensions.
-   - When finished, `data` will be set to size `newDimension` x `data.n_cols`.
-
 #### `Apply()` Parameters:
 
 | **name** | **type** | **description** |
 |-----------|----------|----------|-----------------|
 | `data` | [`arma::mat`](../matrices.md) | Input dataset to perform kernel PCA on. |
 | `transformedData` | [`arma::mat`](../matrices.md) | Matrix to store transformed data into; will be filled with data of size `data.n_cols` x `data.n_cols`, or `newDimension` x `data.n_cols` if `newDimension` was specified. |
-| `eigval` | [`arma::vec&`](../matrices.md) | Vector to store kernel eigenvalues
-into (in descending order). |
-| `eigvec` | [`arma::mat&`](../matrices.md) | Matrix to store kernel eigenvectors into. |
 | `newDimension` | `size_t` | Desired new dimensionality of data (e.g. number of kernel eigenvectors to keep). |
+| `eigval` | [`arma::vec&`](../matrices.md) | Vector to store kernel eigenvalues into (in descending order). |
+| `eigvec` | [`arma::mat&`](../matrices.md) | Matrix to store kernel eigenvectors into. |
 
 ***Notes:***
 
@@ -1201,7 +1204,7 @@ into (in descending order). |
  * Different element types can be used for `data` (e.g. `arma::fmat` or any
    dense matrix type implementing the Armadillo API).  If a different type is
    used for `data`, then the types of `transformedData`, `eigval`, and `eigvec`
-   will match the given element type.  For example, if `data` is `arma::fmat`,
+   must match the given element type.  For example, if `data` is `arma::fmat`,
    then `transformedData` and `eigvec` must have type `arma::fmat`, and `eigval`
    must have type `arma::fvec`.
 
@@ -1209,7 +1212,7 @@ into (in descending order). |
 
  * `k.Kernel()` returns the `KernelType` that will be used for computing the
    kernel matrix.  If a `KernelType` was passed to the
-   [constructor](#constructors), this is the same object.
+   [constructor](#constructors), this is a copy of that object.
 
  * `k.CenterTransformedData()` returns a `bool` indicating whether or not the
    transformed data will be centered about the origin;
@@ -1310,18 +1313,31 @@ for (size_t i = 0; i < 3; ++i)
 
 ---
 
-Perform kernel PCA on the satellite dataset using the Laplacian kernel with a
-custom bandwidth, and using 32-bit floating point values to represent the data.
+Create a kernel PCA object and save it to disk for later usage.
+
+```c++
+mlpack::KernelPCA<mlpack::LaplacianKernel> kpca;
+kpca.Kernel().Bandwidth(50.0);
+
+// Save the object to `kpca.bin`.
+mlpack::Save("kpca.bin", kpca, mlpack::Fatal);
+```
+
+---
+
+Load a kernel PCA object from disk and perform kernel PCA on the satellite
+dataset using the Laplacian kernel with a custom bandwidth, using 32-bit
+floating point values to represent the data.
 
 ```c++
 arma::fmat data;
 mlpack::Load("http://datasets.mlpack.org/satellite.train.csv", data,
     mlpack::Fatal);
 
-// Create a KernelPCA object with the LaplacianKernel, then modify its
-// bandwidth.
+// Load a KernelPCA object from disk.  `kpca.bin` is expected to contain a
+// KernelPCA object with a LaplacianKernel that has a bandwidth of 50.
 mlpack::KernelPCA<mlpack::LaplacianKernel> kpca;
-kpca.Kernel().Bandwidth(50.0);
+mlpack::Load("kpca.bin", kpca, mlpack::Fatal);
 
 // Compute kernel PCA, keeping the top 3 dimensions and their eigenvalues and
 // eigenvectors.
@@ -1431,7 +1447,8 @@ configured as a constructor parameter.
  * `NystroemKernelRule<KMeansSelection<>>` or `NystroemKernelRule<>` can be used
    to compute samples as centroids of a few iterations of [`KMeans`](kmeans.md)
    clustering.
-    - The `KMeansSelection<>` class has two template parameters:
+    - The [`KMeansSelection<>`](nystroem_method.md#kmeansselection) class has
+      two optional template parameters:
       `KMeansSelection<KMeansType, numIterations>`.
     - `KMeansType` can be any templated version of the [`KMeans`](kmeans.md)
       class.
@@ -1439,13 +1456,17 @@ configured as a constructor parameter.
       to run.
 
  * `NystroemKernelRule<RandomSelection>` will select points randomly from the
-   dataset.
+   dataset.  (See also the
+   [`RandomSelection`](nystroem_method.md#randomselection) documentation.)
 
  * `NystroemKernelRule<OrderedSelection>` will select the first points from the
-   dataset.
+   dataset.  (See also the
+   [`OrderedSelection`](nystroem_method.md#orderedselection) documentation.)
 
  * A custom selection strategy can be implemented; the requirements are
-   described in the [`NystroemMethod`](nystroem_method.md) documentation.
+   described in the
+   [`NystroemMethod`](nystroem_method.md#custom-pointselectionpolicy-classes)
+   documentation.
 
 ---
 
