@@ -33,7 +33,7 @@ mlpack provides:
  * [`MeanShift`](../methods/mean_shift.md)
  * [`KernelPCA`](../methods/kernel_pca.md)
  * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
- * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
+ * [`NystroemMethod`](../methods/nystroem_method.md)
 
 ## `GaussianKernel`
 
