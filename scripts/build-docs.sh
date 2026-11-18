@@ -145,6 +145,7 @@ run_kramdown()
   # Replace any links to source files with a link to the current version of the
   # source file on Github.
   sed -i 's/\](\/src\/\([^ ]*\)\.hpp)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1.hpp)/' $input_file.tmp;
+  sed -i 's/\](\/.jenkins\/\([^ ]*\)\](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1)/' $input_file.tmp;
 
   # If this is binding documentation or quickstart documentation, don't set the
   # default language to C++.
