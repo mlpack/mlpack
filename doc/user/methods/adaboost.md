@@ -3,7 +3,7 @@
 The `AdaBoost` class implements the 'adaptive boosting' classifier AdaBoost.MH.
 This classifier is an ensemble of weak learners.  The `AdaBoost` class offers
 control over the weak learners and other behavior via template parameters.  By
-default, the `Perceptron` class is used as a weak learner.
+default, the [`Perceptron`](perceptron.md) class is used as a weak learner.
 
 `AdaBoost` is useful for classifying points with _discrete labels_ (i.e. `0`,
 `1`, `2`).
@@ -73,8 +73,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
    - Train model with custom weak learner hyperparameters.
    - Hyperparameters for the weak learner are any arguments to the weak
      learner's `Train()` function that come after `numClasses` or `weights`.
-   - The only hyperparameter for the default weak learner (`Perceptron`) is
-     `maxIterations`.
+   - The only hyperparameter for the default weak learner
+     ([`Perceptron`](perceptron.md)) is `maxIterations`.
    - See [examples of this constructor in use](#simple-examples).
 
 ---
@@ -86,7 +86,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
 | `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `weakLearner` | `Perceptron` | An initialized weak learner whose hyperparameters will be used as settings for weak learners during training. | _(N/A)_ |
+| `weakLearner` | [`Perceptron`](perceptron.md) | An initialized weak learner whose hyperparameters will be used as settings for weak learners during training. | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations of AdaBoost.MH to use.  This is the maximum number of weak learners to train.  (0 means no limit, and weak learners will be trained until the tolerance is met.) | `100` |
 | `tolerance` | `double` | When the weighted residual (`r_t`) of the model goes below `tolerance`, training will terminate and no more weak learners will be added. | `1e-6` |
 
@@ -117,8 +117,8 @@ named `ab`, the following functions for training are available:
    - Train model with custom weak learner parameters.
    - Hyperparameters for the weak learner are any arguments to the weak
      learner's `Train()` function that come after `numClasses` or `weights`.
-   - The only hyperparameter for the default weak learner (`Perceptron`) is
-     `maxIterations`.
+   - The only hyperparameter for the default weak learner
+     ([`Perceptron`](perceptron.md)) is `maxIterations`.
    - See [examples of this form in use](#simple-examples).
 
 ---
@@ -313,7 +313,8 @@ AdaBoost<WeakLearnerType, MatType>
  * The `ID3DecisionStump` class (a custom variant of
    [`DecisionTree`](decision_tree.md)) is available for drop-in usage as a weak
    learner.
- * Any custom variant of `Perceptron<>` or `DecisionTree<>` can be used; e.g.,
+ * Any custom variant of [`Perceptron<>`](perceptron.md) or
+   [`DecisionTree<>`](decision_tree.md) can be used; e.g.,
    `Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization>`.
  * A custom class must implement the following functions for training and
    classification.  Note that this is the same API as mlpack's classifiers that

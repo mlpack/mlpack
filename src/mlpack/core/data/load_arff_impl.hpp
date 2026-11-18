@@ -73,6 +73,20 @@ bool LoadARFF(const std::string& filename,
       }
       else if (annotation == "@attribute")
       {
+        // An attribute declaration must have both a name and a type.
+        if (tok.size() < 3)
+        {
+          std::stringstream error;
+          error << "LoadARFF(): line " << headerLines << ": @attribute "
+              << "declaration must specify a name and a type.";
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else
+            Log::Warn << error.str() << std::endl;
+
+          return false;
+        }
+
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
