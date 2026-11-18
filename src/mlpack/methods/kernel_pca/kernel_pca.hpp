@@ -149,7 +149,6 @@ class KernelPCA
   bool centerTransformedData;
   // The instantiated kernel matrix computation rule.
   KernelRule rule;
-
 }; // class KernelPCA
 
 } // namespace mlpack

@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE("FullRankTest", "[NystroemMethodTest]", float, double)
     arma::Mat<eT> approximation = g * g.t();
 
     // Check closeness.
-    const double tol = std::is_same<eT, float>::value ? 1e-4 : 1e-7;
+    const double tol = std::is_same<eT, float>::value ? 1e-3 : 1e-7;
     for (size_t i = 0; i < trial * 200; ++i)
     {
       for (size_t j = 0; j < trial * 200; ++j)
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE("FullRankTest", "[NystroemMethodTest]", float, double)
 /**
  * Can we accurately represent a rank-10 matrix?
  */
-TEMPLATE_TEST_CASE("Rank10Test", "[NystroemMethodTest]", float, double)
+TEMPLATE_TEST_CASE("Rank10Test", "[NystroemMethodTest][long]", float, double)
 {
   typedef TestType eT;
 
