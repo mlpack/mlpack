@@ -252,6 +252,8 @@ class LoadCSV
   std::fstream inFile;
   //! Delimiter char.
   char delim;
+  //! Position of the first data row, after any header.
+  std::streampos dataStart = 0;
 };
 
 /**

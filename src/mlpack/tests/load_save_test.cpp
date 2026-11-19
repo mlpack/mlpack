@@ -1738,6 +1738,35 @@ TEST_CASE("CategoricalCSVLoadTest00", "[LoadSaveTest][tiny]")
   remove("test.csv");
 }
 
+/**
+ * Make sure that headers are not loaded as data when loading categorical data.
+ */
+TEST_CASE("CategoricalCSVHeadersLoadTest", "[LoadSaveTest][tiny]")
+{
+  const bool noTranspose = GENERATE(false, true);
+
+  fstream f;
+  f.open("test.csv", fstream::out);
+  f << "number, color" << endl;
+  f << "10, red" << endl;
+  f << "20, blue" << endl;
+  f.close();
+
+  arma::mat matrix;
+  TextOptions opts = Categorical + HasHeaders;
+  opts.NoTranspose() = noTranspose;
+
+  REQUIRE(Load("test.csv", matrix, opts));
+
+  REQUIRE(matrix.n_rows == 2);
+  REQUIRE(matrix.n_cols == 2);
+  REQUIRE(opts.Headers().n_elem == 2);
+  REQUIRE(opts.Headers()[0] == "number");
+  REQUIRE(opts.Headers()[1] == "color");
+
+  remove("test.csv");
+}
+
 TEST_CASE("CategoricalCSVLoadTest01", "[LoadSaveTest][tiny]")
 {
   fstream f;
