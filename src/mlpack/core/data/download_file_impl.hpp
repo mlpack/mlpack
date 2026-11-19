@@ -278,11 +278,19 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
     port = 443;
   httplib::SSLClient cli(host, port);
 #else
+  if (url.rfind("https://", 0) == 0)
+  {
+    Log::Warn << "DownloadFile(): HTTPS support is not enabled; falling back "
+        << "to HTTP for '" << url << "'.  To use HTTPS, define "
+        << "MLPACK_USE_HTTPS before including mlpack and link with -lssl "
+        << "-lcrypto." << std::endl;
+  }
   if (port == -1)
     port = 80;
   httplib::Client cli(host, port);
 #endif
   cli.set_connection_timeout(2);
+  cli.set_follow_location(true);
 
   httplib::Result res = cli.Get(url);
 
@@ -290,6 +298,14 @@ inline bool DownloadFile(const std::string& url, const std::string& dest)
   {
     std::stringstream oss;
     oss << "DownloadFile(): httplib error: " << httplib::to_string(res.error());
+#ifndef MLPACK_USE_HTTPS
+    if (res.error() == httplib::Error::SSLConnection)
+    {
+      oss << ".  The server redirected '" << url << "' to HTTPS, but HTTPS "
+          << "support is not enabled; define MLPACK_USE_HTTPS before including "
+          << "mlpack and link with -lssl -lcrypto.";
+    }
+#endif
     throw std::runtime_error(oss.str());
   }
 
@@ -349,6 +365,7 @@ inline bool DownloadFileWithCache(const std::string& url,
     httplib::Client cli(host, port);
 #endif
     cli.set_connection_timeout(2);
+    cli.set_follow_location(true);
 
     // Register in cache only if the head request has succeeded.
     // If not just jump to download and do not cache the file, not enough
