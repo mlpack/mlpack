@@ -4728,6 +4728,31 @@ TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
 }
 
 /**
+ * Test that the directories of the URL are kept in the cache path.
+ */
+TEST_CASE("CacheURLSubdirectoryTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" / "images" /
+      "mlpack-favicon.png").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  std::string filename;
+  REQUIRE(DownloadFileWithCache(
+      "https://datasets.mlpack.org/images/mlpack-favicon.png", filename));
+  REQUIRE(filename == cachedFile);
+  REQUIRE(std::filesystem::exists(cachedFile));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
  * Test that GetCacheDir() creates the directory and returns a valid path.
  */
 TEST_CASE("GetCacheDirTest", "[LoadSaveTest]")
