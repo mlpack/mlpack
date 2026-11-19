@@ -42,16 +42,17 @@ struct GivesCentroids
         void(*)(const arma::mat&, const size_t, arma::mat&)>::value;
 };
 
-//! Call the initial partition policy, if it returns assignments.  This returns
-//! 'true' to indicate that assignments were given.
+// Call the initial partition policy, if it returns assignments.  This returns
+// 'true' to indicate that assignments were given.
 template<typename MatType,
+         typename DenseMatType,
          typename InitialPartitionPolicy>
 bool GetInitialAssignmentsOrCentroids(
     InitialPartitionPolicy& ipp,
     const MatType& data,
     const size_t clusters,
     arma::Row<size_t>& assignments,
-    arma::mat& /* centroids */,
+    DenseMatType& /* centroids */,
     const typename std::enable_if_t<
         !GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
@@ -60,16 +61,17 @@ bool GetInitialAssignmentsOrCentroids(
   return true;
 }
 
-//! Call the initial partition policy, if it returns centroids.  This returns
-//! 'false' to indicate that assignments were not given.
+// Call the initial partition policy, if it returns centroids.  This returns
+// 'false' to indicate that assignments were not given.
 template<typename MatType,
+         typename DenseMatType,
          typename InitialPartitionPolicy>
 bool GetInitialAssignmentsOrCentroids(
     InitialPartitionPolicy& ipp,
     const MatType& data,
     const size_t clusters,
     arma::Row<size_t>& /* assignments */,
-    arma::mat& centroids,
+    DenseMatType& centroids,
     const typename std::enable_if_t<
         GivesCentroids<InitialPartitionPolicy>::value>* = 0)
 {
@@ -84,19 +86,21 @@ bool GetInitialAssignmentsOrCentroids(
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
 KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 KMeans(const size_t maxIterations,
        const DistanceType distance,
        const InitialPartitionPolicy partitioner,
        const EmptyClusterPolicy emptyClusterAction) :
     maxIterations(maxIterations),
+    iterations(0),
+    distanceComputations(0),
     distance(distance),
     partitioner(partitioner),
     emptyClusterAction(emptyClusterAction)
@@ -113,20 +117,21 @@ KMeans(const size_t maxIterations,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
+template<typename MatType>
 inline void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Row<size_t>& assignments,
         const bool initialGuess)
 {
-  arma::mat centroids(data.n_rows, clusters);
+  typename GetDenseMatType<MatType>::type centroids(data.n_rows, clusters);
   Cluster(data, clusters, assignments, centroids, initialGuess);
 }
 
@@ -137,19 +142,22 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
+template<typename MatType>
 void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
-        arma::mat& centroids,
+        typename GetDenseMatType<MatType>::type& centroids,
         const bool initialGuess)
 {
+  typedef typename GetDenseMatType<MatType>::type DenseMatType;
+
   // Make sure we have more points than clusters.
   if (clusters > data.n_cols)
     Log::Warn << "KMeans::Cluster(): more clusters requested than points given."
@@ -185,7 +193,7 @@ Cluster(const MatType& data,
       centroids.zeros(data.n_rows, clusters);
       for (size_t i = 0; i < data.n_cols; ++i)
       {
-        centroids.col(assignments[i]) += arma::vec(data.col(i));
+        centroids.col(assignments[i]) += data.col(i);
         counts[assignments[i]]++;
       }
 
@@ -200,9 +208,9 @@ Cluster(const MatType& data,
 
   size_t iteration = 0;
 
-  LloydStepType<DistanceType, MatType> lloydStep(data, distance);
-  arma::mat centroidsOther;
-  double cNorm;
+  LloydStepType<DistanceType, MatType, DenseMatType> lloydStep(data, distance);
+  DenseMatType centroidsOther;
+  typename MatType::elem_type cNorm;
 
   do
   {
@@ -244,6 +252,7 @@ Cluster(const MatType& data,
 
   if (iteration != maxIterations)
   {
+    iterations = iteration;
     Log::Info << "KMeans::Cluster(): converged after " << iteration
         << " iterations." << std::endl;
   }
@@ -252,7 +261,8 @@ Cluster(const MatType& data,
     Log::Info << "KMeans::Cluster(): terminated after limit of " << iteration
         << " iterations." << std::endl;
   }
-  Log::Info << lloydStep.DistanceCalculations() << " distance calculations."
+  distanceComputations = lloydStep.DistanceComputations();
+  Log::Info << lloydStep.DistanceComputations() << " distance calculations."
       << std::endl;
 }
 
@@ -263,21 +273,24 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
+template<typename MatType>
 void KMeans<
     DistanceType,
     InitialPartitionPolicy,
     EmptyClusterPolicy,
     LloydStepType,
-    MatType>::
+    DeprecatedMatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Row<size_t>& assignments,
-        arma::mat& centroids,
+        typename GetDenseMatType<MatType>::type& centroids,
         const bool initialAssignmentGuess,
         const bool initialCentroidGuess)
 {
+  typedef typename MatType::elem_type ElemType;
+
   // Now, the initial assignments.  First determine if they are necessary.
   if (initialAssignmentGuess)
   {
@@ -289,7 +302,7 @@ Cluster(const MatType& data,
     centroids.zeros(data.n_rows, clusters);
     for (size_t i = 0; i < data.n_cols; ++i)
     {
-      centroids.col(assignments[i]) += arma::vec(data.col(i));
+      centroids.col(assignments[i]) += data.col(i);
       counts[assignments[i]]++;
     }
 
@@ -308,12 +321,12 @@ Cluster(const MatType& data,
   for (size_t i = 0; i < (size_t) data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
-    double minDistance = std::numeric_limits<double>::infinity();
+    ElemType minDistance = std::numeric_limits<ElemType>::infinity();
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
     for (size_t j = 0; j < centroids.n_cols; ++j)
     {
-      const double dist = distance.Evaluate(data.col(i), centroids.col(j));
+      const ElemType dist = distance.Evaluate(data.col(i), centroids.col(j));
 
       if (dist < minDistance)
       {
@@ -330,16 +343,28 @@ Cluster(const MatType& data,
 template<typename DistanceType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
-         template<class, class> class LloydStepType,
-         typename MatType>
+         template<class, class, class> class LloydStepType,
+         typename DeprecatedMatType>
 template<typename Archive>
 void KMeans<DistanceType,
             InitialPartitionPolicy,
             EmptyClusterPolicy,
             LloydStepType,
-            MatType>::serialize(Archive& ar, const uint32_t /* version */)
+            DeprecatedMatType>::serialize(Archive& ar,
+                                          const uint32_t version)
 {
   ar(CEREAL_NVP(maxIterations));
+  if (version >= 1)
+  {
+    ar(CEREAL_NVP(iterations));
+    ar(CEREAL_NVP(distanceComputations));
+  }
+  else if (Archive::is_loading::value)
+  {
+    iterations = 0;
+    distanceComputations = 0;
+  }
+
   ar(CEREAL_NVP(distance));
   ar(CEREAL_NVP(partitioner));
   ar(CEREAL_NVP(emptyClusterAction));

@@ -54,6 +54,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
  * [mlpack kernels](../core/kernels.md)
  * [Mean shift on Wikipedia](https://en.wikipedia.org/wiki/Mean_shift)
  * [Mean Shift, Mode Seeking, and Clustering (pdf)](https://members.loria.fr/MOBerger/Enseignement/Master2/Exposes/meanShiftCluster.pdf)
+ * [`KMeans`](kmeans.md)
 
 ### Constructors
 
@@ -117,7 +118,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
      `centroids`.
    - `centroids` will be set to size `data.n_rows` x `numClusters`, where
      `numClusters` is the number of clusters found by the mean shift algorithm.
-   - The `i`th cluster centroid can be obtained with `clusters.col(i)`.
+   - The `i`th cluster centroid can be obtained with `centroids.col(i)`.
 
 ---
 
@@ -141,7 +142,7 @@ for (size_t c = 0; c < centroids.n_cols; ++c)
 | `centroids` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) matrix that centroids will be stored into. | _(N/A)_ |
 | `assignments` | [`arma::Row<size_t>`](../matrices.md) | Vector to store cluster assignments for each point into. | _(N/A)_ |
 | `forceConvergence` | `bool` | If `true`, forces convergence of every cluster, ignoring `maxIterations`. | `false` |
-| `useSeeds` | `bool` | If `true`, estimates of high-density regions in the dataset will be used as initial centroids, instead of the full dataset. | `true`
+| `useSeeds` | `bool` | If `true`, estimates of high-density regions in the dataset will be used as initial centroids, instead of the full dataset. | `true` |
 
 ***Notes***:
 

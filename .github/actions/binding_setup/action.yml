@@ -36,10 +36,10 @@ runs:
       if: inputs.lang == 'Julia' && runner.os == 'Linux'
       shell: bash
       run: |
-          wget https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-1.10.4-linux-x86_64.tar.gz
-          sudo tar -C /opt/ -xvpf julia-1.10.4-linux-x86_64.tar.gz
-          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
-          echo "JULIA_EXECUTABLE=/opt/julia-1.10.4/bin/julia" >> $GITHUB_ENV
+          wget https://julialang-s3.julialang.org/bin/linux/x64/1.13/julia-1.13.3-linux-x86_64.tar.gz
+          sudo tar -C /opt/ -xvpf julia-1.13.3-linux-x86_64.tar.gz
+          echo "CMAKE_BINDING_ARGS=-DJULIA_EXECUTABLE=/opt/julia-1.13.3/bin/julia" >> $GITHUB_ENV
+          echo "JULIA_EXECUTABLE=/opt/julia-1.13.3/bin/julia" >> $GITHUB_ENV
 
     - name: "Set up Julia on macOS"
       if: inputs.lang == 'Julia' && runner.os == 'macOS'
