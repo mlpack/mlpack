@@ -833,7 +833,7 @@ opts.Format() = mlpack::FileType::CSVASCII;
 opts.HasHeaders() = true;
 
 // Download and save as "myDataset.csv", then load it.
-mlpack::DownloadFile("https://datasets.mlpack.org/Admission_Predict.csv",
+mlpack::DownloadFile("http://datasets.mlpack.org/Admission_Predict.csv",
     "myDataset.csv");
 mlpack::Load("myDataset.csv", dataset, opts);
 
@@ -857,7 +857,7 @@ downloading.
   #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
 #endif
 
-mlpack::DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+mlpack::DownloadFile("http://datasets.mlpack.org/avocado.csv.gz",
     "avocado.csv.gz");
 
 // The file is automatically decompressed to "avocado.csv".
