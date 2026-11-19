@@ -26,9 +26,10 @@ namespace mlpack {
  * KMeans as the actual implementation of the Lloyd iteration.
  *
  * @param DistanceType Type of distance metric used with this implementation.
- * @param MatType Matrix type (arma::mat or arma::sp_mat).
+ * @param MatType Matrix type (e.g. arma::mat or arma::sp_mat).
+ * @param CentroidsType Matrix type for centroids (e.g. arma::mat; not sparse).
  */
-template<typename DistanceType, typename MatType>
+template<typename DistanceType, typename MatType, typename CentroidsType>
 class NaiveKMeans
 {
  public:
@@ -51,11 +52,11 @@ class NaiveKMeans
    * @param newCentroids New cluster centroids.
    * @param counts Number of points in each cluster at the end of the iteration.
    */
-  double Iterate(const arma::mat& centroids,
-                 arma::mat& newCentroids,
+  double Iterate(const CentroidsType& centroids,
+                 CentroidsType& newCentroids,
                  arma::Col<size_t>& counts);
 
-  size_t DistanceCalculations() const { return distanceCalculations; }
+  size_t DistanceComputations() const { return distanceComputations; }
 
  private:
   //! The dataset.
@@ -64,7 +65,7 @@ class NaiveKMeans
   DistanceType& distance;
 
   //! Number of distance calculations.
-  size_t distanceCalculations;
+  size_t distanceComputations;
 };
 
 } // namespace mlpack

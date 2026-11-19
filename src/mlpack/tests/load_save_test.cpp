@@ -2480,6 +2480,43 @@ TEST_CASE("NonExistentFileARFFTest", "[LoadSaveTest][tiny]")
 }
 
 /**
+ * An @attribute declaration without a name and a type should be rejected.
+ */
+TEST_CASE("ARFFMissingAttributeTypeTest", "[LoadSaveTest][tiny]")
+{
+  // No name and no type.
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute" << endl;
+  f << "@data" << endl;
+  f << "1" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
+
+  // When fatal is false, LoadARFF() should fail without throwing.
+  DatasetInfo info2;
+  REQUIRE(LoadARFF("test.arff", dataset, info2, false, true) == false);
+
+  // A name but no type.
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute a numeric" << endl;
+  f << "@attribute b" << endl;
+  f << "@data" << endl;
+  f << "1, 2" << endl;
+  f.close();
+
+  DatasetInfo info3;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info3, true, true));
+
+  remove("test.arff");
+}
+
+/**
  * A test to check whether the arff loader is case insensitive to declarations:
  * @relation, @attribute, @data.
  */
@@ -2531,6 +2568,42 @@ TEST_CASE("CategoryCaseTest", "[LoadSaveTest][tiny]")
   // means).
   REQUIRE_THROWS_AS(Load("test.arff", dataset, opts),
       std::runtime_error);
+
+  remove("test.arff");
+}
+
+/**
+ * A categorical attribute with an empty set of categories should be rejected.
+ */
+TEST_CASE("ARFFEmptyCategoriesTest", "[LoadSaveTest][tiny]")
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute a numeric" << endl;
+  f << "@attribute b {}" << endl;
+  f << "@data" << endl;
+  f << "1, x" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info, true, true));
+
+  // When fatal is false, LoadARFF() should fail without throwing.
+  DatasetInfo info2;
+  REQUIRE(LoadARFF("test.arff", dataset, info2, false, true) == false);
+
+  // Whitespace inside the braces is still an empty set.
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << "@attribute b { }" << endl;
+  f << "@data" << endl;
+  f << "x" << endl;
+  f.close();
+
+  DatasetInfo info3;
+  REQUIRE_THROWS(LoadARFF("test.arff", dataset, info3, true, true));
 
   remove("test.arff");
 }
@@ -3481,7 +3554,6 @@ TEST_CASE("LoadCSVSemicolonMissingToNanHeaderInOptions", "[LoadSaveTest][tiny]")
 }
 
 #ifndef MLPACK_DISABLE_HTTPLIB
-#ifdef MLPACK_ENABLE_HTTPLIB
 
 TEST_CASE("URLTests", "[LoadSaveTest]")
 {
@@ -3684,7 +3756,7 @@ TEST_CASE("URLTests", "[LoadSaveTest]")
 TEST_CASE("DownLoadFileOnlyAndLoad", "[LoadSaveTest]")
 {
   arma::mat dataset;
-  REQUIRE(Load("http://datasets.mlpack.org/iris_centroids.csv",
+  REQUIRE(Load("https://datasets.mlpack.org/iris_centroids.csv",
         dataset, Fatal + Transpose) == true);
 }
 
@@ -3692,7 +3764,7 @@ TEST_CASE("DownLoadFileOnlyAndLoadCategorical", "[LoadSaveTest]")
 {
   arma::mat dataset;
   TextOptions opts = Fatal + Categorical;
-  REQUIRE(Load("http://datasets.mlpack.org/iris.arff",
+  REQUIRE(Load("https://datasets.mlpack.org/iris.arff",
         dataset, opts) == true);
 }
 
@@ -3703,7 +3775,6 @@ TEST_CASE("DownLoad404File", "[LoadSaveTest]")
         dataset, Fatal + Transpose), std::runtime_error);
 }
 
-#endif
 #endif
 
 #endif
@@ -3781,6 +3852,8 @@ TEST_CASE("SaveCSVWithHeaders", "[LoadSaveTest][tiny]")
 
   remove("test.csv");
 }
+
+#ifndef MLPACK_DISABLE_DR_LIBS
 
 //
 // The audio files below are published under the CC-0 license.
@@ -4588,7 +4661,9 @@ TEMPLATE_TEST_CASE("SaveWavCheck64bps", "[LoadSaveTest]",
   remove("test_roundtrip.wav");
 }
 
-#ifdef MLPACK_ENABLE_HTTPLIB
+#endif // MLPACK_DISABLE_DR_LIBS
+
+#ifndef MLPACK_DISABLE_HTTPLIB
 
 /**
  * Test that DownloadFile() downloads a file to a user-specified destination.

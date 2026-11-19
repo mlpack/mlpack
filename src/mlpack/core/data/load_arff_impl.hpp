@@ -73,6 +73,20 @@ bool LoadARFF(const std::string& filename,
       }
       else if (annotation == "@attribute")
       {
+        // An attribute declaration must have both a name and a type.
+        if (tok.size() < 3)
+        {
+          std::stringstream error;
+          error << "LoadARFF(): line " << headerLines << ": @attribute "
+              << "declaration must specify a name and a type.";
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else
+            Log::Warn << error.str() << std::endl;
+
+          return false;
+        }
+
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
@@ -117,6 +131,20 @@ bool LoadARFF(const std::string& filename,
             categories.push_back(category);
 
             ++it;
+          }
+
+          // A categorical attribute must have at least one category.
+          if (categories.empty())
+          {
+            std::stringstream error;
+            error << "LoadARFF(): line " << headerLines << ": categorical "
+                << "attribute has no categories.";
+            if (fatal)
+              Log::Fatal << error.str() << std::endl;
+            else
+              Log::Warn << error.str() << std::endl;
+
+            return false;
           }
 
           categoryStrings[dimensionality - 1] = std::move(categories);
