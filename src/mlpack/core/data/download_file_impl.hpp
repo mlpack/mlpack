@@ -164,6 +164,24 @@ inline std::string GetCacheDir()
   return dir.string();
 }
 
+inline std::string CacheFileName(const std::string& url,
+                                 const std::string& filename)
+{
+  // 64-bit FNV-1a.  We do not use std::hash because its value is not
+  // guaranteed to be the same between standard library implementations.
+  uint64_t hash = 14695981039346656037ULL;
+  for (const char c : url)
+  {
+    hash ^= static_cast<uint8_t>(c);
+    hash *= 1099511628211ULL;
+  }
+
+  std::ostringstream oss;
+  oss << std::hex << std::setw(16) << std::setfill('0') << hash << "_"
+      << filename;
+  return oss.str();
+}
+
 inline bool LoadManifest(const std::string& cacheDir,
                          CacheManifest& manifest)
 {
@@ -335,8 +353,12 @@ inline bool DownloadFileWithCache(const std::string& url,
           << std::endl;
     }
 
+    // Name the cached file after the full URL, not only the last part of it, so
+    // that different URLs ending in the same file name do not overwrite (and
+    // get served) each other's data.
+    const std::string cacheName = CacheFileName(url, filename);
     std::string dest =
-        (std::filesystem::path(cacheDir) / filename).string();
+        (std::filesystem::path(cacheDir) / cacheName).string();
 
     // Do a head request to get the cache info to compare it.
 #ifdef MLPACK_USE_HTTPS
@@ -371,7 +393,7 @@ inline bool DownloadFileWithCache(const std::string& url,
     if (ext == "gz")
     {
       std::string decompressedName =
-          filename.substr(0, filename.size() - ext.size() - 1);
+          cacheName.substr(0, cacheName.size() - ext.size() - 1);
       decompressedDest =
           (std::filesystem::path(cacheDir) / decompressedName).string();
     }
