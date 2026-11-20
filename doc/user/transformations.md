@@ -17,6 +17,9 @@ Decompose a matrix into two or more components.
 
  * [AMF](methods/amf.md): alternating matrix factorization
  * [NMF](methods/nmf.md): non-negative matrix factorization
+ * [NystroemMethod](methods/nystroem_method.md): Nyström method for
+   approximating kernel matrices as low-rank matrices (for
+   [kernel methods](core/kernels.md))
 
 ## Linear transformations
 
@@ -25,6 +28,13 @@ reduction.
 
  * [PCA](methods/pca.md): principal components analysis
  * [RADICAL](methods/radical.md): an independent components analysis technique
+
+## Nonlinear transformations
+
+Perform a non-linear mapping of data onto a new basis, optionally performing
+dimensionality reduction.
+
+ * [KernelPCA](methods/kernel_pca.md): kernel principal components analysis
 
 ## Metric learning techniques
 

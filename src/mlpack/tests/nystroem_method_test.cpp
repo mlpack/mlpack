@@ -22,30 +22,33 @@ using namespace mlpack;
  * the result is virtually identical (a little bit of tolerance for floating
  * point error).
  */
-TEST_CASE("FullRankTest", "[NystroemMethodTest]")
+TEMPLATE_TEST_CASE("FullRankTest", "[NystroemMethodTest]", float, double)
 {
+  typedef TestType eT;
+
   // Run several trials.
   for (size_t trial = 0; trial < 3; ++trial)
   {
-    arma::mat data;
+    arma::Mat<eT> data;
     data.randu(5, trial * 200);
 
     GaussianKernel gk;
-    NystroemMethod<GaussianKernel, OrderedSelection> nm(data, gk, trial * 200);
+    NystroemMethod<GaussianKernel, OrderedSelection> nm(trial * 200, gk);
 
-    arma::mat g;
-    nm.Apply(g);
+    arma::Mat<eT> g;
+    nm.Apply(data, g);
 
     // Construct exact kernel matrix.
-    arma::mat kernel(trial * 200, trial * 200);
+    arma::Mat<eT> kernel(trial * 200, trial * 200);
     for (size_t i = 0; i < trial * 200; ++i)
       for (size_t j = 0; j < trial * 200; ++j)
         kernel(i, j) = gk.Evaluate(data.col(i), data.col(j));
 
     // Reconstruct approximation.
-    arma::mat approximation = g * g.t();
+    arma::Mat<eT> approximation = g * g.t();
 
     // Check closeness.
+    const double tol = std::is_same<eT, float>::value ? 1e-3 : 1e-7;
     for (size_t i = 0; i < trial * 200; ++i)
     {
       for (size_t j = 0; j < trial * 200; ++j)
@@ -53,7 +56,7 @@ TEST_CASE("FullRankTest", "[NystroemMethodTest]")
         if (kernel(i, j) < 1e-5)
           REQUIRE(approximation(i, j) == Approx(0.0).margin(1e-4));
         else
-          REQUIRE(kernel(i, j) == Approx(approximation(i, j)).epsilon(1e-7));
+          REQUIRE(kernel(i, j) == Approx(approximation(i, j)).epsilon(tol));
       }
     }
   }
@@ -62,48 +65,50 @@ TEST_CASE("FullRankTest", "[NystroemMethodTest]")
 /**
  * Can we accurately represent a rank-10 matrix?
  */
-TEST_CASE("Rank10Test", "[NystroemMethodTest]")
+TEMPLATE_TEST_CASE("Rank10Test", "[NystroemMethodTest][long]", float, double)
 {
-  arma::mat data;
+  typedef TestType eT;
+
+  arma::Mat<eT> data;
   data.randu(500, 500); // Just so it's square.
 
   // Use SVD and only keep the first ten singular vectors.
-  arma::mat U;
-  arma::vec s;
-  arma::mat V;
+  arma::Mat<eT> U;
+  arma::Col<eT> s;
+  arma::Mat<eT> V;
   arma::svd(U, s, V, data);
 
   // Don't set completely to 0; the hope is that K is still positive definite.
-  s.subvec(0, 9) += 1.0; // Make sure the first 10 singular vectors are large.
+  s.subvec(0, 9) += eT(1); // Make sure the first 10 singular vectors are large.
   s.subvec(10, s.n_elem - 1).fill(1e-6);
-  arma::mat dataMod = U * arma::diagmat(s) * V.t();
+  arma::Mat<eT> dataMod = U * arma::diagmat(s) * V.t();
 
   // Add some noise.
-  dataMod += 1e-5 * arma::randu<arma::mat>(dataMod.n_rows, dataMod.n_cols);
+  dataMod += 1e-5 * arma::randu<arma::Mat<eT>>(dataMod.n_rows, dataMod.n_cols);
 
   // Calculate the true kernel matrix.
-  arma::mat kernel = dataMod.t() * dataMod;
+  arma::Mat<eT> kernel = dataMod.t() * dataMod;
 
   size_t successes = 0;
   for (size_t testTrial = 0; testTrial < 5; ++testTrial)
   {
     // Now use the linear kernel to get a Nystroem approximation;
     // try this several times.
-    double normalizedFroAverage = 0.0;
+    eT normalizedFroAverage = 0.0;
     for (size_t trial = 0; trial < 20; ++trial)
     {
       while (true)
       {
         LinearKernel lk;
-        NystroemMethod<LinearKernel, RandomSelection> nm(dataMod, lk, 10);
+        NystroemMethod<LinearKernel, RandomSelection> nm(10, lk);
 
-        arma::mat g;
-        nm.Apply(g);
+        arma::Mat<eT> g;
+        nm.Apply(dataMod, g);
 
-        arma::mat approximation = g * g.t();
+        arma::Mat<eT> approximation = g * g.t();
 
         // Check the normalized Frobenius norm.
-        const double normalizedFro = arma::norm(kernel - approximation, "fro");
+        const eT normalizedFro = arma::norm(kernel - approximation, "fro");
 
         // Sometimes K' is singular. Unlucky.
         if (normalizedFro != normalizedFro)
@@ -164,10 +169,10 @@ TEST_CASE("GermanTest", "[NystroemMethodTest][long]")
     double avgError = 0.0;
     for (size_t z = 1; z < 6; ++z)
     {
-      NystroemMethod<GaussianKernel, KMeansSelection<> > nm(dataset, gk,
-          size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols));
+      NystroemMethod<GaussianKernel, KMeansSelection<> > nm(
+          size_t((double((trial + 1) * 2) / 100.0) * dataset.n_cols), gk);
       arma::mat g;
-      nm.Apply(g);
+      nm.Apply(dataset, g);
 
       // Reconstruct kernel matrix.
       arma::mat approximation = g * g.t();

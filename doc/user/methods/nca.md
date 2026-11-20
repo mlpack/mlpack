@@ -1,4 +1,4 @@
-## NCA
+## `NCA`: neighborhood components analysis
 
 The `NCA` class implements neighborhood components analysis, which can be used
 as both a linear dimensionality reduction technique and a distance learning
