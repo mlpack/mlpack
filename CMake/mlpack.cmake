@@ -65,6 +65,9 @@
 #   OPENBLAS_PATCHES: list of filepaths for patches to be applied to OpenBLAS;
 #       ignored if COMPILE_OPENBLAS is false.  Patches given will be applied
 #       with `-p1`.
+#   OPENBLAS_COMPILE_THREADS: if unset, all available threads are used to
+#       compile OpenBLAS; otherwise, the variable's value is used as the number
+#       of threads for compilation.
 #
 # After all libraries are downloaded and set up, the macro will set the
 # following variables:
@@ -705,16 +708,29 @@ macro(compile_OpenBLAS)
           WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
           COMMAND_ERROR_IS_FATAL ANY)
 
-      execute_process(COMMAND ${CMAKE_COMMAND}
-          --build ${OPENBLAS_BUILD_DIR}
-          --config ${BLASS_BUILD_TYPE}
-          --parallel
-          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-          COMMAND_ERROR_IS_FATAL ANY)
+      if (OPENBLAS_COMPILE_THREADS)
+        execute_process(COMMAND ${CMAKE_COMMAND}
+            --build ${OPENBLAS_BUILD_DIR}
+            --config ${BLASS_BUILD_TYPE}
+            --parallel ${OPENBLAS_COMPILE_THREADS}
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+            COMMAND_ERROR_IS_FATAL ANY)
+      else ()
+        execute_process(COMMAND ${CMAKE_COMMAND}
+            --build ${OPENBLAS_BUILD_DIR}
+            --config ${BLASS_BUILD_TYPE}
+            --parallel
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+            COMMAND_ERROR_IS_FATAL ANY)
+      endif ()
 
       set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     else ()
       if (CMAKE_CROSSCOMPILING)
+        if (OPENBLAS_COMPILE_THREADS)
+          set(MAKE_NB_JOBS_OPT "MAKE_NB_JOBS=${OPENBLAS_COMPILE_THREADS}")
+        endif()
+
         # Update environment variables so that OpenBLAS compiles correctly.
         set(OLD_CC $ENV{CC})
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
@@ -728,7 +744,7 @@ macro(compile_OpenBLAS)
 
         # Now run the OpenBLAS build with all of the configuration variables set.
         execute_process(
-            COMMAND make NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${ARG_LIST}
+            COMMAND make ${PARALLEL_OPT} NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${MAKE_NB_JOBS_OPT} ${ARG_LIST}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
             COMMAND_ERROR_IS_FATAL ANY)
 
