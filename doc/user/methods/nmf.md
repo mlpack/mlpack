@@ -52,9 +52,9 @@ std::cout << "RMSE of reconstructed matrix: "
 
  * [`AMF`](amf.md): alternating matrix factorization
  * [`SparseCoding`](sparse_coding.md)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack transformations](../transformations.md)
  * [Non-negative matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization)
- * [Learning the parts of objects by non-negative matrix factorization](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=29bae9472203546847ec1352a604566d0f602728) (original NMF paper, pdf)
+ * [Learning the parts of objects by non-negative matrix factorization](http://belohlavek.inf.upol.cz/vyuka/Lee-Seung-NMF-1999-p.pdf)
 
 ### Constructors
 
@@ -157,7 +157,7 @@ element type.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -182,7 +182,7 @@ Compare quality of decompositions of MovieLens with different ranks.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 // Create the NMF object.
 mlpack::NMF nmf;
@@ -332,7 +332,7 @@ class CustomTerminationPolicy
   // Note that W and H may have different types than V (i.e. V may be sparse,
   // and W and H must be dense.)
   template<typename WHMatType>
-  bool IsConverged(const MatType& H, const MatType& W);
+  bool IsConverged(const WHMatType& H, const WHMatType& W);
 
   // Return the value that should be returned for the `nmf.Apply()` function
   // when convergence has been reached.  This is called at the end of
@@ -468,7 +468,7 @@ Use a pre-specified initialization for `W` and `H`.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -495,7 +495,7 @@ RMSE of the held-out validation set is sufficiently low.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -523,7 +523,7 @@ validation set.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W1, W2, W3;
 arma::mat H1, H2, H3;
@@ -602,7 +602,7 @@ Then we can use it in the test program:
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::NMF<CustomTimeTermination> nmf(t);

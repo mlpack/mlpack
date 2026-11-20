@@ -71,7 +71,6 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("@knn", "#knn");
-BINDING_SEE_ALSO("Range search tutorial", "@doc/tutorials/range_search.md");
 BINDING_SEE_ALSO("Range searching on Wikipedia",
     "https://en.wikipedia.org/wiki/Range_searching");
 BINDING_SEE_ALSO("Tree-independent dual-tree algorithms (pdf)",
@@ -206,14 +205,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     rs->TreeType() = tree;
     rs->RandomBasis() = randomBasis;
 
+    arma::mat& referenceSet = params.Get<arma::mat>("reference");
+
     Log::Info << "Using reference data from "
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
 
-    arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
-
     const size_t leafSize = size_t(lsInt);
 
-    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive, singleMode);
+    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive,
+        singleMode);
   }
   else
   {
@@ -243,6 +243,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::mat queryData;
     if (params.Has("query"))
     {
+      // Workaround: this avoids printing load information twice for the CLI
+      // bindings, where GetPrintable() will trigger a call to Load(),
+      // which prints loading information in the middle of the Log::Info
+      // message.
+      (void) params.Get<arma::mat>("query");
+
       Log::Info << "Using query data from "
           << params.GetPrintable<arma::mat>("query") << "." << endl;
       queryData = std::move(params.Get<arma::mat>("query"));

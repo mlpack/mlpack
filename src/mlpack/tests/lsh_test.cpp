@@ -37,16 +37,13 @@ void GetPointset(const size_t N, arma::mat& rdata)
   arma::mat c4(d, N / 4, arma::fill::randu);
 
   arma::colvec offset1;
-  offset1 = { { 0 },
-              { 3 } };
+  offset1 = { 0, 3 };
 
   arma::colvec offset2;
-  offset2 = { { 3 },
-              { 3 } };
+  offset2 = { 3, 3 };
 
   arma::colvec offset4;
-  offset4 = { { 3 },
-              { 0 } };
+  offset4 = { 3, 0 };
 
   // Spread points in plane.
   for (size_t p = 0; p < N / 4; ++p)
@@ -113,9 +110,9 @@ TEST_CASE("NumTablesTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -187,9 +184,9 @@ TEST_CASE("HashWidthTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -249,9 +246,9 @@ TEST_CASE("NumProjTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -311,9 +308,9 @@ TEST_CASE("RecallTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Run classic knn on reference data.
@@ -487,7 +484,7 @@ TEST_CASE("DeterministicNoMerge", "[LSHTest]")
  * with increasing number of probes. Also require that at least a few times
  * there's some increase in recall.
  */
-TEST_CASE("MultiprobeTest", "[LSHTest]")
+TEST_CASE("MultiprobeTest", "[LSHTest][tiny]")
 {
   // Test parameters.
   const double epsilonIncrease = 0.01;
@@ -508,9 +505,9 @@ TEST_CASE("MultiprobeTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Add a slight amount of noise to the dataset, so that we don't end up with
@@ -783,9 +780,9 @@ TEST_CASE("ParallelBichromatic", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
@@ -824,7 +821,7 @@ TEST_CASE("ParallelMonochromatic", "[LSHTest]")
   // Read iris training data as reference and query set.
   const string trainSet = "iris_train.csv";
   arma::mat rdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
 
   // Where to store neighbors and distances
@@ -942,9 +939,9 @@ TEST_CASE("SparseLSHTest", "[LSHTest]")
   const string testSet = "iris_test.csv";
   arma::mat rdata;
   arma::mat qdata;
-  if (!data::Load(trainSet, rdata))
+  if (!Load(trainSet, rdata))
     FAIL("Cannot load dataset");
-  if (!data::Load(testSet, qdata))
+  if (!Load(testSet, qdata))
     FAIL("Cannot load dataset");
 
   // Run on dense data.

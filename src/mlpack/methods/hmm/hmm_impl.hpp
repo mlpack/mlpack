@@ -157,7 +157,8 @@ double HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       for (size_t i = 0; i < logTransition.n_rows; i++)
       {
         // Define alias of desired column.
-        arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+        arma::vec alias;
+        MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
         // Use advanced constructor for using logProbs directly.
         emission[i].LogProbability(dataSeq[seq], alias);
       }
@@ -358,7 +359,8 @@ double HMM<Distribution>::LogEstimate(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -515,7 +517,8 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -528,13 +531,14 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     for (size_t j = 0; j < logTransition.n_rows; j++)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTransition.row(j).t();
-      logStateProb(j, t) = prob.max(index) + logProbs(t, j);
+      index = prob.index_max();
+      logStateProb(j, t) = prob[index] + logProbs(t, j);
       stateSeqBack(j, t) = index;
     }
   }
 
   // Backtrack to find the most probable state sequence.
-  logStateProb.unsafe_col(dataSeq.n_cols - 1).max(index);
+  index = logStateProb.unsafe_col(dataSeq.n_cols - 1).index_max();
   stateSeq[dataSeq.n_cols - 1] = index;
   for (size_t t = 2; t <= dataSeq.n_cols; t++)
   {
@@ -561,7 +565,8 @@ double HMM<Distribution>::LogLikelihood(const arma::mat& dataSeq) const
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }
@@ -663,7 +668,8 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   for (size_t i = 0; i < logTransition.n_rows; i++)
   {
     // Define alias of desired column.
-    arma::vec alias(logProbs.colptr(i), logProbs.n_rows, false, true);
+    arma::vec alias;
+    MakeAlias(alias, logProbs, logProbs.n_rows, logProbs.n_rows * i);
     // Use advanced constructor for using logProbs directly.
     emission[i].LogProbability(dataSeq, alias);
   }

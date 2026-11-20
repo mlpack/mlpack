@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple linear no bias module test.
  */
-TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
+TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest][tiny]")
 {
   arma::mat output, input, delta;
   LinearNoBias module(10);
@@ -47,12 +47,12 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
 /**
  * Jacobian linear no bias module test.
  */
-TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
+TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest][tiny]")
 {
   for (size_t i = 0; i < 5; ++i)
   {
-    const size_t inputElements = RandInt(2, 1000);
-    const size_t outputElements = RandInt(2, 1000);
+    const size_t inputElements = RandInt(2, 100);
+    const size_t outputElements = RandInt(2, 100);
 
     arma::mat input;
     input.set_size(inputElements, 1);
@@ -73,7 +73,7 @@ TEST_CASE("JacobianLinearNoBiasLayerTest", "[ANNLayerTest]")
 /**
  * LinearNoBias layer numerical gradient test.
  */
-TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest]")
+TEST_CASE("GradientLinearNoBiasLayerTest", "[ANNLayerTest][tiny]")
 {
   // LinearNoBias function gradient instantiation.
   struct GradientFunction

@@ -17,18 +17,6 @@
 using namespace mlpack;
 
 /**
- * A couple of handful declarations for float32 testing.
- * These will be removed when we refactor the Bounds to accept MatType.
- * For now, we will keep the following declarations.
- */
-template<typename DistanceType>
-using FloatHRectBound = HRectBound<DistanceType, float>;
-
-template<typename DistanceType, typename StatisticType, typename MatType>
-using FloatKDTree = BinarySpaceTree<DistanceType, StatisticType, MatType,
-                                    FloatHRectBound, MidpointSplit>;
-
-/**
  * Test that Unmap() works in the dual-tree case (see unmap.hpp).
  */
 TEST_CASE("KNNDualTreeUnmapTest", "[KNNTest]")
@@ -279,7 +267,7 @@ TEST_CASE("KNNTrainTreeTest", "[KNNTest]")
  */
 TEST_CASE("KNNNaiveTrainTreeTest", "[KNNTest]")
 {
-  KNN empty(NAIVE_MODE);
+  KNN empty(NAIVE);
 
   arma::mat dataset = arma::randu<arma::mat>(5, 100);
   KNN::Tree tree(dataset);
@@ -342,7 +330,7 @@ TEST_CASE("KNNMoveTrainTest", "[KNNTest]")
   REQUIRE(distances.n_cols ==200);
 
   dataset = arma::randu<arma::mat>(3, 300);
-  knn.SearchMode() = NAIVE_MODE;
+  knn.SearchStrategy() = NAIVE;
   knn.Train(std::move(dataset));
   knn.Search(1, neighbors, distances);
 
@@ -375,8 +363,8 @@ TEST_CASE("KNNExhaustiveSyntheticTest", "[KNNTest]")
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -391,13 +379,13 @@ TEST_CASE("KNNExhaustiveSyntheticTest", "[KNNTest]")
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        knn.SearchMode() = DUAL_TREE_MODE;
+        knn.SearchStrategy() = DUAL_TREE;
         break;
       case 1: // Use the single-tree method.
-        knn.SearchMode() = SINGLE_TREE_MODE;
+        knn.SearchStrategy() = SINGLE_TREE;
         break;
       case 2: // Use the naive method.
-        knn.SearchMode() = NAIVE_MODE;
+        knn.SearchStrategy() = NAIVE;
         break;
     }
 
@@ -661,17 +649,17 @@ TEST_CASE("KNNExhaustiveSyntheticTest", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
+TEST_CASE("KNNDualTreeVsNaive", "[KNNTest][tiny]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
 
-  KNN naive(dataset, NAIVE_MODE);
+  KNN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -694,19 +682,19 @@ TEST_CASE("KNNDualTreeVsNaive", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest]")
+TEST_CASE("KNNDualTreeVsNaive2", "[KNNTest][tiny]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   KNN knn(dataset);
 
   // Set naive mode.
-  KNN naive(dataset, NAIVE_MODE);
+  KNN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -735,13 +723,13 @@ TEST_CASE("KNNSingleTreeVsNaive", "[KNNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  KNN knn(dataset, SINGLE_TREE_MODE);
+  KNN knn(dataset, SINGLE_TREE);
 
   // Set up computation for naive mode.
-  KNN naive(dataset, NAIVE_MODE);
+  KNN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -772,19 +760,17 @@ TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   NeighborSearch<NearestNeighborSort,
                  EuclideanDistance,
-                 arma::fmat,
-                 FloatKDTree> knn(dataset, SINGLE_TREE_MODE);
+                 arma::fmat> knn(dataset, SINGLE_TREE);
 
   // Set up computation for naive mode.
   NeighborSearch<NearestNeighborSort,
                  EuclideanDistance,
-                 arma::fmat,
-                 FloatKDTree> naive(dataset, NAIVE_MODE);
+                 arma::fmat> naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::fmat distancesTree;
@@ -806,31 +792,44 @@ TEST_CASE("KNNSingleTreeVsNaiveF32", "[KNNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
+TEMPLATE_TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]", float, double)
 {
-  arma::mat data;
+  typedef TestType eT;
+
+  arma::Mat<eT> data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> tree(data);
+      arma::Mat<eT>> tree(data);
 
-  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(std::move(tree), SINGLE_TREE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::Mat<eT>,
+      StandardCoverTree> coverTreeSearch(std::move(tree), SINGLE_TREE);
 
-  KNN naive(data, NAIVE_MODE);
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::Mat<eT>>
+      naive(data, NAIVE);
 
   arma::Mat<size_t> coverTreeNeighbors;
-  arma::mat coverTreeDistances;
+  arma::Mat<eT> coverTreeDistances;
   coverTreeSearch.Search(15, coverTreeNeighbors, coverTreeDistances);
 
   arma::Mat<size_t> naiveNeighbors;
-  arma::mat naiveDistances;
+  arma::Mat<eT> naiveDistances;
   naive.Search(15, naiveNeighbors, naiveDistances);
 
+  const eT eps = (std::is_same_v<eT, float> ? 1e-5 : 1e-7);
   for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
   {
-    REQUIRE(coverTreeNeighbors[i] ==naiveNeighbors[i]);
-    REQUIRE(coverTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
+    // When using floats, the probability of two neighbors being out of order
+    // due to floating point imprecision is high.  That is, the error is a
+    // computed distance may cause its value (when represented as float) to be
+    // exactly equivalent to the next neighbor's distance.  In that situation,
+    // the neighbors may be returned out of order.  So, we only check the
+    // neighbor indices for double.
+    if (std::is_same_v<eT, double>)
+      REQUIRE(coverTreeNeighbors[i] == naiveNeighbors[i]);
+
+    REQUIRE(coverTreeDistances[i] ==
+        Approx(eT(naiveDistances[i])).epsilon(eps));
   }
 }
 
@@ -838,32 +837,35 @@ TEST_CASE("KNNSingleCoverTreeTest", "[KNNTest]")
  * Test the cover tree dual-tree nearest neighbors method against the naive
  * method.
  */
-TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]")
+TEMPLATE_TEST_CASE("KNNDualCoverTreeTest", "[KNNTest]", float, double)
 {
-  arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  typedef TestType eT;
+
+  arma::Mat<eT> dataset;
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
-  KNN tree(dataset);
+  KNNType<EuclideanDistance, KDTree, arma::Mat<eT>> tree(dataset);
 
   arma::Mat<size_t> kdNeighbors;
-  arma::mat kdDistances;
+  arma::Mat<eT> kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
   StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> referenceTree(dataset);
+      arma::Mat<eT>> referenceTree(dataset);
 
-  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::Mat<eT>,
       StandardCoverTree> coverTreeSearch(std::move(referenceTree));
 
   arma::Mat<size_t> coverNeighbors;
-  arma::mat coverDistances;
+  arma::Mat<eT> coverDistances;
   coverTreeSearch.Search(dataset, 5, coverNeighbors, coverDistances);
 
+  const eT eps = (std::is_same_v<eT, float> ? 1e-4 : 1e-7);
   for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
   {
-    REQUIRE(coverNeighbors(i) ==kdNeighbors(i));
-    REQUIRE(coverDistances(i) == Approx(kdDistances(i)).epsilon(1e-7));
+    REQUIRE(coverNeighbors(i) == kdNeighbors(i));
+    REQUIRE(coverDistances(i) == Approx(kdDistances(i)).epsilon(eps));
   }
 }
 
@@ -878,18 +880,18 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
   arma::mat data;
   data.randu(50, 300); // 50 dimensional, 300 points.
 
-  typedef BallTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = BallTree<EuclideanDistance,
+      NeighborSearchStat<NearestNeighborSort>, arma::mat>;
   TreeType tree(data);
 
-  KNN naive(tree.Dataset(), NAIVE_MODE);
+  KNN naive(tree.Dataset(), NAIVE);
 
   // BinarySpaceTree modifies data. Use modified data to maintain the
   // correspondance between points in the dataset for both methods. The order of
   // query points in both methods should be same.
 
   NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
-      ballTreeSearch(std::move(tree), SINGLE_TREE_MODE);
+      ballTreeSearch(std::move(tree), SINGLE_TREE);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;
@@ -901,7 +903,7 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 
   for (size_t i = 0; i < ballTreeNeighbors.n_elem; ++i)
   {
-    REQUIRE(ballTreeNeighbors[i] ==naiveNeighbors[i]);
+    REQUIRE(ballTreeNeighbors[i] == naiveNeighbors[i]);
     REQUIRE(ballTreeDistances[i] == Approx(naiveDistances[i]).epsilon(1e-7));
   }
 }
@@ -913,7 +915,7 @@ TEST_CASE("KNNSingleBallTreeTest", "[KNNTest]")
 TEST_CASE("KNNDualBallTreeTest", "[KNNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KNN tree(dataset);
@@ -967,7 +969,7 @@ TEST_CASE("KNNHybridSpillSearchTest", "[KNNTest]")
   for (size_t mode = 0; mode < 2; mode++)
   {
     if (mode)
-      spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
+      spTreeSearch.SearchStrategy() = SINGLE_TREE;
 
     arma::Mat<size_t> neighborsSPTree;
     arma::mat distancesSPTree;
@@ -1005,7 +1007,7 @@ TEST_CASE("KNNDuplicatedSpillSearchTest", "[KNNTest]")
     for (size_t mode = 0; mode < 2; mode++)
     {
       if (mode)
-        spTreeSearch.SearchMode() = SINGLE_TREE_MODE;
+        spTreeSearch.SearchStrategy() = SINGLE_TREE;
 
       spTreeSearch.Search(dataset, k, neighborsSPTree, distancesSPTree);
 
@@ -1044,11 +1046,11 @@ TEST_CASE("SparseKNNKDTreeTest", "[KNNTest]")
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::sp_mat,
-      KDTree> SparseKNN;
+  using SparseKNN = NeighborSearch<NearestNeighborSort, EuclideanDistance,
+      arma::sp_mat, KDTree>;
 
   SparseKNN a(referenceDataset);
-  KNN naive(denseReference, NAIVE_MODE);
+  KNN naive(denseReference, NAIVE);
 
   arma::mat sparseDistances;
   arma::Mat<size_t> sparseNeighbors;
@@ -1072,8 +1074,8 @@ TEST_CASE("SparseKNNKDTreeTest", "[KNNTest]")
 /*
 TEST_CASE("SparseKNNCoverTreeTest", "[KNNTest]")
 {
-  typedef CoverTree<LMetric<2, true>, FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort>, arma::sp_mat> SparseCoverTree;
+  using SparseCoverTree = CoverTree<LMetric<2, true>, FirstPointIsRoot,
+      NeighborSearchStat<NearestNeighborSort>, arma::sp_mat>;
 
   // The dimensionality of these datasets must be high so that the probability
   // of a completely empty point is very low.  In this case, with dimensionality
@@ -1086,8 +1088,8 @@ TEST_CASE("SparseKNNCoverTreeTest", "[KNNTest]")
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance,
-      SparseCoverTree> SparseKNN;
+  using SparseKNN = NeighborSearch<NearestNeighborSort, EuclideanDistance,
+      SparseCoverTree>;
 
   arma::mat sparseDistances;
   arma::Mat<size_t> sparseNeighbors;
@@ -1108,11 +1110,11 @@ TEST_CASE("SparseKNNCoverTreeTest", "[KNNTest]")
 }
 */
 
-TEST_CASE("KNNModelTest", "[KNNTest]")
+TEST_CASE("KNNModelTest", "[KNNTest][tiny]")
 {
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results.
-  typedef NSModel<NearestNeighborSort> KNNModel;
+  using KNNModel = NSModel<NearestNeighborSort>;
   util::Timers timers;
 
   arma::mat queryData = arma::randu<arma::mat>(10, 50);
@@ -1165,16 +1167,16 @@ TEST_CASE("KNNModelTest", "[KNNTest]")
       models[i].LeafSize() = 20;
       if (j == 0)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE);
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE);
       }
       if (j == 1)
       {
         models[i].BuildModel(timers, std::move(referenceCopy),
-            SINGLE_TREE_MODE);
+            SINGLE_TREE);
       }
       if (j == 2)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE);
       }
 
       arma::Mat<size_t> neighbors;
@@ -1204,7 +1206,7 @@ TEST_CASE("KNNModelMonochromaticTest", "[KNNTest]")
 {
   // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
   // results, in the case where the reference set is the same as the query set.
-  typedef NSModel<NearestNeighborSort> KNNModel;
+  using KNNModel = NSModel<NearestNeighborSort>;
   util::Timers timers;
 
   arma::mat referenceData = arma::randu<arma::mat>(10, 200);
@@ -1255,16 +1257,16 @@ TEST_CASE("KNNModelMonochromaticTest", "[KNNTest]")
       models[i].LeafSize() = 20;
       if (j == 0)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE_MODE);
+        models[i].BuildModel(timers, std::move(referenceCopy), DUAL_TREE);
       }
       if (j == 1)
       {
         models[i].BuildModel(timers, std::move(referenceCopy),
-            SINGLE_TREE_MODE);
+            SINGLE_TREE);
       }
       if (j == 2)
       {
-        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE_MODE);
+        models[i].BuildModel(timers, std::move(referenceCopy), NAIVE);
       }
 
       arma::Mat<size_t> neighbors;
@@ -1371,8 +1373,8 @@ TEST_CASE("KNNCopyConstructorAndOperatorTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorRTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      RTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, RTree>;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1399,8 +1401,8 @@ TEST_CASE("KNNCopyConstructorAndOperatorRTreeTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, StandardCoverTree>;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1427,8 +1429,8 @@ TEST_CASE("KNNCopyConstructorAndOperatorCoverTreeTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorBinarySpaceTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      KDTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, KDTree>;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1455,8 +1457,8 @@ TEST_CASE("KNNCopyConstructorAndOperatorBinarySpaceTreeTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorSpillTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      SPTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, SPTree>;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1483,8 +1485,8 @@ TEST_CASE("KNNCopyConstructorAndOperatorSpillTreeTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorOctreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      Octree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, Octree>;
   NeighborSearchType knn(std::move(dataset));
 
   // Copy constructor and operator.
@@ -1536,8 +1538,8 @@ TEST_CASE("KNNMoveConstructorTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorRTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      RTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, RTree>;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
@@ -1570,8 +1572,8 @@ TEST_CASE("KNNMoveConstructorRTreeTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorBinarySpaceTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      KDTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, KDTree>;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
@@ -1603,8 +1605,8 @@ TEST_CASE("KNNMoveConstructorBinarySpaceTreeTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorOctreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      Octree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, Octree>;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
@@ -1636,8 +1638,8 @@ TEST_CASE("KNNMoveConstructorOctreeTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorCoverTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      StandardCoverTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, StandardCoverTree>;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
@@ -1669,8 +1671,8 @@ TEST_CASE("KNNMoveConstructorCoverTreeTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorSpillTreeTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
-      SPTree> NeighborSearchType;
+  using NeighborSearchType = NeighborSearch<NearestNeighborSort,
+      EuclideanDistance, arma::mat, SPTree>;
   NeighborSearchType* knn = new NeighborSearchType(std::move(dataset));
 
   // Get predictions.
@@ -1728,14 +1730,14 @@ TEST_CASE("KNNMoveOperatorTest", "[KNNTest]")
 TEST_CASE("KNNCopyConstructorAndOperatorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 50);
-  KNN knn(std::move(dataset), NAIVE_MODE);
+  KNN knn(std::move(dataset), NAIVE);
 
   // Copy constructor and operator.
   KNN knn2(knn);
   KNN knn3 = knn;
 
-  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
-  REQUIRE(knn3.SearchMode() ==NAIVE_MODE);
+  REQUIRE(knn2.SearchStrategy() == NAIVE);
+  REQUIRE(knn3.SearchStrategy() == NAIVE);
 
   // Get results.
   arma::mat distances, distances2, distances3;
@@ -1757,7 +1759,7 @@ TEST_CASE("KNNCopyConstructorAndOperatorNaiveTest", "[KNNTest]")
 TEST_CASE("KNNMoveConstructorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 50);
-  KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
+  KNN* knn = new KNN(std::move(dataset), NAIVE);
 
   // Get predictions.
   arma::mat distances, distances2;
@@ -1770,7 +1772,7 @@ TEST_CASE("KNNMoveConstructorNaiveTest", "[KNNTest]")
 
   delete knn;
 
-  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
+  REQUIRE(knn2.SearchStrategy() == NAIVE);
 
   knn2.Search(3, neighbors2, distances2);
 
@@ -1784,7 +1786,7 @@ TEST_CASE("KNNMoveConstructorNaiveTest", "[KNNTest]")
 TEST_CASE("KNNMoveOperatorNaiveTest", "[KNNTest]")
 {
   arma::mat dataset = arma::randu<arma::mat>(5, 500);
-  KNN* knn = new KNN(std::move(dataset), NAIVE_MODE);
+  KNN* knn = new KNN(std::move(dataset), NAIVE);
 
   // Get predictions.
   arma::mat distances, distances2;
@@ -1797,7 +1799,7 @@ TEST_CASE("KNNMoveOperatorNaiveTest", "[KNNTest]")
 
   delete knn;
 
-  REQUIRE(knn2.SearchMode() ==NAIVE_MODE);
+  REQUIRE(knn2.SearchStrategy() == NAIVE);
 
   knn2.Search(3, neighbors2, distances2);
 
@@ -1819,7 +1821,7 @@ TEST_CASE("KNNGreedyTreeSearch", "[KNNTest]")
       arma::mat> tree(dataset, 1);
 
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, KDTree>
-      greedyTreeSearch(std::move(tree), GREEDY_SINGLE_TREE_MODE);
+      greedyTreeSearch(std::move(tree), GREEDY_SINGLE_TREE);
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -1852,9 +1854,9 @@ TEST_CASE("KNNSpillTreeSearchEnoughResults", "[KNNTest]")
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, SPTree>
       dualTreeSearch(tree);
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, SPTree>
-      singleTreeSearch(tree, SINGLE_TREE_MODE);
+      singleTreeSearch(tree, SINGLE_TREE);
   NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, SPTree>
-      greedySingleTreeSearch(tree, GREEDY_SINGLE_TREE_MODE);
+      greedySingleTreeSearch(tree, GREEDY_SINGLE_TREE);
 
   arma::Mat<size_t> neighborsDual, neighborsSingle, neighborsGreedy;
   arma::mat distancesDual, distancesSingle, distancesGreedy;

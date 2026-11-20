@@ -21,7 +21,7 @@ using namespace mlpack;
 /**
  * Simple bernoulli distribution module test.
  */
-TEST_CASE("SimpleBernoulliDistributionTest", "[ANNDistTest]")
+TEST_CASE("SimpleBernoulliDistributionTest", "[ANNDistTest][tiny]")
 {
   arma::mat param = arma::mat("1 1 0");
   BernoulliDistribution<> module(param, false);

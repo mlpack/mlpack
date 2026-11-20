@@ -45,7 +45,8 @@ class MishFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
     return x * (std::exp(2 * x) + 2 * std::exp(x)) /
            (2 + 2 * std::exp(x) + std::exp(2 * x));
@@ -57,7 +58,7 @@ class MishFunction
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template <typename InputVecType, typename OutputVecType>
+  template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType &x, OutputVecType &y)
   {
     y = x % (exp(2 * x) + 2 * exp(x)) / (2 + 2 * exp(x) + exp(2 * x));
@@ -70,11 +71,12 @@ class MishFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
     return std::exp(x) * (4 * (x + 1) + std::exp(x) * (4 * x + 6) +
            4 * std::exp(2 * x) + std::exp(3 * x)) /
-           std::pow(std::exp(2 * x) + 2 * std::exp(x) + 2, 2);
+           std::pow(std::exp(2 * x) + 2 * std::exp(x) + 2, ElemType(2));
   }
 
   /**
@@ -84,14 +86,14 @@ class MishFunction
    * @param y Result of Fn(x).
    * @param dy The resulting derivatives.
    */
-  template <typename InputVecType, typename OutputVecType, typename DerivVecType>
+  template<typename InputVecType, typename OutputVecType, typename DerivVecType>
   static void Deriv(const InputVecType& x,
                     const OutputVecType& /* y */,
                     DerivVecType& dy)
   {
     dy = exp(x) % (4 * (x + 1) + exp(x) % (4 * x + 6) +
         4 * exp(2 * x) + exp(3 * x)) /
-        pow(exp(2 * x) + 2 * exp(x) + 2, 2);
+        square(exp(2 * x) + 2 * exp(x) + 2);
   }
 }; // class MishFunction
 

@@ -68,7 +68,7 @@ std::cout << "RMSE of reconstructed matrix: "
 
  * [`NMF`](nmf.md): non-negative matrix factorization (a version of `AMF`)
  * [`SparseCoding`](sparse_coding.md)
- * [mlpack transformations](../../index.md#transformations)
+ * [mlpack transformations](../transformations.md)
  * [Matrix factorization on Wikipedia](https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems))
 
 ### Template parameter overview
@@ -103,7 +103,7 @@ each template parameter.
 
  * `SVDBatchFactorizer<WHMatType = arma::mat>`
    - Use batch SVD factorizer (Algorithm 4 from Chih-Chao Ma's
-     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
    - `WHMatType` (default `arma::mat`) represents the type used to represent the
      `W` and `H` matrices.
   -  Uses [`SimpleResidueTermination`](#simpleresiduetermination-default) and
@@ -115,7 +115,7 @@ each template parameter.
 
  * `SVDIncompleteIncrementalFactorizer<VMatType = arma::mat>`
    - Use incomplete incremental SVD factorizer (Algorithm 2 from Chih-Chao Ma's
-     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
    - `VMatType` (default `arma::mat`) represents the type of the `V` matrix that
      will be decomposed.
    - Uses
@@ -130,7 +130,7 @@ each template parameter.
 
  * `SVDCompleteIncrementalFactorizer<VMatType = arma::mat>`
    - Use complete incremental SVD factorizer (Algorithm 3 from Chih-Chao Ma's
-     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+     [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
    - `VMatType` (default `arma::mat`) represents the type of the `V` matrix that
      will be decomposed.
    - Uses
@@ -358,8 +358,7 @@ more specific [`NMF`](nmf.md) class.  `NMF` is just a typedef for
  - Takes one template parameter: `SVDBatchLearning<WHMatType>`.
    * `WHMatType` specifies the type of matrix that will be used to store `W` and
      `H` (default: `arma::mat`).
- - Implements Algorithm 4 from Chih-Chao Ma's [A Guide to Singular Value
-   Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+ - Implements Algorithm 4 from Chih-Chao Ma's [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
  - Constructor: `SVDBatchLearning<WHMatType>(u=0.0002, kw=0.0, kh=0.0, momentum=0.9)`
    * `u` (a `double`) is the learning rate (step size).
    * `kw` (a `double`) is the regularization penalty for the `W` matrix.
@@ -379,8 +378,7 @@ more specific [`NMF`](nmf.md) class.  `NMF` is just a typedef for
  - Each update to `W` and `H` is done by computing the gradient using a single
    nonzero value from `V` (similar to stochastic gradient descent with a batch
    size of 1).
- - Implements Algorithm 3 from Chih-Chao Ma's [A Guide to Singular Value
-   Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+ - Implements Algorithm 3 from Chih-Chao Ma's [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
  - Constructor: `SVDCompleteIncrementalLearning(u=0.001, kw=0.0, kh=0.0)`
    * `u` (a `double`) is the learning rate (step size).
    * `kw` (a `double`) is the regularization penalty for the `W` matrix.
@@ -397,8 +395,7 @@ more specific [`NMF`](nmf.md) class.  `NMF` is just a typedef for
      `arma::sp_mat`).
  - Each update to `W` and `H` is done by computing the gradient using all
    nonzero values in a single column of `V`.
- - Implements Algorithm 2 from Chih-Chao Ma's [A Guide to Singular Value
-   Decomposition for Collaborative Filtering](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=9d14285a32d268b69d51e7036d5a391c007df886).
+ - Implements Algorithm 2 from Chih-Chao Ma's [A Guide to Singular Value Decomposition for Collaborative Filtering](https://www.mlpack.org/papers/ma_svd_for_cf.pdf).
  - Constructor: `SVDIncompleteIncrementalLearning(u=0.001, kw=0.0, kh=0.0)`
    * `u` (a `double`) is the learning rate (step size).
    * `kw` (a `double`) is the regularization penalty for the `W` matrix.
@@ -511,7 +508,7 @@ decomposition, and `float` element type.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 // Create the AMF object.  Use default parameters for the termination policy,
 // initialization rule, and update rules.
@@ -539,7 +536,7 @@ Compare quality of decompositions of MovieLens with different update rules.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 // Create four AMF objects using different update rules:
 //  - SVDBatchLearning
@@ -618,7 +615,7 @@ Use a pre-specified initialization for `W` and `H`.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -648,7 +645,7 @@ and `H` matrices.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -659,8 +656,9 @@ mlpack::RandomAcolInitialization<5> initW;
 mlpack::RandomAMFInitialization initH;
 
 // Combine the two initializations so we can pass it to the AMF class.
-typedef mlpack::MergeInitialization<mlpack::RandomAcolInitialization<5>,
-                                    mlpack::RandomAMFInitialization> InitType;
+using InitType =
+    mlpack::MergeInitialization<mlpack::RandomAcolInitialization<5>,
+                                mlpack::RandomAMFInitialization>;
 InitType init(initW, initH);
 
 // Create an AMF object with the custom initialization.
@@ -686,7 +684,7 @@ RMSE of the held-out validation set is sufficiently low.
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_mat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 arma::mat W, H;
 
@@ -834,7 +832,7 @@ Then we can use it in a program:
 ```c++
 // See https://datasets.mlpack.org/movielens-100k.csv.
 arma::sp_fmat V;
-mlpack::data::Load("movielens-100k.csv", V, true);
+mlpack::Load("movielens-100k.csv", V, mlpack::Fatal);
 
 CustomTimeTermination t(5 /* seconds */);
 mlpack::AMF<CustomTimeTermination,
@@ -889,7 +887,7 @@ class CustomUpdateRule
 
   // Serialize the update rule using the cereal library.
   // This is only necessary if the update rule will be used with an AMF object
-  // that is saved or loaded with data::Save() or data::Load().
+  // that is saved or loaded with Save() or Load().
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t version);
 };

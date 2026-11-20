@@ -76,8 +76,9 @@ HollowBallBound<TDistanceType, ElemType>::HollowBallBound(
 
 //! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename TDistanceType, typename ElemType>
-HollowBallBound<TDistanceType, ElemType>& HollowBallBound<TDistanceType, ElemType>::
-operator=(const HollowBallBound& other)
+HollowBallBound<TDistanceType, ElemType>&
+HollowBallBound<TDistanceType, ElemType>::operator=(
+    const HollowBallBound& other)
 {
   if (this != &other)
   {
@@ -114,8 +115,8 @@ HollowBallBound<TDistanceType, ElemType>::HollowBallBound(
 
 //! Move assignment operator.
 template<typename TDistanceType, typename ElemType>
-HollowBallBound<TDistanceType, ElemType>& HollowBallBound<TDistanceType, ElemType>::
-operator=(HollowBallBound&& other)
+HollowBallBound<TDistanceType, ElemType>&
+HollowBallBound<TDistanceType, ElemType>::operator=(HollowBallBound&& other)
 {
   if (this != &other)
   {
@@ -315,8 +316,8 @@ RangeType<ElemType> HollowBallBound<TDistanceType, ElemType>::RangeDistance(
     typename std::enable_if_t<IsVector<VecType>::value>* /* junk */) const
 {
   if (radii.Hi() < 0)
-    return Range(std::numeric_limits<ElemType>::max(),
-                       std::numeric_limits<ElemType>::max());
+    return RangeType<ElemType>(std::numeric_limits<ElemType>::max(),
+                               std::numeric_limits<ElemType>::max());
   else
   {
     RangeType<ElemType> range;
@@ -422,7 +423,8 @@ HollowBallBound<TDistanceType, ElemType>::operator|=(const MatType& data)
  */
 template<typename TDistanceType, typename ElemType>
 const HollowBallBound<TDistanceType, ElemType>&
-HollowBallBound<TDistanceType, ElemType>::operator|=(const HollowBallBound& other)
+HollowBallBound<TDistanceType, ElemType>::operator|=(
+    const HollowBallBound& other)
 {
   if (radii.Hi() < 0)
   {
@@ -459,7 +461,7 @@ void HollowBallBound<TDistanceType, ElemType>::serialize(
   ar(CEREAL_NVP(radii));
   ar(CEREAL_NVP(center));
   ar(CEREAL_NVP(hollowCenter));
-  ar(CEREAL_POINTER(distance));
+
   if (cereal::is_loading<Archive>())
   {
     // If we're loading, delete the local distance since we'll have a new one.
@@ -468,6 +470,8 @@ void HollowBallBound<TDistanceType, ElemType>::serialize(
 
     ownsDistance = true;
   }
+
+  ar(CEREAL_POINTER(distance));
 }
 
 } // namespace mlpack

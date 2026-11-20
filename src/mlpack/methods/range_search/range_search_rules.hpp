@@ -28,9 +28,9 @@ class RangeSearchRules
 {
  public:
   //! Easy access to MatType.
-  typedef typename TreeType::Mat MatType;
+  using MatType = typename TreeType::Mat;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
   /**
    * Construct the RangeSearchRules object.  This is usually done from within
@@ -111,7 +111,7 @@ class RangeSearchRules
                    TreeType& referenceNode,
                    const ElemType oldScore) const;
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }

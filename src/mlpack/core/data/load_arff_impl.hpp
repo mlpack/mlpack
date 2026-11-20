@@ -18,12 +18,13 @@
 #include "is_naninf.hpp"
 
 namespace mlpack {
-namespace data {
 
 template<typename eT, typename PolicyType>
-void LoadARFF(const std::string& filename,
+bool LoadARFF(const std::string& filename,
               arma::Mat<eT>& matrix,
-              DatasetMapper<PolicyType>& info)
+              DatasetMapper<PolicyType>& info,
+              bool fatal,
+              bool transpose)
 {
   // First, open the file.
   std::ifstream ifs;
@@ -72,6 +73,20 @@ void LoadARFF(const std::string& filename,
       }
       else if (annotation == "@attribute")
       {
+        // An attribute declaration must have both a name and a type.
+        if (tok.size() < 3)
+        {
+          std::stringstream error;
+          error << "LoadARFF(): line " << headerLines << ": @attribute "
+              << "declaration must specify a name and a type.";
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else
+            Log::Warn << error.str() << std::endl;
+
+          return false;
+        }
+
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
@@ -118,6 +133,20 @@ void LoadARFF(const std::string& filename,
             ++it;
           }
 
+          // A categorical attribute must have at least one category.
+          if (categories.empty())
+          {
+            std::stringstream error;
+            error << "LoadARFF(): line " << headerLines << ": categorical "
+                << "attribute has no categories.";
+            if (fatal)
+              Log::Fatal << error.str() << std::endl;
+            else
+              Log::Warn << error.str() << std::endl;
+
+            return false;
+          }
+
           categoryStrings[dimensionality - 1] = std::move(categories);
         }
       }
@@ -128,14 +157,26 @@ void LoadARFF(const std::string& filename,
       }
       else
       {
-        throw std::runtime_error("unknown ARFF annotation '" + (*tok.begin()) +
-            "'");
+        if (fatal)
+          Log::Fatal << "unknown ARFF annotation '" + (*tok.begin()) + "'"
+              << std::endl;
+        else
+          Log::Warn << "unknown ARFF annotation '" + (*tok.begin()) + "'"
+              << std::endl;
+
+        return false;
       }
     }
   }
 
   if (ifs.eof())
-    throw std::runtime_error("no @data section found");
+  {
+    if (fatal)
+      Log::Fatal << "no @data section found" << std::endl;
+    else
+      Log::Warn << "no @data section found" << std::endl;
+    return false;
+  }
 
   // Reset the DatasetInfo object, if needed.
   if (info.Dimensionality() == 0)
@@ -144,11 +185,15 @@ void LoadARFF(const std::string& filename,
   }
   else if (info.Dimensionality() != dimensionality)
   {
-    std::ostringstream oss;
-    oss << "data::LoadARFF(): given DatasetInfo has dimensionality "
-        << info.Dimensionality() << ", but data has dimensionality "
-        << dimensionality;
-    throw std::invalid_argument(oss.str());
+    if (fatal)
+      Log::Fatal << "LoadARFF(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << dimensionality << std::endl;
+    else
+      Log::Warn << "LoadARFF(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << dimensionality << std::endl;
+    return false;
   }
 
   for (size_t i = 0; i < types.size(); ++i)
@@ -160,8 +205,8 @@ void LoadARFF(const std::string& filename,
   }
 
   // Make sure all strings are mapped, if we have any.
-  typedef std::map<size_t, std::vector<std::string>>::const_iterator
-      IteratorType;
+  using IteratorType =
+      std::map<size_t, std::vector<std::string>>::const_iterator;
   for (IteratorType it = categoryStrings.begin(); it != categoryStrings.end();
       ++it)
   {
@@ -174,51 +219,62 @@ void LoadARFF(const std::string& filename,
   // We need to find out how many lines of data are in the file.
   std::streampos pos = ifs.tellg();
   size_t row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     ++row;
   }
-  // Uncount the EOF row.
-  --row;
 
   // Since we've hit the EOF, we have to call clear() so we can seek again.
   ifs.clear();
   ifs.seekg(pos);
 
   // Now, set the size of the matrix.
-  matrix.set_size(dimensionality, row);
+  if (transpose)
+    matrix.set_size(dimensionality, row);
+  else
+    matrix.set_size(row, dimensionality);
 
   // Now we are looking at the @data section.
   row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     Trim(line);
     // Each line of the @data section must be a CSV (except sparse data, which
     // we will handle later).  So now we can tokenize the
     // CSV and parse it.  The '?' representing a missing value is not allowed,
-    // so if that occurs we throw an exception.  We also throw an exception if
+    // so if that occurs we return a fatal.  This only happens if
     // any piece of data does not match its type (categorical or numeric).
 
     // If the first character is {, it is sparse data, and we can just say this
     // is not handled for now...
     if (line[0] == '{')
-      throw std::runtime_error("cannot yet parse sparse ARFF data");
+    {
+      if (fatal)
+        Log::Fatal << "cannot yet parse sparse ARFF data" << std::endl;
+      else
+        Log::Warn << "cannot yet parse sparse ARFF data" << std::endl;
+      return false;
+    }
 
     // Tokenize the line.
     std::vector<std::string> tok = Tokenize(line, ',', '"');
 
     size_t col = 0;
     std::stringstream token;
-    for (std::vector<std::string>::iterator it = tok.begin(); it != tok.end(); ++it)
+    for (std::vector<std::string>::iterator it = tok.begin(); it != tok.end();
+         ++it)
     {
       // Check that we are not too many columns in.
-      if (col >= matrix.n_rows)
+      if (col >= (transpose ? matrix.n_rows : matrix.n_cols))
       {
         std::stringstream error;
         error << "Too many columns in line " << (headerLines + row) << ".";
-        throw std::runtime_error(error.str());
+        if (fatal)
+          Log::Fatal << error.str() << std::endl;
+        else
+          Log::Warn << error.str() << std::endl;
+
+        return false;
       }
 
       // What should this token be?
@@ -242,11 +298,20 @@ void LoadARFF(const std::string& filename,
           for (size_t i = 0; i < categoryStrings.at(col).size() - 1; ++i)
             error << "\"" << categoryStrings.at(col)[i] << "\", ";
           error << "\"" << categoryStrings.at(col).back() << "\").";
-          throw std::runtime_error(error.str());
+
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else
+            Log::Warn << error.str() << std::endl;
+          return false;
         }
 
-        // We load transposed.
-        matrix(col, row) = result;
+        // Set the value of the matrix depending on whether or not we are
+        // transposing.
+        if (transpose)
+          matrix(col, row) = result;
+        else
+          matrix(row, col) = result;
       }
       else if (info.Type(col) == Datatype::numeric)
       {
@@ -264,30 +329,48 @@ void LoadARFF(const std::string& filename,
           {
             // Okay, it's not NaN or inf.  If it's '?', we issue a specific
             // error, otherwise we issue a general error.
-            std::stringstream error;
             std::string tokenStr = token.str();
             Trim(tokenStr);
             if (tokenStr == "?")
-              error << "Missing values ('?') not supported, ";
+            {
+              if (fatal)
+                Log::Fatal << "Missing values ('?') not supported, "
+                    << std::endl;
+              else
+                Log::Warn << "Missing values ('?') not supported, "
+                    << std::endl;
+            }
             else
-              error << "Parse error ";
-            error << "at line " << (headerLines + row) << " token " << col
-                << ": \"" << tokenStr << "\".";
-            throw std::runtime_error(error.str());
+            {
+              std::stringstream error;
+              error << "Parse error " << "at line " <<
+                  (headerLines + row) << " token " << col << ": \""
+                  << tokenStr << "\".";
+
+              if (fatal)
+                Log::Fatal << error.str() << std::endl;
+              else
+                Log::Warn << error.str() << std::endl;
+            }
+            return false;
           }
         }
 
         // If we made it to here, we have a value.
-        matrix(col, row) = val; // We load transposed.
+        if (transpose)
+          matrix(col, row) = val;
+        else
+          matrix(row, col) = val;
       }
 
       ++col;
     }
     ++row;
   }
+
+  return true;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

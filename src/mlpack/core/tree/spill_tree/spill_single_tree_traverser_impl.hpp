@@ -23,7 +23,8 @@ namespace mlpack {
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
+             class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename RuleType, bool Defeatist>
@@ -37,7 +38,8 @@ SpillSingleTreeTraverser<RuleType, Defeatist>::SpillSingleTreeTraverser(
 template<typename DistanceType,
          typename StatisticType,
          typename MatType,
-         template<typename HyperplaneDistanceType> class HyperplaneType,
+         template<typename HyperplaneDistanceType, typename HyperplaneMatType>
+             class HyperplaneType,
          template<typename SplitDistanceType, typename SplitMatType>
              class SplitType>
 template<typename RuleType, bool Defeatist>

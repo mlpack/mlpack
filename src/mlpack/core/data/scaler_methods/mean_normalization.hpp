@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple Mean Normalization class
@@ -43,23 +42,26 @@ namespace data {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class MeanNormalization
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Function to fit features, to find out the min max and scale.
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
-    itemMean = arma::mean(input, 1);
+    itemMean = mean(input, 1);
     itemMin = min(input, 1);
-    itemMax = arma::max(input, 1);
+    itemMax = max(input, 1);
     scale = itemMax - itemMin;
     // Handling zeros in scale vector.
-    scale.for_each([](arma::vec::elem_type& val) { val =
+    scale.for_each([](ElemType& val) { val =
         (val == 0) ? 1 : val; });
   }
 
@@ -69,7 +71,6 @@ class MeanNormalization
    * @param input Dataset to scale features.
    * @param output Output matrix with scaled features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     if (itemMean.is_empty() || scale.is_empty())
@@ -87,7 +88,6 @@ class MeanNormalization
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
@@ -95,13 +95,13 @@ class MeanNormalization
   }
 
   //! Get the Mean row vector.
-  const arma::vec& ItemMean() const { return itemMean; }
+  const VecType& ItemMean() const { return itemMean; }
   //! Get the Min row vector.
-  const arma::vec& ItemMin() const { return itemMin; }
+  const VecType& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
-  const arma::vec& ItemMax() const { return itemMax; }
+  const VecType& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
-  const arma::vec& Scale() const { return scale; }
+  const VecType& Scale() const { return scale; }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -114,16 +114,15 @@ class MeanNormalization
 
  private:
   // Vector which holds mean of each feature.
-  arma::vec itemMean;
+  VecType itemMean;
   // Vector which holds minimum of each feature.
-  arma::vec itemMin;
+  VecType itemMin;
   // Vector which holds maximum of each feature.
-  arma::vec itemMax;
+  VecType itemMax;
   // Vector which is used to scale up each feature.
-  arma::vec scale;
+  VecType scale;
 }; // class MeanNormalization
 
-} // namespace data
 } // namespace mlpack
 
 #endif

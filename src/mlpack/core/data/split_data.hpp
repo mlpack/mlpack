@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * This helper function splits any `input` data into training and testing parts.
@@ -28,7 +27,10 @@ void SplitHelper(const InputType& input,
                  InputType& train,
                  InputType& test,
                  const double testRatio,
-                 const arma::uvec& order = arma::uvec())
+                 const arma::uvec& order = arma::uvec(),
+                 const typename std::enable_if_t<
+                     !IsCube<InputType>::value && !IsField<InputType>::value
+                 >* = 0)
 {
   const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
   const size_t trainSize = input.n_cols - testSize;
@@ -37,21 +39,64 @@ void SplitHelper(const InputType& input,
   train.set_size(input.n_rows, trainSize);
   test.set_size(input.n_rows, testSize);
 
-  // Shuffling and spliting simultaneously.
+  // Shuffling and splitting simultaneously.
+  if (!order.is_empty())
+  {
+    if (trainSize > 0)
+      train = input.cols(order.subvec(0, trainSize - 1));
+
+    if (trainSize < input.n_cols)
+      test = input.cols(order.subvec(trainSize, order.n_elem - 1));
+  }
+  // Splitting only.
+  else
+  {
+    if (trainSize > 0)
+      train = input.cols(0, trainSize - 1);
+
+    if (trainSize < input.n_cols)
+      test = input.cols(trainSize, input.n_cols - 1);
+  }
+}
+
+/**
+ * This is the same as the helper function above, but for arma::field and
+ * arma::cube, which don't support non-contiguous subviews (so we can't do
+ * input.cols(order)).
+ */
+template<typename InputType>
+void SplitHelper(const InputType& input,
+                 InputType& train,
+                 InputType& test,
+                 const double testRatio,
+                 const arma::uvec& order = arma::uvec(),
+                 const typename std::enable_if_t<
+                     IsCube<InputType>::value || IsField<InputType>::value
+                 >* = 0)
+{
+  const size_t testSize = static_cast<size_t>(input.n_cols * testRatio);
+  const size_t trainSize = input.n_cols - testSize;
+
+  // Cubes and fields can be initialized with three dimensions.
+  train.set_size(input.n_rows, trainSize, input.n_slices);
+  test.set_size(input.n_rows, testSize, input.n_slices);
+
+  // Shuffling and splitting simultaneously.
   if (!order.is_empty())
   {
     if (trainSize > 0)
     {
       for (size_t i = 0; i < trainSize; ++i)
-        train.col(i) = input.col(order(i));
+        train.col(i) = input.col(order[i]);
     }
+
     if (trainSize < input.n_cols)
     {
       for (size_t i = trainSize; i < input.n_cols; ++i)
-        test.col(i - trainSize) = input.col(order(i));
+        test.col(i - trainSize) = input.col(order[i]);
     }
   }
-  // Spliting only.
+  // Splitting only.
   else
   {
     if (trainSize > 0)
@@ -145,9 +190,9 @@ void StratifiedSplit(const arma::Mat<T>& input,
   const bool typeCheck = (arma::is_Row<LabelsType>::value)
       || (arma::is_Col<LabelsType>::value);
   if (!typeCheck)
-    throw std::runtime_error("data::Split(): when stratified sampling is done, "
+    throw std::runtime_error("Split(): when stratified sampling is done, "
         "labels must have type `arma::Row<>`!");
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   size_t trainIdx = 0;
   size_t testIdx = 0;
   size_t trainSize = 0;
@@ -251,18 +296,19 @@ void StratifiedSplit(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true.)
  */
-template<typename T, typename LabelsType,
-         typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
-void Split(const arma::Mat<T>& input,
+template<typename MatType, typename LabelsType,
+         typename = std::enable_if_t<IsAnyArmaBaseType<MatType>::value>,
+         typename = std::enable_if_t<IsAnyArmaBaseType<LabelsType>::value>>
+void Split(const MatType& input,
            const LabelsType& inputLabel,
-           arma::Mat<T>& trainData,
-           arma::Mat<T>& testData,
+           MatType& trainData,
+           MatType& testData,
            LabelsType& trainLabel,
            LabelsType& testLabel,
            const double testRatio,
            const bool shuffleData = true)
 {
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -300,10 +346,11 @@ void Split(const arma::Mat<T>& input,
  * @param shuffleData If true, the sample order is shuffled; otherwise, each
  *       sample is visited in linear order. (Default true).
  */
-template<typename T>
-void Split(const arma::Mat<T>& input,
-           arma::Mat<T>& trainData,
-           arma::Mat<T>& testData,
+template<typename MatType,
+         typename = std::enable_if_t<IsAnyArmaBaseType<MatType>::value>>
+void Split(const MatType& input,
+           MatType& trainData,
+           MatType& testData,
            const double testRatio,
            const bool shuffleData = true)
 {
@@ -316,6 +363,79 @@ void Split(const arma::Mat<T>& input,
   else
   {
     SplitHelper(input, trainData, testData, testRatio);
+  }
+}
+
+/**
+ * Given an input dataset, labels, and weights, split into a training set and
+ * test set.  Example usage below.  This overload places the split dataset into
+ * the six output parameters given (trainData, testData, trainLabels,
+ * testLabels, trainWeights, and testWeights).
+ *
+ * @code
+ * arma::mat input = loadData();
+ * arma::Row<size_t> label = loadLabel();
+ * arma::rowvec weights = loadWeights();
+ *
+ * arma::mat trainData, testData;
+ * arma::Row<size_t> trainLabels, testLabels;
+ * arma::rowvec trainWeights, testWeights;
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, label, weights, trainData, testData, trainLabels, testLabels,
+ *     trainWeights, testWeights, 0.3);
+ * @endcode
+ *
+ * @tparam MatType Type of the data matrix.
+ * @tparam LabelsType Type of input labels. It can be arma::Mat, arma::Row,
+ *      arma::Cube, or arma::SpMat.
+ * @tparam WeightsType Type of input weights.  It can be arma::Mat, arma::Row,
+ *      arma::Cube, or arma::SpMat.
+ * @param input Input dataset to split.
+ * @param inputLabels Input labels to split.
+ * @param inputWeights Input weights to split.
+ * @param trainData Matrix to store training data into.
+ * @param testData Matrix to store test data into.
+ * @param trainLabels Vector to store training labels into.
+ * @param testLabels Vector to store test labels into.
+ * @param trainWeights Vector to store training weights into.
+ * @param testWeights Vector to store test weights into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true.)
+ */
+template<typename MatType, typename LabelsType, typename WeightsType,
+         typename = std::enable_if_t<IsAnyArmaBaseType<MatType>::value>,
+         typename = std::enable_if_t<IsAnyArmaBaseType<LabelsType>::value>,
+         typename = std::enable_if_t<IsAnyArmaBaseType<WeightsType>::value>>
+void Split(const MatType& input,
+           const LabelsType& inputLabels,
+           const WeightsType& inputWeights,
+           MatType& trainData,
+           MatType& testData,
+           LabelsType& trainLabels,
+           LabelsType& testLabels,
+           WeightsType& trainWeights,
+           WeightsType& testWeights,
+           const double testRatio,
+           const bool shuffleData = true)
+{
+  util::CheckSameSizes(input, inputLabels, "Split()");
+  util::CheckSameSizes(input, inputWeights, "Split()");
+  if (shuffleData)
+  {
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+    SplitHelper(input, trainData, testData, testRatio, order);
+    SplitHelper(inputLabels, trainLabels, testLabels, testRatio, order);
+    SplitHelper(inputWeights, trainWeights, testWeights, testRatio, order);
+  }
+  else
+  {
+    SplitHelper(input, trainData, testData, testRatio);
+    SplitHelper(inputLabels, trainLabels, testLabels, testRatio);
+    SplitHelper(inputWeights, trainWeights, testWeights, testRatio);
   }
 }
 
@@ -349,6 +469,7 @@ void Split(const arma::Mat<T>& input,
  */
 template<typename T, typename LabelsType,
          typename = std::enable_if_t<arma::is_arma_type<LabelsType>::value> >
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>, LabelsType, LabelsType>
 Split(const arma::Mat<T>& input,
       const LabelsType& inputLabel,
@@ -397,6 +518,7 @@ Split(const arma::Mat<T>& input,
  *      and testData (arma::Mat<T>).
  */
 template<typename T>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<arma::Mat<T>, arma::Mat<T>>
 Split(const arma::Mat<T>& input,
       const double testRatio,
@@ -411,6 +533,48 @@ Split(const arma::Mat<T>& input,
 }
 
 /**
+ * Given an input dataset, split into a training set and test set.
+ * Example usage below. This overload places the split dataset into the two
+ * output parameters given (trainData, testData).
+ *
+ * @code
+ * arma::field<arma::mat> input = loadData();
+ * arma::field<arma::mat> trainData;
+ * arma::field<arma::mat> testData;
+ * RandomSeed(100); // Set the seed if you like.
+ *
+ * // Split the dataset into a training and test set, with 30% of the data being
+ * // held out for the test set.
+ * Split(input, trainData, testData, 0.3);
+ * @endcode
+ *
+ * @param input Input dataset to split.
+ * @param trainData Matrix to store training data into.
+ * @param testData Matrix to store test data into.
+ * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
+ * @param shuffleData If true, the sample order is shuffled; otherwise, each
+ *       sample is visited in linear order. (Default true).
+ */
+template<typename T>
+void Split(const arma::field<T>& input,
+           arma::field<T>& trainData,
+           arma::field<T>& testData,
+           const double testRatio,
+           const bool shuffleData = true)
+{
+  if (shuffleData)
+  {
+    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
+        input.n_cols - 1, input.n_cols));
+    SplitHelper(input, trainData, testData, testRatio, order);
+  }
+  else
+  {
+    SplitHelper(input, trainData, testData, testRatio);
+  }
+}
+
+/**
  * Given an input dataset and labels, split into a training set and test set.
  * Example usage below.  This overload places the split dataset into the four
  * output parameters given (trainData, testData, trainLabel, and testLabel).
@@ -418,7 +582,8 @@ Split(const arma::Mat<T>& input,
  * The input dataset must be of type arma::field. It should have the shape -
  * (n_rows = 1, n_cols = Number of samples, n_slices = 1).
  *
- * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>.
+ * NOTE: Here FieldType could be arma::field<arma::mat> or
+ * arma::field<arma::vec>.
  *
  * @code
  * arma::field<arma::mat> input = loadData();
@@ -431,7 +596,7 @@ Split(const arma::Mat<T>& input,
  *
  * // Split the dataset into a training and test set, with 30% of the data being
  * // held out for the test set.
- * Split(input, label, trainData, testData, trainLabel, testLabel, 0.3);
+ * Split(input, label, trainData, trainLabel, testData, testLabel, 0.3);
  * @endcode
  *
  * @param input Input dataset to split.
@@ -448,6 +613,8 @@ template <typename FieldType, typename T,
           typename = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Use other field overload with testData before trainLabel; this "
+             "overload will be removed in mlpack 5.0.0.")]]
 void Split(const FieldType& input,
            const arma::field<T>& inputLabel,
            FieldType& trainData,
@@ -457,7 +624,7 @@ void Split(const FieldType& input,
            const double testRatio,
            const bool shuffleData = true)
 {
-  util::CheckSameSizes(input, inputLabel, "data::Split()");
+  util::CheckSameSizes(input, inputLabel, "Split()");
   if (shuffleData)
   {
     arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
@@ -469,56 +636,6 @@ void Split(const FieldType& input,
   {
     SplitHelper(input, trainData, testData, testRatio);
     SplitHelper(inputLabel, trainLabel, testLabel, testRatio);
-  }
-}
-
-/**
- * Given an input dataset, split into a training set and test set.
- * Example usage below. This overload places the split dataset into the two
- * output parameters given (trainData, testData).
- *
- * The input dataset must be of type arma::field. It should have the shape -
- * (n_rows = 1, n_cols = Number of samples, n_slices = 1)
- *
- * NOTE: Here FieldType could be arma::field<arma::mat> or arma::field<arma::vec>
- *
- * @code
- * arma::field<arma::mat> input = loadData();
- * arma::field<arma::mat> trainData;
- * arma::field<arma::mat> testData;
- * RandomSeed(100); // Set the seed if you like.
- *
- * // Split the dataset into a training and test set, with 30% of the data being
- * // held out for the test set.
- * Split(input, trainData, testData, 0.3);
- * @endcode
- *
- * @param input Input dataset to split.
- * @param trainData FieldType to store training data into.
- * @param testData FieldType test data into.
- * @param testRatio Percentage of dataset to use for test set (between 0 and 1).
- * @param shuffleData If true, the sample order is shuffled; otherwise, each
- *       sample is visited in linear order. (Default true).
- */
-template <class FieldType,
-          class = std::enable_if_t<
-              arma::is_Col<typename FieldType::object_type>::value ||
-              arma::is_Mat_only<typename FieldType::object_type>::value>>
-void Split(const FieldType& input,
-           FieldType& trainData,
-           FieldType& testData,
-           const double testRatio,
-           const bool shuffleData = true)
-{
-  if (shuffleData)
-  {
-    arma::uvec order = arma::shuffle(arma::linspace<arma::uvec>(0,
-        input.n_cols - 1, input.n_cols));
-    SplitHelper(input, trainData, testData, testRatio, order);
-  }
-  else
-  {
-    SplitHelper(input, trainData, testData, testRatio);
   }
 }
 
@@ -553,6 +670,7 @@ template <class FieldType, typename T,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType, arma::field<T>, arma::field<T>>
 Split(const FieldType& input,
       const arma::field<T>& inputLabel,
@@ -600,6 +718,7 @@ template <class FieldType,
           class = std::enable_if_t<
               arma::is_Col<typename FieldType::object_type>::value ||
               arma::is_Mat_only<typename FieldType::object_type>::value>>
+[[deprecated("Will be removed in mlpack 5.0.0; use other overloads instead")]]
 std::tuple<FieldType, FieldType>
 Split(const FieldType& input,
       const double testRatio,
@@ -613,7 +732,6 @@ Split(const FieldType& input,
                          std::move(testData));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -15,6 +15,7 @@
 #define MLPACK_CORE_MATH_CCOV_HPP
 
 #include <mlpack/prereqs.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
 

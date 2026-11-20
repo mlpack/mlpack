@@ -21,9 +21,7 @@ class RPlusPlusTreeDescentHeuristic
 {
  public:
   /**
-   * Evaluate the node using a heuristic. Returns the number of the node
-   * with minimum largest Hilbert value is greater than the Hilbert value of
-   * the point being inserted.
+   * Evaluate the node using the R++-tree heuristic.
    *
    * @param node The node that is being evaluated.
    * @param point The number of the point that is being inserted.
@@ -32,9 +30,7 @@ class RPlusPlusTreeDescentHeuristic
   static size_t ChooseDescentNode(TreeType* node, const size_t point);
 
   /**
-   * Evaluate the node using a heuristic. Returns the number of the node
-   * with minimum largest Hilbert value is greater than the largest
-   * Hilbert value of the point being inserted.
+   * Evaluate the node using the R++-tree heuristic.
    *
    * @param node The node that is being evaluated.
    * @param insertedNode The node that is being inserted.

@@ -17,20 +17,22 @@
 
 namespace mlpack {
 
-template<typename DistanceType, typename MatType>
-HamerlyKMeans<DistanceType, MatType>::HamerlyKMeans(const MatType& dataset,
-                                                    DistanceType& distance) :
+template<typename DistanceType, typename MatType, typename CentroidsType>
+HamerlyKMeans<DistanceType, MatType, CentroidsType>::HamerlyKMeans(
+    const MatType& dataset,
+    DistanceType& distance) :
     dataset(dataset),
     distance(distance),
-    distanceCalculations(0)
+    distanceComputations(0)
 {
   // Nothing to do.
 }
 
-template<typename DistanceType, typename MatType>
-double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
-                                                     arma::mat& newCentroids,
-                                                     arma::Col<size_t>& counts)
+template<typename DistanceType, typename MatType, typename CentroidsType>
+double HamerlyKMeans<DistanceType, MatType, CentroidsType>::Iterate(
+    const CentroidsType& centroids,
+    CentroidsType& newCentroids,
+    arma::Col<size_t>& counts)
 {
   size_t hamerlyPruned = 0;
 
@@ -38,7 +40,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   if (minClusterDistances.n_elem != centroids.n_cols)
   {
     upperBounds.set_size(dataset.n_cols);
-    upperBounds.fill(DBL_MAX);
+    upperBounds.fill(std::numeric_limits<ElemType>::max());
     lowerBounds.zeros(dataset.n_cols);
     assignments.zeros(dataset.n_cols);
     minClusterDistances.set_size(centroids.n_cols);
@@ -49,27 +51,28 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
   counts.zeros(centroids.n_cols);
 
   // Calculate minimum intra-cluster distance for each cluster.
-  minClusterDistances.fill(DBL_MAX);
+  minClusterDistances.fill(std::numeric_limits<ElemType>::max());
+  #pragma omp parallel for reduction(+:distanceComputations) schedule(static)
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double dist = distance.Evaluate(centroids.col(i),
-                                            centroids.col(j)) / 2.0;
-      ++distanceCalculations;
+      const ElemType dist = distance.Evaluate(centroids.col(i),
+                                              centroids.col(j)) / 2.0;
+      ++distanceComputations;
 
       // Update bounds, if this intra-cluster distance is smaller.
-      if (dist < minClusterDistances(i))
-        minClusterDistances(i) = dist;
-      if (dist < minClusterDistances(j))
-        minClusterDistances(j) = dist;
+      minClusterDistances(i) = std::min(minClusterDistances(i), dist);
+      minClusterDistances(j) = std::min(minClusterDistances(j), dist);
     }
   }
 
+  #pragma omp parallel for reduction(+:hamerlyPruned, distanceComputations) \
+      reduction(matAdd:newCentroids) reduction(colAdd:counts) schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    const double m = std::max(minClusterDistances(assignments[i]),
-                              lowerBounds(i));
+    const ElemType m = std::max(minClusterDistances(assignments[i]),
+                                lowerBounds(i));
 
     // First bound test.
     if (upperBounds(i) <= m)
@@ -83,7 +86,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // Tighten upper bound.
     upperBounds(i) = distance.Evaluate(dataset.col(i),
                                        centroids.col(assignments[i]));
-    ++distanceCalculations;
+    ++distanceComputations;
 
     // Second bound test.
     if (upperBounds(i) <= m)
@@ -96,13 +99,13 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
     // The bounds failed.  So test against all other clusters.
     // This is Hamerly's Point-All-Ctrs() function from the paper.
     // We have to reset the lower bound first.
-    lowerBounds(i) = DBL_MAX;
+    lowerBounds(i) = std::numeric_limits<ElemType>::max();
     for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (c == assignments[i])
         continue;
 
-      const double dist = distance.Evaluate(dataset.col(i), centroids.col(c));
+      const ElemType dist = distance.Evaluate(dataset.col(i), centroids.col(c));
 
       // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
       if (dist < upperBounds(i))
@@ -118,7 +121,7 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
         lowerBounds(i) = dist;
       }
     }
-    distanceCalculations += centroids.n_cols - 1;
+    distanceComputations += centroids.n_cols - 1;
 
     // Update new centroids.
     newCentroids.col(assignments[i]) += dataset.col(i);
@@ -127,36 +130,42 @@ double HamerlyKMeans<DistanceType, MatType>::Iterate(const arma::mat& centroids,
 
   // Normalize centroids and calculate cluster movement (contains parts of
   // Move-Centers() and Update-Bounds()).
-  double furthestMovement = 0.0;
-  double secondFurthestMovement = 0.0;
+  ElemType furthestMovement = 0.0;
+  ElemType secondFurthestMovement = 0.0;
   size_t furthestMovingCluster = 0;
-  arma::vec centroidMovements(centroids.n_cols);
-  double centroidMovement = 0.0;
+  ColType centroidMovements(centroids.n_cols);
+  ElemType centroidMovement = 0.0;
+  #pragma omp parallel for \
+      reduction(+: distanceComputations, centroidMovement) schedule(static)
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     if (counts(c) > 0)
       newCentroids.col(c) /= counts(c);
 
     // Calculate movement.
-    const double movement = distance.Evaluate(centroids.col(c),
-                                              newCentroids.col(c));
+    const ElemType movement = distance.Evaluate(centroids.col(c),
+                                                newCentroids.col(c));
     centroidMovements(c) = movement;
     centroidMovement += std::pow(movement, 2.0);
-    ++distanceCalculations;
+    ++distanceComputations;
 
-    if (movement > furthestMovement)
+    #pragma omp critical
     {
-      secondFurthestMovement = furthestMovement;
-      furthestMovement = movement;
-      furthestMovingCluster = c;
-    }
-    else if (movement > secondFurthestMovement)
-    {
-      secondFurthestMovement = movement;
+      if (movement > furthestMovement)
+      {
+        secondFurthestMovement = furthestMovement;
+        furthestMovement = movement;
+        furthestMovingCluster = c;
+      }
+      else if (movement > secondFurthestMovement)
+      {
+        secondFurthestMovement = movement;
+      }
     }
   }
 
   // Now update bounds (lines 3-8 of Update-Bounds()).
+  #pragma omp parallel for schedule(static)
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     upperBounds(i) += centroidMovements(assignments[i]);

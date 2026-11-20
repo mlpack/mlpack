@@ -92,11 +92,11 @@ std::cout << neighbors[0].size() << " points within the range [1.0, 2.0] of the"
 mlpack comes with a number of pre-written distance metrics that satisfy the
 `DistanceType` policy:
 
- - [`ManhattanDistance`](../user/core.md#lmetric)
- - [`EuclideanDistance`](../user/core.md#lmetric)
- - [`ChebyshevDistance`](../user/core.md#lmetric)
- - [`MahalanobisDistance`](../user/core.md#mahalanobisdistance)
- - [`LMetric`](../user/core.md#lmetric) (for arbitrary L-metrics)
- - [`IPMetric`](../user/core.md#ipmetrickerneltype) (requires a
+ - [`ManhattanDistance`](../user/core/distances.md#lmetric)
+ - [`EuclideanDistance`](../user/core/distances.md#lmetric)
+ - [`ChebyshevDistance`](../user/core/distances.md#lmetric)
+ - [`MahalanobisDistance`](../user/core/distances.md#mahalanobisdistance)
+ - [`LMetric`](../user/core/distances.md#lmetric) (for arbitrary L-metrics)
+ - [`IPMetric`](../user/core/distances.md#ipmetrickerneltype) (requires a
    [KernelType](kernels.md) parameter)
- - [`IoUDistance`](../user/core.md#ioudistance)
+ - [`IoUDistance`](../user/core/distances.md#ioudistance)

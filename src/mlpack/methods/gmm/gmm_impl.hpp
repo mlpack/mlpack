@@ -29,7 +29,7 @@ namespace mlpack {
 inline GMM::GMM(const size_t gaussians, const size_t dimensionality) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    dists(gaussians, GaussianDistribution(dimensionality)),
+    dists(gaussians, GaussianDistribution<>(dimensionality)),
     weights(gaussians)
 {
   // Set equal weights.  Technically this model is still valid, but only barely.
@@ -89,7 +89,8 @@ inline void GMM::LogProbability(const arma::mat& observation,
   // Assign value to the matrix.
   for (size_t i = 0; i < gaussians; i++)
   {
-    arma::vec temp(logProb.colptr(i), observation.n_cols, false, true);
+    arma::vec temp;
+    MakeAlias(temp, logProb, observation.n_cols, logProb.n_rows * i);
     dists[i].LogProbability(observation, temp);
   }
 
@@ -226,7 +227,7 @@ inline void GMM::Classify(const arma::mat& observations,
  */
 inline double GMM::LogLikelihood(
     const arma::mat& data,
-    const std::vector<GaussianDistribution>& distsL,
+    const std::vector<GaussianDistribution<>>& distsL,
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
@@ -271,7 +272,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution<>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -289,8 +290,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<GaussianDistribution> distsTrial(gaussians,
-        GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution<>> distsTrial(gaussians,
+        GaussianDistribution<>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
@@ -355,7 +356,7 @@ double GMM::Train(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<GaussianDistribution> distsOrig;
+    std::vector<GaussianDistribution<>> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
@@ -374,8 +375,8 @@ double GMM::Train(const arma::mat& observations,
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<GaussianDistribution> distsTrial(gaussians,
-        GaussianDistribution(dimensionality));
+    std::vector<GaussianDistribution<>> distsTrial(gaussians,
+        GaussianDistribution<>(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)

@@ -472,7 +472,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, Tree> RuleType;
+    using RuleType = FastMKSRules<KernelType, Tree>;
     RuleType rules(*referenceSet, querySet, k, distance.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -533,7 +533,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   indices.set_size(k, queryTree->Dataset().n_cols);
   kernels.set_size(k, queryTree->Dataset().n_cols);
 
-  typedef FastMKSRules<KernelType, Tree> RuleType;
+  using RuleType = FastMKSRules<KernelType, Tree>;
   RuleType rules(*referenceSet, queryTree->Dataset(), k, distance.Kernel());
 
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
@@ -602,7 +602,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, Tree> RuleType;
+    using RuleType = FastMKSRules<KernelType, Tree>;
     RuleType rules(*referenceSet, *referenceSet, k, distance.Kernel());
 
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);

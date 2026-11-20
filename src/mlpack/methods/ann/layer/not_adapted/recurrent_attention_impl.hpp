@@ -134,7 +134,7 @@ void RecurrentAttention<InputType, OutputType>::Backward(
   if (backwardStep == 0)
   {
     size_t offset = 0;
-    //  TODO: what if rnnModule has a Model()?
+    // TODO: what if rnnModule has a Model()?
     rnnGradient = OutputType(intermediateGradient.memptr() + offset,
         rnnModule->Parameters().n_rows, rnnModule->Parameters().n_cols, false,
         false);

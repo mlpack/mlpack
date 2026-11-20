@@ -79,8 +79,8 @@ template<typename MatType = arma::mat>
 class LocalCoordinateCoding
 {
  public:
-  typedef typename GetColType<MatType>::type ColType;
-  typedef typename GetRowType<MatType>::type RowType;
+  using ColType = typename GetColType<MatType>::type;
+  using RowType = typename GetRowType<MatType>::type;
 
   /**
    * Set the parameters to LocalCoordinateCoding, and train the dictionary.

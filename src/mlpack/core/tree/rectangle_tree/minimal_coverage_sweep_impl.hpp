@@ -24,8 +24,8 @@ SweepNonLeafNode(const size_t axis,
                  const TreeType* node,
                  typename TreeType::ElemType& axisCut)
 {
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 
@@ -88,8 +88,8 @@ SweepLeafNode(const size_t axis,
               const TreeType* node,
               typename TreeType::ElemType& axisCut)
 {
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->Count());
 

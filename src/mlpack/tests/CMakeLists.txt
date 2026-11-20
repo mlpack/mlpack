@@ -7,14 +7,18 @@ add_executable(mlpack_test
   # Tests for neural network code (and reinforcement learning code).
   ann/activation_functions_test.cpp
   ann/ann_dist_test.cpp
-  # This includes all files in ann/layer/.
+  # This includes all files in ann/layer/ excluding serialization
   ann/layer_test.cpp
+  # This includes all files in ann/layer/ with serialization
+  ann/layer_test_serialization.cpp
   ann/ann_regularizer_test.cpp
   ann/ann_test_tools.hpp
   ann/convolutional_network_test.cpp
   ann/convolution_test.cpp
   ann/custom_layer.hpp
+  ann/dag_network_test.cpp
   ann/feedforward_network_test.cpp
+  ann/fp16_test.cpp
   ann/init_rules_test.cpp
   ann/ksinit_test.cpp
   ann/loss_functions_test.cpp
@@ -24,6 +28,7 @@ add_executable(mlpack_test
   ann/augmented_rnns_tasks_test.cpp
   ann/reward_clipping_test.cpp
   ann/rl_components_test.cpp
+  ann/models/yolov3_tests.cpp
 
   # These tests have not yet been adapted to the new inheritance-based ANN
   # implementation.
@@ -60,6 +65,7 @@ add_executable(mlpack_test
   distance_test.cpp
   distribution_test.cpp
   drusilla_select_test.cpp
+  emd_test.cpp
   emst_test.cpp
   facilities_test.cpp
   fastmks_test.cpp
@@ -68,9 +74,10 @@ add_executable(mlpack_test
   hpt_test.cpp
   hoeffding_tree_test.cpp
   hyperplane_test.cpp
-  image_load_test.cpp
+  image_test.cpp
   imputation_test.cpp
   io_test.cpp
+  kde_model_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -94,6 +101,7 @@ add_executable(mlpack_test
   maximal_inputs_test.cpp
   metric_test.cpp
   mean_shift_test.cpp
+  mfcc_test.cpp
   mock_categorical_data.hpp
   nbc_test.cpp
   nca_test.cpp
@@ -154,9 +162,14 @@ add_executable(mlpack_test
   main_tests/adaboost_probabilities_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
+  main_tests/bayesian_linear_regression_train_test.cpp
+  main_tests/bayesian_linear_regression_predict_test.cpp
   main_tests/cf_test.cpp
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
+  main_tests/decision_tree_train_test.cpp
+  main_tests/decision_tree_classify_test.cpp
+  main_tests/decision_tree_probabilities_test.cpp
   main_tests/det_test.cpp
   main_tests/emst_test.cpp
   main_tests/fastmks_test.cpp
@@ -169,6 +182,9 @@ add_executable(mlpack_test
   main_tests/hmm_train_test.cpp
   main_tests/hmm_viterbi_test.cpp
   main_tests/hoeffding_tree_test.cpp
+  main_tests/hoeffding_tree_train_test.cpp
+  main_tests/hoeffding_tree_classify_test.cpp
+  main_tests/hoeffding_tree_probabilities_test.cpp
   main_tests/image_converter_test.cpp
   main_tests/kde_test.cpp
   main_tests/kernel_pca_test.cpp
@@ -176,20 +192,33 @@ add_executable(mlpack_test
   main_tests/kmeans_test.cpp
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
+  main_tests/lars_train_test.cpp
+  main_tests/lars_predict_test.cpp
   main_tests/linear_regression_test.cpp
   main_tests/linear_regression_train_test.cpp
   main_tests/linear_regression_predict_test.cpp
   main_tests/linear_svm_test.cpp
+  main_tests/linear_svm_train_test.cpp
+  main_tests/linear_svm_classify_test.cpp
+  main_tests/linear_svm_scores_test.cpp
   main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
+  main_tests/logistic_regression_train_test.cpp
+  main_tests/logistic_regression_classify_test.cpp
+  main_tests/logistic_regression_probabilities_test.cpp
   main_tests/lsh_test.cpp
   main_tests/mean_shift_test.cpp
   main_tests/nbc_test.cpp
+  main_tests/nbc_train_test.cpp
+  main_tests/nbc_classify_test.cpp
+  main_tests/nbc_probabilities_test.cpp
   main_tests/nca_test.cpp
   main_tests/nmf_test.cpp
   main_tests/pca_test.cpp
   main_tests/perceptron_test.cpp
+  main_tests/perceptron_train_test.cpp
+  main_tests/perceptron_classify_test.cpp
   main_tests/preprocess_binarize_test.cpp
   main_tests/preprocess_imputer_test.cpp
   main_tests/preprocess_one_hot_encode_test.cpp
@@ -197,8 +226,14 @@ add_executable(mlpack_test
   main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/random_forest_train_test.cpp
+  main_tests/random_forest_classify_test.cpp
+  main_tests/random_forest_probabilities_test.cpp
   main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
+  main_tests/softmax_regression_train_test.cpp
+  main_tests/softmax_regression_classify_test.cpp
+  main_tests/softmax_regression_probabilities_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/main_test_fixture.hpp
 )
@@ -260,15 +295,19 @@ add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/
       ${PROJECT_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/doc/img/cat.jpg
+      ${PROJECT_BINARY_DIR}/
 )
 
 add_custom_command(TARGET mlpack_test
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E tar xjf mnist_first250_training_4s_and_9s.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf lars_kkt.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_train_label.tar.bz2
   COMMAND ${CMAKE_COMMAND} -E tar xjf digits_test_label.tar.bz2
+  COMMAND ${CMAKE_COMMAND} -E tar xjf sheep.tar.bz2
   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 

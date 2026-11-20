@@ -44,7 +44,7 @@ inline void AddTask::Generate(arma::field<arma::mat>& input,
       arma::vec weights(bitLen - 1);
       weights = exp2(arma::linspace(1, bitLen - 1, bitLen - 1));
 
-      DiscreteDistribution d(1);
+      DiscreteDistribution<> d(1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) = exp2(arma::linspace(1, bitLen - 1, bitLen - 1));
@@ -55,7 +55,7 @@ inline void AddTask::Generate(arma::field<arma::mat>& input,
     // Construct sequence of the form
     // (binary number with sizeA bits) + '+' + (binary number with sizeB bits).
     vecInput(i) = randi<arma::colvec>(
-        sizeA + sizeB + 1, arma::distr_param(0, 1));
+        sizeA + sizeB + 1, DistrParam(0, 1));
     // Insert special value for '+' delimiter.
     vecInput(i).at(sizeA) = 2;
 

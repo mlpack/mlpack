@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple test for Identity layer.
  */
-TEST_CASE("IdentityTestCase", "[ANNLayerTest]")
+TEST_CASE("IdentityTestCase", "[ANNLayerTest][tiny]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(12, 1, arma::fill::randn);

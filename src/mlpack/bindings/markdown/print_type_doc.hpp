@@ -34,23 +34,23 @@ std::string PrintTypeDoc(util::ParamData& data)
 {
   if (BindingInfo::Language() == "cli")
   {
-    return cli::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+    return cli::PrintTypeDoc<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "python")
   {
-    return python::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+    return python::PrintTypeDoc<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "julia")
   {
-    return julia::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+    return julia::PrintTypeDoc<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "go")
   {
-    return go::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+    return go::PrintTypeDoc<std::remove_pointer_t<T>>(data);
   }
   else if (BindingInfo::Language() == "r")
   {
-    return r::PrintTypeDoc<typename std::remove_pointer<T>::type>(data);
+    return r::PrintTypeDoc<std::remove_pointer_t<T>>(data);
   }
   else
   {

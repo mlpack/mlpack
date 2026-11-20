@@ -160,8 +160,7 @@ typename MatType::elem_type FFN<
 
   // Train the model.
   Timer::Start("ffn_optimization");
-  const typename MatType::elem_type out =
-      optimizer.Optimize(*this, parameters, callbacks...);
+  const ElemType out = optimizer.Optimize(*this, parameters, callbacks...);
   Timer::Stop("ffn_optimization");
 
   Log::Info << "FFN::Train(): final objective of trained model is " << out
@@ -311,7 +310,7 @@ void FFN<
   // We must always store a copy of the forward pass in `networkOutputs` in case
   // we do a backward pass.
   networkOutput.set_size(network.OutputSize(), inputs.n_cols);
-  network.Forward(inputs, networkOutput, begin, end);
+  network.PartialForward(inputs, networkOutput, begin, end);
 
   // It's possible the user passed `networkOutput` as `results`; in this case,
   // we don't need to create an alias.
@@ -330,13 +329,15 @@ typename MatType::elem_type FFN<
             const MatType& targets,
             MatType& gradients)
 {
-  const typename MatType::elem_type res =
-      outputLayer.Forward(networkOutput, targets) + network.Loss();
+  const ElemType res = outputLayer.Forward(networkOutput, targets) +
+      ElemType(network.Loss());
 
   // Compute the error of the output layer.
+  error.set_size(networkOutput.n_rows, networkOutput.n_cols);
   outputLayer.Backward(networkOutput, targets, error);
 
   // Perform the backward pass.
+  networkDelta.set_size(inputs.n_rows, inputs.n_cols);
   network.Backward(inputs, networkOutput, error, networkDelta);
 
   // Now compute the gradients.
@@ -363,7 +364,8 @@ typename MatType::elem_type FFN<
   // pass.
   network.Forward(predictors, networkOutput);
 
-  return outputLayer.Forward(networkOutput, responses) + network.Loss();
+  return outputLayer.Forward(networkOutput, responses) +
+      ElemType(network.Loss());
 }
 
 template<typename OutputLayerType,
@@ -376,17 +378,38 @@ void FFN<
     MatType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  #ifndef MLPACK_ENABLE_ANN_SERIALIZATION
-    // Note: if you define MLPACK_IGNORE_ANN_SERIALIZATION_WARNING, you had
-    // better ensure that every layer you are serializing has had
-    // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
-    // more information.
-    #ifndef MLPACK_ANN_IGNORE_SERIALIZATION_WARNING
-      throw std::runtime_error("Cannot serialize a neural network unless "
-          "MLPACK_ENABLE_ANN_SERIALIZATION is defined!  See the \"Additional "
-          "build options\" section of the README for more information.");
-    #endif
-  #else
+  // Note: if you define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING, you had
+  // better ensure that every layer you are serializing has had
+  // CEREAL_REGISTER_TYPE() called somewhere.  See layer/serialization.hpp for
+  // more information.
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+    if (std::is_same_v<MatType, arma::mat>)
+    {
+      throw std::runtime_error("FFN::serialize(): Cannot serialize"
+        " a neural network with type `arma::mat` if "
+        "`MLPACK_ENABLE_ANN_SERIALIZATION` is not defined.");
+    }
+
+    (void) ar;
+  #endif
+
+  #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
+      !defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+    if (std::is_same_v<MatType, arma::fmat>)
+    {
+      throw std::runtime_error("FFN::serialize(): Cannot serialize"
+        " a neural network with type `arma::fmat` if "
+        "`MLPACK_ENABLE_ANN_SERIALIZATION_FMAT` is not defined.");
+    }
+
+    (void) ar;
+  #endif
+
+  #if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+      defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) || \
+      defined(MLPACK_ANN_IGNORE_SERIALIZATION_WARNING)
+
     // Serialize the output layer and initialization rule.
     ar(CEREAL_NVP(outputLayer));
     ar(CEREAL_NVP(initializeRule));
@@ -427,7 +450,7 @@ typename MatType::elem_type FFN<
     MatType
 >::Evaluate(const MatType& parameters)
 {
-  typename MatType::elem_type res = 0;
+  ElemType res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
     res += Evaluate(parameters, i, 1);
 
@@ -457,7 +480,8 @@ typename MatType::elem_type FFN<
       begin * responses.n_rows);
   network.Forward(predictorsBatch, networkOutput);
 
-  return outputLayer.Forward(networkOutput, responsesBatch) + network.Loss();
+  return outputLayer.Forward(networkOutput, responsesBatch) +
+      ElemType(network.Loss());
 }
 
 template<typename OutputLayerType,
@@ -469,9 +493,10 @@ typename MatType::elem_type FFN<
     MatType
 >::EvaluateWithGradient(const MatType& parameters, MatType& gradient)
 {
-  typename MatType::elem_type res = 0;
+  ElemType res = 0;
   res += EvaluateWithGradient(parameters, 0, gradient, 1);
-  MatType tmpGradient(gradient.n_rows, gradient.n_cols, arma::fill::none);
+  MatType tmpGradient(gradient.n_rows, gradient.n_cols,
+      GetFillType<MatType>::none);
   for (size_t i = 1; i < predictors.n_cols; ++i)
   {
     res += EvaluateWithGradient(parameters, i, tmpGradient, 1);
@@ -488,16 +513,12 @@ typename MatType::elem_type FFN<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::EvaluateWithGradient(const MatType& parameters,
+>::EvaluateWithGradient(const MatType& /* parameters */,
                         const size_t begin,
                         MatType& gradient,
                         const size_t batchSize)
 {
   CheckNetwork("FFN::EvaluateWithGradient()", predictors.n_rows);
-
-  // Set networkOutput to the right size if needed, then perform the forward
-  // pass.
-  networkOutput.set_size(network.OutputSize(), batchSize);
 
   // Alias the batches so we don't copy memory.
   MatType predictorsBatch, responsesBatch;
@@ -506,24 +527,8 @@ typename MatType::elem_type FFN<
   MakeAlias(responsesBatch, responses, responses.n_rows,
       batchSize, begin * responses.n_rows);
 
-  network.Forward(predictorsBatch, networkOutput);
-
-  const typename MatType::elem_type obj = outputLayer.Forward(networkOutput,
-      responsesBatch) + network.Loss();
-
-  // Now perform the backward pass.
-  outputLayer.Backward(networkOutput, responsesBatch, error);
-
-  // The delta should have the same size as the input.
-  networkDelta.set_size(predictors.n_rows, batchSize);
-  network.Backward(predictorsBatch, networkOutput, error, networkDelta);
-
-  // Now compute the gradients.
-  // The gradient should have the same size as the parameters.
-  gradient.set_size(parameters.n_rows, parameters.n_cols);
-  network.Gradient(predictorsBatch, error, gradient);
-
-  return obj;
+  Forward(predictorsBatch, networkOutput);
+  return Backward(predictorsBatch, responsesBatch, gradient);
 }
 
 template<typename OutputLayerType,
@@ -737,9 +742,8 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType>
-typename std::enable_if<
-    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->::type
+std::enable_if_t<
+    ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,
@@ -761,9 +765,8 @@ template<typename OutputLayerType,
          typename InitializationRuleType,
          typename MatType>
 template<typename OptimizerType>
-typename std::enable_if<
-    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void
->::type
+std::enable_if_t<
+    !ens::traits::HasMaxIterationsSignature<OptimizerType>::value, void>
 FFN<
     OutputLayerType,
     InitializationRuleType,

@@ -58,21 +58,21 @@ class SimpleDQN
       network(outputLayer, init),
       isNoisy(isNoisy)
   {
-    network.Add(new Linear(h1));
-    network.Add(new ReLU());
+    network.template Add<Linear>(h1);
+    network.template Add<ReLU>();
     if (isNoisy)
     {
       noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new NoisyLinear(h2));
-      network.Add(new ReLU());
+      network.template Add<NoisyLinear>(h2);
+      network.template Add<ReLU>();
       noisyLayerIndex.push_back(network.Network().size());
-      network.Add(new NoisyLinear(outputDim));
+      network.template Add<NoisyLinear>(outputDim);
     }
     else
     {
-      network.Add(new Linear(h2));
-      network.Add(new ReLU());
-      network.Add(new Linear(outputDim));
+      network.template Add<Linear>(h2);
+      network.template Add<ReLU>();
+      network.template Add<Linear>(outputDim);
     }
   }
 
@@ -129,7 +129,7 @@ class SimpleDQN
   {
     for (size_t i = 0; i < noisyLayerIndex.size(); i++)
     {
-      dynamic_cast<NoisyLinear*>(
+      dynamic_cast<NoisyLinear<>*>(
           network.Network()[noisyLayerIndex[i]])->ResetNoise();
     }
   }

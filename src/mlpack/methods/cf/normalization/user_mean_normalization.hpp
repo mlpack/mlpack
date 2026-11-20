@@ -49,9 +49,9 @@ class UserMeanNormalization
   void Normalize(arma::mat& data)
   {
     const size_t userNum = max(data.row(0)) + 1;
-    userMean = arma::vec(userNum, arma::fill::zeros);
+    userMean = arma::vec(userNum);
     // Number of ratings for each user.
-    arma::Row<size_t> ratingNum(userNum, arma::fill::zeros);
+    arma::Row<size_t> ratingNum(userNum);
 
     // Sum ratings for each user.
     data.each_col([&](arma::vec& datapoint)
@@ -89,8 +89,8 @@ class UserMeanNormalization
   void Normalize(arma::sp_mat& cleanedData)
   {
     // Calculate userMean.
-    userMean = arma::vec(cleanedData.n_cols, arma::fill::zeros);
-    arma::Col<size_t> ratingNum(cleanedData.n_cols, arma::fill::zeros);
+    userMean = arma::vec(cleanedData.n_cols);
+    arma::Col<size_t> ratingNum(cleanedData.n_cols);
     arma::sp_mat::iterator it = cleanedData.begin();
     arma::sp_mat::iterator it_end = cleanedData.end();
     for (; it != it_end; ++it)

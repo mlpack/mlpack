@@ -76,9 +76,8 @@ class CellBound
  public:
   //! Depending on the precision of the tree element type, we may need to use
   //! uint32_t or uint64_t.
-  typedef typename std::conditional<sizeof(ElemType) * CHAR_BIT <= 32,
-                                    uint32_t,
-                                    uint64_t>::type AddressElemType;
+  using AddressElemType = std::conditional_t<
+      (sizeof(ElemType) * CHAR_BIT <= 32), uint32_t, uint64_t>;
 
   /**
    * Empty constructor; creates a bound of dimensionality 0.
@@ -144,10 +143,10 @@ class CellBound
   ElemType& MinWidth() { return minWidth; }
 
   //! Get the distance metric associated with this bound.
-  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   const DistanceType& Metric() const { return distance; }
   //! Modify the distance metric associated with this bound.
-  [[deprecated("Will be removed in 5.0.0; use Distance()")]]
+  [[deprecated("Will be removed in mlpack 5.0.0; use Distance()")]]
   DistanceType& Metric() { return distance; }
 
   //! Get the distance metric associated with this bound.
@@ -323,7 +322,7 @@ template<typename DistanceType, typename ElemType>
 struct BoundTraits<CellBound<DistanceType, ElemType>>
 {
   //! These bounds are always tight for each dimension.
-  const static bool HasTightBounds = true;
+  static const bool HasTightBounds = true;
 };
 
 } // namespace mlpack

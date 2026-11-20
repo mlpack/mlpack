@@ -104,7 +104,8 @@ class ContinuousDoublePoleCart
    * @param l2 The length of the second pole.
    * @param gravity The gravity constant.
    * @param massCart The mass of the cart.
-   * @param forceMag The magnitude of the applied force.
+   * @param forceMag The magnitude of the applied force.  NOTE: not currently
+   *      used.
    * @param tau The time interval.
    * @param thetaThresholdRadians The maximum angle.
    * @param xThreshold The maximum position.
@@ -118,7 +119,7 @@ class ContinuousDoublePoleCart
                            const double l2 = 0.05,
                            const double gravity = 9.8,
                            const double massCart = 1.0,
-                           const double forceMag = 10.0,
+                           const double /* forceMag */ = 10.0,
                            const double tau = 0.02,
                            const double thetaThresholdRadians = 36 * 2 *
                               3.1416 / 360,
@@ -131,7 +132,7 @@ class ContinuousDoublePoleCart
       l2(l2),
       gravity(gravity),
       massCart(massCart),
-      forceMag(forceMag),
+      //forceMag(forceMag),
       tau(tau),
       thetaThresholdRadians(thetaThresholdRadians),
       xThreshold(xThreshold),
@@ -156,7 +157,7 @@ class ContinuousDoublePoleCart
     // Update the number of steps performed.
     stepsPerformed++;
 
-    arma::vec dydx(6, arma::fill::zeros);
+    arma::vec dydx(6);
     dydx[0] = state.Velocity();
     dydx[2] = state.AngularVelocity(1);
     dydx[4] = state.AngularVelocity(2);
@@ -295,19 +296,20 @@ class ContinuousDoublePoleCart
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;
       return true;
     }
     if (std::abs(state.Position()) > xThreshold)
     {
-      Log::Info << "Episode terminated due to cart crossing threshold";
+      Log::Info << "Episode terminated due to cart crossing threshold."
+          << std::endl;
       return true;
     }
     if (std::abs(state.Angle(1)) > thetaThresholdRadians ||
         std::abs(state.Angle(2)) > thetaThresholdRadians)
     {
-      Log::Info << "Episode terminated due to pole falling";
+      Log::Info << "Episode terminated due to pole falling." << std::endl;
       return true;
     }
     return false;
@@ -340,8 +342,8 @@ class ContinuousDoublePoleCart
   //! Locally-stored mass of the cart.
   double massCart;
 
-  //! Locally-stored magnitude of the applied force.
-  double forceMag;
+  //! Locally-stored magnitude of the applied force.  NOTE: not currently used.
+  //double forceMag;
 
   //! Locally-stored time interval.
   double tau;

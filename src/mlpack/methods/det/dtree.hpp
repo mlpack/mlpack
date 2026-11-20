@@ -46,11 +46,11 @@ class DTree
 {
  public:
   //! The actual, underlying type we're working with.
-  typedef typename MatType::elem_type  ElemType;
+  using ElemType = typename MatType::elem_type;
   //! The type of vector we are using.
-  typedef typename GetColType<MatType>::type   VecType;
+  using VecType = typename GetColType<MatType>::type;
   //! The statistic type we are holding.
-  typedef typename arma::Col<ElemType> StatType;
+  using StatType = arma::Col<ElemType>;
 
   /**
    * Create an empty density estimation tree.

@@ -18,7 +18,6 @@
 #include <type_traits>
 
 namespace mlpack {
-namespace data {
 
 template<typename EncodingPolicyType, typename DictionaryType>
 template<typename ... ArgTypes>
@@ -70,9 +69,9 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::CreateMap(
   auto token = tokenizer(strView);
 
   static_assert(
-      std::is_same<typename std::remove_reference<decltype(token)>::type,
-                   typename std::remove_reference<typename DictionaryType::
-                      TokenType>::type>::value,
+      std::is_same_v<std::remove_reference_t<decltype(token)>,
+                     std::remove_reference_t<typename DictionaryType::
+                        TokenType>>,
       "The dictionary token type doesn't match the return value type "
       "of the tokenizer.");
 
@@ -116,9 +115,9 @@ EncodeHelper(const std::vector<std::string>& input,
     auto token = tokenizer(strView);
 
     static_assert(
-        std::is_same<typename std::remove_reference<decltype(token)>::type,
-                     typename std::remove_reference<typename DictionaryType::
-                        TokenType>::type>::value,
+        std::is_same_v<std::remove_reference_t<decltype(token)>,
+                       std::remove_reference_t<typename DictionaryType::
+                          TokenType>>,
         "The dictionary token type doesn't match the return value type "
         "of the tokenizer.");
 
@@ -163,8 +162,8 @@ EncodeHelper(const std::vector<std::string>& input,
              std::vector<std::vector<ElemType>>& output,
              const TokenizerType& tokenizer,
              PolicyType& policy,
-             typename std::enable_if<StringEncodingPolicyTraits<
-                 PolicyType>::onePassEncoding>::type*)
+             std::enable_if_t<StringEncodingPolicyTraits<
+                 PolicyType>::onePassEncoding>*)
 {
   policy.Reset();
 
@@ -176,9 +175,9 @@ EncodeHelper(const std::vector<std::string>& input,
     auto token = tokenizer(strView);
 
     static_assert(
-        std::is_same<typename std::remove_reference<decltype(token)>::type,
-                     typename std::remove_reference<typename DictionaryType::
-                        TokenType>::type>::value,
+        std::is_same_v<std::remove_reference_t<decltype(token)>,
+                       std::remove_reference_t<typename DictionaryType::
+                          TokenType>>,
         "The dictionary token type doesn't match the return value type "
         "of the tokenizer.");
 
@@ -205,7 +204,6 @@ void StringEncoding<EncodingPolicyType, DictionaryType>::serialize(
   ar(CEREAL_NVP(dictionary));
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

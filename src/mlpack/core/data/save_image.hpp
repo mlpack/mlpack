@@ -1,8 +1,9 @@
 /**
  * @file core/data/save_image.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  *
- * Implementation of save functionality.
+ * Implementation of save image functionality.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,77 +13,106 @@
 #ifndef MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 #define MLPACK_CORE_DATA_SAVE_IMAGE_HPP
 
-#include "image_info.hpp"
-
-#ifdef MLPACK_HAS_STB
-
-#define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-
-#if defined __has_include
-  #if __has_include("stb_image_write.h")
-    #include "stb_image_write.h"
-  #elif __has_include("stb/stb_image_write.h")
-    #include "stb/stb_image_write.h"
-  #else
-    #undef MLPACK_HAS_STB
-    #pragma message("Warning: STB disabled; stb_image_write.h header not found")
-  #endif
-#else
-  #ifdef MLPACK_HAS_STB_DIR
-    #include "stb/stb_image_write.h"
-  #else
-    #include "stb_image_write.h"
-  #endif
-#endif
-
-#endif // MLPACK_HAS_STB
+#include <mlpack/core/stb/stb.hpp>
+#include <mlpack/core/math/make_alias.hpp>
 
 namespace mlpack {
-namespace data {
 
-/**
- * Save the image file from the given matrix.
- *
- * @param filename Name of the image file.
- * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
 template<typename eT>
-bool Save(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+bool SaveImage(const std::vector<std::string>& files,
+               const arma::Mat<eT>& matrix,
+               ImageOptions& opts)
+{
+#ifdef MLPACK_DISABLE_STB
+  (void) files;
+  (void) matrix;
+  std::stringstream oss;
+  oss << "Save(): image support was disabled at compile time "
+         "(MLPACK_DISABLE_STB); rebuild without it to save images.";
+  return HandleError(oss, opts);
 
-/**
- * Save the image file from the given matrix.
- *
- * @param files A vector consisting of filenames.
- * @param matrix Matrix to save the image from.
- * @param info An object of ImageInfo class.
- * @param fatal If an error should be reported as fatal (default false).
- * @return Boolean value indicating success or failure of load.
- */
-template<typename eT>
-bool Save(const std::vector<std::string>& files,
-          arma::Mat<eT>& matrix,
-          ImageInfo& info,
-          const bool fatal = false);
+#else // MLPACK_DISABLE_STB
 
-/**
- * Helper function to save files.  Implementation in save_image.hpp.
- */
-inline bool SaveImage(const std::string& filename,
-                      arma::Mat<unsigned char>& image,
-                      ImageInfo& info,
-                      const bool fatal = false);
+  if (files.empty())
+  {
+    std::stringstream oss;
+    oss << "Save(): vector of image files is empty; nothing to save.";
+    return HandleError(oss, opts);
+  }
 
-} //namespace data
-} //namespace mlpack
+  // Check if we do have any type that is not supported.
+  if (opts.Format() == FileType::ImageType ||
+      opts.Format() == FileType::AutoDetect)
+  {
+    for (size_t i = 0; i < files.size() ; ++i)
+    {
+      if (!opts.saveType.count(Extension(files.at(i))))
+      {
+        std::stringstream oss;
+        oss << "Save(): file type " << opts.FileTypeToString()
+            << " isn't supported. Currently image saving supports: ";
+        for (const auto& x : opts.saveType)
+          oss << "  " << x;
+        oss << "." << std::endl;
+        return HandleError(oss, opts);
+      }
+    }
+  }
 
-// Include implementation of Save() for images.
-#include "save_image_impl.hpp"
+  size_t dimension = opts.Width() * opts.Height() * opts.Channels() *
+      files.size();
+  // We only need to check the rows since it is a matrix.
+  if (dimension != matrix.n_rows * matrix.n_cols)
+  {
+    std::stringstream oss;
+    oss << "Save(): The given image dimensions, Width: " << opts.Width()
+        << ", Height: " << opts.Height() << ", Channels: "<< opts.Channels()
+        << " do not match the dimensions of the matrix to be saved!";
+    return HandleError(oss, opts);
+  }
+  // Unfortunately we cannot move because matrix is const.
+  arma::Mat<uint8_t> tempMatrix =
+      arma::conv_to<arma::Mat<uint8_t>>::from(matrix);
+  bool success = false;
+  for (size_t i = 0; i < files.size() ; ++i)
+  {
+    // Update opts.Format() at each iteration.
+    DetectFromExtension<arma::Mat<eT>, ImageOptions>(files.at(i), opts);
+    if (opts.Format() == FileType::PNG)
+    {
+      success = stbi_write_png(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i),
+          opts.Width() * opts.Channels());
+    }
+    else if (opts.Format() == FileType::BMP)
+    {
+      success = stbi_write_bmp(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i));
+    }
+    else if (opts.Format() == FileType::TGA)
+    {
+      success = stbi_write_tga(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i));
+    }
+    else if (opts.Format() == FileType::JPG)
+    {
+      success = stbi_write_jpg(files.at(i).c_str(), opts.Width(), opts.Height(),
+          opts.Channels(), tempMatrix.colptr(i), opts.Quality());
+    }
+
+    if (!success)
+    {
+      std::stringstream oss;
+      oss << "Save(): error saving image to '" << files.at(i) << "'.";
+      return HandleError(oss, opts);
+    }
+  }
+
+  return success;
+
+#endif // MLPACK_DISABLE_STB
+}
+
+} // namespace mlpack
 
 #endif

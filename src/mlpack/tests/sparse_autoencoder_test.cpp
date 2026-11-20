@@ -17,7 +17,7 @@
 
 using namespace mlpack;
 
-TEST_CASE("SparseAutoencoderFunctionEvaluate", "[SparseAutoencoderTest]")
+TEST_CASE("SparseAutoencoderFunctionEvaluate", "[SparseAutoencoderTest][tiny]")
 {
   const size_t vSize = 5;
   const size_t hSize = 3;
@@ -207,7 +207,7 @@ TEST_CASE("SparseAutoencoderFunctionKLDivergenceEvaluate",
   }
 }
 
-TEST_CASE("SparseAutoencoderFunctionGradient", "[SparseAutoencoderTest]")
+TEST_CASE("SparseAutoencoderFunctionGradient", "[SparseAutoencoderTest][long]")
 {
   const size_t points = 1000;
   const size_t vSize = 20;

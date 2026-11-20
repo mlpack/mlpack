@@ -165,7 +165,7 @@ class XTreeAuxiliaryInformation
    * The X tree requires that the tree records it's "split history".  To make
    * this easy, we use the following structure.
    */
-  typedef struct SplitHistoryStruct
+  struct SplitHistoryStruct
   {
     int lastDimension;
     std::vector<bool> history;
@@ -201,7 +201,7 @@ class XTreeAuxiliaryInformation
       ar(CEREAL_NVP(lastDimension));
       ar(CEREAL_NVP(history));
     }
-  } SplitHistoryStruct;
+  };
 
  private:
     //! The max number of child nodes a non-leaf normal node can have.

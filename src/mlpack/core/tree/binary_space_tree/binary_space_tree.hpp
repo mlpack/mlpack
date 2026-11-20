@@ -46,19 +46,20 @@ namespace mlpack {
 template<typename DistanceType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         template<typename BoundDistanceType, typename...> class BoundType =
-            HRectBound,
-         template<typename SplitBoundType, typename SplitMatType>
-            class SplitType = MidpointSplit>
+         template<typename BoundDistanceType,
+                  typename BoundElemType,
+                  typename...> class BoundType = HRectBound,
+         template<typename SplitBoundType,
+                  typename SplitMatType> class SplitType = MidpointSplit>
 class BinarySpaceTree
 {
  public:
   //! So other classes can use TreeType::Mat.
-  typedef MatType Mat;
+  using Mat = MatType;
   //! The type of element held in MatType.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
 
-  typedef SplitType<BoundType<DistanceType>, MatType> Split;
+  using Split = SplitType<BoundType<DistanceType, ElemType>, MatType>;
 
  private:
   //! The left child node.
@@ -74,7 +75,7 @@ class BinarySpaceTree
   //! children).
   size_t count;
   //! The bound object for this node.
-  BoundType<DistanceType> bound;
+  BoundType<DistanceType, ElemType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -100,6 +101,13 @@ class BinarySpaceTree
 
   template<typename RuleType>
   class BreadthFirstDualTreeTraverser;
+
+  /**
+   * A default constructor.  This returns an empty tree, which is not useful.
+   * In general this is only used for serialization or right before copying from
+   * a different object.
+   */
+  BinarySpaceTree();
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -210,7 +218,8 @@ class BinarySpaceTree
   BinarySpaceTree(BinarySpaceTree* parent,
                   const size_t begin,
                   const size_t count,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -236,7 +245,8 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -266,7 +276,8 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
-                  SplitType<BoundType<DistanceType>, MatType>& splitter,
+                  SplitType<BoundType<DistanceType, ElemType>, MatType>&
+                      splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -315,9 +326,9 @@ class BinarySpaceTree
   ~BinarySpaceTree();
 
   //! Return the bound object for this node.
-  const BoundType<DistanceType>& Bound() const { return bound; }
+  const BoundType<DistanceType, ElemType>& Bound() const { return bound; }
   //! Return the bound object for this node.
-  BoundType<DistanceType>& Bound() { return bound; }
+  BoundType<DistanceType, ElemType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -517,8 +528,9 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param splitter Instantiated SplitType object.
    */
-  void SplitNode(const size_t maxLeafSize,
-                 SplitType<BoundType<DistanceType>, MatType>& splitter);
+  void SplitNode(
+      const size_t maxLeafSize,
+      SplitType<BoundType<DistanceType, ElemType>, MatType>& splitter);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -528,9 +540,10 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param splitter Instantiated SplitType object.
    */
-  void SplitNode(std::vector<size_t>& oldFromNew,
-                 const size_t maxLeafSize,
-                 SplitType<BoundType<DistanceType>, MatType>& splitter);
+  void SplitNode(
+      std::vector<size_t>& oldFromNew,
+      const size_t maxLeafSize,
+      SplitType<BoundType<DistanceType, ElemType>, MatType>& splitter);
 
   /**
    * Update the bound of the current node. This method does not take into
@@ -547,19 +560,7 @@ class BinarySpaceTree
    *
    * @param boundToUpdate The bound to update.
    */
-  void UpdateBound(HollowBallBound<DistanceType>& boundToUpdate);
-
- protected:
-  /**
-   * A default constructor.  This is meant to only be used with
-   * cereal, which is allowed with the friend declaration below.
-   * This does not return a valid tree!  The method must be protected, so that
-   * the serialization shim can work with the default constructor.
-   */
-  BinarySpaceTree();
-
-  //! Friend access is given for the default constructor.
-  friend class cereal::access;
+  void UpdateBound(HollowBallBound<DistanceType, ElemType>& boundToUpdate);
 
  public:
   /**

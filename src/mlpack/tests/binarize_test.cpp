@@ -16,7 +16,6 @@
 
 using namespace mlpack;
 using namespace arma;
-using namespace mlpack::data;
 
 TEST_CASE("BinarizeOneDimension", "[BinarizeTest]")
 {
@@ -41,7 +40,7 @@ TEST_CASE("BinarizeOneDimension", "[BinarizeTest]")
   REQUIRE(output(2, 2) == Approx(9.0).epsilon(1e-7)); // 9
 }
 
-TEST_CASE("BinerizeAll", "[BinarizeTest]")
+TEST_CASE("BinerizeAll", "[BinarizeTest][tiny]")
 {
   mat input;
   input = { { 1, 2, 3 },

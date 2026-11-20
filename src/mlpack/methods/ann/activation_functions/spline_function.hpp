@@ -34,9 +34,10 @@ class SplineFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::pow(x, 2) * std::log(1 + x);
+    return std::pow(x, ElemType(2)) * std::log(1 + x);
   }
 
   /**
@@ -48,7 +49,7 @@ class SplineFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = pow(x, 2) % log(1 + x);
+    y = square(x) % log(1 + x);
   }
 
   /**
@@ -58,9 +59,10 @@ class SplineFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double y)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType y)
   {
-    return  x != 0 ? 2 * y / x + std::pow(x, 2) / (1 + x) : 0;
+    return (x != 0) ? (2 * y / x + std::pow(x, ElemType(2)) / (1 + x)) : 0;
   }
 
   /**
@@ -75,10 +77,10 @@ class SplineFunction
                     const OutputVecType& y,
                     DerivVecType& dy)
   {
-    dy = 2 * y / x + pow(x, 2) / (1 + x);
+    dy = 2 * y / x + square(x) / (1 + x);
     // the expression above is indeterminate at 0, even though
     // the expression solely in terms of x is defined (= 0)
-    dy(arma::find(x == 0)).zeros();
+    dy(find(x == 0)).zeros();
   }
 }; // class SplineFunction
 

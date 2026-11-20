@@ -14,7 +14,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 /**
  * The Datatype enum specifies the types of data mlpack algorithms can use.
  * The vast majority of mlpack algorithms can only use numeric data (i.e.
@@ -27,7 +26,6 @@ enum Datatype : bool /* [> bool is all the precision we need for two types <] */
   categorical = 1
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

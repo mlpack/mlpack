@@ -18,7 +18,6 @@
 #include <mlpack/core/data/string_encoding.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Definition of the TfIdfEncodingPolicy class. TfIdfEncodingPolicy is used
@@ -158,7 +157,7 @@ class TfIdfEncodingPolicy
         InverseDocumentFrequency<typename MatType::elem_type>(
             output.n_cols, numContainingStrings[value]);
 
-    output(value - 1, line) =  tf * idf;
+    output(value - 1, line) = tf * idf;
   }
 
   /**
@@ -188,7 +187,7 @@ class TfIdfEncodingPolicy
     const ElemType idf = InverseDocumentFrequency<ElemType>(
         output.size(), numContainingStrings[value]);
 
-    output[line][value - 1] =  tf * idf;
+    output[line][value - 1] = tf * idf;
   }
 
   /*
@@ -343,7 +342,6 @@ class TfIdfEncodingPolicy
 template<typename TokenType>
 using TfIdfEncoding = StringEncoding<TfIdfEncodingPolicy,
                                      StringEncodingDictionary<TokenType>>;
-} // namespace data
 } // namespace mlpack
 
 #endif

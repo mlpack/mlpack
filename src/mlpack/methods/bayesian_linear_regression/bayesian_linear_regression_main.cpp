@@ -28,11 +28,11 @@ BINDING_USER_NAME("BayesianLinearRegression");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of the bayesian linear regression.");
+    "An implementation of the Bayesian linear regression.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of the bayesian linear regression."
+    "An implementation of the Bayesian linear regression."
     "\n"
     "This model is a probabilistic view and implementation of the linear "
     "regression. The final solution is obtained by computing a posterior "
@@ -100,11 +100,10 @@ BINDING_SEE_ALSO("Bayesian Interpolation",
     "https://cs.uwaterloo.ca/~mannr/cs886-w10/mackay-bayesian.pdf");
 BINDING_SEE_ALSO("Bayesian Linear Regression, Section 3.3",
     // I wonder how long this full text PDF will remain available...
-    "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/"
+    "https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/"
     "Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf");
 BINDING_SEE_ALSO("BayesianLinearRegression C++ class documentation",
-    "@src/mlpack/methods/bayesian_linear_regression/"
-    "bayesian_linear_regression.hpp");
+    "@doc/user/methods/bayesian_linear_regression.md");
 
 PARAM_MATRIX_IN("input", "Matrix of covariates (X).", "i");
 
@@ -173,7 +172,6 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
                  << endl;
     }
 
-    arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
     timers.Start("bayesian_linear_regression_training");
     bayesLinReg->Train(matX, responses);

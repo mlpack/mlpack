@@ -23,9 +23,9 @@ using namespace arma;
  * Test for convergence of incomplete incremenal learning.
  */
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][tiny]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
@@ -51,9 +51,9 @@ TEMPLATE_TEST_CASE("SVDIncompleteIncrementalConvergenceTest",
  * Test for convergence of complete incremenal learning
  */
 TEMPLATE_TEST_CASE("SVDCompleteIncrementalConvergenceTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][tiny]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   SpMat<eT> data;
   data.sprandn(100, 100, 0.2);
@@ -99,12 +99,12 @@ class SpecificRandomInitialization
 };
 
 TEMPLATE_TEST_CASE("SVDIncompleteIncrementalRegularizationTest",
-    "[SVDIncrementalTest]", float, double)
+    "[SVDIncrementalTest][long]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   Mat<eT> dataset;
-  if (!data::Load("GroupLensSmall.csv", dataset))
+  if (!Load("GroupLensSmall.csv", dataset))
     FAIL("Cannot load dataset GroupLensSmall.csv");
 
   // Generate list of locations for batch insert constructor for sparse

@@ -121,13 +121,12 @@ BINDING_EXAMPLE(
 
 // See also...
 BINDING_SEE_ALSO("Collaborative Filtering on Wikipedia",
-        "https://en.wikipedia.org/wiki/Collaborative_filtering");
+    "https://en.wikipedia.org/wiki/Collaborative_filtering");
 BINDING_SEE_ALSO("Matrix factorization on Wikipedia",
-        "https://en.wikipedia.org/wiki/Matrix_factorization_"
-        "(recommender_systems)");
-BINDING_SEE_ALSO("Matrix factorization techniques for recommender systems"
-        " (pdf)", "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf"
-        "&doi=cf17f85a0a7991fa01dbfb3e5878fbf71ea4bdc5");
+    "https://en.wikipedia.org/wiki/Matrix_factorization_(recommender_systems)");
+BINDING_SEE_ALSO("Matrix factorization techniques for recommender systems "
+    "(pdf)", "https://www.cs.columbia.edu/~blei/fogm/2023F/readings/"
+    "KorenBellVolinsky2009.pdf");
 BINDING_SEE_ALSO("CFType class documentation", "@src/mlpack/methods/cf/cf.hpp");
 
 // Parameters for training a model.
@@ -195,7 +194,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   RequireParamInSet<string>(params, "algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
-      "RandSVD", "BiasSVD", "SVDPP", "QSVD", "BKSVD" }, true, "unknown algorithm");
+      "RandSVD", "BiasSVD", "SVDPP", "QSVD", "BKSVD" }, true,
+      "unknown algorithm");
 
   ReportIgnoredParam(params, {{ "iteration_only_termination", true }},
       "min_residue");

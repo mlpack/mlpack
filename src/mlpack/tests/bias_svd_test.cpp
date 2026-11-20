@@ -232,7 +232,7 @@ TEST_CASE("BiasSVDOutputSizeTest", "[BiasSVDTest]")
   REQUIRE(userBias.n_elem == numUsers);
 }
 
-TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest]")
+TEST_CASE("BiasSVDFunctionOptimize", "[BiasSVDTest][tiny]")
 {
   // Define useful constants.
   const size_t numUsers = 50;

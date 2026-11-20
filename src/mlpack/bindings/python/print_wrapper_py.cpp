@@ -15,8 +15,10 @@
 #include "wrapper_functions.hpp"
 #include "strip_type.hpp"
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/bindings/util/wrapper_utilities.hpp>
 
 using namespace mlpack::util;
+using namespace mlpack::bindings::util;
 using namespace std;
 
 namespace mlpack {
@@ -43,7 +45,7 @@ void PrintWrapperPY(const std::string& category,
   // keeps track of indentation at each point.
   int indent = 0;
 
-  for (string i: methods)
+  for (string i : methods)
   {
     params[i] = IO::Parameters(groupName + "_" + i);
   }
@@ -192,7 +194,7 @@ void PrintWrapperPY(const std::string& category,
   indent -= 2;
 
   // print all method definitions.
-  for (string methodName: methods)
+  for (string methodName : methods)
   {
     // print method name.
     cout << string(indent, ' ') << "def " << GetMappedName(methodName);
@@ -236,7 +238,7 @@ void PrintWrapperPY(const std::string& category,
           // If this is a matrix parameter.
           if (itr->second.cppType == "arma::mat" ||
               itr->second.cppType ==
-                  "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
+                  "std::tuple<mlpack::DatasetInfo, arma::mat>" ||
               itr->second.cppType == "arma::Mat<size_t>")
           {
             numMatrixInputs++;
@@ -374,10 +376,10 @@ void PrintWrapperPY(const std::string& category,
     for (map<string, ParamData>::iterator itr = methodParams.begin();
          itr != methodParams.end(); itr++)
     {
-      if(itr->second.input && itr->second.required)
+      if (itr->second.input && itr->second.required)
       {
         string validName = GetValidName(itr->first);
-        if(count != 0)
+        if (count != 0)
           cout << string(indent + addIndent, ' ');
         cout << validName << " = ";
 

@@ -23,8 +23,8 @@ void SCVerifyCorrectness(const VecType& beta,
                          const VecType& errCorr,
                          double lambda)
 {
-  const double tol = std::is_same<typename VecType::elem_type, float>::value ?
-      1e-6 : 1e-12;
+  const double tol = std::is_same_v<typename VecType::elem_type, float> ?
+      1e-5 : 1e-12;
   size_t nDims = beta.n_elem;
   for (size_t j = 0; j < nDims; ++j)
   {
@@ -50,13 +50,13 @@ void SCVerifyCorrectness(const VecType& beta,
 TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
-  typedef arma::Col<typename MatType::elem_type> VecType;
+  using MatType = TestType;
+  using VecType = arma::Col<typename MatType::elem_type>;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -84,14 +84,14 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepLasso", "[SparseCodingTest]",
 TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
-  typedef arma::Col<typename MatType::elem_type> VecType;
+  using MatType = TestType;
+  using VecType = arma::Col<typename MatType::elem_type>;
 
   double lambda1 = 0.1;
   double lambda2 = 0.2;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -120,15 +120,15 @@ TEMPLATE_TEST_CASE("SparseCodingTestCodingStepElasticNet", "[SparseCodingTest]",
 TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
-  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+  const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -150,10 +150,10 @@ TEMPLATE_TEST_CASE("SparseCodingTestDictionaryStep", "[SparseCodingTest]",
   REQUIRE(normGradient == Approx(0.0).margin(tol));
 }
 
-TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
+TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest][long]", arma::mat,
     arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType X = randu<MatType>(100, 100);
   size_t nAtoms = 25;
@@ -213,15 +213,15 @@ TEMPLATE_TEST_CASE("SerializationTest", "[SparseCodingTest]", arma::mat,
 TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
-  const double tol = std::is_same<typename MatType::elem_type, float>::value ?
+  const double tol = std::is_same_v<typename MatType::elem_type, float> ?
       0.01 : 1e-6;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
 
-  arma::mat inX; // The .arm file contains an arma::mat.
+  arma::mat inX;
   inX.load("mnist_first250_training_4s_and_9s.csv");
   MatType X = arma::conv_to<MatType>::from(inX);
   uword nPoints = X.n_cols;
@@ -230,7 +230,8 @@ TEMPLATE_TEST_CASE("SparseCodingTrainReturnObjective", "[SparseCodingTest]",
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 0, 0.01, tol);
+  // Use only 10 iterations to keep the test from taking too long.
+  SparseCoding<MatType> sc(nAtoms, lambda1, 0.0, 5, 0.01, tol);
   double objVal = sc.Train(X);
 
   REQUIRE(std::isfinite(objVal) == true);

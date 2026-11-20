@@ -187,7 +187,7 @@ class SubviewType : public Layer<InputType, OutputType>
 }; // class SubviewType
 
 // Standard Subview layer.
-typedef SubviewType<arma::mat, arma::mat> Subview;
+using Subview = SubviewType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

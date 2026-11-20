@@ -11,6 +11,7 @@
  */
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/util/binding_details.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 #include "binding_info.hpp"
 #include "print_param_table.hpp"
@@ -65,7 +66,7 @@ void PrintParamTable(const string& bindingName,
 
       bool isHyperParam = false;
       size_t foundArma = it->second.cppType.find("arma");
-      if(it->second.input && foundArma == string::npos && !isSerial)
+      if (it->second.input && foundArma == string::npos && !isSerial)
         isHyperParam = true;
       printCondition &= isHyperParam;
     }

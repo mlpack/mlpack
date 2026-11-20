@@ -33,7 +33,7 @@ class HollowBallBound
 {
  public:
   //! A public version of the metric type.
-  typedef TDistanceType DistanceType;
+  using DistanceType = TDistanceType;
 
  private:
   //! The inner and the outer radii of the bound.
@@ -249,7 +249,7 @@ template<typename DistanceType, typename ElemType>
 struct BoundTraits<HollowBallBound<DistanceType, ElemType>>
 {
   //! These bounds are potentially loose in some dimensions.
-  const static bool HasTightBounds = false;
+  static const bool HasTightBounds = false;
 };
 
 } // namespace mlpack

@@ -73,15 +73,15 @@ inline void MatrixCompletion::CheckValues()
         << "indices does not have 2 rows!" << std::endl;
   }
 
-  util::CheckSameSizes(indices, values, 
-      "MatrixCompletion::CheckValues()", "labels", false, true);
+  util::CheckSameSizes(indices, values, "MatrixCompletion::CheckValues()",
+      "labels", false, true);
 
   for (size_t i = 0; i < values.n_elem; ++i)
   {
     if (indices(0, i) >= m || indices(1, i) >= n)
       Log::Fatal << "MatrixCompletion::CheckValues(): indices ("
           << indices(0, i) << ", " << indices(1, i)
-          << ") are out of bounds for matrix of size " << m << " x n!"
+          << ") are out of bounds for matrix of size " << m << " x " << n << "!"
           << std::endl;
   }
 }

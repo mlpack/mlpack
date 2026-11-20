@@ -29,38 +29,32 @@ namespace mlpack {
  *    computation.
  */
 template <typename MatType = arma::mat>
-class LogSoftMaxType : public Layer<MatType>
+class LogSoftMax : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Create the LogSoftmax layer.
    */
-  LogSoftMaxType();
+  LogSoftMax();
 
-  //! Clone the LogSoftMaxType object. This handles polymorphism correctly.
-  LogSoftMaxType* Clone() const { return new LogSoftMaxType(*this); }
+  //! Clone the LogSoftMax object. This handles polymorphism correctly.
+  LogSoftMax* Clone() const { return new LogSoftMax(*this); }
 
   // Virtual destructor.
-  virtual ~LogSoftMaxType() { }
+  virtual ~LogSoftMax() { }
 
-  //! Copy the given LogSoftMaxType.
-  LogSoftMaxType(const LogSoftMaxType& other);
-  //! Take ownership of the given LogSoftMaxType.
-  LogSoftMaxType(LogSoftMaxType&& other);
-  //! Copy the given LogSoftMaxType.
-  LogSoftMaxType& operator=(const LogSoftMaxType& other);
-  //! Take ownership of the given LogSoftMaxType.
-  LogSoftMaxType& operator=(LogSoftMaxType&& other);
+  //! Copy the given LogSoftMax.
+  LogSoftMax(const LogSoftMax& other);
+  //! Take ownership of the given LogSoftMax.
+  LogSoftMax(LogSoftMax&& other);
+  //! Copy the given LogSoftMax.
+  LogSoftMax& operator=(const LogSoftMax& other);
+  //! Take ownership of the given LogSoftMax.
+  LogSoftMax& operator=(LogSoftMax&& other);
 
-  /**
-   * A wrapper function to call the correct implementation according to the
-   * specific matrix type (e.g., arma, coot).
-   *
-   * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
-   */
-  void Forward(const MatType& input, MatType& output);
- 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -68,15 +62,7 @@ class LogSoftMaxType : public Layer<MatType>
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void ForwardImpl(const MatType& input, MatType& output,
-                   const typename std::enable_if_t<
-                       arma::is_arma_type<MatType>::value>* = 0);
-
-#ifdef MLPACK_HAS_COOT
-  void ForwardImpl(const MatType& input, MatType& output,
-                   const typename std::enable_if_t<
-                       coot::is_coot_type<MatType>::value>* = 0);
-#endif
+  void Forward(const MatType& input, MatType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -99,13 +85,7 @@ class LogSoftMaxType : public Layer<MatType>
     ar(cereal::base_class<Layer<MatType>>(this));
     // Nothing to do.
   }
-
 }; // class LogSoftmaxType
-
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-typedef LogSoftMaxType<arma::mat> LogSoftMax;
 
 } // namespace mlpack
 

@@ -29,37 +29,44 @@
 #include <mlpack/methods/ann/layer/concat.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/convolution.hpp>
+#include <mlpack/methods/ann/layer/transposed_convolution.hpp>
 #include <mlpack/methods/ann/layer/dropconnect.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
+#include <mlpack/methods/ann/layer/embedding.hpp>
 #include <mlpack/methods/ann/layer/flexible_relu.hpp>
 #include <mlpack/methods/ann/layer/grouped_convolution.hpp>
+#include <mlpack/methods/ann/layer/gru.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
 #include <mlpack/methods/ann/layer/identity.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
 #include <mlpack/methods/ann/layer/linear.hpp>
 #include <mlpack/methods/ann/layer/linear_no_bias.hpp>
+#include <mlpack/methods/ann/layer/linear_recurrent.hpp>
 #include <mlpack/methods/ann/layer/linear3d.hpp>
 #include <mlpack/methods/ann/layer/log_softmax.hpp>
 #include <mlpack/methods/ann/layer/lstm.hpp>
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/multihead_attention.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/padding.hpp>
 #include <mlpack/methods/ann/layer/parametric_relu.hpp>
 #include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 #include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/repeat.hpp>
+#include <mlpack/methods/ann/layer/scale.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/softmin.hpp>
+#include <mlpack/methods/ann/layer/sum_reduce.hpp>
 #include <mlpack/methods/ann/layer/ftswish.hpp>
 
 // Convolution modes.
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 
 // Regularizers.
 #include <mlpack/methods/ann/regularizer/no_regularizer.hpp>
@@ -67,10 +74,14 @@
 // Loss function modules.
 #include <mlpack/methods/ann/loss_functions/negative_log_likelihood.hpp>
 
+// Custom layers for models
+#include <mlpack/methods/ann/models/yolov3/yolov3_layer.hpp>
+
 // Include definitions for polymorphic serialization.  Note that this can cause
 // significant compilation overhead, so we only do it if
 // MLPACK_ENABLE_ANN_SERIALIZATION is enabled.
-#ifdef MLPACK_ENABLE_ANN_SERIALIZATION
+#if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
+    defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT)
 #include <mlpack/methods/ann/layer/serialization.hpp>
 #endif
 

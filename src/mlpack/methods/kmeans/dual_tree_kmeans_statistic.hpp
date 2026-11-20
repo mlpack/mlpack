@@ -16,13 +16,17 @@
 
 namespace mlpack {
 
+template<typename MatType>
 class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
 {
  public:
+  typedef typename MatType::elem_type ElemType;
+  typedef typename GetColType<MatType>::type ColType;
+
   DualTreeKMeansStatistic() :
       NeighborSearchStat<NearestNeighborSort>(),
-      upperBound(DBL_MAX),
-      lowerBound(DBL_MAX),
+      upperBound(std::numeric_limits<ElemType>::max()),
+      lowerBound(std::numeric_limits<ElemType>::max()),
       owner(size_t(-1)),
       pruned(size_t(-1)),
       staticPruned(false),
@@ -37,8 +41,8 @@ class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
   template<typename TreeType>
   DualTreeKMeansStatistic(TreeType& node) :
       NeighborSearchStat<NearestNeighborSort>(),
-      upperBound(DBL_MAX),
-      lowerBound(DBL_MAX),
+      upperBound(std::numeric_limits<ElemType>::max()),
+      lowerBound(std::numeric_limits<ElemType>::max()),
       owner(size_t(-1)),
       pruned(size_t(-1)),
       staticPruned(false),
@@ -70,14 +74,14 @@ class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
       trueChildren[i] = &node.Child(i);
   }
 
-  double UpperBound() const { return upperBound; }
-  double& UpperBound() { return upperBound; }
+  ElemType UpperBound() const { return upperBound; }
+  ElemType& UpperBound() { return upperBound; }
 
-  double LowerBound() const { return lowerBound; }
-  double& LowerBound() { return lowerBound; }
+  ElemType LowerBound() const { return lowerBound; }
+  ElemType& LowerBound() { return lowerBound; }
 
-  const arma::vec& Centroid() const { return centroid; }
-  arma::vec& Centroid() { return centroid; }
+  const ColType& Centroid() const { return centroid; }
+  ColType& Centroid() { return centroid; }
 
   size_t Owner() const { return owner; }
   size_t& Owner() { return owner; }
@@ -88,11 +92,11 @@ class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
   bool StaticPruned() const { return staticPruned; }
   bool& StaticPruned() { return staticPruned; }
 
-  double StaticUpperBoundMovement() const { return staticUpperBoundMovement; }
-  double& StaticUpperBoundMovement() { return staticUpperBoundMovement; }
+  ElemType StaticUpperBoundMovement() const { return staticUpperBoundMovement; }
+  ElemType& StaticUpperBoundMovement() { return staticUpperBoundMovement; }
 
-  double StaticLowerBoundMovement() const { return staticLowerBoundMovement; }
-  double& StaticLowerBoundMovement() { return staticLowerBoundMovement; }
+  ElemType StaticLowerBoundMovement() const { return staticLowerBoundMovement; }
+  ElemType& StaticLowerBoundMovement() { return staticLowerBoundMovement; }
 
   void* TrueParent() const { return trueParent; }
   void*& TrueParent() { return trueParent; }
@@ -103,14 +107,14 @@ class DualTreeKMeansStatistic : public NeighborSearchStat<NearestNeighborSort>
   size_t NumTrueChildren() const { return trueChildren.size(); }
 
  private:
-  double upperBound;
-  double lowerBound;
+  ElemType upperBound;
+  ElemType lowerBound;
   size_t owner;
   size_t pruned;
   bool staticPruned;
-  double staticUpperBoundMovement;
-  double staticLowerBoundMovement;
-  arma::vec centroid;
+  ElemType staticUpperBoundMovement;
+  ElemType staticLowerBoundMovement;
+  ColType centroid;
   void* trueParent;
   std::vector<void*> trueChildren;
 };

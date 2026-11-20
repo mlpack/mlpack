@@ -228,7 +228,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     const int samplings = params.Get<int>("samplings");
     const double percentage = params.Get<double>("percentage");
 
-    typedef KMeans<SquaredEuclideanDistance, RefinedStart> KMeansType;
+    using KMeansType = KMeans<SquaredEuclideanDistance, RefinedStart>;
 
     KMeansType k(kmeansMaxIterations, SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
@@ -250,7 +250,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeansType, PositiveDefiniteConstraint,
-          DiagonalGaussianDistribution> em(maxIterations, tolerance, k);
+          DiagonalGaussianDistribution<>> em(maxIterations, tolerance, k);
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -307,7 +307,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       // Compute the parameters of the model using the EM algorithm.
       timers.Start("em");
       EMFit<KMeans<>, PositiveDefiniteConstraint,
-          DiagonalGaussianDistribution> em(maxIterations, tolerance,
+          DiagonalGaussianDistribution<>> em(maxIterations, tolerance,
           KMeans<>(kmeansMaxIterations));
 
       likelihood = dgmm.Train(dataPoints, params.Get<int>("trials"), false,

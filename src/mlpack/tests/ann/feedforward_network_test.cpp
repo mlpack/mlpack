@@ -19,6 +19,7 @@
 
 #include "../catch.hpp"
 #include "../serialization.hpp"
+#include "ann_test_tools.hpp"
 
 using namespace mlpack;
 
@@ -34,7 +35,12 @@ void TestNetwork(ModelType& model,
                  const size_t maxEpochs,
                  const double classificationErrorThreshold)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
+  #endif
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
@@ -59,7 +65,12 @@ void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -82,7 +93,12 @@ void CheckMoveFunction(ModelType* network1,
                        MatType& trainData,
                        MatType& trainLabels)
 {
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #else
+  // Earlier ensmallen versions did not adjust the step size for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
+  #endif
   network1->Train(trainData, trainLabels, opt);
 
   arma::mat predictions1;
@@ -100,11 +116,11 @@ void CheckMoveFunction(ModelType* network1,
 /**
  * Check whether copying and moving Vanila network is working or not.
  */
-TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   // Normalize labels to [0, 2].
@@ -159,7 +175,7 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  Load("thyroid_train.csv", trainData, Fatal + Transpose);
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -234,11 +250,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
   // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
-  Concatenate* concatLayer = new Concatenate();
-  concatLayer->Concat() = concatMatrix;
+  Concatenate concatLayer;
+  concatLayer.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model1->Add(concatLayer);
+  model1->Add(std::move(concatLayer));
   model1->Add<Linear>(5);
   model1->Add<LogSoftMax>();
 
@@ -251,11 +267,11 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model2->Add<Linear>(5);
 
   // Create new concat layer.
-  Concatenate* concatLayer2 = new Concatenate();
-  concatLayer2->Concat() = concatMatrix;
+  Concatenate concatLayer2;
+  concatLayer2.Concat() = concatMatrix;
 
   // Add concatenate layer to the current network.
-  model2->Add(concatLayer2);
+  model2->Add(std::move(concatLayer2));
   model2->Add<Linear>(5);
   model2->Add<LogSoftMax>();
 
@@ -270,7 +286,7 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  data::Load("thyroid_train.csv", trainData, true);
+  Load("thyroid_train.csv", trainData, Fatal + Transpose);
 
   // Normalize labels to [0, 2].
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -304,7 +320,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTestNoBias", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   // Normalize labels to [0, 2].
@@ -351,7 +367,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -359,7 +375,7 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -397,10 +413,14 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -415,13 +435,17 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
-TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
+TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest][long]")
 {
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -443,7 +467,14 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   ens::VanillaUpdate::Policy<arma::mat, arma::mat> optPolicy(opt,
       model.Parameters().n_rows, model.Parameters().n_cols);
   #endif
+
+  #if ENS_VERSION_MAJOR >= 3
+  double stepSize = 0.1;
+  #else
+  // Older versions of ensmallen did not adjust the step size with the batch
+  // size.
   double stepSize = 0.01;
+  #endif
   size_t batchSize = 10;
 
   size_t iteration = 0;
@@ -499,7 +530,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -507,7 +538,7 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // Labels should be from 0 to numClasses - 1.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -546,9 +577,13 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork<>(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -566,7 +601,9 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -576,7 +613,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -584,7 +621,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // The range should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -624,10 +661,13 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   // Vanilla neural net with logistic activation function.
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
-  TestNetwork(model, trainData, trainLabels, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels,
+      testData, testLabels, 10);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -643,7 +683,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
-  TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
+  error = TestClassificationNetwork(model1, dataset, labels, dataset, labels,
+      10);
+  REQUIRE(error <= 0.2);
 }
 
 /**
@@ -669,7 +711,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -677,7 +719,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // The labels should be between 0 and numClasses - 1.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -694,7 +736,12 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust for the batch size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   model.Train(trainData, trainLabels, opt);
 
@@ -723,11 +770,11 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(10);
 
   // Add a new Add<> module which adds a (learnable) constant term to the input.
-  Add* addModule = new Add();
-  model.Add(addModule);
+  Add addModule;
+  model.Add(std::move(addModule));
 
-  LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
-  model.Add(linearNoBiasModule);
+  LinearNoBias linearNoBiasModule(10);
+  model.Add(std::move(linearNoBiasModule));
 
   model.Add<Linear>(10);
 
@@ -735,9 +782,9 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
-  addModule->Parameters() = arma::ones(10, 1);
+  model.Network()[1]->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
-  linearNoBiasModule->Parameters() = arma::ones(10, 10);
+  model.Network()[2]->Parameters() = arma::ones(10, 10);
 
   arma::mat input = arma::ones(10, 1);
   arma::mat output;
@@ -766,11 +813,11 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 /**
  * Test that FFN::Train() returns finite objective value.
  */
-TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
+TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest][tiny]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -778,7 +825,7 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -795,7 +842,13 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
+  #if ENS_VERSION_MAJOR >= 3
+  ens::RMSProp opt(0.32, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #else
+  // Older versions of ensmallen did not adjust the step size for the batch
+  // size.
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
+  #endif
 
   double objVal = model.Train(trainData, trainLabels, opt);
 
@@ -809,10 +862,10 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
   FFN<NegativeLogLikelihood> model;
-  Linear* linearA = new Linear(3);
-  model.Add(linearA);
-  Linear* linearB = new Linear(4);
-  model.Add(linearB);
+  Linear linearA(3);
+  model.Add(std::move(linearA));
+  Linear linearB(4);
+  model.Add(std::move(linearB));
 
   // Initialize network parameters, with a new input size of 3.
   model.Reset(3);
@@ -821,7 +874,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   model.Parameters().ones();
 
   // Zero the second layer parameter.
-  linearB->Parameters().zeros();
+  model.Network()[1]->Parameters().zeros();
 
   // Get the layer parameter from layer A and layer B and store them in
   // parameterA and parameterB.
@@ -831,19 +884,19 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
   CheckMatrices(parameterA, arma::ones(3 * 3 + 3, 1));
   CheckMatrices(parameterB, arma::zeros(3 * 4 + 4, 1));
 
-  CheckMatrices(linearA->Parameters(), arma::ones(3 * 3 + 3, 1));
-  CheckMatrices(linearB->Parameters(), arma::zeros(3 * 4 + 4, 1));
+  CheckMatrices(model.Network()[0]->Parameters(), arma::ones(3 * 3 + 3, 1));
+  CheckMatrices(model.Network()[1]->Parameters(), arma::zeros(3 * 4 + 4, 1));
 }
 
 /**
  * Test to see if the FFN code compiles when the Optimizer
  * doesn't have the MaxIterations() method.
  */
-TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
+TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1);
@@ -851,7 +904,7 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   trainLabels -= 1; // The labels should be between 0 and numClasses.
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot load dataset thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
@@ -863,7 +916,9 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
-  ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
+  // Since we are only checking compilation here, we set the tolerance to the
+  // very large value of 1e5 so it converges quickly.
+  ens::DE opt(200, 1000, 0.6, 0.8, 1e5);
   model.Train(trainData, trainLabels, opt);
 }
 
@@ -875,7 +930,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   // Normalize labels to [0, 2].
@@ -883,7 +938,7 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   trainData.shed_row(trainData.n_rows - 1);
 
   arma::mat testData;
-  data::Load("thyroid_test.csv", testData, true);
+  Load("thyroid_test.csv", testData, Fatal + Transpose);
 
   arma::mat testLabels = testData.row(testData.n_rows - 1);
   testData.shed_row(testData.n_rows - 1);
@@ -904,11 +959,11 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 /**
  * Train the RBF network on a larger dataset.
  */
-TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
+TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
 {
   // Load the dataset.
   arma::mat trainData;
-  if (!data::Load("thyroid_train.csv", trainData))
+  if (!Load("thyroid_train.csv", trainData))
     FAIL("Cannot open thyroid_train.csv");
 
   arma::mat trainLabels = trainData.row(trainData.n_rows - 1) - 1;
@@ -921,7 +976,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   }
 
   arma::mat testData;
-  if (!data::Load("thyroid_test.csv", testData))
+  if (!Load("thyroid_test.csv", testData))
     FAIL("Cannot open thyroid_test.csv");
 
   arma::mat testLabels = testData.row(testData.n_rows - 1) - 1;
@@ -949,10 +1004,14 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
+  double error = TestClassificationNetwork(model, trainData, trainLabels1,
+      testData, testLabels, 10);
+  REQUIRE(error <= 0.1);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
+  // Make sure the data loaded okay.
+  REQUIRE(!dataset.is_empty());
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -980,5 +1039,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
-  TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
+  error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
+      10);
+  REQUIRE(error <= 0.1);
 }

@@ -22,7 +22,7 @@ template<typename TreeType>
 size_t RPlusTreeDescentHeuristic::ChooseDescentNode(TreeType* node,
                                                     const size_t point)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   size_t bestIndex = 0;
   bool success = true;
 

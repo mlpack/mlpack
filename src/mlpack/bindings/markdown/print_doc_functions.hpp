@@ -119,14 +119,17 @@ inline std::string ImportExtLib();
 inline std::string ImportSplit();
 
 /**
- * Import the current method.
+ * Import the current binding group and any methods.
  */
-inline std::string ImportThis(const std::string& groupName);
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... methodNames);
 
 /**
  * Print the string that splits dataset into training and testing.
  */
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,
@@ -171,8 +174,6 @@ std::string CallMethod(const std::string& bindingName,
  * Get the mapped name in the corresponding language.
  */
 inline std::string GetMappedName(const std::string& methodName);
-
-inline std::string GetWrapperLink(const std::string& bindingName);
 
 /**
  * Return whether or not a runtime check on parameters should be ignored.

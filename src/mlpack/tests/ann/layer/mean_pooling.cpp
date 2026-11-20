@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple test for Mean Pooling layer.
  */
-TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
+TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest][tiny]")
 {
   // For rectangular input to pooling layers.
   arma::mat input = arma::mat(28, 1);
@@ -75,7 +75,7 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   arma::mat prevDelta2 = { { 3.6, -0.9 },
                            { 3.6, -0.9 },
                            { 3.6, -0.9 } };
-  
+
   arma::mat delta1, delta2;
   delta1.set_size(28, 1);
   delta2.set_size(28, 1);

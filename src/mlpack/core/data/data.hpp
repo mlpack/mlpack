@@ -12,9 +12,7 @@
 #ifndef MLPACK_CORE_DATA_DATA_HPP
 #define MLPACK_CORE_DATA_DATA_HPP
 
-#include "detect_file_type.hpp"
 #include "extension.hpp"
-#include "format.hpp"
 #include "has_serialize.hpp"
 
 #include "load.hpp"
@@ -30,13 +28,23 @@
 #include "check_categorical_param.hpp"
 #include "confusion_matrix.hpp"
 #include "dataset_mapper.hpp"
-#include "image_info.hpp"
+#include "data_options.hpp"
+#include "download_file.hpp"
+#include "handle_files.hpp"
+#include "image_layout.hpp"
+#include "image_options.hpp"
+#include "image_resize_crop.hpp"
+#include "image_letterbox.hpp"
+#include "image_bounding_box.hpp"
 #include "imputer.hpp"
 #include "is_naninf.hpp"
+#include "matrix_options.hpp"
 #include "normalize_labels.hpp"
 #include "one_hot_encoding.hpp"
 #include "split_data.hpp"
 #include "string_algorithms.hpp"
-#include "types.hpp"
+#include "text_options.hpp"
+
+#include "combine_options.hpp"
 
 #endif

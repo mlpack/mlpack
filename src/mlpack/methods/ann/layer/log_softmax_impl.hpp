@@ -18,29 +18,29 @@
 namespace mlpack {
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType() :
+LogSoftMax<MatType>::LogSoftMax() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType(const LogSoftMaxType& other) :
+LogSoftMax<MatType>::LogSoftMax(const LogSoftMax& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>::LogSoftMaxType(LogSoftMaxType&& other) :
+LogSoftMax<MatType>::LogSoftMax(LogSoftMax&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>&
-LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
+LogSoftMax<MatType>&
+LogSoftMax<MatType>::operator=(const LogSoftMax& other)
 {
   if (&other != this)
   {
@@ -51,8 +51,8 @@ LogSoftMaxType<MatType>::operator=(const LogSoftMaxType& other)
 }
 
 template<typename MatType>
-LogSoftMaxType<MatType>&
-LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
+LogSoftMax<MatType>&
+LogSoftMax<MatType>::operator=(LogSoftMax&& other)
 {
   if (&other != this)
   {
@@ -63,67 +63,69 @@ LogSoftMaxType<MatType>::operator=(LogSoftMaxType&& other)
 }
 
 template<typename MatType>
-void LogSoftMaxType<MatType>::Forward(const MatType& input, MatType& output)
+void LogSoftMax<MatType>::Forward(const MatType& input, MatType& output)
 {
-  ForwardImpl(input, output);
-}
-
-template<typename MatType>
-void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
-                                          MatType& output,
-                                          const typename std::enable_if_t<
-                                              arma::is_arma_type<MatType>::value>*)
-{
-  MatType maxInput = repmat(max(input), input.n_rows, 1);
-  output = (maxInput - input);
-
-  // Approximation of the base-e exponential function. The acuracy however is
-  // about 0.00001 lower as using exp. Credits go to Leon Bottou.
-  output.transform([](double x)
+  if constexpr (IsArma<MatType>::value)
   {
-    //! Fast approximation of exp(-x) for x positive.
-    static constexpr double A0 = 1.0;
-    static constexpr double A1 = 0.125;
-    static constexpr double A2 = 0.0078125;
-    static constexpr double A3 = 0.00032552083;
-    static constexpr double A4 = 1.0172526e-5;
+    MatType maxInput = repmat(max(input, 0), input.n_rows, 1);
+    output = (maxInput - input);
 
-    if (x < 13.0)
+    // Approximation of the base-e exponential function. The accuracy, however,
+    // is about 0.00001 lower than using exp. Credits go to Leon Bottou.
+    #pragma omp parallel for
+    for (size_t i = 0; i < output.n_elem; ++i)
     {
-      double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
-      y *= y;
-      y *= y;
-      y *= y;
-      y = 1 / y;
+      double x = output(i);
+      //! Fast approximation of exp(-x) for x positive.
+      static constexpr double A0 = 1.0;
+      static constexpr double A1 = 0.125;
+      static constexpr double A2 = 0.0078125;
+      static constexpr double A3 = 0.00032552083;
+      static constexpr double A4 = 1.0172526e-5;
 
-      return y;
+      if (x < 13.0)
+      {
+        double y = A0 + x * (A1 + x * (A2 + x * (A3 + x * A4)));
+        y *= y;
+        y *= y;
+        y *= y;
+        y = 1 / y;
+        output(i) = ElemType(y);
+      }
+      else
+      {
+        output(i) = 0;
+      }
     }
 
-    return 0.0;
-  });
-  maxInput.each_row() += log(sum(output));
-  output = input - maxInput;
+    #pragma omp parallel for
+    for (size_t col = 0; col < maxInput.n_cols; ++col)
+    {
+      ElemType colSum = 0;
+      for (size_t row = 0; row < output.n_rows; ++row)
+      {
+        colSum += output(row, col);
+      }
+      ElemType logSum = std::log(colSum);
+      for (size_t row = 0; row < maxInput.n_rows; ++row)
+      {
+        maxInput(row, col) += logSum;
+      }
+    }
+    output = input - maxInput;
+  }
+  else if constexpr (IsCoot<MatType>::value)
+  {
+    MatType maxInput = repmat(max(input), input.n_rows, 1);
+    output = (maxInput - input);
+    output = exp(-output);
+    maxInput.each_row() += log(sum(output));
+    output = input - maxInput;
+  }
 }
 
-#ifdef MLPACK_HAS_COOT
-
 template<typename MatType>
-void LogSoftMaxType<MatType>::ForwardImpl(const MatType& input,
-                                          MatType& output,
-                                          const typename std::enable_if_t<
-                                              coot::is_coot_type<MatType>::value>*)
-{
-  MatType maxInput = repmat(max(input), input.n_rows, 1);
-  output = (maxInput - input);
-  output = exp(output * -1);
-  maxInput.each_row() += log(sum(output));
-  output = input - maxInput;
-}
-
-#endif
-
-template<typename MatType>
-void LogSoftMaxType<MatType>::Backward(
+void LogSoftMax<MatType>::Backward(
     const MatType& /* input */,
     const MatType& output,
     const MatType& gy,

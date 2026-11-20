@@ -21,7 +21,7 @@ using namespace mlpack;
 /**
  * Compare single-tree and naive.
  */
-TEST_CASE("FastMKSSingleTreeVsNaive", "[FastMKSTest]")
+TEST_CASE("FastMKSSingleTreeVsNaive", "[FastMKSTest][tiny]")
 {
   // First create a random dataset.
   arma::mat data;

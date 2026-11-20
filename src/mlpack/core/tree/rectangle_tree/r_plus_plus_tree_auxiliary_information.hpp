@@ -24,9 +24,9 @@ class RPlusPlusTreeAuxiliaryInformation
 {
  public:
   //! The element type held by the tree.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   //! The bound type held by the auxiliary information.
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   //! Construct the auxiliary information object.
   RPlusPlusTreeAuxiliaryInformation();
@@ -59,6 +59,18 @@ class RPlusPlusTreeAuxiliaryInformation
    * will be moved.
    */
   RPlusPlusTreeAuxiliaryInformation(RPlusPlusTreeAuxiliaryInformation&& other);
+
+  /**
+   * Copy the given RPlusPlusTreeAuxiliaryInformation.
+   */
+  RPlusPlusTreeAuxiliaryInformation& operator=(
+      const RPlusPlusTreeAuxiliaryInformation& other);
+
+  /**
+   * Take ownership of the given RPlusPlusTreeAuxiliaryInformation's data.
+   */
+  RPlusPlusTreeAuxiliaryInformation& operator=(
+      RPlusPlusTreeAuxiliaryInformation&& other);
 
   /**
    * Some tree types require to save some properties at the insertion process.

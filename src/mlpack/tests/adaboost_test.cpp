@@ -24,18 +24,18 @@ using namespace mlpack;
  * checks whether the hamming loss breaches the upperbound, which is provided by
  * ztAccumulator.
  */
-TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest][tiny]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
 
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -47,8 +47,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]", mat, fmat)
   // Define parameters for AdaBoost.
   size_t iterations = 100;
   eT tolerance = 2e-10;
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   AdaBoost<PerceptronType, MatType> a;
   eT ztProduct = a.Train(inputData, labels.row(0), numClasses, iterations,
       tolerance, perceptronIter);
@@ -71,15 +71,15 @@ TEMPLATE_TEST_CASE("HammingLossBoundIris", "[AdaBoostTest]", mat, fmat)
  */
 TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -89,8 +89,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
   int perceptronIter = 400;
 
   Row<size_t> perceptronPrediction(labels.n_cols);
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
@@ -120,15 +120,15 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris", "[AdaBoostTest]", mat, fmat)
 TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -136,8 +136,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
   size_t perceptronIter = 800;
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
 
   // Define parameters for AdaBoost.
@@ -166,15 +166,15 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn", "[AdaBoostTest]", mat,
 TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -184,8 +184,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]", mat,
   size_t perceptronIter = 800;
 
   Row<size_t> perceptronPrediction(labels.n_cols);
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
@@ -215,15 +215,15 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn", "[AdaBoostTest]", mat,
 TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  if (!Load("train_nonlinsep.txt", inputData))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  if (!Load("train_labels_nonlinsep.txt", labels))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -231,8 +231,8 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptronIter iterations.
   size_t perceptronIter = 800;
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
 
   // Define parameters for AdaBoost.
@@ -258,18 +258,18 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData", "[AdaBoostTest]", mat,
  * dataset.  It checks if the error returned by running a single instance of the
  * weak learner is close to that of a boosted weak learner using AdaBoost.
  */
-TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]", mat,
-    fmat)
+TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest][long]",
+    mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  if (!Load("train_nonlinsep.txt", inputData))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  if (!Load("train_labels_nonlinsep.txt", labels))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -279,8 +279,8 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]", mat,
   size_t perceptronIter = 800;
 
   Row<size_t> perceptronPrediction(labels.n_cols);
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
@@ -309,15 +309,15 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData", "[AdaBoostTest]", mat,
  */
 TEMPLATE_TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -349,17 +349,17 @@ TEMPLATE_TEST_CASE("HammingLossIris_DS", "[AdaBoostTest]", mat, fmat)
  * weak learner is close to that of a boosted weak learner using adaboost.
  * This is for the weak learner: decision stumps.
  */
-TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest][tiny]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris_labels.txt");
 
   // no need to map the labels here
@@ -402,15 +402,15 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorIris_DS", "[AdaBoostTest]", mat, fmat)
 TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn_DS", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -448,15 +448,15 @@ TEMPLATE_TEST_CASE("HammingLossBoundVertebralColumn_DS", "[AdaBoostTest]", mat,
 TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -491,18 +491,18 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorVertebralColumn_DS", "[AdaBoostTest]", mat,
  * dataset.  It checks whether the hamming loss breaches the upperbound, which
  * is provided by ztAccumulator.  This is for the weak learner: decision stumps.
  */
-TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS", "[AdaBoostTest]", mat,
-    fmat)
+TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS",
+    "[AdaBoostTest][long]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  if (!Load("train_nonlinsep.txt", inputData))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  if (!Load("train_labels_nonlinsep.txt", labels))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -540,15 +540,15 @@ TEMPLATE_TEST_CASE("HammingLossBoundNonLinearSepData_DS", "[AdaBoostTest]", mat,
 TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  if (!Load("train_nonlinsep.txt", inputData))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  if (!Load("train_labels_nonlinsep.txt", labels))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner, decision stumps in this case.
@@ -585,17 +585,18 @@ TEMPLATE_TEST_CASE("WeakLearnerErrorNonLinearSepData_DS", "[AdaBoostTest]", mat,
  * dataset.  It tests the Classify function and checks for a satisfactory error
  * rate.
  */
-TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest][long]", mat,
+    fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   // Define your own weak learner, perceptron in this case.
@@ -603,19 +604,19 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
   size_t perceptronIter = 1000;
 
   MatType testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   Mat<size_t> trueTestLabels;
 
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!Load("vc2_test_labels.txt", trueTestLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
   Row<size_t> perceptronPrediction(labels.n_cols);
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
@@ -644,7 +645,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1));
   }
@@ -661,15 +662,15 @@ TEMPLATE_TEST_CASE("ClassifyTest_VERTEBRALCOL", "[AdaBoostTest]", mat, fmat)
  */
 TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("train_nonlinsep.txt", inputData))
+  if (!Load("train_nonlinsep.txt", inputData))
     FAIL("Cannot load test dataset train_nonlinsep.txt!");
 
   Mat<size_t> labels;
-  if (!data::Load("train_labels_nonlinsep.txt", labels))
+  if (!Load("train_labels_nonlinsep.txt", labels))
     FAIL("Cannot load labels for train_labels_nonlinsep.txt");
 
   // Define your own weak learner; in this test decision stumps are used.
@@ -679,11 +680,11 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
 
   MatType testData;
 
-  if (!data::Load("test_nonlinsep.txt", testData))
+  if (!Load("test_nonlinsep.txt", testData))
     FAIL("Cannot load test dataset test_nonlinsep.txt!");
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("test_labels_nonlinsep.txt", trueTestLabels))
+  if (!Load("test_labels_nonlinsep.txt", trueTestLabels))
     FAIL("Cannot load labels for test_labels_nonlinsep.txt");
 
   Row<size_t> dsPrediction(labels.n_cols);
@@ -714,7 +715,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
@@ -732,15 +733,15 @@ TEMPLATE_TEST_CASE("ClassifyTest_NONLINSEP", "[AdaBoostTest]", mat, fmat)
  */
 TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   MatType inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  if (!Load("iris_train.csv", inputData))
     FAIL("Cannot load test dataset iris_train.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
+  if (!Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris_train_labels.csv");
   const size_t numClasses = max(labels.row(0)) + 1;
 
@@ -748,8 +749,8 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
   // Run the perceptron for perceptronIter iterations.
   size_t perceptronIter = 800;
 
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
 
   // Define parameters for AdaBoost.
@@ -759,14 +760,14 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
       iterations, tolerance, perceptronIter);
 
   MatType testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("iris_test_labels.csv", trueTestLabels))
+  if (!Load("iris_test_labels.csv", trueTestLabels))
     FAIL("Cannot load test dataset iris_test_labels.csv!");
 
   Row<size_t> predictedLabels1(testData.n_cols),
@@ -787,7 +788,7 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
   for (size_t i = 0; i < predictedLabels1.n_cols; ++i)
   {
     pRow = probabilities.unsafe_col(i);
-    pRow.max(maxIndex);
+    maxIndex = pRow.index_max();
     REQUIRE(predictedLabels1(i) == maxIndex);
     REQUIRE(accu(probabilities.col(i)) == Approx(1).epsilon(1e-7));
   }
@@ -803,23 +804,23 @@ TEMPLATE_TEST_CASE("ClassifyTest_IRIS", "[AdaBoostTest]", mat, fmat)
  */
 TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   // First train on the iris dataset.
   MatType inputData;
-  if (!data::Load("iris_train.csv", inputData))
+  if (!Load("iris_train.csv", inputData))
     FAIL("Cannot load test dataset iris_train.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_train_labels.csv", labels))
+  if (!Load("iris_train_labels.csv", labels))
     FAIL("Cannot load labels for iris_train_labels.csv");
 
   const size_t numClasses = max(labels.row(0)) + 1;
 
   size_t perceptronIter = 800;
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   PerceptronType p(inputData, labels.row(0), numClasses, perceptronIter);
 
   // Now train AdaBoost.
@@ -829,9 +830,9 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
       iterations, tolerance, perceptronIter);
 
   // Now load another dataset...
-  if (!data::Load("vc2.csv", inputData))
+  if (!Load("vc2.csv", inputData))
     FAIL("Cannot load test dataset vc2.csv!");
-  if (!data::Load("vc2_labels.txt", labels))
+  if (!Load("vc2_labels.txt", labels))
     FAIL("Cannot load labels for vc2_labels.txt");
 
   const size_t newNumClasses = max(labels.row(0)) + 1;
@@ -843,11 +844,11 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
 
   // Load test set to see if it trained on vc2 correctly.
   MatType testData;
-  if (!data::Load("vc2_test.csv", testData))
+  if (!Load("vc2_test.csv", testData))
     FAIL("Cannot load test dataset vc2_test.csv!");
 
   Mat<size_t> trueTestLabels;
-  if (!data::Load("vc2_test_labels.txt", trueTestLabels))
+  if (!Load("vc2_test_labels.txt", trueTestLabels))
     FAIL("Cannot load labels for vc2_test_labels.txt");
 
   // Define parameters for AdaBoost.
@@ -860,9 +861,10 @@ TEMPLATE_TEST_CASE("TrainTest", "[AdaBoostTest]", mat, fmat)
   REQUIRE(lError <= 0.30);
 }
 
-TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
+TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest][long]", fmat,
+    mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Build an AdaBoost object.
   MatType data = randu<MatType>(10, 500);
@@ -872,8 +874,8 @@ TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
   for (size_t i = 250; i < 500; ++i)
     labels[i] = 1;
 
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   AdaBoost<PerceptronType, MatType> ab(data, labels, 2, 50, 1e-10, 800);
 
   // Now create another dataset to train with.
@@ -919,7 +921,7 @@ TEMPLATE_TEST_CASE("PerceptronSerializationTest", "[AdaBoostTest]", fmat, mat)
 TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
     fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Build an AdaBoost object.
   MatType data = randu<MatType>(10, 500);
@@ -968,18 +970,19 @@ TEMPLATE_TEST_CASE("ID3DecisionStumpSerializationTest", "[AdaBoostTest]", mat,
   }
 }
 
-TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest]", mat, fmat)
+TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest][long]", mat,
+    fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
   // Train a model.
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   AdaBoost<PerceptronType, MatType> ab(data, labels, 4);
 
   // Ensure that we can get single-point classifications.
@@ -991,20 +994,20 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassify", "[AdaBoostTest]", mat, fmat)
   }
 }
 
-TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs", "[AdaBoostTest]",
-    mat, fmat)
+TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs",
+    "[AdaBoostTest][long]", mat, fmat)
 {
-  typedef TestType MatType;
-  typedef typename MatType::elem_type eT;
+  using MatType = TestType;
+  using eT = typename MatType::elem_type;
 
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
   // Train a model.
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   AdaBoost<PerceptronType, MatType> ab(data, labels, 4);
 
   // Ensure that we can get single-point classifications.
@@ -1023,14 +1026,14 @@ TEMPLATE_TEST_CASE("AdaBoostSinglePointClassifyWithProbs", "[AdaBoostTest]",
 // hyperparameters.
 TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType inputData;
-  if (!data::Load("iris.csv", inputData))
+  if (!Load("iris.csv", inputData))
     FAIL("Cannot load test dataset iris.csv!");
 
   Mat<size_t> labels;
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load labels for iris iris_labels.txt");
 
   const size_t numClasses = max(labels.row(0)) + 1;
@@ -1038,8 +1041,8 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
   // Create two AdaBoost models.  One does not allow the perceptron to train for
   // more than one iteration, and therefore should get less accuracy than the
   // one we let train in full.
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
 
   AdaBoost<PerceptronType, MatType> a1(inputData, labels, numClasses, 2, 1e-6,
       1 /* perceptron max iterations */);
@@ -1059,17 +1062,17 @@ TEMPLATE_TEST_CASE("AdaBoostParamsConstructor", "[AdaBoostTest]", fmat, mat)
 }
 
 // Ensure that all Train() overloads work correctly.
-TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest]", fmat, mat)
+TEMPLATE_TEST_CASE("AdaBoostTrainOverloads", "[AdaBoostTest][long]", fmat, mat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data = randu<MatType>(10, 100);
   // Create random labels.
-  Row<size_t> labels = randi<Row<size_t>>(100, distr_param(0, 3));
+  Row<size_t> labels = randi<Row<size_t>>(100, DistrParam(0, 3));
 
-  typedef Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>
-      PerceptronType;
+  using PerceptronType =
+      Perceptron<SimpleWeightUpdate, ZeroInitialization, MatType>;
   AdaBoost<PerceptronType, MatType> a1, a2, a3, a4;
   a1.MaxIterations() = 65;
   a1.Tolerance() = 2e-4;

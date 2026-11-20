@@ -81,7 +81,7 @@ class SVDWrapper
 }; // class SVDWrapper
 
 //! add simple typedefs
-typedef SVDWrapper<DummyClass> ArmaSVDFactorizer;
+using ArmaSVDFactorizer = SVDWrapper<DummyClass>;
 
 } // namespace mlpack
 

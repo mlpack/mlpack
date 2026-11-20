@@ -29,31 +29,31 @@
 namespace mlpack {
 
 template<typename MatType>
-ReLU6Type<MatType>::ReLU6Type() :
+ReLU6<MatType>::ReLU6() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-ReLU6Type<MatType>::ReLU6Type(
-    const ReLU6Type& other) :
+ReLU6<MatType>::ReLU6(
+    const ReLU6& other) :
     Layer<MatType>(other)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-ReLU6Type<MatType>::ReLU6Type(
-    ReLU6Type&& other) :
+ReLU6<MatType>::ReLU6(
+    ReLU6&& other) :
     Layer<MatType>(std::move(other))
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-ReLU6Type<MatType>&
-ReLU6Type<MatType>::operator=(const ReLU6Type& other)
+ReLU6<MatType>&
+ReLU6<MatType>::operator=(const ReLU6& other)
 {
   if (&other != this)
   {
@@ -64,8 +64,8 @@ ReLU6Type<MatType>::operator=(const ReLU6Type& other)
 }
 
 template<typename MatType>
-ReLU6Type<MatType>&
-ReLU6Type<MatType>::operator=(ReLU6Type&& other)
+ReLU6<MatType>&
+ReLU6<MatType>::operator=(ReLU6&& other)
 {
   if (&other != this)
   {
@@ -76,14 +76,14 @@ ReLU6Type<MatType>::operator=(ReLU6Type&& other)
 }
 
 template<typename MatType>
-void ReLU6Type<MatType>::Forward(
+void ReLU6<MatType>::Forward(
     const MatType& input, MatType& output)
 {
-  output = arma::clamp(input, 0.0, 6.0);
+  output = arma::clamp(input, 0, 6);
 }
 
 template<typename MatType>
-void ReLU6Type<MatType>::Backward(
+void ReLU6<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -95,13 +95,13 @@ void ReLU6Type<MatType>::Backward(
     if (input(i) < 6 && input(i) > 0)
       g(i) = gy(i);
     else
-      g(i) = 0.0;
+      g(i) = 0;
   }
 }
 
 template<typename MatType>
 template<typename Archive>
-void ReLU6Type<MatType>::serialize(
+void ReLU6<MatType>::serialize(
     Archive& /* ar */,
     const uint32_t /* version */)
 {

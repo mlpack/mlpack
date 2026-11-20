@@ -3,7 +3,7 @@
  * @author Shangtong Zhang
  *
  * This file is an implementation of Mountain Car task:
- * https://www.gymlibrary.ml/environments/classic_control/mountain_car
+ * https://www.gymlibrary.dev/environments/classic_control/mountain_car
  *
  * TODO: provide an option to use dynamics directly from OpenAI gym.
  *
@@ -36,7 +36,7 @@ class MountainCar
     /**
      * Construct a state instance.
      */
-    State(): data(dimension, arma::fill::zeros)
+    State(): data(dimension)
     { /* Nothing to do here. */ }
 
     /**
@@ -201,13 +201,13 @@ class MountainCar
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;
       return true;
     }
     else if (state.Position() >= positionGoal)
     {
-      Log::Info << "Episode terminated due to agent succeeding.";
+      Log::Info << "Episode terminated due to agent succeeding." << std::endl;
       return true;
     }
     return false;

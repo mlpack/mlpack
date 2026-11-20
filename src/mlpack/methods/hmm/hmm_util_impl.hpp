@@ -38,7 +38,7 @@ template<typename ActionType, typename ExtraInfoType>
 void LoadHMMAndPerformAction(const std::string& modelFile,
                              ExtraInfoType* x)
 {
-  const std::string extension = data::Extension(modelFile);
+  const std::string extension = Extension(modelFile);
   if (extension == "xml")
   {
     LoadHMMAndPerformActionHelper<ActionType, cereal::XMLInputArchive>(
@@ -81,12 +81,12 @@ void LoadHMMAndPerformActionHelper(const std::string& modelFile,
   {
     case HMMType::DiscreteHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<DiscreteDistribution>>(ar, x);
+          HMM<DiscreteDistribution<>>>(ar, x);
       break;
 
     case HMMType::GaussianHMM:
       DeserializeHMMAndPerformAction<ActionType, ArchiveType,
-          HMM<GaussianDistribution>>(ar, x);
+          HMM<GaussianDistribution<>>>(ar, x);
       break;
 
     case HMMType::GaussianMixtureModelHMM:
@@ -126,7 +126,7 @@ char GetHMMType();
 template<typename HMMType>
 void SaveHMM(HMMType& hmm, const std::string& modelFile)
 {
-  const std::string extension = data::Extension(modelFile);
+  const std::string extension = Extension(modelFile);
   if (extension == "xml")
     SaveHMMHelper<cereal::XMLOutputArchive>(hmm, modelFile);
   else if (extension == "bin")
@@ -161,13 +161,13 @@ template<typename HMMType>
 char GetHMMType() { return char(-1); }
 
 template<>
-char GetHMMType<HMM<DiscreteDistribution>>()
+char GetHMMType<HMM<DiscreteDistribution<>>>()
 {
   return HMMType::DiscreteHMM;
 }
 
 template<>
-char GetHMMType<HMM<GaussianDistribution>>()
+char GetHMMType<HMM<GaussianDistribution<>>>()
 {
   return HMMType::GaussianHMM;
 }

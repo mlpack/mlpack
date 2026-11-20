@@ -9,23 +9,34 @@ This quickstart guide is also available for [C++](cpp.md), [Python](python.md),
 ## Installing mlpack
 
 Installing the mlpack bindings for Go is somewhat time-consuming as the library
-must be built; you can run the following code:
+must be built; you can run the following to add mlpack as a dependency inside of
+a Go module:
 
 ```sh
 go get -u -d mlpack.org/v1/mlpack
-cd ${GOPATH}/src/mlpack.org/v1/mlpack
-make install
 ```
+
+The Go bindings themselves will then need to be compiled.  Find the mlpack
+directory under `$GOMODCACHE/mlpack.org/v1/mlpack` and run these commands:
+
+```sh
+make
+sudo make install
+```
+
+After this, `go run my_code.go` will be able to correctly link against mlpack's
+Go bindings and run.
+
 Building the Go bindings from scratch is a little more in-depth, though.  For
 information on that, follow the instructions in the
-[main README](../../README.md).
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple mlpack quickstart example
 
 As a really simple example of how to use mlpack from Go, let's do some
 simple classification on a subset of the standard machine learning `covertype`
-dataset.  We'll first split the dataset into a training set and a testing set,
-then we'll train an mlpack random forest on the training data, and finally we'll
+dataset.  We will first split the dataset into a training set and a testing set,
+then we will train an mlpack random forest on the training data, and finally we will
 print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into main.go to run it.
@@ -99,10 +110,10 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's
+In this example, we will train a collaborative filtering model using mlpack's
 [`cf()`](../user/bindings/go.md#cf) method.
-We'll train this on the
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+We will train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 You can copy-paste this code directly into main.go to run it.

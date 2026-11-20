@@ -27,11 +27,11 @@ template<typename MatType = arma::mat, typename ParametersType = arma::mat>
 class LinearSVMFunction
 {
  public:
-  typedef typename ParametersType::elem_type ElemType;
-  typedef typename GetDenseMatType<ParametersType>::type DenseMatType;
-  typedef typename GetSparseMatType<ParametersType>::type SparseMatType;
-  typedef typename GetDenseColType<SparseMatType>::type DenseColType;
-  typedef typename GetDenseRowType<ParametersType>::type DenseRowType;
+  using ElemType = typename ParametersType::elem_type;
+  using DenseMatType = typename GetDenseMatType<ParametersType>::type;
+  using SparseMatType = typename GetSparseMatType<ParametersType>::type;
+  using DenseColType = typename GetDenseColType<SparseMatType>::type;
+  using DenseRowType = typename GetDenseRowType<ParametersType>::type;
 
   /**
    * Construct the Linear SVM objective function with given parameters.

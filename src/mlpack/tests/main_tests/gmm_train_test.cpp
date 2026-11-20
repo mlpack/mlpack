@@ -121,7 +121,6 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GMMRefinedStartPercentageTest",
 
   SetInputParam("percentage", (double) -1.0); // Invalid
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
-
 }
 
 // Samplings must be positive.
@@ -196,7 +195,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainNoiseTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   FixedRandomSeed();
@@ -382,10 +381,10 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainDiffKmeansMaxIterationsTest",
 
 // Ensure that Percentage affects the final result when refined_start is true.
 TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
-                 "[GmmTrainMainTest][BindingTests]")
+                 "[GmmTrainMainTest][BindingTests][long]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
@@ -423,10 +422,10 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainPercentageTest",
 
 // Ensure that Sampling affects the final result when refined_start is true.
 TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainSamplingsTest",
-                 "[GmmTrainMainTest][BindingTests]")
+                 "[GmmTrainMainTest][BindingTests][long]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);
@@ -467,7 +466,7 @@ TEST_CASE_METHOD(GmmTrainTestFixture, "GmmTrainToleranceTest",
                  "[GmmTrainMainTest][BindingTests]")
 {
   arma::mat inputData;
-  if (!data::Load("data_3d_mixed.txt", inputData))
+  if (!Load("data_3d_mixed.txt", inputData))
     FAIL("Unable to load train dataset data_3d_mixed.txt!");
 
   SetInputParam("input", inputData);

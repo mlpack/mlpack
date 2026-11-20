@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
@@ -33,6 +34,7 @@
 #include <numeric>
 #include <vector>
 #include <queue>
+#include <string>
 
 // But if it's not defined, we'll do it.
 #ifndef M_PI
@@ -81,9 +83,24 @@
   #error "Need to enable C++17 mode in your compiler"
 #endif
 
+// Armadillo does not provide an official support for unsigned / signed 8 bits
+// integers.
+// Since `char` might be represented differently on various hardware.
+// We override Armadillo definition for unsigned and signed 8 bits integer to
+// use uint8_t / int8_t respectively.
+#ifndef ARMA_U8_TYPE
+  #define ARMA_U8_TYPE std::uint8_t
+#endif
+
+#ifndef ARMA_S8_TYPE
+  #define ARMA_S8_TYPE std::int8_t
+#endif
+
 // Now include Armadillo and traits that we use for it.
 #include <armadillo>
 #include <mlpack/core/util/arma_traits.hpp>
+#include <mlpack/core/util/omp_reductions.hpp>
+#include <mlpack/core/arma_extend/find_nan.hpp>
 
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
@@ -92,11 +109,17 @@
   #pragma warning(disable : 4519)
 #endif
 
-// This can be removed when Visual Studio supports an OpenMP version with
-// unsigned loop variables.
+// OpenMP usage must be version 3.1 or newer, if it is being used.
 #if (defined(_OPENMP) && (_OPENMP >= 201107))
-  #undef  MLPACK_USE_OPENMP
+  #undef MLPACK_USE_OPENMP
   #define MLPACK_USE_OPENMP
+  #include <omp.h>
+#elif defined(_OPENMP)
+  #ifdef _MSC_VER
+    #error "mlpack requires OpenMP 3.1+; compile without /OPENMP"
+  #else
+    #error "mlpack requires OpenMP 3.1+; disable OpenMP in your compiler"
+  #endif
 #endif
 
 #endif

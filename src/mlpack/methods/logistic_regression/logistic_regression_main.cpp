@@ -117,7 +117,7 @@ BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Logistic regression on Wikipedia",
     "https://en.wikipedia.org/wiki/Logistic_regression");
 BINDING_SEE_ALSO(":LogisticRegression C++ class documentation",
-    "@src/mlpack/methods/logistic_regression/logistic_regression.hpp");
+    "@doc/user/methods/logistic_regression.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -186,8 +186,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   ReportIgnoredParam(params, {{ "test", false }}, "predictions");
   ReportIgnoredParam(params, {{ "test", false }}, "probabilities");
 
-  ReportIgnoredParam(params, {{ "training", false }}, "print_training_accuracy");
-  
+  ReportIgnoredParam(params, {{ "training", false }},
+      "print_training_accuracy");
+
   RequireAtLeastOnePassed(params,
       { "test", "output_model", "print_training_accuracy" }, false,
       "the trained logistic regression model will not be used or saved");
@@ -345,13 +346,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
       const size_t correct = accu(predictions == responses);
 
-      Log::Info << correct << " of " << responses.n_elem << " correct on training"
-          << " set (" << (double(correct) / double(responses.n_elem) * 100) << ")."
-          << endl;
+      Log::Info << correct << " of " << responses.n_elem << " correct on "
+          << "training set ("
+          << (double(correct) / double(responses.n_elem) * 100) << ")." << endl;
       timers.Stop("lr_prediction");
     }
   }
-  
+
   if (params.Has("test"))
   {
     const arma::mat& testSet = params.Get<arma::mat>("test");

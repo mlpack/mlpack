@@ -18,28 +18,32 @@
 
 namespace mlpack {
 
-inline GaussianDistribution::GaussianDistribution(
-    const arma::vec& mean,
-    const arma::mat& covariance) :
+template<typename MatType>
+inline GaussianDistribution<MatType>::GaussianDistribution(
+    const VecType& mean,
+    const MatType& covariance) :
     mean(mean),
     logDetCov(0.0)
 {
   Covariance(covariance);
 }
 
-inline void GaussianDistribution::Covariance(const arma::mat& covariance)
+template<typename MatType>
+inline void GaussianDistribution<MatType>::Covariance(const MatType& covariance)
 {
   this->covariance = covariance;
   FactorCovariance();
 }
 
-inline void GaussianDistribution::Covariance(arma::mat&& covariance)
+template<typename MatType>
+inline void GaussianDistribution<MatType>::Covariance(MatType&& covariance)
 {
   this->covariance = std::move(covariance);
   FactorCovariance();
 }
 
-inline void GaussianDistribution::FactorCovariance()
+template<typename MatType>
+inline void GaussianDistribution<MatType>::FactorCovariance()
 {
   // On Armadillo < 4.500, the "lower" option isn't available.
 
@@ -63,26 +67,29 @@ inline void GaussianDistribution::FactorCovariance()
   // 0 after the method. That last part is unnecessary, but baked into
   // Armadillo, so there's not really much that can be done about that without
   // discussion with the Armadillo maintainer.
-  const arma::mat invCovLower = arma::inv(arma::trimatl(covLower));
+  const MatType invCovLower = arma::inv(arma::trimatl(covLower));
 
   invCov = invCovLower.t() * invCovLower;
-  double sign = 0.;
+  ElemType sign = 0.;
   log_det(logDetCov, sign, covLower);
   logDetCov *= 2;
 }
 
-inline double GaussianDistribution::LogProbability(
-    const arma::vec& observation) const
+template<typename MatType>
+inline typename GaussianDistribution<MatType>::ElemType
+GaussianDistribution<MatType>::LogProbability(const VecType& observation) const
 {
   const size_t k = observation.n_elem;
-  const arma::vec diff = mean - observation;
-  const arma::vec v = (diff.t() * invCov * diff);
+  const VecType diff = mean - observation;
+  const VecType v = (diff.t() * invCov * diff);
   return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * v(0);
 }
 
-inline arma::vec GaussianDistribution::Random() const
+template<typename MatType>
+inline typename GaussianDistribution<MatType>::VecType
+GaussianDistribution<MatType>::Random() const
 {
-  return covLower * arma::randn<arma::vec>(mean.n_elem) + mean;
+  return covLower * arma::randn<VecType>(mean.n_elem) + mean;
 }
 
 /**
@@ -90,7 +97,8 @@ inline arma::vec GaussianDistribution::Random() const
  *
  * @param observations List of observations.
  */
-inline void GaussianDistribution::Train(const arma::mat& observations)
+template<typename MatType>
+inline void GaussianDistribution<MatType>::Train(const MatType& observations)
 {
   if (observations.n_cols > 0)
   {
@@ -112,7 +120,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations)
   // Now calculate the covariance.
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
-    arma::vec obsNoMean = observations.col(i) - mean;
+    VecType obsNoMean = observations.col(i) - mean;
     covariance += obsNoMean * trans(obsNoMean);
   }
 
@@ -131,8 +139,9 @@ inline void GaussianDistribution::Train(const arma::mat& observations)
  * account the probability of each observation actually being from this
  * distribution.
  */
-inline void GaussianDistribution::Train(const arma::mat& observations,
-                                        const arma::vec& probabilities)
+template<typename MatType>
+inline void GaussianDistribution<MatType>::Train(const MatType& observations,
+                                                 const VecType& probabilities)
 {
   if (observations.n_cols > 0)
   {
@@ -144,7 +153,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations,
     Log::Fatal << "Observation columns equal to 0." << std::endl;
   }
 
-  double sumProb = 0;
+  ElemType sumProb = 0;
 
   // First calculate the mean, and save the sum of all the probabilities for
   // later normalization.
@@ -170,7 +179,7 @@ inline void GaussianDistribution::Train(const arma::mat& observations,
   // Now find the covariance.
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
-    arma::vec obsNoMean = observations.col(i) - mean;
+    VecType obsNoMean = observations.col(i) - mean;
     covariance += probabilities[i] * (obsNoMean * trans(obsNoMean));
   }
 

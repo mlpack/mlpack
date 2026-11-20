@@ -47,10 +47,10 @@ void VerifyCorrectness(const MatType& beta,
 }
 
 TEMPLATE_TEST_CASE("LocalCoordinateCodingTestCodingStep",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][long]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
-  typedef arma::Col<typename MatType::elem_type> VecType;
+  using MatType = TestType;
+  using VecType = arma::Col<typename MatType::elem_type>;
 
   double lambda1 = 0.1;
   uword nAtoms = 10;
@@ -88,9 +88,9 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTestCodingStep",
 }
 
 TEMPLATE_TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][long]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   const double tol = 0.1;
 
@@ -127,10 +127,11 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingTestDictionaryStep",
   REQUIRE(norm(grad, "fro") == Approx(0.0).margin(tol));
 }
 
+// This is the only LCC test that runs on tiny MPUs...
 TEMPLATE_TEST_CASE("LocalCoordinateCodingSerializationTest",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][tiny]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   MatType X = randu<MatType>(100, 100);
   size_t nAtoms = 10;
@@ -181,9 +182,9 @@ TEMPLATE_TEST_CASE("LocalCoordinateCodingSerializationTest",
  * value.
  */
 TEMPLATE_TEST_CASE("LocalCoordinateCodingTrainReturnObjective",
-    "[LocalCoordinateCodingTest]", arma::mat, arma::fmat)
+    "[LocalCoordinateCodingTest][long]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   double lambda1 = 0.1;
   uword nAtoms = 10;

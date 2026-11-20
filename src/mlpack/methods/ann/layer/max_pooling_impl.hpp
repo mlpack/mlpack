@@ -19,14 +19,14 @@
 namespace mlpack {
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType() :
+MaxPooling<MatType>::MaxPooling() :
     Layer<MatType>()
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
+MaxPooling<MatType>::MaxPooling(
     const size_t kernelWidth,
     const size_t kernelHeight,
     const size_t strideWidth,
@@ -44,8 +44,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
-    const MaxPoolingType& other) :
+MaxPooling<MatType>::MaxPooling(
+    const MaxPooling& other) :
     Layer<MatType>(other),
     kernelWidth(other.kernelWidth),
     kernelHeight(other.kernelHeight),
@@ -59,8 +59,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>::MaxPoolingType(
-    MaxPoolingType&& other) :
+MaxPooling<MatType>::MaxPooling(
+    MaxPooling&& other) :
     Layer<MatType>(std::move(other)),
     kernelWidth(std::move(other.kernelWidth)),
     kernelHeight(std::move(other.kernelHeight)),
@@ -74,8 +74,8 @@ MaxPoolingType<MatType>::MaxPoolingType(
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>&
-MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
+MaxPooling<MatType>&
+MaxPooling<MatType>::operator=(const MaxPooling& other)
 {
   if (&other != this)
   {
@@ -93,8 +93,8 @@ MaxPoolingType<MatType>::operator=(const MaxPoolingType& other)
 }
 
 template<typename MatType>
-MaxPoolingType<MatType>&
-MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
+MaxPooling<MatType>&
+MaxPooling<MatType>::operator=(MaxPooling&& other)
 {
   if (&other != this)
   {
@@ -112,15 +112,16 @@ MaxPoolingType<MatType>::operator=(MaxPoolingType&& other)
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
+void MaxPooling<MatType>::Forward(const MatType& input, MatType& output)
 {
-  arma::Cube<typename MatType::elem_type> inputTemp(
-      const_cast<MatType&>(input).memptr(), this->inputDimensions[0],
-      this->inputDimensions[1], input.n_cols * channels, false, false);
+  using CubeType = typename GetCubeType<MatType>::type;
+  CubeType inputTemp;
+  MakeAlias(inputTemp, input, this->inputDimensions[0],
+      this->inputDimensions[1], input.n_cols * channels, 0, false);
 
-  arma::Cube<typename MatType::elem_type> outputTemp(output.memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      input.n_cols * channels, false, true);
+  CubeType outputTemp;
+  MakeAlias(outputTemp, output, this->outputDimensions[0],
+      this->outputDimensions[1], input.n_cols * channels, 0, true);
 
   if (this->training)
   {
@@ -138,20 +139,20 @@ void MaxPoolingType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::Backward(
+void MaxPooling<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  arma::Cube<typename MatType::elem_type> mappedError =
-      arma::Cube<typename MatType::elem_type>(((MatType&) gy).memptr(),
-      this->outputDimensions[0], this->outputDimensions[1],
-      channels * input.n_cols, false, false);
+  using CubeType = typename GetCubeType<MatType>::type;
+  CubeType mappedError;
+  MakeAlias(mappedError, gy, this->outputDimensions[0],
+      this->outputDimensions[1], channels * input.n_cols, 0, false);
 
-  arma::Cube<typename MatType::elem_type> gTemp(g.memptr(),
-      this->inputDimensions[0], this->inputDimensions[1],
-      channels * input.n_cols, false, true);
+  CubeType gTemp;
+  MakeAlias(gTemp, g, this->inputDimensions[0], this->inputDimensions[1],
+      channels * input.n_cols, 0, true);
 
   gTemp.zeros();
 
@@ -160,12 +161,13 @@ void MaxPoolingType<MatType>::Backward(
   #pragma omp parallel for
   for (size_t s = 0; s < (size_t) mappedError.n_slices; s++)
   {
-    UnpoolingOperation(mappedError.slice(s), gTemp.slice(s), poolingIndices.slice(s));
+    UnpoolingOperation(mappedError.slice(s), gTemp.slice(s),
+        poolingIndices.slice(s));
   }
 }
 
 template<typename MatType>
-void MaxPoolingType<MatType>::ComputeOutputDimensions()
+void MaxPooling<MatType>::ComputeOutputDimensions()
 {
   this->outputDimensions = this->inputDimensions;
 
@@ -195,7 +197,7 @@ void MaxPoolingType<MatType>::ComputeOutputDimensions()
 
 template<typename MatType>
 template<typename Archive>
-void MaxPoolingType<MatType>::serialize(
+void MaxPooling<MatType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 

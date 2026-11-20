@@ -154,7 +154,7 @@ TEST_CASE("TestFindSplit", "[DETTest]")
   REQUIRE(trueRightError == Approx(obRightError).epsilon(1e-12));
 }
 
-TEST_CASE("TestSplitData", "[DETTest]")
+TEST_CASE("TestSplitData", "[DETTest][tiny]")
 {
   arma::mat testData(3, 5);
 
@@ -267,7 +267,7 @@ TEST_CASE("TestGrow", "[DETTest]")
   rootError = -log(4.0) - log(7.0) - log(7.0);
 
   lError = 2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5));
-  rError =  2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
+  rError = 2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5));
 
   rlError = 2 * log(1.0 / 5.0) - (log(0.5) + log(4.0) + log(2.5));
   rrError = 2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5));
@@ -396,7 +396,7 @@ TEST_CASE("TestVariableImportance", "[DETTest]")
   rootError = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
 
   lError = -1.0 * exp(2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) + log(4.5)));
-  rError =  -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5)));
+  rError = -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) + log(2.5)));
 
   rlError = -1.0 * exp(2 * log(1.0 / 5.0) - (log(0.5) + log(4.0) + log(2.5)));
   rrError = -1.0 * exp(2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5)));

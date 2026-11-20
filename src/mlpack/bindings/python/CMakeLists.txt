@@ -16,6 +16,10 @@ macro (post_python_bindings)
   if (BUILDING_PYTHON_BINDINGS)
     get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         PROPERTY INCLUDE_DIRECTORIES)
+    set(PY_CCACHE_PROGRAM "")
+    if (CCACHE_PROGRAM)
+      set(PY_CCACHE_PROGRAM "${CCACHE_PROGRAM}")
+    endif ()
     add_custom_target(python_configure
         COMMAND ${CMAKE_COMMAND}
             -D GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in
@@ -29,6 +33,8 @@ macro (post_python_bindings)
             -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
             -D EXTRA_CXX_FLAGS="-DMLPACK_PRINT_INFO -DMLPACK_PRINT_WARN"
             -D OUTPUT_DIR=${CMAKE_BINARY_DIR}
+            -D CCACHE_PROGRAM=${PY_CCACHE_PROGRAM}
+            -D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             -P "${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py"
         COMMENT "Configuring setup.py...")
@@ -113,7 +119,7 @@ set(CYTHON_SOURCES
 )
 
 set(TEST_SOURCES
-  tests/dataset_info_test.py
+  tests/test_dataset_info.py
   tests/test_python_binding.py
 )
 
@@ -156,6 +162,10 @@ add_custom_command(TARGET python_copy PRE_BUILD
 add_custom_command(TARGET python_copy PRE_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/setup_readme.md
+        ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
+add_custom_command(TARGET python_copy PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml
         ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
 
 # Copy all mlpack headers for inclusion in the package, but remove the bindings/
@@ -366,11 +376,8 @@ endmacro ()
 if (BUILD_PYTHON_BINDINGS)
   if (BUILD_TESTS)
     add_test(NAME python_bindings_test
-        COMMAND ${PYTHON_EXECUTABLE}
-            ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py test
+        COMMAND ${PYTHON_EXECUTABLE} -m pytest tests/
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)
-    set_tests_properties(python_bindings_test
-        PROPERTIES ENVIRONMENT "NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/")
   endif ()
 endif ()
 

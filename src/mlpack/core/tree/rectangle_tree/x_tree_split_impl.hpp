@@ -28,7 +28,7 @@ template<typename TreeType>
 void XTreeSplit::SplitLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   if (tree->Count() <= tree->MaxLeafSize())
     return;
@@ -123,8 +123,8 @@ template<typename TreeType>
 bool XTreeSplit::SplitNonLeafNode(TreeType *tree, std::vector<bool>& relevels)
 {
   // Convenience typedef.
-  typedef typename TreeType::ElemType ElemType;
-  typedef HRectBound<EuclideanDistance, ElemType> BoundType;
+  using ElemType = typename TreeType::ElemType;
+  using BoundType = HRectBound<EuclideanDistance, ElemType>;
 
   // The X tree paper doesn't explain how to handle the split history when
   // reinserting nodes and reinserting nodes seems to hurt the performance, so

@@ -94,7 +94,7 @@ class LogCoshLossType
 }; // class LogCoshLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef LogCoshLossType<arma::mat> LogCoshLoss;
+using LogCoshLoss = LogCoshLossType<arma::mat>;
 
 } // namespace mlpack
 

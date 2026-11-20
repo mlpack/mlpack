@@ -3,7 +3,7 @@
 The `AdaBoost` class implements the 'adaptive boosting' classifier AdaBoost.MH.
 This classifier is an ensemble of weak learners.  The `AdaBoost` class offers
 control over the weak learners and other behavior via template parameters.  By
-default, the `Perceptron` class is used as a weak learner.
+default, the [`Perceptron`](perceptron.md) class is used as a weak learner.
 
 `AdaBoost` is useful for classifying points with _discrete labels_ (i.e. `0`,
 `1`, `2`).
@@ -16,7 +16,7 @@ Train an AdaBoost model on random data and predict labels on a random test set.
 // Train an AdaBoost model on random data and predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -49,11 +49,11 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [`Perceptron`](perceptron.md)
  * [`DecisionTree`](decision_tree.md)
  * [AdaBoost on Wikipedia](https://en.wikipedia.org/wiki/AdaBoost)
- * [AdaBoost.MH paper (pdf)](https://dl.acm.org/doi/pdf/10.1145/279943.279960)
+ * [AdaBoost.MH paper (pdf)](https://www.schapire.net/papers/SchapireSi98.pdf)
 
 ### Constructors
 
@@ -73,8 +73,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
    - Train model with custom weak learner hyperparameters.
    - Hyperparameters for the weak learner are any arguments to the weak
      learner's `Train()` function that come after `numClasses` or `weights`.
-   - The only hyperparameter for the default weak learner (`Perceptron`) is
-     `maxIterations`.
+   - The only hyperparameter for the default weak learner
+     ([`Perceptron`](perceptron.md)) is `maxIterations`.
    - See [examples of this constructor in use](#simple-examples).
 
 ---
@@ -84,9 +84,9 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
-| `weakLearner` | `Perceptron` | An initialized weak learner whose hyperparameters will be used as settings for weak learners during training. | _(N/A)_ |
+| `weakLearner` | [`Perceptron`](perceptron.md) | An initialized weak learner whose hyperparameters will be used as settings for weak learners during training. | _(N/A)_ |
 | `maxIterations` | `size_t` | Maximum number of iterations of AdaBoost.MH to use.  This is the maximum number of weak learners to train.  (0 means no limit, and weak learners will be trained until the tolerance is met.) | `100` |
 | `tolerance` | `double` | When the weighted residual (`r_t`) of the model goes below `tolerance`, training will terminate and no more weak learners will be added. | `1e-6` |
 
@@ -117,8 +117,8 @@ named `ab`, the following functions for training are available:
    - Train model with custom weak learner parameters.
    - Hyperparameters for the weak learner are any arguments to the weak
      learner's `Train()` function that come after `numClasses` or `weights`.
-   - The only hyperparameter for the default weak learner (`Perceptron`) is
-     `maxIterations`.
+   - The only hyperparameter for the default weak learner
+     ([`Perceptron`](perceptron.md)) is `maxIterations`.
    - See [examples of this form in use](#simple-examples).
 
 ---
@@ -184,7 +184,7 @@ used to make class predictions for new data.
 ### Other Functionality
 
  * An `AdaBoost` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `ab.NumClasses()` will return a `size_t` indicating the number of classes the
    model was trained on.
@@ -212,10 +212,10 @@ Train an AdaBoost model using the hyperparameters from an existing weak learner.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 mlpack::AdaBoost ab;
 // Train with a custom number of perceptron iterations, and custom AdaBoost
@@ -242,10 +242,10 @@ trained model to disk.
 ```c++
 // See https://datasets.mlpack.org/iris.csv.
 arma::mat dataset;
-mlpack::data::Load("iris.csv", dataset, true);
+mlpack::Load("iris.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/iris.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("iris.labels.csv", labels, true);
+mlpack::Load("iris.labels.csv", labels, mlpack::Fatal);
 
 mlpack::AdaBoost ab;
 ab.MaxIterations() = 50; // Use at most 50 weak learners.
@@ -255,7 +255,7 @@ ab.Tolerance() = 1e-4; // Set a custom tolerance for convergence.
 ab.Train(dataset, labels, 3);
 
 // Save the model to `adaboost_model.bin`.
-mlpack::data::Save("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::Save("adaboost_model.bin", ab, mlpack::Fatal);
 ```
 
 ---
@@ -265,7 +265,7 @@ Load an AdaBoost model and print some information about it.
 ```c++
 // Load a saved model named "adaboost_model" from `adaboost_model.bin`.
 mlpack::AdaBoost ab;
-mlpack::data::Load("adaboost_model.bin", "adaboost_model", ab, true);
+mlpack::Load("adaboost_model.bin", ab, mlpack::Fatal);
 
 std::cout << "Details about the model in `adaboost_model.bin`:" << std::endl;
 std::cout << "  - Trained on " << ab.NumClasses() << " classes." << std::endl;
@@ -289,7 +289,7 @@ if (ab.WeakLearners() > 0)
 
 See also the following fully-working examples:
 
- - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/graduate_admission_classification_with_Adaboost/graduate-admission-classification-with-adaboost-cpp.ipynb)
+ - [Graduate admission classification with `AdaBoost`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/adaboost/graduate_admission_classification/graduate-admission-classification-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
@@ -313,7 +313,8 @@ AdaBoost<WeakLearnerType, MatType>
  * The `ID3DecisionStump` class (a custom variant of
    [`DecisionTree`](decision_tree.md)) is available for drop-in usage as a weak
    learner.
- * Any custom variant of `Perceptron<>` or `DecisionTree<>` can be used; e.g.,
+ * Any custom variant of [`Perceptron<>`](perceptron.md) or
+   [`DecisionTree<>`](decision_tree.md) can be used; e.g.,
    `Perceptron<SimpleWeightUpdate, RandomPerceptronInitialization>`.
  * A custom class must implement the following functions for training and
    classification.  Note that this is the same API as mlpack's classifiers that
@@ -418,9 +419,9 @@ arma::Row<size_t> labels =
 
 // Train in the constructor, using floating-point data.
 // The weak learner type is now a floating-point Perceptron.
-typedef mlpack::Perceptron<mlpack::SimpleWeightUpdate,
-                           mlpack::ZeroInitialization,
-                           arma::fmat> PerceptronType;
+using PerceptronType = mlpack::Perceptron<mlpack::SimpleWeightUpdate,
+                                          mlpack::ZeroInitialization,
+                                          arma::fmat>;
 mlpack::AdaBoost<PerceptronType, arma::fmat> ab(dataset, labels, 5);
 
 // Create test data (500 points).

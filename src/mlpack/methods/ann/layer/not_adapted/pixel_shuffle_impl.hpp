@@ -119,7 +119,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void PixelShuffle<InputDataType, OutputDataType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   ar(CEREAL_NVP(delta));
   ar(CEREAL_NVP(outputParameter));

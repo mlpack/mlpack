@@ -462,7 +462,7 @@ class LSHSearch
   size_t distanceEvaluations;
 
   //! Candidate represents a possible candidate neighbor (distance, index).
-  typedef std::pair<double, size_t> Candidate;
+  using Candidate = std::pair<double, size_t>;
 
   //! Compare two candidates based on the distance.
   struct CandidateCmp {
@@ -473,8 +473,8 @@ class LSHSearch
   };
 
   //! Use a priority queue to represent the list of candidate neighbors.
-  typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-      CandidateList;
+  using CandidateList = std::priority_queue<Candidate, std::vector<Candidate>,
+      CandidateCmp>;
 }; // class LSHSearch
 
 } // namespace mlpack

@@ -87,7 +87,7 @@ class ReconstructionLossType
 }; // class ReconstructionLossType
 
 // Default typedef for typical `arma::mat` usage.
-typedef ReconstructionLossType<arma::mat> ReconstructionLoss;
+using ReconstructionLoss = ReconstructionLossType<arma::mat>;
 
 } // namespace mlpack
 

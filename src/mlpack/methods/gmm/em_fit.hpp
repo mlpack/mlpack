@@ -39,7 +39,7 @@ namespace mlpack {
  */
 template<typename InitialClusteringType = KMeans<>,
          typename CovarianceConstraintPolicy = PositiveDefiniteConstraint,
-         typename Distribution = GaussianDistribution>
+         typename Distribution = GaussianDistribution<>>
 class EMFit
 {
  public:

@@ -170,13 +170,14 @@ TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        input(arma::randn(72, 2048)),
-        target(arma::zeros(1, 2048))
+        input(arma::randn(72, 128)),
+        target(arma::zeros(1, 128))
     {
       model = new FFN<NegativeLogLikelihood, RandomInitialization>();
       model->ResetData(input, target);
-      model->Add<GroupedConvolution>(4, 3, 3, 2, 1, 1, std::tuple<size_t, size_t>(0, 0),
-          std::tuple<size_t, size_t>(0, 0), "same");
+      model->Add<GroupedConvolution>(4, 3, 3, 2, 1, 1,
+          std::tuple<size_t, size_t>(0, 0), std::tuple<size_t, size_t>(0, 0),
+          "same");
       model->Add<LogSoftMax>();
 
       model->InputDimensions() = std::vector<size_t>({ 6, 6, 2 });
@@ -189,8 +190,8 @@ TEST_CASE("GradientGroupedConvolutionLayerTest", "[ANNLayerTest]")
 
     double Gradient(arma::mat& gradient) const
     {
-      double error = model->Evaluate(model->Parameters(), 0, 2048);
-      model->Gradient(model->Parameters(), 0, gradient, 2048);
+      double error = model->Evaluate(model->Parameters(), 0, 128);
+      model->Gradient(model->Parameters(), 0, gradient, 128);
       return error;
     }
 
@@ -215,10 +216,11 @@ TEST_CASE("NonSquareGroupedConvolutionTest", "[ANNLayerTest]")
   module1.SetWeights(weights1);
 
   arma::mat data(49, 10, arma::fill::randu);
-  arma::mat forwardResult(module1.OutputSize(), 10, arma::fill::zeros);
+  arma::mat forwardResult(module1.OutputSize(), 10);
   REQUIRE_NOTHROW(module1.Forward(data, forwardResult));
   arma::mat backwardResult(49, 10);
-  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult, backwardResult));
+  REQUIRE_NOTHROW(module1.Backward(data, forwardResult, forwardResult,
+      backwardResult));
   arma::mat gradientResult(module1.WeightSize(), 1);
   REQUIRE_NOTHROW(module1.Gradient(data, backwardResult, gradientResult));
 }

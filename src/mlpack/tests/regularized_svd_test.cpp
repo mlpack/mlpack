@@ -192,7 +192,7 @@ TEST_CASE("RegularizedSVDFunctionGradient", "[RegularizedSVDTest]")
   }
 }
 
-TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest]")
+TEST_CASE("RegularizedSVDFunctionOptimize", "[RegularizedSVDTest][tiny]")
 {
   // Define useful constants.
   const size_t numUsers = 50;

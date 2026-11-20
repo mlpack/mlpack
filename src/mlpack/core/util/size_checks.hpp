@@ -39,12 +39,13 @@ inline void CheckSameSizes(
     const std::string& addInfo = "labels",
     const bool& isDataTranspose = false,
     const bool& isLabelTranspose = false,
-    const typename std::enable_if<
-        !std::is_integral<LabelsType>::value>::type* = 0)
+    const std::enable_if_t<!std::is_integral_v<LabelsType>>* = 0)
 {
-  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows : data.n_cols;
-  const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows : label.n_cols;
-  
+  const size_t dataPoints = (isDataTranspose == true) ? data.n_rows :
+      data.n_cols;
+  const size_t labelPoints = (isLabelTranspose == true) ? label.n_rows :
+      label.n_cols;
+
   if (dataPoints != labelPoints)
   {
     std::ostringstream oss;
@@ -65,7 +66,7 @@ inline void CheckSameSizes(
     const SizeType& size,
     const std::string& callerDescription,
     const std::string& addInfo = "labels",
-    const typename std::enable_if<std::is_integral<SizeType>::value>::type* = 0)
+    const std::enable_if_t<std::is_integral_v<SizeType>>* = 0)
 {
   if (data.n_cols != size)
   {
@@ -94,7 +95,7 @@ inline void CheckSameDimensionality(
     const DimType& dimension,
     const std::string& callerDescription,
     const std::string& addInfo = "dataset",
-    const typename std::enable_if<!std::is_integral<DimType>::value>::type* = 0)
+    const std::enable_if_t<!std::is_integral_v<DimType>>* = 0)
 {
   if (data.n_rows != dimension.n_rows)
   {
@@ -117,7 +118,7 @@ inline void CheckSameDimensionality(
     const DimType& dimension,
     const std::string& callerDescription,
     const std::string& addInfo = "dataset",
-    const typename std::enable_if<std::is_integral<DimType>::value>::type* = 0)
+    const std::enable_if_t<std::is_integral_v<DimType>>* = 0)
 {
   if (data.n_rows != dimension)
   {

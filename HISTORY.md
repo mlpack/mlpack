@@ -4,8 +4,198 @@
 
 _????-??-??_
 
-  * Distribute STB headers as part of R package (#3724, #3726).
+ * Add support for caching downloaded datasets to `Load()` (#4103).
 
+ * Templetize Scalar methods to allow using float types (#4229).
+
+ * Accelerated `LeakyReLU` ANN Layer (#4174).
+
+ * Update `LinearSVM` documentation: `Classify()` returns class scores, not
+   class probabilities (#4187).
+
+ * Add `Scale` layer for scalar multiplication of neural network layers (#4196).
+
+ * Check that Julia models are trained when calling `predict()` (#4195).
+
+## mlpack 4.8.0
+
+_2026-06-07_
+
+ * Add Mel Filterbanks Energies (MFE) and Mel-frequency cepstral coefficients
+   (MFCC) as part of our signal processing utilities (#4144).
+
+ * Add support for audio data via dr_wav and dr_mp3 allowing to load these
+   file types (#4112, #4113).
+
+ * Add HTTP support via cpp-httplib to allow online dataset downloading (#4092, #4099).
+
+ * Fix header inclusion and warnings in R package (#4098).
+
+ * Adapt `TransposedConvolution` ANN layer to the new interface (#3967).
+
+ * Fix rendering of Python documentation (#4126).
+
+ * Add `TSVASCII` format for loading TSVs (#4127).
+
+ * Efficiency improvements for `Load()` and `Save()` (#4128, #4129).
+
+ * Add `EMD` and `EEMD` signal preprocessing utilities (#4044, #4146).
+
+ * Efficiency improvements for `MeanImputation` and `MedianImputation` with
+   newer Armadillo versions (#4149).
+
+ * Fix `CoverTree` compilation errors with non-default element types (#4160).
+
+ * Significant efficiency improvements (5-10x) for `CoverTree` construction
+   (#4164).
+
+ * Refactor bindings for regression and classification methods providing a
+   unified class interface (#4122, #4132, #4161, #4170, #4171, #4180, #4182,
+   #4186, #4188, #4189, #4202, #4203)
+
+## mlpack 4.7.0
+
+_2026-01-30_
+
+ * Allow batching when training RNN with ragged lengths (#4042).
+
+ * Fixed generated artifiacts in resized float images by using clamping (#4030).
+
+ * Optimize convolution (#3988).
+
+ * Added `GELUExact` ANN activation layer (#3994).
+
+ * Adapt `GRU` ANN layer to the new interface (#3955).
+
+ * Fix warning on CRAN for bundled STB (#3950).
+
+ * Fix potential MSVC constructor shadowing (#3958).
+
+ * Use a looser check for auto-detection of categorical file types (#3961).
+
+ * Accelerate `CELU` layer (#3975).
+
+ * Fix dependency detection bugs in `mlpack.cmake` (#3981).
+
+ * Add a `SumReduce` layer (#3991).
+
+ * Update header used by R packages compiling directly against C++ API (#3990).
+
+ * Add `FFN::Add()` and `RNN::Add()` with copy and move semantics; use these
+   instead of passing layers to `Add()` as pointers (#3974).
+
+ * Mark long-running tests with the `[long]` tag (#3983).
+
+ * Added `DAGNetwork` class to represent complex neural network structures
+   (#3944).
+
+ * Fix mask handling in `MultiHeadAttention` layer (#3998)
+
+ * Added `data::GroupChannels()` and `data::InterleaveChannels()` for
+  preprocessing images before using `Convolution` layers. (#4006)
+
+ * Fix infinite recursion in `Octree` when the number of identical points
+   exceeds `maxLeafSize` (#4020).
+
+ * Add `Embedding` layer (#3999).
+
+ * Add YOLOv3Tiny for object detection (#4023).
+
+ * Fix thread-specific random seed initialization (#4027).
+
+ * R bindings now return class attributes as vector with the given model,
+   mlpack model bindings and list as fallback (#4045).
+
+ * Added `BoundingBoxImage()` for drawing bounding boxes onto images when
+   doing tasks such as object detection (#4039).
+
+## mlpack 4.6.2
+
+_2025-05-22_
+
+ * Fix compilation of `Save()` when HDF5 is enabled (#3942).
+
+ * Update bundled STB to fix warnings in R bindings (#3940).
+
+ * Fix cross-validation support for algorithms with many parameters (including
+   `RandomForest`) (#3941).
+
+## mlpack 4.6.1
+
+_2025-05-13_
+
+ * Shuffle sequence lengths for RNNs (#3926).
+
+ * Add ability to compile OpenBLAS for Windows (#3922).
+
+ * Drop pytest-runner and "setup.py test" support (#3921).
+
+ * Fix compilation errors with clang++ version 20 (#3928).
+
+## mlpack 4.6.0
+
+_2025-04-02_
+
+ * Fix command-line duplicate output bug when loading matrices for some bindings
+   (#3838).
+ * Use `CMAKE_BUILD_TYPE` to specify build type instead of DEBUG and PROFILE options (#3865).
+
+ * Add `MLPACK_NO_STD_MUTEX` to allow disabling `std::mutex` (#3868).
+
+ * Bundle STB with mlpack and add `ResizeImages()` functionality (#3823).
+
+ * Add `mlpack.cmake` to facilitate finding mlpack and its dependencies (#3872).
+
+ * Fix conversion of empty Armadillo objects to numpy in Python bindings
+   (#3896).
+
+ * Added bootstrap strategies for `RandomForest`: `IdentityBootstrap`,
+   `DefaultBootstrap`, and `SequentialBootstrap` (#3829).
+
+ * Add `ResizeCropImages()` for resize-and-crop image preprocessing
+   functionality (#3903).
+
+ * Fix `LSTM` input size calculation for multidimensional inputs (#3913).
+
+## mlpack 4.5.1
+
+_2024-12-02_
+
+ * Fix compilation with clang 19 (#3799).
+
+ * Deprecate version of `data::Split()` that returns a `std::tuple` for
+   consistency; use other overloads instead (#3803).
+
+ * Fix LSTM layer copy/move constructors (#3809).
+
+ * Fix compilation if only including `mlpack/methods/kde/kde_model.hpp` (#3800).
+
+ * Fix serialization and `MinDistance()` bugs with `HollowBallBound` (#3808).
+
+ * Add `LinearRecurrent` layer and revamp `LSTM` layer (#3859).
+
+ * Fix BPTT issues in `RNN` (#3859).
+
+## mlpack 4.5.0
+
+_2024-09-17_
+
+ * Distribute STB headers as part of R package (#3724, #3726).
+
+ * Added OpenMP parallelization to Hamerly, Naive, and Elkan k-means (#3761, #3762, #3764).
+
+ * Added OpenMP support for fast approximation (#3685).
+
+ * Implemented the Find and Fill algorithm into the Dropout Layer and added OpenMP support (#3684).
+
+ * Update Python bindings to support NumPy 2.x (#3752).
+
+ * Bump minimum Armadillo version to 10.8 (#3760).
+
+ * Adapt `NearestInterpolation` ANN layer to new Layer Inteface (#3768).
+
+ * Add support for arbitrary matrix types to `Radical` and deprecate
+   `Radical::DoRadical()` in favor of `Radical::Apply()` (#3787).
 
 ## mlpack 4.4.0
 
@@ -101,7 +291,7 @@ _2023-09-05_
   * Add `ClassProbabilities()` member to `DecisionTree` so that the internal
     details of trees can be more easily inspected (#3511).
 
-  * Bipolar sigmoid activation function added and invertible functions 
+  * Bipolar sigmoid activation function added and invertible functions
     fixed (#3506).
 
   * Add auto-configured `mlpack/config.hpp` to contain configuration details of

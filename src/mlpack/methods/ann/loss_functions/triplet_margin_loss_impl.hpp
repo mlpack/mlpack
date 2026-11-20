@@ -55,7 +55,7 @@ template<typename MatType>
 template<typename Archive>
 void TripletMarginLossType<MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   ar(CEREAL_NVP(margin));
 }

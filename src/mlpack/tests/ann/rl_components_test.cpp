@@ -24,7 +24,7 @@ using namespace mlpack;
  * Constructs a Pendulum instance and check if the main routine works as it
  * should be working.
  */
-TEST_CASE("SimplePendulumTest", "[RLComponentsTest]")
+TEST_CASE("SimplePendulumTest", "[RLComponentsTest][tiny]")
 {
   Pendulum task = Pendulum();
   task.MaxSteps() = 20;
@@ -58,7 +58,7 @@ TEST_CASE("SimplePendulumTest", "[RLComponentsTest]")
  * Constructs a Continuous MountainCar instance and check if the main rountine
  * works as it should be.
  */
-TEST_CASE("SimpleContinuousMountainCarTest", "[RLComponentsTest]")
+TEST_CASE("SimpleContinuousMountainCarTest", "[RLComponentsTest][tiny]")
 {
   ContinuousMountainCar task = ContinuousMountainCar();
   task.MaxSteps() = 5;
@@ -85,7 +85,7 @@ TEST_CASE("SimpleContinuousMountainCarTest", "[RLComponentsTest]")
  * Constructs a Acrobot instance and check if the main rountine works as
  * it should be.
  */
-TEST_CASE("SimpleAcrobotTest", "[RLComponentsTest]")
+TEST_CASE("SimpleAcrobotTest", "[RLComponentsTest][tiny]")
 {
   Acrobot task = Acrobot();
   task.MaxSteps() = 5;
@@ -112,7 +112,7 @@ TEST_CASE("SimpleAcrobotTest", "[RLComponentsTest]")
  * Constructs a MountainCar instance and check if the main rountine works as
  * it should be.
  */
-TEST_CASE("SimpleMountainCarTest", "[RLComponentsTest]")
+TEST_CASE("SimpleMountainCarTest", "[RLComponentsTest][tiny]")
 {
   MountainCar task = MountainCar();
   task.MaxSteps() = 5;
@@ -139,7 +139,7 @@ TEST_CASE("SimpleMountainCarTest", "[RLComponentsTest]")
  * Constructs a CartPole instance and check if the main routine works as
  * it should be.
  */
-TEST_CASE("SimpleCartPoleTest", "[RLComponentsTest]")
+TEST_CASE("SimpleCartPoleTest", "[RLComponentsTest][tiny]")
 {
   CartPole task = CartPole();
   task.MaxSteps() = 5;

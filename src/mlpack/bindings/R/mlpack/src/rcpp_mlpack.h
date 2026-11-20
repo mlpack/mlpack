@@ -13,16 +13,24 @@
 #ifndef MLPACK_BINDINGS_R_RCPP_MLPACK_H
 #define MLPACK_BINDINGS_R_RCPP_MLPACK_H
 
-#include <Rcpp.h>
+// Armadillo does not provide an official support for unsigned / signed 8 bits
+// integers.
+// Since `char` might be represented differently on various hardware.
+// We override Armadillo definition for unsigned and signed 8 bits integer to
+// use uint8_t / int8_t respectively.
+#ifndef ARMA_U8_TYPE
+  #define ARMA_U8_TYPE std::uint8_t
+#endif
+
+#ifndef ARMA_S8_TYPE
+  #define ARMA_S8_TYPE std::int8_t
+#endif
+
+// This also includes Rcpp headers along with RcppArmadillo
+#include <RcppArmadillo.h>
 
 // Rcpp has its own stream object which cooperates more nicely with R's i/o
-// And as of armadillo and mlpack, we can use this stream object as well.
-#if !defined(ARMA_COUT_STREAM)
-  #define ARMA_COUT_STREAM Rcpp::Rcout
-#endif
-#if !defined(ARMA_CERR_STREAM)
-  #define ARMA_CERR_STREAM Rcpp::Rcerr
-#endif
+// And like armadillo, mlpack can use this stream object as well.
 #if !defined(MLPACK_COUT_STREAM)
   #define MLPACK_COUT_STREAM Rcpp::Rcout
 #endif
@@ -30,17 +38,23 @@
   #define MLPACK_CERR_STREAM Rcpp::Rcerr
 #endif
 
-// This define makes the R RNG have precedent over the C++11-based
-// RNG provided by Armadillo.
-#if !defined(ARMA_RNG_ALT)
-  #define ARMA_RNG_ALT         RcppArmadillo/rng/Alt_R_RNG.h
+// The R bindings default to not enabling STB, DR_LIBS or HTTPLIB.
+// This can be overriden via package compilerflags, i.e.
+//   PKG_CPPFLAGS=-DMLPACK_R_ENABLE_DR_LIBS R CMD INSTALL mlpack_*.tar.gz
+// on the command-line, or by editing src/Makevars or ~/.R/Makevars.
+#if !defined(MLPACK_R_ENABLE_STB)
+  #undef  MLPACK_DISABLE_STB
+  #define MLPACK_DISABLE_STB
 #endif
 
-// To suppress warnings related to core/util/arma_util.hpp.
-#define MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
+#if !defined(MLPACK_R_ENABLE_DR_LIBS)
+  #undef  MLPACK_DISABLE_DR_LIBS
+  #define MLPACK_DISABLE_DR_LIBS
+#endif
 
-// Undefine macro due to macro collision.
-#undef Realloc
-#undef Free
+#if !defined(MLPACK_R_ENABLE_HTTPLIB)
+  #undef  MLPACK_DISABLE_HTTPLIB
+  #define MLPACK_DISABLE_HTTPLIB
+#endif
 
 #endif

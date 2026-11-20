@@ -22,7 +22,7 @@ information...](#fully-custom-behavior))
 // Train a random forest on random numeric data and predict labels on test data:
 
 // All data and labels are uniform random; 10 dimensional data, 5 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
@@ -56,7 +56,7 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 
  * [`DecisionTree`](decision_tree.md)
  * [`DecisionTreeRegressor`](decision_tree_regressor.md)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [Random forest on Wikipedia](https://en.wikipedia.org/wiki/Random_forest)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Leo Breiman's Random Forests page](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm)
@@ -87,8 +87,8 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `info` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `info` | [`DatasetInfo`](../load_save.md#datasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Instance weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numTrees` | `size_t` | Number of trees to train in the random forest. | `20`
@@ -109,6 +109,10 @@ std::cout << arma::accu(predictions == 3) << " test points classified as class "
    and so if a smaller-sized model is desired, this value should be increased
    (at the potential cost of accuracy).
  * `minGainSplit` can also be increased if a smaller-sized model is desired.
+ * `bootstrap` can be any of `DefaultBootstrap`, `IdentityBootstrap`,
+   `SequentialBootstrap`, or any customer bootstrapping algorithm as defined
+   by [BootstrapType](#bootstraptype). Note that `SequentialBootstrap` does
+   not have a default constructor.
 
 ***Note:*** different types can be used for `data` and `weights` (e.g.,
 `arma::fmat`, `arma::sp_mat`).  However, the element type of `data` and
@@ -203,7 +207,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `RandomForest` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `rf.NumTrees()` will return a `size_t` indicating the number of trees in the
    random forest.
@@ -228,28 +232,28 @@ to disk:
 ```c++
 // Load a categorical dataset.
 arma::mat dataset;
-mlpack::data::DatasetInfo info;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/covertype.train.arff.
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
+mlpack::Load("covertype.train.arff", dataset, opts);
 
 arma::Row<size_t> labels;
 // See https://datasets.mlpack.org/covertype.train.labels.csv.
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 10 trees on the given dataset, with a minimum leaf size of 3.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */);
 
 // Now load categorical test data.
 arma::mat testDataset;
 // See https://datasets.mlpack.org/covertype.test.arff.
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
+mlpack::Load("covertype.test.arff", testDataset, opts);
 
 arma::Row<size_t> testLabels;
 // See https://datasets.mlpack.org/covertype.test.labels.csv.
-mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Compute test set accuracy.
 arma::Row<size_t> testPredictions;
@@ -260,7 +264,7 @@ std::cout << "After training 10 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
 
 // Now train another 10 trees and compute the test accuracy.
-rf.Train(dataset, info, labels, 7 /* classes */, 10 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 10 /* trees */,
          3 /* minimum leaf size */, 0.0 /* minimum split gain */,
          0 /* maximum depth (unlimited) */, true /* incremental training */);
 
@@ -271,7 +275,7 @@ std::cout << "After training 20 trees, test set accuracy is " << accuracy
     << "%." << std::endl;
 
 // Save the random forest to disk.
-mlpack::data::Save("rf.bin", "rf", rf);
+mlpack::Save("rf.bin", rf);
 ```
 
 ---
@@ -280,9 +284,9 @@ Load a random forest and print some information about it.
 
 ```c++
 mlpack::RandomForest rf;
-// This call assumes a random forest called "rf" has already been saved to
-// `rf.bin` with `data::Save()`.
-mlpack::data::Load("rf.bin", "rf", rf, true);
+// This call assumes a random forest has already been saved to `rf.bin` with
+// `Save()`.
+mlpack::Load("rf.bin", rf, mlpack::Fatal);
 
 std::cout << "The random forest in 'rf.bin' contains " << rf.NumTrees()
     << " trees." << std::endl;
@@ -301,7 +305,7 @@ performance of each individual tree:
 ```c++
 // Load a categorical dataset (training and test sets).
 arma::mat dataset, testDataset;
-mlpack::data::DatasetInfo info;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 arma::Row<size_t> labels, testLabels;
 
 // See the following files:
@@ -309,15 +313,15 @@ arma::Row<size_t> labels, testLabels;
 //  * https://datasets.mlpack.org/covertype.train.labels.csv
 //  * https://datasets.mlpack.org/covertype.test.arff
 //  * https://datasets.mlpack.org/covertype.test.labels.csv
-mlpack::data::Load("covertype.train.arff", dataset, info, true);
-mlpack::data::Load("covertype.train.labels.csv", labels, true);
-mlpack::data::Load("covertype.test.arff", testDataset, info, true);
-mlpack::data::Load("covertype.test.labels.csv", testLabels, true);
+mlpack::Load("covertype.train.arff", dataset, opts);
+mlpack::Load("covertype.train.labels.csv", labels, mlpack::Fatal);
+mlpack::Load("covertype.test.arff", testDataset, opts);
+mlpack::Load("covertype.test.labels.csv", testLabels, mlpack::Fatal);
 
 // Create the random forest.
 mlpack::RandomForest rf;
 // Train 20 trees on the given dataset, with a minimum leaf size of 5.
-rf.Train(dataset, info, labels, 7 /* classes */, 20 /* trees */,
+rf.Train(dataset, opts.DatasetInfo(), labels, 7 /* classes */, 20 /* trees */,
          5 /* minimum leaf size */);
 
 // Compute test set accuracy for each tree.
@@ -369,8 +373,8 @@ std::cout << "Probabilities of each class: " << probabilities.t();
 
 See also the following fully-working examples:
 
- - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/rainfall_prediction_with_random_forest/rainfall-prediction-with-random-forest-cpp.ipynb)
- - [Forest cover type prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/rainfall_prediction_with_random_forest/rainfall-prediction-with-random-forest-cpp.ipynb)
+ - [Rainfall prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/rainfall_prediction/rainfall-prediction-cpp.ipynb)
+ - [Forest cover type prediction with `RandomForest`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/random_forest/forest_covertype_prediction/covertype-rf-cpp.ipynb)
 
 ### Advanced Functionality: Template Parameters
 
@@ -420,7 +424,7 @@ used as drop-in replacements throughout this documentation page:
 
  * `ExtraTrees`
     - This is an implementation of the Extremely Randomized Trees algorithm
-      ([paper pdf](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=336a165c17c9c56160d332b9f4a2b403fccbdbfb)).
+      ([paper pdf](https://services.montefiore.uliege.be/stochastic/pubs/2006/GEW06a/geurts-mlj-advance.pdf)).
     - When training an `ExtraTrees` model, each individual decision tree chooses
       splits for numeric data randomly.
     - Training an `ExtraTrees` model is generally much faster than
@@ -438,7 +442,8 @@ RandomForest<FitnessFunction,
              DimensionSelectionType,
              NumericSplitType,
              CategoricalSplitType,
-             UseBootstrap>
+             UseBootstrap,
+             BootstrapType>
 ```
 
  * `FitnessFunction`: the measure of goodness to use when deciding on tree
@@ -450,7 +455,14 @@ RandomForest<FitnessFunction,
  * `CategoricalSplitType`: the strategy used for finding splits on categorical
    data dimensions
  * `UseBootstrap`: a boolean indicating whether or not to use a bootstrap sample
-   when training each tree in the forest
+   when training each tree in the forest. This argument will be removed in mlpack
+   5.0.0 as it is superseded by the BootstrapType strategy.
+ * `BootstrapType`: the strategy used to bootstrap the samples per tree.
+
+An additional `RandomForest` constructor offers two additional parameters to
+pass the `DimensionSelectionType`, via the `dimSelector` argument, and the
+`BootstrapType`, via the `bootstrap` argument, in case they have non-default
+constructors.  See the [`BootstrapType` documentation](#bootstraptype).
 
 Note that the first four of these template parameters are exactly the same as
 the template parameters for the
@@ -568,6 +580,11 @@ template<typename FitnessFunction>
 class CustomNumericSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -592,20 +609,20 @@ class CustomNumericSplit
   // Otherwise, they are instance weighs for each value in `data` (one dimension
   // of the input data).
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double SplitIfBetter(const double bestGain,
-                       const VecType& data,
-                       const arma::Row<size_t>& labels,
-                       const size_t numClasses,
-                       const WeightVecType& weights,
-                       const size_t minLeafSize,
-                       const double minGainSplit,
-                       arma::vec& splitInfo,
-                       AuxiliarySplitInfo& aux);
+  static double SplitIfBetter(const double bestGain,
+                              const VecType& data,
+                              const arma::Row<size_t>& labels,
+                              const size_t numClasses,
+                              const WeightVecType& weights,
+                              const size_t minLeafSize,
+                              const double minGainSplit,
+                              arma::vec& splitInfo,
+                              AuxiliarySplitInfo& aux);
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
   // `aux`, return the index of the child that corresponds to the point.  So,
@@ -614,13 +631,8 @@ class CustomNumericSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
@@ -641,6 +653,11 @@ template<typename FitnessFunction>
 class CustomCategoricalSplit
 {
  public:
+  // This class can hold any extra data that is necessary to encode a split.  It
+  // should only be non-empty if a single `double` value cannot be used to hold
+  // the information corresponding to a split.
+  class AuxiliarySplitInfo { };
+
   // If a split with better resulting gain than `bestGain` is found, then
   // information about the new, better split should be stored in `splitInfo` and
   // `aux`.  Specifically, a split is better than `bestGain` if the sum of the
@@ -681,8 +698,8 @@ class CustomCategoricalSplit
 
   // Return the number of children for a given split (stored as the single
   // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
-                     const AuxiliarySplitInfo& aux);
+  static size_t NumChildren(const arma::vec& splitInfo,
+                            const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information
   // `splitInfo` and `aux`, return the index of the child that corresponds to
@@ -691,19 +708,18 @@ class CustomCategoricalSplit
   template<typename ElemType>
   static size_t CalculateDirection(
       const ElemType& point,
-      const double& splitInfo,
+      const arma::vec& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
-
-  // This class can hold any extra data that is necessary to encode a split.  It
-  // should only be non-empty if a single `double` value cannot be used to hold
-  // the information corresponding to a split.
-  class AuxiliarySplitInfo { };
 };
 ```
 
 ---
 
 #### `UseBootstrap`
+
+***Note:*** this parameter will be removed in mlpack 5.0.0. A value of `false`
+will then be equivalent to setting `BootstrapType` to `IdentityBootstrap`, and a
+value of `true` will be equivalent to `DefaultBootstrap`.
 
  * A `bool` value that indicates whether or not a bootstrap sample of the
    dataset should be used for the training of each individual decision tree in
@@ -712,3 +728,113 @@ class CustomCategoricalSplit
    dataset will be used to train each decision tree.
  * If `false` _(default for the `ExtraTrees` [variant](#fully-custom-behavior))_, the full
    dataset will be used to train each decision tree.
+
+#### `BootstrapType`
+
+ * Specifies the strategy used for bootstrapping data for each tree in the random forest.
+ * Three implementations for `BootstrapType` are available for drop-in usage:
+   - `DefaultBootstrap` *(default)*: bootstrap via random sampling with replacement.
+   - `IdentityBootstrap`: no bootstrapping.  Simply copies the input `dataset`, `labels`, and `weights` for each tree's data.
+   - `SequentialBootstrap`: bootstrapping from overlapping sequences such that samples with informational overlap behave more I.I.D.
+     * Useful when data consists of multiple overlapping events (or individual sequences).
+     * `b = SequentialBootstrap(intervals)` will create a `SequentialBootstrap` object, where:
+       - `intervals` is of type `arma::umat`, with 2 rows and `n` columns, where `n` is the number of events to be sampled from.
+       - Each column in `intervals` represents the start and end columns (inclusive) of each event.
+       - So, e.g., if the 10th event is 5 points long, starting at index 6, then column `9` of `intervals` should be `[6, 10]`.
+     * A `SequentialBootstrap` must be passed as the `bootstrap` option to the advanced constructor (below).
+     * For more information, see: M. López de Prado (2018): "Advances in Financial Machine Learning", pp. 63-65.
+
+ * When using a `BootstrapType` that requires an instantiated object (such as `SequentialBootstrap`), the following advanced constructor forms can be used for `RandomForest`:
+ 
+   - `rf = RandomForest(data, info, labels, numClasses,          numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
+   - `rf = RandomForest(data, info, labels, numClasses, weights, numTrees, minLeafSize, minGainSplit, maxDepth, bootstrap)`
+
+ * A custom `BootstrapType` class must take a `bool` template parameter `UseWeights` and implement one function:
+
+```c++
+class CustomBootstrapType
+{
+ public:
+  /**
+   * Compute a bootstrap dataset based on the original dataset.
+   * If `UseWeights` is `false`, then `weights` and `bootstrapWeights` can be
+   * ignored.
+   *
+   * When the function is complete, `bootstrapDataset` and `bootstrapLabels`
+   * should contain a bootstrapped dataset.  If `UseWeights` is `true`, then
+   * `bootstrapWeights` should contain the corresponding instance weights for
+   * the bootstrapped dataset.
+   */
+  template<
+      bool UseWeights,
+      typename MatType,
+      typename LabelsType,
+      typename WeightsType>
+  void Bootstrap(
+      const MatType& dataset,
+      const LabelsType& labels,
+      const WeightsType& weights,
+      MatType& bootstrapDataset,
+      LabelsType& bootstrapLabels,
+      WeightsType& bootstrapWeights);
+};
+```
+
+---
+
+Train a `RandomForest` with the `SequentialBootstrap` strategy.
+
+```c++
+// 1000 random points in 10 dimensions. In reality this might be
+// financial time-series data.
+arma::mat dataset(10 /* rows */, 1000 /* cols */, arma::fill::randu);
+
+// Random labels for each point, totaling 5 classes.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 4));
+
+arma::umat intervals(2, labels.n_cols);
+
+for (size_t c = 0; c < 1000; ++c)
+{
+  // Every "normal" event has length 1 and happens at the time step
+  // equivalent to its column.
+  intervals(0, c) = c;
+  intervals(1, c) = c;
+}
+
+// Now set the three "overlapping" events to have longer ranges.
+// The first two events overlap in [100,200].
+// The third event is isolated from the other two.
+// All three still overlap in each time step with one
+// "normal" event.
+intervals(0, 0) = 0; // start of first event
+intervals(1, 0) = 200; // end of first event
+intervals(0, 100) = 100; // start of second event
+intervals(1, 100) = 500; // end of second event
+intervals(0, 600) = 600; // start of third event
+intervals(1, 600) = 1000; // end of third event
+
+mlpack::SequentialBootstrap bootstrap(intervals);
+
+// Create and train the random forest.
+mlpack::RandomForest<
+    mlpack::GiniGain,
+    mlpack::MultipleRandomDimensionSelect,
+    mlpack::BestBinaryNumericSplit,
+    mlpack::AllCategoricalSplit,
+    true,
+    mlpack::SequentialBootstrap<>> rf(
+        dataset,
+        labels,
+        5, // numClasses
+        20, // numTrees
+        1, // minimumLeafSize
+        1e-7, // minimumGainSplit
+        0, // maximumDepth
+        mlpack::MultipleRandomDimensionSelect(), // dimSelector
+        bootstrap);
+
+std::cout << "Forest trained with sequential bootstrap has " << rf.NumTrees()
+    << " trees." << std::endl;
+```

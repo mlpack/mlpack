@@ -17,7 +17,8 @@ namespace mlpack {
 /**
  * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N.
  */
-inline void RandVector(arma::vec& v)
+template<typename eT>
+inline void RandVector(arma::Col<eT>& v)
 {
   for (size_t i = 0; i + 1 < v.n_elem; i += 2)
   {
@@ -31,7 +32,8 @@ inline void RandVector(arma::vec& v)
 
   if ((v.n_elem % 2) == 1)
   {
-    v[v.n_elem - 1] = std::sqrt(-2 * std::log(Random())) * cos(2 * M_PI * Random());
+    v[v.n_elem - 1] = std::sqrt(-2 * std::log(Random())) *
+        cos(2 * M_PI * Random());
   }
 
   v /= std::sqrt(dot(v, v));

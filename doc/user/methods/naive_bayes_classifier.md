@@ -11,7 +11,7 @@ etc.), and due to its simplicity scales well to large-data scenarios.
 // Train a Naive Bayes classifier on random data and predict labels:
 
 // All data and labels are uniform random; 5 dimensional data, 4 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 3));
@@ -42,8 +42,8 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
- * [`GaussianDistribution`](../core.md#gaussiandistribution)
+ * [mlpack classifiers](../modeling.md#classification)
+ * [`GaussianDistribution`](../core/distributions.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors
@@ -73,7 +73,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `incremental` | `bool` | If `true`, then the model will not be reset before training, and will use a robust incremental algorithm for variance computation. | `true` |
 | `epsilon` | `double` | Initial small value for sample variances, to prevent underflow (via `log(0)`). | 1e-10 |
@@ -163,7 +163,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `NaiveBayesClassifier` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `nbc.Probabilities()` will return a column vector of length `numClasses`
    representing the prior probability of each class.
@@ -198,10 +198,10 @@ accuracy on a test set and save the model to disk.
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::data::Load("mnist.train.csv", dataset, true);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("mnist.train.labels.csv", labels, true);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::NaiveBayesClassifier nbc(dataset.n_rows /* dimensionality */,
                                  10 /* numClasses */);
@@ -214,10 +214,10 @@ for (size_t i = 0; i < dataset.n_cols; ++i)
 
 // See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("mnist.test.csv", testDataset, true);
+mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("mnist.test.labels.csv", testLabels, true);
+mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
 
 arma::Row<size_t> predictions;
 nbc.Classify(dataset, predictions);
@@ -233,8 +233,8 @@ const double testAccuracy = 100.0 *
 std::cout << "Accuracy of model on test data:     " << testAccuracy << "\%."
     << std::endl;
 
-// Save the model to disk with the name "nbc".
-mlpack::data::Save("nbc_model.bin", "nbc", nbc, true);
+// Save the model to disk.
+mlpack::Save("nbc_model.bin", nbc, mlpack::Fatal);
 ```
 
 ---
@@ -244,8 +244,8 @@ Load a saved Naive Bayes classifier and print some information about it.
 ```c++
 mlpack::NaiveBayesClassifier nbc;
 
-// Load the model named "nbc" from "nbc_model.bin".
-mlpack::data::Load("nbc_model.bin", "nbc", nbc, true);
+// Load the `NaiveBayesClassifier` model from "nbc_model.bin".
+mlpack::Load("nbc_model.bin", nbc, mlpack::Fatal);
 
 // Print information about the model.
 std::cout << "The dimensionality of the model in nbc_model.bin is "
@@ -275,7 +275,7 @@ std::cout << "Random point class probabilities: " << probabilities.t();
 
 See also the following fully-working examples:
 
- - [Microchip QA Classification using `NaiveBayesClassifier`](https://github.com/mlpack/examples/blob/master/microchip_quality_control_naive_bayes/microchip-quality-control-naive-bayes-cpp.ipynb)
+ - [Microchip QA Classification using `NaiveBayesClassifier`](https://github.com/mlpack/examples/blob/master/jupyter_notebook/naive_bayes/microchip_quality_control/microchip-quality-control-cpp.ipynb)
 
 ### Advanced Functionality: Different Element Types
 

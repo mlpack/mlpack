@@ -174,7 +174,7 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
 }; // class VirtualBatchNormType
 
 // Standard VirtualBatchNorm layer.
-typedef VirtualBatchNormType<arma::mat, arma::mat> VirtualBatchNorm;
+using VirtualBatchNorm = VirtualBatchNormType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

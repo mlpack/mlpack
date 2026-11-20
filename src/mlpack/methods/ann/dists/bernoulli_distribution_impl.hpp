@@ -40,8 +40,7 @@ BernoulliDistribution<DataType>::BernoulliDistribution(
   }
   else
   {
-    probability = arma::mat(logits.memptr(), logits.n_rows,
-        logits.n_cols, false, false);
+    MakeAlias(probability, logits, logits.n_rows, logits.n_cols);
   }
 }
 
@@ -52,7 +51,7 @@ DataType BernoulliDistribution<DataType>::Sample() const
   sample.randu(probability.n_rows, probability.n_cols);
 
   for (size_t i = 0; i < sample.n_elem; ++i)
-      sample(i) = sample(i) < probability(i);
+    sample(i) = sample(i) < probability(i);
 
   return sample;
 }

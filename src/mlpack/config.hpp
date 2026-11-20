@@ -24,29 +24,6 @@
 #endif
 
 //
-// mlpack provides image loading and saving support via STB, if available.  STB
-// is an optional dependency of mlpack.  When STB is found on a system,
-// MLPACK_HAS_STB will be defined and the files `stb_image.h` and
-// `stb_image_write.h` are expected to be found in the compiler include path.
-//
-#ifndef MLPACK_HAS_STB
-// #define MLPACK_HAS_STB
-#endif
-
-//
-// If STB support is available but the STB headers do not live in an stb/
-// directory, then MLPACK_HAS_NO_STB_DIR should be defined.
-//
-// Note that this is ignored in newer compilers where __has_include is available
-// (C++17 and newer compilers support it).
-//
-#ifdef MLPACK_HAS_STB
-#ifndef MLPACK_HAS_NO_STB_DIR
-// #define MLPACK_HAS_NO_STB_DIR
-#endif
-#endif
-
-//
 // If the version of mlpack is built from a git repository and is not an
 // official release, then MLPACK_GIT_VERSION will be defined.  This causes
 // mlpack::util::GetVersion() to return the git revision instead of the version
@@ -61,7 +38,7 @@
 // non-error messages.
 //
 #if !defined(MLPACK_COUT_STREAM)
- #define MLPACK_COUT_STREAM std::cout
+  #define MLPACK_COUT_STREAM std::cout
 #endif
 
 //
@@ -69,49 +46,113 @@
 // errors.
 //
 #if !defined(MLPACK_CERR_STREAM)
- #define MLPACK_CERR_STREAM std::cerr
+  #define MLPACK_CERR_STREAM std::cerr
 #endif
 
 //
-// Perform autodetection of STB if possible.
+// MLPACK_NO_STD_MUTEX is used to disable mutex usage inside mlpack. Assuming
+// the system has one core only.
 //
-#ifndef MLPACK_HAS_STB
-  #if defined __has_include
-    #if __has_include("stb_image.h")
-      #define MLPACK_HAS_STB_IMAGE
-    #elif __has_include("stb/stb_image.h")
-      #define MLPACK_HAS_STB_IMAGE
-    #endif
-
-    #if __has_include("stb_image_write.h")
-      #define MLPACK_HAS_STB_IMAGE_WRITE
-    #elif __has_include("stb/stb_image_write.h")
-      #define MLPACK_HAS_STB_IMAGE_WRITE
-    #endif
-
-    #if defined(MLPACK_HAS_STB_IMAGE) && defined(MLPACK_HAS_STB_IMAGE_WRITE)
-      #define MLPACK_HAS_STB
-    #endif
-
-    #undef MLPACK_HAS_STB_IMAGE
-    #undef MLPACK_HAS_STB_IMAGE_WRITE
-  #endif
+#ifdef MLPACK_NO_STD_MUTEX
+  #define ARMA_DONT_USE_STD_MUTEX
 #endif
 
 //
-// These macros can be defined to disable support that is defined above.  (This
-// is useful if you cannot or do not want to modify config.hpp.)
+// MLPACK_USE_SYSTEM_STB is used to enable usage of locally installed STB.
 //
-#ifdef MLPACK_DISABLE_STB
-  #undef MLPACK_HAS_STB
+#if !defined(MLPACK_USE_SYSTEM_STB)
+  // #define MLPACK_USE_SYSTEM_STB
 #endif
 
-#ifdef MLPACK_DISABLE_NO_STB_DIR
-  #undef MLPACK_HAS_NO_STB_DIR
+//
+// MLPACK_DISABLE_STB is used to disable the bundled STB image loaders; use this
+// if your system does not need image processing (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_STB)
+  // #define MLPACK_DISABLE_STB
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_STB) && defined(MLPACK_USE_SYSTEM_STB)
+  #undef MLPACK_USE_SYSTEM_STB
+#endif
+
+//
+// MLPACK_USE_SYSTEM_DR_LIBS is used to enable usage of locally
+// installed dr_mp3 and dr_wav.
+//
+#if !defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  // #define MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
+// MLPACK_DISABLE_DR_LIBS is used to disable the bundled dr_mp3 and dr_wav
+// audio loaders; use this if your system does not need audio processing
+// (e.g. embedded systems).
+//
+#if !defined(MLPACK_DISABLE_DR_LIBS)
+  // #define MLPACK_DISABLE_DR_LIBS
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_DR_LIBS) \
+  && defined(MLPACK_USE_SYSTEM_DR_LIBS)
+  #undef MLPACK_USE_SYSTEM_DR_LIBS
+#endif
+
+//
+// MLPACK_USE_SYSTEM_HTTPLIB is used to enable usage of locally installed
+// cpp-httplib.
+//
+#if !defined(MLPACK_USE_SYSTEM_HTTPLIB)
+  // #define MLPACK_USE_SYSTEM_HTTPLIB
+#endif
+
+//
+// MLPACK_DISABLE_HTTPLIB is used to disable usage of locally installed
+// cpp-httplib.
+//
+#if !defined(MLPACK_DISABLE_HTTPLIB)
+  // #define MLPACK_DISABLE_HTTPLIB
+#endif
+
+//
+// This is necessary if we would like to overwrite the default packaging
+// condition.
+//
+#if defined(MLPACK_DONT_USE_SYSTEM_HTTPLIB) \
+  && defined(MLPACK_USE_SYSTEM_HTTPLIB)
+  #undef MLPACK_USE_SYSTEM_HTTPLIB
 #endif
 
 #ifdef MLPACK_DISABLE_BFD_DL
   #undef MLPACK_HAS_BFD_DL
 #endif
+
+#ifdef MLPACK_DISABLE_HTTPLIB
+  #undef MLPACK_USE_SYSTEM_HTTPLIB
+#endif
+
+// MLPACK_USE_ZLIB enables decompression for gzip-compressed datasets.
+#if !defined(MLPACK_USE_ZLIB)
+  // #define MLPACK_USE_ZLIB
+#endif
+
+// MLPACK_DISABLE_REMOTE_DATASET_CACHE disables the download cache.
+// This feature is enabled by default.
+#if !defined(MLPACK_DISABLE_REMOTE_DATASET_CACHE)
+  // #define MLPACK_DISABLE_REMOTE_DATASET_CACHE
+#endif
+
+// MLPACK_REMOTE_DATASET_CACHE_DIR can be set to override the default cache
+// directory.  If not set, the default is $HOME/.mlpack/cache/ on POSIX and
+// %APPDATA%\mlpack\cache\ on Windows.
+// #define MLPACK_REMOTE_DATASET_CACHE_DIR "/custom/cache/path/"
 
 #endif

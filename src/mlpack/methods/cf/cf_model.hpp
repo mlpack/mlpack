@@ -87,7 +87,7 @@ template<typename DecompositionPolicy, typename NormalizationPolicy>
 class CFWrapper : public CFWrapperBase
 {
  protected:
-  typedef CFType<DecompositionPolicy, NormalizationPolicy> CFModelType;
+  using CFModelType = CFType<DecompositionPolicy, NormalizationPolicy>;
 
  public:
   //! Create the CFWrapper object, using default parameters to initialize the
@@ -100,7 +100,7 @@ class CFWrapper : public CFWrapperBase
             const size_t numUsersForSimilarity,
             const size_t rank,
             const size_t maxIterations,
-            const size_t minResidue,
+            const double minResidue,
             const bool mit) :
       cf(data,
          decomposition,

@@ -19,7 +19,7 @@ test set:
 // Train a decision tree regressor on random numeric data and make predictions.
 
 // All data and responses are uniform random; this uses 10 dimensional data.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(10, 1000, arma::fill::randu); // 1000 points.
 arma::rowvec responses = arma::randn<arma::rowvec>(1000);
 arma::mat testDataset(10, 500, arma::fill::randu); // 500 test points.
@@ -53,7 +53,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 
  * [`DecisionTree`](decision_tree.md)
  * [Random forests](random_forest.md)
- * [mlpack regression techniques](../../index.md#regression-algorithms)
+ * [mlpack regression techniques](../modeling.md#regression)
  * [Decision tree on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree)
  * [Decision tree learning on Wikipedia](https://en.wikipedia.org/wiki/Decision_tree_learning)
 
@@ -83,7 +83,7 @@ std::cout << arma::accu(predictions < 0) << " test points predicted to have "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `datasetInfo` | [`data::DatasetInfo`](../load_save.md#loading-categorical-data) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
+| `datasetInfo` | [`DatasetInfo`](../load_save.md#datasetinfo) | Dataset information, specifying type information for each dimension. | _(N/A)_ |
 | `responses` | [`arma::rowvec`](../matrices.md) | Training responses (e.g. values to predict).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `weights` | [`arma::rowvec`](../matrices.md) | Weights for each training point.  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
@@ -169,7 +169,7 @@ that is used should be the same type that was used for training.
 ### Other Functionality
 
  * A `DecisionTreeRegressor` can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `tree.NumChildren()` will return a `size_t` indicating the number of children
    in the node `tree`.
@@ -194,30 +194,31 @@ See also the [simple usage example](#simple-usage-example) for a trivial use of
 
 ---
 
-Train a decision tree regressor on mixed categorical data.
+Train a decision tree regressor on mixed categorical data and save the model to
+disk.
 
 ```c++
 // Load a categorical dataset.
 arma::mat data;
-mlpack::data::DatasetInfo info;
+mlpack::TextOptions opts = mlpack::Categorical + mlpack::Fatal;
 // See https://datasets.mlpack.org/telecom_churn.arff.
-mlpack::data::Load("telecom_churn.arff", data, info, true);
+mlpack::Load("telecom_churn.arff", data, opts);
 
 arma::rowvec responses;
 // See https://datasets.mlpack.org/telecom_churn.responses.csv.
-mlpack::data::Load("telecom_churn.responses.csv", responses, true);
+mlpack::Load("telecom_churn.responses.csv", responses, mlpack::Fatal);
 
 // Split data into training set (80%) and test set (20%).
 arma::mat trainData, testData;
 arma::rowvec trainResponses, testResponses;
-mlpack::data::Split(data, responses, trainData, testData, trainResponses,
+mlpack::Split(data, responses, trainData, testData, trainResponses,
     testResponses, 0.2);
 
 // Create the tree.
 mlpack::DecisionTreeRegressor tree;
 // Train on the given dataset, specifying a minimum gain of 1e-6 and keeping the
 // default minimum leaf size.
-const double mse = tree.Train(trainData, info, trainResponses,
+const double mse = tree.Train(trainData, opts.DatasetInfo(), trainResponses,
     10 /* minimum leaf size */, 1e-6 /* minimum gain */);
 // Print the MSE of the trained tree.
 std::cout << "MSE of trained tree is " << mse << "." << std::endl;
@@ -235,6 +236,9 @@ tree.Predict(testData, testPredictions);
 const double testAverageError = arma::mean(testResponses - testPredictions);
 std::cout << "Average error on test set: " << testAverageError << "."
     << std::endl;
+
+// Save the tree to "tree.bin" with the name "tree".
+mlpack::Save("tree.bin", tree);
 ```
 
 ---
@@ -244,8 +248,8 @@ Load a tree and print some information about it.
 ```c++
 mlpack::DecisionTreeRegressor tree;
 // This call assumes a tree called "tree" has already been saved to `tree.bin`
-// with `data::Save()`.
-mlpack::data::Load("tree.bin", "tree", tree, true);
+// with `Save()`.
+mlpack::Load("tree.bin", tree, mlpack::Fatal);
 
 std::cout << "Information about the DecisionTreeRegressor in `tree.bin`:"
     << std::endl;
@@ -424,9 +428,10 @@ class CustomNumericSplit
                        AuxiliarySplitInfo& aux,
                        FitnessFunction& function);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with value `point`, and split information `splitInfo` and
@@ -455,8 +460,23 @@ class CustomNumericSplit
 
  * Specifies the strategy to be used during training when splitting a
     categorical feature.
- * The `AllCategoricalSplit` _(default)_ is available for drop-in usage and
-   splits all categories into their own node.
+ * The `AllCategoricalSplit` _(default)_ and `BestBinaryCategoricalSplit` are~
+   available for drop-in usage.
+ * `AllCategoricalSplit`, the default ID3 split
+   algorithm, splits all categories into their own node. This variant is simple,
+   and has complexity `O(n)`, where `n` is the number of samples.
+ * `BestBinaryCategoricalSplit` is the preferred algorithm of
+   [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
+   It will find the the best (entropy-minimizing) binary partition of the
+   categories. This algorithm has complexity `O(n lg n)` in the case of binary
+   outcomes, but is exponential in the number of _categories_ when there are
+   more than two _classes_.
+   - ***Note***: `BestBinaryCategoricalSplit` should not be chosen when there
+     are multiple classes and many categories.
+   - ***Note***: for regression tasks,
+     [W. Fisher's proof of correctness](https://www.mlpack.org/papers/fisher.pdf)
+     only applies to when `FitnessFunction` is `MSEGain`; therefore,
+     `BestBinaryCategoricalSplit` requires the use of `MSEGain`.
  * A custom class must take a [`FitnessFunction`](#fitnessfunction) as a
    template parameter, implement three functions, and have an internal
    structure `AuxiliarySplitInfo` that is used at classification time:
@@ -482,7 +502,7 @@ class CustomCategoricalSplit
   // If a new best split is found, then `splitInfo` and `aux` should be
   // populated with the information that will be needed for
   // `CalculateDirection()` to successfully choose the child for a given point.
-  // `splitInfo` should be set to a vector of length 1.  The format of `aux` is
+  // `splitInfo` should be set to a non-empty vector.  The format of `aux` is
   // arbitrary and is detailed more below.
   //
   // If `UseWeights` is false, the vector `weights` should be ignored.
@@ -503,9 +523,10 @@ class CustomCategoricalSplit
       AuxiliarySplitInfo& aux,
       FitnessFunction& fitnessFunction);
 
-  // Return the number of children for a given split (stored as the single
-  // element from `splitInfo` and auxiliary data `aux` in `SplitIfBetter()`).
-  size_t NumChildren(const double& splitInfo,
+  // Return the number of children for a given split. If there was no split,
+  // return zero. `splitInfo` and `aux` contain the split information, as set
+  // in `SplitIfBetter`.
+  size_t NumChildren(const arma::vec& splitInfo,
                      const AuxiliarySplitInfo& aux);
 
   // Given a point with (categorical) value `point`, and split information

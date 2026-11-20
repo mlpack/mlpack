@@ -22,7 +22,7 @@ using namespace mlpack;
  * Check the if the product of the calculated factorization is close to the
  * input matrix. Default case.
  */
-TEST_CASE("NMFDefaultTest", "[NMFTest]")
+TEST_CASE("NMFDefaultTest", "[NMFTest][tiny]")
 {
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
@@ -307,7 +307,7 @@ TEST_CASE("NonNegNMFALSTest", "[NMFTest]")
  */
 TEMPLATE_TEST_CASE("NoInitializationTest", "[NMFTest]", float, double)
 {
-  typedef TestType eT;
+  using eT = TestType;
 
   arma::Mat<eT> W, H;
   W.randu(100, 5);

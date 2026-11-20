@@ -43,7 +43,7 @@ typename MatType::elem_type MultiLabelSoftMarginLossType<MatType>::Forward(
 
   MatType logSigmoid = log((1 / (1 + exp(-input))));
   MatType logSigmoidNeg = log(1 / (1 + exp(input)));
-  MatType loss = arma::mean(sum(-(target % logSigmoid +
+  MatType loss = mean(sum(-(target % logSigmoid +
       (1 - target) % logSigmoidNeg)) % classWeights, 1);
 
   if (reduction)
@@ -58,7 +58,6 @@ void MultiLabelSoftMarginLossType<MatType>::Backward(
     const MatType& target,
     MatType& output)
 {
-  output.set_size(size(input));
   MatType sigmoid = (1 / (1 + exp(-input)));
   output = -(target % (1 - sigmoid) - (1 - target) % sigmoid) %
         repmat(classWeights, target.n_rows, 1) / output.n_elem;
@@ -71,7 +70,7 @@ template<typename MatType>
 template<typename Archive>
 void MultiLabelSoftMarginLossType<MatType>::serialize(
     Archive& ar,
-    const unsigned int /* version */)
+    const uint32_t /* version */)
 {
   ar(CEREAL_NVP(classWeights));
   ar(CEREAL_NVP(reduction));

@@ -510,7 +510,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
   {
     if (fitIntercept)
     {
-      offsetX = arma::mean(matX, 1);
+      offsetX = mean(matX, 1);
       dataTrans = (matX.each_col() - offsetX).t();
     }
 
@@ -536,7 +536,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
     // We don't need to transpose the data---it's already in row-major form.
     if (fitIntercept)
     {
-      offsetX = arma::mean(matX, 0).t();
+      offsetX = mean(matX, 0).t();
       dataTrans = (matX.each_row() - offsetX.t());
     }
 
@@ -558,7 +558,7 @@ LARS<ModelMatType>::Train(const MatType& matX,
 
   if (fitIntercept)
   {
-    this->offsetY = arma::mean(y);
+    this->offsetY = mean(y);
     yCentered = y - this->offsetY;
   }
 
@@ -573,8 +573,8 @@ LARS<ModelMatType>::Train(const MatType& matX,
   isIgnored.resize(dataRef.n_cols, false);
 
   // Initialize yHat and beta.
-  arma::Col<ElemType> beta(dataRef.n_cols, arma::fill::zeros);
-  arma::Col<ElemType> yHat(dataRef.n_rows, arma::fill::zeros);
+  arma::Col<ElemType> beta(dataRef.n_cols);
+  arma::Col<ElemType> yHat(dataRef.n_rows);
   arma::Col<ElemType> yHatDirection(dataRef.n_rows, arma::fill::none);
 
   bool lassocond = false;

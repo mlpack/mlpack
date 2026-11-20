@@ -199,10 +199,9 @@ class HyperParameterTuner
   };
 
   //! A short alias for the full type of the cross-validation.
-  using CVType = typename std::conditional<Metric::NeedsMinimization,
+  using CVType = std::conditional_t<Metric::NeedsMinimization,
       CV<MLAlgorithm, Metric, MatType, PredictionsType, WeightsType>,
-      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType,
-          WeightsType>>::type;
+      CV<MLAlgorithm, Negated<Metric>, MatType, PredictionsType, WeightsType>>;
 
 
   //! The cross-validation object for assessing sets of hyper-parameters.
@@ -234,15 +233,15 @@ class HyperParameterTuner
    * PreFixedArg.
    */
   template<typename Tuple, size_t I>
-  using IsPreFixed = IsPreFixedArg<typename std::tuple_element<I, Tuple>::type>;
+  using IsPreFixed = IsPreFixedArg<std::tuple_element_t<I, Tuple>>;
 
   /**
    * A type function to check whether the element I of the tuple type is an
    * arithmetic type.
    */
   template<typename Tuple, size_t I>
-  using IsArithmetic = std::is_arithmetic<typename std::remove_reference<
-      typename std::tuple_element<I, Tuple>::type>::type>;
+  using IsArithmetic = std::is_arithmetic<std::remove_reference_t<
+      std::tuple_element_t<I, Tuple>>>;
 
   /**
    * The set of methods to initialize auxiliary objects (a CVFunction object and
@@ -258,7 +257,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -277,7 +276,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -298,7 +297,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**
@@ -320,7 +319,7 @@ class HyperParameterTuner
   inline void InitAndOptimize(
       const ArgsTuple& args,
       arma::mat& bestParams,
-      data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+      DatasetMapper<IncrementPolicy, double>& datasetInfo,
       FixedArgs... fixedArgs);
 
   /**

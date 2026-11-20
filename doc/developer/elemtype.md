@@ -28,7 +28,7 @@ types cannot be used.
 easily defined as below:
 
 ```c++
-typedef typename MatType::elem_type ElemType;
+using ElemType = typename MatType::elem_type;
 ```
 
 and otherwise a template parameter with the name `ElemType` can be used.  It is

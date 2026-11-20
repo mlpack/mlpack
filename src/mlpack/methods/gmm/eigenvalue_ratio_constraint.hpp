@@ -32,10 +32,10 @@ class EigenvalueRatioConstraint
    * which is the largest eigenvalue, so the first element of the vector should
    * be 1.  In addition, all other elements should be less than or equal to 1.
    */
-  EigenvalueRatioConstraint(const arma::vec& ratios) :
-      // Make an alias of the ratios vector.  It will never be modified here.
-      ratios(const_cast<double*>(ratios.memptr()), ratios.n_elem, false)
+  EigenvalueRatioConstraint(const arma::vec& ratios)
   {
+    // Make an alias of the ratios vector.  It will never be modified here.
+    MakeAlias(const_cast<arma::vec&>(this->ratios), ratios, ratios.n_elem);
     // Check validity of ratios.
     if (std::abs(ratios[0] - 1.0) > 1e-20)
       Log::Fatal << "EigenvalueRatioConstraint::EigenvalueRatioConstraint(): "

@@ -18,396 +18,517 @@
 namespace mlpack {
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType() :
+LSTM<MatType>::LSTM() :
     RecurrentLayer<MatType>(),
+    inSize(0),
     outSize(0)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(const size_t outSize) :
+LSTM<MatType>::LSTM(const size_t outSize) :
     RecurrentLayer<MatType>(),
+    inSize(0),
     outSize(outSize)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(const LSTMType& layer) :
-    RecurrentLayer<MatType>(layer)
+LSTM<MatType>::LSTM(const LSTM& layer) :
+    RecurrentLayer<MatType>(layer),
+    inSize(layer.inSize),
+    outSize(layer.outSize)
 {
   // Nothing to do here.
 }
 
 template<typename MatType>
-LSTMType<MatType>::LSTMType(LSTMType&& layer) :
-    RecurrentLayer<MatType>(std::move(layer))
+LSTM<MatType>::LSTM(LSTM&& layer) :
+    RecurrentLayer<MatType>(std::move(layer)),
+    inSize(layer.inSize),
+    outSize(layer.outSize)
 {
-  // Nothing to do here.
+  layer.inSize = 0;
+  layer.outSize = 0;
 }
 
 template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(const LSTMType& layer)
+LSTM<MatType>& LSTM<MatType>::operator=(const LSTM& layer)
 {
   if (this != &layer)
   {
     RecurrentLayer<MatType>::operator=(layer);
+    inSize = layer.inSize;
+    outSize = layer.outSize;
   }
 
   return *this;
 }
 
 template<typename MatType>
-LSTMType<MatType>& LSTMType<MatType>::operator=(LSTMType&& layer)
+LSTM<MatType>& LSTM<MatType>::operator=(LSTM&& layer)
 {
   if (this != &layer)
   {
     RecurrentLayer<MatType>::operator=(std::move(layer));
+    inSize = layer.inSize;
+    outSize = layer.outSize;
+
+    layer.inSize = 0;
+    layer.outSize = 0;
   }
 
   return *this;
 }
 
 template<typename MatType>
-void LSTMType<MatType>::ClearRecurrentState(
-    const size_t bpttSteps, const size_t batchSize)
+void LSTM<MatType>::SetWeights(const MatType& weights)
 {
-  // Make sure all of the different matrices we will use to hold parameters are
-  // at least as large as we need.
-  inputGate.set_size(outSize, batchSize);
-  forgetGate.set_size(outSize, batchSize);
-  hiddenLayer.set_size(outSize, batchSize);
-  outputGate.set_size(outSize, batchSize);
+  // Set the weight parameters for the inputs.
+  const size_t inputWeightSize = outSize * inSize;
+  MakeAlias(blockInputWeight, weights, outSize, inSize);
+  MakeAlias(inputGateWeight, weights, outSize, inSize, inputWeightSize);
+  MakeAlias(forgetGateWeight, weights, outSize, inSize, 2 * inputWeightSize);
+  MakeAlias(outputGateWeight, weights, outSize, inSize, 3 * inputWeightSize);
 
-  inputGateActivation.set_size(outSize, batchSize, bpttSteps);
-  forgetGateActivation.set_size(outSize, batchSize, bpttSteps);
-  outputGateActivation.set_size(outSize, batchSize, bpttSteps);
-  hiddenLayerActivation.set_size(outSize, batchSize, bpttSteps);
+  // Set the bias parameters for the inputs.
+  const size_t biasOffset = 4 * inputWeightSize;
+  MakeAlias(blockInputBias, weights, outSize, 1, biasOffset);
+  MakeAlias(inputGateBias, weights, outSize, 1, biasOffset + outSize);
+  MakeAlias(forgetGateBias, weights, outSize, 1, biasOffset + 2 * outSize);
+  MakeAlias(outputGateBias, weights, outSize, 1, biasOffset + 3 * outSize);
 
-  cellActivation.set_size(outSize, batchSize, bpttSteps);
-  outParameter.set_size(outSize, batchSize, bpttSteps);
+  // Set the recurrent weight parameters.
+  const size_t recurrentOffset = biasOffset + 4 * outSize;
+  const size_t recurrentWeightSize = outSize * outSize;
+  MakeAlias(recurrentBlockInputWeight, weights, outSize, outSize,
+      recurrentOffset);
+  MakeAlias(recurrentInputGateWeight, weights, outSize, outSize,
+      recurrentOffset + recurrentWeightSize);
+  MakeAlias(recurrentForgetGateWeight, weights, outSize, outSize,
+      recurrentOffset + 2 * recurrentWeightSize);
+  MakeAlias(recurrentOutputGateWeight, weights, outSize, outSize,
+      recurrentOffset + 3 * recurrentWeightSize);
 
-  // Now reset recurrent values to 0.
-  cell.zeros(outSize, batchSize, bpttSteps);
-}
-
-template<typename MatType>
-void LSTMType<MatType>::SetWeights(const MatType& weights)
-{
-  // Set the weight parameter for the output gate.
-  MakeAlias(input2GateOutputWeight, weights, outSize, inSize);
-  size_t offset = input2GateOutputWeight.n_elem;
-  MakeAlias(input2GateOutputBias, weights, outSize, 1, offset);
-  offset += input2GateOutputBias.n_elem;
-
-  // Set the weight parameter for the forget gate.
-  MakeAlias(input2GateForgetWeight, weights, outSize, inSize, offset);
-  offset += input2GateForgetWeight.n_elem;
-  MakeAlias(input2GateForgetBias, weights, outSize, 1, offset);
-  offset += input2GateForgetBias.n_elem;
-
-  // Set the weight parameter for the input gate.
-  MakeAlias(input2GateInputWeight, weights, outSize, inSize, offset);
-  offset += input2GateInputWeight.n_elem;
-  MakeAlias(input2GateInputBias, weights, outSize, 1, offset);
-  offset += input2GateInputBias.n_elem;
-
-  // Set the weight parameter for the hidden gate.
-  MakeAlias(input2HiddenWeight, weights, outSize, inSize, offset);
-  offset += input2HiddenWeight.n_elem;
-  MakeAlias(input2HiddenBias, weights, outSize, 1, offset);
-  offset += input2HiddenBias.n_elem;
-
-  // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateOutputWeight, weights, outSize, outSize, offset);
-  offset += output2GateOutputWeight.n_elem;
-
-  // Set the weight parameter for the output multiplication.
-  MakeAlias(output2GateForgetWeight, weights, outSize, outSize, offset);
-  offset += output2GateForgetWeight.n_elem;
-
-  // Set the weight parameter for the input multiplication.
-  MakeAlias(output2GateInputWeight, weights, outSize, outSize, offset);
-  offset += output2GateInputWeight.n_elem;
-
-  // Set the weight parameter for the hidden multiplication.
-  MakeAlias(output2HiddenWeight, weights, outSize, outSize, offset);
-  offset += output2HiddenWeight.n_elem;
-
-  // Set the weight parameter for the cell multiplication.
-  MakeAlias(cell2GateOutputWeight, weights, outSize, 1, offset);
-  offset += cell2GateOutputWeight.n_elem;
-
-  // Set the weight parameter for the cell - forget gate multiplication.
-  MakeAlias(cell2GateForgetWeight, weights, outSize, 1, offset);
-  offset += cell2GateOutputWeight.n_elem;
-
-  // Set the weight parameter for the cell - input gate multiplication.
-  MakeAlias(cell2GateInputWeight, weights, outSize, 1, offset);
+  // Set the peephole weight parameters.
+  const size_t peepholeOffset = recurrentOffset + 4 * recurrentWeightSize;
+  MakeAlias(peepholeInputGateWeight, weights, outSize, 1, peepholeOffset);
+  MakeAlias(peepholeForgetGateWeight, weights, outSize, 1,
+      peepholeOffset + outSize);
+  MakeAlias(peepholeOutputGateWeight, weights, outSize, 1,
+      peepholeOffset + 2 * outSize);
 }
 
 // Forward when cellState is not needed.
 template<typename MatType>
-void LSTMType<MatType>::Forward(const MatType& input, MatType& output)
+void LSTM<MatType>::Forward(const MatType& input, MatType& output)
 {
   // Convenience alias.
-  const size_t batchSize = input.n_cols;
+  const size_t activeBatchSize = input.n_cols;
 
-  inputGate = input2GateInputWeight * input;
+  // Compute internal state:
+  //
+  // z_t  =    tanh(W_z x_t + R_z y_{t - 1} + b_z)
+  // i_t  = sigmoid(W_i x_t + R_i y_{t - 1} + p_i % c_{t - 1} + b_i)
+  // f_t  = sigmoid(W_f x_t + R_f y_{t - 1} + p_f % c_{t - 1} + b_f)
+  // c_t  =         z_t % i_t + c_{t - 1} % f_t
+  // o_t  = sigmoid(W_o x_t + R_o y_{t - 1} + p_o % c_t + b_o)
+  // y_t  =    tanh(c_t) % o_t
+
+  // Start by computing all non-recurrent portions.
+  blockInput = blockInputWeight * input + repmat(blockInputBias, 1,
+      activeBatchSize);
+  inputGate = inputGateWeight * input + repmat(inputGateBias, 1,
+      activeBatchSize);
+  forgetGate = forgetGateWeight * input + repmat(forgetGateBias, 1,
+      activeBatchSize);
+  outputGate = outputGateWeight * input + repmat(outputGateBias, 1,
+      activeBatchSize);
+
+  // Now add in recurrent portions, if needed.
   if (this->HasPreviousStep())
   {
-    inputGate +=
-        output2GateInputWeight * outParameter.slice(this->PreviousStep());
+    blockInput += recurrentBlockInputWeight * prevRecurrent;
+    inputGate += recurrentInputGateWeight * prevRecurrent +
+        repmat(peepholeInputGateWeight, 1, activeBatchSize) % prevCell;
+    forgetGate += recurrentForgetGateWeight * prevRecurrent +
+        repmat(peepholeForgetGateWeight, 1, activeBatchSize) % prevCell;
   }
-  inputGate.each_col() += input2GateInputBias;
 
-  forgetGate = input2GateForgetWeight * input;
+  // Apply nonlinearities.  (TODO: fast sigmoid?)
+  blockInput = tanh(blockInput);
+  inputGate = 1 / (1 + exp(-inputGate));
+  forgetGate = 1 / (1 + exp(-forgetGate));
+
+  // Compute the cell state.
+  if (this->HasPreviousStep())
+    thisCell = blockInput % inputGate + prevCell % forgetGate;
+  else
+    thisCell = blockInput % inputGate;
+
+  // Now add recurrent portion to output gate.
   if (this->HasPreviousStep())
   {
-    forgetGate += output2GateForgetWeight * outParameter.slice(
-        this->PreviousStep());
-  }
-  forgetGate.each_col() += input2GateForgetBias;
-
-  if (this->HasPreviousStep())
-  {
-    inputGate += repmat(cell2GateInputWeight, 1, batchSize) %
-        cell.slice(this->PreviousStep());
-
-    forgetGate += repmat(cell2GateForgetWeight, 1, batchSize) %
-        cell.slice(this->PreviousStep());
-  }
-
-  inputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + exp(-inputGate));
-  forgetGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + exp(-forgetGate));
-
-  hiddenLayer = input2HiddenWeight * input;
-  if (this->HasPreviousStep())
-  {
-    hiddenLayer += output2HiddenWeight *
-        outParameter.slice(this->PreviousStep());
-  }
-  hiddenLayer.each_col() += input2HiddenBias;
-
-  hiddenLayerActivation.slice(this->CurrentStep()) = arma::tanh(hiddenLayer);
-
-  if (!this->HasPreviousStep())
-  {
-    cell.slice(this->CurrentStep()) =
-        inputGateActivation.slice(this->CurrentStep()) %
-        hiddenLayerActivation.slice(this->CurrentStep());
+    outputGate += recurrentOutputGateWeight * prevRecurrent +
+        repmat(peepholeOutputGateWeight, 1, activeBatchSize) % thisCell;
   }
   else
   {
-    cell.slice(this->CurrentStep()) =
-        forgetGateActivation.slice(this->CurrentStep()) %
-        cell.slice(this->PreviousStep()) +
-        inputGateActivation.slice(this->CurrentStep()) %
-        hiddenLayerActivation.slice(this->CurrentStep());
+    // If we don't have a previous step, we still have to consider the peephole
+    // connection.
+    outputGate += repmat(peepholeOutputGateWeight, 1, activeBatchSize) %
+        thisCell;
   }
 
-  outputGate = input2GateOutputWeight * input +
-      cell.slice(this->CurrentStep()).each_col() % cell2GateOutputWeight;
-  if (this->HasPreviousStep())
-  {
-    outputGate +=
-        output2GateOutputWeight * outParameter.slice(this->PreviousStep());
-  }
-  outputGate.each_col() += input2GateOutputBias;
+  // Apply nonlinearity for output gate.
+  outputGate = 1 / (1 + exp(-outputGate));
 
-  outputGateActivation.slice(this->CurrentStep()) =
-      1.0 / (1.0 + exp(-outputGate));
+  // Finally, we can compute the output itself.
+  output = tanh(thisCell) % outputGate;
 
-  cellActivation.slice(this->CurrentStep()) =
-      arma::tanh(cell.slice(this->CurrentStep()));
-
-  // There's a bit of an issue here: we need to preserve the output for the next
-  // time step, but we also need to set `output` to that.  Unfortunately for now
-  // we make a copy, but it's possible that we could instead use an alias here,
-  // or have `outParameter` hold a collection of aliases.
-  outParameter.slice(this->CurrentStep()) =
-      cellActivation.slice(this->CurrentStep()) %
-      outputGateActivation.slice(this->CurrentStep());
-
-  output = outParameter.slice(this->CurrentStep());
+  // If necessary, store the recurrent output.
+  if (!this->AtFinalStep())
+    thisRecurrent = output;
 }
 
 template<typename MatType>
-void LSTMType<MatType>::Backward(
+void LSTM<MatType>::Backward(
     const MatType& /* input */,
-    const MatType& /* output */,
+    const MatType& output,
     const MatType& gy,
     MatType& g)
 {
-  MatType gyLocal;
-  if (this->HasPreviousStep())
+  // Compute backward partial derivatives, defined by the following equations.
+  // Note that there is a little sleight of hand here between non-delta and
+  // delta values.  `o_t`, for instance, refers to the output gate *after* the
+  // nonlinearity was applied.  But `do_t` refers to the delta *before* the
+  // nonlinearity.  In the paper, they use an overbar to highlight this
+  // difference, but I don't have that luxury here in this code.
+  //
+  // dy_t = gy + R_z^T dz_{t + 1} + R_i^T di_{t + 1} + R_f^T df_{t + 1} +
+  //             R_o^T do_{t + 1}
+  //
+  // do_t = dy_t % h(c_t) % (o_t % (1 - o_t))
+  // dc_t = dy_t % o_t % (1 - c_t .^ 2) + p_o % do_t + p_i % di_{t + 1} +
+  //                                      p_f % df_{t + 1} +
+  //                                      dc_{t + 1} % f_{t + 1}
+  //
+  // df_t = dc_t % c_{t - 1} % (f_t % (1 - f_t))
+  // di_t = dc_t % z_t       % (i_t % (1 - i_t))
+  // dz_t = dc_t % i_t       % (1 - z_t .^ 2)
+  //
+  // dx_t = W_z^T dz_t + W_i^T di_t + W_f^T df_t + W_o^T do_t
+  const size_t activeBatchSize = output.n_cols;
+
+  // First attempt...
+  if (this->AtFinalStep())
   {
-    gyLocal = gy + output2GateOutputWeight.t() * outputGateError +
-      output2GateForgetWeight.t() * forgetGateError +
-      output2GateInputWeight.t() * inputGateError +
-      output2HiddenWeight.t() * hiddenError;
+    deltaY = gy;
   }
   else
   {
-    // Make an alias.
-    gyLocal = MatType(((MatType&) gy).memptr(), gy.n_rows, gy.n_cols,
-        false, false);
+    deltaY = gy + recurrentBlockInputWeight.t() * nextDeltaBlockInput +
+                  recurrentInputGateWeight.t() * nextDeltaInputGate +
+                  recurrentForgetGateWeight.t() * nextDeltaForgetGate +
+                  recurrentOutputGateWeight.t() * nextDeltaOutputGate;
   }
 
-  outputGateError = gyLocal % cellActivation.slice(this->CurrentStep()) %
-      (outputGateActivation.slice(this->CurrentStep()) %
-      (1.0 - outputGateActivation.slice(this->CurrentStep())));
+  deltaOutputGate = deltaY % tanh(thisCell) % (outputGate % (1 - outputGate));
 
-  MatType cellError = gyLocal %
-      outputGateActivation.slice(this->CurrentStep()) %
-      (1 - pow(cellActivation.slice(this->CurrentStep()), 2)) +
-      outputGateError.each_col() % cell2GateOutputWeight;
-
-  if (this->HasPreviousStep())
+  // Only first two terms if at final step
+  if (this->AtFinalStep())
   {
-    cellError += inputCellError;
-  }
-
-  if (this->HasPreviousStep())
-  {
-    forgetGateError = cell.slice(this->PreviousStep()) % cellError %
-        (forgetGateActivation.slice(this->CurrentStep()) %
-        (1.0 - forgetGateActivation.slice(this->CurrentStep())));
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
+        repmat(peepholeOutputGateWeight, 1, activeBatchSize) % deltaOutputGate;
   }
   else
   {
-    forgetGateError.zeros(forgetGateActivation.n_rows,
-        forgetGateActivation.n_cols);
+    deltaCell = deltaY % outputGate % (1 - square(tanh(thisCell))) +
+        repmat(peepholeOutputGateWeight, 1, activeBatchSize) % deltaOutputGate +
+        repmat(peepholeInputGateWeight, 1, activeBatchSize) %
+            nextDeltaInputGate +
+        repmat(peepholeForgetGateWeight, 1, activeBatchSize) %
+            nextDeltaForgetGate +
+        nextDeltaCell % nextForgetGate;
   }
 
-  inputGateError = hiddenLayerActivation.slice(this->CurrentStep()) %
-      cellError % (inputGateActivation.slice(this->CurrentStep()) %
-      (1.0 - inputGateActivation.slice(this->CurrentStep())));
+  if (this->HasPreviousStep())
+    deltaForgetGate = deltaCell % prevCell % (forgetGate % (1 - forgetGate));
+  else
+    deltaForgetGate.zeros();
+  deltaInputGate = deltaCell % blockInput % (inputGate % (1 - inputGate));
+  deltaBlockInput = deltaCell % inputGate % (1 - square(blockInput));
 
-  hiddenError = inputGateActivation.slice(this->CurrentStep()) % cellError %
-      (1 - pow(hiddenLayerActivation.slice(this->CurrentStep()), 2));
+  // Finally, compute deltaX (which is what we wanted all along).
+  g = blockInputWeight.t() * deltaBlockInput +
+      inputGateWeight.t() * deltaInputGate +
+      forgetGateWeight.t() * deltaForgetGate +
+      outputGateWeight.t() * deltaOutputGate;
 
-  inputCellError = forgetGateActivation.slice(this->CurrentStep()) % cellError +
-      forgetGateError.each_col() % cell2GateForgetWeight +
-      inputGateError.each_col() % cell2GateInputWeight;
-
-  g = input2GateInputWeight.t() * inputGateError +
-      input2HiddenWeight.t() * hiddenError +
-      input2GateForgetWeight.t() * forgetGateError +
-      input2GateOutputWeight.t() * outputGateError;
+  // Save this alias for later.
+  MakeAlias(thisY, output, output.n_rows, output.n_cols);
 }
 
 template<typename MatType>
-void LSTMType<MatType>::Gradient(
+void LSTM<MatType>::Gradient(
     const MatType& input,
     const MatType& /* error */,
     MatType& gradient)
 {
-  // This implementation depends on Gradient() being called just after
-  // Backward(), which is something we can safely assume.
+  // In this implementation we won't use aliases; we'll just address the correct
+  // part of the gradient directly.
 
-  // Input2GateOutputWeight and input2GateOutputBias gradients.
-  gradient.submat(0, 0, input2GateOutputWeight.n_elem - 1, 0) =
-      vectorise(outputGateError * input.t());
-  gradient.submat(input2GateOutputWeight.n_elem, 0,
-      input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem - 1, 0) =
-      sum(outputGateError, 1);
-  size_t offset = input2GateOutputWeight.n_elem + input2GateOutputBias.n_elem;
+  // dW_z = < dz_t, x_t >
+  gradient.submat(0, 0, blockInputWeight.n_elem - 1, 0) =
+      vectorise(deltaBlockInput * input.t());
+  size_t offset = blockInputWeight.n_elem;
+  // dW_i = < di_t, x_t >
+  gradient.submat(offset, 0, offset + inputGateWeight.n_elem - 1, 0) =
+      vectorise(deltaInputGate * input.t());
+  offset += inputGateWeight.n_elem;
+  // dW_f = < df_t, x_t >
+  gradient.submat(offset, 0, offset + forgetGateWeight.n_elem - 1, 0) =
+      vectorise(deltaForgetGate * input.t());
+  offset += forgetGateWeight.n_elem;
+  // dW_o = < do_t, x_t >
+  gradient.submat(offset, 0, offset + outputGateWeight.n_elem - 1, 0) =
+      vectorise(deltaOutputGate * input.t());
+  offset += outputGateWeight.n_elem;
 
-  // input2GateForgetWeight and input2GateForgetBias gradients.
-  gradient.submat(offset, 0, offset + input2GateForgetWeight.n_elem - 1, 0) =
-      vectorise(forgetGateError * input.t());
-  gradient.submat(offset + input2GateForgetWeight.n_elem, 0,
-      offset + input2GateForgetWeight.n_elem +
-      input2GateForgetBias.n_elem - 1, 0) = sum(forgetGateError, 1);
-  offset += input2GateForgetWeight.n_elem + input2GateForgetBias.n_elem;
+  // db_z = sum(dz_t)
+  gradient.submat(offset, 0, offset + blockInputBias.n_elem - 1, 0) =
+      sum(deltaBlockInput, 1);
+  offset += blockInputBias.n_elem;
+  // db_i = sum(di_t)
+  gradient.submat(offset, 0, offset + inputGateBias.n_elem - 1, 0) =
+      sum(deltaInputGate, 1);
+  offset += inputGateBias.n_elem;
+  // db_f = sum(df_t)
+  gradient.submat(offset, 0, offset + forgetGateBias.n_elem - 1, 0) =
+      sum(deltaForgetGate, 1);
+  offset += forgetGateBias.n_elem;
+  // db_o = sum(do_t)
+  gradient.submat(offset, 0, offset + outputGateBias.n_elem - 1, 0) =
+      sum(deltaOutputGate, 1);
+  offset += outputGateBias.n_elem;
 
-  // input2GateInputWeight and input2GateInputBias gradients.
-  gradient.submat(offset, 0, offset + input2GateInputWeight.n_elem - 1, 0) =
-      vectorise(inputGateError * input.t());
-  gradient.submat(offset + input2GateInputWeight.n_elem, 0,
-      offset + input2GateInputWeight.n_elem +
-      input2GateInputBias.n_elem - 1, 0) = sum(inputGateError, 1);
-  offset += input2GateInputWeight.n_elem + input2GateInputBias.n_elem;
+  // For the recurrent weights, the gradient does not apply at the first time
+  // step.
 
-  // input2HiddenWeight and input2HiddenBias gradients.
-  gradient.submat(offset, 0, offset + input2HiddenWeight.n_elem - 1, 0) =
-      vectorise(hiddenError * input.t());
-  gradient.submat(offset + input2HiddenWeight.n_elem, 0,
-      offset + input2HiddenWeight.n_elem + input2HiddenBias.n_elem - 1, 0) =
-      sum(hiddenError, 1);
-  offset += input2HiddenWeight.n_elem + input2HiddenBias.n_elem;
-
-  // output2GateOutputWeight gradients.
-  gradient.submat(offset, 0, offset + output2GateOutputWeight.n_elem - 1, 0) =
-      vectorise(outputGateError * outParameter.slice(this->CurrentStep()).t());
-  offset += output2GateOutputWeight.n_elem;
-
-  // output2GateForgetWeight gradients.
-  gradient.submat(offset, 0, offset + output2GateForgetWeight.n_elem - 1, 0) =
-      vectorise(forgetGateError * outParameter.slice(this->CurrentStep()).t());
-  offset += output2GateForgetWeight.n_elem;
-
-  // output2GateInputWeight gradients.
-  gradient.submat(offset, 0, offset + output2GateInputWeight.n_elem - 1, 0) =
-      vectorise(inputGateError * outParameter.slice(this->CurrentStep()).t());
-  offset += output2GateInputWeight.n_elem;
-
-  // output2HiddenWeight gradients.
-  gradient.submat(offset, 0, offset + output2HiddenWeight.n_elem - 1, 0) =
-      vectorise(hiddenError * outParameter.slice(this->CurrentStep()).t());
-  offset += output2HiddenWeight.n_elem;
-
-  // cell2GateOutputWeight gradients.
-  gradient.submat(offset, 0, offset + cell2GateOutputWeight.n_elem - 1, 0) =
-      sum(outputGateError % cell.slice(this->CurrentStep()), 1);
-  offset += cell2GateOutputWeight.n_elem;
-
-  // cell2GateForgetWeight and cell2GateInputWeight gradients.
-  if (this->HasPreviousStep())
+  if (!this->AtFinalStep())
   {
-    gradient.submat(offset, 0, offset + cell2GateForgetWeight.n_elem - 1, 0) =
-        sum(forgetGateError % cell.slice(this->PreviousStep()), 1);
-    gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
-        cell2GateForgetWeight.n_elem + cell2GateInputWeight.n_elem - 1, 0) =
-        sum(inputGateError % cell.slice(this->PreviousStep()), 1);
+    // dR_z = < dz_{t + 1}, y_t >
+    gradient.submat(offset, 0,
+                    offset + recurrentBlockInputWeight.n_elem - 1, 0) =
+        vectorise(nextDeltaBlockInput * thisY.t());
+    offset += recurrentBlockInputWeight.n_elem;
+
+    // dR_i = < di_{t + 1}, y_t >
+    gradient.submat(offset, 0,
+                    offset + recurrentInputGateWeight.n_elem - 1, 0) =
+        vectorise(nextDeltaInputGate * thisY.t());
+    offset += recurrentInputGateWeight.n_elem;
+
+    // dR_f = < df_{t + 1}, y_t >
+    gradient.submat(offset, 0,
+                    offset + recurrentForgetGateWeight.n_elem - 1, 0) =
+        vectorise(nextDeltaForgetGate * thisY.t());
+    offset += recurrentForgetGateWeight.n_elem;
+
+    // dR_o = < do_{t + 1}, y_t>
+    gradient.submat(offset, 0,
+                    offset + recurrentOutputGateWeight.n_elem - 1, 0) =
+        vectorise(nextDeltaOutputGate * thisY.t());
+    offset += recurrentOutputGateWeight.n_elem;
   }
   else
   {
-    gradient.submat(offset, 0, offset +
-        cell2GateForgetWeight.n_elem - 1, 0).zeros();
-    gradient.submat(offset + cell2GateForgetWeight.n_elem, 0, offset +
-        cell2GateForgetWeight.n_elem +
-        cell2GateInputWeight.n_elem - 1, 0).zeros();
+    offset += recurrentBlockInputWeight.n_elem +
+        recurrentInputGateWeight.n_elem +
+        recurrentForgetGateWeight.n_elem +
+        recurrentOutputGateWeight.n_elem;
+  }
+
+  // Finally, the peephole connection gradients.
+
+  // dp_i = c_t % di_{t + 1}
+  if (!this->AtFinalStep())
+  {
+    gradient.submat(offset, 0,
+                    offset + peepholeInputGateWeight.n_elem - 1, 0) =
+        sum(thisCell % nextDeltaInputGate, 1);
+  }
+  offset += peepholeInputGateWeight.n_elem;
+
+  // dp_f = c_t % df_{t + 1}
+  if (!this->AtFinalStep())
+  {
+    gradient.submat(offset, 0,
+                    offset + peepholeForgetGateWeight.n_elem - 1, 0) =
+        sum(thisCell % nextDeltaForgetGate, 1);
+  }
+  offset += peepholeForgetGateWeight.n_elem;
+
+  // dp_o = c_t % do_t
+  gradient.submat(offset, 0,
+                  offset + peepholeOutputGateWeight.n_elem - 1, 0) =
+      sum(thisCell % deltaOutputGate, 1);
+}
+
+template<typename MatType>
+size_t LSTM<MatType>::WeightSize() const
+{
+  return 4 * inSize * outSize /* input weight connections */ +
+      4 * outSize /* input bias */ +
+      4 * outSize * outSize /* recurrent weight connections */ +
+      3 * outSize /* peephole connections */;
+}
+
+template<typename MatType>
+size_t LSTM<MatType>::RecurrentSize() const
+{
+  // We have to account for the cell, recurrent connection, and the four
+  // internal matrices: block input, input gate, forget gate, and output gate.
+  // Technically those last four are not recurrent connections, but we use them
+  // as 'stored state' that we compute in Forward() and then access in
+  // Backward().
+  return 6 * outSize;
+}
+
+template<typename MatType>
+void LSTM<MatType>::OnStepChanged(const size_t step,
+                                  const size_t batchSize,
+                                  const size_t activeBatchSize,
+                                  const bool backwards)
+{
+  // Make all of the aliases for internal state point to the correct place.
+  MatType& state = this->RecurrentState(step);
+
+  // First make aliases for the recurrent connections.
+  MakeAlias(thisRecurrent, state, outSize, activeBatchSize);
+  MakeAlias(thisCell, state, outSize, activeBatchSize, outSize * batchSize);
+
+  // Now make aliases for the internal state members that we use as scratch
+  // space for computation.
+  MakeAlias(blockInput, state, outSize, activeBatchSize, 2 * outSize *
+      batchSize);
+  MakeAlias(inputGate, state, outSize, activeBatchSize, 3 * outSize *
+      batchSize);
+  MakeAlias(forgetGate, state, outSize, activeBatchSize, 4 * outSize *
+      batchSize);
+  MakeAlias(outputGate, state, outSize, activeBatchSize, 5 * outSize *
+      batchSize);
+
+  // Make aliases for the previous time step, too, if we can.
+  if (this->HasPreviousStep())
+  {
+    MatType& prevState = this->RecurrentState(this->PreviousStep());
+
+    MakeAlias(prevRecurrent, prevState, outSize, activeBatchSize);
+    MakeAlias(prevCell, prevState, outSize, activeBatchSize, outSize *
+        batchSize);
+  }
+
+  // Also set the workspaces for the backwards pass, if requested.
+  if (backwards)
+  {
+    // We need to hold enough space for two time steps.
+    workspace.set_size(12 * outSize, batchSize);
+
+    if (step % 2 == 0)
+    {
+      MakeAlias(deltaY, workspace, outSize, activeBatchSize);
+      MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
+          outSize * batchSize);
+      MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
+          2 * outSize * batchSize);
+      MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
+          3 * outSize * batchSize);
+      MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
+          4 * outSize * batchSize);
+      MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
+          5 * outSize * batchSize);
+
+      MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize,
+          6 * outSize * batchSize);
+      MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
+          7 * outSize * batchSize);
+      MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
+          8 * outSize * batchSize);
+      MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
+          9 * outSize * batchSize);
+      MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
+          10 * outSize * batchSize);
+      MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
+          11 * outSize * batchSize);
+    }
+    else
+    {
+      MakeAlias(nextDeltaY, workspace, outSize, activeBatchSize);
+      MakeAlias(nextDeltaBlockInput, workspace, outSize, activeBatchSize,
+          outSize * batchSize);
+      MakeAlias(nextDeltaInputGate, workspace, outSize, activeBatchSize,
+          2 * outSize * batchSize);
+      MakeAlias(nextDeltaForgetGate, workspace, outSize, activeBatchSize,
+          3 * outSize * batchSize);
+      MakeAlias(nextDeltaOutputGate, workspace, outSize, activeBatchSize,
+          4 * outSize * batchSize);
+      MakeAlias(nextDeltaCell, workspace, outSize, activeBatchSize,
+          5 * outSize * batchSize);
+
+      MakeAlias(deltaY, workspace, outSize, activeBatchSize,
+          6 * outSize * batchSize);
+      MakeAlias(deltaBlockInput, workspace, outSize, activeBatchSize,
+          7 * outSize * batchSize);
+      MakeAlias(deltaInputGate, workspace, outSize, activeBatchSize,
+          8 * outSize * batchSize);
+      MakeAlias(deltaForgetGate, workspace, outSize, activeBatchSize,
+          9 * outSize * batchSize);
+      MakeAlias(deltaOutputGate, workspace, outSize, activeBatchSize,
+          10 * outSize * batchSize);
+      MakeAlias(deltaCell, workspace, outSize, activeBatchSize,
+          11 * outSize * batchSize);
+    }
+
+    if (!this->AtFinalStep())
+    {
+      // To update the cell state, we actually need to use the forget gate
+      // values from the next time step.
+      MakeAlias(nextForgetGate, this->RecurrentState(this->CurrentStep() + 1),
+          outSize, activeBatchSize, 4 * outSize * batchSize);
+    }
   }
 }
 
 template<typename MatType>
 template<typename Archive>
-void LSTMType<MatType>::serialize(Archive& ar, const uint32_t /* version */)
+void LSTM<MatType>::serialize(Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<RecurrentLayer<MatType>>(this));
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
 
-  // Clear recurrent state if we are loading.
+  // Clear internal scratch space if we are loading.
   if (Archive::is_loading::value)
   {
-    inputGateActivation.clear();
-    forgetGateActivation.clear();
-    outputGateActivation.clear();
-    hiddenLayerActivation.clear();
-    cellActivation.clear();
-    forgetGateError.clear();
-    outputGateError.clear();
-    outParameter.clear();
-    inputCellError.clear();
-    inputGateError.clear();
-    hiddenError.clear();
+    workspace.clear();
+
+    deltaY.clear();
+    deltaBlockInput.clear();
+    deltaInputGate.clear();
+    deltaForgetGate.clear();
+    deltaOutputGate.clear();
+    deltaCell.clear();
+
+    nextDeltaY.clear();
+    nextDeltaBlockInput.clear();
+    nextDeltaInputGate.clear();
+    nextDeltaForgetGate.clear();
+    nextDeltaOutputGate.clear();
+    nextDeltaCell.clear();
   }
 }
 

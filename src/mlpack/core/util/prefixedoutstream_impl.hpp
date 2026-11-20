@@ -130,7 +130,8 @@ inline PrefixedOutStream& PrefixedOutStream::operator<<(
   return *this;
 }
 
-inline PrefixedOutStream& PrefixedOutStream::operator<<(std::ios& (*pf)(std::ios&))
+inline PrefixedOutStream& PrefixedOutStream::operator<<(
+    std::ios& (*pf)(std::ios&))
 {
   BaseLogic<std::ios& (*)(std::ios&)>(pf);
   return *this;
@@ -145,7 +146,7 @@ inline PrefixedOutStream& PrefixedOutStream::operator<<(
 
 // For non-Armadillo types.
 template<typename T>
-typename std::enable_if<!arma::is_arma_type<T>::value>::type
+std::enable_if_t<!arma::is_arma_type<T>::value>
 PrefixedOutStream::BaseLogic(const T& val)
 {
   // We will use this to track whether or not we need to terminate at the end of
@@ -253,7 +254,7 @@ PrefixedOutStream::BaseLogic(const T& val)
 
 // For Armadillo types.
 template<typename T>
-typename std::enable_if<arma::is_arma_type<T>::value>::type
+std::enable_if_t<arma::is_arma_type<T>::value>
 PrefixedOutStream::BaseLogic(const T& val)
 {
   // Extract printable object from the input.

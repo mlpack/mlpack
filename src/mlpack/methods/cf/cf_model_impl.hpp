@@ -552,7 +552,7 @@ void CFModel::serialize(Archive& ar, const uint32_t /* version */)
     case QUIC_SVD:
       SerializeHelper<QUIC_SVDPolicy>(ar, cf, normalizationType);
       break;
-    
+
     case BLOCK_KRYLOV_SVD:
       SerializeHelper<BlockKrylovSVDPolicy>(ar, cf, normalizationType);
       break;

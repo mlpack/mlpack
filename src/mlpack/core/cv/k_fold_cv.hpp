@@ -14,6 +14,7 @@
 
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/cv_base.hpp>
+#include <mlpack/core/util/arma_traits.hpp>
 
 namespace mlpack {
 
@@ -96,7 +97,7 @@ class KFoldCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter.
+   * can take a DatasetInfo parameter.
    *
    * @param k Number of folds (should be at least 2).
    * @param xs Data points to cross-validate on.
@@ -107,7 +108,7 @@ class KFoldCV
    */
   KFoldCV(const size_t k,
           const MatType& xs,
-          const data::DatasetInfo& datasetInfo,
+          const DatasetInfo& datasetInfo,
           const PredictionsType& ys,
           const size_t numClasses,
           const bool shuffle = true);
@@ -149,7 +150,7 @@ class KFoldCV
 
   /**
    * This constructor can be used for multiclass classification algorithms that
-   * can take a data::DatasetInfo parameter and support weighted learning.
+   * can take a DatasetInfo parameter and support weighted learning.
    *
    * @param k Number of folds (should be at least 2).
    * @param xs Data points to cross-validate on.
@@ -161,7 +162,7 @@ class KFoldCV
    */
   KFoldCV(const size_t k,
           const MatType& xs,
-          const data::DatasetInfo& datasetInfo,
+          const DatasetInfo& datasetInfo,
           const PredictionsType& ys,
           const size_t numClasses,
           const WeightsType& weights,
@@ -189,7 +190,7 @@ class KFoldCV
    * the model type.
    */
   template<bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   void Shuffle();
 
   /**
@@ -197,7 +198,7 @@ class KFoldCV
    * model type.
    */
   template<bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   void Shuffle();
 
@@ -257,7 +258,7 @@ class KFoldCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = !Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type>
+           typename = std::enable_if_t<Enabled>>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 
   /**
@@ -265,7 +266,7 @@ class KFoldCV
    */
   template<typename... MLAlgorithmArgs,
            bool Enabled = Base::MIE::SupportsWeights,
-           typename = typename std::enable_if<Enabled>::type,
+           typename = std::enable_if_t<Enabled>,
            typename = void>
   double TrainAndEvaluate(const MLAlgorithmArgs& ...mlAlgorithmArgs);
 
@@ -280,30 +281,38 @@ class KFoldCV
   /**
    * Get the ith training subset from a variable of a matrix type.
    */
-  template<typename ElementType>
-  inline arma::Mat<ElementType> GetTrainingSubset(arma::Mat<ElementType>& m,
-                                                  const size_t i);
+  template<typename SubsetMatType>
+  inline SubsetMatType GetTrainingSubset(
+      SubsetMatType& m,
+      const size_t i,
+      const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>* = 0);
 
   /**
    * Get the ith training subset from a variable of a row type.
    */
-  template<typename ElementType>
-  inline arma::Row<ElementType> GetTrainingSubset(arma::Row<ElementType>& r,
-                                                  const size_t i);
+  template<typename SubsetRowType>
+  inline SubsetRowType GetTrainingSubset(
+      SubsetRowType& r,
+      const size_t i,
+      const typename std::enable_if_t<IsRow<SubsetRowType>::value>* = 0);
 
   /**
    * Get the ith validation subset from a variable of a matrix type.
    */
-  template<typename ElementType>
-  inline arma::Mat<ElementType> GetValidationSubset(arma::Mat<ElementType>& m,
-                                                    const size_t i);
+  template<typename SubsetMatType>
+  inline SubsetMatType GetValidationSubset(
+      SubsetMatType& m,
+      const size_t i,
+      const typename std::enable_if_t<IsMatrix<SubsetMatType>::value>* = 0);
 
   /**
    * Get the ith validation subset from a variable of a row type.
    */
-  template<typename ElementType>
-  inline arma::Row<ElementType> GetValidationSubset(arma::Row<ElementType>& r,
-                                                    const size_t i);
+  template<typename SubsetRowType>
+  inline SubsetRowType GetValidationSubset(
+      SubsetRowType& r,
+      const size_t i,
+      const typename std::enable_if_t<IsRow<SubsetRowType>::value>* = 0);
 };
 
 } // namespace mlpack

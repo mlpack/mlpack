@@ -62,7 +62,7 @@ TEST_CASE("NnsNodeToNodeDistance", "[SortPolicyTest]")
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::mat dataset("1");
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType nodeOne(dataset);
   arma::vec utility(1);
   utility[0] = 0;
@@ -118,7 +118,7 @@ TEST_CASE("NnsPointToNodeDistance", "[SortPolicyTest]")
   utility[0] = 0;
 
   arma::mat dataset("1");
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType node(dataset);
   node.Bound() = HRectBound<EuclideanDistance>(1);
   node.Bound() |= utility;
@@ -191,7 +191,7 @@ TEST_CASE("FnsNodeToNodeDistance", "[SortPolicyTest]")
   utility[0] = 0;
 
   arma::mat dataset("1");
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType nodeOne(dataset);
   nodeOne.Bound() = HRectBound<EuclideanDistance>(1);
   nodeOne.Bound() |= utility;
@@ -243,7 +243,7 @@ TEST_CASE("FnsPointToNodeDistance", "[SortPolicyTest]")
   utility[0] = 0;
 
   arma::mat dataset("1");
-  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, EmptyStatistic, arma::mat>;
   TreeType node(dataset);
   node.Bound() = HRectBound<EuclideanDistance>(1);
   node.Bound() |= utility;

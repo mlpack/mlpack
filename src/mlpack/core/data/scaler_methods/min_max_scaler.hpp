@@ -15,7 +15,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple MinMax Scaler class
@@ -45,9 +44,13 @@ namespace data {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class MinMaxScaler
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * Default constructor
    *
@@ -70,14 +73,13 @@ class MinMaxScaler
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
     itemMin = min(input, 1);
     itemMax = arma::max(input, 1);
     scale = itemMax - itemMin;
     // Handle zeros in scale vector.
-    scale.for_each([](arma::vec::elem_type& val) { val =
+    scale.for_each([](ElemType& val) { val =
         (val == 0) ? 1 : val; });
     scale = (scaleMax - scaleMin) / scale;
     scalerowmin.copy_size(itemMin);
@@ -91,7 +93,6 @@ class MinMaxScaler
    * @param input Dataset to scale features.
    * @param output Output matrix with scaled features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     if (scalerowmin.is_empty() || scale.is_empty())
@@ -109,7 +110,6 @@ class MinMaxScaler
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output.copy_size(input);
@@ -117,15 +117,15 @@ class MinMaxScaler
   }
 
   //! Get the Min row vector.
-  const arma::vec& ItemMin() const { return itemMin; }
+  const VecType& ItemMin() const { return itemMin; }
   //! Get the Max row vector.
-  const arma::vec& ItemMax() const { return itemMax; }
+  const VecType& ItemMax() const { return itemMax; }
   //! Get the Scale row vector.
-  const arma::vec& Scale() const { return scale; }
+  const VecType& Scale() const { return scale; }
   //! Get the upper range parameter.
-  double ScaleMax() const { return scaleMax; }
+  ElemType ScaleMax() const { return scaleMax; }
   //! Get the lower range parameter.
-  double ScaleMin() const { return scaleMin; }
+  ElemType ScaleMin() const { return scaleMin; }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -140,20 +140,19 @@ class MinMaxScaler
 
  private:
   // Vector which holds minimum of each feature.
-  arma::vec itemMin;
+  VecType itemMin;
   // Vector which holds maximum of each feature.
-  arma::vec itemMax;
+  VecType itemMax;
   // Scale vector which is used to scale up each feature.
-  arma::vec scale;
+  VecType scale;
   // Lower value for range.
-  double scaleMin;
+  ElemType scaleMin;
   // Upper value for range.
-  double scaleMax;
+  ElemType scaleMax;
   // Column vector of scalemin
-  arma::vec scalerowmin;
+  VecType scalerowmin;
 }; // class MinMaxScaler
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -330,7 +330,8 @@ void FastMKSModel::BuildModel(util::Timers& timers,
   {
     case LINEAR_KERNEL:
       linear = new FastMKS<LinearKernel>(singleMode, naive);
-      BuildFastMKSModel(timers, *linear, kernel, std::move(referenceData), base);
+      BuildFastMKSModel(timers, *linear, kernel, std::move(referenceData),
+          base);
       break;
 
     case POLYNOMIAL_KERNEL:
@@ -341,7 +342,8 @@ void FastMKSModel::BuildModel(util::Timers& timers,
 
     case COSINE_SIMILARITY:
       cosine = new FastMKS<CosineSimilarity>(singleMode, naive);
-      BuildFastMKSModel(timers, *cosine, kernel, std::move(referenceData), base);
+      BuildFastMKSModel(timers, *cosine, kernel, std::move(referenceData),
+          base);
       break;
 
     case GAUSSIAN_KERNEL:
@@ -363,7 +365,8 @@ void FastMKSModel::BuildModel(util::Timers& timers,
 
     case HYPTAN_KERNEL:
       hyptan = new FastMKS<HyperbolicTangentKernel>(singleMode, naive);
-      BuildFastMKSModel(timers, *hyptan, kernel, std::move(referenceData), base);
+      BuildFastMKSModel(timers, *hyptan, kernel, std::move(referenceData),
+          base);
       break;
   }
 }

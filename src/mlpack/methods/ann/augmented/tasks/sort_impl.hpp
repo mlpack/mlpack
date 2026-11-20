@@ -57,7 +57,7 @@ inline void SortTask::Generate(arma::field<arma::mat>& input,
       // Generate random uniform length from [2..maxLength].
       size = RandInt(2, maxLength+1);
     }
-    input(i) = randi<arma::mat>(bitLen, size, arma::distr_param(0, 1));
+    input(i) = randi<arma::mat>(bitLen, size, DistrParam(0, 1));
     arma::mat itemAns(bitLen, size);
     arma::colvec vals(size);
     for (size_t j = 0; j < size; ++j)

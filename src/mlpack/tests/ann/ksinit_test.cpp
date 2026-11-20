@@ -225,9 +225,9 @@ TEST_CASE("IrisDataset", "[KSInitialization]")
 
   arma::mat dataset, labels;
 
-  if (!data::Load("iris.csv", dataset))
+  if (!Load("iris.csv", dataset))
     FAIL("Cannot load dataset iris.csv");
-  if (!data::Load("iris_labels.txt", labels))
+  if (!Load("iris_labels.txt", labels))
     FAIL("Cannot load dataset iris_labels.txt");
 
   dataset.insert_rows(dataset.n_rows, labels);
@@ -266,7 +266,7 @@ TEST_CASE("IrisDataset", "[KSInitialization]")
  * Kathirvalavakumar Subavathi Initialization Test case for
  * the Non Linear Function Approximation Problem.
  */
-TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization]")
+TEST_CASE("NonLinearFunctionApproximation", "[KSInitialization][long]")
 {
   double trainErrorThreshold = 0.0045;
   double validationErrorThreshold = 0.0045;

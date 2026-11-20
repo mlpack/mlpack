@@ -1,6 +1,7 @@
 /**
  * @file core/data/load_impl.hpp
  * @author Ryan Curtin
+ * @author Omar Shrit
  * @author Gopi Tatiraju
  *
  * Implementation of templatized load() function defined in load.hpp.
@@ -16,426 +17,227 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
-#include <algorithm>
-#include <exception>
-
-#include "extension.hpp"
-#include "detect_file_type.hpp"
-#include "string_algorithms.hpp"
-
 namespace mlpack {
-namespace data {
 
-namespace details{
-
-template<typename Tokenizer>
-std::vector<std::string> ToTokens(Tokenizer& lineTok)
-{
-  std::vector<std::string> tokens;
-  std::transform(std::begin(lineTok), std::end(lineTok),
-                 std::back_inserter(tokens),
-                 [&tokens](std::string const &str)
-  {
-    std::string trimmedToken(str);
-    Trim(trimmedToken);
-    return std::move(trimmedToken);
-  });
-
-  return tokens;
-}
-
-inline
-void TransposeTokens(std::vector<std::vector<std::string>> const &input,
-                     std::vector<std::string>& output,
-                     size_t index)
-{
-  output.clear();
-  for (size_t i = 0; i != input.size(); ++i)
-  {
-    output.emplace_back(input[i][index]);
-  }
-}
-
-} // namespace details
-
-template <typename MatType>
-bool inline inplace_transpose(MatType& X, bool fatal)
-{
-  try
-  {
-    X = trans(X);
-    return true;
-  }
-  catch (const std::exception& e)
-  {
-    if (fatal)
-      Log::Fatal << "\nTranspose Operation Failed.\n"
-          "Exception: " << e.what() << std::endl;
-    else
-      Log::Warn << "\nTranspose Operation Failed.\n"
-          "Exception: " << e.what() << std::endl;
-
-    return false;
-  }
-}
-
-template<typename eT>
+template<typename MatType, typename DataOptionsType>
 bool Load(const std::string& filename,
+          MatType& matrix,
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  DataOptionsType tmpOpts(opts);
+  return Load(filename, matrix, tmpOpts, false);
+}
+
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
           arma::Mat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
+          const DataOptionsType& opts,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  DataOptionsType tmpOpts(opts);
+  return Load(files, matrix, tmpOpts, false);
+}
+
+// We need to change filename to src and matrix to dest
+// src could be a link to URL, filename, any place where the data can be
+// dest, usually matrix, or something else.
+template<typename ObjectType, typename DataOptionsType>
+bool Load(const std::string& src,
+          ObjectType& dest,
+          DataOptionsType& opts,
+          const bool copyBack,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
 {
   Timer::Start("loading_data");
 
-  // Catch nonexistent files by opening the stream ourselves.
+  static_assert(!IsArma<ObjectType>::value || !IsSparseMat<ObjectType>::value
+      || !HasSerialize<ObjectType>::value, "mlpack can load Armadillo"
+      " matrices or serialized mlpack models only; please use a known type.");
+  const bool isMatrixType = IsArma<ObjectType>::value ||
+      IsSparseMat<ObjectType>::value;
+  const bool isSerializable = HasSerialize<ObjectType>::value;
+  const bool isSparseMatrixType = IsSparseMat<ObjectType>::value;
+
   std::fstream stream;
+  std::string filename;
+  bool success = false;
 
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
+  if (CheckIfURL(src))
   {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
-
-  FileType loadType = inputLoadType;
-  std::string stringType;
-  if (inputLoadType == FileType::AutoDetect)
-  {
-    // Attempt to auto-detect the type from the given file.
-    loadType = AutoDetect(stream, filename);
-    // Provide error if we don't know the type.
-    if (loadType == FileType::FileTypeUnknown)
+#ifndef MLPACK_DISABLE_HTTPLIB
+    success = DownloadFileWithCache(src, filename);
+    if (!success)
     {
       Timer::Stop("loading_data");
-      if (fatal)
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed. Incorrect extension?" << std::endl;
-
-      return false;
+      return HandleError("Cannot download the dataset from the provided link. "
+          "Please check the link or the data format.", opts);
     }
-  }
-
-  stringType = GetStringType(loadType);
-
-#ifndef ARMA_USE_HDF5
-  if (inputLoadType == FileType::HDF5Binary)
-  {
-    // Ensure that HDF5 is supported.
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
-    else
-      Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
-          << "Armadillo was compiled without HDF5 support.  Load failed."
-          << std::endl;
-
-    return false;
-  }
+#else
+    return HandleError("httplib support was disabled at compile time "
+        "(MLPACK_DISABLE_HTTPLIB); rebuild without it to download a dataset "
+        "from a URL.", opts);
 #endif
-
-  // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == FileType::RawBinary)
-    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
-        << "but this may not be the actual filetype!" << std::endl;
-  else
-    Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
-        << std::flush;
-
-  // We can't use the stream if the type is HDF5.
-  bool success;
-  LoadCSV loader;
-
-  if (loadType != FileType::HDF5Binary)
-  {
-    if (loadType == FileType::CSVASCII)
-      success = loader.LoadNumericCSV(matrix, stream);
-    else
-      success = matrix.load(stream, ToArmaFileType(loadType));
   }
   else
-    success = matrix.load(filename, ToArmaFileType(loadType));
+  {
+    filename = src;
+  }
 
+  // If the file has a .gz extension, decompress it to a temporary file first.
+  DecompressGzipIfNeeded(filename);
+
+  success = OpenFile(filename, opts, true, stream);
   if (!success)
   {
-    Log::Info << std::endl;
     Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
-
-    return false;
-  }
-  else
-    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
-
-  // Now transpose the matrix, if necessary.
-  if (transpose)
-  {
-    success = inplace_transpose(matrix, fatal);
-  }
-
-  Timer::Stop("loading_data");
-
-  // Finally, return the success indicator.
-  return success;
-}
-
-// Load with mappings.  Unfortunately we have to implement this ourselves.
-template<typename eT, typename PolicyType>
-bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
-          DatasetMapper<PolicyType>& info,
-          const bool fatal,
-          const bool transpose)
-{
-  // Get the extension and load as necessary.
-  Timer::Start("loading_data");
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-  stream.open(filename.c_str(), std::fstream::in);
-
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
     return false;
   }
 
-  if (extension == "csv" || extension == "tsv" || extension == "txt")
+  success = DetectFileType<ObjectType>(filename, opts, true, &stream);
+  if (!success)
   {
-    Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
-    try
-    {
-      LoadCSV loader(filename);
-      loader.LoadCategoricalCSV(matrix, info, transpose);
-    }
-    catch (std::exception& e)
-    {
-      Timer::Stop("loading_data");
-      if (fatal)
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
-      return false;
-    }
+    Timer::Stop("loading_data");
+    return false;
   }
-  else if (extension == "arff")
-  {
-    Log::Info << "Loading '" << filename << "' as ARFF dataset.  "
-        << std::flush;
-    try
-    {
-      LoadARFF(filename, matrix, info);
+  const bool isAudioFormat = opts.Format() == FileType::WAV ||
+      opts.Format() == FileType::MP3;
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
 
-      // We transpose by default.  So, un-transpose if necessary...
-      if (!transpose)
+  if constexpr (isMatrixType)
+  {
+    if (isImageFormat)
+    {
+      if constexpr (isSparseMatrixType)
       {
-        return inplace_transpose(matrix, fatal);
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, tmp, imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
+      }
+      else
+      {
+        ImageOptions imgOpts(std::move(opts));
+        std::vector<std::string> files;
+        files.push_back(filename);
+        success = LoadImage(files, dest, imgOpts);
+        if (copyBack)
+          opts = std::move(imgOpts);
       }
     }
-    catch (std::exception& e)
+    else if (isAudioFormat)
     {
-      Timer::Stop("loading_data");
-      if (fatal)
-        Log::Fatal << e.what() << std::endl;
-      else
-        Log::Warn << e.what() << std::endl;
-
-      return false;
-    }
-  }
-  else
-  {
-    // The type is unknown.
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Unable to detect type of '" << filename << "'; "
-          << "incorrect extension?" << std::endl;
-    else
-      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
-          << " Incorrect extension?" << std::endl;
-
-    return false;
-  }
-
-  Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-      << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
-
-  Timer::Stop("loading_data");
-
-  return true;
-}
-
-// For loading data into sparse matrix
-template <typename eT>
-bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
-          const bool fatal,
-          const bool transpose,
-          const FileType inputLoadType)
-{
-  Timer::Start("loading_data");
-
-  // Get the extension.
-  std::string extension = Extension(filename);
-
-  // Catch nonexistent files by opening the stream ourselves.
-  std::fstream stream;
-#ifdef  _WIN32 // Always open in binary mode on Windows.
-  stream.open(filename.c_str(), std::fstream::in | std::fstream::binary);
-#else
-  stream.open(filename.c_str(), std::fstream::in);
-#endif
-  if (!stream.is_open())
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
-    else
-      Log::Warn << "Cannot open file '" << filename << "'; load failed."
-          << std::endl;
-
-    return false;
-  }
-
-  FileType loadType = inputLoadType;
-  std::string stringType;
-  if (inputLoadType == FileType::AutoDetect)
-  {
-    // Attempt to auto-detect the type from the given file.
-    loadType = AutoDetect(stream, filename);
-    // Provide an error if we don't know the type, or if the type can't be used
-    // to load sparse matrices.
-    if (loadType == FileType::FileTypeUnknown)
-    {
-      if (fatal)
-        Log::Fatal << "Unable to detect type of '" << filename << "'; "
-            << "incorrect extension?" << std::endl;
-      else
-        Log::Warn << "Unable to detect type of '" << filename << "'; load "
-            << "failed. Incorrect extension?" << std::endl;
-
-      return false;
-    }
-
-    // There is still a small amount of differentiation that needs to be done:
-    // if we got a text type, it could be a coordinate list.  We will make an
-    // educated guess based on the shape of the input.
-    if (loadType == FileType::RawASCII)
-    {
-      // Get the number of columns in the file.  If it is the right shape, we
-      // will assume it is sparse.
-      const size_t cols = CountCols(stream);
-      if (cols == 3)
+      if constexpr (isSparseMatrixType)
       {
-        // We have the right number of columns, so assume the type is a
-        // coordinate list.
-        loadType = FileType::CoordASCII;
+        // Assuming dest is a sparse matrix.
+        arma::Mat<typename ObjectType::elem_type> tmp;
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(filename, tmp, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
+
+        dest = arma::conv_to<ObjectType>::from(tmp);
+      }
+      else
+      {
+        AudioOptions audOpts(std::move(opts));
+        success = LoadAudio(filename, dest, audOpts);
+        if (copyBack)
+          opts = std::move(audOpts);
       }
     }
-  }
-
-  // Filter out invalid types.
-  if ((loadType == FileType::PGMBinary) ||
-      (loadType == FileType::PPMBinary) ||
-      (loadType == FileType::ArmaASCII) ||
-      (loadType == FileType::RawBinary))
-  {
-    if (fatal)
-      Log::Fatal << "Cannot load '" << filename << "' with type "
-          << GetStringType(loadType) << " into a sparse matrix; format is "
-          << "only supported for dense matrices." << std::endl;
-    else
-      Log::Warn << "Cannot load '" << filename << "' with type "
-          << GetStringType(loadType) << " into a sparse matrix; format is "
-          << "only supported for dense matrices; load failed." << std::endl;
-
-    return false;
-  }
-
-  bool success;
-
-  if (loadType == FileType::CSVASCII)
-  {
-    // Armadillo sparse matrices can't load CSVs, so we have to load a separate
-    // matrix to do that.  If the CSV has three columns, we assume it's a
-    // coordinate list.
-    arma::Mat<eT> dense;
-    success = dense.load(stream, ToArmaFileType(loadType));
-    if (dense.n_cols == 3)
-    {
-      arma::umat locations = arma::conv_to<arma::umat>::from(
-          dense.cols(0, 1).t());
-      matrix = arma::SpMat<eT>(locations, dense.col(2));
-    }
     else
     {
-      matrix = arma::conv_to<arma::SpMat<eT>>::from(dense);
+      TextOptions txtOpts(std::move(opts));
+      success = LoadNumeric(filename, dest, stream, txtOpts);
+      if (copyBack)
+        opts = std::move(txtOpts);
     }
+  }
+  else if constexpr (isSerializable)
+  {
+    success = LoadModel(dest, opts, stream);
   }
   else
   {
-    success = matrix.load(stream, ToArmaFileType(loadType));
+    return HandleError("DataOptionsType is unknown!  Please use a known type "
+        "or provide specific overloads.", opts);
   }
 
   if (!success)
   {
-    Log::Info << std::endl;
     Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
-    else
-      Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
-
-    return false;
+    std::stringstream oss;
+    oss << "Loading from '" << filename << "' failed.";
+    return HandleError(oss, opts);
   }
   else
   {
-    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
-        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
-  }
-
-  // Now transpose the matrix, if necessary.
-  if (transpose)
-  {
-    success = inplace_transpose(matrix, fatal);
+    if constexpr (IsArma<ObjectType>::value)
+    {
+      Log::Info << "Size is " << dest.n_rows << " x "
+          << dest.n_cols << ".\n";
+    }
   }
 
   Timer::Stop("loading_data");
 
-  // Finally, return the success indicator.
   return success;
 }
 
-} // namespace data
+template<typename eT, typename DataOptionsType>
+bool Load(const std::vector<std::string>& files,
+          arma::Mat<eT>& matrix,
+          DataOptionsType& opts,
+          const bool copyBack,
+          const typename std::enable_if_t<
+              IsDataOptions<DataOptionsType>::value>*)
+{
+  bool success = false;
+  if (files.empty())
+  {
+    return HandleError("Load(): given set of filenames is empty;"
+        " loading failed.", opts);
+  }
+
+  DetectFromExtension<arma::Mat<eT>>(files.back(), opts);
+
+  const bool isImageFormat = (opts.Format() == FileType::PNG ||
+      opts.Format() == FileType::JPG || opts.Format() == FileType::PNM ||
+      opts.Format() == FileType::BMP || opts.Format() == FileType::GIF ||
+      opts.Format() == FileType::PSD || opts.Format() == FileType::TGA ||
+      opts.Format() == FileType::PIC || opts.Format() == FileType::ImageType);
+
+  if (isImageFormat)
+  {
+    ImageOptions imgOpts(std::move(opts));
+    success = LoadImage(files, matrix, imgOpts);
+    if (copyBack)
+      opts = std::move(imgOpts);
+  }
+  else
+  {
+    TextOptions txtOpts(std::move(opts));
+    success = LoadNumericMultifile(files, matrix, txtOpts);
+    if (copyBack)
+      opts = std::move(txtOpts);
+  }
+  return success;
+}
+
 } // namespace mlpack
 
 #endif

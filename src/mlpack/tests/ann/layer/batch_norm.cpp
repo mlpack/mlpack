@@ -15,7 +15,6 @@
 
 #include "../../test_catch_tools.hpp"
 #include "../../catch.hpp"
-#include "../../serialization.hpp"
 #include "../ann_test_tools.hpp"
 
 using namespace mlpack;
@@ -25,7 +24,7 @@ using namespace mlpack;
  * the values from another implementation.
  * Link to the implementation - http://cthorey.github.io./backpropagation/
  */
-TEST_CASE("BatchNormTest", "[ANNLayerTest]")
+TEST_CASE("BatchNormTest", "[ANNLayerTest][tiny]")
 {
   arma::mat output;
   arma::mat input = { { 5.1, 3.5, 1.4 },
@@ -57,7 +56,7 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   input.reshape(9, 1);
   module1.Forward(input, output);
 
- // Value calculates using torch.nn.BatchNorm1d(momentum = None).
+  // Value calculates using torch.nn.BatchNorm1d(momentum = None).
   arma::mat result;
   output.reshape(3, 3);
   result = { { 1.1658, 0.1100, -1.2758 },
@@ -73,13 +72,13 @@ TEST_CASE("BatchNormTest", "[ANNLayerTest]")
   result.clear();
   output.clear();
 
- // Values calculated using torch.nn.BatchNorm1d(momentum = None).
+  // Values calculated using torch.nn.BatchNorm1d(momentum = None).
   output = module1.TrainingMean();
   result = arma::mat({ 3.33333333, 3.1, 3.06666666 }).t();
 
   CheckMatrices(output, result, 1e-1);
 
- // Values calculated using torch.nn.BatchNorm1d().
+  // Values calculated using torch.nn.BatchNorm1d().
   output = module2.TrainingMean();
   result = arma::mat({ 0.3333, 0.3100, 0.3067 }).t();
 
@@ -135,8 +134,8 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        input(arma::randn(32, 2048)),
-        target(arma::zeros(1, 2048))
+        input(arma::randn(32, 512)),
+        target(arma::zeros(1, 512))
     {
       model = new FFN<NegativeLogLikelihood, NguyenWidrowInitialization>();
       model->ResetData(input, target);
@@ -153,8 +152,8 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
 
     double Gradient(arma::mat& gradient) const
     {
-      double error = model->Evaluate(model->Parameters(), 0, 2048);
-      model->Gradient(model->Parameters(), 0, gradient, 2048);
+      double error = model->Evaluate(model->Parameters(), 0, 512);
+      model->Gradient(model->Parameters(), 0, gradient, 512);
       return error;
     }
 
@@ -167,52 +166,6 @@ TEST_CASE("GradientBatchNormTest", "[ANNLayerTest]")
   double gradient = CheckGradient(function);
 
   REQUIRE(gradient < 1e-1);
-}
-
-// General ANN serialization test.
-template<typename LayerType>
-void ANNLayerSerializationTest(LayerType& layer)
-{
-  arma::mat input(5, 100, arma::fill::randu);
-  arma::mat output(5, 100, arma::fill::randu);
-
-  FFN<> model;
-  model.Add<Linear>(10);
-  model.Add<LayerType>(layer);
-  model.Add<ReLU>();
-  model.Add<Linear>(output.n_rows);
-  model.Add<LogSoftMax>();
-
-  ens::StandardSGD opt(0.1, 1, 5, -100, false);
-  model.Train(input, output, opt);
-
-  arma::mat originalOutput;
-  model.Predict(input, originalOutput);
-
-  // Now serialize the model.
-  FFN<> xmlModel, jsonModel, binaryModel;
-  SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
-
-  // Ensure that predictions are the same.
-  arma::mat modelOutput, xmlOutput, jsonOutput, binaryOutput;
-  model.Predict(input, modelOutput);
-  xmlModel.Predict(input, xmlOutput);
-  jsonModel.Predict(input, jsonOutput);
-  binaryModel.Predict(input, binaryOutput);
-
-  CheckMatrices(originalOutput, modelOutput, 1e-5);
-  CheckMatrices(originalOutput, xmlOutput, 1e-5);
-  CheckMatrices(originalOutput, jsonOutput, 1e-5);
-  CheckMatrices(originalOutput, binaryOutput, 1e-5);
-}
-
-/**
- * Simple serialization test for batch normalization layer.
- */
-TEST_CASE("BatchNormSerializationTest", "[ANNLayerTest]")
-{
-  BatchNorm layer;
-  ANNLayerSerializationTest(layer);
 }
 
 TEST_CASE("BatchNormWithMinBatchesTest", "[ANNLayerTest]")

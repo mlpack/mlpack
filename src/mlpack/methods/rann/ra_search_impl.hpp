@@ -260,7 +260,7 @@ Search(const MatType& querySet,
   neighborPtr->set_size(k, querySet.n_cols);
   distancePtr->set_size(k, querySet.n_cols);
 
-  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = RASearchRules<SortPolicy, DistanceType, Tree>;
 
   if (naive)
   {
@@ -424,7 +424,7 @@ void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Search(
   distances.set_size(k, querySet.n_cols);
 
   // Create the helper object for the tree traversal.
-  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = RASearchRules<SortPolicy, DistanceType, Tree>;
   RuleType rules(*referenceSet, queryTree->Dataset(), k, distance, tau, alpha,
       naive, sampleAtLeaves, firstLeafExact, singleSampleLimit, false);
 
@@ -476,7 +476,7 @@ void RASearch<SortPolicy, DistanceType, MatType, TreeType>::Search(
   distancePtr->set_size(k, referenceSet->n_cols);
 
   // Create the helper object for the tree traversal.
-  typedef RASearchRules<SortPolicy, DistanceType, Tree> RuleType;
+  using RuleType = RASearchRules<SortPolicy, DistanceType, Tree>;
   RuleType rules(*referenceSet, *referenceSet, k, distance, tau, alpha, naive,
       sampleAtLeaves, firstLeafExact, singleSampleLimit, true /* same sets */);
 

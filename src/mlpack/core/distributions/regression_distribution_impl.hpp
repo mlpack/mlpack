@@ -22,23 +22,26 @@ namespace mlpack {
  *
  * @param observations List of observations.
  */
-inline void RegressionDistribution::Train(const arma::mat& observations)
+template<typename MatType>
+inline void RegressionDistribution<MatType>::Train(const MatType& observations)
 {
-  LinearRegression<> lr(observations.rows(1, observations.n_rows - 1),
-      arma::rowvec(observations.row(0)), 0, true);
+  LinearRegression<MatType> lr(observations.rows(1, observations.n_rows - 1),
+      RowType(observations.row(0)), 0, true);
   rf = lr;
-  arma::rowvec fitted;
+  RowType fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
   err.Train(observations.row(0) - fitted);
 }
 
-inline void RegressionDistribution::Train(const arma::mat& observations,
-                                          const arma::rowvec& weights)
+template<typename MatType>
+inline void RegressionDistribution<MatType>::Train(
+    const MatType& observations,
+    const RowType& weights)
 {
-  LinearRegression<> lr(observations.rows(1, observations.n_rows - 1),
-      arma::rowvec(observations.row(0)), weights, 0, true);
+  LinearRegression<MatType> lr(observations.rows(1, observations.n_rows - 1),
+      RowType(observations.row(0)), weights, 0, true);
   rf = lr;
-  arma::rowvec fitted;
+  RowType fitted;
   lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
   err.Train(observations.row(0) - fitted, weights.t());
 }
@@ -48,16 +51,35 @@ inline void RegressionDistribution::Train(const arma::mat& observations,
  *
  * @param observation Point to evaluate probability at.
  */
-inline double RegressionDistribution::Probability(
-    const arma::vec& observation) const
+template<typename MatType>
+inline typename RegressionDistribution<MatType>::ElemType
+RegressionDistribution<MatType>::Probability(const VecType& observation) const
 {
-  arma::rowvec fitted;
+  RowType fitted;
   rf.Predict(observation.rows(1, observation.n_rows - 1), fitted);
   return err.Probability(observation(0) - fitted.t());
 }
 
-inline void RegressionDistribution::Predict(const arma::mat& points,
-                                            arma::rowvec& predictions) const
+/**
+ * Evaluate probability density function on the given observations.
+ *
+ * @param observation Points to evaluate probability at.
+ * @param probabilities Vector to store computed probabilities in.
+ */
+template<typename MatType>
+inline void RegressionDistribution<MatType>::Probability(
+    const MatType& observations,
+    VecType& probabilities) const
+{
+  probabilities.set_size(observations.n_cols);
+  for (size_t i = 0; i < observations.n_cols; ++i)
+    probabilities[i] = Probability(observations.unsafe_col(i));
+}
+
+template<typename MatType>
+inline void RegressionDistribution<MatType>::Predict(
+    const MatType& points,
+    RowType& predictions) const
 {
   rf.Predict(points, predictions);
 }

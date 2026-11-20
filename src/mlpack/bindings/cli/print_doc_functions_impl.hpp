@@ -202,11 +202,11 @@ inline std::string ProgramCall(util::Params& p, const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+    p.functionMap[it.second.tname]["GetPrintableParamName"](it.second, NULL,
         (void*) &name);
 
     std::string value;
-    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+    p.functionMap[it.second.tname]["DefaultParam"](it.second, NULL,
         (void*) &value);
     if (value == "''")
       value = "<string>";
@@ -231,11 +231,11 @@ inline std::string ProgramCall(util::Params& p, const std::string& programName)
 
     // Otherwise, print the name and the default value.
     std::string name;
-    p.functionMap[it.second.tname]["GetPrintableParamName"]( it.second, NULL,
+    p.functionMap[it.second.tname]["GetPrintableParamName"](it.second, NULL,
         (void*) &name);
 
     std::string value;
-    p.functionMap[it.second.tname]["DefaultParam"]( it.second, NULL,
+    p.functionMap[it.second.tname]["DefaultParam"](it.second, NULL,
         (void*) &value);
     if (value == "''")
       value = "<string>";

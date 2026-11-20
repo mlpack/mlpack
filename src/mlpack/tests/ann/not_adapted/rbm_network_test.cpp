@@ -227,7 +227,7 @@ void BuildVanillaNetwork(MatType& trainData,
   // Check free energy.
   arma::Mat<float> freeEnergy = MatType(
       "-0.87523715, 0.50615066, 0.46923476, 1.21509084;");
-  arma::vec calculatedFreeEnergy(4, arma::fill::zeros);
+  arma::vec calculatedFreeEnergy(4);
   for (size_t i = 0; i < trainData.n_cols; ++i)
   {
     calculatedFreeEnergy(i) = model.FreeEnergy(trainData.col(i));

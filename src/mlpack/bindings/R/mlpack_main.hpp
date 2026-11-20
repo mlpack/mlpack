@@ -52,6 +52,56 @@
 #define PRINT_MODEL mlpack::bindings::r::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::r::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ * For R, this is part of the 'mlpack' package.
+ */
+#define IMPORT_SPLIT mlpack::bindings::r::ImportSplit
+
+/**
+ * IMPORT_THIS() returns a string that imports the current method.
+ * For R, all functions in the package are already accessible.
+ */
+#define IMPORT_THIS(binding, ...) \
+    mlpack::bindings::r::ImportThis(binding, false, __VA_ARGS__)
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET mlpack::bindings::r::GetDataset
+
+/**
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets assuming
+ * integer labels.
+ *
+ * SPLIT_TRAIN_TEST_REGRESSION() does the same, but assumes floating-point
+ * labels.
+ */
+#define SPLIT_TRAIN_TEST(...) \
+    mlpack::bindings::r::SplitTrainTest(true, __VA_ARGS__)
+#define SPLIT_TRAIN_TEST_REGRESSION(...) \
+    mlpack::bindings::r::SplitTrainTest(false, __VA_ARGS__)
+
+/**
+ * CREATE_OBJECT() returns a string that creates an instance of the
+ * class.
+ */
+#define CREATE_OBJECT(...) mlpack::bindings::r::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
+ * CALL_METHOD() returns a string that calls a method of an instance.
+ */
+#define CALL_METHOD(...) mlpack::bindings::r::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of

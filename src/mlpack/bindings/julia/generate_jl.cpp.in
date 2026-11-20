@@ -36,5 +36,6 @@ using namespace mlpack::util;
 int main(int /* argc */, char** /* argv */)
 {
   // All the parameters are registered under the name BINDING_NAME.
-  PrintJL(STRINGIFY(BINDING_NAME), "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
+  PrintJL(STRINGIFY(BINDING_NAME), "${NAME}", "${MLPACK_JL_LIB_SUFFIX}",
+      ${IS_GROUP_BINDING});
 }

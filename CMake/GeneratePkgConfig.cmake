@@ -24,5 +24,5 @@ set(MLPACK_VERSION_STRING
     "${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}")
 
 configure_file(
-    ${CMAKE_BINARY_DIR}/CMake/mlpack.pc.in.partial
-    ${CMAKE_BINARY_DIR}/lib/pkgconfig/mlpack.pc @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/CMake/mlpack.pc.in.partial
+    ${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/mlpack.pc @ONLY)

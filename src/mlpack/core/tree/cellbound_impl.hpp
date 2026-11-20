@@ -18,6 +18,8 @@
 // In case it has not been included yet.
 #include "cellbound.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 /**

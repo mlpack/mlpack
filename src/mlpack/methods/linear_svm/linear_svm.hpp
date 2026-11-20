@@ -79,9 +79,9 @@ template<typename ModelMatType = arma::mat>
 class LinearSVM
 {
  public:
-  typedef typename ModelMatType::elem_type ElemType;
-  typedef typename GetDenseMatType<ModelMatType>::type DenseMatType;
-  typedef typename GetDenseColType<ModelMatType>::type DenseColType;
+  using ElemType = typename ModelMatType::elem_type;
+  using DenseMatType = typename GetDenseMatType<ModelMatType>::type;
+  using DenseColType = typename GetDenseColType<ModelMatType>::type;
 
   /**
    * Initialize the Linear SVM without performing training.  Default
@@ -135,14 +135,14 @@ class LinearSVM
    */
   template<typename OptimizerType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                LinearSVMFunction<arma::mat, ModelMatType>,
                ModelMatType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   LinearSVM(const arma::mat& data,
             const arma::Row<size_t>& labels,
@@ -173,11 +173,11 @@ class LinearSVM
    * @param optimizer Desired optimizer.
    */
   template<typename OptimizerType = ens::L_BFGS,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                LinearSVMFunction<arma::mat, ModelMatType>,
                ModelMatType
-           >::value>::type>
+           >::value>>
   [[deprecated("Will be removed in mlpack 5.0.0, use other constructors")]]
   LinearSVM(const arma::mat& data,
             const arma::Row<size_t>& labels,
@@ -203,9 +203,9 @@ class LinearSVM
    */
   template<typename MatType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses,
@@ -232,9 +232,9 @@ class LinearSVM
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   LinearSVM(const MatType& data,
             const arma::Row<size_t>& labels,
             const size_t numClasses,
@@ -259,9 +259,9 @@ class LinearSVM
    */
   template<typename MatType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
@@ -269,9 +269,9 @@ class LinearSVM
 
   template<typename MatType,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
@@ -299,14 +299,14 @@ class LinearSVM
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                LinearSVMFunction<MatType, ModelMatType>,
                ModelMatType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
@@ -316,14 +316,14 @@ class LinearSVM
   template<typename MatType,
            typename OptimizerType = ens::L_BFGS,
            typename... CallbackTypes,
-           typename = typename std::enable_if<IsEnsOptimizer<
+           typename = std::enable_if_t<IsEnsOptimizer<
                OptimizerType,
                LinearSVMFunction<MatType, ModelMatType>,
                ModelMatType
-           >::value>::type,
-           typename = typename std::enable_if<IsEnsCallbackTypes<
+           >::value>,
+           typename = std::enable_if_t<IsEnsCallbackTypes<
                CallbackTypes...
-           >::value>::type>
+           >::value>>
   ElemType Train(const MatType& data,
                  const arma::Row<size_t>& labels,
                  const size_t numClasses,
@@ -335,9 +335,8 @@ class LinearSVM
 
   /**
    * Classify the given points, returning the predicted labels for each point.
-   * The function calculates the probabilities for every class, given a data
-   * point. It then chooses the class which has the highest probability among
-   * all.
+   * The function calculates the scores for every class, given a data point. It
+   * then chooses the class which has the highest score among all.
    *
    * @param data Set of points to classify.
    * @param labels Predicted labels for each point.
@@ -348,14 +347,15 @@ class LinearSVM
 
   /**
    * Classify the given points, returning class scores and predicted
-   * class label for each point.
-   * The function calculates the scores for every class, given a data
-   * point. It then chooses the class which has the highest probability among
-   * all.
+   * class label for each point.  Note that class scores are not normalized to
+   * [0, 1] (they are not class probabilities); they can take any value.
+   *
+   * The function calculates the scores for every class, given a data point. It
+   * then chooses the class which has the highest score among all.
    *
    * @param data Matrix of data points to be classified.
    * @param labels Predicted labels for each point.
-   * @param scores Class probabilities for each point.
+   * @param scores Class scores for each point.
    */
   template<typename MatType>
   void Classify(const MatType& data,
@@ -376,7 +376,7 @@ class LinearSVM
   /**
    * Classify the given point. The predicted class label is returned.
    * The function calculates the scores for every class, given the point.
-   * It then chooses the class which has the highest probability among all.
+   * It then chooses the class which has the highest score among all.
    *
    * @param point Point to be classified.
    * @return Predicted class label of the point.
@@ -386,17 +386,19 @@ class LinearSVM
 
   /**
    * Classify the given point. The predicted class label is stored in `label`,
-   * and the probability of each class is stored in `probabilities`..
+   * and the score of each class is stored in `scores`.  Note that `scores` are
+   * class scores, not probabilities, and thus may take any value (they are not
+   * limited to the range [0, 1]).
    *
    * @param point Point to be classified.
    * @param label size_t to store predicted label into.
-   * @param probabilities Vector to store class probabilities into.
+   * @param scores Vector to store class scores into.
    * @return Predicted class label of the point.
    */
   template<typename VecType>
   void Classify(const VecType& point,
                 size_t& label,
-                DenseColType& probabilities) const;
+                DenseColType& scores) const;
 
   /**
    * Computes accuracy of the learned model given the feature data and the

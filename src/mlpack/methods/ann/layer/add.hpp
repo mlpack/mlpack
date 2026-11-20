@@ -24,45 +24,33 @@ namespace mlpack {
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
  */
-template<typename MatType>
-class AddType : public Layer<MatType>
+template<typename MatType = arma::mat>
+class Add : public Layer<MatType>
 {
  public:
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
   /**
-   * Create the AddType object.  The output size of the layer will be the same
+   * Create the Add object.  The output size of the layer will be the same
    * as the input size.
    */
-  AddType();
+  Add();
 
-  //! Clone the AddType object. This handles polymorphism correctly.
-  AddType* Clone() const override { return this->CloneAs<MatType>(); }
-
-  // Templated clone function for type conversion.
-  template<typename LayerMatType = MatType>
-  AddType<LayerMatType>* CloneAs() const
-  {
-    auto clonedLayer = new AddType<LayerMatType>();
-    clonedLayer->outSize = this->outSize;
-    clonedLayer->Parameters() = conv_to<LayerMatType>::from(this->Parameters());
-    return clonedLayer;
-  }
+  //! Clone the Add object. This handles polymorphism correctly.
+  Add* Clone() const { return new Add(*this); }
 
   // Virtual destructor.
-  virtual ~AddType() { }
+  virtual ~Add() { }
 
-  //! Copy the given AddType layer.
-  AddType(const AddType& other);
-
-  //! Templated copy constructor.
-  template<typename OtherMatType>
-  AddType(const AddType<OtherMatType>& other);
-  
-  //! Take ownership of the given AddType layer.
-  AddType(AddType&& other);
-  //! Copy the given AddType layer.
-  AddType& operator=(const AddType& other);
-  //! Take ownership of the given AddType layer.
-  AddType& operator=(AddType&& other);
+  //! Copy the given Add layer.
+  Add(const Add& other);
+  //! Take ownership of the given Add layer.
+  Add(Add&& other);
+  //! Copy the given Add layer.
+  Add& operator=(const Add& other);
+  //! Take ownership of the given Add layer.
+  Add& operator=(Add&& other);
 
   /**
    * Forward pass: add the bias to the input.
@@ -124,9 +112,6 @@ class AddType : public Layer<MatType>
   //! Locally-stored weight object.
   MatType weights;
 }; // class Add
-
-// Standard Add layer.
-typedef AddType<arma::mat> Add;
 
 } // namespace mlpack
 

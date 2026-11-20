@@ -50,9 +50,10 @@ class RectifierFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::max(0.0, x);
+    return std::max(ElemType(0), x);
   }
 
   /**
@@ -64,9 +65,7 @@ class RectifierFunction
   template<typename MatType>
   static void Fn(const MatType& x, MatType& y)
   {
-    y.set_size(size(x));
-    y.zeros();
-    y = max(y, x);
+    y = clamp(x, 0, std::numeric_limits<typename MatType::elem_type>::max());
   }
 
   /**
@@ -76,9 +75,10 @@ class RectifierFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
-    return (double)(x > 0);
+    return ElemType(x > 0);
   }
 
   /**
@@ -89,11 +89,11 @@ class RectifierFunction
    * @param dy The resulting derivatives.
    */
   template<typename InputType, typename OutputType, typename DerivType>
-  static void Deriv(const InputType& x,
-                    const OutputType& /* y */,
+  static void Deriv(const InputType& /* x */,
+                    const OutputType& y,
                     DerivType& dy)
   {
-    dy = ConvTo<DerivType>::From(x > 0);
+    dy = sign(y);
   }
 }; // class RectifierFunction
 

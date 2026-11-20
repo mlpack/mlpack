@@ -14,6 +14,7 @@
 
 #include <mlpack/prereqs.hpp>
 #include <queue>
+#include "recursion_sets.hpp"
 
 namespace mlpack {
 
@@ -59,49 +60,18 @@ class CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>::
   //! The number of pruned nodes.
   size_t numPrunes;
 
-  //! Struct used for traversal.
-  struct DualCoverTreeMapEntry
-  {
-    //! The node this entry refers to.
-    CoverTree<DistanceType, StatisticType, MatType, RootPointPolicy>*
-        referenceNode;
-    //! The score of the node.
-    double score;
-    //! The base case.
-    double baseCase;
-    //! The traversal info associated with the call to Score() for this entry.
-    typename RuleType::TraversalInfoType traversalInfo;
+  // Struct used for traversal.
+  typedef DualCoverTreeMapEntry<CoverTree, RuleType> MapEntryType;
 
-    //! Comparison operator, for sorting within the map.
-    bool operator<(const DualCoverTreeMapEntry& other) const
-    {
-      if (score == other.score)
-        return (baseCase < other.baseCase);
-      else
-        return (score < other.score);
-    }
-  };
-
-  /**
-   * Helper function for traversal of the two trees.
-   */
-  void Traverse(
-      CoverTree& queryNode,
-      std::map<int, std::vector<DualCoverTreeMapEntry>,
-          std::greater<int>>& referenceMap);
-
-  //! Prepare map for recursion.
+  // Prepare map for recursion.
   void PruneMap(
       CoverTree& queryNode,
-      std::map<int, std::vector<DualCoverTreeMapEntry>,
-          std::greater<int>>& referenceMap,
-      std::map<int, std::vector<DualCoverTreeMapEntry>,
-          std::greater<int>>& childMap);
+      CoverTreeRecursionSets<MapEntryType, 8>& recursionSets,
+      CoverTreeRecursionSets<MapEntryType, 8>& childRecursionSets);
 
   void ReferenceRecursion(
       CoverTree& queryNode,
-    std::map<int, std::vector<DualCoverTreeMapEntry>,
-        std::greater<int>>& referenceMap);
+      CoverTreeRecursionSets<MapEntryType, 8>& recursionSets);
 };
 
 } // namespace mlpack

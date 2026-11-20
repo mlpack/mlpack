@@ -91,21 +91,20 @@ class CLIOption
     data.cppType = cppName;
 
     // Apply default value.
-    if (std::is_same<typename std::remove_pointer<N>::type,
-                     typename ParameterType<typename
-                         std::remove_pointer<N>::type>::type>::value)
+    if (std::is_same_v<std::remove_pointer_t<N>,
+                       typename ParameterType<std::remove_pointer_t<N>>::type>)
     {
       data.value = defaultValue;
     }
     else
     {
-      typename ParameterType<typename std::remove_pointer<N>::type>::type tmp;
+      typename ParameterType<std::remove_pointer_t<N>>::type tmp;
       data.value = std::tuple<N, decltype(tmp)>(defaultValue, tmp);
     }
 
     const std::string tname = data.tname;
     const std::string cliName = MapParameterName<
-        typename std::remove_pointer<N>::type>(identifier);
+        std::remove_pointer_t<N>>(identifier);
     std::string progOptId = (alias[0] != '\0') ?
         "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 

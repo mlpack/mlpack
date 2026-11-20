@@ -52,6 +52,54 @@
 #define PRINT_MODEL mlpack::bindings::julia::PrintModel
 
 /**
+ * IMPORT_EXT_LIB() returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::julia::ImportExtLib
+
+/**
+ * IMPORT_SPLIT() returns a string that imports mlpack's preprocess_split.
+ */
+#define IMPORT_SPLIT mlpack::bindings::julia::ImportSplit
+
+/**
+ * IMPORT_THIS returns a string that imports the current binding group, as well
+ * as any methods that might need to be explicitly imported.
+ */
+#define IMPORT_THIS mlpack::bindings::julia::ImportThis
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET mlpack::bindings::julia::GetDataset
+
+/**
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets assuming
+ * integer labels.
+ *
+ * SPLIT_TRAIN_TEST_REGRESSION() does the same, but assumes floating-point
+ * labels.
+ */
+#define SPLIT_TRAIN_TEST(...) \
+    mlpack::bindings::julia::SplitTrainTest(true, __VA_ARGS__)
+#define SPLIT_TRAIN_TEST_REGRESSION(...) \
+    mlpack::bindings::julia::SplitTrainTest(false, __VA_ARGS__)
+
+/**
+ * CREATE_OBJECT() returns a string that creates an instance of the
+ * class.
+ */
+#define CREATE_OBJECT(...) mlpack::bindings::julia::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
+ * CALL_METHOD() returns a string that calls a method of an instance.
+ */
+#define CALL_METHOD(...) mlpack::bindings::julia::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+/**
  * PRINT_CALL() returns a string that contains the full language-specific
  * representation of a call to an mlpack binding.  The first argument should be
  * the name of the binding, and all other arguments should be names of

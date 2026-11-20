@@ -129,7 +129,7 @@ inline HoeffdingTreeModel::~HoeffdingTreeModel()
 // Create the model.
 inline void HoeffdingTreeModel::BuildModel(
     const arma::mat& dataset,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
     const bool batchTraining,
@@ -248,7 +248,7 @@ inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
 // Classify the given points.
 inline void HoeffdingTreeModel::Classify(const arma::mat& dataset,
                                          arma::Row<size_t>& predictions,
-                                         arma::rowvec& probabilities) 
+                                         arma::rowvec& probabilities)
     const
 {
   // Call Classify() with the right model.

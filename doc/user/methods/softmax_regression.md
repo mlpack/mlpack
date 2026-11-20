@@ -16,7 +16,7 @@ Softmax regression is useful for multi-class classification (i.e. classes are
 // Train a softmax regression model on random data and predict labels:
 
 // All data and labels are uniform random; 5 dimensional data, 4 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 3));
@@ -48,7 +48,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 #### See also:
 
  * [`LogisticRegression`](logistic_regression.md)
- * [mlpack classifiers](../../index.md#classification-algorithms)
+ * [mlpack classifiers](../modeling.md#classification)
  * [UFLDL Softmax Regression Tutorial](http://deeplearning.stanford.edu/tutorial/supervised/SoftmaxRegression/)
 
 ### Constructors
@@ -79,7 +79,7 @@ std::cout << arma::accu(predictions == 2) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `lambda` | `double` | L2 regularization penalty parameter.  Must be nonnegative. | `0.0001` |
 | `fitIntercept` | `bool` | If true, an intercept term is fit to the model. | `true` |
@@ -188,7 +188,7 @@ can be used to make class predictions for new data.
 ### Other Functionality
 
  * A `SoftmaxRegression` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `sr.Parameters()` will return an `arma::mat` filled with the weights of the
    model.  The matrix will have rows equal to `numClasses` and columns equal to
@@ -221,10 +221,10 @@ callbacks.
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::data::Load("mnist.train.csv", dataset, true);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("mnist.train.labels.csv", labels, true);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 
@@ -241,10 +241,10 @@ sr.Train(dataset, labels, 10 /* numClasses */, optimizer,
 
 // See https://datasets.mlpack.org/mnist.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("mnist.test.csv", testDataset, true);
+mlpack::Load("mnist.test.csv", testDataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("mnist.test.labels.csv", testLabels, true);
+mlpack::Load("mnist.test.labels.csv", testLabels, mlpack::Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -274,7 +274,7 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    mlpack::data::Save(filename, "sr_model", model, true);
+    mlpack::Save(filename, model, mlpack::Fatal);
     return false; // Do not terminate the optimization.
   }
 
@@ -288,10 +288,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/mnist.train.csv.
 arma::mat dataset;
-mlpack::data::Load("mnist.train.csv", dataset, true);
+mlpack::Load("mnist.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/mnist.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("mnist.train.labels.csv", labels, true);
+mlpack::Load("mnist.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::SoftmaxRegression sr;
 
@@ -312,9 +312,9 @@ Load an existing softmax regression model and print some information about it.
 
 ```c++
 mlpack::SoftmaxRegression sr;
-// This assumes that a model called "sr_model" has been saved to the file
+// This assumes that a `SoftmaxRegression` model has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::data::Load("model-1.bin", "sr_model", sr, true);
+mlpack::Load("model-1.bin", sr, mlpack::Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 const size_t dimensionality = (sr.FitIntercept()) ?

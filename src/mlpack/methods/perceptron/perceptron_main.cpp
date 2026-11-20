@@ -20,6 +20,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "perceptron.hpp"
+#include "perceptron_model.hpp"
 
 using namespace mlpack;
 using namespace mlpack::util;
@@ -31,7 +32,7 @@ BINDING_USER_NAME("Perceptron");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of a perceptron---a single level neural network--=for "
+    "An implementation of a perceptron---a single level neural network---for "
     "classification.  Given labeled data, a perceptron can be trained and saved"
     " for future use; or, a pre-trained perceptron can be used for "
     "classification on new points.");
@@ -97,31 +98,7 @@ BINDING_SEE_ALSO("@adaboost", "#adaboost");
 BINDING_SEE_ALSO("Perceptron on Wikipedia",
     "https://en.wikipedia.org/wiki/Perceptron");
 BINDING_SEE_ALSO("Perceptron C++ class documentation",
-    "@src/mlpack/methods/perceptron/perceptron.hpp");
-
-// When we save a model, we must also save the class mappings.  So we use this
-// auxiliary structure to store both the perceptron and the mapping, and we'll
-// save this.
-class PerceptronModel
-{
- private:
-  Perceptron<> p;
-  Col<size_t> map;
-
- public:
-  Perceptron<>& P() { return p; }
-  const Perceptron<>& P() const { return p; }
-
-  Col<size_t>& Map() { return map; }
-  const Col<size_t>& Map() const { return map; }
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(p));
-    ar(CEREAL_NVP(map));
-  }
-};
+    "@doc/user/methods/perceptron.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set.", "t");
@@ -238,7 +215,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Normalize the labels.
     Row<size_t> labels;
-    data::NormalizeLabels(labelsIn, labels, p->Map());
+    NormalizeLabels(labelsIn, labels, p->Map());
     const size_t numClasses = p->Map().n_elem;
 
     // Now, if we haven't already created a perceptron, do it.  Otherwise, make
@@ -282,9 +259,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, the training procedure is complete.  Do we have any test data?
   if (params.Has("test"))
   {
+    mat& testData = params.Get<arma::mat>("test");
     Log::Info << "Classifying dataset '"
         << params.GetPrintable<arma::mat>("test") << "'." << endl;
-    mat testData = std::move(params.Get<arma::mat>("test"));
 
     if (testData.n_rows != p->P().Weights().n_rows)
     {
@@ -306,7 +283,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Un-normalize labels to prepare output.
     Row<size_t> results;
-    data::RevertLabels(predictedLabels, p->Map(), results);
+    RevertLabels(predictedLabels, p->Map(), results);
 
     // Save the predicted labels.
     if (params.Has("predictions"))

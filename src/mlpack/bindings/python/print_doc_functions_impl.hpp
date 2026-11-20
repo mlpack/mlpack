@@ -156,7 +156,7 @@ std::string PrintInputOptions(util::Params& params,
 
     bool isHyperParam = false;
     size_t foundArma = d.cppType.find("arma");
-    if(d.input && foundArma == std::string::npos &&
+    if (d.input && foundArma == std::string::npos &&
         !isSerial)
       isHyperParam = true;
 
@@ -164,9 +164,12 @@ std::string PrintInputOptions(util::Params& params,
 
     // no parameter is both a hyper-parameter and a matrix-parmeter
     // hence the print condition is "false".
-    if(onlyHyperParams && onlyMatrixParams) printCondition = false;
-    else if(onlyHyperParams) printCondition = isHyperParam;
-    else if(onlyMatrixParams) printCondition = foundArma != std::string::npos;
+    if (onlyHyperParams && onlyMatrixParams)
+      printCondition = false;
+    else if (onlyHyperParams)
+      printCondition = isHyperParam;
+    else if (onlyMatrixParams)
+      printCondition = foundArma != std::string::npos;
 
     if (printCondition)
     {
@@ -180,14 +183,14 @@ std::string PrintInputOptions(util::Params& params,
   else
   {
     // Unknown parameter!
-    throw std::runtime_error("Unknown parameter '" + GetValidName(paramName) + "' " +
-        "encountered while assembling documentation!  Check BINDING_LONG_DESC()"
-        + " and BINDING_EXAMPLE() declaration.");
+    throw std::runtime_error("Unknown parameter '" + GetValidName(paramName) +
+        "' encountered while assembling documentation!  "
+        "Check BINDING_LONG_DESC() and BINDING_EXAMPLE() declaration.");
   }
 
   // Continue recursion.
   std::string rest = PrintInputOptions(params, onlyHyperParams,
-                                       onlyMatrixParams, args...);
+      onlyMatrixParams, args...);
   if (rest != "" && result != "")
     result += ", " + rest;
   else if (result == "")
@@ -400,12 +403,15 @@ inline std::string ImportSplit()
   return ">>> from mlpack import preprocess_split";
 }
 
-inline std::string ImportThis(const std::string& groupName)
+template<typename... Args>
+inline std::string ImportThis(const std::string& groupName,
+                              Args&&... /* methodNames */)
 {
   return ">>> from mlpack import " + GetClassName(groupName);
 }
 
-inline std::string SplitTrainTest(const std::string& datasetName,
+inline std::string SplitTrainTest(const bool integerLabels,
+                                  const std::string& datasetName,
                                   const std::string& labelName,
                                   const std::string& trainDataset,
                                   const std::string& trainLabels,
@@ -414,12 +420,34 @@ inline std::string SplitTrainTest(const std::string& datasetName,
                                   const std::string& splitRatio)
 {
   std::string splitString;
-  splitString += ">>> d = preprocess_split(input_=" + datasetName + ", input_labels=";
-  splitString += labelName + ", test_ratio=" + splitRatio + ")\n";
-  splitString += ">>> " + trainDataset + " = d['training']\n";
-  splitString += ">>> " + trainLabels + " = d['training_labels']\n";
-  splitString += ">>> " + testDataset + " = d['test']\n";
-  splitString += ">>> " + testLabels + " = d['test_labels']";
+
+  if (integerLabels)
+  {
+    splitString += ">>> d = preprocess_split(input_=" + datasetName +
+        ", input_labels=";
+    splitString += labelName + ", test_ratio=" + splitRatio + ")\n";
+    splitString += ">>> " + trainDataset + " = d['training']\n";
+    splitString += ">>> " + trainLabels + " = d['training_labels']\n";
+    splitString += ">>> " + testDataset + " = d['test']\n";
+    splitString += ">>> " + testLabels + " = d['test_labels']";
+    return splitString;
+  }
+  else
+  {
+    // When the labels are not integers, then we have to call preprocess_split()
+    // on a list of indices, since it expects the input_labels parameters to be
+    // an integer matrix/vector.
+    splitString += ">>> d = preprocess_split(input_=" + datasetName +
+        ", input_labels=list(range(len(" + labelName + "))), test_ratio=" +
+        splitRatio + ")\n";
+    splitString += ">>> " + trainDataset + " = d['training']\n";
+    splitString += ">>> " + trainLabels + " = " + labelName +
+        "[d['training_labels']]\n";
+    splitString += ">>> " + testDataset + " = d['test']\n";
+    splitString += ">>> " + testLabels + " = " + labelName +
+        "[d['test_labels']]";
+  }
+
   return splitString;
 }
 
@@ -464,12 +492,12 @@ inline std::string CreateObject(const std::string& bindingName,
 
     bool isHyperParam = false;
     size_t foundArma = it->second.cppType.find("arma");
-    if(it->second.input && foundArma == std::string::npos &&
-        !isSerial)
+    if (it->second.input && foundArma == std::string::npos && !isSerial)
       isHyperParam = true;
 
-    if(!isHyperParam) continue;
-    if(it->second.name == "help" || it->second.name == "info" ||
+    if (!isHyperParam)
+      continue;
+    if (it->second.name == "help" || it->second.name == "info" ||
         it->second.name == "version")
         continue;
 
@@ -501,9 +529,10 @@ std::string CallMethod(const std::string& bindingName,
   std::string callMethod = ">>> ";
 
   // find out if there are any output options.
-  for(auto it=parameters.begin(); it!=parameters.end(); it++)
+  for (auto it = parameters.begin(); it != parameters.end(); it++)
   {
-    if(it->second.input) continue;
+    if (it->second.input)
+      continue;
     callMethod += it->first + ", ";
   }
   if (callMethod != "")

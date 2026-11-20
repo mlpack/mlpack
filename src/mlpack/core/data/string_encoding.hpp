@@ -19,7 +19,6 @@
 #include <vector>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The class translates a set of strings into numbers using various encoding
@@ -198,8 +197,8 @@ class StringEncoding
                     std::vector<std::vector<ElemType>>& output,
                     const TokenizerType& tokenizer,
                     PolicyType& policy,
-                    typename std::enable_if<StringEncodingPolicyTraits<
-                        PolicyType>::onePassEncoding>::type* = 0);
+                    std::enable_if_t<StringEncodingPolicyTraits<
+                        PolicyType>::onePassEncoding>* = 0);
 
  private:
   //! The encoding policy object.
@@ -208,7 +207,6 @@ class StringEncoding
   DictionaryType dictionary;
 };
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

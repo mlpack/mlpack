@@ -293,7 +293,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test a Pandas Series input paramter
     """
-    x =  pd.Series(np.random.rand(100))
+    x = pd.Series(np.random.rand(100))
     z = copy.deepcopy(x)
 
     output = test_python_binding(string_in='hello',
@@ -313,7 +313,7 @@ class TestPythonBinding(unittest.TestCase):
     """
     Test a Pandas Series input paramter
     """
-    x =  pd.Series(np.random.rand(100))
+    x = pd.Series(np.random.rand(100))
 
     output = test_python_binding(string_in='hello',
                                  int_in=12,

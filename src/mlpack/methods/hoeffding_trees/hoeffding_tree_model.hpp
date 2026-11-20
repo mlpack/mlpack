@@ -37,17 +37,17 @@ class HoeffdingTreeModel
   };
 
   //! Convenience typedef for GINI_HOEFFDING tree type.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniHoeffdingTreeType;
+  using GiniHoeffdingTreeType = HoeffdingTree<GiniImpurity,
+      HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for GINI_BINARY tree type.
-  typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> GiniBinaryTreeType;
+  using GiniBinaryTreeType = HoeffdingTree<GiniImpurity,
+      BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for INFO_HOEFFDING tree type.
-  typedef HoeffdingTree<HoeffdingInformationGain, HoeffdingDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoHoeffdingTreeType;
+  using InfoHoeffdingTreeType = HoeffdingTree<HoeffdingInformationGain,
+      HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>;
   //! Convenience typedef for INFO_BINARY tree type.
-  typedef HoeffdingTree<HoeffdingInformationGain, BinaryDoubleNumericSplit,
-      HoeffdingCategoricalSplit> InfoBinaryTreeType;
+  using InfoBinaryTreeType = HoeffdingTree<HoeffdingInformationGain,
+      BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>;
 
   /**
    * Construct the Hoeffding tree model, but don't initialize any tree.
@@ -112,7 +112,7 @@ class HoeffdingTreeModel
    *      Hoeffding numeric split.
    */
   void BuildModel(const arma::mat& dataset,
-                  const data::DatasetInfo& datasetInfo,
+                  const DatasetInfo& datasetInfo,
                   const arma::Row<size_t>& labels,
                   const size_t numClasses,
                   const bool batchTraining,
@@ -185,7 +185,7 @@ class HoeffdingTreeModel
     ar(CEREAL_NVP(type));
 
     // Fake dataset info may be needed to create fake trees.
-    data::DatasetInfo info;
+    DatasetInfo info;
     if (type == GINI_HOEFFDING)
       ar(CEREAL_POINTER(giniHoeffdingTree));
     else if (type == GINI_BINARY)

@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given a set of labels of a particular datatype, convert them to unsigned
@@ -47,7 +46,6 @@ void RevertLabels(const arma::Row<size_t>& labels,
                   const arma::Col<eT>& mapping,
                   arma::Row<eT>& labelsOut);
 
-} // namespace data
 } // namespace mlpack
 
 // Include implementation.

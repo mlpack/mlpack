@@ -17,7 +17,6 @@
 #include <mlpack/core/data/map_policies/datatype.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * IncrementPolicy is used as a helper class for DatasetMapper. It tells how the
@@ -122,7 +121,7 @@ class IncrementPolicy
       if (numMappings == 0)
         types[dimension] = Datatype::categorical;
 
-      typedef typename std::pair<InputType, MappedType> PairType;
+      using PairType = std::pair<InputType, MappedType>;
       maps[dimension].first.insert(PairType(input, numMappings));
 
       // Do we need to create the second map?
@@ -147,7 +146,6 @@ class IncrementPolicy
   bool forceAllMappings;
 }; // class IncrementPolicy
 
-} // namespace data
 } // namespace mlpack
 
 #endif

@@ -77,7 +77,7 @@ LogisticRegressionFunction<MatType>::Evaluate(
   //   f(w) = sum(y log(sig(w'x)) + (1 - y) log(sig(1 - w'x))).
   // We want to minimize this function.  L2-regularization is just lambda
   // multiplied by the squared l2-norm of the parameters then divided by two.
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Specifying these here makes the code below a little bit cleaner, and avoids
   // accidentally casting an entire expression to `double`, e.g., by the use of
@@ -123,7 +123,7 @@ LogisticRegressionFunction<MatType>::Evaluate(
     const size_t begin,
     const size_t batchSize) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Specifying these here makes the code below a little bit cleaner, and avoids
   // accidentally casting an entire expression to `double`, e.g., by the use of
@@ -159,7 +159,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
     const CoordinatesType& parameters,
     GradType& gradient) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Regularization term.
   GradType regularization;
@@ -189,7 +189,7 @@ void LogisticRegressionFunction<MatType>::Gradient(
                 GradType& gradient,
                 const size_t batchSize) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Regularization term.
   GradType regularization;
@@ -226,7 +226,7 @@ void LogisticRegressionFunction<MatType>::PartialGradient(
     const size_t j,
     GradType& gradient) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Specifying this here makes the code below a little bit cleaner, and avoids
   // accidentally casting an entire expression to `double`, e.g., by the use of
@@ -256,7 +256,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
     const CoordinatesType& parameters,
     GradType& gradient) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Specifying these here makes the code below a little bit cleaner, and avoids
   // accidentally casting an entire expression to `double`, e.g., by the use of
@@ -299,7 +299,7 @@ LogisticRegressionFunction<MatType>::EvaluateWithGradient(
     GradType& gradient,
     const size_t batchSize) const
 {
-  typedef typename CoordinatesType::elem_type ElemType;
+  using ElemType = typename CoordinatesType::elem_type;
 
   // Specifying these here makes the code below a little bit cleaner, and avoids
   // accidentally casting an entire expression to `double`, e.g., by the use of

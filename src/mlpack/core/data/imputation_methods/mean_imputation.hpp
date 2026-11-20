@@ -15,12 +15,10 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
+
 /**
- * A simple mean imputation class
- * @tparam T Type of armadillo matrix
+ * A simple mean imputation class.
  */
-template <typename T>
 class MeanImputation
 {
  public:
@@ -29,76 +27,176 @@ class MeanImputation
    * replaces it with the mean of the given dimension. The result is overwritten
    * to the input matrix.
    *
+   * @param input Matrix that contains missingValue.
+   * @param missingValue Value to replace with the mean.
+   * @param dimension Index of the dimension to impute.
+   * @param columnMajor If true, `input` is column major.
+   */
+  template<typename T>
+  static void Impute(arma::Mat<T>& input,
+                     const T& missingValue,
+                     const size_t dimension,
+                     const bool columnMajor = true)
+  {
+    T meanValue = 0;
+
+    #if ARMA_VERSION_MAJOR < 14 || \
+        (ARMA_VERSION_MAJOR == 14 && ARMA_VERSION_MINOR < 6)
+      // This Armadillo-specific version is used when omit_nan() is not
+      // available.
+      T sum = 0;
+      size_t elems = 0; // Excluding missingValue.
+
+      // Different implementations if we are searching for NaN.
+      if (std::isnan(missingValue))
+      {
+        if (columnMajor)
+        {
+          #pragma omp parallel for schedule(static)
+          for (size_t i = 0; i < input.n_cols; ++i)
+          {
+            if (!std::isnan(input(dimension, i)))
+            {
+              ++elems;
+              sum += input(dimension, i);
+            }
+          }
+        }
+        else
+        {
+          #pragma omp parallel for schedule(static)
+          for (size_t i = 0; i < input.n_rows; ++i)
+          {
+            if (!std::isnan(input(i, dimension)))
+            {
+              ++elems;
+              sum += input(i, dimension);
+            }
+          }
+        }
+      }
+      else
+      {
+        if (columnMajor)
+        {
+          #pragma omp parallel for schedule(static)
+          for (size_t i = 0; i < input.n_cols; ++i)
+          {
+            if (input(dimension, i) != missingValue)
+            {
+              ++elems;
+              sum += input(dimension, i);
+            }
+          }
+        }
+        else
+        {
+          #pragma omp parallel for schedule(static)
+          for (size_t i = 0; i < input.n_rows; ++i)
+          {
+            if (input(i, dimension) != missingValue)
+            {
+              ++elems;
+              sum += input(i, dimension);
+            }
+          }
+        }
+      }
+
+      if (elems == 0)
+      {
+        throw std::invalid_argument("MeanImputation::Impute(): no non-missing "
+            "elements; cannot compute mean!");
+      }
+
+      // Now compute the mean.
+      meanValue = sum / elems;
+    #else
+      if (std::isnan(missingValue))
+      {
+        if (columnMajor)
+          meanValue = mean(omit_nan(input.row(dimension)));
+        else
+          meanValue = mean(omit_nan(input.col(dimension)));
+      }
+      else
+      {
+        if (columnMajor)
+        {
+          meanValue = mean(vectorise(input.submat(
+              arma::uvec({ static_cast<arma::uword>(dimension) }),
+              find(input.row(dimension) != missingValue))));
+        }
+        else
+        {
+          meanValue = mean(vectorise(input.submat(
+              find(input.col(dimension) != missingValue),
+              arma::uvec({ static_cast<arma::uword>(dimension) }))));
+        }
+      }
+    #endif
+
+    // Replace all values with the computed mean.
+    if (columnMajor)
+      input.row(dimension).replace(missingValue, meanValue);
+    else
+      input.col(dimension).replace(missingValue, meanValue);
+  }
+
+  /**
+   * Impute function searches through the input looking for mappedValue and
+   * replaces it with the mean of the given dimension. The result is overwritten
+   * to the input matrix.
+   *
+   * This overload is used for Bandicoot, where omit_nan() is not available
+   * (yet).
+   *
    * @param input Matrix that contains mappedValue.
    * @param mappedValue Value that the user wants to get rid of.
    * @param dimension Index of the dimension of the mappedValue.
    * @param columnMajor State of whether the input matrix is columnMajor or not.
    */
-  void Impute(arma::Mat<T>& input,
-              const T& mappedValue,
-              const size_t dimension,
-              const bool columnMajor = true)
+  template<typename MatType>
+  static void Impute(MatType& input,
+                     const typename MatType::elem_type& missingValue,
+                     const size_t dimension,
+                     const bool columnMajor = true)
   {
-    double sum = 0;
-    size_t elems = 0; // excluding nan or missing target
+    static_assert(!IsSparse<MatType>::value, "MeanImputation::Impute(): "
+        "sparse matrix imputation is not supported; use a dense matrix "
+        "instead!");
 
-    using PairType = std::pair<size_t, size_t>;
-    // dimensions and indexes are saved as pairs inside this vector.
-    std::vector<PairType> targets;
-
-
-    // calculate number of elements and sum of them excluding mapped value or
-    // nan. while doing that, remember where mappedValue or NaN exists.
+    typedef typename MatType::elem_type ElemType;
+    typedef typename GetUColType<MatType>::type UCol;
+    ElemType meanValue;
     if (columnMajor)
     {
-      for (size_t i = 0; i < input.n_cols; ++i)
-      {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
-        {
-          targets.emplace_back(dimension, i);
-        }
-        else
-        {
-          elems++;
-          sum += input(dimension, i);
-        }
-      }
+      UCol indices;
+      if (std::isnan(missingValue))
+        indices = find_nonnan(input.row(dimension));
+      else
+        indices = find(input.row(dimension) != missingValue);
+
+      meanValue = mean(vectorise(input.submat(UCol({ dimension }), indices)));
     }
     else
     {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
-        {
-          targets.emplace_back(i, dimension);
-        }
-        else
-        {
-          elems++;
-          sum += input(i, dimension);
-        }
-      }
+      UCol indices;
+      if (std::isnan(missingValue))
+        indices = find_nonnan(input.col(dimension));
+      else
+        indices = find(input.col(dimension) != missingValue);
+
+      meanValue = mean(vectorise(input.submat(indices, UCol({ dimension }))));
     }
 
-    if (elems == 0)
-      Log::Fatal << "it is impossible to calculate mean; no valid elements in "
-          << "the dimension" << std::endl;
-
-    // calculate mean;
-    const double mean = sum / elems;
-
-    // Now replace the calculated mean to the missing variables
-    // It only needs to loop through targets vector, not the whole matrix.
-    for (const PairType& target : targets)
-    {
-      input(target.first, target.second) = mean;
-    }
+    if (columnMajor)
+      input.row(dimension).replace(missingValue, meanValue);
+    else
+      input.col(dimension).replace(missingValue, meanValue);
   }
 }; // class MeanImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif

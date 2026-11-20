@@ -26,12 +26,16 @@ namespace r {
 template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
-    const typename std::enable_if<!std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<!HasSerialize<T>::value>* = 0,
+    const std::enable_if_t<!std::is_same_v<T,
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
-  if (!d.required)
+  if (!d.required &&
+      !(std::is_same_v<T, std::string> ||
+        std::is_same_v<T, bool> ||
+        std::is_same_v<T, double> ||
+        std::is_same_v<T, int>))
   {
     /**
      * This gives us code like:
@@ -72,7 +76,7 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
+    const std::enable_if_t<arma::is_arma_type<T>::value>* = 0)
 {
   std::string extraTransStr = "";
   if (d.cppType == "arma::mat")
@@ -135,8 +139,8 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
-    const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+    const std::enable_if_t<std::is_same_v<T,
+        std::tuple<DatasetInfo, arma::mat>>>* = 0)
 {
   if (!d.required)
   {
@@ -182,8 +186,8 @@ void PrintInputProcessing(
 template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
-    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
-    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
+    const std::enable_if_t<!arma::is_arma_type<T>::value>* = 0,
+    const std::enable_if_t<HasSerialize<T>::value>* = 0)
 {
   if (!d.required)
   {
@@ -229,7 +233,7 @@ void PrintInputProcessing(util::ParamData& d,
                           const void* /* input */,
                           void* /* output */)
 {
-  PrintInputProcessing<typename std::remove_pointer<T>::type>(d);
+  PrintInputProcessing<std::remove_pointer_t<T>>(d);
 }
 
 } // namespace r

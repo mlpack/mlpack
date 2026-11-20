@@ -58,7 +58,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
     {
       arma::vec weights(maxLength - 1);
 
-      DiscreteDistribution d(1);
+      DiscreteDistribution<> d(1);
       // We have two binary numbers with exactly two digits (10 and 11).
       // Increasing length by 1 double the number of valid numbers.
       d.Probabilities(0) =
@@ -67,7 +67,7 @@ inline void CopyTask::Generate(arma::field<arma::mat>& input,
       size = 2 + d.Random()(0);
     }
     arma::colvec vecInput = randi<arma::colvec>(
-      size, arma::distr_param(0, 1));
+      size, DistrParam(0, 1));
     arma::colvec vecLabel = ConvTo<arma::colvec>::From(
         repmat(vecInput, nRepeats, 1));
     size_t totSize = vecInput.n_elem + addSeparator + vecLabel.n_elem;

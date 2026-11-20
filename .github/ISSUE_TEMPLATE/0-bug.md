@@ -23,7 +23,7 @@ quickly figure out what the issue is and solve it.  Thanks!
  * version of mlpack:
  * operating system:
  * compiler:
- * version of dependencies (Boost/Armadillo):
+ * version of dependencies (Armadillo/ensmallen/cereal):
  * any other environment information you think is relevant:
 
 #### Steps to reproduce

@@ -22,10 +22,10 @@ namespace mlpack {
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   if (tree->Count() == 1)
   {
@@ -39,7 +39,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
       if (node->NumChildren() == node->MaxNumChildren() + 1)
       {
         // Split the overflowed node.
-        RPlusTreeSplit::SplitNonLeafNode(node, relevels);
+        RPlusTreeSplitType::SplitNonLeafNode(node, relevels);
         return;
       }
       node = node->Parent();
@@ -65,14 +65,14 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->children[(tree->NumChildren())++] = copy;
     assert(tree->NumChildren() == 1);
 
-    RPlusTreeSplit::SplitLeafNode(copy, relevels);
+    RPlusTreeSplitType::SplitLeafNode(copy, relevels);
     return;
   }
 
   size_t cutAxis = tree->Bound().Dim();
   ElemType cut = std::numeric_limits<ElemType>::lowest();
 
-  // Try to find a partiotion of the node.
+  // Try to find a partition of the node.
   if (!PartitionNode(tree, cutAxis, cut))
     return;
 
@@ -111,7 +111,7 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(parent, relevels);
 
   tree->SoftDelete();
 }
@@ -119,10 +119,10 @@ SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
+bool RPlusTreeSplitType<SplitPolicyType, SweepType>::
 SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
@@ -136,13 +136,13 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->NullifyData();
     tree->children[(tree->NumChildren())++] = copy;
 
-    RPlusTreeSplit::SplitNonLeafNode(copy, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(copy, relevels);
     return true;
   }
   size_t cutAxis = tree->Bound().Dim();
   ElemType cut = std::numeric_limits<ElemType>::lowest();
 
-  // Try to find a partiotion of the node.
+  // Try to find a partition of the node.
   if ( !PartitionNode(tree, cutAxis, cut))
     return false;
 
@@ -183,7 +183,7 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 
   // Propagate the split upward if necessary.
   if (parent->NumChildren() == parent->MaxNumChildren() + 1)
-    RPlusTreeSplit::SplitNonLeafNode(parent, relevels);
+    RPlusTreeSplitType::SplitNonLeafNode(parent, relevels);
 
   return false;
 }
@@ -191,7 +191,8 @@ SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
+SplitLeafNodeAlongPartition(
     TreeType* tree,
     TreeType* treeOne,
     TreeType* treeTwo,
@@ -242,7 +243,8 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitLeafNodeAlongPartition(
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
+SplitNonLeafNodeAlongPartition(
     TreeType* tree,
     TreeType* treeOne,
     TreeType* treeTwo,
@@ -306,7 +308,7 @@ void RPlusTreeSplit<SplitPolicyType, SweepType>::SplitNonLeafNodeAlongPartition(
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
 {
   size_t numDescendantNodes = tree->TreeDepth() - 1;
@@ -324,7 +326,7 @@ AddFakeNodes(const TreeType* tree, TreeType* emptyTree)
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-bool RPlusTreeSplit<SplitPolicyType, SweepType>::
+bool RPlusTreeSplitType<SplitPolicyType, SweepType>::
 PartitionNode(const TreeType* node, size_t& minCutAxis,
     typename TreeType::ElemType& minCut)
 {
@@ -333,9 +335,8 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
     return false; // No partition required.
 
   // Define the type of the sweep cost.
-  typedef typename
-      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type
-      SweepCostType;
+  using SweepCostType = typename
+      SweepType<SplitPolicyType>::template SweepCost<TreeType>::type;
 
   SweepCostType minCost = std::numeric_limits<SweepCostType>::max();
   minCutAxis = node->Bound().Dim();
@@ -343,8 +344,8 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
   // Find the sweep with a minimal cost.
   for (size_t k = 0; k < node->Bound().Dim(); ++k)
   {
-    typename TreeType::ElemType cut;
-    SweepCostType cost;
+    typename TreeType::ElemType cut = 0.0;
+    SweepCostType cost = 0.0;
 
     if (node->IsLeaf())
       cost = SweepType<SplitPolicyType>::SweepLeafNode(k, node, cut);
@@ -365,7 +366,7 @@ PartitionNode(const TreeType* node, size_t& minCutAxis,
 template<typename SplitPolicyType,
          template<typename> class SweepType>
 template<typename TreeType>
-void RPlusTreeSplit<SplitPolicyType, SweepType>::
+void RPlusTreeSplitType<SplitPolicyType, SweepType>::
 InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();

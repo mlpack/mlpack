@@ -27,7 +27,7 @@ namespace mlpack {
  * The linear layer applies a linear transformation to the incoming data
  * (input), i.e. y = Ax + b. The input matrix given in Forward(input, output)
  * must be either a vector or matrix. If the input is a matrix, then each column
- * is assumed to be an input sample of a given batch.
+ * is assumed to be an input sample of given batch.
  *
  * @tparam MatType Matrix representation to accept as input and use for
  *    computation.
@@ -38,11 +38,14 @@ template<
     typename MatType = arma::mat,
     typename RegularizerType = NoRegularizer
 >
-class LinearType : public Layer<MatType>
+class Linear : public Layer<MatType>
 {
  public:
-  //! Create the Linear object.
-  LinearType();
+  // Convenience typedef to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+
+  // Create the Linear object.
+  Linear();
 
   /**
    * Create the Linear layer object with the specified number of output
@@ -52,35 +55,25 @@ class LinearType : public Layer<MatType>
    * @param regularizer The regularizer to use, optional (default: no
    *     regularizer).
    */
-  LinearType(const size_t outSize,
-             RegularizerType regularizer = RegularizerType());
+  Linear(const size_t outSize,
+         RegularizerType regularizer = RegularizerType());
 
-  virtual ~LinearType() { }
+  virtual ~Linear() { }
 
-  Layer<MatType>* Clone() const override
-  {
-      return this->CloneAs<TargetMatType>();
-  }
-
-  template<typename TargetMatType = MatType>
-  Layer<TargetMatType>* CloneAs() const
-  {
-      return new LinearType<TargetMatType, RegularizerType>(
-          this->outSize, this->regularizer);
-  }
+  //! Clone the Linear object. This handles polymorphism correctly.
+  Linear* Clone() const { return new Linear(*this); }
 
   //! Copy the other Linear layer (but not weights).
-  template<typename OtherMatType>
-  LinearType(const LinearType<OtherMatType, RegularizerType>& layer);
+  Linear(const Linear& layer);
 
   //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType(LinearType&& layer);
+  Linear(Linear&& layer);
 
   //! Copy the other Linear layer (but not weights).
-  LinearType& operator=(const LinearType& layer);
+  Linear& operator=(const Linear& layer);
 
   //! Take ownership of the members of the other Linear layer (but not weights).
-  LinearType& operator=(LinearType&& layer);
+  Linear& operator=(Linear&& layer);
 
   /**
    * Reset the layer parameter (weights and bias). The method is called to
@@ -102,7 +95,7 @@ class LinearType : public Layer<MatType>
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
+   * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
    * To compute the downstream gradient (g) the chain rule is used.
@@ -153,9 +146,6 @@ class LinearType : public Layer<MatType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
-  const RegularizerType& Regularizer() const { return regularizer; }
-  RegularizerType& Regularizer() { return regularizer; }
-
  private:
   //! Locally-stored number of input units.
   size_t inSize;
@@ -163,7 +153,7 @@ class LinearType : public Layer<MatType>
   //! Locally-stored number of output units.
   size_t outSize;
 
-  //! Locally-stored weight object. This holds all the weights in a vectorized
+  //! Locally-stored weight object.  This holds all the weights in a vectorized
   //! form; i.e., the weight and the bias.
   MatType weights;
 
@@ -175,12 +165,7 @@ class LinearType : public Layer<MatType>
 
   //! Locally-stored regularizer object.
   RegularizerType regularizer;
-}; // class LinearType
-
-// Convenience typedefs.
-
-// Standard Linear layer using no regularization.
-typedef LinearType<arma::mat, NoRegularizer> Linear;
+}; // class Linear
 
 } // namespace mlpack
 

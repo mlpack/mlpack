@@ -21,7 +21,7 @@ using namespace mlpack;
 using namespace ens;
 
 //! Test DDPG on Pendulum task.
-TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -40,29 +40,29 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up the OUNoise parameters.
-    int size = 1; 
+    int size = 1;
     double mu = 0.0;
-    double theta = 1.0; 
+    double theta = 1.0;
     double sigma = 0.01;
 
     // Create an instance of the OUNoise class.
     OUNoise ouNoise(size, mu, theta, sigma);
 
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork),
         OUNoise, AdamUpdate>
         agent(config, qNetwork, policyNetwork, ouNoise, replayMethod);
 
@@ -74,7 +74,7 @@ TEST_CASE("PendulumWithDDPG", "[PolicyGradientTest]")
 }
 
 //! Test DDPG on Pendulum task with Gaussian noise.
-TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -93,28 +93,28 @@ TEST_CASE("PendulumWithGaussianDDPG", "[PolicyGradientTest]")
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up the GaussianNoise parameters.
-    int size = 1; 
-    double mu = 0.0; 
+    int size = 1;
+    double mu = 0.0;
     double sigma = 0.01;
 
     // Create an instance of the GaussianNoise class.
     GaussianNoise gaussianNoise(size, mu, sigma);
 
     // Set up Deep Deterministic Policy Gradient agent.
-    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork), 
+    DDPG<Pendulum, decltype(qNetwork), decltype(policyNetwork),
         GaussianNoise, AdamUpdate>
         agent(config, qNetwork, policyNetwork, gaussianNoise, replayMethod);
 
@@ -130,16 +130,16 @@ TEST_CASE("DDPGForMultipleActions", "[PolicyGradientTest]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
@@ -152,7 +152,7 @@ TEST_CASE("DDPGForMultipleActions", "[PolicyGradientTest]")
   // Set up the OUNoise parameters.
   int size = 4;
   double mu = 0.0;
-  double theta = 1.0;  
+  double theta = 1.0;
   double sigma = 0.01;
 
   // Create an instance of the OUNoise class.
@@ -204,8 +204,8 @@ TEST_CASE("OUNoiseTest", "[PolicyGradientTest]")
 TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
 {
   // Set up the GaussianNoise parameters.
-  int size = 5; 
-  double mu = 0.0; 
+  int size = 5;
+  double mu = 0.0;
   double sigma = 0.00001;
 
   // Create an instance of the GaussianNoise class.
@@ -215,7 +215,7 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   arma::colvec noise = gaussianNoise.sample();
   REQUIRE((int) noise.n_elem == size);
 
-  // Verify that the noise vector has values drawn from a 
+  // Verify that the noise vector has values drawn from a
   // Gaussian distribution with the specified mean and standard deviation.
   double mean = arma::mean(noise);
   double stdDev = arma::stddev(noise);
@@ -226,8 +226,8 @@ TEST_CASE("GaussianNoiseTest", "[PolicyGradientTest]")
   REQUIRE(stdDevErr <= 1e-4);
 }
 
-//! Test TD3 on Pendulum task.
-TEST_CASE("PendulumWithTD3", "[PolicyGradientTest]")
+// Test TD3 on Pendulum task.
+TEST_CASE("PendulumWithTD3", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -239,24 +239,24 @@ TEST_CASE("PendulumWithTD3", "[PolicyGradientTest]")
     RandomReplay<Pendulum> replayMethod(32, 10000);
 
     TrainingConfig config;
-    config.StepSize() = 0.001;
+    config.StepSize() = 0.0012;
     config.TargetNetworkSyncInterval() = 2;
     config.UpdateInterval() = 3;
 
     // Set up Actor network.
     FFN<EmptyLoss, GaussianInitialization>
-        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+        policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.02));
+    policyNetwork.Add<Linear>(64);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     // Set up Critic network.
     FFN<EmptyLoss, GaussianInitialization>
-        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+        qNetwork(EmptyLoss(), GaussianInitialization(0, 0.02));
+    qNetwork.Add<Linear>(64);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up Twin Delayed Deep Deterministic policy gradient agent.
     TD3<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -274,16 +274,16 @@ TEST_CASE("TD3ForMultipleActions", "[PolicyGradientTest]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);
@@ -313,7 +313,7 @@ TEST_CASE("TD3ForMultipleActions", "[PolicyGradientTest]")
 }
 
 //! Test SAC on Pendulum task.
-TEST_CASE("PendulumWithSAC", "[PolicyGradientTest]")
+TEST_CASE("PendulumWithSAC", "[PolicyGradientTest][long]")
 {
   // It isn't guaranteed that the network will converge in the specified number
   // of iterations using random weights.
@@ -331,16 +331,16 @@ TEST_CASE("PendulumWithSAC", "[PolicyGradientTest]")
 
     FFN<EmptyLoss, GaussianInitialization>
         policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    policyNetwork.Add(new Linear(128));
-    policyNetwork.Add(new ReLU());
-    policyNetwork.Add(new Linear(1));
-    policyNetwork.Add(new TanH());
+    policyNetwork.Add<Linear>(128);
+    policyNetwork.Add<ReLU>();
+    policyNetwork.Add<Linear>(1);
+    policyNetwork.Add<TanH>();
 
     FFN<EmptyLoss, GaussianInitialization>
         qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-    qNetwork.Add(new Linear(128));
-    qNetwork.Add(new ReLU());
-    qNetwork.Add(new Linear(1));
+    qNetwork.Add<Linear>(128);
+    qNetwork.Add<ReLU>();
+    qNetwork.Add<Linear>(1);
 
     // Set up Soft actor-critic agent.
     SAC<Pendulum, decltype(qNetwork), decltype(policyNetwork), AdamUpdate>
@@ -354,20 +354,20 @@ TEST_CASE("PendulumWithSAC", "[PolicyGradientTest]")
 }
 
 //! A test to ensure SAC works with multiple actions in action space.
-TEST_CASE("SACForMultipleActions", "[PolicyGradientTest]")
+TEST_CASE("SACForMultipleActions", "[PolicyGradientTest][tiny]")
 {
   FFN<EmptyLoss, GaussianInitialization>
       policyNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  policyNetwork.Add(new Linear(128));
-  policyNetwork.Add(new ReLU());
-  policyNetwork.Add(new Linear(4));
-  policyNetwork.Add(new TanH());
+  policyNetwork.Add<Linear>(128);
+  policyNetwork.Add<ReLU>();
+  policyNetwork.Add<Linear>(4);
+  policyNetwork.Add<TanH>();
 
   FFN<EmptyLoss, GaussianInitialization>
       qNetwork(EmptyLoss(), GaussianInitialization(0, 0.1));
-  qNetwork.Add(new Linear(128));
-  qNetwork.Add(new ReLU());
-  qNetwork.Add(new Linear(1));
+  qNetwork.Add<Linear>(128);
+  qNetwork.Add<ReLU>();
+  qNetwork.Add<Linear>(1);
 
   // Set up the replay method.
   RandomReplay<ContinuousActionEnv<3, 4>> replayMethod(32, 10000);

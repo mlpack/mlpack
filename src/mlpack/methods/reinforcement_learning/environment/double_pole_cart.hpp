@@ -162,7 +162,7 @@ class DoublePoleCart
     // Update the number of steps performed.
     stepsPerformed++;
 
-    arma::vec dydx(6, arma::fill::zeros);
+    arma::vec dydx(6);
     dydx[0] = state.Velocity();
     dydx[2] = state.AngularVelocity(1);
     dydx[4] = state.AngularVelocity(2);
@@ -301,19 +301,20 @@ class DoublePoleCart
   {
     if (maxSteps != 0 && stepsPerformed >= maxSteps)
     {
-      Log::Info << "Episode terminated due to the maximum number of steps"
-          "being taken.";
+      Log::Info << "Episode terminated due to the maximum number of steps "
+          "being taken." << std::endl;
       return true;
     }
     if (std::abs(state.Position()) > xThreshold)
     {
-      Log::Info << "Episode terminated due to cart crossing threshold";
+      Log::Info << "Episode terminated due to cart crossing threshold."
+          << std::endl;
       return true;
     }
     if (std::abs(state.Angle(1)) > thetaThresholdRadians ||
         std::abs(state.Angle(2)) > thetaThresholdRadians)
     {
-      Log::Info << "Episode terminated due to pole falling";
+      Log::Info << "Episode terminated due to pole falling." << std::endl;
       return true;
     }
     return false;

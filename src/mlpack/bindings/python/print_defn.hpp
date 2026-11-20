@@ -32,7 +32,7 @@ void PrintDefn(util::ParamData& d,
   std::string name = GetValidName(d.name);
 
   std::cout << name;
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
     std::cout << "=False";
   else if (!d.required)
     std::cout << "=None";

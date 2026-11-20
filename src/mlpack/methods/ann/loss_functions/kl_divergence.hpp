@@ -91,7 +91,7 @@ class KLDivergenceType
 }; // class KLDivergenceType
 
 // Default typedef for typical `arma::mat` usage.
-typedef KLDivergenceType<arma::mat> KLDivergence;
+using KLDivergence = KLDivergenceType<arma::mat>;
 
 } // namespace mlpack
 

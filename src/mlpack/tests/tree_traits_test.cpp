@@ -44,7 +44,7 @@ TEST_CASE("DefaultsTraitsTest", "[TreeTraitsTest]")
 // Test the binary space tree traits.
 TEST_CASE("BinarySpaceTreeTraitsTest", "[TreeTraitsTest]")
 {
-  typedef BinarySpaceTree<LMetric<2, false>> TreeType;
+  using TreeType = BinarySpaceTree<LMetric<2, false>>;
 
   // Children are non-overlapping.
   bool b = TreeTraits<TreeType>::HasOverlappingChildren;
@@ -87,4 +87,28 @@ TEST_CASE("CoverTreeTraitsTest", "[TreeTraitsTest]")
 
   b = TreeTraits<CoverTree<>>::BinaryTree;
   REQUIRE(b == false); // Not necessarily binary.
+}
+
+// Test the ball tree traits.
+TEST_CASE("BallTreeTraitsTest", "[TreeTraitsTest]")
+{
+  // Children may be overlapping.
+  bool b = TreeTraits<BallTree<>>::HasOverlappingChildren;
+  REQUIRE(b == true);
+
+  // Points are not contained at multiple levels.
+  b = TreeTraits<BallTree<>>::HasSelfChildren;
+  REQUIRE(b == false);
+
+  // The first point is not the centroid.
+  b = TreeTraits<BallTree<>>::FirstPointIsCentroid;
+  REQUIRE(b == false);
+
+  // The dataset gets rearranged at build time.
+  b = TreeTraits<BallTree<>>::RearrangesDataset;
+  REQUIRE(b == true);
+
+  // It is a binary tree.
+  b = TreeTraits<BallTree<>>::BinaryTree;
+  REQUIRE(b == true);
 }

@@ -87,10 +87,10 @@ BINDING_EXAMPLE(
 // See also...
 BINDING_SEE_ALSO("@sparse_coding", "#sparse_coding");
 BINDING_SEE_ALSO("Nonlinear learning using local coordinate coding (pdf)",
-        "https://papers.nips.cc/paper/3875-nonlinear-learning-using-local-"
-        "coordinate-coding.pdf");
+    "https://proceedings.neurips.cc/paper_files/paper/2009/file/"
+    "2afe4567e1bf64d32a5527244d104cea-Paper.pdf");
 BINDING_SEE_ALSO("LocalCoordinateCoding C++ class documentation",
-        "@doc/user/methods/local_coordinate_coding.md");
+    "@doc/user/methods/local_coordinate_coding.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "Matrix of training data (X).", "t");

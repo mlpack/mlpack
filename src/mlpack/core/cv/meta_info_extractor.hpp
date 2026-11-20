@@ -25,7 +25,7 @@ namespace mlpack {
  * @tparam MatType The type of data.
  * @tparam PredictionsType The type of predictions.
  * @tparam WeightsType The type of weights.
- * @tparam DatasetInfo An indicator whether a data::DatasetInfo parameter should
+ * @tparam DatasetInfo An indicator whether a DatasetInfo parameter should
  *   be present.
  * @tparam NumClasses An indicator whether the numClasses parameter should be
  *   present.
@@ -101,7 +101,7 @@ struct TrainForm<MT, PT, void, false, false> : public TrainFormBase4<PT, void,
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, true, false> : public TrainFormBase5<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&> {};
+    const MT&, const DatasetInfo&, const PT&> {};
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, false, false> : public TrainFormBase5<PT, WT,
@@ -109,7 +109,7 @@ struct TrainForm<MT, PT, WT, false, false> : public TrainFormBase5<PT, WT,
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, true, false> : public TrainFormBase6<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&, const WT&> {};
+    const MT&, const DatasetInfo&, const PT&, const WT&> {};
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, false, true> : public TrainFormBase5<PT, void,
@@ -117,7 +117,7 @@ struct TrainForm<MT, PT, void, false, true> : public TrainFormBase5<PT, void,
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, true, true> : public TrainFormBase6<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&, const size_t> {};
+    const MT&, const DatasetInfo&, const PT&, const size_t> {};
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase6<PT, WT,
@@ -125,7 +125,7 @@ struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase6<PT, WT,
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, true, true> : public TrainFormBase7<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&,
+    const MT&, const DatasetInfo&, const PT&,
     const size_t, const WT&> {};
 #else
 template<typename PT, typename WT, typename... SignatureParams>
@@ -147,7 +147,7 @@ struct TrainForm<MT, PT, void, false, false> : public TrainFormBase<PT, void,
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, true, false> : public TrainFormBase<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&> {};
+    const MT&, const DatasetInfo&, const PT&> {};
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, false, false> : public TrainFormBase<PT, WT,
@@ -155,7 +155,7 @@ struct TrainForm<MT, PT, WT, false, false> : public TrainFormBase<PT, WT,
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, true, false> : public TrainFormBase<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&, const WT&> {};
+    const MT&, const DatasetInfo&, const PT&, const WT&> {};
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, false, true> : public TrainFormBase<PT, void,
@@ -163,7 +163,7 @@ struct TrainForm<MT, PT, void, false, true> : public TrainFormBase<PT, void,
 
 template<typename MT, typename PT>
 struct TrainForm<MT, PT, void, true, true> : public TrainFormBase<PT, void,
-    const MT&, const data::DatasetInfo&, const PT&, const size_t> {};
+    const MT&, const DatasetInfo&, const PT&, const size_t> {};
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase<PT, WT,
@@ -171,7 +171,7 @@ struct TrainForm<MT, PT, WT, false, true> : public TrainFormBase<PT, WT,
 
 template<typename MT, typename PT, typename WT>
 struct TrainForm<MT, PT, WT, true, true> : public TrainFormBase<PT, WT,
-    const MT&, const data::DatasetInfo&, const PT&,
+    const MT&, const DatasetInfo&, const PT&,
     const size_t, const WT&> {};
 #endif
 
@@ -217,11 +217,11 @@ struct SelectMethodForm<MLAlgorithm, HasMethodForm, HMFs...>
     template<typename Form, typename... RemainingForms>
     struct Implementation<Form, RemainingForms...>
     {
-      using Type = typename std::conditional<
+      using Type = std::conditional_t<
           HasMethodForm<MLAlgorithm, Form::template Type,
               Form::MinNumberOfAdditionalArgs>::value,
           Form,
-          typename Implementation<RemainingForms...>::Type>::type;
+          typename Implementation<RemainingForms...>::Type>;
     };
 
    public:
@@ -305,9 +305,9 @@ class MetaInfoExtractor
 
   /* An indication whether a method form is selected */
   template<typename... MFs /* MethodForms */>
-  using Selects = typename std::conditional<
-      std::is_same<typename Select<MFs...>::Type, NotFoundMethodForm>::value,
-      std::false_type, std::true_type>::type;
+  using Selects = std::conditional_t<
+      std::is_same_v<typename Select<MFs...>::Type, NotFoundMethodForm>,
+      std::false_type, std::true_type>;
 
  public:
   /**
@@ -328,15 +328,15 @@ class MetaInfoExtractor
    * An indication whether PredictionsType has been identified (i.e. MLAlgorithm
    * is supported by MetaInfoExtractor).
    */
-  static const bool IsSupported = !std::is_same<PredictionsType, void*>::value;
+  static const bool IsSupported = !std::is_same_v<PredictionsType, void*>;
 
   /**
    * An indication whether MLAlgorithm supports weighted learning.
    */
-  static const bool SupportsWeights = !std::is_same<WeightsType, void*>::value;
+  static const bool SupportsWeights = !std::is_same_v<WeightsType, void*>;
 
   /**
-   * An indication whether MLAlgorithm takes a data::DatasetInfo parameter.
+   * An indication whether MLAlgorithm takes a DatasetInfo parameter.
    */
   static const bool TakesDatasetInfo = Selects<TF5>::value;
 

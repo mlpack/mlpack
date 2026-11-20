@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * The class is used to split a string into characters.
@@ -59,7 +58,6 @@ class CharExtract
   }
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

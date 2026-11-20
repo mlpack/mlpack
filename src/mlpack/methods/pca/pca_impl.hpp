@@ -47,14 +47,14 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
       "PCA::Apply(): transformedData must be a matrix type!");
   static_assert(IsBaseMatType<VecType>::value,
       "PCA::Apply(): eigVal must be a vector type!");
-  static_assert(std::is_same<typename MatType::elem_type,
-                             typename OutMatType::elem_type>::value,
+  static_assert(std::is_same_v<typename MatType::elem_type,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 
   // Center the data into a temporary matrix.
   OutMatType centeredData = arma::conv_to<OutMatType>::from(data);
-  centeredData.each_col() -= arma::mean(centeredData, 1);
+  centeredData.each_col() -= mean(centeredData, 1);
 
   // Scale the data if the user asked for it.
   ScaleData(centeredData);
@@ -81,8 +81,8 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
       "PCA::Apply(): transformedData must be a matrix type!");
   static_assert(IsBaseMatType<VecType>::value,
       "PCA::Apply(): eigVal must be a vector type!");
-  static_assert(std::is_same<typename MatType::elem_type,
-                             typename OutMatType::elem_type>::value,
+  static_assert(std::is_same_v<typename MatType::elem_type,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 
@@ -104,14 +104,14 @@ void PCA<DecompositionPolicy>::Apply(const MatType& data,
   // Sanity checks on input types.
   static_assert(IsBaseMatType<OutMatType>::value,
       "PCA::Apply(): transformedData must be a matrix type!");
-  static_assert(std::is_same<typename MatType::elem_type,
-                             typename OutMatType::elem_type>::value,
+  static_assert(std::is_same_v<typename MatType::elem_type,
+                               typename OutMatType::elem_type>,
       "PCA::Apply(): data and transformedData must have the same element "
       "types!");
 
   // It's possible a user didn't pass in a matrix but instead an expression, but
   // we need a type that we can store.
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   OutMatType eigvec;
   BaseColType eigVal;
@@ -152,15 +152,15 @@ double PCA<DecompositionPolicy>::Apply(const MatType& data,
     throw std::invalid_argument(oss.str());
   }
 
-  typedef typename GetDenseMatType<MatType>::type BaseMatType;
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseMatType = typename GetDenseMatType<MatType>::type;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   BaseMatType eigvec;
   BaseColType eigVal;
 
   // Center the data into a temporary matrix.
   BaseMatType centeredData = arma::conv_to<OutMatType>::from(data);
-  centeredData.each_col() -= arma::mean(centeredData, 1);
+  centeredData.each_col() -= mean(centeredData, 1);
 
   // This check cannot happen until here, as `data` may not have a .n_rows
   // member if it is an expression.
@@ -231,8 +231,8 @@ double PCA<DecompositionPolicy>::Apply(const MatType& data,
     throw std::invalid_argument(oss.str());
   }
 
-  typedef typename GetDenseMatType<MatType>::type BaseMatType;
-  typedef typename GetDenseColType<MatType>::type BaseColType;
+  using BaseMatType = typename GetDenseMatType<MatType>::type;
+  using BaseColType = typename GetDenseColType<MatType>::type;
 
   BaseMatType eigvec;
   BaseColType eigVal;

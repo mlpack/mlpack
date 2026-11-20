@@ -37,8 +37,10 @@ inline void LogisticRegressionTestData(arma::mat& data,
                                        arma::Row<size_t>& shuffledResponses)
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   data = arma::mat(3, 1000);
   responses = arma::Row<size_t>(1000);
@@ -84,22 +86,25 @@ void LoadBostonHousingDataset(MatType& trainData,
                               MatType& testData,
                               ResponsesType& trainResponses,
                               ResponsesType& testResponses,
-                              data::DatasetInfo& info)
+                              DatasetInfo& info)
 {
   MatType dataset;
   ResponsesType responses;
 
   // Defining categorical deimensions.
   info.SetDimensionality(13);
-  info.Type(3) = data::Datatype::categorical;
-  info.Type(8) = data::Datatype::categorical;
+  info.Type(3) = Datatype::categorical;
+  info.Type(8) = Datatype::categorical;
 
-  if (!data::Load("boston_housing_price.csv", dataset, info))
+  TextOptions opts = Categorical;
+  opts.DatasetInfo() = info;
+
+  if (!Load("boston_housing_price.csv", dataset, opts))
     FAIL("Cannot load test dataset boston_housing_price.csv!");
-  if (!data::Load("boston_housing_price_responses.csv", responses))
+  if (!Load("boston_housing_price_responses.csv", responses))
     FAIL("Cannot load test dataset boston_housing_price_responses.csv!");
 
-  data::Split(dataset, responses, trainData, testData,
+  Split(dataset, responses, trainData, testData,
       trainResponses, testResponses, 0.3);
 }
 
@@ -109,6 +114,50 @@ inline ElemType RMSE(const arma::Row<ElemType>& predictions,
 {
   ElemType mse = accu(square(predictions - trueResponses)) / predictions.n_elem;
   return sqrt(mse);
+}
+
+template<typename MatType>
+void GenerateFiveGaussianDataset(MatType& data,
+                                 arma::Row<size_t>& labels,
+                                 const size_t points)
+{
+  using VecType = typename GetColType<MatType>::type;
+
+  MatType identity = arma::eye<MatType>(5, 5);
+  GaussianDistribution<MatType> g1(VecType("1.0 9.0 1.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g2(VecType("4.0 3.0 4.0 2.0 2.0"), identity);
+  GaussianDistribution<MatType> g3(VecType("3.0 2.0 7.0 0.0 5.0"), identity);
+  GaussianDistribution<MatType> g4(VecType("4.0 1.0 1.0 2.0 7.0"), identity);
+  GaussianDistribution<MatType> g5(VecType("1.0 0.0 1.0 8.0 3.0"), identity);
+
+  data.set_size(5, points);
+  labels.set_size(points);
+
+  for (size_t i = 0; i < points / 5; ++i)
+  {
+    data.col(i) = g1.Random();
+    labels(i) = 0;
+  }
+  for (size_t i = points / 5; i < (2 * points) / 5; ++i)
+  {
+    data.col(i) = g2.Random();
+    labels(i) = 1;
+  }
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; ++i)
+  {
+    data.col(i) = g3.Random();
+    labels(i) = 2;
+  }
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; ++i)
+  {
+    data.col(i) = g4.Random();
+    labels(i) = 3;
+  }
+  for (size_t i = (4 * points) / 5; i < points; ++i)
+  {
+    data.col(i) = g5.Random();
+    labels(i) = 4;
+  }
 }
 
 #endif

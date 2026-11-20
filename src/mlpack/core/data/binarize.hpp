@@ -16,7 +16,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * Given an input dataset and threshold, set values greater than threshold to
@@ -86,7 +85,6 @@ void Binarize(const arma::Mat<T>& input,
     output(dimension, i) = input(dimension, i) > threshold;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

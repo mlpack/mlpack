@@ -19,7 +19,7 @@
 namespace mlpack {
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(
+Concat<MatType>::Concat(
     const size_t axis) :
     MultiLayer<MatType>(),
     axis(axis),
@@ -29,7 +29,7 @@ ConcatType<MatType>::ConcatType(
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType() :
+Concat<MatType>::Concat() :
     MultiLayer<MatType>(),
     axis(0),
     useAxis(false)
@@ -38,13 +38,13 @@ ConcatType<MatType>::ConcatType() :
 }
 
 template<typename MatType>
-ConcatType<MatType>::~ConcatType()
+Concat<MatType>::~Concat()
 {
   // Nothing to do: the child layer memory is already cleared by MultiLayer.
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(const ConcatType& other) :
+Concat<MatType>::Concat(const Concat& other) :
     MultiLayer<MatType>(other),
     axis(other.axis),
     useAxis(other.useAxis)
@@ -53,7 +53,7 @@ ConcatType<MatType>::ConcatType(const ConcatType& other) :
 }
 
 template<typename MatType>
-ConcatType<MatType>::ConcatType(ConcatType&& other) :
+Concat<MatType>::Concat(Concat&& other) :
     MultiLayer<MatType>(std::move(other)),
     axis(std::move(other.axis)),
     useAxis(std::move(other.useAxis))
@@ -62,7 +62,7 @@ ConcatType<MatType>::ConcatType(ConcatType&& other) :
 }
 
 template<typename MatType>
-ConcatType<MatType>& ConcatType<MatType>::operator=(const ConcatType& other)
+Concat<MatType>& Concat<MatType>::operator=(const Concat& other)
 {
   if (this != &other)
   {
@@ -75,7 +75,7 @@ ConcatType<MatType>& ConcatType<MatType>::operator=(const ConcatType& other)
 }
 
 template<typename MatType>
-ConcatType<MatType>& ConcatType<MatType>::operator=(ConcatType&& other)
+Concat<MatType>& Concat<MatType>::operator=(Concat&& other)
 {
   if (this != &other)
   {
@@ -88,7 +88,7 @@ ConcatType<MatType>& ConcatType<MatType>::operator=(ConcatType&& other)
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
+void Concat<MatType>::Forward(const MatType& input, MatType& output)
 {
   // The implementation of MultiLayer is fine: this will allocate a matrix that
   // is able to hold each child layer's output.
@@ -119,15 +119,14 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  std::vector<arma::Cube<typename MatType::elem_type>> layerOutputAliases(
-      this->layerOutputs.size());
+  std::vector<CubeType> layerOutputAliases(this->layerOutputs.size());
   for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
-    MakeAlias(layerOutputAliases[i], this->layerOutputs[i], rows, 
+    MakeAlias(layerOutputAliases[i], this->layerOutputs[i], rows,
         this->network[i]->OutputDimensions()[axis], slices);
   }
 
-  arma::Cube<typename MatType::elem_type> outputAlias;
+  CubeType outputAlias;
   MakeAlias(outputAlias, output, rows, this->outputDimensions[axis], slices);
 
   // Now get the columns from each output.
@@ -141,7 +140,7 @@ void ConcatType<MatType>::Forward(const MatType& input, MatType& output)
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Backward(
+void Concat<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -163,7 +162,7 @@ void ConcatType<MatType>::Backward(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> gyTmp;
+  CubeType gyTmp;
   MakeAlias(gyTmp, gy, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -190,7 +189,7 @@ void ConcatType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Backward(
+void Concat<MatType>::Backward(
     const MatType& input,
     const MatType& /* output */,
     const MatType& gy,
@@ -209,7 +208,7 @@ void ConcatType<MatType>::Backward(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> gyTmp;
+  CubeType gyTmp;
   MakeAlias(gyTmp, gy, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -227,7 +226,7 @@ void ConcatType<MatType>::Backward(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Gradient(
+void Concat<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
@@ -243,7 +242,7 @@ void ConcatType<MatType>::Gradient(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> errorTmp;
+  CubeType errorTmp;
   MakeAlias(errorTmp, error, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -265,7 +264,7 @@ void ConcatType<MatType>::Gradient(
 }
 
 template<typename MatType>
-void ConcatType<MatType>::Gradient(
+void Concat<MatType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient,
@@ -282,7 +281,7 @@ void ConcatType<MatType>::Gradient(
   for (size_t i = axis + 1; i < this->outputDimensions.size(); ++i)
     slices *= this->outputDimensions[i];
 
-  arma::Cube<typename MatType::elem_type> errorTmp;
+  CubeType errorTmp;
   MakeAlias(errorTmp, error, rows, this->outputDimensions[axis], slices);
 
   size_t startCol = 0;
@@ -305,7 +304,7 @@ void ConcatType<MatType>::Gradient(
 
 template<typename MatType>
 template<typename Archive>
-void ConcatType<MatType>::serialize(
+void Concat<MatType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<MultiLayer<MatType>>(this));

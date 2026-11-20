@@ -98,7 +98,7 @@ class SigmoidCrossEntropyErrorType
 }; // class SigmoidCrossEntropyErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef SigmoidCrossEntropyErrorType<arma::mat> SigmoidCrossEntropyError;
+using SigmoidCrossEntropyError = SigmoidCrossEntropyErrorType<arma::mat>;
 
 } // namespace mlpack
 

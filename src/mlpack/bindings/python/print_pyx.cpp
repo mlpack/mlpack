@@ -40,7 +40,7 @@ void PrintPYX(const util::BindingDetails& doc,
   util::Params params = IO::Parameters(bindingName);
 
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
-  typedef std::map<std::string, util::ParamData>::iterator ParamIter;
+  using ParamIter = std::map<std::string, util::ParamData>::iterator;
 
   // Split into input and output parameters.  Take two passes on the input
   // parameters, so that we get the required ones first.
@@ -258,7 +258,7 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "  result = {}" << endl;
   cout << endl;
 
-  typedef std::tuple<util::Params, std::tuple<size_t, bool>> TupleType;
+  using TupleType = std::tuple<util::Params, std::tuple<size_t, bool>>;
 
   for (size_t i = 0; i < outputOptions.size(); ++i)
   {

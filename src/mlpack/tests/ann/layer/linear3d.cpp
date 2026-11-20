@@ -23,7 +23,7 @@ using namespace mlpack;
 /**
  * Simple Linear3D layer test.
  */
-TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest]")
+TEST_CASE("SimpleLinear3DLayerTest", "[ANNLayerTest][tiny]")
 {
   const size_t inSize = 4;
   const size_t outSize = 1;

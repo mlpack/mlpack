@@ -233,8 +233,8 @@ template<
   typename PolicyType
 >
 template<typename Policy>
-typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, double>::type
+std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                 std::is_same_v<Policy, DCGAN>, double>
 GAN<Model, InitializationRuleType, Noise, PolicyType>::Evaluate(
     const arma::mat& /* parameters */,
     const size_t i,
@@ -288,8 +288,8 @@ template<
   typename PolicyType
 >
 template<typename GradType, typename Policy>
-typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, double>::type
+std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                 std::is_same_v<Policy, DCGAN>, double>
 GAN<Model, InitializationRuleType, Noise, PolicyType>::
 EvaluateWithGradient(const arma::mat& /* parameters */,
                      const size_t i,
@@ -391,8 +391,8 @@ template<
   typename PolicyType
 >
 template<typename Policy>
-typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
-                        std::is_same<Policy, DCGAN>::value, void>::type
+std::enable_if_t<std::is_same_v<Policy, StandardGAN> ||
+                 std::is_same_v<Policy, DCGAN>, void>
 GAN<Model, InitializationRuleType, Noise, PolicyType>::
 Gradient(const arma::mat& parameters,
          const size_t i,

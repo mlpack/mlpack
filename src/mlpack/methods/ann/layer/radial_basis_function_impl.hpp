@@ -16,7 +16,7 @@
 namespace mlpack {
 
 template<typename MatType, typename Activation>
-RBFType<MatType, Activation>::RBFType() :
+RBF<MatType, Activation>::RBF() :
     Layer<MatType>(),
     outSize(0),
     betas(0)
@@ -25,9 +25,9 @@ RBFType<MatType, Activation>::RBFType() :
 }
 
 template<typename MatType, typename Activation>
-RBFType<MatType, Activation>::RBFType(
+RBF<MatType, Activation>::RBF(
     const size_t outSize,
-    MatType& centres,
+    const MatType& centres,
     double betas) :
     Layer<MatType>(),
     outSize(outSize),
@@ -41,7 +41,32 @@ RBFType<MatType, Activation>::RBFType(
     {
       double maxDis = 0;
       MatType temp = centres.each_col() - centres.col(i);
-      maxDis = max(pow(sum(pow((temp), 2), 0), 0.5).t());
+      maxDis = max(sqrt(sum(square(temp), 0)).t());
+      if (maxDis > sigmas)
+        sigmas = maxDis;
+    }
+    this->betas = std::pow(2 * outSize, 0.5) / sigmas;
+  }
+}
+
+template<typename MatType, typename Activation>
+RBF<MatType, Activation>::RBF(
+    const size_t outSize,
+    MatType&& centres,
+    double betas) :
+    Layer<MatType>(),
+    outSize(outSize),
+    betas(betas),
+    centres(std::move(centres))
+{
+  double sigmas = 0;
+  if (betas == 0)
+  {
+    for (size_t i = 0; i < centres.n_cols; i++)
+    {
+      double maxDis = 0;
+      MatType temp = centres.each_col() - centres.col(i);
+      maxDis = max(sqrt(sum(square(temp), 0)).t());
       if (maxDis > sigmas)
         sigmas = maxDis;
     }
@@ -51,7 +76,7 @@ RBFType<MatType, Activation>::RBFType(
 
 template<typename MatType,
          typename Activation>
-RBFType<MatType, Activation>::RBFType(const RBFType& other) :
+RBF<MatType, Activation>::RBF(const RBF& other) :
     Layer<MatType>(other),
     outSize(other.outSize),
     betas(other.betas),
@@ -62,7 +87,7 @@ RBFType<MatType, Activation>::RBFType(const RBFType& other) :
 
 template<typename MatType,
          typename Activation>
-RBFType<MatType, Activation>::RBFType(RBFType&& other) :
+RBF<MatType, Activation>::RBF(RBF&& other) :
     Layer<MatType>(other),
     outSize(other.outSize),
     betas(other.betas),
@@ -72,8 +97,8 @@ RBFType<MatType, Activation>::RBFType(RBFType&& other) :
 }
 
 template<typename MatType, typename Activation>
-RBFType<MatType, Activation>&
-RBFType<MatType, Activation>::operator=(const RBFType& other)
+RBF<MatType, Activation>&
+RBF<MatType, Activation>::operator=(const RBF& other)
 {
   if (&other != this)
   {
@@ -87,8 +112,8 @@ RBFType<MatType, Activation>::operator=(const RBFType& other)
 }
 
 template<typename MatType, typename Activation>
-RBFType<MatType, Activation>&
-RBFType<MatType, Activation>::operator=(RBFType&& other)
+RBF<MatType, Activation>&
+RBF<MatType, Activation>::operator=(RBF&& other)
 {
   if (&other != this)
   {
@@ -102,14 +127,14 @@ RBFType<MatType, Activation>::operator=(RBFType&& other)
 }
 
 template<typename MatType, typename Activation>
-void RBFType<MatType, Activation>::Forward(
+void RBF<MatType, Activation>::Forward(
     const MatType& input,
     MatType& output)
 {
   // Sanity check: make sure the dimensions are right.
   if (input.n_rows != centres.n_rows)
   {
-    Log::Fatal << "RBFType::Forward(): input size (" << input.n_rows << ") does"
+    Log::Fatal << "RBF::Forward(): input size (" << input.n_rows << ") does"
         << " not match given center size (" << centres.n_rows << ")!"
         << std::endl;
   }
@@ -119,14 +144,14 @@ void RBFType<MatType, Activation>::Forward(
   for (size_t i = 0; i < input.n_cols; i++)
   {
     MatType temp = centres.each_col() - input.col(i);
-    distances.col(i) = pow(sum(pow((temp), 2), 0), 0.5).t();
+    distances.col(i) = sqrt(sum(square(temp), 0)).t();
   }
-  Activation::Fn(distances * std::pow(betas, 0.5), output);
+  Activation::Fn(distances * ElemType(std::pow(betas, 0.5)), output);
 }
 
 
 template<typename MatType, typename Activation>
-void RBFType<MatType, Activation>::Backward(
+void RBF<MatType, Activation>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& /* gy */,
@@ -136,7 +161,7 @@ void RBFType<MatType, Activation>::Backward(
 }
 
 template<typename MatType, typename Activation>
-void RBFType<MatType, Activation>::ComputeOutputDimensions()
+void RBF<MatType, Activation>::ComputeOutputDimensions()
 {
   this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(), 1);
 
@@ -146,7 +171,7 @@ void RBFType<MatType, Activation>::ComputeOutputDimensions()
 
 template<typename MatType, typename Activation>
 template<typename Archive>
-void RBFType<MatType, Activation>::serialize(
+void RBF<MatType, Activation>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

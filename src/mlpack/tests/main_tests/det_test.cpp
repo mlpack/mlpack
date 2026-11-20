@@ -31,11 +31,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETOutputDimensionTest",
                 "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -63,7 +63,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
                 "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   // Test for max_leaf_size.
@@ -99,11 +99,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelReuseTest",
                 "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -138,11 +138,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETViDimensionTest",
                 "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   size_t testRows = testData.n_rows;
@@ -165,7 +165,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelValidityTest",
                 "[DETMainTest][BindingTests]")
 {
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   SetInputParam("training", std::move(trainingData));
@@ -186,12 +186,17 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelValidityTest",
 TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
                 "[DETMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -223,6 +228,10 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
   REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -231,12 +240,17 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
 TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
                 "[DETMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -268,6 +282,10 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
   REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -276,12 +294,17 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
 TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
                 "[DETMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -313,6 +336,10 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
   REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }
 
 /**
@@ -321,12 +348,17 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
 TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
                 "[DETMainTest][BindingTests]")
 {
+  #if defined(MLPACK_USE_OPENMP)
+  const size_t oldThreads = omp_get_num_threads();
+  omp_set_num_threads(1);
+  #endif
+
   arma::mat trainingData;
-  if (!data::Load("iris.csv", trainingData))
+  if (!Load("iris.csv", trainingData))
     FAIL("Unable to load dataset iris.csv!");
 
   arma::mat testData;
-  if (!data::Load("iris_test.csv", testData))
+  if (!Load("iris_test.csv", testData))
     FAIL("Unable to load dataset iris_test.csv!");
 
   // Input data.
@@ -358,4 +390,8 @@ TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
   REQUIRE(accu(testSetEstimates ==
       params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
+
+  #if defined(MLPACK_USE_OPENMP)
+  omp_set_num_threads(oldThreads);
+  #endif
 }

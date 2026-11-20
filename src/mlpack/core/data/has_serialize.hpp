@@ -20,7 +20,6 @@
 #include <type_traits>
 
 namespace mlpack {
-namespace data {
 
 // This gives us a HasSerializeCheck<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a Serialize() function.
@@ -52,14 +51,13 @@ struct HasSerialize
   template<typename U, typename V, typename W> struct check;
   template<typename U> static yes& chk( // This matches classes.
       check<U,
-            typename std::enable_if_t<std::is_class<U>::value>*,
+            typename std::enable_if_t<std::is_class_v<U>>*,
             typename std::enable_if_t<HasSerializeFunction<U>::value>*>*);
   template<typename  > static no&  chk(...); // This matches non-classes.
 
   static const bool value = (sizeof(chk<T>(0)) == sizeof(yes));
 };
 
-} // namespace data
 } // namespace mlpack
 
 #endif

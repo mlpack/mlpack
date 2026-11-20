@@ -31,31 +31,31 @@ DDPG<
   EnvironmentType,
   QNetworkType,
   PolicyNetworkType,
-  NoiseType, 
+  NoiseType,
   UpdaterType,
   ReplayType
->::DDPG(TrainingConfig& config,
-       QNetworkType& learningQNetwork,
-       PolicyNetworkType& policyNetwork,
-       NoiseType& noise,
-       ReplayType& replayMethod,
-       UpdaterType qNetworkUpdater,
-       UpdaterType policyNetworkUpdater,
-       EnvironmentType environment):
-  config(config),
-  learningQNetwork(learningQNetwork),
-  policyNetwork(policyNetwork),
-  noise(noise),
-  replayMethod(replayMethod),
-  qNetworkUpdater(std::move(qNetworkUpdater)),
+>::DDPG(TrainingConfig& configIn,
+       QNetworkType& learningQNetworkIn,
+       PolicyNetworkType& policyNetworkIn,
+       NoiseType& noiseIn,
+       ReplayType& replayMethodIn,
+       UpdaterType qNetworkUpdaterIn,
+       UpdaterType policyNetworkUpdaterIn,
+       EnvironmentType environmentIn):
+  config(configIn),
+  learningQNetwork(learningQNetworkIn),
+  policyNetwork(policyNetworkIn),
+  noise(noiseIn),
+  replayMethod(replayMethodIn),
+  qNetworkUpdater(std::move(qNetworkUpdaterIn)),
   #if ENS_VERSION_MAJOR >= 2
   qNetworkUpdatePolicy(NULL),
   #endif
-  policyNetworkUpdater(std::move(policyNetworkUpdater)),
+  policyNetworkUpdater(std::move(policyNetworkUpdaterIn)),
   #if ENS_VERSION_MAJOR >= 2
   policyNetworkUpdatePolicy(NULL),
   #endif
-  environment(std::move(environment)),
+  environment(std::move(environmentIn)),
   totalSteps(0),
   deterministic(false)
 {
@@ -81,7 +81,7 @@ DDPG<
 
   if (learningQNetwork.Parameters().n_elem != networkSize)
     learningQNetwork.Reset(networkSize);
-  
+
   targetQNetwork.Reset(networkSize);
 
   #if ENS_VERSION_MAJOR == 1
@@ -192,7 +192,7 @@ void DDPG<
       sampledNextStates);
   arma::rowvec Q;
   targetQNetwork.Predict(targetQInput, Q);
-  arma::rowvec nextQ = sampledRewards + config.Discount() 
+  arma::rowvec nextQ = sampledRewards + config.Discount()
       * ((1 - isTerminal) % Q);
 
   arma::mat sampledActionValues(action.size, sampledActions.size());

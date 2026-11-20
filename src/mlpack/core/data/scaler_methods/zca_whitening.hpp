@@ -16,7 +16,6 @@
 #include <mlpack/core/data/scaler_methods/pca_whitening.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * A simple ZCAWhitening class.
@@ -43,9 +42,13 @@ namespace data {
  * scale.InverseTransform(output, input);
  * @endcode
  */
+template<typename MatType = arma::mat>
 class ZCAWhitening
 {
  public:
+  using VecType = typename GetColType<MatType>::type;
+  using ElemType = typename MatType::elem_type;
+
   /**
    * A constructor to set the regularization parameter.
    *
@@ -58,7 +61,6 @@ class ZCAWhitening
    *
    * @param input Dataset to fit.
    */
-  template<typename MatType>
   void Fit(const MatType& input)
   {
     pca.Fit(input);
@@ -70,7 +72,6 @@ class ZCAWhitening
    * @param input Dataset to scale features.
    * @param output Output matrix with whitened features.
    */
-  template<typename MatType>
   void Transform(const MatType& input, MatType& output)
   {
     pca.Transform(input, output);
@@ -83,7 +84,6 @@ class ZCAWhitening
    * @param input Scaled dataset.
    * @param output Output matrix with original Dataset.
    */
-  template<typename MatType>
   void InverseTransform(const MatType& input, MatType& output)
   {
     output = inv(pca.EigenVectors()) * arma::diagmat(sqrt(
@@ -92,13 +92,13 @@ class ZCAWhitening
   }
 
   //! Get the mean row vector.
-  const arma::vec& ItemMean() const { return pca.ItemMean(); }
+  const VecType& ItemMean() const { return pca.ItemMean(); }
   //! Get the eigenvalues vector.
-  const arma::vec& EigenValues() const { return pca.EigenValues(); }
+  const VecType& EigenValues() const { return pca.EigenValues(); }
   //! Get the eigenvector.
-  const arma::mat& EigenVectors() const { return pca.EigenVectors(); }
+  const MatType& EigenVectors() const { return pca.EigenVectors(); }
   //! Get the regularization parameter.
-  double Epsilon() const { return pca.Epsilon(); }
+  ElemType Epsilon() const { return pca.Epsilon(); }
 
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
@@ -108,10 +108,9 @@ class ZCAWhitening
 
  private:
   // A pointer to PcaWhitening Class.
-  PCAWhitening pca;
+  PCAWhitening<MatType> pca;
 }; // class ZCAWhitening
 
-} // namespace data
 } // namespace mlpack
 
 #endif

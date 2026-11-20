@@ -193,10 +193,10 @@ class RAWrapper : public RAWrapperBase
   }
 
  protected:
-  typedef RASearch<NearestNeighborSort,
-                   EuclideanDistance,
-                   arma::mat,
-                   TreeType> RAType;
+  using RAType = RASearch<NearestNeighborSort,
+                          EuclideanDistance,
+                          arma::mat,
+                          TreeType>;
 
   //! The instantiated RASearch object that we are wrapping.
   RAType ra;

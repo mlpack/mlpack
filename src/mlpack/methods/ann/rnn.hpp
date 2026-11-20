@@ -37,6 +37,11 @@ template<
 class RNN
 {
  public:
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
+  using CubeType = typename GetCubeType<MatType>::type;
+  using URowType = typename GetURowType<MatType>::type;
+
   /**
    * Create the RNN object.
    *
@@ -75,22 +80,56 @@ class RNN
   /**
    * Add a new module to the model.
    *
-   * @param args The layer parameter.
+   * @param args The parameters to pass to the constructor of the layer.
    */
-  template <typename LayerType, typename... Args>
-  void Add(Args... args) { network.template Add<LayerType>(args...); }
+  template<typename LayerType, typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType>(std::forward<Args>(args)...);
+  }
+
+  /**
+   * Add a new layer to the model, without specifying the matrix type of the
+   * layer as a template parameter.
+   *
+   * @param args The parameters to pass to the constructor of the layer.
+   */
+  template<template<typename...> typename LayerType,
+           typename... Args>
+  void Add(Args&&... args)
+  {
+    network.template Add<LayerType<MatType>>(std::forward<Args>(args)...);
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
+  [[deprecated("Will be removed in mlpack 5.0.0.  Use Add(std::move(layer)).")]]
   void Add(Layer<MatType>* layer) { network.Add(layer); }
+
+  /**
+   * Add a new layer to the model by copying/moving the parameters of the given
+   * layer.  Note that any trainable weights of this layer will be reset!
+   * (Constant parameters are kept.)  Preferably, pass the layer with
+   * std::move().
+   *
+   * @param layer The layer to be added to the model.
+   */
+  template<typename LayerType>
+  void Add(LayerType&& layer,
+           // This SFINAE can be removed in mlpack 5.0.0.
+           typename std::enable_if<!std::is_pointer_v<
+                std::remove_reference_t<LayerType>>>::type* = 0)
+  {
+    network.Add(std::forward<LayerType>(layer));
+  }
 
   //! Get the network model.
   const std::vector<Layer<MatType>*>& Network() const
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -102,7 +141,7 @@ class RNN
    */
   std::vector<Layer<MatType>*>& Network()
   {
-    return network.Network().Network();
+    return network.Network();
   }
 
   /**
@@ -127,11 +166,10 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
-      OptimizerType& optimizer,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 OptimizerType& optimizer,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Train the recurrent network on the given input data. By default, the
@@ -155,10 +193,74 @@ class RNN
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
-  typename MatType::elem_type Train(
-      arma::Cube<typename MatType::elem_type> predictors,
-      arma::Cube<typename MatType::elem_type> responses,
-      CallbackTypes&&... callbacks);
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 CallbackTypes&&... callbacks);
+
+  /**
+   * Train the recurrent network on the given input data using the given
+   * optimizer, given that input sequences may have different lengths.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   * @param optimizer Instantiated optimizer used to train the model.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType, typename... CallbackTypes>
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 URowType sequenceLengths,
+                 OptimizerType& optimizer,
+                 CallbackTypes&&... callbacks);
+
+  /**
+   * Train the recurrent network on the given input data, given that each input
+   * sequence may have a different length.  By default, the RMSProp optimization
+   * algorithm is used, but others can be specified (such as ens::SGD).
+   *
+   * When passing sequences with different lengths, the batch size of the
+   * optimizer must be set to 1; if it is not, an exception will be thrown
+   * during training.
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization. If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * Note that due to shuffling, training will make a copy of the data, unless
+   * you use `std::move()` to pass the `predictors` and `responses` (that is,
+   * `Train(std::move(predictors), std::move(responses))`).
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @tparam CallbackTypes Types of Callback Functions.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
+   *      See https://www.ensmallen.org/docs.html#callback-documentation.
+   * @return The final objective of the trained model (NaN or Inf on error).
+   */
+  template<typename OptimizerType = ens::RMSProp, typename... CallbackTypes>
+  ElemType Train(CubeType predictors,
+                 CubeType responses,
+                 URowType sequenceLengths,
+                 CallbackTypes&&... callbacks);
 
   /**
    * Predict the responses to a given set of predictors. The responses will
@@ -169,9 +271,27 @@ class RNN
    * @param results Matrix to put output predictions of responses into.
    * @param batchSize Batch size to use for prediction.
    */
-  void Predict(const arma::Cube<typename MatType::elem_type>& predictors,
-               arma::Cube<typename MatType::elem_type>& results,
+  void Predict(const CubeType& predictors,
+               CubeType& results,
                const size_t batchSize = 128);
+
+  /**
+   * Predict the responses to a given set of predictors, given that each
+   * sequence can have a different length. The responses will reflect the output
+   * of the given output layer as returned by the output layer function.
+   *
+   * Slices of column `i` of `results` at time indexes greater than
+   * `sequenceLengths[i]` should not be considered valid predictions.
+   *
+   * The batch size is limited to 1 when predicting on sequences of different
+   * lengths.
+   *
+   * @param predictors Input predictors.
+   * @param results Matrix to put output predictions of responses into.
+   */
+  void Predict(const CubeType& predictors,
+               CubeType& results,
+               const URowType& sequenceLengths);
 
   // Return the nujmber of weights in the model.
   size_t WeightSize() { return network.WeightSize(); }
@@ -232,11 +352,26 @@ class RNN
    * @param predictors Input variables.
    * @param responses Target outputs for input variables.
    */
-  typename MatType::elem_type Evaluate(
-      const arma::Cube<typename MatType::elem_type>& predictors,
-      const arma::Cube<typename MatType::elem_type>& responses);
+  ElemType Evaluate(const CubeType& predictors, const CubeType& responses);
 
-  //! Serialize the model.
+  /**
+   * Evaluate the recurrent network with the given predictors and responses.
+   * This functions is usually used to monitor progress while training.
+   *
+   * @param predictors Input variables.
+   * @param responses Target outputs for input variables.
+   * @param sequenceLengths Length of each input sequences.  Should have size
+   *     `predictors.n_cols`, and all values should be less than or equal to
+   *     `predictors.n_slices`.
+   * @param batchSize Number of points to be passed at a time to use for
+   *        objective function evaluation.
+   */
+  ElemType Evaluate(const CubeType& predictors,
+                    const CubeType& responses,
+                    const URowType& sequenceLengths,
+                    const size_t batchSize);
+
+  // Serialize the model.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
@@ -251,7 +386,7 @@ class RNN
    *
    * @param parameters Matrix model parameters.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters);
+  ElemType Evaluate(const MatType& parameters);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -267,9 +402,9 @@ class RNN
    * @param batchSize Number of points to be passed at a time to use for
    *        objective function evaluation.
    */
-  typename MatType::elem_type Evaluate(const MatType& parameters,
-                                       const size_t begin,
-                                       const size_t batchSize);
+  ElemType Evaluate(const MatType& parameters,
+                    const size_t begin,
+                    const size_t batchSize);
 
   /**
    * Evaluate the recurrent network with the given parameters.
@@ -280,8 +415,8 @@ class RNN
    * @param gradient Matrix to output gradient into.
    */
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
-                                                   GradType& gradient);
+  ElemType EvaluateWithGradient(const MatType& parameters,
+                                GradType& gradient);
 
    /**
    * Evaluate the recurrent network with the given parameters, but using only
@@ -296,10 +431,10 @@ class RNN
    *        objective function evaluation.
    */
   template<typename GradType>
-  typename MatType::elem_type EvaluateWithGradient(const MatType& parameters,
-                                                   const size_t begin,
-                                                   GradType& gradient,
-                                                   const size_t batchSize);
+  ElemType EvaluateWithGradient(const MatType& parameters,
+                                const size_t begin,
+                                GradType& gradient,
+                                const size_t batchSize);
 
   /**
    * Evaluate the gradient of the recurrent network with the given parameters,
@@ -337,9 +472,12 @@ class RNN
    *
    * @param predictors Input data variables.
    * @param responses Outputs results from input data variables.
+   * @param sequenceLengths (Optional) sequence length for each predictor
+   *     sequence.
    */
-  void ResetData(arma::Cube<typename MatType::elem_type> predictors,
-                 arma::Cube<typename MatType::elem_type> responses);
+  void ResetData(CubeType predictors,
+                 CubeType responses,
+                 URowType sequenceLengths = URowType());
 
  private:
   // Helper functions.
@@ -351,10 +489,51 @@ class RNN
    */
   void ResetMemoryState(const size_t memorySize, const size_t batchSize);
 
-  //! Set the previous step index of all recurrent layers to `step`.
-  void SetPreviousStep(const size_t step);
   //! Set the current step index of all recurrent layers to `step`.
-  void SetCurrentStep(const size_t step);
+  void SetCurrentStep(const size_t step,
+                      const bool end,
+                      size_t batchSize,
+                      size_t activeBatchSize,
+                      bool backwards = false);
+
+  // Reorders the data in a batch to have sequence lengths in descending order.
+  void ReorderBatch(const size_t begin,
+                    const size_t batchSize,
+                    CubeType& predictors,
+                    CubeType& responses,
+                    URowType& sequenceLengths);
+
+  // Calculates the number of active points in the batch.
+  template <typename SeqLenType = URowType>
+  void CalculateActivePoints(size_t& activeBatchSize,
+                             const size_t begin,
+                             const SeqLenType& sequenceLengths,
+                             const size_t step,
+                             const std::enable_if_t<
+                                 IsArma<SeqLenType>::value>* = 0)
+  {
+    // Since we know that `sequenceLengths` is sorted in order of descending
+    // lengths and `activeBatchSize` only decreases as `step` increases, we
+    // can just decrease `activeBatchSize` until we find the sequence length
+    // that is greater than the current step.
+    while (activeBatchSize > 0 &&
+        sequenceLengths[begin + activeBatchSize - 1] <= step)
+      activeBatchSize--;
+  }
+
+  template <typename SeqLenType = URowType>
+  void CalculateActivePoints(size_t& activeBatchSize,
+                             const size_t begin,
+                             const SeqLenType& sequenceLengths,
+                             const size_t step,
+                             const std::enable_if_t<
+                                 IsCoot<SeqLenType>::value>* = 0)
+  {
+    // Individual element access is probably slower if `SeqLenType` is a
+    // Bandicoot type so we don't use the optimized version.
+    activeBatchSize = accu(sequenceLengths
+        .subvec(begin, begin + activeBatchSize - 1) > step);
+  }
 
   //! Number of timesteps to consider for backpropagation through time (BPTT).
   size_t bpttSteps;
@@ -367,14 +546,18 @@ class RNN
   //! occasionally resetting any memory cells.
   FFN<OutputLayerType, InitializationRuleType, MatType> network;
 
-  //! The matrix of data points (predictors).  This member is empty, except
-  //! during training---we must store a local copy of the training data since
-  //! the ensmallen optimizer will not provide training data.
-  arma::Cube<typename MatType::elem_type> predictors;
+  // The matrix of data points (predictors).  These members are empty, except
+  // during training---we must store a local copy of the training data since
+  // the ensmallen optimizer will not provide training data.
+  CubeType predictors;
 
-  //! The matrix of responses to the input data points.  This member is empty,
-  //! except during training.
-  arma::Cube<typename MatType::elem_type> responses;
+  // The matrix of responses to the input data points.  This member is empty,
+  // except during training.
+  CubeType responses;
+
+  // The length of each input sequence.  If this is empty, then every sequence
+  // is assumed to have the same length (`predictors.n_slices`).
+  URowType sequenceLengths;
 }; // class RNNType
 
 } // namespace mlpack

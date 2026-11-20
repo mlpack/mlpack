@@ -1,0 +1,315 @@
+// The cross-compilation job tests mlpack on a set of low-resource devices.
+// First, the cross-compilation host compiles mlpack tests for each
+// architecture, and then copies them to the destination host and runs them.
+
+target_info = [
+  'couscous': [
+      'device_name': 'rpi5',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA76',
+      'page_size': '0x4000' /* 16kb for RPi5s */
+  ],
+  'tofu': [
+      'device_name': 'rpi3b+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA53',
+      'test_filters': '~[long]'
+  ],
+  'chorizo': [
+      'device_name': 'jetson-orin-nano',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA78'
+  ],
+  'tatertot': [
+      'device_name': 'beaglebone-ai64',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA72',
+      'page_size': '0x10000' /* 64kb */
+  ],
+  // Thanks to NC Semi for hosting the little G4 cube!
+  'megakelvin': [
+      'device_name': 'mac-g4-cube',
+      'arch_type': 'ppc32',
+      'arch_name': 'POWERPCG4',
+      'test_filters': '~[long]',
+      'jump_host': 'millivolt.ncsemiconductor.com',
+      'openblas_extra_flags': 'USE_THREAD=0'
+  ],
+  'cayenne': [
+      'device_name': 'vocore2-ultimate',
+      'arch_type': 'mips32-softfp',
+      'arch_name': 'MIPS24K',
+      'test_filters': '[tiny]',
+      'openblas_extra_flags': 'MSA_FLAGS= USE_THREAD=0',
+      'scp_opts': '-O'
+  ],
+  'laziji': [
+      'device_name': 'sunblade-150',
+      'arch_type': 'sparc64',
+      'arch_name': 'ULTRASPARC',
+      'test_filters': '~[long]',
+      // OpenBLAS doesn't run correctly on SPARC64 so we manually download a
+      // precompiled reference BLAS implementation.
+      'blas_url': 'https://files.mlpack.org/librefblas-sparc64.a'
+  ],
+  'manaeesh': [
+      'device_name': 'milkv-duo',
+      'arch_type': 'riscv64-lp64d-musl',
+      'arch_name': 'RV64GCV',
+      // Even the "tiny" LSTMReberGrammarTest is too much for the Milk-V Duo!
+      'test_filters': '[tiny] ~LSTMReberGrammarTest',
+      'openblas_extra_flags': 'USE_THREAD=0 NUM_THREADS=1 USE_OPENMP=0',
+      'openblas_patches': '.jenkins/cross-compilation/openblas-riscv64-low-memory.patch',
+      'scp_opts': '-O',
+      // We need a special patch to decrease the size of the internal buffers
+      // that OpenBLAS uses, so that we don't exhaust the small amount of RAM
+      // that we have.  We also need to disable Armadillo's std::mutex support.
+      'extra_cmake_opts': '-DDISABLE_STB=ON -DDISABLE_DR_LIBS=ON -DDISABLE_HTTPLIB=ON -DCMAKE_CXX_FLAGS="-DARMA_DONT_USE_STD_MUTEX"'
+  ],
+  'laab': [
+      'device_name': 'orange-pi-6+',
+      'arch_type': 'arm64',
+      'arch_name': 'CORTEXA710'
+  ]
+]
+
+pipeline
+{
+  agent
+  {
+    // Only use a node that has access to the target hosts.
+    label 'cross-compile'
+  }
+
+  options
+  {
+    // Only allow one build at a time of this job.
+    disableConcurrentBuilds(abortPrevious: true)
+
+    // We will do checkout manually.
+    skipDefaultCheckout()
+  }
+
+  stages
+  {
+    stage('Set up workspace')
+    {
+      steps
+      {
+        cleanWs(deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true)
+        checkout scm
+
+        script
+        {
+          u = load '.jenkins/utils.groovy'
+          u.startCheck('Cross-compilation checks', 'Setting up workspace...')
+        }
+
+        // Create a directory for our resulting reports.
+        sh'mkdir -p reports/'
+      }
+    }
+
+    stage('Cross-compile mlpack to different targets')
+    {
+      matrix
+      {
+        axes
+        {
+          axis
+          {
+            name 'target'
+            values 'couscous', 'tofu', 'chorizo', 'tatertot', 'megakelvin',
+                   'cayenne', 'laziji', 'manaeesh', 'laab'
+          }
+        }
+
+        stages
+        {
+          // Cross-compile mlpack tests.
+          stage('Cross-compilation tests')
+          {
+            agent
+            {
+              docker
+              {
+                image 'mlpack/cross-compile-' +
+                    target_info[env.target]['arch_type'].toLowerCase() +
+                    ':latest'
+                alwaysPull true
+                reuseNode true
+                args '-v /home/jenkins/ccache:/opt/ccache -e HOME=/home/jenkins/'
+              }
+            }
+
+            environment
+            {
+              ARCH_NAME = "${target_info[env.target]['arch_name']}"
+              DEVICE_NAME = "${target_info[env.target]['device_name']}"
+              PAGE_SIZE = "${target_info[env.target]['page_size'] ?: ''}"
+              TEST_FILTERS = "${target_info[env.target]['test_filters'] ?: ''}"
+              JUMP_HOST = "${target_info[env.target]['jump_host'] ?: ''}"
+              OPENBLAS_EXTRA_FLAGS = "${target_info[env.target]['openblas_extra_flags'] ?: ''}"
+              OPENBLAS_PATCHES = "${target_info[env.target]['openblas_patches'] ?: ''}"
+              SCP_OPTS = "${target_info[env.target]['scp_opts'] ?: ''}"
+              BLAS_URL = "${target_info[env.target]['blas_url'] ?: ''}"
+              EXTRA_CXXFLAGS = "${target_info[env.target]['extra_cxxflags'] ?: ''}"
+              EXTRA_CMAKE_OPTS = "${target_info[env.target]['extra_cmake_opts'] ?: '' }"
+            }
+
+            steps
+            {
+              script
+              {
+                u.updateCheckStatus('Building mlpack for ' + env.target + '...')
+              }
+
+              // Specifically use bash so `time` is available.
+              sh '''#!/bin/bash -xe
+                # If a custom page size is needed, set it.
+                if [ ! -z "$PAGE_SIZE" ];
+                then
+                  EXTRA_CXXFLAGS="${EXTRA_CXXFLAGS} -Wl,-z,common-page-size='$PAGE_SIZE' -Wl,-z,max-page-size='$PAGE_SIZE'";
+                fi
+
+                # Configure ccache.
+                export CCACHE_DIR=/opt/ccache/;
+                ccache --set-config "sloppiness=include_file_ctime";
+                ccache --set-config "hash_dir=false";
+                ccache --set-config "max_size=10G";
+                ccache --zero-stats;
+
+                # This only supports one patch.  Later, it may be necessary to
+                # support more.
+                if [ ! -z "$OPENBLAS_PATCHES" ];
+                then
+                  OPENBLAS_PATCH_LIST="-DOPENBLAS_PATCHES=\"$PWD/$OPENBLAS_PATCHES\"";
+                else
+                  OPENBLAS_PATCH_LIST=;
+                fi
+
+                rm -rf build-${target}/
+                mkdir build-${target}/
+                cd build-${target}/
+                cmake \
+                    -DBUILD_TESTS=ON \
+                    -DUSE_PRECOMPILED_HEADERS=OFF \
+                    -DARCH_NAME=${ARCH_NAME} \
+                    -DCMAKE_CROSSCOMPILING=ON \
+                    -DCMAKE_TOOLCHAIN_FILE=../CMake/crosscompile-toolchain.cmake \
+                    -DTOOLCHAIN_PREFIX=$TOOLCHAIN_PREFIX \
+                    -DCMAKE_SYSROOT=$CMAKE_SYSROOT \
+                    -DDOWNLOAD_DEPENDENCIES=ON \
+                    -DOPENBLAS_EXTRA_ARGS="NO_FORTRAN=1 DYNAMIC_ARCH=0 $OPENBLAS_EXTRA_FLAGS" \
+                    -DCMAKE_CXX_FLAGS="$EXTRA_CXXFLAGS" \
+                    $OPENBLAS_PATCH_LIST \
+                    $EXTRA_CMAKE_OPTS \
+                    ../
+                # If we have a custom BLAS library move it into place...
+                if [ ! -z "$BLAS_URL" ]; then
+                    curl $BLAS_URL > deps/OpenBLAS*/libopenblas_*.a;
+                fi
+                time make mlpack_test;
+
+                # Print ccache results.
+                ccache -s;
+              '''
+
+              script
+              {
+                u.updateCheckStatus('Testing mlpack on ' + env.target + '...')
+              }
+
+              withCredentials([sshUserPrivateKey(
+                  credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
+                  keyFileVariable: 'KEY_FILE',
+                  passphraseVariable: 'PASSPHRASE')])
+              {
+                // Specifically use bash so `time` is available.
+                sh'''#!/bin/bash -xe
+                  eval $(ssh-agent -s)
+                  echo ${PASSPHRASE} | SSH_ASKPASS=/bin/cat setsid -w ssh-add ${KEY_FILE}
+
+                  # Don't check the host keys, because they won't be saved in
+                  # this container anyway.
+                  mkdir -p ~/.ssh/
+                  echo "Host *" >> ~/.ssh/config;
+                  echo '  StrictHostKeyChecking no' >> ~/.ssh/config;
+                  if [ ! -z "$JUMP_HOST" ];
+                  then
+                    echo "" >> ~/.ssh/config;
+                    echo "Host ${target}" >> ~/.ssh/config;
+                    echo "  ProxyJump $JUMP_HOST" >> ~/.ssh/config;
+                  fi
+                  cat ~/.ssh/config;
+
+                  ssh jenkins@${target} -t mkdir -p test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} build-${target}/bin/mlpack_test jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r src/mlpack/tests/data/* jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+                  scp ${SCP_OPTS} -r doc/img/cat.jpg jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/
+
+                  # Unpack all compressed test data.
+                  ssh jenkins@${target} -t "
+                      cd test_${BRANCH_NAME}_${BUILD_ID};
+                      find ./ -iname '*.bz2' -exec tar xvf \\{\\} \\;"
+
+                  # We use a lockfile to ensure that we don't run more than one
+                  # test on the device at once.  `lockfile` is provided by
+                  # procmail.  The configuration here kills any tests that took
+                  # more than two hours.
+                  mkdir -p reports;
+                  time ssh jenkins@${target} -t "
+                      cd test_${BRANCH_NAME}_${BUILD_ID};
+                      lockfile -r-1 -l 7200 ~/mlpack_test.lock;
+                      killall -9 mlpack_test;
+                      mkdir -p reports;
+                      ./mlpack_test -r junit -n mlpack_test.${target} -o reports/mlpack_test.junit.xml ${TEST_FILTERS};
+                      rm -f ~/mlpack_test.lock;" \
+                      || echo "Test failure or other problem.";
+
+                  # Clean up afterwards.
+                  scp ${SCP_OPTS} jenkins@${target}:test_${BRANCH_NAME}_${BUILD_ID}/reports/mlpack_test.junit.xml reports/mlpack_test.${target}.junit.xml;
+                  ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
+                '''
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post
+  {
+    always
+    {
+      junit(allowEmptyResults: true,
+            skipPublishingChecks: true,
+            testResults: '**/reports/mlpack_test.*.junit.xml')
+
+      // Clean the workspace.
+      cleanWs(cleanWhenNotBuilt: true,
+              deleteDirs: true,
+              disableDeferredWipeout: true,
+              notFailBuild: true)
+    }
+
+    success
+    {
+      script { u.finishCheck('Cross-compilation checks passed.', true) }
+    }
+
+    // Mark unstable builds as failed.
+    unstable
+    {
+      script { u.finishCheck('Cross-compilation checks failed.', false) }
+    }
+
+    failure
+    {
+      script { u.finishCheck('Cross-compilation checks failed.', false) }
+    }
+  }
+}

@@ -27,23 +27,23 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
 {
   arma::mat output, input, delta, error;
 
-  Linear* moduleA = new Linear(10);
-  moduleA->InputDimensions() = std::vector<size_t>({ 10 });
-  moduleA->ComputeOutputDimensions();
-  arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights(weightsA);
-  moduleA->Parameters().randu();
-
-  Linear* moduleB = new Linear(10);
-  moduleB->InputDimensions() = std::vector<size_t>({ 10 });
-  moduleB->ComputeOutputDimensions();
-  arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights(weightsB);
-  moduleB->Parameters().randu();
-
   Concat module;
-  module.Add(moduleA);
-  module.Add(moduleB);
+  module.Add<Linear>(10);
+  Linear<>* linearA = dynamic_cast<Linear<>*>(module.Network().back());
+  linearA->InputDimensions() = std::vector<size_t>({ 10 });
+  linearA->ComputeOutputDimensions();
+  arma::mat weightsA(linearA->WeightSize(), 1);
+  linearA->SetWeights(weightsA);
+  linearA->Parameters().randu();
+
+  module.Add<Linear>(10);
+  Linear<>* linearB = dynamic_cast<Linear<>*>(module.Network().back());
+  linearB->InputDimensions() = std::vector<size_t>({ 10 });
+  linearB->ComputeOutputDimensions();
+  arma::mat weightsB(linearB->WeightSize(), 1);
+  linearB->SetWeights(weightsB);
+  linearB->Parameters().randu();
+
   module.InputDimensions() = std::vector<size_t>({ 10 });
   module.ComputeOutputDimensions();
 
@@ -53,11 +53,11 @@ TEST_CASE("SimpleConcatLayerTest", "[ANNLayerTest]")
   module.Forward(input, output);
 
   const double sumModuleA = accu(
-      moduleA->Parameters().submat(
-      100, 0, moduleA->Parameters().n_elem - 1, 0));
+      linearA->Parameters().submat(
+      100, 0, linearA->Parameters().n_elem - 1, 0));
   const double sumModuleB = accu(
-      moduleB->Parameters().submat(
-      100, 0, moduleB->Parameters().n_elem - 1, 0));
+      linearB->Parameters().submat(
+      100, 0, linearB->Parameters().n_elem - 1, 0));
   REQUIRE(sumModuleA + sumModuleB ==
       Approx(accu(output.col(0))).epsilon(1e-5));
 
@@ -86,26 +86,26 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 
   input = arma::ones(inputWidth * inputHeight * inputChannel, batch);
 
-  Convolution* moduleA = new Convolution(outputChannel, kW, kH, 1, 1, 0, 0);
-  Convolution* moduleB = new Convolution(outputChannel, kW, kH, 1, 1, 0, 0);
+  Convolution moduleA(outputChannel, kW, kH, 1, 1, 0, 0);
+  Convolution moduleB(outputChannel, kW, kH, 1, 1, 0, 0);
 
-  moduleA->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
-  moduleA->ComputeOutputDimensions();
-  arma::mat weightsA(moduleA->WeightSize(), 1);
-  moduleA->SetWeights(weightsA);
-  moduleA->Parameters().randu();
+  moduleA.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
+  moduleA.ComputeOutputDimensions();
+  arma::mat weightsA(moduleA.WeightSize(), 1);
+  moduleA.SetWeights(weightsA);
+  moduleA.Parameters().randu();
 
-  moduleB->InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
-  moduleB->ComputeOutputDimensions();
-  arma::mat weightsB(moduleB->WeightSize(), 1);
-  moduleB->SetWeights(weightsB);
-  moduleB->Parameters().randu();
+  moduleB.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
+  moduleB.ComputeOutputDimensions();
+  arma::mat weightsB(moduleB.WeightSize(), 1);
+  moduleB.SetWeights(weightsB);
+  moduleB.Parameters().randu();
 
   // Compute output of each layer.
-  outputA.set_size(moduleA->OutputSize(), 1);
-  outputB.set_size(moduleB->OutputSize(), 1);
-  moduleA->Forward(input, outputA);
-  moduleB->Forward(input, outputB);
+  outputA.set_size(moduleA.OutputSize(), 1);
+  outputB.set_size(moduleB.OutputSize(), 1);
+  moduleA.Forward(input, outputA);
+  moduleB.Forward(input, outputB);
 
   arma::cube A(outputA.memptr(), outputWidth, outputHeight, outputChannel);
   arma::cube B(outputB.memptr(), outputWidth, outputHeight, outputChannel);
@@ -146,8 +146,15 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
 
     // Compute output of Concat<> layer.
     Concat module(axis);
-    module.Add(moduleA);
-    module.Add(moduleB);
+    // Copy the layers we made earlier; but we must manually set the weights.
+    module.Add(Convolution(moduleA));
+    arma::mat moduleWeightsA = weightsA;
+    module.Network().back()->SetWeights(moduleWeightsA);
+
+    module.Add(Convolution(moduleB));
+    arma::mat moduleWeightsB = weightsB;
+    module.Network().back()->SetWeights(moduleWeightsB);
+
     module.InputDimensions() = std::vector<size_t>({ inputWidth, inputHeight });
     module.ComputeOutputDimensions();
     output.set_size(module.OutputSize(), 1);
@@ -162,9 +169,6 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
     // deallocated.
     module.Network().clear();
   }
-
-  delete moduleA;
-  delete moduleB;
 }
 
 /**
@@ -195,10 +199,10 @@ TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
       model->ResetData(input, target);
       model->Add<Linear>(10);
 
-      concat = new Concat();
-      concat->Add<Linear>(5);
-      concat->Add<Linear>(5);
-      model->Add(concat);
+      Concat concat;
+      concat.Add<Linear>(5);
+      concat.Add<Linear>(5);
+      model->Add<Concat>(std::move(concat));
       model->Add<Linear>(2);
 
       model->Add<LogSoftMax>();
@@ -219,7 +223,6 @@ TEST_CASE("GradientConcatLayerTest", "[ANNLayerTest]")
     arma::mat& Parameters() { return model->Parameters(); }
 
     FFN<NegativeLogLikelihood, NguyenWidrowInitialization>* model;
-    Concat* concat;
     arma::mat input, target;
   } function;
 

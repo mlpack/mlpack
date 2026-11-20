@@ -67,7 +67,11 @@ inline bool Params::Has(const std::string& key) const
   }
   const std::string& checkKey = usedKey;
 
-  return (parameters.at(checkKey).wasPassed > 0);
+  // For boolean parameters, return the actual value of the parameter.
+  if (parameters.at(checkKey).cppType == "bool")
+    return *std::any_cast<bool>(&parameters.at(checkKey).value);
+  else
+    return (parameters.at(checkKey).wasPassed > 0);
 }
 
 /**
@@ -286,11 +290,11 @@ inline void Params::CheckInputMatrices()
     {
       CheckInputMatrix(Get<arma::rowvec>(paramName), paramName);
     }
-    else if (paramType == "std::tuple<mlpack::data::DatasetInfo, arma::mat>")
+    else if (paramType == "std::tuple<mlpack::DatasetInfo, arma::mat>")
     {
       // Note that CheckCategoricalParam() is a utility function that must be
       // defined after DatasetInfo is fully defined.
-      data::CheckCategoricalParam(*this, paramName);
+      CheckCategoricalParam(*this, paramName);
     }
   }
 }

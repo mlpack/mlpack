@@ -34,9 +34,9 @@ class MeanSquaredErrorType
    *                  'mean' reduction is used, where sum of the output will be
    *                  divided by the number of elements in the output. If true,
    *                  'sum' reduction is used and the output will be summed. It
-   *                  is set to true by default.
+   *                  is set to false by default.
    */
-  MeanSquaredErrorType(const bool reduction = true);
+  MeanSquaredErrorType(const bool reduction = false);
 
   /**
    * Computes the mean squared error function.
@@ -78,7 +78,7 @@ class MeanSquaredErrorType
 }; // class MeanSquaredErrorType
 
 // Default typedef for typical `arma::mat` usage.
-typedef MeanSquaredErrorType<arma::mat> MeanSquaredError;
+using MeanSquaredError = MeanSquaredErrorType<arma::mat>;
 
 } // namespace mlpack
 

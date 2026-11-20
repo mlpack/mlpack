@@ -20,12 +20,14 @@ namespace mlpack {
 /**
  * Return the log probability of the given observation.
  */
-inline double LaplaceDistribution::LogProbability(
-    const arma::vec& observation) const
+template<typename MatType>
+inline typename LaplaceDistribution<MatType>::ElemType
+LaplaceDistribution<MatType>::LogProbability(
+    const VecType& observation) const
 {
   // Evaluate the PDF of the Laplace distribution to determine
   // the log probability.
-  return -std::log(2. * scale) - arma::norm(observation - mean, 2) / scale;
+  return -std::log(2. * scale) - norm(observation - distMean, 2) / scale;
 }
 
 /**
@@ -34,8 +36,10 @@ inline double LaplaceDistribution::LogProbability(
  * @param x List of observations.
  * @param probabilities Output probabilities for each input observation.
  */
-inline void LaplaceDistribution::Probability(const arma::mat& x,
-                                             arma::vec& probabilities) const
+template<typename MatType>
+inline void LaplaceDistribution<MatType>::Probability(
+    const MatType& x,
+    VecType& probabilities) const
 {
   probabilities.set_size(x.n_cols);
   for (size_t i = 0; i < x.n_cols; ++i)
@@ -49,7 +53,33 @@ inline void LaplaceDistribution::Probability(const arma::mat& x,
  *
  * @param observations List of observations.
  */
-inline void LaplaceDistribution::Estimate(const arma::mat& observations)
+template<typename MatType>
+[[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
+inline void LaplaceDistribution<MatType>::Estimate(const MatType& observations)
+{
+  Train(observations);
+}
+
+/**
+ * Estimate the Laplace distribution directly from the given observations,
+ * taking into account the probability of each observation actually being from
+ * this distribution.
+ */
+template<typename MatType>
+[[deprecated("Will be removed in mlpack 5.0.0; use Train() instead")]]
+inline void LaplaceDistribution<MatType>::Estimate(const MatType& observations,
+                                                   const VecType& probabilities)
+{
+  Train(observations, probabilities);
+}
+
+/**
+ * Estimate the Laplace distribution directly from the given observations.
+ *
+ * @param observations List of observations.
+ */
+template<typename MatType>
+inline void LaplaceDistribution<MatType>::Train(const MatType& observations)
 {
   // The maximum likelihood estimate of the mean is the median of the data for
   // the univariate case.  See the short note "The Double Exponential
@@ -67,13 +97,13 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations)
   //   \theta_k = (1 / n) \sum_{i = 1}^{n} x_ik
   // so L'(\theta) = 0 when \theta is the mean of the observations.  I am not
   // 100% certain my calculus and linear algebra is right, but I think it is...
-  mean = arma::mean(observations, 1);
+  distMean = mean(observations, 1);
 
   // The maximum likelihood estimate of the scale parameter is the mean
   // deviation from the mean.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
-    scale += arma::norm(observations.col(i) - mean, 2);
+    scale += norm(observations.col(i) - distMean, 2);
   scale /= observations.n_cols;
 }
 
@@ -82,22 +112,23 @@ inline void LaplaceDistribution::Estimate(const arma::mat& observations)
  * taking into account the probability of each observation actually being from
  * this distribution.
  */
-inline void LaplaceDistribution::Estimate(const arma::mat& observations,
-                                          const arma::vec& probabilities)
+template<typename MatType>
+inline void LaplaceDistribution<MatType>::Train(const MatType& observations,
+                                                const VecType& probabilities)
 {
   // I am not completely sure that this change results in a valid maximum
   // likelihood estimator given probabilities of points.
-  mean.zeros(observations.n_rows);
+  distMean.zeros(observations.n_rows);
   for (size_t i = 0; i < observations.n_cols; ++i)
-    mean += observations.col(i) * probabilities(i);
-  mean /= accu(probabilities);
+    distMean += observations.col(i) * probabilities(i);
+  distMean /= accu(probabilities);
 
   // This is the same formula as the previous function, but here we are
   // multiplying by the probability that the point is actually from
   // this distribution.
   scale = 0.0;
   for (size_t i = 0; i < observations.n_cols; ++i)
-    scale += probabilities(i) * arma::norm(observations.col(i) - mean, 2);
+    scale += probabilities(i) * norm(observations.col(i) - distMean, 2);
   scale /= accu(probabilities);
 }
 

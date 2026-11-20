@@ -11,6 +11,7 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+#include <mlpack/core/data/dataset_mapper.hpp>
 
 #undef BINDING_NAME
 #define BINDING_NAME test_R_binding
@@ -195,15 +196,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   // All numeric elements should be multiplied by 3.
   if (params.Has("matrix_and_info_in"))
   {
-    typedef tuple<data::DatasetInfo, arma::mat> TupleType;
+    using TupleType = tuple<DatasetInfo, arma::mat>;
     TupleType tuple = std::move(params.Get<TupleType>("matrix_and_info_in"));
 
-    const data::DatasetInfo& di = std::get<0>(tuple);
+    const DatasetInfo& di = std::get<0>(tuple);
     arma::mat& m = std::get<1>(tuple);
 
     for (size_t i = 0; i < m.n_rows; ++i)
     {
-      if (di.Type(i) == data::Datatype::numeric)
+      if (di.Type(i) == Datatype::numeric)
       {
         m.row(i) *= 2.0;
       }

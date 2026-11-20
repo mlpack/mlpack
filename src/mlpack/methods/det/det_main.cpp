@@ -297,7 +297,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       }
 
       if (params.Has("tag_counters_file"))
-        data::Save(params.Get<string>("tag_counters_file"), counters);
+        Save(params.Get<string>("tag_counters_file"), counters);
     }
 
     timers.Stop("det_test_set_tagging");

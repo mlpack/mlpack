@@ -43,7 +43,6 @@ void SoftMarginLossType<MatType>::Backward(
     const MatType& target,
     MatType& loss)
 {
-  loss.set_size(size(prediction));
   MatType temp = exp(-target % prediction);
   MatType numerator = -target % temp;
   MatType denominator = 1 + temp;

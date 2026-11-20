@@ -32,7 +32,7 @@ template<typename MatType = arma::mat>
 class CosineTree
 {
  public:
-  typedef typename GetDenseColType<MatType>::type VecType;
+  using VecType = typename GetDenseColType<MatType>::type;
 
   /**
    * CosineTree constructor for the root node of the tree. It initializes the

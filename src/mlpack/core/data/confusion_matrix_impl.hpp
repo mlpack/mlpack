@@ -17,7 +17,6 @@
 #include "confusion_matrix.hpp"
 
 namespace mlpack {
-namespace data {
 
 /**
  * A confusion matrix is a summary of prediction results on a classification
@@ -60,7 +59,6 @@ void ConfusionMatrix(const arma::Row<size_t> predictors,
   }
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

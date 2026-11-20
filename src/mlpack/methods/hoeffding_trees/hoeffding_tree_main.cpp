@@ -23,7 +23,6 @@
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::data;
 using namespace mlpack::util;
 
 // Program Name.
@@ -90,9 +89,9 @@ BINDING_EXAMPLE(
 BINDING_SEE_ALSO("@decision_tree", "#decision_tree");
 BINDING_SEE_ALSO("@random_forest", "#random_forest");
 BINDING_SEE_ALSO("Mining High-Speed Data Streams (pdf)",
-    "http://dm.cs.washington.edu/papers/vfdt-kdd00.pdf");
+    "https://www.cs.rhodes.edu/~welshc/COMP465_S15/Papers/kdd00.pdf");
 BINDING_SEE_ALSO("HoeffdingTree class documentation",
-    "@src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp");
+    "@doc/user/methods/hoeffding_tree.md");
 
 PARAM_MATRIX_AND_INFO_IN("training", "Training dataset (may be categorical).",
     "t");
@@ -133,7 +132,7 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
     "performed.", "o", 100);
 
 // Convenience typedef.
-typedef tuple<DatasetInfo, arma::mat> TupleType;
+using TupleType = tuple<DatasetInfo, arma::mat>;
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -276,7 +275,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   if (params.Has("test"))
   {
     // Before loading, pre-set the dataset info by getting the raw parameter
-    // (that doesn't call data::Load()).
+    // (that doesn't call Load()).
     std::get<0>(params.GetRaw<TupleType>("test")) = datasetInfo;
     arma::mat testSet = std::get<1>(params.Get<TupleType>("test"));
 

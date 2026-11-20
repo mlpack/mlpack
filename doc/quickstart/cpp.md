@@ -24,10 +24,10 @@ sudo apt-get install libmlpack-dev
 and on Fedora or Red Hat:
 
 ```sh
-sudo dnf install mlpack
+sudo dnf install mlpack-devel
 ```
 
-You can also use a Docker image from Dockerhub, 
+You can also use a Docker image from Dockerhub,
 which has mlpack headers already installed:
 
 ```sh
@@ -37,12 +37,19 @@ docker run -it mlpack/mlpack /bin/bash
 If you prefer to build mlpack from scratch, see the
 [main README](../../README.md).
 
-**Note for Ubuntu LTS Users**: The libmlpack-dev version in the Ubuntu LTS 
+***Note for Ubuntu LTS Users***: The libmlpack-dev version in the Ubuntu LTS
 repositories may not always be the latest. This can lead to issues, such as
-missing header files (e.g., `mlpack.hpp` missing in versions prior to 4.0).
-To ensure compatibility with the latest mlpack features and examples,
-we recommend building mlpack from source, as explained in the
-[main README](../../README.md).
+missing header files (e.g., `mlpack.hpp` missing in versions prior to 4.0).  To
+ensure compatibility with the latest mlpack features and examples, we recommend
+building mlpack from source, as explained in the [main README](../../README.md).
+
+***Warning:*** on Ubuntu and Debian systems, older versions of OpenBLAS (0.3.26
+and older) can over-use the number of cores on your system, causing slow
+execution of mlpack programs, especially mlpack's test suite.  To prevent this,
+set `OMP_NUM_THREADS` as detailed [in the test build
+guide](../user/install.md#build-tests), or install the `libopenblas-openmp-dev`
+package on Ubuntu or Debian and remove `libopenblas-pthread-dev`.  Ubuntu 24.04,
+Debian bookworm, and older are all affected by this issue.
 
 ## Installing mlpack from vcpkg
 
@@ -76,8 +83,8 @@ If the version is outdated or there is a new release version, please [create an 
 
 As a really simple example of how to use mlpack in C++, let's do some simple
 classification on a subset of the standard machine learning `covertype` dataset.
-We'll first split the dataset into a training set and a test set, then we'll
-train an mlpack random forest on the training data, and finally we'll print the
+We will first split the dataset into a training set and a test set, then we will
+train an mlpack random forest on the training data, and finally we will print the
 accuracy of the random forest on the test dataset.
 
 The first step is to download the covertype dataset onto your system so that it
@@ -109,9 +116,9 @@ int main()
   // Load the datasets.
   mat dataset;
   Row<size_t> labels;
-  if (!data::Load("covertype-small.data.csv", dataset))
+  if (!Load("covertype-small.data.csv", dataset))
     throw std::runtime_error("Could not read covertype-small.data.csv!");
-  if (!data::Load("covertype-small.labels.csv", labels))
+  if (!Load("covertype-small.labels.csv", labels))
     throw std::runtime_error("Could not read covertype-small.labels.csv!");
 
   // Labels are 1-7, but we want 0-6 (we are 0-indexed in C++).
@@ -121,7 +128,7 @@ int main()
   // dataset for the test set.
   mat trainDataset, testDataset;
   Row<size_t> trainLabels, testLabels;
-  data::Split(dataset, labels, trainDataset, testDataset, trainLabels,
+  Split(dataset, labels, trainDataset, testDataset, trainLabels,
       testLabels, 0.3);
 
   // Create the RandomForest object and train it on the training data.
@@ -174,9 +181,9 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's `CF`
-class.  We'll train this on this
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+In this example, we will train a collaborative filtering model using mlpack's `CF`
+class.  We will train this on this
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 First, download the MovieLens dataset:
@@ -204,19 +211,19 @@ int main()
 {
   // Load the ratings.
   mat ratings;
-  if (!data::Load("ratings-only.csv", ratings))
+  if (!Load("ratings-only.csv", ratings))
     throw std::runtime_error("Could not load ratings-only.csv!");
   // Now, load the names of the movies as a single-feature categorical dataset.
   // We can use `moviesInfo.UnmapString(i, 0)` to get the i'th string.
-  data::DatasetInfo moviesInfo;
+  DatasetInfo moviesInfo;
   mat movies; // This will be unneeded.
-  if (!data::Load("movies.csv", movies, moviesInfo))
+  if (!Load("movies.csv", movies, moviesInfo))
     throw std::runtime_error("Could not load movies.csv!");
 
   // Split the ratings into a training set and a test set, using 10% of the
   // dataset for the test set.
   mat trainRatings, testRatings;
-  data::Split(ratings, trainRatings, testRatings, 0.1);
+  Split(ratings, trainRatings, testRatings, 0.1);
 
   // Train the CF model using RegularizedSVD as the decomposition algorithm.
   // Here we use a rank of 10 for the decomposition.

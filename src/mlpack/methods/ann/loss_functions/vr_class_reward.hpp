@@ -112,7 +112,7 @@ class VRClassRewardType
 }; // class VRClassRewardType
 
 // Default typedef for typical `arma::mat` usage.
-typedef VRClassRewardType<arma::mat> VRClassReward;
+using VRClassReward = VRClassRewardType<arma::mat>;
 
 } // namespace mlpack
 

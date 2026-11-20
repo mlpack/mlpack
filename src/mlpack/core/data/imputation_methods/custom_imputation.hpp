@@ -15,17 +15,17 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
+
 /**
- * A simple custom imputation class
- * @tparam T Type of armadillo matrix
+ * A simple custom imputation class, which replaces missing values with a
+ * predefined value.
  */
-template <typename T>
+template<typename ElemType = double>
 class CustomImputation
 {
  public:
-  CustomImputation(T customValue):
-      customValue(std::move(customValue))
+  CustomImputation(const ElemType customValue):
+      customValue(customValue)
   {
     // nothing to initialize here
   }
@@ -41,42 +41,26 @@ class CustomImputation
    * @param dimension Index of the dimension of the mappedValue.
    * @param columnMajor State of whether the input matrix is columnMajor or not.
    */
-  void Impute(arma::Mat<T>& input,
-              const T& mappedValue,
+  template<typename MatType>
+  void Impute(MatType& input,
+              const typename MatType::elem_type& missingValue,
               const size_t dimension,
               const bool columnMajor = true)
   {
-    // replace the target value to custom value
+    typedef typename MatType::elem_type T;
+
+    // Here we can use .replace() directly.
     if (columnMajor)
-    {
-      for (size_t i = 0; i < input.n_cols; ++i)
-      {
-        if (input(dimension, i) == mappedValue ||
-            std::isnan(input(dimension, i)))
-        {
-          input(dimension, i) = customValue;
-        }
-      }
-    }
+      input.row(dimension).replace(missingValue, (T) customValue);
     else
-    {
-      for (size_t i = 0; i < input.n_rows; ++i)
-      {
-        if (input(i, dimension) == mappedValue ||
-            std::isnan(input(i, dimension)))
-        {
-          input(i, dimension) = customValue;
-        }
-      }
-    }
+      input.col(dimension).replace(missingValue, (T) customValue);
   }
 
  private:
-  //! A user-defined value that the user wants to replace missing values with.
-  T customValue;
+  // A user-defined value that the user wants to replace missing values with.
+  ElemType customValue;
 }; // class CustomImputation
 
-} // namespace data
 } // namespace mlpack
 
 #endif

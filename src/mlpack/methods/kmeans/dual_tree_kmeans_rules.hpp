@@ -22,11 +22,15 @@ template<typename DistanceType, typename TreeType>
 class DualTreeKMeansRules
 {
  public:
-  DualTreeKMeansRules(const arma::mat& centroids,
-                      const arma::mat& dataset,
+  typedef typename TreeType::Mat MatType;
+  typedef typename GetColType<MatType>::type ColType;
+  typedef typename MatType::elem_type ElemType;
+
+  DualTreeKMeansRules(const MatType& centroids,
+                      const MatType& dataset,
                       arma::Row<size_t>& assignments,
-                      arma::vec& upperBounds,
-                      arma::vec& lowerBounds,
+                      ColType& upperBounds,
+                      ColType& lowerBounds,
                       DistanceType& distance,
                       const std::vector<bool>& prunedPoints,
                       const std::vector<size_t>& oldFromNewCentroids,
@@ -43,7 +47,7 @@ class DualTreeKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  typedef typename mlpack::TraversalInfo<TreeType> TraversalInfoType;
+  using TraversalInfoType = mlpack::TraversalInfo<TreeType>;
 
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -59,11 +63,11 @@ class DualTreeKMeansRules
   size_t MinimumBaseCases() const { return 0; }
 
  private:
-  const arma::mat& centroids;
-  const arma::mat& dataset;
+  const MatType& centroids;
+  const MatType& dataset;
   arma::Row<size_t>& assignments;
-  arma::vec& upperBounds;
-  arma::vec& lowerBounds;
+  ColType& upperBounds;
+  ColType& lowerBounds;
   DistanceType& distance;
 
   const std::vector<bool>& prunedPoints;

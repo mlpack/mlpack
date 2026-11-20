@@ -14,6 +14,5 @@
 
 #include "datatype.hpp"
 #include "increment_policy.hpp"
-#include "missing_policy.hpp"
 
 #endif

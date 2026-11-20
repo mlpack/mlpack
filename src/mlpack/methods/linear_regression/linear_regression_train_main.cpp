@@ -42,18 +42,20 @@ BINDING_LONG_DESC(
 BINDING_EXAMPLE(
     IMPORT_EXT_LIB() + "\n" +
     IMPORT_SPLIT() + "\n" +
-    IMPORT_THIS("linear_regression") + "\n" +
-    GET_DATASET("X", "https://example.com") + "\n" +
-    GET_DATASET("y", "https://example.com") + "\n" +
-    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
-        "0.2") + "\n" +
-    CREATE_OBJECT("lr", "linear_regression") + "\n" +
-    CALL_METHOD("lr", "train", "training", "X_train", "training_responses",
+    IMPORT_THIS("linear_regression", "train", "predict") + "\n" +
+    GET_DATASET("X", "https://datasets.mlpack.org/admission_predict.csv") +
+        "\n" +
+    GET_DATASET("y",
+        "https://datasets.mlpack.org/admission_predict.responses.csv") + "\n" +
+    SPLIT_TRAIN_TEST_REGRESSION("X", "y", "X_train", "y_train", "X_test",
+        "y_test", "0.2") + "\n" +
+    CREATE_OBJECT("model", "linear_regression") + "\n" +
+    CALL_METHOD("model", "train", "training", "X_train", "training_responses",
         "y_train"));
 
 // See also...
-PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X (regressors).",
-    "t");
+PARAM_MATRIX_IN_REQ("training", "Matrix containing training set X "
+    "(regressors).", "t");
 PARAM_ROW_IN("training_responses", "Optional vector containing y "
     "(responses). If not given, the responses are assumed to be the last row "
     "of the input file.", "r");
@@ -101,8 +103,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
     }
   }
 
-  if(regressors.n_cols != responses.n_cols)
-    Log::Fatal << "Regressors and Responses must have the same number of data points!" << endl;
+  if (regressors.n_cols != responses.n_cols)
+    Log::Fatal << "Regressors and responses must have the same number of data "
+        << "points!" << endl;
 
   timer.Start("regression");
   LinearRegression<>* lr = new LinearRegression<>(regressors, responses,

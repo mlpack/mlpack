@@ -1,24 +1,4 @@
-# All we have to do is recurse into the subdirectories.
-set(DIRS
-  cli
-  julia
-  markdown
-  python
-  go
-  R
-  tests
-)
-
-foreach(dir ${DIRS})
-  add_subdirectory(${dir})
-endforeach()
-
-set(MLPACK_SRCS ${MLPACK_SRCS} PARENT_SCOPE)
-set(MLPACK_TEST_SRCS ${MLPACK_TEST_SRCS} PARENT_SCOPE)
-set(MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
-set(DISABLE_CFLAGS ${DISABLE_CFLAGS} PARENT_SCOPE)
-set(BUILDING_PYTHON_BINDINGS ${BUILDING_PYTHON_BINDINGS} PARENT_SCOPE)
-
+# This macro allows grouping a set of bindings into a single class.
 macro(group_bindings directory name methods)
   set(${name}_METHOD_MAIN_FILES "")
   set(${name}_VALID_METHODS "")
@@ -34,6 +14,31 @@ macro(group_bindings directory name methods)
     endif()
   endforeach()
 endmacro()
+
+# All we have to do is recurse into the subdirectories.
+set(DIRS
+  cli
+  julia
+  markdown
+  python
+  go
+  R
+  tests
+)
+
+foreach(dir ${DIRS})
+  add_subdirectory(${dir})
+endforeach()
+
+# Some of these variables may be set in the lower-level test directories, and we
+# need to pass their values back up so they are accessible in
+# src/mlpack/methods/.
+set(MLPACK_SRCS ${MLPACK_SRCS} PARENT_SCOPE)
+set(MLPACK_TEST_SRCS ${MLPACK_TEST_SRCS} PARENT_SCOPE)
+set(MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
+set(DISABLE_CFLAGS ${DISABLE_CFLAGS} PARENT_SCOPE)
+set(BUILDING_PYTHON_BINDINGS ${BUILDING_PYTHON_BINDINGS} PARENT_SCOPE)
+set(JULIA_GROUP_BINDINGS ${JULIA_GROUP_BINDINGS} PARENT_SCOPE)
 
 include(Categories.cmake)
 set(CATEGORIES ${CATEGORIES} PARENT_SCOPE)

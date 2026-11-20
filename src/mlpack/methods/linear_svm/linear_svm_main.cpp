@@ -17,6 +17,7 @@
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "linear_svm.hpp"
+#include "linear_svm_model.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -57,6 +58,7 @@ BINDING_LONG_DESC(
     "manually specified with the " + PRINT_PARAM_STRING("num_classes") +
     "and if an intercept term is not desired in the model, the " +
     PRINT_PARAM_STRING("no_intercept") + " parameter can be specified."
+    "\n\n"
     "Margin of difference between correct class and other classes can "
     "be specified with the " + PRINT_PARAM_STRING("delta") + " option."
     "The optimizer used to train the model can be specified with the " +
@@ -107,7 +109,7 @@ BINDING_SEE_ALSO("@logistic_regression", "#logistic_regression");
 BINDING_SEE_ALSO("LinearSVM on Wikipedia",
     "https://en.wikipedia.org/wiki/Support-vector_machine");
 BINDING_SEE_ALSO("LinearSVM C++ class documentation",
-    "@src/mlpack/methods/linear_svm/linear_svm.hpp");
+    "@doc/user/methods/linear_svm.md");
 
 // Training parameters.
 PARAM_MATRIX_IN("training", "A matrix containing the training set (the matrix "
@@ -137,21 +139,6 @@ PARAM_FLAG("shuffle", "Don't shuffle the order in which data points are "
 PARAM_INT_IN("epochs", "Maximum number of full epochs over dataset for "
     "psgd", "E", 50);
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-
-class LinearSVMModel
-{
- public:
-  arma::Col<size_t> mappings;
-  LinearSVM<> svm;
-
-  template<typename Archive>
-  void serialize(Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(mappings));
-    ar(CEREAL_NVP(svm));
-  }
-};
-
 
 // Model loading/saving.
 PARAM_MODEL_IN(LinearSVMModel, "input_model", "Existing model "
@@ -258,7 +245,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireParamValue<double>(params, "delta", [](double x) { return x >= 0.0; },
       true, "delta must be non-negative");
 
-  // Delta must be positive.
+  // Epochs must be positive.
   RequireParamValue<int>(params, "epochs", [](int x) { return x > 0; }, true,
       "epochs must be non-negative");
 
@@ -313,7 +300,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   // Now, do the training.
   if (params.Has("training"))
   {
-    data::NormalizeLabels(rawLabels, labels, model->mappings);
+    NormalizeLabels(rawLabels, labels, model->mappings);
     numClasses = params.Get<int>("num_classes") == 0 ?
         model->mappings.n_elem : params.Get<int>("num_classes");
     model->svm.Lambda() = lambda;
@@ -410,7 +397,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
 
     model->svm.Classify(testSet, predictedLabels);
-    data::RevertLabels(predictedLabels, model->mappings, predictions);
+    RevertLabels(predictedLabels, model->mappings, predictions);
 
     // Calculate accuracy, if desired.
     if (params.Has("test_labels"))
@@ -419,7 +406,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       arma::Row<size_t> testRawLabels =
           std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
-      data::NormalizeLabels(testRawLabels, testLabels, model->mappings);
+      NormalizeLabels(testRawLabels, testLabels, model->mappings);
 
       if (testSet.n_cols != testLabels.n_elem)
       {

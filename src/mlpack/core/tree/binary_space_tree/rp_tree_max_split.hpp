@@ -32,7 +32,7 @@ class RPTreeMaxSplit
 {
  public:
   //! The element type held by the matrix type.
-  typedef typename MatType::elem_type ElemType;
+  using ElemType = typename MatType::elem_type;
   //! An information about the partition.
   struct SplitInfo
   {

@@ -122,8 +122,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Split(
   childMajorities.set_size(sufficientStatistics.n_cols);
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
   {
-    arma::uword maxIndex = 0;
-    sufficientStatistics.unsafe_col(i).max(maxIndex);
+    arma::uword maxIndex = sufficientStatistics.unsafe_col(i).index_max();
     childMajorities[i] = size_t(maxIndex);
   }
 
@@ -144,8 +143,7 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
     for (size_t i = 0; i < samplesSeen; ++i)
       classes[labels[i]]++;
 
-    arma::uword majorityClass;
-    classes.max(majorityClass);
+    arma::uword majorityClass = classes.index_max();
     return size_t(majorityClass);
   }
   else
@@ -154,8 +152,7 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
     // statistics.
     arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
-    arma::uword maxIndex = 0;
-    classCounts.max(maxIndex);
+    arma::uword maxIndex = classCounts.index_max();
     return size_t(maxIndex);
   }
 }

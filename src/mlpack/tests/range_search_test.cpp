@@ -71,7 +71,7 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef KDTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, RangeSearchStat, arma::mat>;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -464,12 +464,12 @@ TEST_CASE("ExhaustiveSyntheticTest", "[RangeSearchTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest]")
+TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest][tiny]")
 {
   arma::mat dataForTree;
 
   // Hard-coded filename: bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!Load("test_data_3_1000.csv", dataForTree))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -484,13 +484,13 @@ TEST_CASE("DualTreeVsNaive1", "[RangeSearchTest]")
 
   vector<vector<size_t>> neighborsTree;
   vector<vector<double>> distancesTree;
-  rs.Search(dualQuery, Range(0.25, 1.05), neighborsTree, distancesTree);
+  rs.Search(dualQuery, Range(0.975, 1.025), neighborsTree, distancesTree);
   vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
   vector<vector<size_t>> neighborsNaive;
   vector<vector<double>> distancesNaive;
-  naive.Search(naiveQuery, Range(0.25, 1.05), neighborsNaive, distancesNaive);
+  naive.Search(naiveQuery, Range(0.975, 1.025), neighborsNaive, distancesNaive);
   vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
@@ -519,7 +519,7 @@ TEST_CASE("DualTreeVsNaive2", "[RangeSearchTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!Load("test_data_3_1000.csv", dataForTree))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -568,7 +568,7 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree))
+  if (!Load("test_data_3_1000.csv", dataForTree))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
@@ -609,7 +609,7 @@ TEST_CASE("SingleTreeVsNaive", "[RangeSearchTest]")
  * Ensure that dual tree range search with cover trees works by comparing
  * with the kd-tree implementation.
  */
-TEST_CASE("RSCoverTreeTest", "[RangeSearchTest]")
+TEST_CASE("RSCoverTreeTest", "[RangeSearchTest][long]")
 {
   arma::mat data;
   data.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -1126,7 +1126,7 @@ TEST_CASE("RangeSearchTrainTest", "[RangeSearchTest]")
 TEST_CASE("TrainTreeTest", "[RangeSearchTest]")
 {
   // Avoid mappings by using the cover tree.
-  typedef RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> RSType;
+  using RSType = RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>;
   RSType empty;
 
   arma::mat dataset = arma::randu<arma::mat>(5, 100);

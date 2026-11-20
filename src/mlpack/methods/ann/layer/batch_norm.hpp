@@ -50,11 +50,15 @@ namespace mlpack {
  *         computation.
  */
 template <typename MatType = arma::mat>
-class BatchNormType : public Layer<MatType>
+class BatchNorm : public Layer<MatType>
 {
  public:
+  // Convenience typedefs to access the element type of the weights and data.
+  using ElemType = typename MatType::elem_type;
+  using CubeType = typename GetCubeType<MatType>::type;
+
   /**
-   * Create the BatchNorm object. 
+   * Create the BatchNorm object.
    *
    * With batch normalization, the same exact normalization is applied to every
    * element in an individual channel.  To control what axes normalization is
@@ -67,20 +71,20 @@ class BatchNormType : public Layer<MatType>
    * will be 0, and thus every element of the input will have a different
    * normalization applied to it.
    *
-   * As an example, if we have a 3-dimensional input (call the 
-   * three dimensions rows, columns and slices), and `minAxis` & `maxAxis` is 
+   * As an example, if we have a 3-dimensional input (call the
+   * three dimensions rows, columns and slices), and `minAxis` & `maxAxis` is
    * 2, then we apply the same normalization across different slices.
    */
-  BatchNormType();
+  BatchNorm();
 
   /**
-   * Create the BatchNorm layer object for a specified axis of input units as 
+   * Create the BatchNorm layer object for a specified axis of input units as
    * channels.  With batch normalization, the same exact normalization is
    * applied to every element in an individual channel.  To control what axes
    * normalization is applied to, set the `minAxis` and `maxAxis` parameters.
-   * 
+   *
    * As an example, if we have a 3-dimensional input (call the three dimensions
-   * rows, columns and slices), and `minAxis` is 1 & `maxAxis` is 2, then the 
+   * rows, columns and slices), and `minAxis` is 1 & `maxAxis` is 2, then the
    * number of channels is equal to `columns * slices`.
    *
    * @param minAxis The min axis along which BatchNorm is applied. Before that,
@@ -92,28 +96,30 @@ class BatchNormType : public Layer<MatType>
    *                updating the parameters or momentum is used.
    * @param momentum Parameter used to to update the running mean and variance.
    */
-  BatchNormType(const size_t minAxis,
-                const size_t maxAxis,
-                const double eps = 1e-8,
-                const bool average = true,
-                const double momentum = 0.1);
-  
-  virtual ~BatchNormType() { }
+  BatchNorm(const size_t minAxis,
+            const size_t maxAxis,
+            const double eps = 1e-8,
+            const bool average = true,
+            const double momentum = 0.1);
 
-  //! Clone the BatchNormType object. This handles polymorphism correctly.
-  BatchNormType* Clone() const { return new BatchNormType(*this); }
+  virtual ~BatchNorm() { }
 
-  //! Copy the other BatchNorm layer (but not weights).
-  BatchNormType(const BatchNormType& layer);
-
-  //! Take ownership of the members of the other BatchNorm layer (but not weights).
-  BatchNormType(BatchNormType&& layer);
+  //! Clone the BatchNorm object. This handles polymorphism correctly.
+  BatchNorm* Clone() const { return new BatchNorm(*this); }
 
   //! Copy the other BatchNorm layer (but not weights).
-  BatchNormType& operator=(const BatchNormType& layer);
+  BatchNorm(const BatchNorm& layer);
 
-  //! Take ownership of the members of the other BatchNorm layer (but not weights).
-  BatchNormType& operator=(BatchNormType&& layer);
+  //! Take ownership of the members of the other BatchNorm layer (but not
+  //! weights).
+  BatchNorm(BatchNorm&& layer);
+
+  //! Copy the other BatchNorm layer (but not weights).
+  BatchNorm& operator=(const BatchNorm& layer);
+
+  //! Take ownership of the members of the other BatchNorm layer (but not
+  //! weights).
+  BatchNorm& operator=(BatchNorm&& layer);
 
   /**
    * Reset the layer parameters.
@@ -174,7 +180,7 @@ class BatchNormType : public Layer<MatType>
   const MatType& Beta() const { return beta; }
   //! Modify the beta.
   MatType& Beta() { return beta; }
-  
+
   //! Get the mean over the training data.
   const MatType& TrainingMean() const { return runningMean; }
   //! Modify the mean over the training data.
@@ -186,7 +192,7 @@ class BatchNormType : public Layer<MatType>
   MatType& TrainingVariance() { return runningVariance; }
 
   //! Get the number of input units / channels.
-  size_t InputSize() const { return size; }
+  size_t InputSize() const { return inputUnits; }
 
   //! Get the epsilon value.
   const double &Epsilon() const { return eps; }
@@ -200,7 +206,7 @@ class BatchNormType : public Layer<MatType>
   bool Average() const { return average; }
 
   //! Get size of weights.
-  size_t WeightSize() const { return 2 * size; }
+  size_t WeightSize() const { return 2 * inputUnits; }
 
   //! Compute the output dimensions of the layer given `InputDimensions()`.
   void ComputeOutputDimensions();
@@ -243,16 +249,16 @@ class BatchNormType : public Layer<MatType>
   //! Locally-stored running mean/variance counter.
   size_t count;
 
-  //! Locally-stored number of input dimensions that we are applying 
-  //! batch normalization over.  (This is the product of this->inputDimensions 
+  //! Locally-stored number of input dimensions that we are applying
+  //! batch normalization over.  (This is the product of this->inputDimensions
   //! from index 0 to (minAxis - 1)).
   size_t inputDimension;
 
   //! Locally-stored number of input units.  (This is the product of all
   //! dimensions between minAxis and maxAxis, inclusive.)
-  size_t size;
+  size_t inputUnits;
 
-  //! Locally-stored number of higher dimension we are not applying 
+  //! Locally-stored number of higher dimension we are not applying
   //! batch normalization to.  This is the product of this->inputDimensions
   //! for all dimensions greater than or equal to maxAxis.
   size_t higherDimension;
@@ -264,16 +270,11 @@ class BatchNormType : public Layer<MatType>
   MatType runningVariance;
 
   //! Locally-stored normalized input.
-  arma::Cube<typename MatType::elem_type> normalized;
+  CubeType normalized;
 
   //! Locally-stored zero mean input.
-  arma::Cube<typename MatType::elem_type> inputMean;
+  CubeType inputMean;
 }; // class BatchNorm
-
-// Convenience typedefs.
-
-// Standard Adaptive max pooling layer.
-typedef BatchNormType<arma::mat> BatchNorm;
 
 } // namespace mlpack
 

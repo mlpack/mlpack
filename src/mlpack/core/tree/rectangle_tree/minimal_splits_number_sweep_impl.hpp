@@ -24,7 +24,7 @@ size_t MinimalSplitsNumberSweep<SplitPolicy>::SweepNonLeafNode(
     const TreeType* node,
     typename TreeType::ElemType& axisCut)
 {
-  typedef typename TreeType::ElemType ElemType;
+  using ElemType = typename TreeType::ElemType;
 
   std::vector<std::pair<ElemType, size_t>> sorted(node->NumChildren());
 

@@ -81,7 +81,9 @@ inline void IO::AddParameter(const std::string& bindingName,
   }
 
   // Add the alias, if necessary.
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
+#endif
   if (data.alias != '\0')
     bindingAliases[data.alias] = data.name;
 
@@ -99,7 +101,9 @@ inline void IO::AddFunction(const std::string& type,
                             const std::string& name,
                             void (*func)(util::ParamData&, const void*, void*))
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
+#endif
   GetSingleton().functionMap[type][name] = func;
 }
 
@@ -112,7 +116,9 @@ inline void IO::AddFunction(const std::string& type,
 inline void IO::AddBindingName(const std::string& bindingName,
                                const std::string& name)
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().mapMutex);
+#endif
   GetSingleton().docs[bindingName].name = name;
 }
 
@@ -125,7 +131,9 @@ inline void IO::AddBindingName(const std::string& bindingName,
 inline void IO::AddShortDescription(const std::string& bindingName,
                                     const std::string& shortDescription)
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+#endif
   GetSingleton().docs[bindingName].shortDescription = shortDescription;
 }
 
@@ -139,7 +147,9 @@ inline void IO::AddLongDescription(
     const std::string& bindingName,
     const std::function<std::string()>& longDescription)
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+#endif
   GetSingleton().docs[bindingName].longDescription = longDescription;
 }
 
@@ -152,7 +162,9 @@ inline void IO::AddLongDescription(
 inline void IO::AddExample(const std::string& bindingName,
                            const std::function<std::string()>& example)
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+#endif
   GetSingleton().docs[bindingName].example.push_back(std::move(example));
 }
 
@@ -167,7 +179,9 @@ inline void IO::AddSeeAlso(const std::string& bindingName,
                            const std::string& description,
                            const std::string& link)
 {
+#ifndef MLPACK_NO_STD_MUTEX
   std::lock_guard<std::mutex> lock(GetSingleton().docMutex);
+#endif
   GetSingleton().docs[bindingName].seeAlso.push_back(
       std::make_pair(description, link));
 }

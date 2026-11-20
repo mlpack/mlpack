@@ -51,8 +51,12 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
   PositionalEncodingType(const size_t embedDim,
                          const size_t maxSequenceLength);
 
-  //! Clone the PositionalEncodingType object. This handles polymorphism correctly.
-  PositionalEncodingType* Clone() const { return new PositionalEncodingType(*this); }
+  //! Clone the PositionalEncodingType object. This handles polymorphism
+  //! correctly.
+  PositionalEncodingType* Clone() const
+  {
+    return new PositionalEncodingType(*this);
+  }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -107,7 +111,7 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
 }; // class PositionalEncodingTest
 
 // Standard PositionalEncoding layer.
-typedef PositionalEncodingType<arma::mat, arma::mat> PositionalEncoding;
+using PositionalEncoding = PositionalEncodingType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

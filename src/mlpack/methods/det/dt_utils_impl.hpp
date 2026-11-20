@@ -269,8 +269,8 @@ DTree<MatType, TagType>* Trainer(MatType& dataset,
   {
     // We can no longer work in the log-space for this because we have no
     // guarantee the quantity will be positive.
-    long double thisNegError = std::exp((long double) prunedSequence[i].second) -
-        (long double) regularizationConstants[i];
+    long double thisNegError = std::exp((long double) prunedSequence[i].second)
+        - (long double) regularizationConstants[i];
 
     if (thisNegError > cvBestNegError)
     {

@@ -147,7 +147,8 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>&
-RangeSearch<DistanceType, MatType, TreeType>::operator=(const RangeSearch& other)
+RangeSearch<DistanceType, MatType, TreeType>::operator=(
+    const RangeSearch& other)
 {
   if (this != &other)
   {
@@ -331,7 +332,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   distancePtr->resize(querySet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<DistanceType, Tree> RuleType;
+  using RuleType = RangeSearchRules<DistanceType, Tree>;
 
   // Reset counts.
   baseCases = 0;
@@ -485,7 +486,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   distances.resize(querySet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<DistanceType, Tree> RuleType;
+  using RuleType = RangeSearchRules<DistanceType, Tree>;
   RuleType rules(*referenceSet, queryTree->Dataset(), range, *neighborPtr,
       distances, distance);
 
@@ -548,7 +549,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   distancePtr->resize(referenceSet->n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<DistanceType, Tree> RuleType;
+  using RuleType = RangeSearchRules<DistanceType, Tree>;
   RuleType rules(*referenceSet, *referenceSet, range, *neighborPtr,
       *distancePtr, distance, true /* don't return the query in the results */);
 

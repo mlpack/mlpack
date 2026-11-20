@@ -15,6 +15,8 @@
 // In case it hasn't been included.
 #include "iou_metric.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<bool UseCoordinates>
@@ -23,10 +25,10 @@ typename VecTypeA::elem_type IoU<UseCoordinates>::Evaluate(
     const VecTypeA& a,
     const VecTypeB& b)
 {
-  Log::Assert(a.n_elem == b.n_elem && a.n_elem == 4, "Incorrect \
-      shape for bounding boxes. They must contain 4 elements either be \
-      {x0, y0, x1, y1} or {x0, y0, h, w}. Refer to the documentation \
-      for more information.");
+  Log::Assert(a.n_elem == b.n_elem && a.n_elem == 4, "Incorrect "
+      "shape for bounding boxes. They must contain 4 elements either be "
+      "{x0, y0, x1, y1} or {x0, y0, h, w}. Refer to the documentation "
+      "for more information.");
 
   // Bounding boxes represented as {x0, y0, x1, y1}.
   if (UseCoordinates)
@@ -52,8 +54,8 @@ typename VecTypeA::elem_type IoU<UseCoordinates>::Evaluate(
 
   // Bounding boxes represented as {x0, y0, h, w}.
   // Check correctness of bounding box.
-  Log::Assert(a(2) > 0 && b(2) > 0 && a(3) > 0 && b(3) > 0, "Height and width \
-      of bounding boxes must be greater than zero.");
+  Log::Assert(a(2) > 0 && b(2) > 0 && a(3) > 0 && b(3) > 0, "Height and width "
+      "of bounding boxes must be greater than zero.");
 
   typename VecTypeA::elem_type interSectionArea = std::max(0.0,
       std::min(a(0) + a(2), b(0) + b(2)) - std::max(a(0), b(0)) + 1)

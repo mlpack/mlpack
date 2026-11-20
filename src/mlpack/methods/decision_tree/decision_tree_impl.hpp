@@ -29,7 +29,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              NoRecursion>::DecisionTree(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
@@ -37,8 +37,8 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -74,8 +74,8 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -103,7 +103,7 @@ DecisionTree<FitnessFunction,
              DimensionSelectionType,
              NoRecursion>::DecisionTree(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
@@ -112,11 +112,11 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*)
+        std::remove_reference_t<WeightsType>>::value>*)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -153,11 +153,11 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*)
+        std::remove_reference_t<WeightsType>>::value>*)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -186,20 +186,20 @@ DecisionTree<FitnessFunction,
         NoRecursion>::DecisionTree(
     const DecisionTree& other,
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<WeightsType>::type>::value>*):
+        std::remove_reference_t<WeightsType>>::value>*):
         NumericAuxiliarySplitInfo(other),
         CategoricalAuxiliarySplitInfo(other)
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -233,14 +233,13 @@ DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*):
+        std::remove_reference_t<WeightsType>>::value>*):
         NumericAuxiliarySplitInfo(other),
         CategoricalAuxiliarySplitInfo(other)  // other info does need to copy
 {
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -447,7 +446,7 @@ double DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::Train(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     const size_t minimumLeafSize,
@@ -458,8 +457,8 @@ double DecisionTree<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -498,8 +497,8 @@ double DecisionTree<FitnessFunction,
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -528,7 +527,7 @@ double DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::Train(
     MatType data,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     LabelsType labels,
     const size_t numClasses,
     WeightsType weights,
@@ -537,16 +536,14 @@ double DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -583,16 +580,14 @@ double DecisionTree<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
     const std::enable_if_t<
-        arma::is_arma_type<
-        typename std::remove_reference<
-        WeightsType>::type>::value>*)
+        arma::is_arma_type<std::remove_reference_t<WeightsType>>::value>*)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, labels, "DecisionTree::Train()");
 
-  using TrueMatType = typename std::decay<MatType>::type;
-  using TrueLabelsType = typename std::decay<LabelsType>::type;
-  using TrueWeightsType = typename std::decay<WeightsType>::type;
+  using TrueMatType = std::decay_t<MatType>;
+  using TrueLabelsType = std::decay_t<LabelsType>;
+  using TrueWeightsType = std::decay_t<WeightsType>;
 
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
@@ -623,7 +618,7 @@ double DecisionTree<FitnessFunction,
     MatType& data,
     const size_t begin,
     const size_t count,
-    const data::DatasetInfo& datasetInfo,
+    const DatasetInfo& datasetInfo,
     arma::Row<size_t>& labels,
     const size_t numClasses,
     WeightsType& weights,
@@ -655,7 +650,7 @@ double DecisionTree<FitnessFunction,
          i = dimensionSelector.Next())
     {
       double dimGain = -DBL_MAX;
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      if (datasetInfo.Type(i) == Datatype::categorical)
       {
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
@@ -668,7 +663,7 @@ double DecisionTree<FitnessFunction,
             classProbabilities,
             *this);
       }
-      else if (datasetInfo.Type(i) == data::Datatype::numeric)
+      else if (datasetInfo.Type(i) == Datatype::numeric)
       {
         dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
@@ -704,30 +699,30 @@ double DecisionTree<FitnessFunction,
 
     // Get the number of children we will have.
     size_t numChildren = 0;
-    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(classProbabilities[0], *this);
+    if (datasetInfo.Type(bestDim) == Datatype::categorical)
+      numChildren = CategoricalSplit::NumChildren(classProbabilities, *this);
     else
-      numChildren = NumericSplit::NumChildren(classProbabilities[0], *this);
+      numChildren = NumericSplit::NumChildren(classProbabilities, *this);
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
-    if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
+    if (datasetInfo.Type(bestDim) == Datatype::categorical)
     {
       for (size_t j = begin; j < begin + count; ++j)
         childAssignments[j - begin] = CategoricalSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities[0], *this);
+            data(bestDim, j), classProbabilities, *this);
     }
     else
     {
       for (size_t j = begin; j < begin + count; ++j)
       {
         childAssignments[j - begin] = NumericSplit::CalculateDirection(
-            data(bestDim, j), classProbabilities[0], *this);
+            data(bestDim, j), classProbabilities, *this);
       }
     }
 
     // Figure out counts of children.
-    arma::Row<size_t> childCounts(numChildren, arma::fill::zeros);
+    arma::Row<size_t> childCounts(numChildren);
     for (size_t i = begin; i < begin + count; ++i)
       childCounts[childAssignments[i - begin]]++;
 
@@ -871,9 +866,9 @@ double DecisionTree<FitnessFunction,
   {
     // We know that the split is numeric.
     size_t numChildren =
-        NumericSplit::NumChildren(classProbabilities[0], *this);
+        NumericSplit::NumChildren(classProbabilities, *this);
     splitDimension = bestDim;
-    dimensionType = (size_t) data::Datatype::numeric;
+    dimensionType = (size_t) Datatype::numeric;
 
     // Calculate all child assignments.
     arma::Row<size_t> childAssignments(count);
@@ -881,7 +876,7 @@ double DecisionTree<FitnessFunction,
     for (size_t j = begin; j < begin + count; ++j)
     {
       childAssignments[j - begin] = NumericSplit::CalculateDirection(
-          data(bestDim, j), classProbabilities[0], *this);
+          data(bestDim, j), classProbabilities, *this);
     }
 
     // Calculate counts of children in each node.
@@ -1086,7 +1081,8 @@ void DecisionTree<FitnessFunction,
 
   // Now serialize the rest of the object.
   ar(CEREAL_NVP(splitDimension));
-  // Since dimensionType and majorityClass are a union, we only need to serialize one.
+  // Since dimensionType and majorityClass are a union, we only need to
+  // serialize one.
   ar(CEREAL_NVP(dimensionType));
   ar(CEREAL_NVP(classProbabilities));
 }
@@ -1103,12 +1099,12 @@ size_t DecisionTree<FitnessFunction,
                     DimensionSelectionType,
                     NoRecursion>::CalculateDirection(const VecType& point) const
 {
-  if ((data::Datatype) dimensionType == data::Datatype::categorical)
+  if ((Datatype) dimensionType == Datatype::categorical)
     return CategoricalSplit::CalculateDirection(point[splitDimension],
-        classProbabilities[0], *this);
+        classProbabilities, *this);
   else
     return NumericSplit::CalculateDirection(point[splitDimension],
-        classProbabilities[0], *this);
+        classProbabilities, *this);
 }
 
 // Get the number of classes in the tree.
@@ -1163,8 +1159,7 @@ void DecisionTree<FitnessFunction,
 
   // Now normalize into probabilities.
   classProbabilities /= UseWeights ? sumWeights : labels.n_elem;
-  arma::uword maxIndex = 0;
-  classProbabilities.max(maxIndex);
+  arma::uword maxIndex = classProbabilities.index_max();
   majorityClass = (size_t) maxIndex;
 }
 

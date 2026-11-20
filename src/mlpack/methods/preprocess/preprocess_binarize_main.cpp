@@ -113,12 +113,12 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   timers.Start("binarize");
   if (params.Has("dimension"))
   {
-    data::Binarize<double>(input, output, threshold, dimension);
+    Binarize<double>(input, output, threshold, dimension);
   }
   else
   {
     // Binarize the whole dataset.
-    data::Binarize<double>(input, output, threshold);
+    Binarize<double>(input, output, threshold);
   }
   timers.Stop("binarize");
 

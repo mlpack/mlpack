@@ -107,7 +107,7 @@ class SelectType : public Layer<InputType, OutputType>
 }; // class SelectType
 
 // Standard Select layer.
-typedef SelectType<arma::mat, arma::mat> Select;
+using Select = SelectType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

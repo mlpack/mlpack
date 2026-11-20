@@ -78,7 +78,7 @@ TEST_CASE_METHOD(
     "[MeanShiftMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("iris_test.csv", x))
+  if (!Load("iris_test.csv", x))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   // Get initial number of rows and columns in file.
@@ -107,7 +107,7 @@ TEST_CASE_METHOD(
     "[MeanShiftMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("iris_test.csv", x))
+  if (!Load("iris_test.csv", x))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
@@ -145,7 +145,7 @@ TEST_CASE_METHOD(
     "[MeanShiftMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("iris_test.csv", x))
+  if (!Load("iris_test.csv", x))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.
@@ -181,7 +181,7 @@ TEST_CASE_METHOD(
     "[MeanShiftMainTest][BindingTests]")
 {
   arma::mat x;
-  if (!data::Load("iris_test.csv", x))
+  if (!Load("iris_test.csv", x))
     FAIL("Cannot load test dataset iris_test.csv!");
 
   // Input random data points.

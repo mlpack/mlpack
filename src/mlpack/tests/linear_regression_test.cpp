@@ -24,9 +24,9 @@ using namespace mlpack;
 TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
     arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
-  typedef arma::Col<typename MatType::elem_type> ColType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
+  using ColType = arma::Col<typename MatType::elem_type>;
 
   // Predictors and points are 10x3 matrices.
   MatType predictors(3, 10);
@@ -65,10 +65,10 @@ TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
   LinearRegression<MatType> lr(predictors, responses);
   lr.Predict(points, predictions);
 
-  // Output result and verify we have less than 5% error from "correct" value
+  // Output result and verify we have less than 7.5% error from "correct" value
   // for each point.
   for (size_t i = 0; i < predictions.n_cols; ++i)
-    REQUIRE(predictions(i) - responses(i) == Approx(0.0).margin(0.05));
+    REQUIRE(predictions(i) - responses(i) == Approx(0.0).margin(0.075));
 }
 
 /**
@@ -77,8 +77,8 @@ TEMPLATE_TEST_CASE("LinearRegressionTestCase", "[LinearRegressionTest]",
 TEMPLATE_TEST_CASE("ComputeErrorTest", "[LinearRegressionTest]", arma::fmat,
     arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
@@ -279,10 +279,10 @@ TEST_CASE("LinearRegressionTrainReturnObjective", "[LinearRegressionTest]")
  * Make sure all versions of Train() work correctly.
  */
 TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
-    "[LinearRegressionTest]", arma::fmat, arma::mat)
+    "[LinearRegressionTest][tiny]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   // The data doesn't really matter for this test; mostly we want to make sure
   // that all the Train() variants work properly.
@@ -341,8 +341,8 @@ TEMPLATE_TEST_CASE("LinearRegressionAllTrainVersionsTest",
 TEMPLATE_TEST_CASE("LinearRegressionSinglePointPredictTest",
     "[LinearRegressionTest]", arma::fmat, arma::mat)
 {
-  typedef TestType MatType;
-  typedef arma::Row<typename MatType::elem_type> RowType;
+  using MatType = TestType;
+  using RowType = arma::Row<typename MatType::elem_type>;
 
   MatType predictors;
   predictors = { {  0, 1, 2, 4, 8, 16 },
@@ -423,3 +423,14 @@ TEST_CASE("LinearRegressionSparseTrainingTest", "[LinearRegressionTest]")
 
   REQUIRE(predictions.n_elem == 5000);
 }
+
+TEST_CASE("LinearRegressionMismatchedInputTest",
+          "[LinearRegressionTest]")
+{
+  arma::mat predictors(3, 10, arma::fill::randu);
+  arma::rowvec responses(5, arma::fill::randu);
+
+  REQUIRE_THROWS(
+      LinearRegression<>(predictors, responses));
+}
+

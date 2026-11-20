@@ -85,7 +85,7 @@ class KDE
 {
  public:
   //! Convenience typedef.
-  typedef TreeType<DistanceType, KDEStat, MatType> Tree;
+  using Tree = TreeType<DistanceType, KDEStat, MatType>;
 
   /**
    * Initialize KDE object using custom instantiated Metric and Kernel objects.

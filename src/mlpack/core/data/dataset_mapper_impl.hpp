@@ -17,7 +17,6 @@
 #include "dataset_mapper.hpp"
 
 namespace mlpack {
-namespace data {
 
 // Default constructor.
 template<typename PolicyType, typename InputType>
@@ -52,7 +51,7 @@ void CallMapFirstPass(
     const InputType& input,
     const size_t dimension,
     std::vector<Datatype>& types,
-    const typename std::enable_if<PolicyType::NeedsFirstPass>::type* = 0)
+    const std::enable_if_t<PolicyType::NeedsFirstPass>* = 0)
 {
   policy.template MapFirstPass<T>(input, dimension, types);
 }
@@ -64,7 +63,7 @@ void CallMapFirstPass(
     const InputType& /* input */,
     const size_t /* dimension */,
     std::vector<Datatype>& /* types */,
-    const typename std::enable_if<!PolicyType::NeedsFirstPass>::type* = 0)
+    const std::enable_if_t<!PolicyType::NeedsFirstPass>* = 0)
 {
   // Nothing to do here.
 }
@@ -248,7 +247,6 @@ inline void DatasetMapper<PolicyType, InputType>::Policy(PolicyType&& policy)
   this->policy = std::forward<PolicyType>(policy);
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

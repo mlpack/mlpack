@@ -22,7 +22,7 @@
 
 using namespace mlpack;
 
-#ifdef MLPACK_HAS_STB // Compile this only if stb is present.
+#ifndef MLPACK_DISABLE_STB
 
 BINDING_TEST_FIXTURE(ImageConverterTestFixture);
 
@@ -41,11 +41,12 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "LoadImageTest",
   remove("test_image999.png");
 }
 
+
 TEST_CASE_METHOD(ImageConverterTestFixture, "SaveImageTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
-  arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+  arma::mat testimage = arma::randi<arma::mat>((5 * 5 * 3), 2,
+      arma::distr_param(1, 255));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("height", 5);
@@ -82,7 +83,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "IncompleteTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+      arma::randi<arma::Mat<uint8_t>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("save", true);
@@ -100,7 +101,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidInputTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+      arma::randi<arma::Mat<uint8_t>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("save", true);
@@ -120,7 +121,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidWidthTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+      arma::randi<arma::Mat<uint8_t>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("save", true);
@@ -139,7 +140,7 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "InvalidChannelTest",
                  "[ImageConverterMainTest][BindingTests]")
 {
   arma::mat testimage = ConvTo<arma::mat>::From(
-      arma::randi<arma::Mat<unsigned char>>((5 * 5 * 3), 2));
+      arma::randi<arma::Mat<uint8_t>>((5 * 5 * 3), 2));
   SetInputParam<vector<string>>("input", {"test_image777.png",
       "test_image999.png"});
   SetInputParam("save", true);
@@ -165,4 +166,4 @@ TEST_CASE_METHOD(ImageConverterTestFixture, "EmptyInputTest",
   REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
-#endif // MLPACK_HAS_STB.
+#endif

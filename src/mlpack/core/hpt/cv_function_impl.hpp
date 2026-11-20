@@ -45,7 +45,7 @@ template<typename CVType,
          typename... BoundArgs>
 CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::CVFunction(
     CVType& cv,
-    data::DatasetMapper<data::IncrementPolicy, double>& datasetInfo,
+    DatasetMapper<IncrementPolicy, double>& datasetInfo,
     const double relativeDelta,
     const double minDelta,
     const BoundArgs&... args) :
@@ -159,7 +159,7 @@ double CVFunction<CVType, MLAlgorithm, TotalArgs, BoundArgs...>::PutNextArg(
     const arma::mat& parameters,
     const Args&... args)
 {
-  if (datasetInfo.Type(ParamIndex) == data::Datatype::categorical)
+  if (datasetInfo.Type(ParamIndex) == Datatype::categorical)
   {
     return Evaluate<BoundArgIndex, ParamIndex + 1>(parameters, args...,
         datasetInfo.UnmapString(size_t(parameters(ParamIndex, 0)), ParamIndex));

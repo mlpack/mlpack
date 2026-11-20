@@ -98,7 +98,8 @@ void Assert(bool condition,
   #define BASH_CLEAR ""
 #endif
 
-#if defined(DEBUG) || defined(MLPACK_PRINT_DEBUG)
+#if (defined(DEBUG) || defined(MLPACK_PRINT_DEBUG)) && \
+    !defined(MLPACK_NO_PRINT_DEBUG)
 static util::PrefixedOutStream Debug =
     util::PrefixedOutStream(MLPACK_COUT_STREAM,
                             BASH_CYAN "[DEBUG] " BASH_CLEAR);

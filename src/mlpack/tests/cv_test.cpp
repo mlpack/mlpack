@@ -17,13 +17,13 @@
 #include <mlpack/methods/logistic_regression.hpp>
 #include <mlpack/methods/naive_bayes.hpp>
 #include <mlpack/methods/perceptron.hpp>
+#include <mlpack/methods/random_forest.hpp>
 #include <mlpack/methods/softmax_regression.hpp>
 
 #include "catch.hpp"
 #include "mock_categorical_data.hpp"
 
 using namespace mlpack;
-using namespace mlpack::data;
 
 /**
  * Test metrics for binary classification.
@@ -140,7 +140,7 @@ TEST_CASE("ConfusionMatrixTest", "[CVTest]")
   arma::Row<size_t> predictedLabels("0 0 0 0 0  1 1 1 1 1");
   // Confusion matrix.
   arma::Mat<int> output;
-  data::ConfusionMatrix(predictedLabels, labels, output, 2);
+  ConfusionMatrix(predictedLabels, labels, output, 2);
   REQUIRE(output(0, 0) == 4);
   REQUIRE(output(0, 1) == 1);
   REQUIRE(output(1, 0) == 2);
@@ -299,8 +299,7 @@ void CheckPredictionsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT>;
   using ActualPT = typename Extractor::PredictionsType;
-  static_assert(std::is_same<ExpectedPT, ActualPT>::value,
-      "Should be the same");
+  static_assert(std::is_same_v<ExpectedPT, ActualPT>, "Should be the same");
 }
 
 /**
@@ -320,6 +319,10 @@ TEST_CASE("PredictionsTypeTest", "[CVTest]")
       arma::Row<size_t>>();
   CheckPredictionsType<DecisionTree<>, arma::Row<char>, arma::mat,
       arma::Row<char>>();
+  CheckPredictionsType<RandomForest<>, arma::Row<size_t>, arma::mat,
+      arma::Row<size_t>>();
+  CheckPredictionsType<RandomForest<>, arma::Row<char>, arma::mat,
+      arma::Row<char>>();
 }
 
 /**
@@ -333,6 +336,10 @@ TEST_CASE("SupportsWeightsTest", "[CVTest]")
   static_assert(MetaInfoExtractor<DecisionTree<>>::SupportsWeights,
       "Value should be true");
   static_assert(MetaInfoExtractor<DecisionTree<>, arma::mat, arma::urowvec,
+      arma::Row<float>>::SupportsWeights, "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::SupportsWeights,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>, arma::mat, arma::urowvec,
       arma::Row<float>>::SupportsWeights, "Value should be true");
 
   static_assert(!MetaInfoExtractor<LARS<>>::SupportsWeights,
@@ -350,8 +357,7 @@ void CheckWeightsType()
 {
   using Extractor = MetaInfoExtractor<Class, PassedMT, PassedPT, PassedWT>;
   using ActualWT = typename Extractor::WeightsType;
-  static_assert(std::is_same<ExpectedWT, ActualWT>::value,
-      "Should be the same");
+  static_assert(std::is_same_v<ExpectedWT, ActualWT>, "Should be the same");
 }
 
 /**
@@ -364,6 +370,9 @@ TEST_CASE("WeightsTypeTest", "[CVTest]")
   CheckWeightsType<DecisionTree<>, arma::rowvec>();
   CheckWeightsType<DecisionTree<>, arma::Row<float>, arma::mat,
       arma::Row<size_t>, arma::Row<float>>();
+  CheckWeightsType<RandomForest<>, arma::rowvec>();
+  CheckWeightsType<RandomForest<>, arma::Row<float>, arma::mat,
+      arma::Row<size_t>, arma::Row<float>>();
 }
 
 /**
@@ -373,6 +382,8 @@ TEST_CASE("WeightsTypeTest", "[CVTest]")
 TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesDatasetInfo,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::TakesDatasetInfo,
       "Value should be true");
   static_assert(!MetaInfoExtractor<LinearRegression<>>::TakesDatasetInfo,
       "Value should be false");
@@ -387,6 +398,8 @@ TEST_CASE("TakesDatasetInfoTest", "[CVTest]")
 TEST_CASE("TakesNumClassesTest", "[CVTest]")
 {
   static_assert(MetaInfoExtractor<DecisionTree<>>::TakesNumClasses,
+      "Value should be true");
+  static_assert(MetaInfoExtractor<RandomForest<>>::TakesNumClasses,
       "Value should be true");
   static_assert(MetaInfoExtractor<SoftmaxRegression<>>::TakesNumClasses,
       "Value should be true");
@@ -460,7 +473,7 @@ TEST_CASE("FilterNANCVTest", "[CVTest]")
   // Create a dataset with only one positive label, so it will not be in every
   // fold.
   arma::mat data(3, 10, arma::fill::randu);
-  arma::Row<size_t> labels(10, arma::fill::zeros);
+  arma::Row<size_t> labels(10);
   labels[0] = 1;
 
   const size_t numClasses = 2;
@@ -490,7 +503,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   arma::mat trainingData = data.cols(0, 1999);
@@ -536,7 +549,7 @@ TEST_CASE("SimpleCVWithDTTest", "[CVTest]")
 /**
  * Test k-fold cross-validation with the MSE metric.
  */
-TEST_CASE("KFoldCVMSETest", "[CVTest]")
+TEST_CASE("KFoldCVMSETest", "[CVTest][tiny]")
 {
   // Defining dataset with two sets of responses for the same two data points.
   arma::mat data("0 1  0 1");
@@ -559,7 +572,7 @@ TEST_CASE("KFoldCVMSETest", "[CVTest]")
 /**
  * Test k-fold cross-validation with the Accuracy metric.
  */
-TEST_CASE("KFoldCVAccuracyTest", "[CVTest]")
+TEST_CASE("KFoldCVAccuracyTest", "[CVTest][tiny]")
 {
   // Making a 10-points dataset. The last point should be classified wrong when
   // it is tested separately.
@@ -611,6 +624,34 @@ TEST_CASE("KFoldCVPerceptronTest", "[CVTest]")
 }
 
 /**
+ * Test KFoldCV on random forests.
+ */
+TEST_CASE("KFoldCVRandomForestTest", "[CVTest]")
+{
+  // Basically the same as the test above (for Naive Bayes), but with the
+  // random forest.
+
+  // Making a 10-points dataset. All points should always be correctly
+  // classified.
+  arma::mat data("0 0 0 0 0 1 1 1 1 1");
+  arma::Row<size_t> labels("0 0 0 0 0 1 1 1 1 1");
+  size_t numClasses = 2;
+
+  // 10-fold cross-validation, no shuffling.
+  KFoldCV<RandomForest<>, Accuracy> cv(10, data, labels, numClasses);
+
+  // We should succeed in classifying separately the first nine samples, and
+  // fail with the remaining one.
+  double expectedAccuracy = 1.0;
+
+  REQUIRE(cv.Evaluate() == Approx(expectedAccuracy).epsilon(1e-7));
+
+  // Assert we can access a trained model without the exception of
+  // uninitialization.
+  REQUIRE_NOTHROW(cv.Model());
+}
+
+/**
  * Test k-fold cross-validation with weighted linear regression.
  */
 TEST_CASE("KFoldCVWithWeightedLRTest", "[CVTest]")
@@ -641,7 +682,7 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
 {
   arma::mat originalData;
   arma::Row<size_t> originalLabels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(originalData, originalLabels, datasetInfo);
 
   // Each fold will be filled with this dataset.
@@ -702,7 +743,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -728,7 +769,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsNoShuffle", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -752,7 +793,7 @@ TEST_CASE("KFoldCVWithDTTestLargeK", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -777,7 +818,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBins", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
 
   size_t numClasses = 5;
@@ -801,7 +842,7 @@ TEST_CASE("KFoldCVWithDTTestLargeKWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 
@@ -827,7 +868,7 @@ TEST_CASE("KFoldCVWithDTTestUnevenBinsWeighted", "[CVTest]")
 {
   arma::mat data;
   arma::Row<size_t> labels;
-  data::DatasetInfo datasetInfo;
+  DatasetInfo datasetInfo;
   MockCategoricalData(data, labels, datasetInfo);
   arma::rowvec weights(data.n_cols, arma::fill::randu);
 

@@ -17,8 +17,7 @@
 
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/im2col_convolution.hpp>
 #include <mlpack/core/util/to_lower.hpp>
 
 #include "layer.hpp"
@@ -28,9 +27,9 @@ namespace mlpack {
 
 /**
  * Implementation of the Grouped Convolution class.
- * 
+ *
  * For information on convolution, please refer to the convolution layer.
- * 
+ *
  * A Grouped Convolution uses a group of convolutions - multiple kernels per
  * layer - resulting in multiple channel outputs per layer. This leads to wider
  * networks helping a network learn a varied set of low level and high level
@@ -40,19 +39,19 @@ namespace mlpack {
  * used to improve classification accuracy. Specifically by exposing a new
  * dimension through grouped convolutions, cardinality (the size of set of
  * transformations), we can increase accuracy by increasing it.
- * 
+ *
  * The `groups` parameter controls the connections between inputs and outputs.
- * inMaps and outMaps must both be divisible by groups. 
+ * inMaps and outMaps must both be divisible by groups.
  * For example,
  *    At groups=1, all inputs are convolved to all outputs.
- *    At groups=2, the operation becomes equivalent to having two conv layers 
- *      side by side, each seeing half the input channels and producing half 
+ *    At groups=2, the operation becomes equivalent to having two conv layers
+ *      side by side, each seeing half the input channels and producing half
  *      the output channels, and both subsequently concatenated.
- *    At groups= inMaps, each input channel is convolved with its own set of 
+ *    At groups= inMaps, each input channel is convolved with its own set of
  *      filters (of size \frac{\text{out\_channels}}{\text{in\_channels}}).
- * 
+ *
  * For more information, kindly refer to the following paper.
- * 
+ *
  * @code
  * @article{Huang2018,
  *  author = {Gao Huang, Shichen Liu, Laurens van der Maaten, Kilian Q. Weinberger},
@@ -69,21 +68,23 @@ namespace mlpack {
  *    computation.
  */
 template <
-    typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename MatType = arma::mat
+    typename MatType = arma::mat,
+    typename ForwardConvolutionRule = Im2ColConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = Im2ColConvolution<FullConvolution>,
+    typename GradientConvolutionRule = Im2ColConvolution<ValidConvolution>
 >
-class GroupedConvolutionType : public Layer<MatType>
+class GroupedConvolution : public Layer<MatType>
 {
  public:
-  typedef typename GetCubeType<MatType>::type CubeType;
+  // Convenience typedefs.
+  using ElemType = typename MatType::elem_type;
+  using CubeType = typename GetCubeType<MatType>::type;
 
-  //! Create the GroupedConvolutionType object.
-  GroupedConvolutionType();
+  // Create the GroupedConvolution object.
+  GroupedConvolution();
 
   /**
-   * Create the GroupedConvolutionType object using the specified number of
+   * Create the GroupedConvolution object using the specified number of
    * output maps, filter size, stride and padding parameter.
    *
    * @param maps The number of output maps.
@@ -99,7 +100,7 @@ class GroupedConvolutionType : public Layer<MatType>
    *    will be used.
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  GroupedConvolutionType(const size_t maps,
+  GroupedConvolution(const size_t maps,
                          const size_t kernelWidth,
                          const size_t kernelHeight,
                          const size_t groups,
@@ -131,7 +132,7 @@ class GroupedConvolutionType : public Layer<MatType>
    *      will be used.
    * @param useBias Whether or not to use a bias with the convolution.
    */
-  GroupedConvolutionType(const size_t maps,
+  GroupedConvolution(const size_t maps,
                          const size_t kernelWidth,
                          const size_t kernelHeight,
                          const size_t groups,
@@ -142,23 +143,27 @@ class GroupedConvolutionType : public Layer<MatType>
                          const std::string& paddingType = "none",
                          const bool useBias = true);
 
-  //! Clone the GroupedConvolutionType object. This handles polymorphism correctly.
-  GroupedConvolutionType* Clone() const { return new GroupedConvolutionType(*this); }
+  //! Clone the GroupedConvolution object. This handles polymorphism
+  //! correctly.
+  GroupedConvolution* Clone() const
+  {
+    return new GroupedConvolution(*this);
+  }
 
-  //! Copy the given GroupedConvolutionType (but not weights).
-  GroupedConvolutionType(const GroupedConvolutionType& layer);
+  //! Copy the given GroupedConvolution (but not weights).
+  GroupedConvolution(const GroupedConvolution& layer);
 
-  //! Take ownership of the given GroupedConvolutionType (but not weights).
-  GroupedConvolutionType(GroupedConvolutionType&&);
+  //! Take ownership of the given GroupedConvolution (but not weights).
+  GroupedConvolution(GroupedConvolution&&);
 
-  //! Copy the given GroupedConvolutionType (but not weights).
-  GroupedConvolutionType& operator=(const GroupedConvolutionType& layer);
+  //! Copy the given GroupedConvolution (but not weights).
+  GroupedConvolution& operator=(const GroupedConvolution& layer);
 
-  //! Take ownership of the given GroupedConvolutionType (but not weights).
-  GroupedConvolutionType& operator=(GroupedConvolutionType&& layer);
+  //! Take ownership of the given GroupedConvolution (but not weights).
+  GroupedConvolution& operator=(GroupedConvolution&& layer);
 
   // Virtual destructor.
-  virtual ~GroupedConvolutionType() { }
+  virtual ~GroupedConvolution() { }
 
   /*
    * Set the weight and bias term.
@@ -392,10 +397,10 @@ class GroupedConvolutionType : public Layer<MatType>
   CubeType gradientTemp;
 
   //! Locally-stored padding layer.
-  PaddingType<MatType> padding;
+  Padding<MatType> padding;
 
   //! Locally-stored padding layer for backward pass.
-  PaddingType<MatType> paddingBackward;
+  Padding<MatType> paddingBackward;
 
   //! Type of padding.
   std::string paddingType;
@@ -411,14 +416,6 @@ class GroupedConvolutionType : public Layer<MatType>
   //! Locally-stored apparent height.
   size_t apparentHeight;
 }; // class Convolution
-
-// Standard Convolution layer.
-typedef GroupedConvolutionType<
-    NaiveConvolution<ValidConvolution>,
-    NaiveConvolution<FullConvolution>,
-    NaiveConvolution<ValidConvolution>,
-    arma::mat
-> GroupedConvolution;
 
 } // namespace mlpack
 

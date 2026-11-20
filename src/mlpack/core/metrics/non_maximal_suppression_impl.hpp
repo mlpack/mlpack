@@ -15,6 +15,8 @@
 // In case it hasn't been included.
 #include "non_maximal_suppression.hpp"
 
+#include <mlpack/core/util/log.hpp>
+
 namespace mlpack {
 
 template<bool UseCoordinates>
@@ -29,25 +31,26 @@ void NMS<UseCoordinates>::Evaluate(
     OutputType& selectedIndices,
     const double threshold)
 {
-  Log::Assert(boundingBoxes.n_rows == 4, "Bounding boxes must \
-      contain only 4 rows determining coordinates of bounding \
-      box either in {x1, y1, x2, y2} or {x1, y1, h, w} format.\
-      Refer to the documentation for more information.");
+  Log::Assert(boundingBoxes.n_rows >= 4, "Bounding boxes must "
+      "contain at least 4 rows determining coordinates of bounding "
+      "box either in {x1, y1, x2, y2} or {x, y, w, h} format.");
 
-  Log::Assert(confidenceScores.n_cols != boundingBoxes.n_cols, "Each \
-      bounding box must correspond to atleast and only 1 bounding box. \
-      Found " + std::to_string(confidenceScores.n_cols) + " confidence \
-      scores for " + std::to_string(boundingBoxes.n_cols) + " bounding boxes.");
+  Log::Assert(confidenceScores.n_rows == boundingBoxes.n_cols, "Each "
+    "confidence score must correspond to 1 bounding box. Found" +
+    std::to_string(confidenceScores.n_rows) + " confidence "
+    "scores for " + std::to_string(boundingBoxes.n_cols) +
+    " bounding boxes.");
 
   // Clear selected bounding boxes.
   selectedIndices.clear();
 
   // Obtain Sorted indices for bounding boxes according to
   // their confidence scores.
-  arma::ucolvec sortedIndices = arma::sort_index(confidenceScores);
+  typename GetUColType<ConfidenceScoreType>::type sortedIndices =
+      sort_index(confidenceScores);
 
   // Pre-Compute area of each bounding box.
-  arma::mat area;
+  BoundingBoxesType area;
   if (UseCoordinates)
   {
     area = (boundingBoxes.row(2) - boundingBoxes.row(0)) %
@@ -63,7 +66,8 @@ void NMS<UseCoordinates>::Evaluate(
     size_t selectedIndex = sortedIndices(sortedIndices.n_elem - 1);
 
     // Choose the box with the largest probability.
-    selectedIndices.insert_rows(0, arma::uvec(1).fill(selectedIndex));
+    selectedIndices.insert_rows(0, 1);
+    selectedIndices[0] = selectedIndex;
 
     // Check if there are other bounding boxes to compare with.
     if (sortedIndices.n_elem == 1)
@@ -80,7 +84,7 @@ void NMS<UseCoordinates>::Evaluate(
         sortedIndices);
 
     BoundingBoxesType x1 = boundingBoxes.submat(arma::uvec(1).fill(0),
-        sortedIndices);;
+        sortedIndices);
 
     BoundingBoxesType y2 = boundingBoxes.submat(arma::uvec(1).fill(3),
         sortedIndices);
@@ -104,23 +108,25 @@ void NMS<UseCoordinates>::Evaluate(
 
     // Calculate points of intersection between the bounding box with
     // highest confidence score and remaining bounding boxes.
-    x2 = arma::clamp(x2, DBL_MIN, selectedX2);
-    y2 = arma::clamp(y2, DBL_MIN, selectedY2);
-    x1 = arma::clamp(x1, selectedX1, DBL_MAX);
-    y1 = arma::clamp(y1, selectedY1, DBL_MAX);
+    typedef typename BoundingBoxesType::elem_type BoxElemType;
+    x2 = clamp(x2, std::numeric_limits<BoxElemType>::lowest(), selectedX2);
+    y2 = clamp(y2, std::numeric_limits<BoxElemType>::lowest(), selectedY2);
+    x1 = clamp(x1, selectedX1, std::numeric_limits<BoxElemType>::max());
+    y1 = clamp(y1, selectedY1, std::numeric_limits<BoxElemType>::max());
 
-    BoundingBoxesType intersectionArea = arma::clamp(x2 - x1, 0.0, DBL_MAX) %
-          arma::clamp(y2 - y1, 0.0, DBL_MAX);
+    BoundingBoxesType intersectionArea = clamp(x2 - x1, 0,
+        std::numeric_limits<BoxElemType>::max()) %
+        clamp(y2 - y1, 0.0, std::numeric_limits<BoxElemType>::max());
 
     // Calculate IoU of remaining boxes with the last bounding box with
     // the highest confidence score.
     BoundingBoxesType calculateIoU = intersectionArea /
         (area(sortedIndices).t() - intersectionArea + area(selectedIndex));
 
-    sortedIndices = sortedIndices(arma::find(calculateIoU <= threshold));
+    sortedIndices = sortedIndices(find(calculateIoU <= threshold));
   }
 
-  selectedIndices = arma::flipud(selectedIndices);
+  selectedIndices = flipud(selectedIndices);
 }
 
 template<bool UseCoordinates>

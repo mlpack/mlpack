@@ -145,7 +145,7 @@ class HighwayType : public MultiLayer<InputType, OutputType>
 }; // class HighwayType
 
 // Standard Highway layer.
-typedef HighwayType<arma::mat, arma::mat> Highway;
+using Highway = HighwayType<arma::mat, arma::mat>;
 
 } // namespace mlpack
 

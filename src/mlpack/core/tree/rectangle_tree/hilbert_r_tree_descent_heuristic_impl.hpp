@@ -41,7 +41,7 @@ size_t HilbertRTreeDescentHeuristic::ChooseDescentNode(
 
   for (bestIndex = 0; bestIndex < node->NumChildren() - 1; bestIndex++)
     if (node->Child(bestIndex).AuxiliaryInfo().HilbertValue().
-        CompareWith(node, node->AuxiliaryInfo().HilbertValue()) > 0)
+        CompareWith(node->AuxiliaryInfo().HilbertValue()) > 0)
       break;
 
   return bestIndex;

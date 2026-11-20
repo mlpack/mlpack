@@ -54,7 +54,7 @@ template<typename MLAlgorithm,
 CVBase<MLAlgorithm,
        MatType,
        PredictionsType,
-       WeightsType>::CVBase(const data::DatasetInfo& datasetInfo,
+       WeightsType>::CVBase(const DatasetInfo& datasetInfo,
                             const size_t numClasses) :
     datasetInfo(datasetInfo),
     isDatasetInfoPassed(true),
@@ -63,7 +63,7 @@ CVBase<MLAlgorithm,
   static_assert(MIE::TakesNumClasses,
       "The given MLAlgorithm does not take the numClasses parameter");
   static_assert(MIE::TakesDatasetInfo,
-      "The given MLAlgorithm does not accept a data::DatasetInfo parameter");
+      "The given MLAlgorithm does not accept a DatasetInfo parameter");
 }
 
 template<typename MLAlgorithm,
@@ -141,8 +141,8 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          MLAlgorithmArgs...>::value,
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&, MLAlgorithmArgs...>,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
   return MLAlgorithm(xs, ys, args...);
@@ -161,8 +161,9 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          const size_t, MLAlgorithmArgs...>::value,
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&,
+          const size_t, MLAlgorithmArgs...>,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
   return MLAlgorithm(xs, ys, numClasses, args...);
@@ -182,15 +183,16 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&,
-          const data::DatasetInfo, const PredictionsType&, const size_t,
-              MLAlgorithmArgs...>::value,
-      "The given MLAlgorithm is not constructible with a data::DatasetInfo "
+      std::is_constructible_v<MLAlgorithm, const MatType&,
+          const DatasetInfo, const PredictionsType&, const size_t,
+              MLAlgorithmArgs...>,
+      "The given MLAlgorithm is not constructible with a DatasetInfo "
       "parameter and the passed arguments");
 
   static const bool constructableWithoutDatasetInfo =
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          const size_t, MLAlgorithmArgs...>::value;
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&,
+          const size_t, MLAlgorithmArgs...>;
   return TrainModel<constructableWithoutDatasetInfo>(xs, ys, args...);
 }
 
@@ -208,8 +210,9 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          const WeightsType&, MLAlgorithmArgs...>::value,
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&,
+          const WeightsType&, MLAlgorithmArgs...>,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
   return MLAlgorithm(xs, ys, weights, args...);
@@ -229,8 +232,9 @@ MLAlgorithm CVBase<MLAlgorithm,
                                             const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          const size_t, const WeightsType&, MLAlgorithmArgs...>::value,
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&,
+          const size_t, const WeightsType&, MLAlgorithmArgs...>,
       "The given MLAlgorithm is not constructible from the passed arguments");
 
   return MLAlgorithm(xs, ys, numClasses, weights, args...);
@@ -251,15 +255,16 @@ MLAlgorithm CVBase<MLAlgorithm,
                                            const MLAlgorithmArgs&... args)
 {
   static_assert(
-      std::is_constructible<MLAlgorithm, const MatType&,
-          const data::DatasetInfo, const PredictionsType&, const size_t,
-              const WeightsType&, MLAlgorithmArgs...>::value,
-      "The given MLAlgorithm is not constructible with a data::DatasetInfo "
+      std::is_constructible_v<MLAlgorithm, const MatType&,
+          const DatasetInfo, const PredictionsType&, const size_t,
+              const WeightsType&, MLAlgorithmArgs...>,
+      "The given MLAlgorithm is not constructible with a DatasetInfo "
       "parameter and the passed arguments");
 
   static const bool constructableWithoutDatasetInfo =
-      std::is_constructible<MLAlgorithm, const MatType&, const PredictionsType&,
-          const size_t, const WeightsType&, MLAlgorithmArgs...>::value;
+      std::is_constructible_v<MLAlgorithm,
+          const MatType&, const PredictionsType&,
+          const size_t, const WeightsType&, MLAlgorithmArgs...>;
   return TrainModel<constructableWithoutDatasetInfo>(xs, ys, weights, args...);
 }
 
@@ -297,7 +302,7 @@ MLAlgorithm CVBase<MLAlgorithm,
 {
   if (!isDatasetInfoPassed)
     throw std::invalid_argument(
-        "The given MLAlgorithm requires a data::DatasetInfo parameter");
+        "The given MLAlgorithm requires a DatasetInfo parameter");
 
   return MLAlgorithm(xs, datasetInfo, ys, numClasses, args...);
 }

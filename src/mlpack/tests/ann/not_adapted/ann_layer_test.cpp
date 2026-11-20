@@ -584,110 +584,6 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 // }
 
 // /**
-//  * Test the LSTM layer with a user defined rho parameter and without.
-//  */
-// TEST_CASE("LSTMRrhoTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5;
-//   arma::cube input = arma::randu(1, 1, 5);
-//   arma::cube target = arma::ones(1, 1, 5);
-//   RandomInitialization init(0.5, 0.5);
-
-//   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood(), init);
-//   modelA.Add<IdentityLayer<> >();
-//   modelA.Add<Linear<> >(1, 10);
-
-//   // Use LSTM layer with rho.
-//   modelA.Add<LSTM<> >(10, 3, rho);
-//   modelA.Add<LogSoftMax<> >();
-
-//   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood> modelB(
-//       rho, false, NegativeLogLikelihood(), init);
-//   modelB.Add<IdentityLayer<> >();
-//   modelB.Add<Linear<> >(1, 10);
-
-//   // Use LSTM layer with rho = MAXSIZE.
-//   modelB.Add<LSTM<> >(10, 3);
-//   modelB.Add<LogSoftMax<> >();
-
-//   ens::StandardSGD opt(0.1, 1, 5, -100, false);
-//   modelA.Train(input, target, opt);
-//   modelB.Train(input, target, opt);
-
-//   CheckMatrices(modelB.Parameters(), modelA.Parameters());
-// }
-
-// /**
-//  * LSTM layer numerical gradient test.
-//  */
-// TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   // LSTM function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(1, 1, 5)),
-//         target(arma::ones(1, 1, 5))
-//     {
-//       const size_t rho = 5;
-
-//       model = new RNN<NegativeLogLikelihood>(rho);
-//       model->ResetData(input, target);
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(1, 10);
-//       model->Add<LSTM<> >(10, 3, rho);
-//       model->Add<LogSoftMax<> >();
-//     }
-
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
-
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
-
-//     arma::mat& Parameters() { return model->Parameters(); }
-
-//     RNN<NegativeLogLikelihood>* model;
-//     arma::cube input, target;
-//   } function;
-
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
-
-// /**
-//  * Test that the functions that can modify and access the parameters of the
-//  * LSTM layer work.
-//  */
-// TEST_CASE("LSTMLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inSize, outSize, rho.
-//   LSTM<> layer1(1, 2, 3);
-//   LSTM<> layer2(1, 2, 4);
-
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer1.InSize() == 1);
-//   REQUIRE(layer1.OutSize() == 2);
-//   REQUIRE(layer1.Rho() == 3);
-
-//   // Now modify the parameters to match the second layer.
-//   layer1.Rho() = 4;
-
-//   // Now ensure all the results are the same.
-//   REQUIRE(layer1.InSize() == layer2.InSize());
-//   REQUIRE(layer1.OutSize() == layer2.OutSize());
-//   REQUIRE(layer1.Rho() == layer2.Rho());
-// }
-
-// /**
 //  * Test the FastLSTM layer with a user defined rho parameter and without.
 //  */
 // TEST_CASE("FastLSTMRrhoTest", "[ANNLayerTest]")
@@ -824,211 +720,6 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 
 //   // Check whether move constructor is working or not.
 //   CheckRNNMoveFunction<>(model2, input, target, 1);
-// }
-
-// /**
-//  * Check whether copying and moving network with LSTM is working or not.
-//  */
-// TEST_CASE("CheckCopyMoveLSTMTest", "[ANNLayerTest]")
-// {
-//   arma::cube input = arma::randu(1, 1, 5);
-//   arma::cube target = arma::ones(1, 1, 5);
-//   const size_t rho = 5;
-
-//   RNN<NegativeLogLikelihood> *model1 =
-//       new RNN<NegativeLogLikelihood>(rho);
-//   model1->ResetData(input, target);
-//   model1->Add<IdentityLayer<> >();
-//   model1->Add<Linear<> >(1, 10);
-//   model1->Add<LSTM<> >(10, 3, rho);
-//   model1->Add<LogSoftMax<> >();
-
-//   RNN<NegativeLogLikelihood> *model2 =
-//      new RNN<NegativeLogLikelihood>(rho);
-//   model2->ResetData(input, target);
-//   model2->Add<IdentityLayer<> >();
-//   model2->Add<Linear<> >(1, 10);
-//   model2->Add<LSTM<> >(10, 3, rho);
-//   model2->Add<LogSoftMax<> >();
-
-//   // Check whether copy constructor is working or not.
-//   CheckRNNCopyFunction<>(model1, input, target, 1);
-
-//   // Check whether move constructor is working or not.
-//   CheckRNNMoveFunction<>(model2, input, target, 1);
-// }
-
-// /**
-//  * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
-//  * state. Besides output, the overloaded function provides read access to cell
-//  * state of the LSTM layer.
-//  */
-// TEST_CASE("ReadCellStateParamLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5, inputSize = 3, outputSize = 2;
-
-//   // Provide input of all ones.
-//   arma::cube input = arma::ones(inputSize, outputSize, rho);
-
-//   arma::mat inputGate, forgetGate, outputGate, hidden;
-//   arma::mat outLstm, cellLstm;
-
-//   // LSTM layer.
-//   LSTM<> lstm(inputSize, outputSize, rho);
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-
-//   // Initialize the weights to all ones.
-//   lstm.Parameters().ones();
-
-//   arma::mat inputWeight = arma::ones(outputSize, inputSize);
-//   arma::mat outputWeight = arma::ones(outputSize, outputSize);
-//   arma::mat bias = arma::ones(outputSize, input.n_cols);
-//   arma::mat cellCalc = arma::zeros(outputSize, input.n_cols);
-//   arma::mat outCalc = arma::zeros(outputSize, input.n_cols);
-
-//   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-//   {
-//       // Wrap a matrix around our data to avoid a copy.
-//       arma::mat stepData(input.slice(seqNum).memptr(),
-//           input.n_rows, input.n_cols, false, true);
-
-//       // Apply Forward() on LSTM layer.
-//       lstm.Forward(stepData, // Input.
-//                    outLstm,  // Output.
-//                    cellLstm, // Cell state.
-//                    false); // Don't write into the cell state.
-
-//       // Compute the value of cell state and output.
-//       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // z = tanh(W.dot(x) + W.dot(h) + b).
-//       hidden = arma::tanh(inputWeight * stepData +
-//                      outputWeight * outCalc + bias);
-
-//       // c = f * c + i * z.
-//       cellCalc = forgetGate % cellCalc + inputGate % hidden;
-
-//       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // h = o * tanh(c).
-//       outCalc = outputGate % arma::tanh(cellCalc);
-
-//       CheckMatrices(outLstm, outCalc, 1e-12);
-//       CheckMatrices(cellLstm, cellCalc, 1e-12);
-//   }
-// }
-
-// /**
-//  * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
-//  * state. Besides output, the overloaded function provides write access to cell
-//  * state of the LSTM layer.
-//  */
-// TEST_CASE("WriteCellStateParamLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5, inputSize = 3, outputSize = 2;
-
-//   // Provide input of all ones.
-//   arma::cube input = arma::ones(inputSize, outputSize, rho);
-
-//   arma::mat inputGate, forgetGate, outputGate, hidden;
-//   arma::mat outLstm, cellLstm;
-//   arma::mat cellCalc;
-
-//   // LSTM layer.
-//   LSTM<> lstm(inputSize, outputSize, rho);
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-
-//   // Initialize the weights to all ones.
-//   lstm.Parameters().ones();
-
-//   arma::mat inputWeight = arma::ones(outputSize, inputSize);
-//   arma::mat outputWeight = arma::ones(outputSize, outputSize);
-//   arma::mat bias = arma::ones(outputSize, input.n_cols);
-//   arma::mat outCalc = arma::zeros(outputSize, input.n_cols);
-
-//   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-//   {
-//       // Wrap a matrix around our data to avoid a copy.
-//       arma::mat stepData(input.slice(seqNum).memptr(),
-//           input.n_rows, input.n_cols, false, true);
-
-//       if (cellLstm.is_empty())
-//       {
-//         // Set the cell state to zeros.
-//         cellLstm = arma::zeros(outputSize, input.n_cols);
-//         cellCalc = arma::zeros(outputSize, input.n_cols);
-//       }
-//       else
-//       {
-//         // Set the cell state to zeros.
-//         cellLstm = arma::zeros(cellLstm.n_rows, cellLstm.n_cols);
-//         cellCalc = arma::zeros(cellCalc.n_rows, cellCalc.n_cols);
-//       }
-
-//       // Apply Forward() on the LSTM layer.
-//       lstm.Forward(stepData, // Input.
-//                    outLstm,  // Output.
-//                    cellLstm, // Cell state.
-//                    true);  // Write into cell state.
-
-//       // Compute the value of cell state and output.
-//       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // z = tanh(W.dot(x) + W.dot(h) + b).
-//       hidden = arma::tanh(inputWeight * stepData +
-//                      outputWeight * outCalc + bias);
-
-//       // c = f * c + i * z.
-//       cellCalc = forgetGate % cellCalc + inputGate % hidden;
-
-//       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-
-//       // h = o * tanh(c).
-//       outCalc = outputGate % arma::tanh(cellCalc);
-
-//       CheckMatrices(outLstm, outCalc, 1e-12);
-//       CheckMatrices(cellLstm, cellCalc, 1e-12);
-//   }
-
-//   // Attempting to write empty matrix into cell state.
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-//   arma::mat stepData(input.slice(0).memptr(),
-//       input.n_rows, input.n_cols, false, true);
-
-//   lstm.Forward(stepData, // Input.
-//                outLstm,  // Output.
-//                cellLstm, // Cell state.
-//                true); // Write into cell state.
-
-//   for (size_t seqNum = 1; seqNum < rho; ++seqNum)
-//   {
-//     arma::mat empty;
-//     // Should throw error.
-//     REQUIRE_THROWS_AS(lstm.Forward(stepData, // Input.
-//                                    outLstm,  // Output.
-//                                    empty, // Cell state.
-//                                    true),  // Write into cell state.
-//                                    std::runtime_error);
-//   }
 // }
 
 // /**
@@ -1189,110 +880,6 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 // }
 
 /**
- * Test the LSTM layer with a user defined rho parameter and without.
- */
-// TEST_CASE("LSTMRrhoTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5;
-//   arma::cube input = arma::randu(1, 1, 5);
-//   arma::cube target = arma::zeros(1, 1, 5);
-//   RandomInitialization init(0.5, 0.5);
-//
-//   // Create model with user defined rho parameter.
-//   RNN<NegativeLogLikelihood, RandomInitialization> modelA(
-//       rho, false, NegativeLogLikelihood(), init);
-//   modelA.Add<IdentityLayer<> >();
-//   modelA.Add<Linear<> >(1, 10);
-//
-//   // Use LSTM layer with rho.
-//   modelA.Add<LSTM<> >(10, 3, rho);
-//   modelA.Add<LogSoftMax<> >();
-//
-//   // Create model without user defined rho parameter.
-//   RNN<NegativeLogLikelihood> modelB(
-//       rho, false, NegativeLogLikelihood(), init);
-//   modelB.Add<IdentityLayer<> >();
-//   modelB.Add<Linear<> >(1, 10);
-//
-//   // Use LSTM layer with rho = MAXSIZE.
-//   modelB.Add<LSTM<> >(10, 3);
-//   modelB.Add<LogSoftMax<> >();
-//
-//   ens::StandardSGD opt(0.1, 1, 5, -100, false);
-//   modelA.Train(input, target, opt);
-//   modelB.Train(input, target, opt);
-//
-//   CheckMatrices(modelB.Parameters(), modelA.Parameters());
-// }
-
-/**
- * LSTM layer numerical gradient test.
- */
-// TEST_CASE("GradientLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   // LSTM function gradient instantiation.
-//   struct GradientFunction
-//   {
-//     GradientFunction() :
-//         input(arma::randu(1, 1, 5)),
-//         target(arma::zeros(1, 1, 5))
-//     {
-//       const size_t rho = 5;
-//
-//       model = new RNN<NegativeLogLikelihood>(rho);
-//       model->ResetData(input, target);
-//       model->Add<IdentityLayer<> >();
-//       model->Add<Linear<> >(1, 10);
-//       model->Add<LSTM<> >(10, 3, rho);
-//       model->Add<LogSoftMax<> >();
-//     }
-//
-//     ~GradientFunction()
-//     {
-//       delete model;
-//     }
-//
-//     double Gradient(arma::mat& gradient) const
-//     {
-//       double error = model->Evaluate(model->Parameters(), 0, 1);
-//       model->Gradient(model->Parameters(), 0, gradient, 1);
-//       return error;
-//     }
-//
-//     arma::mat& Parameters() { return model->Parameters(); }
-//
-//     RNN<NegativeLogLikelihood>* model;
-//     arma::cube input, target;
-//   } function;
-//
-//   REQUIRE(CheckGradient(function) <= 1e-4);
-// }
-
-/**
- * Test that the functions that can modify and access the parameters of the
- * LSTM layer work.
- */
-// TEST_CASE("LSTMLayerParametersTest", "[ANNLayerTest]")
-// {
-//   // Parameter order : inSize, outSize, rho.
-//   LSTM<> layer1(1, 2, 3);
-//   LSTM<> layer2(1, 2, 4);
-//
-//   // Make sure we can get the parameters successfully.
-//   REQUIRE(layer1.InSize() == 1);
-//   REQUIRE(layer1.OutSize() == 2);
-//   REQUIRE(layer1.Rho() == 3);
-//
-//   // Now modify the parameters to match the second layer.
-//   layer1.Rho() = 4;
-//
-//   // Now ensure all the results are the same.
-//   REQUIRE(layer1.InSize() == layer2.InSize());
-//   REQUIRE(layer1.OutSize() == layer2.OutSize());
-//   REQUIRE(layer1.Rho() == layer2.Rho());
-// }
-
-/**
  * Test the FastLSTM layer with a user defined rho parameter and without.
  */
 // TEST_CASE("FastLSTMRrhoTest", "[ANNLayerTest]")
@@ -1429,211 +1016,6 @@ TEST_CASE("SimpleJoinLayerTest", "[ANNLayerTest]")
 //
 //   // Check whether move constructor is working or not.
 //   CheckRNNMoveFunction<>(model2, input, target, 1);
-// }
-
-/**
- * Check whether copying and moving network with LSTM is working or not.
- */
-// TEST_CASE("CheckCopyMoveLSTMTest", "[ANNLayerTest]")
-// {
-//   arma::cube input = arma::randu(1, 1, 5);
-//   arma::cube target = arma::ones(1, 1, 5);
-//   const size_t rho = 5;
-//
-//   RNN<NegativeLogLikelihood> *model1 =
-//       new RNN<NegativeLogLikelihood>(rho);
-//   model1->ResetData(input, target);
-//   model1->Add<IdentityLayer<> >();
-//   model1->Add<Linear<> >(1, 10);
-//   model1->Add<LSTM<> >(10, 3, rho);
-//   model1->Add<LogSoftMax<> >();
-//
-//   RNN<NegativeLogLikelihood> *model2 =
-//      new RNN<NegativeLogLikelihood>(rho);
-//   model2->ResetData(input, target);
-//   model2->Add<IdentityLayer<> >();
-//   model2->Add<Linear<> >(1, 10);
-//   model2->Add<LSTM<> >(10, 3, rho);
-//   model2->Add<LogSoftMax<> >();
-//
-//   // Check whether copy constructor is working or not.
-//   CheckRNNCopyFunction<>(model1, input, target, 1);
-//
-//   // Check whether move constructor is working or not.
-//   CheckRNNMoveFunction<>(model2, input, target, 1);
-// }
-
-/**
- * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
- * state. Besides output, the overloaded function provides read access to cell
- * state of the LSTM layer.
- */
-// TEST_CASE("ReadCellStateParamLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5, inputSize = 3, outputSize = 2;
-//
-//   // Provide input of all ones.
-//   arma::cube input = arma::ones(inputSize, outputSize, rho);
-//
-//   arma::mat inputGate, forgetGate, outputGate, hidden;
-//   arma::mat outLstm, cellLstm;
-//
-//   // LSTM layer.
-//   LSTM<> lstm(inputSize, outputSize, rho);
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-//
-//   // Initialize the weights to all ones.
-//   lstm.Parameters().ones();
-//
-//   arma::mat inputWeight = arma::ones(outputSize, inputSize);
-//   arma::mat outputWeight = arma::ones(outputSize, outputSize);
-//   arma::mat bias = arma::ones(outputSize, input.n_cols);
-//   arma::mat cellCalc = arma::zeros(outputSize, input.n_cols);
-//   arma::mat outCalc = arma::zeros(outputSize, input.n_cols);
-//
-//   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-//   {
-//       // Wrap a matrix around our data to avoid a copy.
-//       arma::mat stepData(input.slice(seqNum).memptr(),
-//           input.n_rows, input.n_cols, false, true);
-//
-//       // Apply Forward() on LSTM layer.
-//       lstm.Forward(stepData, // Input.
-//                    outLstm,  // Output.
-//                    cellLstm, // Cell state.
-//                    false); // Don't write into the cell state.
-//
-//       // Compute the value of cell state and output.
-//       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // z = tanh(W.dot(x) + W.dot(h) + b).
-//       hidden = arma::tanh(inputWeight * stepData +
-//                      outputWeight * outCalc + bias);
-//
-//       // c = f * c + i * z.
-//       cellCalc = forgetGate % cellCalc + inputGate % hidden;
-//
-//       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // h = o * tanh(c).
-//       outCalc = outputGate % arma::tanh(cellCalc);
-//
-//       CheckMatrices(outLstm, outCalc, 1e-12);
-//       CheckMatrices(cellLstm, cellCalc, 1e-12);
-//   }
-// }
-
-/**
- * Testing the overloaded Forward() of the LSTM layer, for retrieving the cell
- * state. Besides output, the overloaded function provides write access to cell
- * state of the LSTM layer.
- */
-// TEST_CASE("WriteCellStateParamLSTMLayerTest", "[ANNLayerTest]")
-// {
-//   const size_t rho = 5, inputSize = 3, outputSize = 2;
-//
-//   // Provide input of all ones.
-//   arma::cube input = arma::ones(inputSize, outputSize, rho);
-//
-//   arma::mat inputGate, forgetGate, outputGate, hidden;
-//   arma::mat outLstm, cellLstm;
-//   arma::mat cellCalc;
-//
-//   // LSTM layer.
-//   LSTM<> lstm(inputSize, outputSize, rho);
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-//
-//   // Initialize the weights to all ones.
-//   lstm.Parameters().ones();
-//
-//   arma::mat inputWeight = arma::ones(outputSize, inputSize);
-//   arma::mat outputWeight = arma::ones(outputSize, outputSize);
-//   arma::mat bias = arma::ones(outputSize, input.n_cols);
-//   arma::mat outCalc = arma::zeros(outputSize, input.n_cols);
-//
-//   for (size_t seqNum = 0; seqNum < rho; ++seqNum)
-//   {
-//       // Wrap a matrix around our data to avoid a copy.
-//       arma::mat stepData(input.slice(seqNum).memptr(),
-//           input.n_rows, input.n_cols, false, true);
-//
-//       if (cellLstm.is_empty())
-//       {
-//         // Set the cell state to zeros.
-//         cellLstm = arma::zeros(outputSize, input.n_cols);
-//         cellCalc = arma::zeros(outputSize, input.n_cols);
-//       }
-//       else
-//       {
-//         // Set the cell state to zeros.
-//         cellLstm = arma::zeros(cellLstm.n_rows, cellLstm.n_cols);
-//         cellCalc = arma::zeros(cellCalc.n_rows, cellCalc.n_cols);
-//       }
-//
-//       // Apply Forward() on the LSTM layer.
-//       lstm.Forward(stepData, // Input.
-//                    outLstm,  // Output.
-//                    cellLstm, // Cell state.
-//                    true);  // Write into cell state.
-//
-//       // Compute the value of cell state and output.
-//       // i = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       inputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // f = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       forgetGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // z = tanh(W.dot(x) + W.dot(h) + b).
-//       hidden = arma::tanh(inputWeight * stepData +
-//                      outputWeight * outCalc + bias);
-//
-//       // c = f * c + i * z.
-//       cellCalc = forgetGate % cellCalc + inputGate % hidden;
-//
-//       // o = sigmoid(W.dot(x) + W.dot(h) + W.dot(c) + b).
-//       outputGate = 1.0 /(1 + exp(-(inputWeight * stepData +
-//           outputWeight * outCalc + outputWeight % cellCalc + bias)));
-//
-//       // h = o * tanh(c).
-//       outCalc = outputGate % arma::tanh(cellCalc);
-//
-//       CheckMatrices(outLstm, outCalc, 1e-12);
-//       CheckMatrices(cellLstm, cellCalc, 1e-12);
-//   }
-//
-//   // Attempting to write empty matrix into cell state.
-//   lstm.Reset();
-//   lstm.ResetCell(rho);
-//   arma::mat stepData(input.slice(0).memptr(),
-//       input.n_rows, input.n_cols, false, true);
-//
-//   lstm.Forward(stepData, // Input.
-//                outLstm,  // Output.
-//                cellLstm, // Cell state.
-//                true); // Write into cell state.
-//
-//   for (size_t seqNum = 1; seqNum < rho; ++seqNum)
-//   {
-//     arma::mat empty;
-//     // Should throw error.
-//     REQUIRE_THROWS_AS(lstm.Forward(stepData, // Input.
-//                                    outLstm,  // Output.
-//                                    empty, // Cell state.
-//                                    true),  // Write into cell state.
-//                                    std::runtime_error);
-//   }
 // }
 
 /**
@@ -1872,70 +1254,6 @@ TEST_CASE("LookupLayerParametersTest", "[ANNLayerTest]")
   // Make sure we can get the parameters successfully.
   REQUIRE(layer.VocabSize() == 100);
   REQUIRE(layer.EmbeddingSize() == 8);
-}
-*/
-
-/**
- * Simple test for the NearestInterpolation layer
- *
-TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
-{
-  // Tested output against torch.nn.Upsample(mode="nearest").
-  arma::mat input, output, unzoomedOutput, expectedOutput;
-  size_t inRowSize = 2;
-  size_t inColSize = 2;
-  size_t outRowSize = 5;
-  size_t outColSize = 7;
-  size_t depth = 1;
-  input.zeros(inRowSize * inColSize * depth, 1);
-  input[0] = 1.0;
-  input[1] = 3.0;
-  input[2] = 2.0;
-  input[3] = 4.0;
-  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize,
-                               outColSize, depth);
-
-  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
-                 << 2.0000 << 2.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
-                 << 4.0000 << 4.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
-                 << 4.0000 << 4.0000 << arma::endr;
-  expectedOutput.reshape(35, 1);
-
-  layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput,
-                arma::zeros(output.n_rows), 1e-4);
-
-  expectedOutput.clear();
-  expectedOutput << 12.0000 << 18.0000 << arma::endr
-                 << 24.0000 << 24.0000 << arma::endr;
-  expectedOutput.reshape(4, 1);
-  layer.Backward(output, output, unzoomedOutput);
-  CheckMatrices(unzoomedOutput - expectedOutput,
-      arma::zeros(input.n_rows), 1e-4);
-
-  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
-  inRowSize = 2;
-  inColSize = 3;
-  outRowSize = 17;
-  outColSize = 23;
-  input1 << 1 << 2 << 3 << arma::endr
-         << 4 << 5 << 6 << arma::endr;
-  input1.reshape(6, 1);
-  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize,
-                                outColSize, depth);
-
-  layer1.Forward(input1, output1);
-  layer1.Backward(output1, output1, unzoomedOutput1);
-
-  REQUIRE(accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
-  REQUIRE(accu(unzoomedOutput1) - 1317.00 ==
-          Approx(0.0).margin(1e-05));
 }
 */
 
@@ -2219,7 +1537,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module1(1, 1, 3, 3, 1, 1, 0, 0, 4, 4, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters() = arma::mat(9 + 1, 1);
   module1.Parameters()(0) = 1.0;
   module1.Parameters()(8) = 2.0;
   module1.Reset();
@@ -2235,7 +1553,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module2(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module2.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module2.Parameters() = arma::mat(16 + 1, 1);
   module2.Parameters()(0) = 1.0;
   module2.Parameters()(3) = 1.0;
   module2.Parameters()(6) = 1.0;
@@ -2255,7 +1573,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module3(1, 1, 3, 3, 1, 1, 1, 1, 5, 5, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Parameters() = arma::mat(9 + 1, 1);
   module3.Parameters()(1) = 2.0;
   module3.Parameters()(2) = 4.0;
   module3.Parameters()(3) = 3.0;
@@ -2273,7 +1591,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module4(1, 1, 3, 3, 1, 1, 0, 0, 5, 5, 7, 7);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Parameters() = arma::mat(9 + 1, 1);
   module4.Parameters()(2) = 2.0;
   module4.Parameters()(4) = 4.0;
   module4.Parameters()(6) = 6.0;
@@ -2291,7 +1609,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Parameters() = arma::mat(25 + 1, 1);
   module5.Parameters()(2) = 8.0;
   module5.Parameters()(4) = 6.0;
   module5.Parameters()(6) = 4.0;
@@ -2309,7 +1627,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module6(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 5, 5);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module6.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module6.Parameters() = arma::mat(9 + 1, 1);
   module6.Parameters()(0) = 8.0;
   module6.Parameters()(3) = 6.0;
   module6.Parameters()(6) = 2.0;
@@ -2327,7 +1645,7 @@ TEST_CASE("SimpleTransposedConvolutionLayerTest", "[ANNLayerTest]")
   TransposedConvolution module7(1, 1, 3, 3, 2, 2, 1, 1, 3, 3, 6, 6);
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module7.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module7.Parameters() = arma::mat(9 + 1, 1);
   module7.Parameters()(0) = 8.0;
   module7.Parameters()(2) = 6.0;
   module7.Parameters()(4) = 2.0;
@@ -2484,7 +1802,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   AtrousConvolution<> module1(1, 1, 3, 3, 1, 1, 0, 0, 7, 7, 2, 2);
 //   // Test the Forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module1.Parameters() = arma::mat(9 + 1, 1);
 //   module1.Parameters()(0) = 1.0;
 //   module1.Parameters()(8) = 2.0;
 //   module1.Reset();
@@ -2499,7 +1817,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 //   AtrousConvolution<> module2(1, 1, 3, 3, 2, 2, 0, 0, 7, 7, 2, 2);
 //   // Test the forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module2.Parameters() = arma::mat(9 + 1, 1);
 //   module2.Parameters()(0) = 1.0;
 //   module2.Parameters()(3) = 1.0;
 //   module2.Parameters()(6) = 1.0;
@@ -2629,7 +1947,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 //   // Test the Forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module1.Parameters() = arma::mat(9 + 1, 1);
 //   module1.Reset();
 //   module1.Forward(input, output);
 
@@ -2647,7 +1965,7 @@ TEST_CASE("SimpleMultiplyMergeLayerTest", "[ANNLayerTest]")
 
 //   // Test the forward function.
 //   input = arma::linspace<arma::colvec>(0, 48, 49);
-//   module2.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+//   module2.Parameters() = arma::mat(9 + 1, 1);
 //   module2.Reset();
 //   module2.Forward(input, output);
 
@@ -3401,7 +2719,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   // Test the forward function.
   // Valid Should give the same result.
   input = arma::linspace<arma::colvec>(0, 15, 16);
-  module1.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module1.Parameters() = arma::mat(9 + 1, 1);
   module1.Reset();
   module1.Forward(input, output);
   // Value calculated using tensorflow.nn.conv2d_transpose().
@@ -3417,7 +2735,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
       2, 2, 5, 5, "VALID");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module2.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module2.Parameters() = arma::mat(25 + 1, 1);
   module2.Parameters()(2) = 8.0;
   module2.Parameters()(4) = 6.0;
   module2.Parameters()(6) = 4.0;
@@ -3435,7 +2753,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module3(1, 1, 3, 3, 2, 2, 0, 0, 3, 3, 3, 3, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 8, 9);
-  module3.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module3.Parameters() = arma::mat(9 + 1, 1);
   module3.Reset();
   module3.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3452,7 +2770,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
     5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module4.Parameters() = arma::mat(9 + 1, 1, arma::fill::zeros);
+  module4.Parameters() = arma::mat(9 + 1, 1);
   module4.Reset();
   module4.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3466,7 +2784,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module5(1, 1, 3, 3, 2, 2, 0, 0, 2, 2, 2, 2, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 3, 4);
-  module5.Parameters() = arma::mat(25 + 1, 1, arma::fill::zeros);
+  module5.Parameters() = arma::mat(25 + 1, 1);
   module5.Reset();
   module5.Forward(input, output);
   REQUIRE(accu(output) == 0);
@@ -3480,7 +2798,7 @@ TEST_CASE("TransposedConvolutionLayerPaddingTest", "[ANNLayerTest]")
   TransposedConvolution module6(1, 1, 4, 4, 1, 1, 1, 1, 5, 5, 5, 5, "SAME");
   // Test the forward function.
   input = arma::linspace<arma::colvec>(0, 24, 25);
-  module6.Parameters() = arma::mat(16 + 1, 1, arma::fill::zeros);
+  module6.Parameters() = arma::mat(16 + 1, 1);
   module6.Reset();
   module6.Forward(input, output);
   REQUIRE(accu(output) == 0);

@@ -31,6 +31,7 @@ namespace adaboost { using namespace mlpack; }
 namespace amf { using namespace mlpack; }
 namespace ann { using namespace mlpack; }
 namespace cf { using namespace mlpack; }
+namespace data { using namespace mlpack; }
 namespace dbscan { using namespace mlpack; }
 namespace det { using namespace mlpack; }
 namespace emst { using namespace mlpack; }

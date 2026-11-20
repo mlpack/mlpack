@@ -132,8 +132,8 @@ class PathCacher
   size_t NumNodes() const { return pathCache.size(); }
 
  protected:
-  typedef std::list<std::pair<bool, int>>          PathType;
-  typedef std::vector<std::pair<int, std::string>> PathCacheType;
+  using PathType = std::list<std::pair<bool, int>>;
+  using PathCacheType = std::vector<std::pair<int, std::string>>;
 
   PathType      path;
   PathFormat    format;

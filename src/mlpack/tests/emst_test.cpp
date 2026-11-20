@@ -22,7 +22,7 @@ using namespace mlpack;
  * dimension for simplicity -- the correct functionality of distance functions
  * is not tested here.
  */
-TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
+TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest][tiny]")
 {
   // Set up our data.
   arma::mat data(1, 11);
@@ -41,7 +41,7 @@ TEST_CASE("EMSTExhaustiveSyntheticTest", "[EMSTTest]")
   arma::mat results;
 
   // Build the tree by hand to get a leaf size of 1.
-  typedef KDTree<EuclideanDistance, DTBStat, arma::mat> TreeType;
+  using TreeType = KDTree<EuclideanDistance, DTBStat, arma::mat>;
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
   TreeType tree(data, oldFromNew, newFromOld, 1);
@@ -183,7 +183,7 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!Load("test_data_3_1000.csv", inputData))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -219,7 +219,7 @@ TEST_CASE("DualTreeVsNaive", "[EMSTTest]")
 TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
 {
   arma::mat inputData;
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!Load("test_data_3_1000.csv", inputData))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   DualTreeBoruvka<> bst(inputData);
@@ -247,7 +247,7 @@ TEST_CASE("EMSTCoverTreeTest", "[EMSTTest]")
 TEST_CASE("EMSTBallTreeTest", "[EMSTTest]")
 {
   arma::mat inputData;
-  if (!data::Load("test_data_3_1000.csv", inputData))
+  if (!Load("test_data_3_1000.csv", inputData))
     FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // naive mode.

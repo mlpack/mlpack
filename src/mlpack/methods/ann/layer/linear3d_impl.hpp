@@ -18,7 +18,7 @@
 namespace mlpack {
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType() :
+Linear3D<MatType, RegularizerType>::Linear3D() :
     Layer<MatType>(),
     outSize(0)
 {
@@ -26,7 +26,7 @@ Linear3DType<MatType, RegularizerType>::Linear3DType() :
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
+Linear3D<MatType, RegularizerType>::Linear3D(
     const size_t outSize,
     RegularizerType regularizer) :
     Layer<MatType>(),
@@ -35,8 +35,8 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 { }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
-    const Linear3DType& other) :
+Linear3D<MatType, RegularizerType>::Linear3D(
+    const Linear3D& other) :
     Layer<MatType>(other),
     outSize(other.outSize),
     regularizer(other.regularizer)
@@ -45,8 +45,8 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>::Linear3DType(
-    Linear3DType&& other) :
+Linear3D<MatType, RegularizerType>::Linear3D(
+    Linear3D&& other) :
     Layer<MatType>(std::move(other)),
     outSize(std::move(other.outSize)),
     regularizer(std::move(other.regularizer))
@@ -55,9 +55,9 @@ Linear3DType<MatType, RegularizerType>::Linear3DType(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>&
-Linear3DType<MatType, RegularizerType>::operator=(
-    const Linear3DType& other)
+Linear3D<MatType, RegularizerType>&
+Linear3D<MatType, RegularizerType>::operator=(
+    const Linear3D& other)
 {
   if (&other != this)
   {
@@ -70,9 +70,9 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-Linear3DType<MatType, RegularizerType>&
-Linear3DType<MatType, RegularizerType>::operator=(
-    Linear3DType&& other)
+Linear3D<MatType, RegularizerType>&
+Linear3D<MatType, RegularizerType>::operator=(
+    Linear3D&& other)
 {
   if (&other != this)
   {
@@ -85,7 +85,8 @@ Linear3DType<MatType, RegularizerType>::operator=(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn)
+void Linear3D<MatType, RegularizerType>::SetWeights(
+    const MatType& weightsIn)
 {
   MakeAlias(weights, weightsIn, outSize * this->inputDimensions[0] + outSize,
       1);
@@ -94,16 +95,15 @@ void Linear3DType<MatType, RegularizerType>::SetWeights(const MatType& weightsIn
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Forward(
+void Linear3D<MatType, RegularizerType>::Forward(
     const MatType& input, MatType& output)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
-
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  const CubeType inputTemp(const_cast<MatType&>(input).memptr(),
-      this->inputDimensions[0], nPoints, batchSize, false, false);
+  const CubeType inputTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
+      nPoints, batchSize, 0, false);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -116,25 +116,24 @@ void Linear3DType<MatType, RegularizerType>::Forward(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Backward(
+void Linear3D<MatType, RegularizerType>::Backward(
     const MatType& /* input */,
     const MatType& /* output */,
     const MatType& gy,
     MatType& g)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
-
   if (gy.n_rows % outSize != 0)
   {
-    Log::Fatal << "Number of rows in propagated error must be divisible by \
-        outSize." << std::endl;
+    Log::Fatal << "Number of rows in propagated error must be divisible by "
+        << "outSize." << std::endl;
   }
 
   const size_t nPoints = gy.n_rows / outSize;
   const size_t batchSize = gy.n_cols;
 
-  const CubeType gyTemp(const_cast<MatType&>(gy).memptr(), outSize,
-      nPoints, batchSize, false, false);
+  const CubeType gyTemp;
+  MakeAlias(const_cast<CubeType&>(gyTemp), gy, outSize, nPoints, batchSize,
+      0, false);
 
   for (size_t i = 0; i < gyTemp.n_slices; ++i)
   {
@@ -145,23 +144,22 @@ void Linear3DType<MatType, RegularizerType>::Backward(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<MatType, RegularizerType>::Gradient(
+void Linear3D<MatType, RegularizerType>::Gradient(
     const MatType& input,
     const MatType& error,
     MatType& gradient)
 {
-  typedef typename arma::Cube<typename MatType::elem_type> CubeType;
-
   if (error.n_rows % outSize != 0)
     Log::Fatal << "Propagated error matrix has invalid dimension!" << std::endl;
 
   const size_t nPoints = input.n_rows / this->inputDimensions[0];
   const size_t batchSize = input.n_cols;
 
-  const CubeType inputTemp(const_cast<MatType&>(input).memptr(),
-      this->inputDimensions[0], nPoints, batchSize, false, false);
-  const CubeType errorTemp(const_cast<MatType&>(error).memptr(), outSize,
-      nPoints, batchSize, false, false);
+  const CubeType inputTemp, errorTemp;
+  MakeAlias(const_cast<CubeType&>(inputTemp), input, this->inputDimensions[0],
+      nPoints, batchSize, 0, false);
+  MakeAlias(const_cast<CubeType&>(errorTemp), error, outSize, nPoints,
+      batchSize, 0, false);
 
   CubeType dW(outSize, this->inputDimensions[0], batchSize);
   for (size_t i = 0; i < batchSize; ++i)
@@ -180,7 +178,7 @@ void Linear3DType<MatType, RegularizerType>::Gradient(
 }
 
 template<typename MatType, typename RegularizerType>
-void Linear3DType<
+void Linear3D<
     MatType, RegularizerType
 >::ComputeOutputDimensions()
 {
@@ -193,7 +191,7 @@ void Linear3DType<
 
 template<typename MatType, typename RegularizerType>
 template<typename Archive>
-void Linear3DType<MatType, RegularizerType>::serialize(
+void Linear3D<MatType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
   ar(cereal::base_class<Layer<MatType>>(this));

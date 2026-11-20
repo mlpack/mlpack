@@ -46,7 +46,7 @@ void MeanSquaredErrorType<MatType>::Backward(
   loss = 2 * (prediction - target);
 
   if (!reduction)
-    loss = loss / target.n_elem;
+    loss = loss / target.n_rows /* ignore batch size */;
 }
 
 template<typename MatType>

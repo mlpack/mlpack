@@ -29,22 +29,38 @@ void PrintInputParam(util::ParamData& d,
                      void* /* output */)
 {
   MLPACK_COUT_STREAM << d.name;
-  if (std::is_same<T, bool>::value)
+  if (std::is_same_v<T, bool>)
   {
     if (d.name == "verbose")
     {
       // Make sure that we use the global verbose option for the mlpack package
       // as the default.
-      MLPACK_COUT_STREAM << "=getOption(\"mlpack.verbose\", FALSE)";
+      MLPACK_COUT_STREAM << " = getOption(\"mlpack.verbose\", FALSE)";
     }
     else
     {
-      MLPACK_COUT_STREAM << "=FALSE";
+      MLPACK_COUT_STREAM << " = FALSE";
     }
   }
   else if (!d.required)
   {
-    MLPACK_COUT_STREAM << "=NA";
+    if (std::is_same_v<T, std::string>)
+    {
+      MLPACK_COUT_STREAM << " = \"" << std::any_cast<std::string>(d.value)
+                         << "\"";
+    }
+    else if (std::is_same_v<T, double>)
+    {
+      MLPACK_COUT_STREAM << " = " << std::any_cast<double>(d.value);
+    }
+    else if (std::is_same_v<T, int>)
+    {
+      MLPACK_COUT_STREAM << " = " << std::any_cast<int>(d.value);
+    }
+    else
+    {
+      MLPACK_COUT_STREAM << " = NA";
+    }
   }
 }
 

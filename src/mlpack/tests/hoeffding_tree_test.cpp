@@ -22,7 +22,6 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::data;
 
 TEST_CASE("GiniImpurityPerfectSimpleTest", "[HoeffdingTreeTest]")
 {
@@ -332,7 +331,7 @@ TEST_CASE("HoeffdingCategoricalSplitSplitTest", "[HoeffdingTreeTest]")
   HoeffdingCategoricalSplit<GiniImpurity> split(3, 3); // 3 categories.
 
   // No training is necessary because we can just call CreateChildren().
-  data::DatasetInfo info(3);
+  DatasetInfo info(3);
   info.MapString<size_t>("hello", 0); // Make dimension 0 categorical.
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
@@ -353,7 +352,7 @@ TEST_CASE("HoeffdingCategoricalSplitSplitTest", "[HoeffdingTreeTest]")
 TEST_CASE("HoeffdingTreeNoSplitTest", "[HoeffdingTreeTest]")
 {
   // Make all dimensions categorical.
-  data::DatasetInfo info(3);
+  DatasetInfo info(3);
   info.MapString<size_t>("cat1", 0);
   info.MapString<size_t>("cat2", 0);
   info.MapString<size_t>("cat3", 0);
@@ -390,7 +389,7 @@ TEST_CASE("HoeffdingTreeEasySplitTest", "[HoeffdingTreeTest]")
   // dimension, category 0 will only receive points with class 0, and category 1
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<size_t>("cat0", 0);
   info.MapString<size_t>("cat1", 0);
   info.MapString<size_t>("cat0", 1);
@@ -418,7 +417,7 @@ TEST_CASE("HoeffdingTreeProbability1SplitTest", "[HoeffdingTreeTest]")
   // dimension, category 0 will only receive points with class 0, and category 1
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<size_t>("cat0", 0);
   info.MapString<size_t>("cat1", 0);
   info.MapString<size_t>("cat0", 1);
@@ -445,7 +444,7 @@ TEST_CASE("HoeffdingTreeProbability1SplitTest", "[HoeffdingTreeTest]")
 TEST_CASE("HoeffdingTreeAlmostPerfectSplit", "[HoeffdingTreeTest]")
 {
   // Two categories and two dimensions.
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<size_t>("cat0", 0);
   info.MapString<size_t>("cat1", 0);
   info.MapString<size_t>("cat0", 1);
@@ -480,7 +479,7 @@ TEST_CASE("HoeffdingTreeAlmostPerfectSplit", "[HoeffdingTreeTest]")
 TEST_CASE("HoeffdingTreeEqualSplitTest", "[HoeffdingTreeTest]")
 {
   // Two categories and two dimensions.
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
   info.MapString<size_t>("cat0", 0);
   info.MapString<size_t>("cat1", 0);
   info.MapString<size_t>("cat0", 1);
@@ -548,8 +547,8 @@ TEST_CASE("HoeffdingTreeSimpleDatasetTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -584,7 +583,7 @@ TEST_CASE("NumDescendantsTest1", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(3, 500);
   arma::Row<size_t> labels(500);
-  data::DatasetInfo info(3); // All features are numeric.
+  DatasetInfo info(3); // All features are numeric.
   for (size_t i = 0; i <500; i ++)
   {
     dataset(0, i) = Random();
@@ -594,7 +593,7 @@ TEST_CASE("NumDescendantsTest1", "[HoeffdingTreeTest]")
   }
 
   // Now train streaming decision tree;
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit>;
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 500; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -643,8 +642,8 @@ TEST_CASE("NumDescendantsTest2", "[HoeffdingTreeTest]")
 
   // Now train the streaming decision tree.  This should split because splitting
   // on dimension 2 gives a perfect split.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
-      HoeffdingCategoricalSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
+      HoeffdingCategoricalSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
 
   REQUIRE(batchTree.NumDescendants() == 3);
@@ -810,12 +809,12 @@ TEST_CASE("BinaryNumericSplitSimpleFourClassSplitTest", "[HoeffdingTreeTest]")
  * Create a HoeffdingTree that uses the HoeffdingNumericSplit and make sure it
  * can split meaningfully on the correct dimension.
  */
-TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
+TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest][tiny]")
 {
   // Generate data.
   arma::mat dataset(3, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(3); // All features are numeric.
+  DatasetInfo info(3); // All features are numeric.
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = Random();
@@ -836,7 +835,7 @@ TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -875,12 +874,12 @@ TEST_CASE("NumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
  * The same as the previous test, but with the numeric binary split, and with a
  * categorical feature.
  */
-TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
+TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest][tiny]")
 {
   // Generate data.
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
@@ -905,7 +904,7 @@ TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit> TreeType;
+  using TreeType = HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit>;
   TreeType batchTree(dataset, info, labels, 3, false);
   TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -945,7 +944,7 @@ TEST_CASE("BinaryNumericHoeffdingTreeTest", "[HoeffdingTreeTest]")
  */
 TEST_CASE("MajorityProbabilityTest", "[HoeffdingTreeTest]")
 {
-  data::DatasetInfo info(1);
+  DatasetInfo info(1);
   HoeffdingTree<> tree(info, 3);
 
   // Feed the tree a few samples.
@@ -1031,7 +1030,7 @@ TEST_CASE("BatchTrainingTest", "[HoeffdingTreeTest]")
   arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
   arma::Row<size_t> testLabels = l.subvec(5000, 9999);
 
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
 
   // Now build two decision trees; one in batch mode, and one in streaming mode.
   // We need to set the confidence pretty high so that the streaming tree isn't
@@ -1066,7 +1065,7 @@ TEST_CASE("ConfidenceChangeTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
@@ -1123,7 +1122,7 @@ TEST_CASE("ParameterChangeTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
@@ -1176,7 +1175,7 @@ TEST_CASE("MultipleSerializationTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
@@ -1234,7 +1233,7 @@ TEST_CASE("HoeffdingTreeModelTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
@@ -1313,7 +1312,7 @@ TEST_CASE("HoeffdingTreeModelBatchTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
@@ -1389,7 +1388,7 @@ TEST_CASE("HoeffdingTreeModelSerializationTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat dataset(4, 3000);
   arma::Row<size_t> labels(3000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
@@ -1490,7 +1489,7 @@ TEST_CASE("HoeffdingTreeEmptyConstructorTrainTest", "[HoeffdingTreeTest]")
   // Now, create a categorical dataset and retrain.
   arma::mat data2 = arma::mat(4, 3000);
   arma::Row<size_t> labels2(3000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 3000; i += 3)
   {
@@ -1587,7 +1586,7 @@ TEST_CASE("HoeffdingTreeCategoricalTrainVariantTest", "[HoeffdingTreeTest]")
   // Generate data.
   arma::mat data(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
@@ -1691,7 +1690,7 @@ TEST_CASE("HoeffdingTreeResetTests", "[HoeffdingTreeTest]")
   REQUIRE(ht.NumChildren() == 0);
 
   data = arma::randu<arma::mat>(10, 1000);
-  for(size_t i = 750; i < 1000; ++i)
+  for (size_t i = 750; i < 1000; ++i)
     labels[i] = 2;
 
   ht.Train(data, labels);
@@ -1700,7 +1699,7 @@ TEST_CASE("HoeffdingTreeResetTests", "[HoeffdingTreeTest]")
 
   // Reset the tree to work on categorical data with a different number of
   // classes.
-  data::DatasetInfo info(10);
+  DatasetInfo info(10);
   info.MapString<double>("0", 3);
   data.row(9).fill(0.0);
   for (size_t i = 0; i < 250; ++i)
@@ -1766,7 +1765,7 @@ TEST_CASE("HoeffdingTreeNumericFloatDataTest", "[HoeffdingTreeTest]")
   arma::Row<size_t> trainingLabels = l.subvec(0, 4999);
   arma::Row<size_t> testLabels = l.subvec(5000, 9999);
 
-  data::DatasetInfo info(2);
+  DatasetInfo info(2);
 
   // Now build two decision trees; one in batch mode, and one in streaming mode.
   // We need to set the confidence pretty high so that the streaming tree isn't
@@ -1812,7 +1811,7 @@ TEST_CASE("HoeffdingTreeCategoricalFloatDataTest", "[HoeffdingTreeTest]")
     dataset.col(i + 2) -= 2.0;
   }
 
-  data::DatasetInfo info(4); // All features are numeric, except the fourth.
+  DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString<double>("0", 3);
   dataset.row(3).fill(0.0);
 

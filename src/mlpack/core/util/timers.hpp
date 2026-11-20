@@ -19,7 +19,9 @@
 #include <iomanip>
 #include <list>
 #include <map>
+#ifndef MLPACK_NO_STD_MUTEX
 #include <mutex>
+#endif
 #include <string>
 #include <thread> // std::thread is used for thread safety.
 
@@ -27,9 +29,9 @@
   // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
     #if SIZEOF_UNSIGNED_LONG == 8
-      typedef unsigned long uint64_t;
+      using uint64_t = unsigned long;
     #else
-      typedef unsigned long long uint64_t;
+      using uint64_t = unsigned long long;
     #endif // SIZEOF_UNSIGNED_LONG
   #endif // HAVE_UINT64_T
 #endif
@@ -169,8 +171,10 @@ class Timers
  private:
   //! A map of all the timers that are being tracked.
   std::map<std::string, std::chrono::microseconds> timers;
+#ifndef MLPACK_NO_STD_MUTEX
   //! A mutex for modifying the timers.
   std::mutex timersMutex;
+#endif
   //! A map for the starting values of the timers.
   std::map<std::thread::id, std::map<std::string,
       std::chrono::high_resolution_clock::time_point>> timerStartTime;

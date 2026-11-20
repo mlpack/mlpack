@@ -17,7 +17,6 @@
 #include <mlpack/prereqs.hpp>
 
 namespace mlpack {
-namespace data {
 
 /**
  * See if the token is a NaN or an Inf, and if so, set the value accordingly and
@@ -66,7 +65,6 @@ inline bool IsNaNInf(T& val, const std::string& token)
   return false;
 }
 
-} // namespace data
 } // namespace mlpack
 
 #endif

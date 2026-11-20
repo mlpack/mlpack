@@ -33,9 +33,10 @@ class QuadraticFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x)
+  template<typename ElemType>
+  static ElemType Fn(const ElemType x)
   {
-    return std::pow(x, 2);
+    return std::pow(x, ElemType(2));
   }
 
   /**
@@ -47,7 +48,7 @@ class QuadraticFunction
   template<typename InputVecType, typename OutputVecType>
   static void Fn(const InputVecType& x, OutputVecType& y)
   {
-    y = pow(x, 2);
+    y = square(x);
   }
 
   /**
@@ -57,7 +58,8 @@ class QuadraticFunction
    * @param y Result of Fn(x).
    * @return f'(x)
    */
-  static double Deriv(const double x, const double /* y */)
+  template<typename ElemType>
+  static ElemType Deriv(const ElemType x, const ElemType /* y */)
   {
     return 2 * x;
   }

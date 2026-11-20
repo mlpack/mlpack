@@ -136,11 +136,11 @@ TEST_CASE("Rank10Test", "[NystroemMethodTest]")
  *  rank = 0.08n; approximation error: ~7
  *  rank = 0.10n; approximation error: ~3
  */
-TEST_CASE("GermanTest", "[NystroemMethodTest]")
+TEST_CASE("GermanTest", "[NystroemMethodTest][long]")
 {
   // Load the dataset.
   arma::mat dataset;
-  if (!data::Load("german.csv", dataset))
+  if (!Load("german.csv", dataset))
     FAIL("Cannot load dataset german.csv");
 
   // These are our tolerance bounds.

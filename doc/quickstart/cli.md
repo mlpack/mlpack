@@ -32,16 +32,17 @@ docker run -it mlpack/mlpack /bin/bash
 This Docker image has mlpack's command-line bindings already built and
 installed.
 
-If you prefer to build mlpack from scratch, see the
-[main README](../../README.md).
+If you prefer to build the command-line programs from scratch, follow the
+instructions in the
+[installation guide](../user/install.md#compile-bindings-manually).
 
 ## Simple quickstart example
 
 As a really simple example of how to use mlpack from the command-line, let's do
 some simple classification on a subset of the standard machine learning
-`covertype` dataset.  We'll first split the dataset into a training set and a
-testing set, then we'll train an mlpack random forest on the training data, and
-finally we'll print the accuracy of the random forest on the test dataset.
+`covertype` dataset.  We will first split the dataset into a training set and a
+testing set, then we will train an mlpack random forest on the training data, and
+finally we will print the accuracy of the random forest on the test dataset.
 
 You can copy-paste this code directly into your shell to run it.
 
@@ -98,9 +99,9 @@ different mlpack learners, or to interface with other machine learning toolkits.
 
 ## Using mlpack for movie recommendations
 
-In this example, we'll train a collaborative filtering model using mlpack's
-`mlpack_cf` program.  We'll train this on the
-[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we'll
+In this example, we will train a collaborative filtering model using mlpack's
+`mlpack_cf` program.  We will train this on the
+[MovieLens dataset](https://grouplens.org/datasets/movielens/), and then we will
 use the model that we train to give recommendations.
 
 You can copy-paste this code directly into the command line to run it.
@@ -173,7 +174,7 @@ these two examples have only shown a little bit of the functionality of mlpack.
 Lots of other commands are available with different functionality.  A full list
 of commands and full documentation for each can be found on the following page:
 
- - [CLI program documentation](https://www.mlpack.org/doc/stable/cli_documentation.html)
+ - [CLI program documentation](https://www.mlpack.org/doc/user/bindings/cli.html)
 
 Also, mlpack is much more flexible from C++ and allows much greater
 functionality.  So, more complicated tasks are possible if you are willing to

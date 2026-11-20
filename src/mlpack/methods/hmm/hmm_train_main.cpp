@@ -110,7 +110,7 @@ struct Init
 
   //! Helper function to create discrete HMM.
   static void Create(util::Params& /* params */,
-                     HMM<DiscreteDistribution>& hmm,
+                     HMM<DiscreteDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -127,13 +127,13 @@ struct Init
       maxEmissions = arma::max(maxEmissions, maxSeqs);
     }
 
-    hmm = HMM<DiscreteDistribution>(size_t(states),
-        DiscreteDistribution(maxEmissions), tolerance);
+    hmm = HMM<DiscreteDistribution<>>(size_t(states),
+        DiscreteDistribution<>(maxEmissions), tolerance);
   }
 
   //! Helper function to create Gaussian HMM.
   static void Create(util::Params& /* params */,
-                     HMM<GaussianDistribution>& hmm,
+                     HMM<GaussianDistribution<>>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -153,8 +153,8 @@ struct Init
     }
 
     // Get the model and initialize it.
-    hmm = HMM<GaussianDistribution>(size_t(states),
-        GaussianDistribution(dimensionality), tolerance);
+    hmm = HMM<GaussianDistribution<>>(size_t(states),
+        GaussianDistribution<>(dimensionality), tolerance);
   }
 
   //! Helper function to create GMM HMM.
@@ -229,7 +229,7 @@ struct Init
 
   //! Helper function for discrete emission distributions.
   static void RandomInitialize(util::Params& /* params */,
-                               vector<DiscreteDistribution>& e)
+                               vector<DiscreteDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -240,7 +240,7 @@ struct Init
 
   //! Helper function for Gaussian emission distributions.
   static void RandomInitialize(util::Params& /* params */,
-                               vector<GaussianDistribution>& e)
+                               vector<GaussianDistribution<>>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -356,7 +356,7 @@ struct Train
 
           // Now read the matrix.
           Mat<size_t> label;
-          data::Load(lineBuf, label, true); // Fatal on failure.
+          Load(lineBuf, label, Fatal);
 
           // Ensure that matrix only has one row.
           if (label.n_cols == 1)
@@ -387,7 +387,7 @@ struct Train
       else
       {
         Mat<size_t> label;
-        data::Load(labelsFile, label, true);
+        Load(labelsFile, label, Fatal);
 
         // Ensure that matrix only has one row.
         if (label.n_cols == 1)
@@ -498,7 +498,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
       // Now read the matrix.
       trainSeq.push_back(mat());
-      data::Load(lineBuf, trainSeq.back(), true); // Fatal on failure.
+      Load(lineBuf, trainSeq.back(), Fatal);
 
       // See if we need to transpose the data.
       if (type == "discrete")
@@ -516,7 +516,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   {
     // Only one input file.
     trainSeq.resize(1);
-    data::Load(inputFile, trainSeq[0], true);
+    Load(inputFile, trainSeq[0], Fatal);
   }
 
   // Get the type.

@@ -1,0 +1,525 @@
+/**
+ * @file core/data/handle_files_impl.hpp
+ * @author Conrad Sanderson
+ * @author Ryan Curtin
+ * @author Omar Shrit
+ *
+ * Functionality to guess the type of a file by inspecting it.  Parts of the
+ * implementation are adapted from the Armadillo sources and relicensed to be a
+ * part of mlpack with permission from Conrad.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#include "handle_files.hpp"
+
+namespace mlpack {
+
+template<typename DataOptionsType>
+inline void AutoDetectFile(std::fstream& stream,
+                           const std::string& filename,
+                           DataOptionsType& opts)
+{
+  // Get the extension.
+  std::string extension = Extension(filename);
+
+  if (extension == "csv" || extension == "tsv")
+  {
+    GuessFileType(stream, opts);
+    if (opts.Format() == FileType::CSVASCII)
+    {
+      if (extension == "tsv")
+        Log::Warn << "'" << filename << "' is comma-separated, not "
+            "tab-separated!" << std::endl;
+    }
+    else if (opts.Format() == FileType::TSVASCII)
+    {
+      if (extension == "csv")
+        Log::Warn << "'" << filename << "' is tab-separated, not "
+            "comma-separated!" << std::endl;
+    }
+    else if (opts.Format() == FileType::RawASCII) // .csv file can be tsv.
+    {
+      if (extension == "csv")
+      {
+        // We should issue a warning, but we don't want to issue the warning if
+        // there is only one column in the CSV (since there will be no commas
+        // anyway, and it will be detected as arma::raw_ascii).
+        const std::streampos pos = stream.tellg();
+        std::string line;
+        std::getline(stream, line, '\n');
+        Trim(line);
+
+        // Reset stream position.
+        stream.seekg(pos);
+
+        // If there are no spaces or whitespace in the line, then we shouldn't
+        // print the warning.
+        if ((line.find(' ') != std::string::npos) ||
+            (line.find('\t') != std::string::npos))
+        {
+          Log::Warn << "'" << filename << "' is not a standard csv file."
+              << std::endl;
+        }
+      }
+    }
+    else
+    {
+      opts.Format() = FileType::FileTypeUnknown;
+    }
+  }
+  else if (extension == "txt")
+  {
+    // This could be raw ASCII or Armadillo ASCII (ASCII with size header).
+    // We'll let Armadillo do its guessing (although we have to check if it is
+    // arma_ascii ourselves) and see what we come up with.
+
+    // This is adapted from load_auto_detect() in diskio_meat.hpp.
+    const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
+    std::string rawHeader(ARMA_MAT_TXT.length(), '\0');
+    std::streampos pos = stream.tellg();
+
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_TXT.length()));
+    stream.clear();
+    stream.seekg(pos); // Reset stream position after peeking.
+
+    if (rawHeader == ARMA_MAT_TXT)
+    {
+      opts.Format() = FileType::ArmaASCII;
+    }
+    else // It's not arma_ascii.  Now we let Armadillo guess.
+    {
+      GuessFileType(stream, opts);
+
+      if (opts.Format() != FileType::RawASCII &&
+          opts.Format() != FileType::CSVASCII &&
+          opts.Format() != FileType::TSVASCII)
+        opts.Format() = FileType::FileTypeUnknown;
+    }
+  }
+  else if (extension == "bin")
+  {
+    // This could be raw binary or Armadillo binary (binary with header).  We
+    // will check to see if it is Armadillo binary.
+    const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
+    const std::string ARMA_SPM_BIN = "ARMA_SPM_BIN";
+    std::string rawHeader(ARMA_MAT_BIN.length(), '\0');
+
+    std::streampos pos = stream.tellg();
+
+    stream.read(&rawHeader[0], std::streamsize(ARMA_MAT_BIN.length()));
+    stream.clear();
+    stream.seekg(pos); // Reset stream position after peeking.
+
+    if (rawHeader == ARMA_MAT_BIN || rawHeader == ARMA_SPM_BIN)
+    {
+      opts.Format() = FileType::ArmaBinary;
+    }
+    else // We can only assume it's raw binary.
+    {
+      opts.Format() = FileType::RawBinary;
+    }
+  }
+  else if (extension == "pgm")
+  {
+    opts.Format() = FileType::PGMBinary;
+  }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+    opts.Format() = FileType::HDF5Binary;
+  }
+  else if (extension == "arff")
+  {
+    opts.Format() = FileType::ARFFASCII;
+  }
+  else if (extension == "png")
+  {
+    opts.Format() = FileType::PNG;
+  }
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    opts.Format() = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    opts.Format() = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    opts.Format() = FileType::PSD;
+  }
+  else if (extension == "gif")
+  {
+    opts.Format() = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    opts.Format() = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    opts.Format() = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    opts.Format() = FileType::BMP;
+  }
+  else if (extension == "wav" || extension == "wave")
+  {
+    opts.Format() = FileType::WAV;
+  }
+  else if (extension == "mp3")
+  {
+    opts.Format() = FileType::MP3;
+  }
+  else // Unknown extension...
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+  }
+}
+
+inline size_t CountCols(std::fstream& f)
+{
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  std::string firstLine;
+  std::getline(f, firstLine);
+
+  // Extract tokens from the first line using whitespace.
+  std::stringstream str(firstLine);
+  size_t cols = 0;
+  std::string token;
+
+  while (str >> token)
+    ++cols;
+
+  // Reset to wherever we were.
+  f.clear();
+  f.seekg(pos1);
+
+  return cols;
+}
+
+template<typename ObjectType, typename DataOptionsType>
+void DetectFromExtension(const std::string& filename,
+                         DataOptionsType& opts)
+{
+  const std::string extension = Extension(filename);
+
+  if (extension == "csv")
+  {
+    opts.Format() = FileType::CSVASCII;
+  }
+  else if (extension == "tsv")
+  {
+    opts.Format() = FileType::TSVASCII;
+  }
+  else if (extension == "txt")
+  {
+    if (IsSparseMat<ObjectType>::value)
+      opts.Format() = FileType::CoordASCII;
+    else
+      opts.Format() = FileType::RawASCII;
+  }
+  else if (!HasSerialize<ObjectType>::value && extension == "bin")
+  {
+    opts.Format() = FileType::ArmaBinary;
+  }
+  else if (extension == "pgm")
+  {
+    opts.Format() = FileType::PGMBinary;
+  }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+    opts.Format() = FileType::HDF5Binary;
+  }
+  else if (extension == "arff")
+  {
+    opts.Format() = FileType::ARFFASCII;
+  }
+  else if (extension == "png")
+  {
+    opts.Format() = FileType::PNG;
+  }
+  else if (extension == "jpg" || extension == "jpeg")
+  {
+    opts.Format() = FileType::JPG;
+  }
+  else if (extension == "tga")
+  {
+    opts.Format() = FileType::TGA;
+  }
+  else if (extension == "psd")
+  {
+    opts.Format() = FileType::PSD;
+  }
+  else if (extension == "gif")
+  {
+    opts.Format() = FileType::GIF;
+  }
+  else if (extension == "pic")
+  {
+    opts.Format() = FileType::PIC;
+  }
+  else if (extension == "pnm")
+  {
+    opts.Format() = FileType::PNM;
+  }
+  else if (extension == "bmp")
+  {
+    opts.Format() = FileType::BMP;
+  }
+  else if (extension == "wav" || extension == "wave")
+  {
+    opts.Format() = FileType::WAV;
+  }
+  else if (extension == "mp3")
+  {
+    opts.Format() = FileType::MP3;
+  }
+  else
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+  }
+}
+
+template<typename ObjectType, typename DataOptionsType>
+void DetectFromSerializedExtension(const std::string& filename,
+                                   DataOptionsType& opts)
+{
+  const std::string extension = Extension(filename);
+  if (extension == "xml")
+  {
+    opts.Format() = FileType::XML;
+  }
+  else if (extension == "bin")
+  {
+    opts.Format() = FileType::BIN;
+  }
+  else if (extension == "json")
+  {
+    opts.Format() = FileType::JSON;
+  }
+  else
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+  }
+}
+
+template<typename ObjectType, typename DataOptionsType>
+bool DetectFileType(const std::string& filename,
+                    DataOptionsType& opts,
+                    bool isLoading,
+                    std::fstream* stream)
+{
+  if constexpr (HasSerialize<ObjectType>::value)
+  {
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      DetectFromSerializedExtension<ObjectType>(filename, opts);
+      if (opts.Format() == FileType::FileTypeUnknown)
+      {
+        std::stringstream oss;
+        oss << "Unable to detect type of '" << filename
+            << "'; incorrect extension? (allowed: xml/bin/json)";
+        return HandleError(oss, opts);
+      }
+    }
+  }
+  else
+  {
+    if (opts.Format() == FileType::AutoDetect)
+    {
+      if (isLoading)
+      {
+        // Attempt to auto-detect the type from the given file.
+        AutoDetectFile(*stream, filename, opts);
+      }
+      else
+      {
+        DetectFromExtension<ObjectType>(filename, opts);
+      }
+      // Provide error if we don't know the type.
+      if (opts.Format() == FileType::FileTypeUnknown)
+      {
+        std::stringstream oss;
+        oss <<  "Unable to detect type of '" << filename << "'; "
+            << "incorrect extension?";
+        return HandleError(oss, opts);
+      }
+    }
+  }
+  return true;
+}
+
+// Utility helper function: set delimiter and semicolon for TextOptions, but
+// only for TextOptions.
+template<typename DataOptionsType>
+inline void SetSemicolon(DataOptionsType& /* unused */) { }
+template<>
+inline void SetSemicolon<TextOptions>(TextOptions& opts)
+{
+  opts.Semicolon() = true;
+}
+
+template<typename DataOptionsType>
+inline void GuessFileType(std::istream& f, DataOptionsType& opts)
+{
+  f.clear();
+  const std::fstream::pos_type pos1 = f.tellg();
+
+  f.clear();
+  f.seekg(0, std::ios::end);
+
+  f.clear();
+  // Get the length of the stream.
+  const std::fstream::pos_type pos2 = f.tellg();
+
+  // Compute length of the stream.
+  const arma::uword nMax = ((pos1 >= 0) && (pos2 >= 0) && (pos2 > pos1)) ?
+      arma::uword(pos2 - pos1) : arma::uword(0);
+
+  f.clear();
+  f.seekg(pos1);
+
+  // Handle empty files.
+  if (nMax == 0)
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
+  }
+
+  const arma::uword nUse = std::min(nMax, arma::uword(4096));
+
+  unsigned char* dataMem = new unsigned char[nUse];
+  memset(dataMem, 0, nUse);
+
+  f.clear();
+  f.read(reinterpret_cast<char*>(dataMem), std::streamsize(nUse));
+
+  const bool loadOkay = f.good();
+
+  f.clear();
+  f.seekg(pos1);
+
+  if (!loadOkay)
+  {
+    opts.Format() = FileType::FileTypeUnknown;
+    return;
+  }
+
+  bool hasBinary = false;
+  bool hasBracket = false;
+  bool hasComma = false;
+  bool hasSemicolon = false;
+  bool hasTabs = false;
+
+  for (arma::uword i = 0; i < nUse; ++i)
+  {
+    const unsigned char val = dataMem[i];
+    if (val <= 8)
+    {
+      hasBinary = true;
+      break;
+    }  // The range checking can be made more elaborate.
+
+    if ((val == '(') || (val == ')'))
+    {
+      hasBracket = true;
+    }
+
+    if (val == ';')
+    {
+      hasSemicolon = true;
+    }
+
+    if (val == ',')
+    {
+      hasComma = true;
+    }
+
+    if (val == '\t')
+    {
+      hasTabs = true;
+    }
+  }
+
+  delete[] dataMem;
+
+  if (hasBinary)
+    opts.Format() = FileType::RawBinary;
+
+  if (hasSemicolon && (hasBracket == false))
+    opts.Format() = FileType::CSVASCII;
+  else if (hasComma && (hasBracket == false))
+    opts.Format() = FileType::CSVASCII;
+  else if (hasTabs && (hasBracket == false))
+    opts.Format() = FileType::TSVASCII;
+  else
+    opts.Format() = FileType::RawASCII;
+
+  if (hasSemicolon)
+    SetSemicolon(opts);
+}
+
+template<typename DataOptionsType>
+bool OpenFile(const std::string& filename,
+              DataOptionsType& opts,
+              bool isLoading,
+              std::fstream& stream)
+{
+  if (isLoading)
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::in
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::in);
+#endif
+  }
+  else
+  {
+#ifdef  _WIN32 // Always open in binary mode on Windows.
+    stream.open(filename.c_str(), std::fstream::out
+        | std::fstream::binary);
+#else
+    stream.open(filename.c_str(), std::fstream::out);
+#endif
+  }
+
+  if (!stream.is_open())
+  {
+    std::stringstream oss;
+    if (isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for loading.  "
+          << "Please check if the file exists.";
+      return HandleError(oss, opts);
+    }
+    else if (!isLoading)
+    {
+      oss << "Cannot open file '" << filename << "' for saving.  "
+          << "Please check if you have permissions for writing.";
+      return HandleError(oss, opts);
+    }
+  }
+  return true;
+}
+
+inline std::filesystem::path TempName()
+{
+  std::stringstream nameStream;
+  static constexpr auto num_bits = 128;
+  for (size_t i = 0; i < (num_bits / std::numeric_limits<uint8_t>::digits); ++i)
+  {
+    nameStream << RandInt(0, 9);
+  }
+  return std::filesystem::temp_directory_path() / nameStream.str();
+}
+
+} // namespace mlpack

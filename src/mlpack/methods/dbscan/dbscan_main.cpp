@@ -37,7 +37,7 @@ BINDING_LONG_DESC(
     "\n\n"
     "The input dataset to be clustered may be specified with the " +
     PRINT_PARAM_STRING("input") + " parameter; the radius of each range "
-    "search may be specified with the " + PRINT_PARAM_STRING("epsilon") +
+    "search may be specified with the " + PRINT_PARAM_STRING("radius") +
     " parameters, and the minimum number of points in a cluster may be "
     "specified with the " + PRINT_PARAM_STRING("min_size") + " parameter."
     "\n\n"
@@ -65,7 +65,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"
     "\n\n" +
-    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
+    PRINT_CALL("dbscan", "input", "input", "radius", 0.5, "min_size", 5));
 
 // See also...
 BINDING_SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN");
@@ -80,7 +80,11 @@ PARAM_UROW_OUT("assignments", "Output matrix for assignments of each "
     "point.", "a");
 PARAM_MATRIX_OUT("centroids", "Matrix to save output centroids to.", "C");
 
-PARAM_DOUBLE_IN("epsilon", "Radius of each range search.", "e", 1.0);
+// This parameter is deprecated and will be removed for mlpack 5.0.0.
+PARAM_DOUBLE_IN("epsilon", "Radius of each range search. (Deprecated: use "
+    "'radius' parameter instead!)", "e", 0.5);
+
+PARAM_DOUBLE_IN("radius", "Radius of each range search.", "r", 0.5);
 PARAM_INT_IN("min_size", "Minimum number of points for a cluster.", "m", 5);
 
 PARAM_STRING_IN("tree_type", "If using single-tree or dual-tree search, the "
@@ -104,11 +108,14 @@ void RunDBSCAN(util::Params& params,
 
   // Load dataset.
   arma::mat dataset = std::move(params.Get<arma::mat>("input"));
-  const double epsilon = params.Get<double>("epsilon");
+  // Provide reverse-compatibility by checking for the deprecated 'epsilon'
+  // parameter first.  (This can be removed when mlpack 5.0.0 is released.)
+  const double radius = params.Has("epsilon") ? params.Get<double>("epsilon") :
+      params.Get<double>("radius");
   const size_t minSize = (size_t) params.Get<int>("min_size");
   arma::Row<size_t> assignments;
 
-  DBSCAN<RangeSearchType, PointSelectionPolicy> d(epsilon, minSize,
+  DBSCAN<RangeSearchType, PointSelectionPolicy> d(radius, minSize,
       !params.Has("single_mode"), rs, pointSelector);
 
   // If possible, avoid the overhead of calculating centroids.
@@ -147,15 +154,27 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   RequireAtLeastOnePassed(params, { "assignments", "centroids" }, false,
       "no output will be saved");
 
+  RequireOnlyOnePassed(params, { "epsilon", "radius" }, true,
+      "cannot specify both 'epsilon' and 'radius'; use only one", true);
+  if (params.Has("epsilon"))
+  {
+    Log::Warn << PRINT_PARAM_STRING("epsilon") << " is deprecated and will be "
+        << "removed in mlpack 5.0.0.  Use " << PRINT_PARAM_STRING("radius")
+        << "instead." << std::endl;
+  }
+
   ReportIgnoredParam(params, {{ "naive", true }}, "single_mode");
 
   RequireParamInSet<string>(params, "tree_type", { "kd", "cover", "r", "r-star",
       "x", "hilbert-r", "r-plus", "r-plus-plus", "ball" }, true,
       "unknown tree type");
 
-  // Value of epsilon should be positive.
+  // Value of radius should be positive.
+  // (The epsilon check can be removed when mlpack 5.0.0 is released.)
   RequireParamValue<double>(params, "epsilon", [](double x) { return x > 0; },
       true, "invalid value of epsilon specified");
+  RequireParamValue<double>(params, "radius", [](double x) { return x > 0; },
+      true, "invalid value of radius specified");
 
   // Value of min_size should be positive.
   RequireParamValue<int>(params, "min_size", [](int y) { return y > 0; },

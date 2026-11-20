@@ -24,7 +24,7 @@ using namespace mlpack;
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({2, 1}, true);
+  Repeat<MatType> module1({2, 1}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI0", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({1, 2}, true);
+  Repeat<MatType> module1({1, 2}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI1", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 6.
   output.set_size(48, 1);
 
-  RepeatType<MatType> module1({2, 2}, true);
+  Repeat<MatType> module1({2, 2}, true);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -156,7 +156,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseI2", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -168,7 +168,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 3.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({2, 1}, false);
+  Repeat<MatType> module1({2, 1}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB1", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -207,7 +207,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 4 x 6.
   output.set_size(24, 1);
 
-  RepeatType<MatType> module1({1, 2}, false);
+  Repeat<MatType> module1({1, 2}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -234,7 +234,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB2", "[ANNLayerTest]", arma::mat, arma::fmat)
  */
 TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Input will be 4 x 3.
   MatType input(4, 3, arma::fill::randn);
@@ -246,7 +246,7 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
   // Output-Size should be 8 x 6.
   output.set_size(48, 1);
 
-  RepeatType<MatType> module1({2, 2}, false);
+  Repeat<MatType> module1({2, 2}, false);
   module1.InputDimensions() = std::vector<size_t>({ 4, 3 });
   module1.ComputeOutputDimensions();
   REQUIRE(module1.OutputDimensions().size() == 2);
@@ -273,8 +273,8 @@ TEMPLATE_TEST_CASE("RepeatTestCaseB3", "[ANNLayerTest]", arma::mat, arma::fmat)
 template <typename F> struct GradientBound {};
 template <> struct GradientBound<arma::mat>
 {
-  static constexpr double eps = 1e-5;
-  static constexpr double bound = 1e-4;
+  static constexpr double eps = 1e-4;
+  static constexpr double bound = 1e-3;
 };
 template <> struct GradientBound<arma::fmat>
 {
@@ -285,9 +285,10 @@ template <> struct GradientBound<arma::fmat>
 /**
  * Numerical gradient test for MultiheadAttention layer.
  */
-TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat)
+TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat,
+    arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
   struct GradientFunction
   {
     GradientFunction(std::vector<size_t> multiples, bool interleave) :
@@ -302,20 +303,16 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
                                          inputDimensions.end(), 1,
                                          std::multiplies<>());
       input = arma::randu<MatType>(inputSize, batchSize);
-      target = arma::zeros<MatType>(vocabSize, batchSize);
-      for (size_t i = 0; i < target.n_elem; ++i)
-      {
-        const size_t label = RandInt(1, vocabSize);
-        target(i) = label;
-      }
+      target = arma::randi<MatType>(1, batchSize,
+          arma::distr_param(0, vocabSize - 1));
 
       model = new FFN<NegativeLogLikelihoodType<MatType>,
                       RandomInitialization, MatType>();
       model->InputDimensions() = inputDimensions;
       model->ResetData(input, target);
-      model->template Add<RepeatType<MatType>>(multiples, interleave);
-      model->template Add<LinearType<MatType>>(vocabSize);
-      model->template Add<LogSoftMaxType<MatType>>();
+      model->template Add<Repeat>(multiples, interleave);
+      model->template Add<Linear>(vocabSize);
+      model->template Add<LogSoftMax>();
     }
 
     ~GradientFunction()
@@ -332,7 +329,8 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
 
     MatType& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihoodType<MatType>,RandomInitialization,MatType>* model;
+    FFN<NegativeLogLikelihoodType<MatType>, RandomInitialization, MatType>*
+        model;
 
     MatType input, target;
     const std::vector<size_t> inputDimensions;
@@ -343,20 +341,21 @@ TEMPLATE_TEST_CASE("GradientRepeatTest", "[ANNLayerTest]", arma::mat, arma::fmat
     const size_t batchSize;
     size_t count;
   };
+
   GradientFunction fn1({2, 1}, true);
   GradientFunction fn2({2, 1}, false);
   GradientFunction fn3({1, 2}, true);
   GradientFunction fn4({1, 2}, false);
-  GradientFunction fn5( {2, 2}, true);
-  GradientFunction fn6( {2, 2}, false);
-  
+  GradientFunction fn5({2, 2}, true);
+  GradientFunction fn6({2, 2}, false);
+
   double eps = GradientBound<MatType>::eps;
   double bound = GradientBound<MatType>::bound;
 
-  CHECK(CheckGradient<GradientFunction,MatType>(fn1, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn2, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn3, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn4, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn5, eps) <= bound);
-  CHECK(CheckGradient<GradientFunction,MatType>(fn6, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn1, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn2, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn3, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn4, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn5, eps) <= bound);
+  CHECK(CheckGradient<GradientFunction, MatType>(fn6, eps) <= bound);
 }

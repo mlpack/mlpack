@@ -128,7 +128,7 @@ inline void GlorotInitializationType<false>::Initialize(MatType& W,
 }
 
 template<>
-template<typename MatType> 
+template<typename MatType>
 inline void GlorotInitializationType<true>::Initialize(MatType& W,
                                                        const size_t rows,
                                                        const size_t cols)
@@ -169,8 +169,8 @@ inline void GlorotInitializationType<true>::Initialize(MatType& W,
   randomInit.Initialize(W);
 }
 
-template <bool Uniform>
-template<typename CubeType> 
+template<bool Uniform>
+template<typename CubeType>
 inline void GlorotInitializationType<Uniform>::Initialize(CubeType& W,
                                                           const size_t rows,
                                                           const size_t cols,

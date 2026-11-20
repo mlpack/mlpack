@@ -571,7 +571,7 @@ TEST_CASE("LogisticRegressionLBFGSRegularizationSimpleTest",
 // Test training of logistic regression on a simple dataset using SGD with
 // regularization.
 TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
-          "[LogisticRegressionTest]")
+          "[LogisticRegressionTest][tiny]")
 {
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
@@ -597,11 +597,14 @@ TEST_CASE("LogisticRegressionSGDRegularizationSimpleTest",
 
 // Test training of logistic regression on two Gaussians and ensure it's
 // properly separable.
-TEST_CASE("LogisticRegressionLBFGSGaussianTest", "[LogisticRegressionTest]")
+TEST_CASE("LogisticRegressionLBFGSGaussianTest",
+    "[LogisticRegressionTest][tiny]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -647,8 +650,10 @@ TEST_CASE("LogisticRegressionLBFGSGaussianTest", "[LogisticRegressionTest]")
 TEST_CASE("LogisticRegressionSGDGaussianTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -716,7 +721,13 @@ TEST_CASE("LogisticRegressionInstantiatedOptimizer", "[LogisticRegressionTest]")
 
   // Now do the same with SGD.
   ens::StandardSGD sgdOpt;
+  #if ENS_VERSION_MAJOR >= 3
+  sgdOpt.StepSize() = 0.15 * sgdOpt.BatchSize();
+  #else
+  // Old versions of of ensmallen did not adjust the step size for the batch
+  // size.
   sgdOpt.StepSize() = 0.15;
+  #endif
   sgdOpt.Tolerance() = 1e-75;
   LogisticRegression<> lr2(data, responses, sgdOpt, 0.0005);
 
@@ -838,8 +849,10 @@ TEST_CASE("LogisticRegressionSparseSGDTest", "[LogisticRegressionTest]")
 TEST_CASE("ClassifyTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -884,8 +897,10 @@ TEST_CASE("LogisticRegressionSinglePointClassifyTest",
           "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -933,8 +948,10 @@ TEST_CASE("LogisticRegressionSinglePointClassifyTest",
 TEST_CASE("ClassifyProbabilitiesTest", "[LogisticRegressionTest]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -1059,11 +1076,13 @@ TEST_CASE("ConstructionThenTraining", "[LogisticRegressionTest]")
 /**
  * Make sure that incremental training works.
  */
-TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
+TEST_CASE("IncrementalTraining", "[LogisticRegressionTest][long]")
 {
   // Generate a two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g1(arma::vec("1.0 1.0 1.0"),
+      arma::eye<arma::mat>(3, 3));
+  GaussianDistribution<> g2(arma::vec("9.0 9.0 9.0"),
+      arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
   arma::Row<size_t> responses(1000);
@@ -1095,11 +1114,11 @@ TEST_CASE("IncrementalTraining", "[LogisticRegressionTest]")
 TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
     "[LogisticRegressionTest]", arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Empty constructor.
@@ -1158,11 +1177,11 @@ TEMPLATE_TEST_CASE("LogisticRegressionAllConstructorsTest",
 TEMPLATE_TEST_CASE("LogisticRegressionAllTrainTest", "[LogisticRegressionTest]",
     arma::mat, arma::fmat)
 {
-  typedef TestType MatType;
+  using MatType = TestType;
 
   // Create random data.
   MatType data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Construct all objects that we will use, but don't train.
@@ -1236,7 +1255,7 @@ TEST_CASE("LogisticRegressionResetTest", "[LogisticRegressionTest]")
 {
   // Create random data.
   arma::mat data(50, 1000, arma::fill::randu);
-  arma::Row<size_t> labels(1000, arma::fill::zeros);
+  arma::Row<size_t> labels(1000);
   labels.subvec(500, 999).fill(1);
 
   // Create two logistic regression models.

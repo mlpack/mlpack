@@ -37,7 +37,9 @@ namespace mlpack {
  *
  * @see @ref trees, RStarTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using RTree = RectangleTree<DistanceType,
                             StatisticType,
                             MatType,
@@ -65,7 +67,9 @@ using RTree = RectangleTree<DistanceType,
  *
  * @see @ref trees, RTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using RStarTree = RectangleTree<DistanceType,
                                 StatisticType,
                                 MatType,
@@ -91,7 +95,9 @@ using RStarTree = RectangleTree<DistanceType,
  *
  * @see @ref trees, RTree, RStarTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using XTree = RectangleTree<DistanceType,
                             StatisticType,
                             MatType,
@@ -126,7 +132,9 @@ template<typename TreeType>
 using DiscreteHilbertRTreeAuxiliaryInformation =
       HilbertRTreeAuxiliaryInformation<TreeType, DiscreteHilbertValue>;
 
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using HilbertRTree = RectangleTree<DistanceType,
                                    StatisticType,
                                    MatType,
@@ -157,12 +165,13 @@ using HilbertRTree = RectangleTree<DistanceType,
  *
  * @see @ref trees, RTree, RTree, RPlusTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using RPlusTree = RectangleTree<DistanceType,
                                 StatisticType,
                                 MatType,
-                                RPlusTreeSplit<RPlusTreeSplitPolicy,
-                                               MinimalCoverageSweep>,
+                                RPlusTreeSplit,
                                 RPlusTreeDescentHeuristic,
                                 NoAuxiliaryInformation>;
 
@@ -186,12 +195,13 @@ using RPlusTree = RectangleTree<DistanceType,
  *
  * @see @ref trees, RTree, RTree, RPlusTree, RPlusPlusTree
  */
-template<typename DistanceType, typename StatisticType, typename MatType>
+template<typename DistanceType = EuclideanDistance,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 using RPlusPlusTree = RectangleTree<DistanceType,
                                     StatisticType,
                                     MatType,
-                                    RPlusTreeSplit<RPlusPlusTreeSplitPolicy,
-                                                   MinimalSplitsNumberSweep>,
+                                    RPlusPlusTreeSplit,
                                     RPlusPlusTreeDescentHeuristic,
                                     RPlusPlusTreeAuxiliaryInformation>;
 } // namespace mlpack

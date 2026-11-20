@@ -39,8 +39,8 @@ TEST_CASE("KFNExhaustiveSyntheticTest", "[KFNTest]")
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef BinarySpaceTree<EuclideanDistance,
-      NeighborSearchStat<FurthestNeighborSort>, arma::mat> TreeType;
+  using TreeType = BinarySpaceTree<EuclideanDistance,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat>;
 
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
@@ -54,13 +54,13 @@ TEST_CASE("KFNExhaustiveSyntheticTest", "[KFNTest]")
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        kfn.SearchMode() = DUAL_TREE_MODE;
+        kfn.SearchStrategy() = DUAL_TREE;
         break;
       case 1: // Use the single-tree method.
-        kfn.SearchMode() = SINGLE_TREE_MODE;
+        kfn.SearchStrategy() = SINGLE_TREE;
         break;
       case 2: // Use the naive method.
-        kfn.SearchMode() = NAIVE_MODE;
+        kfn.SearchStrategy() = NAIVE;
         break;
     }
 
@@ -324,17 +324,17 @@ TEST_CASE("KFNExhaustiveSyntheticTest", "[KFNTest]")
  *
  * Errors are produced if the results are not identical.
  */
-TEST_CASE("KFNDualTreeVsNaive1", "[KFNTest]")
+TEST_CASE("KFNDualTreeVsNaive1", "[KFNTest][tiny]")
 {
   arma::mat dataset;
 
   // Hard-coded filename: bad?
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN kfn(dataset);
 
-  KFN naive(dataset, NAIVE_MODE);
+  KFN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -363,12 +363,12 @@ TEST_CASE("KFNDualTreeVsNaive2", "[KFNTest]")
 
   // Hard-coded filename: bad?
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN kfn(dataset);
 
-  KFN naive(dataset, NAIVE_MODE);
+  KFN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -397,12 +397,12 @@ TEST_CASE("KFNSingleTreeVsNaive", "[KFNTest]")
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
-  KFN kfn(dataset, SINGLE_TREE_MODE);
+  KFN kfn(dataset, SINGLE_TREE);
 
-  KFN naive(dataset, NAIVE_MODE);
+  KFN naive(dataset, NAIVE);
 
   arma::Mat<size_t> neighborsTree;
   arma::mat distancesTree;
@@ -435,9 +435,9 @@ TEST_CASE("KFNSingleCoverTreeTest", "[KFNTest]")
       FirstPointIsRoot> tree(data);
 
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
-      coverTreeSearch(std::move(tree), SINGLE_TREE_MODE);
+      coverTreeSearch(std::move(tree), SINGLE_TREE);
 
-  KFN naive(data, NAIVE_MODE);
+  KFN naive(data, NAIVE);
 
   arma::Mat<size_t> coverTreeNeighbors;
   arma::mat coverTreeDistances;
@@ -461,7 +461,7 @@ TEST_CASE("KFNSingleCoverTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN tree(dataset);
@@ -470,8 +470,8 @@ TEST_CASE("KFNDualCoverTreeTest", "[KFNTest]")
   arma::mat kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
-  typedef CoverTree<LMetric<2, true>, NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat, FirstPointIsRoot> TreeType;
+  using TreeType = CoverTree<LMetric<2, true>,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat, FirstPointIsRoot>;
 
   TreeType referenceTree(dataset);
 
@@ -500,17 +500,17 @@ TEST_CASE("KFNSingleBallTreeTest", "[KFNTest]")
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  typedef BallTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat> TreeType;
+  using TreeType = BallTree<EuclideanDistance,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat>;
   TreeType tree(data);
 
-  KFN naive(tree.Dataset(), NAIVE_MODE);
+  KFN naive(tree.Dataset(), NAIVE);
 
   // BinarySpaceTree modifies data. Use modified data to maintain the
   // correspondence between points in the dataset for both methods. The order of
   // query points in both methods should be same.
   NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, BallTree>
-      ballTreeSearch(std::move(tree), SINGLE_TREE_MODE);
+      ballTreeSearch(std::move(tree), SINGLE_TREE);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;
@@ -534,7 +534,7 @@ TEST_CASE("KFNSingleBallTreeTest", "[KFNTest]")
 TEST_CASE("KFNDualBallTreeTest", "[KFNTest]")
 {
   arma::mat dataset;
-  if (!data::Load("test_data_3_1000.csv", dataset))
+  if (!Load("test_data_3_1000.csv", dataset))
     FAIL("Cannot load test dataset test_data_3_1000.csv");
 
   KFN tree(dataset);

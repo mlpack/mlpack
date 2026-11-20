@@ -39,22 +39,22 @@ TEST_CASE("SimpleHardTanHTest", "[ANNLayerTest]")
     {-0.1101,  -1.0000,  -1.0000,  -1.0000,  -1.0000}};
 
   HardTanH module;
-	
-  output.set_size(5,5);
-  // Test the Forward function
+
+  output.set_size(5, 5);
+  // Test the Forward function.
   module.Forward(input, output);
   REQUIRE(accu(output - actualOutput) == Approx(0).epsilon(1e-4));
-  
-  arma::mat delta = {{0  , 1.0, 1.0, 1.0, 0.0},
-    {0  , 0  , 0  , 0.0, 0.0},
-    {1.0, 1.0, 0  , 0.0, 1.0},
-    {1.0, 1.0, 1.0, 0.0, 1.0},
-    {1.0, 0  , 0.0, 0.0, 0.0}};
 
-  gy.set_size(5,5);
+  arma::mat delta = {{0.0, 1.0, 1.0, 1.0, 0.0},
+                     {0.0, 0.0, 0.0, 0.0, 0.0},
+                     {1.0, 1.0, 0.0, 0.0, 1.0},
+                     {1.0, 1.0, 1.0, 0.0, 1.0},
+                     {1.0, 0.0, 0.0, 0.0, 0.0}};
+
+  gy.set_size(5, 5);
   gy.fill(1);
-  g.set_size(5,5);
-  
+  g.set_size(5, 5);
+
   //Test the Backward function
   module.Backward(input, output, gy, g);
   REQUIRE(accu(g - delta) == Approx(0).epsilon(1e-4));

@@ -11,7 +11,7 @@ classification (i.e. classes are `0`, `1`, `2`, etc.).
 // Train a linear SVM classifier on random data and predict labels:
 
 // All data and labels are uniform random; 5 dimensional data, 4 classes.
-// Replace with a data::Load() call or similar for a real application.
+// Replace with a Load() call or similar for a real application.
 arma::mat dataset(5, 1000, arma::fill::randu); // 1000 points.
 arma::Row<size_t> labels =
     arma::randi<arma::Row<size_t>>(1000, arma::distr_param(0, 3));
@@ -42,8 +42,8 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 
 #### See also:
 
- * [mlpack classifiers](../../index.md#classification-algorithms)
- * [`GaussianDistribution`](../core.md#gaussiandistribution)
+ * [mlpack classifiers](../modeling.md#classification)
+ * [`GaussianDistribution`](../core/distributions.md#gaussiandistribution)
  * [Naive Bayes classifier on Wikipedia](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 ### Constructors
@@ -81,7 +81,7 @@ std::cout << arma::accu(predictions == 1) << " test points classified as class "
 | **name** | **type** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `data` | [`arma::mat`](../matrices.md) | [Column-major](../matrices.md#representing-data-in-mlpack) training matrix. | _(N/A)_ |
-| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../load_save.md#normalizing-labels) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
+| `labels` | [`arma::Row<size_t>`](../matrices.md) | Training labels, [between `0` and `numClasses - 1`](../core/normalizing_labels.md) (inclusive).  Should have length `data.n_cols`.  | _(N/A)_ |
 | `dimensionality` | `size_t` | Dimension of input data (if data is not specified).  Should be equal to `data.n_rows`. | _(N/A)_ |
 | `numClasses` | `size_t` | Number of classes in the dataset. | _(N/A)_ |
 | `optimizer` | [any ensmallen optimizer](https://www.ensmallen.org) | Instantiated ensmallen optimizer for [differentiable functions](https://www.ensmallen.org/docs.html#differentiable-functions) or [differentiable separable functions](https://www.ensmallen.org/docs.html#differentiable-separable-functions). | `ens::L_BFGS()` |
@@ -138,11 +138,12 @@ can be used to make class predictions for new data.
 
 ---
 
- * `svm.Classify(point, prediction, probabilitiesVec)`
+ * `svm.Classify(point, prediction, scoresVec)`
    - ***(Single-point)***
-   - Classify a single point and compute class probabilities.
+   - Classify a single point and compute class scores.
    - The predicted class is stored in `prediction`.
-   - The probability of class `i` can be accessed with `probabilitiesVec[i]`.
+   - The score of class `i` can be accessed with `scoresVec[i]`.  Scores are not
+     normalized to `[0, 1]`.
 
 ---
 
@@ -153,12 +154,12 @@ can be used to make class predictions for new data.
 
 ---
 
- * `svm.Classify(data, predictions, probabilities)`
+ * `svm.Classify(data, predictions, scores)`
    - ***(Multi-point)***
-   - Classify a set of points and compute class probabilities.
+   - Classify a set of points and compute class scores.
    - The prediction for data point `i` can be accessed with `predictions[i]`.
-   - The probability of class `j` for data point `i` can be accessed with
-     `probabilities(j, i)`.
+   - The score of class `j` for data point `i` can be accessed with
+     `scores(j, i)`.  Scores are not normalized to `[0, 1]`.
 
 ---
 
@@ -168,16 +169,16 @@ can be used to make class predictions for new data.
 |-----------|----------|----------|-----------------|
 | _single-point_ | `point` | [`arma::vec`](../matrices.md) | Single point for classification. |
 | _single-point_ | `prediction` | `size_t&` | `size_t` to store class prediction into. |
-| _single-point_ | `probabilitiesVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class probabilities into; will have length 2. |
+| _single-point_ | `scoresVec` | [`arma::vec&`](../matrices.md) | `arma::vec&` to store class scores into; will have length `numClasses`. |
 ||||
 | _multi-point_ | `data` | [`arma::mat`](../matrices.md) | Set of [column-major](../matrices.md) points for classification. |
 | _multi-point_ | `predictions` | [`arma::Row<size_t>&`](../matrices.md) | Vector of `size_t`s to store class prediction into; will be set to length `data.n_cols`. |
-| _multi-point_ | `probabilities` | [`arma::mat&`](../matrices.md) | Matrix to store class probabilities into (number of rows will be equal to 2; number of columns will be equal to `data.n_cols`). |
+| _multi-point_ | `scores` | [`arma::mat&`](../matrices.md) | Matrix to store class scores into (number of rows will be equal to `numClasses`; number of columns will be equal to `data.n_cols`). |
 
 ### Other Functionality
 
  * A `LinearSVM` model can be serialized with
-   [`data::Save()` and `data::Load()`](../load_save.md#mlpack-objects).
+   [`Save()` and `Load()`](../load_save.md#mlpack-models-and-objects).
 
  * `svm.Parameters()` will return the parameters of the model as an `arma::mat`
    with either `data.n_rows` rows (if `FitIntercept()` is `false`) or
@@ -206,10 +207,10 @@ Train a linear SVM using a custom SGD-like optimizer with callbacks.
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::Load("satellite.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::LinearSVM svm;
 svm.Lambda() = 0.1;
@@ -225,10 +226,10 @@ svm.Train(dataset, labels, 2, optimizer, ens::ProgressBar(), ens::Report());
 
 // See https://datasets.mlpack.org/satellite.test.csv.
 arma::mat testDataset;
-mlpack::data::Load("satellite.test.csv", testDataset, true);
+mlpack::Load("satellite.test.csv", testDataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/satellite.test.labels.csv.
 arma::Row<size_t> testLabels;
-mlpack::data::Load("satellite.test.labels.csv", testLabels, true);
+mlpack::Load("satellite.test.labels.csv", testLabels, mlpack::Fatal);
 
 std::cout << std::endl;
 std::cout << "Accuracy on training set: "
@@ -257,7 +258,7 @@ class ModelCheckpoint
                 const double /* objective */)
   {
     const std::string filename = "model-" + std::to_string(epoch) + ".bin";
-    mlpack::data::Save(filename, "svm", model, true);
+    mlpack::Save(filename, model, mlpack::Fatal);
     return false; // Do not terminate the optimization.
   }
 
@@ -271,10 +272,10 @@ With that callback available, the code to train the model is below:
 ```c++
 // See https://datasets.mlpack.org/satellite.train.csv.
 arma::mat dataset;
-mlpack::data::Load("satellite.train.csv", dataset, true);
+mlpack::Load("satellite.train.csv", dataset, mlpack::Fatal);
 // See https://datasets.mlpack.org/satellite.train.labels.csv.
 arma::Row<size_t> labels;
-mlpack::data::Load("satellite.train.labels.csv", labels, true);
+mlpack::Load("satellite.train.labels.csv", labels, mlpack::Fatal);
 
 mlpack::LinearSVM svm;
 
@@ -296,9 +297,9 @@ Load a linear SVM from disk and print some information about it.
 
 ```c++
 mlpack::LinearSVM svm;
-// This assumes that a model called "svm" has been saved to the file
+// This assumes that a `LinearSVM` model has been saved to the file
 // "model-1.bin" (as in the previous example).
-mlpack::data::Load("model-1.bin", "svm", svm, true);
+mlpack::Load("model-1.bin", svm, mlpack::Fatal);
 
 // Print the dimensionality of the model and some other statistics.
 std::cout << "The dimensionality of the model in model-1.bin is "
@@ -361,13 +362,12 @@ arma::sp_fvec point;
 point.sprandu(100, 1, 0.3);
 
 size_t prediction;
-arma::fvec probabilitiesVec;
-svm.Classify(point, prediction, probabilitiesVec);
+arma::fvec scoresVec;
+svm.Classify(point, prediction, scoresVec);
 
 std::cout << "Prediction for random test point: " << prediction << "."
     << std::endl;
-std::cout << "Class probabilities for random test point: "
-    << probabilitiesVec.t();
+std::cout << "Class scores for random test point: " << scoresVec.t();
 ```
 
 ***Note:*** dense objects should be used for `ModelMatType`, since in general

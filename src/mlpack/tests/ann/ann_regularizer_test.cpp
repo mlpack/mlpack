@@ -18,7 +18,7 @@
 
 using namespace mlpack;
 
-TEST_CASE("GradientL1RegularizerTest", "[ANNRegularizerTest]")
+TEST_CASE("GradientL1RegularizerTest", "[ANNRegularizerTest][tiny]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -47,7 +47,7 @@ TEST_CASE("GradientL1RegularizerTest", "[ANNRegularizerTest]")
   REQUIRE(CheckRegularizerGradient(function) <= 1e-4);
 }
 
-TEST_CASE("GradientL2RegularizerTest", "[ANNRegularizerTest]")
+TEST_CASE("GradientL2RegularizerTest", "[ANNRegularizerTest][tiny]")
 {
   // Add function gradient instantiation.
   struct GradientFunction
@@ -76,7 +76,7 @@ TEST_CASE("GradientL2RegularizerTest", "[ANNRegularizerTest]")
   REQUIRE(CheckRegularizerGradient(function) <= 1e-4);
 }
 
-TEST_CASE("GradientOrthogonalRegularizerTest", "[ANNRegularizerTest]")
+TEST_CASE("GradientOrthogonalRegularizerTest", "[ANNRegularizerTest][tiny]")
 {
   // Add function gradient instantiation.
   struct GradientFunction

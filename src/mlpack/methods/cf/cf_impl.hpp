@@ -227,8 +227,8 @@ GetRecommendations(const size_t numRecs,
     // Default candidate: the smallest possible value and invalid item number.
     const Candidate def = std::make_pair(-DBL_MAX, cleanedData.n_rows);
     std::vector<Candidate> vect(numRecs, def);
-    typedef std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>
-        CandidateList;
+    using CandidateList =
+        std::priority_queue<Candidate, std::vector<Candidate>, CandidateCmp>;
     CandidateList pqueue(CandidateCmp(), std::move(vect));
 
     // Look through the ratings column corresponding to the current user.

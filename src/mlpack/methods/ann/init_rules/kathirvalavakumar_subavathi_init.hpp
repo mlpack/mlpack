@@ -69,7 +69,7 @@ class KathirvalavakumarSubavathiInitialization
   KathirvalavakumarSubavathiInitialization(const MatType& data,
                                            const double s) : s(s)
   {
-    dataSum = sum(data % data);
+    dataSum = conv_to<arma::rowvec>::from(sum(data % data));
   }
 
   /**
@@ -83,8 +83,8 @@ class KathirvalavakumarSubavathiInitialization
   template<typename MatType>
   void Initialize(MatType& W, const size_t rows, const size_t cols)
   {
-    typedef typename GetRowType<MatType>::type RowType; 
-    RowType b = s * sqrt(3 / (rows * dataSum));
+    using RowType = typename GetRowType<MatType>::type;
+    RowType b = conv_to<RowType>::from(s * sqrt(3 / (rows * dataSum)));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W, rows, cols);
@@ -100,8 +100,8 @@ class KathirvalavakumarSubavathiInitialization
   void Initialize(MatType& W,
       const typename std::enable_if_t<IsMatrix<MatType>::value>* = 0)
   {
-    typedef typename GetRowType<MatType>::type RowType; 
-    RowType b = s * sqrt(3 / (W.n_rows * dataSum));
+    using RowType = typename GetRowType<MatType>::type;
+    RowType b = conv_to<RowType>::from(s * sqrt(3 / (W.n_rows * dataSum)));
     const double theta = b.min();
     RandomInitialization randomInit(-theta, theta);
     randomInit.Initialize(W);
@@ -145,7 +145,7 @@ class KathirvalavakumarSubavathiInitialization
     for (size_t i = 0; i < W.n_slices; ++i)
       Initialize(W.slice(i));
   }
- 
+
   /**
    * Serialize the initialization.
    */
