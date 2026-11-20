@@ -21,6 +21,7 @@
 #include "image_options.hpp"
 #include "text_options.hpp"
 #include "handle_files.hpp"
+#include "decompress_gz.hpp"
 #include "download_file.hpp"
 #include "load_deprecated.hpp"
 #include "load_arff.hpp"

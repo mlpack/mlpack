@@ -35,6 +35,8 @@ and [format detection/selection](#formats).
      - an exception is *not* thrown on an error.
    * Returns a `bool` indicating whether the load was a success.
    * `X` can be [any supported load type](#types).
+   * [gzip-compressed](#loading-gzip-compressed-files) local or remote files (`.csv.gz`, `.arff.gz`, etc.) can also be
+     decompressed.
 
  - `Load(path, X, Option1 + Option2 + ...)`
    * Load `X` from the given local file or remote URL `path` with the given options.
@@ -95,6 +97,24 @@ bool success = mlpack::Load("http://datasets.mlpack.org/iris.csv",
     data, mlpack::NoFatal);
 if (!success)
   std::cout << "Error loading dataset" << std::endl;
+```
+
+Loading a compressed gzip file (requires
+[`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions);
+see [Loading gzip-compressed files](#loading-gzip-compressed-files)):
+
+```c++
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
+// See https://datasets.mlpack.org/avocado.csv.gz.
+arma::mat data;
+mlpack::Load("avocado.csv.gz", data);
+
+std::cout << "Loaded avocado.csv.gz: " << data.n_rows << " x " << data.n_cols
+    << "." << std::endl;
 ```
 
 See also the other examples for each [supported load type](#types):
@@ -538,7 +558,10 @@ given in the table.
 |---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
 | `AutoDetect` _(default)_  | `opts.Format() = mlpack::FileType::AutoDetect`  | _(n/a)_                   | All [data types](#types). | The format of the file is autodetected as one of the formats below. |
 |---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
-| `CSV`                     | `opts.Format() = mlpack::FileType::CSVASCII;`   | `.csv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| _(N/A)_                   | _(N/A)_                                         | `.gz`                     | All [data types](#types). | gzip-compressed format.  Requires [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions) and linking with `-lz`.  The file is decompressed into any intermediate supported format such as CSV, TSV, etc.  See [Loading gzip-compressed files](#loading-gzip-compressed-files). |
+|---------------------------|-------------------------------------------------|---------------------------|---------------------------|-------------------|
+| `CSV`                      | `opts.Format() = mlpack::FileType::CSVASCII;`   | `.csv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data | CSV format.  If loading a sparse matrix and the CSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
 | `TSV`                     | `opts.Format() = mlpack::FileType::TSVASCII;`   | `.tsv`                    | [Numeric](#numeric-data) and [categorical](#mixed-categorical-data) data. | TSV format.  If loading a sparse matrix and the TSV has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
 | `ArmaASCII`               | `opts.Format() = mlpack::FileType::ArmaASCII;`  | `.txt`, `.csv`            | [Numeric](#numeric-data) data | Space-separated values as saved by Armadillo with the [`arma_ascii`](https://arma.sourceforge.net/docs.html#save_load_mat) format. |
 | `RawASCII`                | `opts.Format() = mlpack::FileType::RawASCII;`   | `.txt`                    | [Numeric](#numeric-data) data | Space-separated values with no header.  If loading a sparse matrix and the file has three columns, the data is interpreted as a [coordinate list](https://arma.sourceforge.net/docs.html#save_load_mat). |
@@ -755,6 +778,12 @@ When a remote URL is given to `Load()`:
    - The cache directory can be overridden at compile time with
      [`MLPACK_REMOTE_DATASET_CACHE_DIR`](compile.md#configuring-mlpack-with-compile-time-definitions).
 
+ * If zlib is available (see
+   [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)),
+   gzip-compressed files (`.csv.gz`, `.arff.gz`, etc.) are automatically
+   decompressed after download.  Local `.gz` files can also be loaded directly
+   with `Load()` (see [Loading gzip-compressed files](#loading-gzip-compressed-files)).
+
 Instead of passing a URL directly to `Load()`, it is also possible to download a
 remote dataset manually to a specific local path with the
 [`DownloadFile()`](#downloading-to-a-specific-file-with-downloadfile) function.
@@ -813,6 +842,48 @@ for (size_t i = 0; i < opts.Headers().size(); ++i)
   std::cout << " - Column " << i << ": '" << opts.Headers()[i] << "'."
       << std::endl;
 }
+```
+
+### Downloading gzip-compressed datasets
+
+When [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)
+is enabled, `DownloadFile()` automatically decompresses `.gz` files after
+downloading.
+
+```c++
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
+mlpack::DownloadFile("https://datasets.mlpack.org/avocado.csv.gz",
+    "avocado.csv.gz");
+
+// The file is automatically decompressed to "avocado.csv".
+arma::mat data;
+mlpack::Load("avocado.csv", data);
+```
+
+### Loading gzip-compressed files
+
+When [`MLPACK_USE_ZLIB`](compile.md#configuring-mlpack-with-compile-time-definitions)
+is enabled, `Load()` can directly load `.gz` files.  If the file or URL has a
+`.gz` extension and contains valid gzip data, it is decompressed to a
+temporary file before loading.  The inner extension determines the file
+format (e.g. `data.csv.gz` is loaded as CSV, `data.arff.gz` as ARFF).
+
+```c++
+// Make sure MLPACK_USE_ZLIB is defined before including mlpack!
+#ifndef MLPACK_USE_ZLIB
+  #error "For gzip support, MLPACK_USE_ZLIB must be defined before including mlpack!"
+#endif
+
+arma::mat data;
+// See https://datasets.mlpack.org/avocado.csv.gz.
+mlpack::Load("avocado.csv.gz", data, mlpack::Fatal);
+
+std::cout << "Loaded " << data.n_cols << " points with "
+    << data.n_rows << " dimensions." << std::endl;
 ```
 
 ## Mixed categorical data

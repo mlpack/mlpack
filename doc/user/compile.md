@@ -74,6 +74,7 @@ program (before including mlpack or Armadillo!).
 | `-DMLPACK_USE_SYSTEM_HTTPLIB` | `#define MLPACK_USE_SYSTEM_HTTPLIB` | Use the version of [cpp-httplib](https://github.com/yhirose/cpp-httplib) that is available on the system instead of the version bundled with mlpack. If set, make sure `httplib.h` is available. |
 | `-DMLPACK_DONT_USE_SYSTEM_HTTPLIB` | `#define MLPACK_DONT_USE_SYSTEM_HTTPLIB` | Force usage of the bundled version of httplib.  Only necessary if mlpack was [configured](install.md#cmake-options) with `USE_SYSTEM_HTTPLIB=ON`. |
 | `-DMLPACK_DISABLE_HTTPLIB` | `#define MLPACK_DISABLE_HTTPLIB` | Disable httplib support within mlpack; use this if your system does not need httplib (e.g., embedded systems).|
+| `-DMLPACK_USE_ZLIB` | `#define MLPACK_USE_ZLIB` | Enable zlib-based gzip decompression for datasets.  When enabled, `Load()` will automatically decompress `.gz` files.  Requires [linking with `-lz`](compile.md#linking-against-optional-mlpack-dependencies). |
 | `-DMLPACK_DISABLE_REMOTE_DATASET_CACHE` | `#define MLPACK_DISABLE_REMOTE_DATASET_CACHE` | Disable caching of downloaded datasets.  When set, files downloaded via `Load()` are saved to the system temporary directory instead of the cache directory. |
 | `-DMLPACK_REMOTE_DATASET_CACHE_DIR="/path/to/cache/"` | `#define MLPACK_REMOTE_DATASET_CACHE_DIR "/path/to/cache/"` | Override the directory where cached datasets are stored.  Defaults to `$HOME/.mlpack/cache/` on Linux/MacOS and `%APPDATA%\mlpack\cache\` on Windows. |
 
@@ -95,6 +96,10 @@ g++ -std=c++17 -O3 -o mlpack_program mlpack_program.cpp -larmadillo -fopenmp [ex
  * If HTTPS support is enabled with
    [`MLPACK_ENABLE_HTTPS`](#configuring-mlpack-with-compile-time-definitions),
    the SSL and libcrypto libraries must be linked against with `-lssl -lcrypto`.
+
+ * If zlib support is enabled with
+   [`MLPACK_USE_ZLIB`](#configuring-mlpack-with-compile-time-definitions),
+   the zlib library must be linked against with `-lz`.
 
  * If the Armadillo runtime library is not available or linking against the underlying
    BLAS/LAPACK libraries is desired, see the

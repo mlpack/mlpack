@@ -145,6 +145,7 @@ run_kramdown()
   # Replace any links to source files with a link to the current version of the
   # source file on Github.
   sed -i 's/\](\/src\/\([^ ]*\)\.hpp)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/src\/\1.hpp)/' $input_file.tmp;
+  sed -i 's/\](\/\.jenkins\/\([^ ]*\)/](https:\/\/github.com\/mlpack\/mlpack\/blob\/master\/.jenkins\/\1)/' $input_file.tmp;
 
   # If this is binding documentation or quickstart documentation, don't set the
   # default language to C++.
@@ -523,6 +524,8 @@ then
   echo "  ^https://github.com/mlpack/mlpack/issues/[0-9]*$" >> "$output_dir/linkcheckerrc.in";
   echo "  ^https://github.com/mlpack/mlpack/issues[?]q.*$" >> "$output_dir/linkcheckerrc.in";
   echo "  ^https://github.com/mlpack/mlpack/pulls[?]q.*$" >> "$output_dir/linkcheckerrc.in";
+  # Slack now doesn't allow itself to be crawled, but we know this URL works.
+  echo "  ^https://mlpack.slack.com*$" >> "$output_dir/linkcheckerrc.in";
 
   # Initialize our cache or take the current version of it.
   if [ ! -z ${LINK_CACHE_FILE+x} ];

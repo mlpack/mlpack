@@ -59,9 +59,15 @@
 # Configuration options:
 #
 #   MLPACK_DISABLE_OPENMP: if set, parallelism via OpenMP will be disabled.
+#   MLPACK_DISABLE_STB: if set, mlpack image (STB) support is disabled.
+#   MLPACK_DISABLE_DR_LIBS: if set, mlpack audio (dr_libs) support is disabled.
+#   MLPACK_DISABLE_HTTPLIB: if set, mlpack httplib support is disabled.
 #   OPENBLAS_PATCHES: list of filepaths for patches to be applied to OpenBLAS;
 #       ignored if COMPILE_OPENBLAS is false.  Patches given will be applied
 #       with `-p1`.
+#   OPENBLAS_COMPILE_THREADS: if unset, all available threads are used to
+#       compile OpenBLAS; otherwise, the variable's value is used as the number
+#       of threads for compilation.
 #
 # After all libraries are downloaded and set up, the macro will set the
 # following variables:
@@ -216,6 +222,19 @@ endif ()
 if (NOT MLPACK_DISABLE_OPENMP)
   set(MLPACK_DISABLE_OPENMP OFF)
 endif ()
+
+# Expose mlpack CMake options in mlpack.cmake. In the case of
+# cross-compilation, the user will use the autodownloader to download mlpack
+# will be able to apply these options using the following
+# apply_mlpack_compile_options macros when using fetch_mlpack().
+macro(apply_mlpack_compile_options)
+  foreach(_mlpack_opt MLPACK_DISABLE_STB MLPACK_DISABLE_DR_LIBS
+                      MLPACK_DISABLE_HTTPLIB)
+    if (${_mlpack_opt})
+      add_compile_definitions(${_mlpack_opt})
+    endif ()
+  endforeach()
+endmacro()
 
 include(FindPackageHandleStandardArgs)
 
@@ -689,16 +708,29 @@ macro(compile_OpenBLAS)
           WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
           COMMAND_ERROR_IS_FATAL ANY)
 
-      execute_process(COMMAND ${CMAKE_COMMAND}
-          --build ${OPENBLAS_BUILD_DIR}
-          --config ${BLASS_BUILD_TYPE}
-          --parallel
-          WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
-          COMMAND_ERROR_IS_FATAL ANY)
+      if (OPENBLAS_COMPILE_THREADS)
+        execute_process(COMMAND ${CMAKE_COMMAND}
+            --build ${OPENBLAS_BUILD_DIR}
+            --config ${BLASS_BUILD_TYPE}
+            --parallel ${OPENBLAS_COMPILE_THREADS}
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+            COMMAND_ERROR_IS_FATAL ANY)
+      else ()
+        execute_process(COMMAND ${CMAKE_COMMAND}
+            --build ${OPENBLAS_BUILD_DIR}
+            --config ${BLASS_BUILD_TYPE}
+            --parallel
+            WORKING_DIRECTORY ${OPENBLAS_SRC_DIR}
+            COMMAND_ERROR_IS_FATAL ANY)
+      endif ()
 
       set(OPENBLAS_LIBRARIES "${OPENBLAS_OUTPUT_LIB_DIR}/openblas.lib")
     else ()
       if (CMAKE_CROSSCOMPILING)
+        if (OPENBLAS_COMPILE_THREADS)
+          set(MAKE_NB_JOBS_OPT "MAKE_NB_JOBS=${OPENBLAS_COMPILE_THREADS}")
+        endif()
+
         # Update environment variables so that OpenBLAS compiles correctly.
         set(OLD_CC $ENV{CC})
         set(ENV{COMMON_OPT} "${CMAKE_OPENBLAS_FLAGS}") # Pass our flags to OpenBLAS
@@ -712,7 +744,7 @@ macro(compile_OpenBLAS)
 
         # Now run the OpenBLAS build with all of the configuration variables set.
         execute_process(
-            COMMAND make NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${ARG_LIST}
+            COMMAND make ${PARALLEL_OPT} NO_SHARED=1 HOSTCC=gcc TARGET=${OPENBLAS_TARGET} BINARY=${OPENBLAS_BINARY} ${MAKE_NB_JOBS_OPT} ${ARG_LIST}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/deps/OpenBLAS-${OPENBLAS_VERSION}
             COMMAND_ERROR_IS_FATAL ANY)
 
@@ -859,6 +891,8 @@ macro(fetch_mlpack COMPILE_OPENBLAS)
     find_openmp()
   endif ()
 
+  apply_mlpack_compile_options()
+
 endmacro()
 
 ##===================================================
@@ -879,7 +913,7 @@ macro(find_mlpack)
 
   find_armadillo()
   if (ARMADILLO_FOUND)
-    set(MLPACK_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIRS})
+    set(MLPACK_INCLUDE_DIRS ${MLPACK_INCLUDE_DIRS} ${ARMADILLO_INCLUDE_DIRS})
     set(MLPACK_LIBRARIES ${MLPACK_LIBRARIES} ${ARMADILLO_LIBRARIES})
   else()
     message(FATAL_ERROR "Armadillo not found, (required dependency of mlpack).")
@@ -914,6 +948,8 @@ macro(find_mlpack)
   else()
     message(FATAL_ERROR "mlpack not found!")
   endif()
+
+  apply_mlpack_compile_options()
 
   mark_as_advanced(MLPACK_INCLUDE_DIR)
   mark_as_advanced(MLPACK_INCLUDE_DIRS)

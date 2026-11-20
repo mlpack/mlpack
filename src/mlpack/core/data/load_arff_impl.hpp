@@ -73,6 +73,20 @@ bool LoadARFF(const std::string& filename,
       }
       else if (annotation == "@attribute")
       {
+        // An attribute declaration must have both a name and a type.
+        if (tok.size() < 3)
+        {
+          std::stringstream error;
+          error << "LoadARFF(): line " << headerLines << ": @attribute "
+              << "declaration must specify a name and a type.";
+          if (fatal)
+            Log::Fatal << error.str() << std::endl;
+          else
+            Log::Warn << error.str() << std::endl;
+
+          return false;
+        }
+
         ++dimensionality;
         // We need to mark this dimension with its according type.
         ++it; // Ignore the dimension name.
@@ -117,6 +131,20 @@ bool LoadARFF(const std::string& filename,
             categories.push_back(category);
 
             ++it;
+          }
+
+          // A categorical attribute must have at least one category.
+          if (categories.empty())
+          {
+            std::stringstream error;
+            error << "LoadARFF(): line " << headerLines << ": categorical "
+                << "attribute has no categories.";
+            if (fatal)
+              Log::Fatal << error.str() << std::endl;
+            else
+              Log::Warn << error.str() << std::endl;
+
+            return false;
           }
 
           categoryStrings[dimensionality - 1] = std::move(categories);
@@ -191,13 +219,10 @@ bool LoadARFF(const std::string& filename,
   // We need to find out how many lines of data are in the file.
   std::streampos pos = ifs.tellg();
   size_t row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     ++row;
   }
-  // Uncount the EOF row.
-  --row;
 
   // Since we've hit the EOF, we have to call clear() so we can seek again.
   ifs.clear();
@@ -211,9 +236,8 @@ bool LoadARFF(const std::string& filename,
 
   // Now we are looking at the @data section.
   row = 0;
-  while (ifs.good())
+  while (std::getline(ifs, line))
   {
-    std::getline(ifs, line, '\n');
     Trim(line);
     // Each line of the @data section must be a CSV (except sparse data, which
     // we will handle later).  So now we can tokenize the
