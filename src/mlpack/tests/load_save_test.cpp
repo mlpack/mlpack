@@ -4695,7 +4695,8 @@ TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "iris.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "iris.csv").string();
 
   remove(cachedFile.c_str());
   remove(manifestPath.c_str());
@@ -4721,6 +4722,31 @@ TEST_CASE("LoadURLCacheTest", "[LoadSaveTest]")
   REQUIRE(mtime1 == mtime2);
 
   REQUIRE(arma::approx_equal(data1, data2, "absdiff", 1e-10));
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+}
+
+/**
+ * Test that the directories of the URL are kept in the cache path.
+ */
+TEST_CASE("CacheURLSubdirectoryTest", "[LoadSaveTest]")
+{
+  std::string cacheDir = GetCacheDir();
+  std::string manifestPath =
+      (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
+  std::string cachedFile =
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" / "images" /
+      "mlpack-favicon.png").string();
+
+  remove(cachedFile.c_str());
+  remove(manifestPath.c_str());
+
+  std::string filename;
+  REQUIRE(DownloadFileWithCache(
+      "https://datasets.mlpack.org/images/mlpack-favicon.png", filename));
+  REQUIRE(filename == cachedFile);
+  REQUIRE(std::filesystem::exists(cachedFile));
 
   remove(cachedFile.c_str());
   remove(manifestPath.c_str());
@@ -4781,7 +4807,8 @@ TEST_CASE("CacheInvalidationTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "iris.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "iris.csv").string();
 
   remove(cachedFile.c_str());
   remove(manifestPath.c_str());
@@ -4878,9 +4905,11 @@ TEST_CASE("LoadGzipCSVFromURL", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedFile.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
@@ -4924,9 +4953,11 @@ TEST_CASE("GzipVsUncompressedDownloadTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedCsv =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedCsv.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
@@ -4956,9 +4987,11 @@ TEST_CASE("GzipCacheTest", "[LoadSaveTest]")
   std::string manifestPath =
       (std::filesystem::path(cacheDir) / "cache_manifest.csv").string();
   std::string cachedFile =
-      (std::filesystem::path(cacheDir) / "avocado.csv").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv").string();
   std::string cachedGz =
-      (std::filesystem::path(cacheDir) / "avocado.csv.gz").string();
+      (std::filesystem::path(cacheDir) / "datasets.mlpack.org" /
+      "avocado.csv.gz").string();
   remove(cachedFile.c_str());
   remove(cachedGz.c_str());
   remove(manifestPath.c_str());
