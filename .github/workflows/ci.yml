@@ -246,8 +246,8 @@ jobs:
           vcpkg install zlib:x64-windows
           Get-ChildItem -Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\" -Force -Recurse
           # Verify the zlib library, header, and DLL exist.
-          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib")) {
-            Write-Error "z.lib not found after vcpkg install!"
+          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\libz.lib")) {
+            Write-Error "libz.lib not found after vcpkg install!"
             exit 1
           }
           if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include\zlib.h")) {
