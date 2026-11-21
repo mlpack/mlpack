@@ -61,7 +61,7 @@ function insertWrap(signature, insertIndex, numSpaces)
 function wrapLine(signature, maxNumChars)
 {
   let firstParen = signature.textContent.indexOf('(');
-  if (!firstParen)
+  if (firstParen < 0)
   {
     console.log("Could not find opening parenthesis of signature: '" +
         signature.textContent + "'");
@@ -74,7 +74,7 @@ function wrapLine(signature, maxNumChars)
 
   // We need to compute the locations of all of the first characters *after*
   // a comma and a space.
-  let argLocs = []
+  let argLocs = [];
   let associatedChildNodeIndex = 0;
   let totalNumChars = 0;
   while ((totalNumChars < firstParen + 1) &&
@@ -127,7 +127,7 @@ function wrapLine(signature, maxNumChars)
   }
 
   // Keep track of which line each argument is on.
-  let argLines = []
+  let argLines = [];
   argLines.length = argLocs.length;
   argLines.fill(0);
 
@@ -225,7 +225,7 @@ function wrapLines()
         else
         {
           // Got an unexpected non-#text non-child node.
-          console.log(i + "Unexpected non-#text non-child node!");
+          console.log("Unexpected non-#text non-child node!");
           return false;
         }
       }
@@ -244,7 +244,7 @@ function wrapLines()
   const contentDivLeftPadding =
       getComputedStyle(contentDiv).paddingLeft.replace(/px$/, '');
   const contentDivRightPadding =
-      getComputedStyle(contentDiv).paddingRight.replace(/px$/, '');;
+      getComputedStyle(contentDiv).paddingRight.replace(/px$/, '');
   if (isNaN(parseInt(contentDivLeftPadding)) ||
       isNaN(parseInt(contentDivRightPadding)))
   {
