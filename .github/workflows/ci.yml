@@ -261,7 +261,7 @@ jobs:
             exit 1
           }
           # Export the actual paths so later bash steps can use them.
-          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_LIB_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib"
+          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_LIB_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\libz.lib"
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_INCLUDE_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include"
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_BIN_DIR=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin"
           # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
