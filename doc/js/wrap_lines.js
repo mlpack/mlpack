@@ -159,7 +159,7 @@ function wrapLine(signature, maxNumChars)
   }
 
   // Now check the average number of arguments per line.  If it's less than
-  // three, then we need to wrap everything else too.
+  // 2.5, then we need to wrap everything else too.
   let argsPerLine = argLines.length / (argLines[argLines.length - 1] + 1);
   if (argsPerLine < 2.5)
   {
