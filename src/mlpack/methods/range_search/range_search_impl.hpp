@@ -27,16 +27,44 @@ template<typename DistanceType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
     MatType referenceSet,
-    const bool naive,
-    const bool singleMode,
+    const TreeSearchStrategy strategyIn,
     const DistanceType distance) :
-    referenceTree(naive ? NULL : BuildTree<Tree>(std::move(referenceSet),
-        oldFromNewReferences)),
-    referenceSet(naive ? new MatType(std::move(referenceSet)) :
+    referenceTree((strategyIn == NAIVE) ? NULL :
+        BuildTree<Tree>(std::move(referenceSet), oldFromNewReferences)),
+    referenceSet((strategyIn == NAIVE) ? new MatType(std::move(referenceSet)) :
         &referenceTree->Dataset()),
-    treeOwner(!naive),
-    naive(naive),
-    singleMode(!naive && singleMode),
+    treeOwner(strategyIn != NAIVE),
+    strategy(strategyIn),
+    needsSync(false),
+    naive(strategyIn == NAIVE),
+    singleMode(strategyIn == SINGLE_TREE),
+    distance(distance),
+    baseCases(0),
+    scores(0)
+{
+  // Nothing to do.
+}
+
+// Deprecated and will be removed in mlpack 5.0.0.
+template<typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
+    MatType referenceSet,
+    const bool naiveIn,
+    const bool singleModeIn,
+    const DistanceType distance) :
+    referenceTree(naiveIn ? NULL : BuildTree<Tree>(std::move(referenceSet),
+        oldFromNewReferences)),
+    referenceSet(naiveIn ? new MatType(std::move(referenceSet)) :
+        &referenceTree->Dataset()),
+    treeOwner(!naiveIn),
+    strategy(naiveIn ? NAIVE : (singleModeIn ? SINGLE_TREE : DUAL_TREE)),
+    needsSync(false),
+    naive(naiveIn),
+    singleMode(!naiveIn && singleModeIn),
     distance(distance),
     baseCases(0),
     scores(0)
@@ -50,14 +78,40 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
+    Tree referenceTreeIn,
+    const TreeSearchStrategy strategyIn,
+    const DistanceType distance) :
+    referenceTree(new Tree(std::move(referenceTreeIn))),
+    referenceSet(&referenceTree->Dataset()),
+    treeOwner(true),
+    strategy(strategyIn),
+    needsSync(false),
+    naive(false),
+    singleMode(strategyIn == SINGLE_TREE),
+    distance(distance),
+    baseCases(0),
+    scores(0)
+{
+  // Nothing else to initialize.
+}
+
+// Deprecated and will be removed in mlpack 5.0.0.
+template<typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
     Tree* referenceTree,
-    const bool singleMode,
+    const bool singleModeIn,
     const DistanceType distance) :
     referenceTree(referenceTree),
     referenceSet(&referenceTree->Dataset()),
     treeOwner(false),
+    strategy(singleModeIn ? SINGLE_TREE : DUAL_TREE),
+    needsSync(false),
     naive(false),
-    singleMode(singleMode),
+    singleMode(singleModeIn),
     distance(distance),
     baseCases(0),
     scores(0)
@@ -71,14 +125,46 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
-    const bool naive,
-    const bool singleMode,
+    const TreeSearchStrategy strategyIn,
     const DistanceType distance) :
     referenceTree(NULL),
-    referenceSet(naive ? new MatType() : NULL), // Empty matrix.
+    referenceSet((strategyIn == NAIVE) ? new MatType() : NULL), // Empty matrix.
     treeOwner(false),
-    naive(naive),
-    singleMode(singleMode),
+    strategy(strategyIn),
+    needsSync(false),
+    naive(strategyIn == NAIVE),
+    singleMode(strategyIn == SINGLE_TREE),
+    distance(distance),
+    baseCases(0),
+    scores(0)
+{
+  // Build the tree on the empty dataset, if necessary.
+  if (strategy != NAIVE)
+  {
+    referenceTree = BuildTree<Tree>(std::move(MatType()),
+        oldFromNewReferences);
+    referenceSet = &referenceTree->Dataset();
+    treeOwner = true;
+  }
+}
+
+// Deprecated and will be removed in mlpack 5.0.0.
+template<typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
+    const bool naiveIn,
+    const bool singleModeIn,
+    const DistanceType distance) :
+    referenceTree(NULL),
+    referenceSet(naiveIn ? new MatType() : NULL), // Empty matrix.
+    treeOwner(false),
+    strategy(naiveIn ? NAIVE : (singleModeIn ? SINGLE_TREE : DUAL_TREE)),
+    needsSync(false),
+    naive(naiveIn),
+    singleMode(singleModeIn),
     distance(distance),
     baseCases(0),
     scores(0)
@@ -105,6 +191,8 @@ RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(
     referenceSet(other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet)),
     treeOwner(other.referenceTree),
+    strategy(other.strategy),
+    needsSync(other.needsSync),
     naive(other.naive),
     singleMode(other.singleMode),
     distance(other.distance),
@@ -124,6 +212,8 @@ RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
     referenceTree(other.referenceTree),
     referenceSet(other.referenceSet),
     treeOwner(other.treeOwner),
+    strategy(other.strategy),
+    needsSync(other.needsSync),
     naive(other.naive),
     singleMode(other.singleMode),
     distance(std::move(other.distance)),
@@ -135,6 +225,8 @@ RangeSearch<DistanceType, MatType, TreeType>::RangeSearch(RangeSearch&& other) :
       BuildTree<Tree>(std::move(MatType()), other.oldFromNewReferences);
   other.referenceSet = &other.referenceTree->Dataset();
   other.treeOwner = true;
+  other.strategy = DUAL_TREE;
+  other.needsSync = false;
   other.naive = false;
   other.singleMode = false;
   other.baseCases = 0;
@@ -158,6 +250,8 @@ RangeSearch<DistanceType, MatType, TreeType>::operator=(
     referenceSet = other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet);
     treeOwner = other.referenceTree;
+    strategy = other.strategy;
+    needsSync = other.needsSync;
     naive = other.naive;
     singleMode = other.singleMode;
     distance = other.distance;
@@ -188,6 +282,8 @@ RangeSearch<DistanceType, MatType, TreeType>::operator=(RangeSearch&& other)
     referenceTree = other.referenceTree;
     referenceSet = other.referenceSet;
     treeOwner = other.treeOwner;
+    strategy = other.strategy;
+    needsSync = other.needsSync;
     naive = other.naive;
     singleMode = other.singleMode;
     distance = std::move(other.distance);
@@ -198,6 +294,8 @@ RangeSearch<DistanceType, MatType, TreeType>::operator=(RangeSearch&& other)
     other.referenceTree = nullptr;
     other.referenceSet = nullptr;
     other.treeOwner = false;
+    other.strategy = DUAL_TREE;
+    other.needsSync = false;
     other.naive = false;
     other.singleMode = false;
     other.baseCases = 0;
@@ -213,9 +311,11 @@ template<typename DistanceType,
                   typename TreeMatType> class TreeType>
 RangeSearch<DistanceType, MatType, TreeType>::~RangeSearch()
 {
+  SyncStrategy();
+
   if (treeOwner && referenceTree)
     delete referenceTree;
-  if (naive && referenceSet)
+  if ((strategy == NAIVE) && referenceSet)
     delete referenceSet;
 }
 
@@ -227,12 +327,14 @@ template<typename DistanceType,
 void RangeSearch<DistanceType, MatType, TreeType>::Train(
     MatType referenceSet)
 {
+  SyncStrategy();
+
   // Clean up the old tree, if we built one.
   if (treeOwner && referenceTree)
     delete referenceTree;
 
   // We may need to rebuild the tree.
-  if (!naive)
+  if (strategy != NAIVE)
   {
     referenceTree = BuildTree<Tree>(std::move(referenceSet),
         oldFromNewReferences);
@@ -240,14 +342,15 @@ void RangeSearch<DistanceType, MatType, TreeType>::Train(
   }
   else
   {
+    referenceTree = NULL;
     treeOwner = false;
   }
 
   // Delete the old reference set, if we owned it.
-  if (naive && this->referenceSet)
+  if ((strategy == NAIVE) && this->referenceSet)
     delete this->referenceSet;
 
-  if (!naive)
+  if (strategy != NAIVE)
   {
     this->referenceSet = &referenceTree->Dataset();
   }
@@ -263,21 +366,33 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<DistanceType, MatType, TreeType>::Train(
-  Tree* referenceTree)
+    Tree referenceTree)
 {
-  if (naive)
+  SyncStrategy();
+
+  if (strategy == NAIVE)
     throw std::invalid_argument("cannot train on given reference tree when "
         "naive search (without trees) is desired");
 
   // Can only train when passed argument `referenceTree` is not nullptr.
-  if (treeOwner && referenceTree)
-  {
+  if (treeOwner)
     delete this->referenceTree;
 
-    this->referenceTree = referenceTree;
-    this->referenceSet = &referenceTree->Dataset();
-    treeOwner = false;
-  }
+  this->referenceTree = new Tree(std::move(referenceTree));
+  this->oldFromNewReferences.clear();
+  this->referenceSet = &this->referenceTree->Dataset();
+  treeOwner = true;
+}
+
+template<typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RangeSearch<DistanceType, MatType, TreeType>::Train(
+    Tree* referenceTree)
+{
+  Train(*referenceTree);
 }
 
 template<typename DistanceType,
@@ -291,6 +406,16 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<ElemType>>& distances)
 {
+  SyncStrategy();
+
+  // Make sure the strategy is valid.
+  if (strategy == GREEDY_SINGLE_TREE)
+  {
+    throw std::invalid_argument("RangeSearch::Search(): GREEDY_SINGLE_TREE "
+        "search strategy not supported; use DUAL_TREE, SINGLE_TREE, or NAIVE "
+        "instead!");
+  }
+
   util::CheckSameDimensionality(querySet, *referenceSet,
       "RangeSearch::Search()", "query set");
 
@@ -313,7 +438,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   {
     // Query indices only need to be mapped if we are building the query tree
     // ourselves.
-    if (!singleMode && !naive)
+    if (strategy == DUAL_TREE)
     {
       distancePtr = new std::vector<std::vector<ElemType>>;
       neighborPtr = new std::vector<std::vector<size_t>>;
@@ -321,7 +446,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
 
     // Reference indices only need to be mapped if we built the reference tree
     // ourselves.
-    else if (treeOwner)
+    else if (treeOwner && oldFromNewReferences.size() > 0)
       neighborPtr = new std::vector<std::vector<size_t>>;
   }
 
@@ -338,7 +463,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   baseCases = 0;
   scores = 0;
 
-  if (naive)
+  if (strategy == NAIVE)
   {
     RuleType rules(*referenceSet, querySet, range, *neighborPtr, *distancePtr,
         distance);
@@ -350,7 +475,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
 
     baseCases += (querySet.n_cols * referenceSet->n_cols);
   }
-  else if (singleMode)
+  else if (strategy == SINGLE_TREE)
   {
     // Create the traverser.
     RuleType rules(*referenceSet, querySet, range, *neighborPtr, *distancePtr,
@@ -386,7 +511,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   // Map points back to original indices, if necessary.
   if (TreeTraits<Tree>::RearrangesDataset)
   {
-    if (!singleMode && !naive && treeOwner)
+    if ((strategy == DUAL_TREE) && treeOwner && oldFromNewReferences.size() > 0)
     {
       // We must map both query and reference indices.
       neighbors.clear();
@@ -411,7 +536,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
       delete neighborPtr;
       delete distancePtr;
     }
-    else if (!singleMode && !naive)
+    else if (strategy == DUAL_TREE)
     {
       // We must map query indices only.
       neighbors.clear();
@@ -431,7 +556,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
       delete neighborPtr;
       delete distancePtr;
     }
-    else if (treeOwner)
+    else if (treeOwner && oldFromNewReferences.size() > 0)
     {
       // We must map reference indices only.
       neighbors.clear();
@@ -456,27 +581,39 @@ template<typename DistanceType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
 void RangeSearch<DistanceType, MatType, TreeType>::Search(
-    Tree* queryTree,
+    Tree& queryTree,
     const RangeType<ElemType>& range,
     std::vector<std::vector<size_t>>& neighbors,
-    std::vector<std::vector<ElemType>>& distances)
+    std::vector<std::vector<ElemType>>& distances,
+    bool sameSet)
 {
+  SyncStrategy();
+
+  // Make sure the strategy is valid.
+  if (strategy == GREEDY_SINGLE_TREE)
+  {
+    throw std::invalid_argument("RangeSearch::Search(): GREEDY_SINGLE_TREE "
+        "search strategy not supported; use DUAL_TREE, SINGLE_TREE, or NAIVE "
+        "instead!");
+  }
+
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)
     return;
 
   // Get a reference to the query set.
-  const MatType& querySet = queryTree->Dataset();
+  const MatType& querySet = queryTree.Dataset();
 
   // Make sure we are in dual-tree mode.
-  if (singleMode || naive)
+  if (strategy != DUAL_TREE)
     throw std::invalid_argument("cannot call RangeSearch::Search() with a "
         "query tree when naive or singleMode are set to true");
 
   // We won't need to map query indices, but will we need to map distances?
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
 
-  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset &&
+      oldFromNewReferences.size() > 0)
     neighborPtr = new std::vector<std::vector<size_t>>;
 
   // Resize each vector.
@@ -487,19 +624,20 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
 
   // Create the helper object for the traversal.
   using RuleType = RangeSearchRules<DistanceType, Tree>;
-  RuleType rules(*referenceSet, queryTree->Dataset(), range, *neighborPtr,
-      distances, distance);
+  RuleType rules(*referenceSet, queryTree.Dataset(), range, *neighborPtr,
+      distances, distance, sameSet);
 
   // Create the traverser.
   typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
-  traverser.Traverse(*queryTree, *referenceTree);
+  traverser.Traverse(queryTree, *referenceTree);
 
   baseCases = rules.BaseCases();
   scores = rules.Scores();
 
   // Do we need to map indices?
-  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset &&
+      oldFromNewReferences.size() > 0)
   {
     // We must map reference indices only.
     neighbors.clear();
@@ -527,15 +665,26 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<ElemType>>& distances)
 {
+  SyncStrategy();
+
   // If there are no points, there is no search to be done.
   if (referenceSet->n_cols == 0)
     return;
+
+  // Make sure the strategy is valid.
+  if (strategy == GREEDY_SINGLE_TREE)
+  {
+    throw std::invalid_argument("RangeSearch::Search(): GREEDY_SINGLE_TREE "
+        "search strategy not supported; use DUAL_TREE, SINGLE_TREE, or NAIVE "
+        "instead!");
+  }
 
   // Here, we will use the query set as the reference set.
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
   std::vector<std::vector<ElemType>>* distancePtr = &distances;
 
-  if (TreeTraits<Tree>::RearrangesDataset && treeOwner)
+  if (TreeTraits<Tree>::RearrangesDataset && treeOwner &&
+      oldFromNewReferences.size() > 0)
   {
     // We will always need to rearrange in this case.
     distancePtr = new std::vector<std::vector<ElemType>>;
@@ -553,7 +702,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   RuleType rules(*referenceSet, *referenceSet, range, *neighborPtr,
       *distancePtr, distance, true /* don't return the query in the results */);
 
-  if (naive)
+  if (strategy == NAIVE)
   {
     // The naive brute-force solution.
     for (size_t i = 0; i < referenceSet->n_cols; ++i)
@@ -563,7 +712,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
     baseCases = (referenceSet->n_cols * referenceSet->n_cols);
     scores = 0;
   }
-  else if (singleMode)
+  else if (strategy == SINGLE_TREE)
   {
     // Create the traverser.
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -587,7 +736,8 @@ void RangeSearch<DistanceType, MatType, TreeType>::Search(
   }
 
   // Do we need to map the reference indices?
-  if (treeOwner && TreeTraits<Tree>::RearrangesDataset)
+  if (treeOwner && TreeTraits<Tree>::RearrangesDataset &&
+      oldFromNewReferences.size() > 0)
   {
     neighbors.clear();
     neighbors.resize(referenceSet->n_cols);
@@ -621,11 +771,28 @@ template<typename DistanceType,
                   typename TreeMatType> class TreeType>
 template<typename Archive>
 void RangeSearch<DistanceType, MatType, TreeType>::serialize(
-    Archive& ar, const uint32_t /* version */)
+    Archive& ar, const uint32_t version)
 {
+  SyncStrategy();
+
   // Serialize preferences for search.
-  ar(CEREAL_NVP(naive));
-  ar(CEREAL_NVP(singleMode));
+  if (version >= 1)
+  {
+    ar(CEREAL_NVP(strategy));
+    // This is necessary for reverse compatibility and can be removed in mlpack
+    // 5.0.0.
+    naive = (strategy == NAIVE);
+    singleMode = (strategy == SINGLE_TREE);
+    needsSync = false;
+  }
+  else
+  {
+    // Older versions stored the strategy as two booleans.
+    ar(CEREAL_NVP(naive));
+    ar(CEREAL_NVP(singleMode));
+    strategy = singleMode ? SINGLE_TREE : (naive ? NAIVE : DUAL_TREE);
+    needsSync = false;
+  }
 
   // Reset base cases and scores if we are loading.
   if (cereal::is_loading<Archive>())
@@ -636,7 +803,7 @@ void RangeSearch<DistanceType, MatType, TreeType>::serialize(
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
-  if (naive)
+  if (strategy == NAIVE)
   {
     if (cereal::is_loading<Archive>())
     {
@@ -680,6 +847,22 @@ void RangeSearch<DistanceType, MatType, TreeType>::serialize(
       referenceSet = &referenceTree->Dataset();
       distance = referenceTree->Distance(); // Get the distance from the tree.
     }
+  }
+}
+
+template<typename DistanceType,
+         typename MatType,
+         template<typename TreeDistanceType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
+void RangeSearch<DistanceType, MatType, TreeType>::SyncStrategy()
+{
+  if (needsSync)
+  {
+    // If the user has called Naive() or SingleMode() most recently, then we
+    // take those preferences.
+    strategy = singleMode ? SINGLE_TREE : (naive ? NAIVE : DUAL_TREE);
+    needsSync = false;
   }
 }
 

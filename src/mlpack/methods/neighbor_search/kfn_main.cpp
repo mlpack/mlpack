@@ -179,7 +179,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   const string algorithm = params.Get<string>("algorithm");
   RequireParamInSet<string>(params, "algorithm", { "naive", "single_tree",
       "dual_tree", "greedy" }, true, "unknown neighbor search algorithm");
-  NeighborSearchStrategy searchStrategy = DUAL_TREE;
+  TreeSearchStrategy searchStrategy = DUAL_TREE;
 
   if (algorithm == "naive")
     searchStrategy = NAIVE;
