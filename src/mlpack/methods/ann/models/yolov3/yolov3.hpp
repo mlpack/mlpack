@@ -15,7 +15,7 @@
 #include <mlpack/prereqs.hpp>
 
 #include <mlpack/methods/ann/dag_network.hpp>
-#include <mlpack/methods/ann/loss_functions/loss_functions.hpp>
+#include <mlpack/methods/ann/models/yolov3/yolov3_loss_fn.hpp>
 #include <mlpack/methods/ann/init_rules/init_rules.hpp>
 
 #include <mlpack/methods/ann/layer/layer_types.hpp>
@@ -49,7 +49,7 @@ namespace mlpack {
  *
  */
 template <typename MatType = arma::mat,
-          typename OutputLayerType = EmptyLossType<MatType>,
+          typename OutputLayerType = YOLOv3Loss<MatType>,
           typename InitializationRuleType = RandomInitialization>
 class YOLOv3
 {
