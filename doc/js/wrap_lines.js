@@ -63,7 +63,7 @@ function wrapLine(signature, maxNumChars)
   let firstParen = signature.textContent.indexOf('(');
   if (firstParen < 0)
   {
-    console.log("Could not find opening parenthesis of signature: '" +
+    console.warn("Could not find opening parenthesis of signature: '" +
         signature.textContent + "'");
     return;
   }
@@ -88,7 +88,7 @@ function wrapLine(signature, maxNumChars)
   // Paranoia, although this should never happen.
   if (associatedChildNodeIndex == signature.childNodes.length)
   {
-    console.log("Could not find child node index for opening parenthesis of " +
+    console.warn("Could not find child node index for opening parenthesis of " +
         "signature: '" + signature.textContent + "'!");
     return;
   }
@@ -225,7 +225,7 @@ function wrapLines()
         else
         {
           // Got an unexpected non-#text non-child node.
-          console.log("Unexpected non-#text non-child node!");
+          console.warn("Unexpected non-#text non-child node!");
           return false;
         }
       }
@@ -238,7 +238,7 @@ function wrapLines()
   const contentDiv = document.querySelector("div#content");
   if (!contentDiv)
   {
-    console.log("Failed to find div#content for method signature wrapping!");
+    console.warn("Failed to find div#content for method signature wrapping!");
     return; // Failure to find the content div...
   }
   const contentDivLeftPadding =
@@ -248,7 +248,7 @@ function wrapLines()
   if (isNaN(parseInt(contentDivLeftPadding)) ||
       isNaN(parseInt(contentDivRightPadding)))
   {
-    console.log("Could not compute left or right padding of div#content!");
+    console.warn("Could not compute left or right padding of div#content!");
     return;
   }
 
