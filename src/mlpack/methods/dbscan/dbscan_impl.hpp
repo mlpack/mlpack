@@ -234,7 +234,6 @@ void DBSCAN<RangeSearchType, PointSelectionPolicy>::BatchCluster(
   std::vector<std::vector<size_t>> neighbors;
   std::vector<std::vector<ElemType>> distances;
   Log::Info << "Performing range search." << std::endl;
-  rangeSearch.Train(data);
   rangeSearch.Search(RangeType<ElemType>(ElemType(0.0), radius), neighbors,
       distances);
   Log::Info << "Range search complete." << std::endl;

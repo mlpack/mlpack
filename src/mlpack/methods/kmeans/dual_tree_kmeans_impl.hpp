@@ -148,7 +148,7 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
   // We won't use the KNN class here because we have our own set of rules.
   lastIterationCentroids = centroids;
   using RuleType = DualTreeKMeansRules<DistanceType, Tree>;
-  RuleType rules(nns.ReferenceTree().Dataset(), dataset, assignments,
+  RuleType rules(nns.ReferenceTree()->Dataset(), dataset, assignments,
       upperBounds, lowerBounds, distance, prunedPoints, oldFromNewCentroids,
       visited);
 
@@ -159,7 +159,7 @@ double DualTreeKMeans<DistanceType, MatType, CentroidsType, TreeType>::Iterate(
 
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
-  traverser.Traverse(*tree, nns.ReferenceTree());
+  traverser.Traverse(*tree, *nns.ReferenceTree());
   distanceComputations += rules.BaseCases() + rules.Scores();
 
   DecoalesceTree(*tree);
