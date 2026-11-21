@@ -17,12 +17,12 @@ function clearWraps()
  */
 function insertWrap(signature, insertIndex, numSpaces)
 {
-  var spaces = document.createElement("span");
+  let spaces = document.createElement("span");
   spaces.classList.add("signature_wrap");
   spaces.textContent = " ".repeat(numSpaces);
   signature.insertBefore(spaces, signature.childNodes[insertIndex]);
 
-  var br = document.createElement("br");
+  let br = document.createElement("br");
   br.classList.add("signature_wrap");
   signature.insertBefore(br, spaces);
 }
@@ -60,7 +60,7 @@ function insertWrap(signature, insertIndex, numSpaces)
  */
 function wrapLine(signature, maxNumChars)
 {
-  const firstParen = signature.textContent.indexOf('(');
+  let firstParen = signature.textContent.indexOf('(');
   if (!firstParen)
   {
     console.log("Could not find opening parenthesis of signature: '" +
@@ -74,9 +74,9 @@ function wrapLine(signature, maxNumChars)
 
   // We need to compute the locations of all of the first characters *after*
   // a comma and a space.
-  var argLocs = []
-  var associatedChildNodeIndex = 0;
-  var totalNumChars = 0;
+  let argLocs = []
+  let associatedChildNodeIndex = 0;
+  let totalNumChars = 0;
   while ((totalNumChars < firstParen + 1) &&
          (associatedChildNodeIndex < signature.childNodes.length))
   {
@@ -119,7 +119,7 @@ function wrapLine(signature, maxNumChars)
 
   // First check whether we need to wrap the very first argument---if so,
   // then we have to wrap in a different way.
-  var mustWrap = false;
+  let mustWrap = false;
   if (argLocs[0][1] >= maxNumChars)
   {
     mustWrap = true;
@@ -127,7 +127,7 @@ function wrapLine(signature, maxNumChars)
   }
 
   // Keep track of which line each argument is on.
-  var argLines = []
+  let argLines = []
   argLines.length = argLocs.length;
   argLines.fill(0);
 
@@ -160,10 +160,10 @@ function wrapLine(signature, maxNumChars)
 
   // Now check the average number of arguments per line.  If it's less than
   // three, then we need to wrap everything else too.
-  var argsPerLine = argLines.length / (argLines[argLines.length - 1] + 1);
+  let argsPerLine = argLines.length / (argLines[argLines.length - 1] + 1);
   if (argsPerLine < 2.5)
   {
-    var insertedNodes = 0;
+    let insertedNodes = 0;
     for (let j = 1; j < argLocs.length; ++j)
     {
       // If the argument hasn't been wrapped yet, force-wrap it.
