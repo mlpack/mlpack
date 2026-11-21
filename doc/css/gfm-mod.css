@@ -856,6 +856,14 @@ code {
   border-radius: 3px;
 }
 
+div#content > ul > li > code {
+  display: inline-block;
+}
+
+div#content > ul > li > * {
+  vertical-align: top;
+}
+
 pre {
   word-wrap: normal;
 }
