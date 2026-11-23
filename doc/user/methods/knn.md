@@ -443,9 +443,8 @@ compute quality metrics of the approximate search.
 Find the exact nearest neighbor of every point in the `cloud` dataset.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -472,9 +471,8 @@ Split the `corel-histogram` dataset into two sets, and find the exact nearest
 neighbor in the first set of every point in the second set.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Split the dataset into two equal-sized sets randomly with `Split()`.
 arma::mat referenceSet, querySet;
@@ -517,9 +515,8 @@ Perform approximate single-tree search to find 5 nearest neighbors of the first
 point in a subset of the `LCDM` dataset.
 
 ```c++
-// See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Build a KNN object on the LCDM dataset, and pass with `std::move()` so that
 // we can avoid copying the dataset.  Set the search strategy to single-tree.
@@ -562,9 +559,8 @@ trees---see the [advanced examples](#advanced-examples) for another example that
 does exactly that.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build a tree on the dataset and set the search strategy to the greedy single
 // tree strategy.
@@ -600,9 +596,8 @@ std::cout << "Effective error of greedy search: " << effectiveError << "."
 Build a `KNN` object on the `cloud` dataset and save it to disk.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build the reference tree.
 mlpack::KNN knn(std::move(dataset));
@@ -646,9 +641,8 @@ Compute the 5 approximate nearest neighbors of two subsets of the
 tree to compute the exact neighbors and compute the effective error.
 
 ```c++
-// See https://datasets.mlpack.org/corel-histogram.csv.
 arma::mat dataset;
-mlpack::Load("corel-histogram.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/corel-histogram.csv", dataset);
 
 // Split the covertype dataset into two parts of equal size.
 arma::mat referenceSet, querySet;
@@ -832,9 +826,8 @@ Perform exact nearest neighbor search to find the nearest neighbor of every
 point in the `cloud` dataset, using 32-bit floats to represent the data.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::fmat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -862,9 +855,8 @@ Perform approximate single-tree nearest neighbor search using the Chebyshev
 (L-infinity) distance as the distance metric.
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Construct the KNN object; this will avoid copies via std::move(), and build a
 // kd-tree on the dataset.
@@ -893,9 +885,8 @@ dimensions) to find the exact nearest neighbors of all the points in a tiny
 subset of the 3-dimensional LCDM dataset.
 
 ```c++
-// See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::mat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Construct the KNN object with Octrees.
 mlpack::KNNType<mlpack::EuclideanDistance, mlpack::Octree> knn(
@@ -926,9 +917,8 @@ distance.  Then, compute exact nearest neighbors and the average error and
 recall.
 
 ```c++
-// See https://datasets.mlpack.org/lcdm_tiny.csv.
 arma::fmat dataset;
-mlpack::Load("lcdm_tiny.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/lcdm_tiny.csv", dataset);
 
 // Split the dataset into a query set and a reference set (each with the same
 // size).
@@ -993,9 +983,8 @@ the [simple examples](#simple-examples) section where the default
 better for greedy search!
 
 ```c++
-// See https://datasets.mlpack.org/cloud.csv.
 arma::mat dataset;
-mlpack::Load("cloud.csv", dataset);
+mlpack::Load("http://datasets.mlpack.org/cloud.csv", dataset);
 
 // Build a spill tree on the dataset and set the search strategy to the greedy
 // single tree strategy.  We will build the tree manually, so that we can
