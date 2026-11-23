@@ -33,6 +33,25 @@ namespace mlpack {
  * There are numerous available kernels in the mlpack::kernel namespace (see
  * files in mlpack/core/kernels/) and it is easy to write your own; see other
  * implementations for examples.
+ *
+ * Each `Apply()` overload accepts its own `MatType` (and, where relevant,
+ * `OutMatType`/`VecType`) template parameters, defaulting to `arma::mat`,
+ * `arma::mat`, and `arma::vec` respectively, so that `KernelPCA` can be used
+ * with other element types (e.g. `arma::fmat`) as long as the default
+ * `NaiveKernelRule` is used.  For example:
+ *
+ * @code
+ * arma::fmat data = loadData();
+ * arma::fmat transformedData, eigvec;
+ * arma::fvec eigval;
+ *
+ * KernelPCA<GaussianKernel> kpca;
+ * kpca.Apply(data, transformedData, eigval, eigvec);
+ * @endcode
+ *
+ * Note that `NystroemKernelRule` (and therefore `NystroemMethod`) still only
+ * supports `arma::mat`; only the default (naive) kernel rule has been
+ * extended to support arbitrary element types.
  */
 template <
   typename KernelType,
@@ -62,10 +81,13 @@ class KernelPCA
    * @param eigvec KPCA eigenvectors will be written to this matrix.
    * @param newDimension New dimension for the dataset.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval,
-             arma::mat& eigvec,
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  void Apply(const MatType& data,
+             OutMatType& transformedData,
+             VecType& eigval,
+             OutMatType& eigvec,
              const size_t newDimension);
 
   /**
@@ -76,10 +98,13 @@ class KernelPCA
    * @param eigval KPCA eigenvalues will be written to this vector.
    * @param eigvec KPCA eigenvectors will be written to this matrix.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval,
-             arma::mat& eigvec);
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  void Apply(const MatType& data,
+             OutMatType& transformedData,
+             VecType& eigval,
+             OutMatType& eigvec);
 
   /**
    * Apply Kernel Principal Component Analysis to the provided data set.
@@ -88,9 +113,12 @@ class KernelPCA
    * @param transformedData Matrix to output results into.
    * @param eigval KPCA eigenvalues will be written to this vector.
    */
-  void Apply(const arma::mat& data,
-             arma::mat& transformedData,
-             arma::vec& eigval);
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  void Apply(const MatType& data,
+             OutMatType& transformedData,
+             VecType& eigval);
 
   /**
    * Apply dimensionality reduction using Kernel Principal Component Analysis
@@ -105,7 +133,8 @@ class KernelPCA
    * @param data Data matrix.
    * @param newDimension New dimension for the dataset.
    */
-  void Apply(arma::mat& data, const size_t newDimension);
+  template<typename MatType = arma::mat>
+  void Apply(MatType& data, const size_t newDimension);
 
   //! Get the kernel.
   const KernelType& Kernel() const { return kernel; }

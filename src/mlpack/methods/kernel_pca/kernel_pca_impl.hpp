@@ -28,51 +28,58 @@ KernelPCA<KernelType, KernelRule>::KernelPCA(const KernelType kernel,
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
 template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec,
+template<typename MatType, typename OutMatType, typename VecType>
+void KernelPCA<KernelType, KernelRule>::Apply(const MatType& data,
+                                  OutMatType& transformedData,
+                                  VecType& eigval,
+                                  OutMatType& eigvec,
                                   const size_t newDimension)
 {
+  static_assert(std::is_same_v<typename MatType::elem_type,
+                               typename OutMatType::elem_type>,
+      "KernelPCA::Apply(): data and transformedData must have the same "
+      "element type!");
+
   KernelRule::ApplyKernelMatrix(data, transformedData, eigval,
                                 eigvec, newDimension, kernel);
 
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
   {
-    arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-    transformedData = transformedData - (transformedDataMean *
-        ones<arma::rowvec>(transformedData.n_cols));
+    transformedData.each_col() -= arma::mean(transformedData, 1);
   }
 }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
 template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigval,
-                                  arma::mat& eigvec)
+template<typename MatType, typename OutMatType, typename VecType>
+void KernelPCA<KernelType, KernelRule>::Apply(const MatType& data,
+                                  OutMatType& transformedData,
+                                  VecType& eigval,
+                                  OutMatType& eigvec)
 {
   Apply(data, transformedData, eigval, eigvec, data.n_cols);
 }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
 template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigVal)
+template<typename MatType, typename OutMatType, typename VecType>
+void KernelPCA<KernelType, KernelRule>::Apply(const MatType& data,
+                                  OutMatType& transformedData,
+                                  VecType& eigVal)
 {
-  arma::mat coeffs;
+  OutMatType coeffs;
   Apply(data, transformedData, eigVal, coeffs, data.n_cols);
 }
 
 //! Use KPCA for dimensionality reduction.
 template <typename KernelType, typename KernelRule>
-void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
+template<typename MatType>
+void KernelPCA<KernelType, KernelRule>::Apply(MatType& data,
                                     const size_t newDimension)
 {
-  arma::mat coeffs;
-  arma::vec eigVal;
+  MatType coeffs;
+  typename GetColType<MatType>::type eigVal;
 
   Apply(data, data, eigVal, coeffs, newDimension);
 

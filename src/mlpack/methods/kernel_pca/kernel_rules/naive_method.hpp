@@ -31,15 +31,25 @@ class NaiveKernelRule
    * @param * (rank) Rank to be used for matrix approximation.
    * @param kernel Kernel to be used for computation.
    */
-  static void ApplyKernelMatrix(const arma::mat& data,
-                                arma::mat& transformedData,
-                                arma::vec& eigval,
-                                arma::mat& eigvec,
+  template<typename MatType = arma::mat,
+           typename OutMatType = arma::mat,
+           typename VecType = arma::vec>
+  static void ApplyKernelMatrix(const MatType& data,
+                                OutMatType& transformedData,
+                                VecType& eigval,
+                                OutMatType& eigvec,
                                 const size_t /* rank */,
                                 KernelType kernel = KernelType())
 {
+  static_assert(std::is_same_v<typename MatType::elem_type,
+                               typename OutMatType::elem_type>,
+      "NaiveKernelRule::ApplyKernelMatrix(): data and transformedData must "
+      "have the same element type!");
+
+  using RowVecType = typename GetRowType<OutMatType>::type;
+
   // Construct the kernel matrix.
-  arma::mat kernelMatrix;
+  OutMatType kernelMatrix;
   // Resize the kernel matrix to the right size.
   kernelMatrix.set_size(data.n_cols, data.n_cols);
 
@@ -66,7 +76,7 @@ class NaiveKernelRule
   // centered. Since we actually never work in the feature space we cannot
   // center the data. So, we perform a "psuedo-centering" using the kernel
   // matrix.
-  arma::rowvec rowMean = sum(kernelMatrix, 0) / kernelMatrix.n_cols;
+  RowVecType rowMean = sum(kernelMatrix, 0) / kernelMatrix.n_cols;
   kernelMatrix.each_col() -= sum(kernelMatrix, 1) / kernelMatrix.n_cols;
   kernelMatrix.each_row() -= rowMean;
   kernelMatrix += sum(rowMean) / kernelMatrix.n_cols;
