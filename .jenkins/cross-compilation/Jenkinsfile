@@ -139,7 +139,7 @@ pipeline
                     target_info[env.target]['arch_type'].toLowerCase() +
                     ':latest'
                 alwaysPull true
-                reuseNode true
+                label 'cross-compile'
                 args '-v /home/jenkins/ccache:/opt/ccache -e HOME=/home/jenkins/'
               }
             }
