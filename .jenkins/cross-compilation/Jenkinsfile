@@ -276,6 +276,13 @@ pipeline
                   ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
                 '''
               }
+
+              script
+              {
+                junit(allowEmptyResults: true,
+                      skipPublishingChecks: true,
+                      testResults: '**/reports/mlpack_test.*.junit.xml')
+              }
             }
           }
         }
@@ -285,19 +292,6 @@ pipeline
 
   post
   {
-    always
-    {
-      junit(allowEmptyResults: true,
-            skipPublishingChecks: true,
-            testResults: '**/reports/mlpack_test.*.junit.xml')
-
-      // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: true,
-              deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true)
-    }
-
     success
     {
       script { u.finishCheck('Cross-compilation checks passed.', true) }
