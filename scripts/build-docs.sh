@@ -528,6 +528,9 @@ then
   echo "  ^https://github.com/mlpack/mlpack/pulls[?]q.*$" >> "$output_dir/linkcheckerrc.in";
   # Slack now doesn't allow itself to be crawled, but we know this URL works.
   echo "  ^https://mlpack.slack.com*$" >> "$output_dir/linkcheckerrc.in";
+  # NOTE: this should be removed after
+  # https://github.com/mlpack/examples/pull/250 is merged!
+  echo "  ^https://github.com/mlpack/examples/tree/master/cpp/movement_recognition*$" >> "$output_dir/linkcheckerrc.in";
 
   # Initialize our cache or take the current version of it.
   if [ ! -z ${LINK_CACHE_FILE+x} ];
