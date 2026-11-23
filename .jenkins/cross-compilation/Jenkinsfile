@@ -99,6 +99,7 @@ pipeline
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
                 notFailBuild: true)
+        checkout scm
 
         script
         {
