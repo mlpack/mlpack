@@ -9,7 +9,7 @@ _????-??-??_
  * Templetize Scalar methods to allow using float types (#4229).
 
  * Templatize `KernelPCA` (with the default naive kernel rule) to allow using
-   different element types, such as `arma::fmat` (#TODO).
+   different element types, such as `arma::fmat` (#4288).
 
  * Accelerated `LeakyReLU` ANN Layer (#4174).
 
