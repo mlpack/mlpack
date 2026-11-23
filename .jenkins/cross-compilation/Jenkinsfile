@@ -99,7 +99,6 @@ pipeline
         cleanWs(deleteDirs: true,
                 disableDeferredWipeout: true,
                 notFailBuild: true)
-        checkout scm
 
         script
         {
@@ -163,6 +162,7 @@ pipeline
             {
               script
               {
+                checkout scm
                 u.updateCheckStatus('Building mlpack for ' + env.target + '...')
               }
 
