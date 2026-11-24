@@ -157,7 +157,7 @@ pipeline
               script
               {
                 u = load '.jenkins/utils.groovy'
-                u.updateMatrixJobStatus(env.target, 'Building')
+                u.updateMatrixJobStatus(env.target as String, 'Building')
                 checkout scm
               }
 
@@ -215,7 +215,7 @@ pipeline
 
               script
               {
-                u.updateMatrixJobStatus(env.target, 'Testing')
+                u.updateMatrixJobStatus(env.target as String, 'Testing')
               }
 
               withCredentials([sshUserPrivateKey(
@@ -277,7 +277,7 @@ pipeline
                       skipPublishingChecks: true,
                       testResults: '**/reports/mlpack_test.*.junit.xml')
 
-                u.updateMatrixJobStatus(env.target, 'Done')
+                u.updateMatrixJobStatus(env.target as String, 'Done')
               }
             }
           }
