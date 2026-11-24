@@ -56,41 +56,32 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
 {
   this.name = name
 
-  statuses.eachWithIndex
+  for (it in statuses)
   {
-    it, i ->
-      if (i == 0)
-      {
-        this.matrixStatus[it] = targets
-      }
-      else
-      {
-        this.matrixStatus[it] = []
-      }
+    this.matrixStatus[it] = []
   }
+  this.matrixStatus[statuses[0]] = targets
 
   this.status = ''
-  this.matrixStatus.each
+  for (entry in this.matrixStatus)
   {
-    entry ->
-      if (this.status.size() > 0)
+    if (this.status.size() > 0)
+    {
+      this.status += '; '
+    }
+
+    this.status += entry.key += ": ["
+    def first = true
+    for (it in entry.value)
+    {
+      if (!this.first)
       {
-        this.status += '; '
+        this.status += ", "
       }
 
-      this.status += entry.key += ": ["
-      def first = true
-      entry.value.each
-      {
-        it ->
-          if (!this.first)
-          {
-            this.status += ", "
-          }
-
-          this.status += it
-      }
-      this.status += "]"
+      this.status += it
+    }
+    this.status += "]"
   }
   this.status += "."
 
@@ -103,7 +94,7 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
 
 def updateMatrixJobStatus(String target, String status)
 {
-  
+  this.status = 'hello'
 }
 
 return this

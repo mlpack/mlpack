@@ -2,7 +2,7 @@
 // First, the cross-compilation host compiles mlpack tests for each
 // architecture, and then copies them to the destination host and runs them.
 
-target_info = [
+def target_info = [
   'couscous': [
       'device_name': 'rpi5',
       'arch_type': 'arm64',
