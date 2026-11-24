@@ -96,6 +96,7 @@ pipeline
       {
         script
         {
+          checkout scm
           u = load '.jenkins/utils.groovy'
           // Initialize the Github status to show that all jobs are queued.
           u.initMatrixJobStatus('Cross-compilation checks',
