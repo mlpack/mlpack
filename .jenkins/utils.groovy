@@ -52,16 +52,8 @@ def finishCheck(String status, boolean success)
                 detailsURL: currentBuild.absoluteUrl + 'testReport')
 }
 
-def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
+def prepareMatrixJobStatusString()
 {
-  this.name = name
-  this.matrixStatus = [:]
-  for (it in statuses)
-  {
-    this.matrixStatus[it] = []
-  }
-  this.matrixStatus[statuses[0]] = targets
-
   this.status = ''
   for (entry in this.matrixStatus)
   {
@@ -84,6 +76,19 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
     this.status += "]"
   }
   this.status += "."
+}
+
+def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
+{
+  this.name = name
+  this.matrixStatus = [:]
+  for (it in statuses)
+  {
+    this.matrixStatus[it] = []
+  }
+  this.matrixStatus[statuses[0]] = targets
+
+  prepareMatrixJobStatusString()
 
   publishChecks(name: this.name,
                 status: 'IN_PROGRESS',
@@ -94,7 +99,22 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
 
 def updateMatrixJobStatus(String target, String status)
 {
-  this.status = 'hello'
+  // Find whatever status the target currently has and delete it.
+  for (entry in this.matrixStatus)
+  {
+    entry.value -= target
+  }
+
+  this.matrixStatus[status] += target
+
+  prepareMatrixJobStatusString()
+
+  // TODO: check if we are all finished
+  publishChecks(name: this.name,
+                status: 'IN_PROGRESS',
+                title: this.status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteURL + 'stages')
 }
 
 return this
