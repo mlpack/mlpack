@@ -74,7 +74,7 @@ def initMatrixJobStatus(String name, String statuses_test, String targets_test)
       this.status += '; '
     }
 
-    this.status += entry.key += ": ["
+    this.status += entry.key + ": ["
     def first = true
     for (it in entry.value)
     {
