@@ -102,7 +102,11 @@ def updateMatrixJobStatus(String target, String status)
   // Find whatever status the target currently has and delete it.
   for (entry in this.matrixStatus)
   {
-    this.matrixStatus[entry.key] -= target
+    def index = entry.value.indexOf(target)
+    if (index != -1)
+    {
+      this.matrixStatus[entry.key] -= target
+    }
   }
 
   this.matrixStatus[status] += target
