@@ -71,10 +71,9 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
     }
 
     this.status += entry.key + ": ["
-    def first = true
     for (it in entry.value)
     {
-      if (first == false)
+      if (this.status[-1] != '[')
       {
         this.status += ", "
         first = false
