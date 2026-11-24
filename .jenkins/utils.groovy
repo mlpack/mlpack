@@ -54,28 +54,29 @@ def finishCheck(String status, boolean success)
 
 def prepareMatrixJobStatusString()
 {
-  this.status = ''
+  def local_status = ''
   for (entry in this.matrixStatus)
   {
-    if (this.status.size() > 0)
+    if (local_status.size() > 0)
     {
-      this.status += '; '
+      local_status += '; '
     }
 
-    this.status += entry.key + ": ["
+    local_status += entry.key + ": ["
     for (it in entry.value)
     {
-      if (this.status[-1] != '[')
+      if (local_status[-1] != '[')
       {
-        this.status += ", "
+        local_status += ", "
         first = false
       }
 
-      this.status += it
+      local_status += it
     }
-    this.status += "]"
+    local_status += "]"
   }
-  this.status += "."
+  local_status += "."
+  return local_status
 }
 
 def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
@@ -88,13 +89,14 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
   }
   this.matrixStatus[statuses[0]] = targets
 
-  prepareMatrixJobStatusString()
+  def local_status = prepareMatrixJobStatusString()
 
   publishChecks(name: this.name,
                 status: 'IN_PROGRESS',
-                title: this.status,
-                text: this.status,
+                title: local_status,
+                text: local_status,
                 detailsURL: currentBuild.absoluteUrl + 'stages')
+  this.status = local_status
 }
 
 def updateMatrixJobStatus(String target, String status)
