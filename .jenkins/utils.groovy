@@ -78,25 +78,6 @@ def prepareMatrixJobStatusString()
   this.status += "."
 }
 
-def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
-{
-  this.name = name
-  this.matrixStatus = [:]
-  for (it in statuses)
-  {
-    this.matrixStatus[it] = []
-  }
-  this.matrixStatus[statuses[0]] = targets
-
-  prepareMatrixJobStatusString()
-
-  publishChecks(name: this.name,
-                status: 'IN_PROGRESS',
-                title: this.status,
-                text: this.status,
-                detailsURL: currentBuild.absoluteUrl + 'stages')
-}
-
 //def updateMatrixJobStatus(String target, String status)
 def updateMatrixJobStatus()
 {
@@ -116,6 +97,25 @@ def updateMatrixJobStatus()
   //              title: this.status,
   //              text: this.status,
   //              detailsURL: currentBuild.absoluteURL + 'stages')
+}
+
+def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
+{
+  this.name = name
+  this.matrixStatus = [:]
+  for (it in statuses)
+  {
+    this.matrixStatus[it] = []
+  }
+  this.matrixStatus[statuses[0]] = targets
+
+  prepareMatrixJobStatusString()
+
+  publishChecks(name: this.name,
+                status: 'IN_PROGRESS',
+                title: this.status,
+                text: this.status,
+                detailsURL: currentBuild.absoluteUrl + 'stages')
 }
 
 return this
