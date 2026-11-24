@@ -78,9 +78,10 @@ def initMatrixJobStatus(String name, String statuses_test, String targets_test)
     def first = true
     for (it in entry.value)
     {
-      if (!this.first)
+      if (!first)
       {
         this.status += ", "
+        first = false
       }
 
       this.status += it
