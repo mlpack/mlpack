@@ -113,14 +113,14 @@ def updateMatrixJobStatus(String target, String status)
 
   this.matrixStatus[status] += target
 
-  prepareMatrixJobStatusString()
+  def local_status = prepareMatrixJobStatusString()
 
   // TODO: check if we are all finished
   publishChecks(name: this.name,
                 status: 'IN_PROGRESS',
-                title: this.status,
-                text: this.status,
-                detailsURL: currentBuild.absoluteURL + 'stages')
+                title: local_status,
+                text: local_status,
+                detailsURL: currentBuild.absoluteUrl + 'stages')
 }
 
 return this
