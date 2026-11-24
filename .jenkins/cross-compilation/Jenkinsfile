@@ -100,7 +100,7 @@ pipeline
           u = load '.jenkins/utils.groovy'
           // Initialize the Github status to show that all jobs are queued.
           u.initMatrixJobStatus('Cross-compilation checks',
-              ['Queued', 'Building', 'Testing', 'Done'], target_info.keySet() as List[String])
+              ['Queued', 'Building', 'Testing', 'Done'], target_info.keySet() as List<String>)
         }
       }
     }
