@@ -2,7 +2,7 @@
 def name = ''
 def status = ''
 def time = 0
-def matrixStatus = []
+def matrixStatus = [:]
 
 def startCheck(String name, String status)
 {
@@ -59,7 +59,7 @@ def initMatrixJobStatus(String name, String statuses_test, String targets_test)
   def targets = [targets_test]
 
   this.name = name
-  this.matrixStatus = []
+  this.matrixStatus = [:]
   for (it in statuses)
   {
     this.matrixStatus[it] = []
