@@ -88,6 +88,18 @@ pipeline
 
   stages
   {
+    stage('Job setup')
+    {
+      script
+      {
+        u = load '.jenkins/utils.groovy'
+        // Initialize the Github status to show that all jobs are queued.
+        u.initMatrixJobStatus('Cross-compilation checks',
+            ['Queued', 'Building', 'Testing', 'Done'],
+            target_info.keySet())
+      }
+    }
+
     stage('Cross-compilation checks')
     {
       matrix
@@ -140,9 +152,8 @@ pipeline
               script
               {
                 u = load '.jenkins/utils.groovy'
-                u.startCheck('Cross-compilation checks', 'Setting up workspace...')
+                u.updateMatrixJobStatus(env.target, 'Building')
                 checkout scm
-                u.updateCheckStatus('Building mlpack for ' + env.target + '...')
               }
 
               // Specifically use bash so `time` is available.
@@ -199,7 +210,7 @@ pipeline
 
               script
               {
-                u.updateCheckStatus('Testing mlpack on ' + env.target + '...')
+                u.updateMatrixJobStatus(env.target, 'Testing')
               }
 
               withCredentials([sshUserPrivateKey(
@@ -260,6 +271,8 @@ pipeline
                 junit(allowEmptyResults: true,
                       skipPublishingChecks: true,
                       testResults: '**/reports/mlpack_test.*.junit.xml')
+
+                u.updateMatrixJobStatus(env.target, 'Done')
               }
             }
           }
