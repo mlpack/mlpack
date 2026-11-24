@@ -52,11 +52,8 @@ def finishCheck(String status, boolean success)
                 detailsURL: currentBuild.absoluteUrl + 'testReport')
 }
 
-//def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
-def initMatrixJobStatus(String name, List<String> statuses, String targets_test)
+def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
 {
-  def targets = [targets_test]
-
   this.name = name
   this.matrixStatus = [:]
   for (it in statuses)
