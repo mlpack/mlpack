@@ -55,11 +55,11 @@ def finishCheck(String status, boolean success)
 //def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
 def initMatrixJobStatus(String name, String statuses_test, String targets_test)
 {
-  statuses = [statuses_test]
-  targets = [targets_test]
+  def statuses = [statuses_test]
+  def targets = [targets_test]
 
   this.name = name
-
+  this.matrixStatus = []
   for (it in statuses)
   {
     this.matrixStatus[it] = []
