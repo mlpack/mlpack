@@ -97,7 +97,8 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
                 detailsURL: currentBuild.absoluteUrl + 'stages')
 }
 
-def updateMatrixJobStatus(String target, String status)
+//def updateMatrixJobStatus(String target, String status)
+def updateMatrixJobStatus()
 {
   // Find whatever status the target currently has and delete it.
   //for (entry in this.matrixStatus)

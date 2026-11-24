@@ -157,7 +157,7 @@ pipeline
               script
               {
                 u = load '.jenkins/utils.groovy'
-                u.updateMatrixJobStatus('couscous', 'Building')
+                u.updateMatrixJobStatus()
                 checkout scm
               }
 
