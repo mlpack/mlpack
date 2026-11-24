@@ -52,7 +52,7 @@ def finishCheck(String status, boolean success)
                 detailsURL: currentBuild.absoluteUrl + 'testReport')
 }
 
-def initMatrixJobStatus(String name, ArrayList<String> statuses, ArrayList<String> targets)
+def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
 {
   this.name = name
 
