@@ -90,6 +90,8 @@ pipeline
   {
     stage('Job setup')
     {
+      agent any
+
       steps
       {
         script
