@@ -1,0 +1,154 @@
+/**
+ * @file methods/tsne/tsne_main.cpp
+ * @author Ranjodh Singh
+ *
+ * t-SNE CLI.
+ *
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
+#undef BINDING_NAME
+#define BINDING_NAME tsne
+
+#include <mlpack/core.hpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "tsne.hpp"
+#include "tsne_methods.hpp"
+
+using namespace mlpack;
+using namespace mlpack::util;
+using namespace std;
+
+// Program Name.
+BINDING_USER_NAME("t-distributed Stochastic Neighbor Embedding");
+
+// Short description.
+BINDING_SHORT_DESC(
+    "t-distributed stochastic neighbor embedding (t-SNE) "
+    "is a statistical method for visualizing high-dimensional data "
+    "by giving each data point a location in a two- or three-dimensional map.");
+
+// Long description.
+BINDING_LONG_DESC(
+    "The t-SNE algorithm comprises two main stages. "
+    "First, t-SNE constructs a probability distribution over pairs of "
+    "high-dimensional objects in such a way that similar objects are "
+    "assigned a higher probability while dissimilar points are assigned "
+    "a lower probability. Second, t-SNE defines a similar probability "
+    "distribution over the points in the low-dimensional map, and it "
+    "minimizes the Kullback-Leibler divergence (KL divergence) "
+    "between the two distributions with respect to the locations of the "
+    "points in the map.");
+
+// Example.
+BINDING_EXAMPLE(
+    "For example, to reduce " + PRINT_DATASET("data") + " to two dimensions "
+    "using the Barnes-Hut method with PCA initialization, automatic step size, "
+    "a theta value of 0.5, a perplexity of 30, an exaggeration of 12, and a "
+    "maximum of 500 iterations, and to save the resulting embedding to " +
+    PRINT_DATASET("data_mod") + ", use the following command: \n\n" +
+    PRINT_CALL("tsne", "input", "data", "output_dimensions", 2, "method",
+    "barnes-hut", "init", "pca", "step_size", 0.0, "theta", 0.5,
+    "perplexity", 30.0, "exaggeration", 12.0, "max_iterations", 500,
+    "output", "data_mod"));
+
+// See also...
+BINDING_SEE_ALSO("t-distributed Stochastic Neighbor Embedding on Wikipedia",
+                 "https://en.wikipedia.org/wiki/"
+                 "T-distributed_stochastic_neighbor_embedding");
+BINDING_SEE_ALSO("Visualizing Data using t-SNE",
+                 "https://www.jmlr.org/papers/volume9/"
+                 "vandermaaten08a/vandermaaten08a.pdf");
+BINDING_SEE_ALSO("Accelerating t-SNE using Tree-Based Algorithms",
+                 "https://www.jmlr.org/papers/volume15/"
+                 "vandermaaten14a/vandermaaten14a.pdf");
+BINDING_SEE_ALSO("TSNE C++ class documentation", "@doc/user/methods/tsne.md");
+
+// Parameters for program.
+PARAM_MATRIX_IN("input", "Input dataset to perform t-SNE on.", "i");
+PARAM_MATRIX_OUT("output", "Output path to save embedding to.", "o");
+PARAM_INT_IN("output_dimensions",
+    "Dimensionality of the embedded space.", "d", 2);
+PARAM_DOUBLE_IN("perplexity",
+    "Perplexity regulates the balance between local and global "
+    "structure preservation, typically set between 5 and 50.",
+    "p", 30.0);
+PARAM_DOUBLE_IN("exaggeration",
+    "Amplifies pairwise similarities during the initial optimization phase. "
+    "This helps form tighter clusters and clearer separation between them. "
+    "A higher value increases the spacing between clusters, but if the cost "
+    "function grows during initial iterations, reduce this value or "
+    "lower the step size.", "e", 12.0);
+PARAM_DOUBLE_IN("step_size",
+    "Step size for the optimizer. If the given value is zero or negative, "
+    "the step size is set to max(50.0, N / exaggeration / 4.0), where N is "
+    "the number of points in the dataset.", "s", 0.0);
+PARAM_INT_IN("max_iterations", "Maximum number of iterations.", "n", 1000);
+PARAM_DOUBLE_IN("tolerance", "Minimum improvement in the objective value "
+    "required to perform another iteration.", "l", 1e-12);
+PARAM_STRING_IN("init",
+    "Initialization method for the output embedding. Options: 'pca' (default) "
+    "or 'random'. 'pca' is preferred since it improves both speed and "
+    "quality. Unlike some implementations that first reduce input to ~50 "
+    "dimensions with PCA, here PCA is used only to initialize the output "
+    "embedding matrix using 'output_dimensions' components.", "r", "pca");
+PARAM_STRING_IN("method",
+    "Gradient computation method. Options are: 'exact', 'dual-tree', "
+    "'barnes-hut' (default). Please see the references for details about "
+    "these methods and their trade-offs.", "m", "barnes-hut");
+PARAM_DOUBLE_IN("theta",
+    "Theta regulates the trade-off between speed and accuracy for the "
+    "'barnes-hut' and 'dual-tree' methods. Higher values of theta result "
+    "in coarser approximations, and the optimal value depends on the chosen "
+    "methods.", "t", 0.5);
+
+
+//! Run TSNE on the specified dataset with the given policy.
+template <typename TSNEMethod, typename MatType>
+void RunTSNE(
+    util::Params& params, util::Timers& /* timers */, MatType& dataset)
+{
+  TSNE<TSNEMethod> tsne(
+      params.Get<int>("output_dimensions"),
+      params.Get<double>("perplexity"),
+      params.Get<double>("exaggeration"),
+      params.Get<double>("step_size"),
+      params.Get<int>("max_iterations"),
+      params.Get<double>("tolerance"),
+      params.Get<std::string>("init"),
+      params.Get<double>("theta"));
+
+  Log::Info << "Running t-SNE optimization..." << endl;
+  tsne.Embed(params.Get<MatType>("input"), dataset);
+  Log::Info << "t-SNE optimization completed." << endl;
+}
+
+// Binding Function
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+{
+  arma::mat dataset;
+
+  const std::string method = params.Get<std::string>("method");
+  if (method == "exact")
+  {
+    RunTSNE<ExactTSNE>(params, timers, dataset);
+  }
+  else if (method == "dual-tree")
+  {
+    RunTSNE<DualTreeTSNE>(params, timers, dataset);
+  }
+  else if (method == "barnes-hut")
+  {
+    RunTSNE<BarnesHutTSNE>(params, timers, dataset);
+  }
+  else
+  {
+    throw std::invalid_argument("invalid method type");
+  }
+
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(dataset);
+}
