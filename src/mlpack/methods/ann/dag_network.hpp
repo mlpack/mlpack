@@ -110,7 +110,8 @@ class DAGNetwork
   using CubeType = typename GetCubeType<MatType>::type;
 
  private:
-  // Helper trait to determine if the first variadic argument is convertible to std::string.
+  // Helper trait to determine if the first variadic argument is convertible to
+  // std::string.
   template <typename... T>
   struct FirstArgIsString : std::false_type {};
 
@@ -191,7 +192,8 @@ class DAGNetwork
   size_t Add(LayerType&& layer,
              typename std::enable_if_t<
                  !std::is_pointer_v<std::remove_reference_t<LayerType>> &&
-                 !std::is_convertible_v<std::decay_t<LayerType>, std::string>>* = 0)
+                 !std::is_convertible_v<std::decay_t<LayerType>,
+                                        std::string>>* = 0)
   {
     using NewLayerType =
         typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
@@ -215,7 +217,8 @@ class DAGNetwork
              LayerType&& layer,
              typename std::enable_if_t<
                  !std::is_pointer_v<std::remove_reference_t<LayerType>> &&
-                 !std::is_convertible_v<std::decay_t<LayerType>, std::string>>* = 0)
+                 !std::is_convertible_v<std::decay_t<LayerType>,
+                                        std::string>>* = 0)
   {
     using NewLayerType =
         typename std::remove_cv_t<std::remove_reference_t<LayerType>>;
@@ -266,8 +269,10 @@ class DAGNetwork
    * Create an edge between two layers. If the child node expects multiple
    * parents, the child must have been added to the network with an axis.
    *
-   * @param parentNodeId The parent node whose output is the input to `childNodeId`.
-   * @param childNodeId The child node whose input will come from `parentNodeId`.
+   * @param parentNodeId The parent node whose output is the input to
+   *     `childNodeId`.
+   * @param childNodeId The child node whose input will come from
+   *     `parentNodeId`.
    */
   void Connect(size_t parentNodeId, size_t childNodeId);
 
@@ -662,7 +667,8 @@ class DAGNetwork
   {
     if (name.empty())
     {
-      throw std::invalid_argument("DAGNetwork::Add(): Layer name cannot be empty.");
+      throw std::invalid_argument(
+          "DAGNetwork::Add(): Layer name cannot be empty.");
     }
     if (layerNames.find(name) != layerNames.end())
     {
@@ -949,8 +955,10 @@ class DAGNetwork
 } // namespace mlpack
 
 CEREAL_TEMPLATE_CLASS_VERSION(
-    (typename OutputLayerType, typename InitializationRuleType, typename MatType),
-    (mlpack::DAGNetwork<OutputLayerType, InitializationRuleType, MatType>), (1));
+    (typename OutputLayerType, typename InitializationRuleType,
+     typename MatType),
+    (mlpack::DAGNetwork<OutputLayerType, InitializationRuleType, MatType>),
+    (1));
 
 #include "dag_network_impl.hpp"
 

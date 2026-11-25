@@ -1053,7 +1053,8 @@ TEST_CASE("NamedLayersExceptionsTest", "[DAGNetworkTest]")
   REQUIRE_THROWS_AS(model.Connect("conv1", "ghost"), std::invalid_argument);
 
   // Setting connection/axis on nonexistent layers.
-  REQUIRE_THROWS_AS(model.SetConnection("ghost", ADDITION), std::invalid_argument);
+  REQUIRE_THROWS_AS(model.SetConnection("ghost", ADDITION),
+      std::invalid_argument);
   REQUIRE_THROWS_AS(model.SetAxis("ghost", 0), std::invalid_argument);
 }
 
