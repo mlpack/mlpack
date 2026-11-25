@@ -278,12 +278,12 @@ pipeline
               {
                 success
                 {
-                  u.updateMatrixJobStatus(env.target, 'passed', true)
+                  script { u.updateMatrixJobStatus(env.target, 'passed', true) }
                 }
 
                 failure
                 {
-                  u.updateMatrixJobStatus(env.target, 'failed', true)
+                  script { u.updateMatrixJobStatus(env.target, 'failed', true) }
                 }
               }
             }
