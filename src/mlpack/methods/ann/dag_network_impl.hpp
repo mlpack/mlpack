@@ -50,6 +50,8 @@ DAGNetwork<
     parentsList(other.parentsList),
     layerAxes(other.layerAxes),
     layerConnections(other.layerConnections),
+    layerNames(other.layerNames),
+    layerIndexNames(other.layerIndexNames),
 
     parameters(other.parameters),
     inputDimensions(other.inputDimensions),
@@ -104,6 +106,8 @@ DAGNetwork<
 
   parentsList = std::move(other.parentsList);
   childrenList = std::move(other.childrenList);
+  layerNames = std::move(other.layerNames);
+  layerIndexNames = std::move(other.layerIndexNames);
 }
 
 template<typename OutputLayerType,
@@ -127,6 +131,8 @@ DAGNetwork<
     childrenList = other.childrenList;
     layerAxes = other.layerAxes;
     layerConnections = other.layerConnections;
+    layerNames = other.layerNames;
+    layerIndexNames = other.layerIndexNames;
 
     parameters = other.parameters;
     inputDimensions = other.inputDimensions;
@@ -172,6 +178,8 @@ DAGNetwork<OutputLayerType,
     childrenList = std::move(other.childrenList);
     layerAxes = std::move(other.layerAxes);
     layerConnections = std::move(other.layerConnections);
+    layerNames = std::move(other.layerNames);
+    layerIndexNames = std::move(other.layerIndexNames);
 
     parameters = std::move(other.parameters);
     inputDimensions = std::move(other.inputDimensions);
@@ -303,6 +311,78 @@ void DAGNetwork<
 
   validOutputDimensions = false;
   layerMemoryIsSet = false;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetAxis(const std::string& layerName, size_t concatAxis)
+{
+  auto it = layerNames.find(layerName);
+  if (it == layerNames.end())
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetAxis(): layer '"
+        << layerName << "' does not exist in the network.";
+    throw std::invalid_argument(errMessage.str());
+  }
+
+  SetAxis(it->second, concatAxis);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::SetConnection(const std::string& layerName, ConnectionTypes connection)
+{
+  auto it = layerNames.find(layerName);
+  if (it == layerNames.end())
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::SetConnection(): layer '"
+        << layerName << "' does not exist in the network.";
+    throw std::invalid_argument(errMessage.str());
+  }
+
+  SetConnection(it->second, connection);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename MatType>
+void DAGNetwork<
+    OutputLayerType,
+    InitializationRuleType,
+    MatType
+>::Connect(const std::string& parentName, const std::string& childName)
+{
+  auto itParent = layerNames.find(parentName);
+  if (itParent == layerNames.end())
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::Connect(): Parent layer '"
+        << parentName << "' does not exist in the network.";
+    throw std::invalid_argument(errMessage.str());
+  }
+
+  auto itChild = layerNames.find(childName);
+  if (itChild == layerNames.end())
+  {
+    std::ostringstream errMessage;
+    errMessage << "DAGNetwork::Connect(): Child layer '"
+        << childName << "' does not exist in the network.";
+    throw std::invalid_argument(errMessage.str());
+  }
+
+  Connect(itParent->second, itChild->second);
 }
 
 template<typename OutputLayerType,
@@ -1591,7 +1671,7 @@ void DAGNetwork<
     OutputLayerType,
     InitializationRuleType,
     MatType
->::serialize(Archive& ar, const uint32_t /* version */)
+>::serialize(Archive& ar, const uint32_t version)
 {
   // Note: if you define MLPACK_ANN_IGNORE_SERIALIZATION_WARNING, you had
   // better ensure that every layer you are serializing has had
@@ -1607,6 +1687,7 @@ void DAGNetwork<
     }
 
     (void) ar;
+    (void) version;
   #endif
 
   #if !defined(MLPACK_ENABLE_ANN_SERIALIZATION_FMAT) && \
@@ -1619,6 +1700,7 @@ void DAGNetwork<
     }
 
     (void) ar;
+    (void) version;
   #endif
 
   #if defined(MLPACK_ENABLE_ANN_SERIALIZATION) || \
@@ -1638,6 +1720,17 @@ void DAGNetwork<
     ar(CEREAL_NVP(parameters));
 
     ar(CEREAL_NVP(inputDimensions));
+
+    if (version > 0)
+    {
+      ar(CEREAL_NVP(layerNames));
+      ar(CEREAL_NVP(layerIndexNames));
+    }
+    else if (cereal::is_loading<Archive>())
+    {
+      layerNames.clear();
+      layerIndexNames.assign(network.size(), "");
+    }
 
     // If we are loading, we need to initialize the weights.
     if (cereal::is_loading<Archive>())
