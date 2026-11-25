@@ -3,6 +3,7 @@ def name = ''
 def status = ''
 def time = 0
 def matrixStatus = [:]
+def matrixRunning = []
 
 def startCheck(String name, String status)
 {
@@ -88,6 +89,7 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
     this.matrixStatus[it] = []
   }
   this.matrixStatus[statuses[0]] = targets
+  this.matrixRunning = targets
 
   def local_status = prepareMatrixJobStatusString()
 
@@ -99,7 +101,7 @@ def initMatrixJobStatus(String name, List<String> statuses, List<String> targets
   this.status = local_status
 }
 
-def updateMatrixJobStatus(String target, String status)
+def updateMatrixJobStatus(String target, String status, boolean finished)
 {
   // Find whatever status the target currently has and delete it.
   for (entry in this.matrixStatus)
@@ -113,9 +115,32 @@ def updateMatrixJobStatus(String target, String status)
 
   this.matrixStatus[status] += target
 
-  def local_status = prepareMatrixJobStatusString()
+  if (finished)
+  {
+    def index = this.matrixRunning.indexOf(target)
+    if (index != -1)
+    {
+      this.matrixRunning -= target
+    }
+  }
 
-  // TODO: check if we are all finished
+  def local_status = prepareMatrixJobStatusString()
+  def job_status = 'IN_PROGRESS'
+  // Set the job status correctly if we are finished.
+  if (this.matrixRunning.empty)
+  {
+    // Check if any of the jobs failed.
+    if (this.matrixStatus.containsKey("failed") &&
+        !this.matrixStatus["failed"].empty)
+    {
+      job_status = 'FAILURE'
+    }
+    else
+    {
+      job_status = 'SUCCESS'
+    }
+  }
+
   publishChecks(name: this.name,
                 status: 'IN_PROGRESS',
                 title: local_status,

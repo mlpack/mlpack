@@ -100,7 +100,7 @@ pipeline
           u = load '.jenkins/utils.groovy'
           // Initialize the Github status to show that all jobs are queued.
           u.initMatrixJobStatus('Cross-compilation checks',
-              ['Queued', 'building', 'testing', 'done'], target_info.keySet() as List<String>)
+              ['Queued'], target_info.keySet() as List<String>)
         }
       }
     }
@@ -156,7 +156,7 @@ pipeline
             {
               script
               {
-                u.updateMatrixJobStatus(env.target, 'building')
+                u.updateMatrixJobStatus(env.target, 'building', false)
                 checkout scm
               }
 
@@ -212,10 +212,7 @@ pipeline
                 ccache -s;
               '''
 
-              script
-              {
-                u.updateMatrixJobStatus(env.target, 'testing')
-              }
+              script { u.updateMatrixJobStatus(env.target, 'testing', false) }
 
               withCredentials([sshUserPrivateKey(
                   credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
@@ -275,8 +272,19 @@ pipeline
                 junit(allowEmptyResults: true,
                       skipPublishingChecks: true,
                       testResults: '**/reports/mlpack_test.*.junit.xml')
+              }
 
-                u.updateMatrixJobStatus(env.target, 'done')
+              post
+              {
+                success
+                {
+                  u.updateMatrixJobStatus(env.target, 'passed', true)
+                }
+
+                failure
+                {
+                  u.updateMatrixJobStatus(env.target, 'failed', true)
+                }
               }
             }
           }
