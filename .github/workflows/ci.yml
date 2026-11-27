@@ -244,9 +244,10 @@ jobs:
           nuget install OpenBLAS -o deps
           nuget install ensmallen -o deps -Version 2.17.0
           vcpkg install zlib:x64-windows
+          Get-ChildItem -Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\" -Force -Recurse
           # Verify the zlib library, header, and DLL exist.
-          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib")) {
-            Write-Error "z.lib not found after vcpkg install!"
+          if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\libz.lib")) {
+            Write-Error "libz.lib not found after vcpkg install!"
             exit 1
           }
           if (-not (Test-Path "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include\zlib.h")) {
@@ -260,7 +261,7 @@ jobs:
             exit 1
           }
           # Export the actual paths so later bash steps can use them.
-          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_LIB_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\z.lib"
+          Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_LIB_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\lib\libz.lib"
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_INCLUDE_PATH=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\include"
           Add-Content -Path $env:GITHUB_ENV -Value "ZLIB_BIN_DIR=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin"
           # Delete all ensmallen dependencies including armadillo headers, we do not need them here.
