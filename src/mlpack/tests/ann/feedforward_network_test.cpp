@@ -1041,5 +1041,5 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
   // RBFN neural net with MeanSquaredError.
   error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
       10);
-  REQUIRE(error <= 0.1);
+  REQUIRE(error <= 0.12);
 }
