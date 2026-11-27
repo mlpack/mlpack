@@ -4,6 +4,11 @@
 
 _????-??-??_
 
+ * Fix an out-of-bounds read when loading an image whose channel count differs
+   from the requested one (e.g. an RGBA image with the default 3-channel
+   request), and free the decoded buffer on the dimension-mismatch error path
+   (#4290).
+
  * Add support for caching downloaded datasets to `Load()` (#4103).
 
  * Templetize Scalar methods to allow using float types (#4229).
