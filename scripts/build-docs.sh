@@ -238,6 +238,7 @@ create_template_header()
   <link type="text/css" rel="stylesheet" href="LINKROOTgfm-mod.css">
   <link type="text/css" rel="stylesheet" href="LINKROOTrouge-github-mod.css">
   <title>mlpack documentation</title>
+  <script type="text/javascript" src="LINKROOTwrap_lines.js"></script>
 </head>
 <body>
 EOF
@@ -399,6 +400,7 @@ fi
 rm -rf "$output_dir";
 mkdir -p "$output_dir";
 cp -v doc/css/* "$output_dir";
+cp -v doc/js/* "$output_dir";
 mkdir -p "$output_dir/img/";
 cp -v doc/img/* "$output_dir/img/";
 mkdir -p "$output_dir/tutorials/res/";
