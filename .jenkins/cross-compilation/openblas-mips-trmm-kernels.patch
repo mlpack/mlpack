@@ -1,0 +1,45 @@
+Ensure that MIPS24K uses the generic TRMM kernels instead of the generic GEMM
+kernels.  (See also https://github.com/OpenMathLib/OpenBLAS/pull/6289.)  When
+the incorrect GEMM kernels are used, `dtrmm_()` will return incorrect results,
+which can bubble up to mlpack in the form of incorrect `svd()` results from
+Armadillo and similar issues.
+
+---
+ kernel/Makefile.L3       | 4 ++++
+ kernel/mips/KERNEL.P5600 | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/kernel/Makefile.L3 b/kernel/Makefile.L3
+index 29f9bec8e..48409372e 100644
+--- a/kernel/Makefile.L3
++++ b/kernel/Makefile.L3
+@@ -79,6 +79,10 @@ USE_TRMM = 1
+ endif
+ endif
+ 
++ifeq ($(ARCH), mips)
++USE_TRMM = 1
++endif
++
+ ifneq ($(DYNAMIC_ARCH), 1)
+ ifeq ($(TARGET), MIPS64_GENERIC)
+ USE_TRMM = 1
+diff --git a/kernel/mips/KERNEL.P5600 b/kernel/mips/KERNEL.P5600
+index 72400f79e..cdedb89c4 100644
+--- a/kernel/mips/KERNEL.P5600
++++ b/kernel/mips/KERNEL.P5600
+@@ -113,6 +113,11 @@ CGEMVTKERNEL = ../arm/zgemv_t.c
+ ZGEMVTKERNEL = ../arm/zgemv_t.c
+ endif
+ 
++STRMMKERNEL = ../generic/trmmkernel_2x2.c
++DTRMMKERNEL = ../generic/trmmkernel_2x2.c
++CTRMMKERNEL = ../generic/ztrmmkernel_2x2.c
++ZTRMMKERNEL = ../generic/ztrmmkernel_2x2.c
++
+ ifndef NO_MSA
+ SGEMMKERNEL    = ../mips/sgemm_kernel_8x8_msa.c
+ SGEMMONCOPY    = ../mips/sgemm_ncopy_8_msa.c
+-- 
+2.55.0
+

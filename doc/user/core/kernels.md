@@ -30,10 +30,10 @@ mlpack provides:
 <!-- TODO: document everything below -->
 
  * [`KDE`](/src/mlpack/methods/kde/kde.hpp)
- * [`MeanShift`](/src/mlpack/methods/mean_shift/mean_shift.hpp)
- * [`KernelPCA`](/src/mlpack/methods/kernel_pca/kernel_pca.hpp)
+ * [`MeanShift`](../methods/mean_shift.md)
+ * [`KernelPCA`](../methods/kernel_pca.md)
  * [`FastMKS`](/src/mlpack/methods/fastmks/fastmks.hpp)
- * [`NystroemMethod`](/src/mlpack/methods/nystroem_method/nystroem_method.hpp)
+ * [`NystroemMethod`](../methods/nystroem_method.md)
 
 ## `GaussianKernel`
 

@@ -28,12 +28,17 @@ class OrderedSelection
    * @param m Number of points to select.
    * @return Indices of selected points from the dataset.
    */
-  static const arma::Col<size_t> Select(const arma::mat& /* data */,
+  template<typename MatType>
+  static const arma::Col<size_t> Select(const MatType& /* data */,
                                         const size_t m)
   {
     // This generates [0 1 2 3 ... (m - 1)].
     return arma::linspace<arma::Col<size_t> >(0, m - 1, m);
   }
+
+  // Serialize the object (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace mlpack

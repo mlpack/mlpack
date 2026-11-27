@@ -28,7 +28,8 @@ class RandomSelection
    * @param m Number of points to select.
    * @return Indices of selected points from the dataset.
    */
-  static const arma::Col<size_t> Select(const arma::mat& data, const size_t m)
+  template<typename MatType>
+  static const arma::Col<size_t> Select(const MatType& data, const size_t m)
   {
     arma::Col<size_t> selectedPoints(m);
     for (size_t i = 0; i < m; ++i)
@@ -36,6 +37,10 @@ class RandomSelection
 
     return selectedPoints;
   }
+
+  // Serialize the object (nothing to do).
+  template<typename Archive>
+  void serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace mlpack
