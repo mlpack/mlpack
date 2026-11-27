@@ -54,10 +54,17 @@ bool LoadImage(const std::vector<std::string>& files,
   unsigned char* imageBuf = nullptr;
   size_t i = 0;
 
+  // The channel count requested by the caller (0 means "use whatever the file
+  // has"). stb delivers this many channels per pixel when it is nonzero, while
+  // tempChannels reports the file's original channel count, which is not the
+  // size of the returned buffer. Sizing the matrix from tempChannels reads past
+  // the buffer when the two differ (e.g. an RGBA file loaded as RGB).
+  const size_t requestedChannels = opts.Channels();
+
   while (i < files.size())
   {
     imageBuf = stbi_load(files.at(i).c_str(), &tempWidth, &tempHeight,
-        &tempChannels, opts.Channels());
+        &tempChannels, requestedChannels);
     if (!imageBuf)
     {
       std::stringstream oss;
@@ -65,19 +72,25 @@ bool LoadImage(const std::vector<std::string>& files,
               << stbi_failure_reason();
       return HandleError(oss, opts);
     }
+
+    // Channels actually present in the returned buffer.
+    const size_t loadedChannels = (requestedChannels != 0) ?
+        requestedChannels : (size_t) tempChannels;
+
     if (opts.Width() == 0 || opts.Height() == 0)
     {
       opts.Width() = tempWidth;
       opts.Height() = tempHeight;
-      opts.Channels() = tempChannels;
+      opts.Channels() = loadedChannels;
     }
     dimension = opts.Width() * opts.Height() * opts.Channels();
     images.set_size(dimension, files.size());
 
     if ((size_t) tempWidth != opts.Width() ||
         (size_t) tempHeight != opts.Height() ||
-        (size_t) tempChannels != opts.Channels())
+        loadedChannels != opts.Channels())
     {
+      stbi_image_free(imageBuf);
       std::stringstream oss;
       oss << "Load(): dimension mismatch: in the case of "
           << "several images, please check that all the images have the same "

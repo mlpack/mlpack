@@ -110,6 +110,49 @@ TEST_CASE("LoadPNGImageTestNoFormat", "[ImageLoadTest]")
 }
 
 /**
+ * Loading an RGBA (4-channel) image with the default 3-channel request must not
+ * read past the decoded buffer: stb returns a 3-channel buffer but reports the
+ * original 4 channels, and the loader used to size the matrix from the latter.
+ */
+TEST_CASE("LoadImageChannelConversion", "[ImageLoadTest]")
+{
+  // Build and save a 4-channel RGBA image.
+  ImageInfo saveOpts(6, 4, 4, 90);
+  const size_t rgbaDim = saveOpts.Width() * saveOpts.Height() *
+      saveOpts.Channels();
+  arma::Mat<uint8_t> rgba =
+      arma::randi<arma::Mat<uint8_t>>(rgbaDim, 1, arma::distr_param(0, 255));
+  REQUIRE(Save("rgba_test.png", rgba, saveOpts) == true);
+
+  // Default load requests 3 channels; the result must be RGB-sized, not RGBA.
+  arma::Mat<uint8_t> rgb;
+  ImageInfo opts;
+  REQUIRE(Load("rgba_test.png", rgb, opts) == true);
+  REQUIRE(opts.Channels() == 3);
+  REQUIRE(rgb.n_rows == opts.Width() * opts.Height() * 3);
+
+  // Forcing 4 channels round-trips the original image exactly.
+  arma::Mat<uint8_t> rgba2;
+  ImageInfo opts4;
+  opts4.Channels() = 4;
+  REQUIRE(Load("rgba_test.png", rgba2, opts4) == true);
+  REQUIRE(opts4.Channels() == 4);
+  REQUIRE(rgba2.n_rows == rgbaDim);
+  for (size_t i = 0; i < rgbaDim; ++i)
+    REQUIRE(rgba2[i] == rgba[i]);
+
+  // Forcing grayscale yields a single-channel image, not an over-read.
+  arma::Mat<uint8_t> gray;
+  ImageInfo opts1;
+  opts1.Channels() = 1;
+  REQUIRE(Load("rgba_test.png", gray, opts1) == true);
+  REQUIRE(opts1.Channels() == 1);
+  REQUIRE(gray.n_rows == opts1.Width() * opts1.Height() * 1);
+
+  remove("rgba_test.png");
+}
+
+/**
  * Test when loading an image with the wrong data options
  */
 TEST_CASE("LoadWrongDataOptions", "[ImageLoadTest]")
