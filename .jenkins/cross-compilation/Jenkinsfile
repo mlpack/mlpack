@@ -41,6 +41,7 @@ target_info = [
       'arch_name': 'MIPS24K',
       'test_filters': '[tiny]',
       'openblas_extra_flags': 'MSA_FLAGS= USE_THREAD=0',
+      'openblas_patches': 'openblas-mips-trmm-kernels.patch',
       'scp_opts': '-O'
   ],
   'laziji': [
