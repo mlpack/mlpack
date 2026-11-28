@@ -2,7 +2,7 @@
 // First, the cross-compilation host compiles mlpack tests for each
 // architecture, and then copies them to the destination host and runs them.
 
-target_info = [
+def target_info = [
   'couscous': [
       'device_name': 'rpi5',
       'arch_type': 'arm64',
@@ -75,11 +75,7 @@ target_info = [
 
 pipeline
 {
-  agent
-  {
-    // Only use a node that has access to the target hosts.
-    label 'cross-compile'
-  }
+  agent none
 
   options
   {
@@ -92,27 +88,24 @@ pipeline
 
   stages
   {
-    stage('Set up workspace')
+    stage('Job setup')
     {
+      agent any
+
       steps
       {
-        cleanWs(deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true)
-        checkout scm
-
         script
         {
+          checkout scm
           u = load '.jenkins/utils.groovy'
-          u.startCheck('Cross-compilation checks', 'Setting up workspace...')
+          // Initialize the Github status to show that all jobs are queued.
+          u.initMatrixJobStatus('Cross-compilation checks',
+              target_info.keySet() as List<String>)
         }
-
-        // Create a directory for our resulting reports.
-        sh'mkdir -p reports/'
       }
     }
 
-    stage('Cross-compile mlpack to different targets')
+    stage('Cross-compilation checks')
     {
       matrix
       {
@@ -139,7 +132,7 @@ pipeline
                     target_info[env.target]['arch_type'].toLowerCase() +
                     ':latest'
                 alwaysPull true
-                reuseNode true
+                label 'cross-compile'
                 args '-v /home/jenkins/ccache:/opt/ccache -e HOME=/home/jenkins/'
               }
             }
@@ -163,7 +156,8 @@ pipeline
             {
               script
               {
-                u.updateCheckStatus('Building mlpack for ' + env.target + '...')
+                u.updateMatrixJobStatus(env.target, 'building', false)
+                checkout scm
               }
 
               // Specifically use bash so `time` is available.
@@ -218,10 +212,7 @@ pipeline
                 ccache -s;
               '''
 
-              script
-              {
-                u.updateCheckStatus('Testing mlpack on ' + env.target + '...')
-              }
+              script { u.updateMatrixJobStatus(env.target, 'testing', false) }
 
               withCredentials([sshUserPrivateKey(
                   credentialsId: 'mlpack-jenkins-cross-compile-rsa-key',
@@ -275,42 +266,30 @@ pipeline
                   ssh jenkins@${target} -t rm -rf test_${BRANCH_NAME}_${BUILD_ID}/;
                 '''
               }
+
+              script
+              {
+                junit(allowEmptyResults: true,
+                      skipPublishingChecks: true,
+                      testResults: '**/reports/mlpack_test.*.junit.xml')
+              }
+            }
+
+            post
+            {
+              success
+              {
+                script { u.updateMatrixJobStatus(env.target, 'passed', true) }
+              }
+
+              failure
+              {
+                script { u.updateMatrixJobStatus(env.target, 'failed', true) }
+              }
             }
           }
         }
       }
-    }
-  }
-
-  post
-  {
-    always
-    {
-      junit(allowEmptyResults: true,
-            skipPublishingChecks: true,
-            testResults: '**/reports/mlpack_test.*.junit.xml')
-
-      // Clean the workspace.
-      cleanWs(cleanWhenNotBuilt: true,
-              deleteDirs: true,
-              disableDeferredWipeout: true,
-              notFailBuild: true)
-    }
-
-    success
-    {
-      script { u.finishCheck('Cross-compilation checks passed.', true) }
-    }
-
-    // Mark unstable builds as failed.
-    unstable
-    {
-      script { u.finishCheck('Cross-compilation checks failed.', false) }
-    }
-
-    failure
-    {
-      script { u.finishCheck('Cross-compilation checks failed.', false) }
     }
   }
 }
