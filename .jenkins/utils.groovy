@@ -80,15 +80,11 @@ def prepareMatrixJobStatusString()
   return local_status
 }
 
-def initMatrixJobStatus(String name, List<String> statuses, List<String> targets)
+def initMatrixJobStatus(String name, List<String> targets)
 {
   this.name = name
   this.matrixStatus = [:]
-  for (it in statuses)
-  {
-    this.matrixStatus[it] = []
-  }
-  this.matrixStatus[statuses[0]] = targets
+  this.matrixStatus["Queued"] = targets
   this.matrixRunning = targets
 
   def local_status = prepareMatrixJobStatusString()
@@ -113,7 +109,10 @@ def updateMatrixJobStatus(String target, String status, boolean finished)
     }
   }
 
-  this.matrixStatus[status] += target
+  if (!this.matrixStatus.containsKey(status))
+    this.matrixStatus[status] = [target]
+  else
+    this.matrixStatus[status] += target
 
   if (finished)
   {
