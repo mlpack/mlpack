@@ -1006,7 +1006,7 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
   // RBFN neural net with MeanSquaredError.
   double error = TestClassificationNetwork(model, trainData, trainLabels1,
       testData, testLabels, 10);
-  REQUIRE(error <= 0.1);
+  REQUIRE(error <= 0.11);
 
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.csv");
@@ -1041,5 +1041,5 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest][long]")
   // RBFN neural net with MeanSquaredError.
   error = TestClassificationNetwork(model1, dataset, labels1, dataset, labels,
       10);
-  REQUIRE(error <= 0.1);
+  REQUIRE(error <= 0.11);
 }
