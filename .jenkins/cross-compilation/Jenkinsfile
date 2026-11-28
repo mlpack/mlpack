@@ -273,18 +273,18 @@ pipeline
                       skipPublishingChecks: true,
                       testResults: '**/reports/mlpack_test.*.junit.xml')
               }
+            }
 
-              post
+            post
+            {
+              success
               {
-                success
-                {
-                  script { u.updateMatrixJobStatus(env.target, 'passed', true) }
-                }
+                script { u.updateMatrixJobStatus(env.target, 'passed', true) }
+              }
 
-                failure
-                {
-                  script { u.updateMatrixJobStatus(env.target, 'failed', true) }
-                }
+              failure
+              {
+                script { u.updateMatrixJobStatus(env.target, 'failed', true) }
               }
             }
           }
